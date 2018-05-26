@@ -1,0 +1,17 @@
+syntax = "proto3";
+package types;
+
+message Job {
+    string name = 1;
+    string description = 2;
+    Trigger trigger = 3;
+
+}
+
+message Trigger {
+    Schedule schedule = 1;
+}
+
+message Schedule {
+    string recurrencePeriodDuration = 1;
+}

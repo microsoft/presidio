@@ -1,0 +1,25 @@
+Welcome to the Presidium DLP Demo.
+
+Type or paste some text here to test the Presidium DLP API. Findings appear below.
+
+For example, strings like this one produce a PHONE_NUMBER finding:
+    "Please call me. My phone number is (555) 253-0000."
+
+Probability:
+Findings are ranked on a probability scale of 0 (least probable) to 1 (most
+certain). The raw probability number is provided for each finding:
+    Low (0.0 to 0.499)
+    Medium (0.5 to 0.799)
+    High (0.8 to 1)
+
+Low scores may introduce noise in the results, especially when a particular
+string matches multiple detectors. To limit the findings to high scores,
+select "High probability" on the right.
+
+More examples:
+    Email address: foo@example.com
+    Credit card number: 4012-8888-8888-1881
+    No valid credit card number: 4012-8888-8888-1882
+    Valid Credit card number: 375811111111123
+    National Provider Identifier: 2245119599
+    Driver's license: AC111991
