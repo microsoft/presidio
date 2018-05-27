@@ -1,10 +1,13 @@
-FROM python:3.6.5-alpine
-
-RUN apk update && apk add --no-cache --virtual .build-deps build-base g++
+FROM python:3.6.5-slim-stretch
 
 WORKDIR /usr/bin/presidium-anaylzer
-COPY . /usr/bin/presidium-anaylzer
 
-RUN pip install -r requirements.txt && apk del .build-deps build-base g++
+RUN apt-get update && apt-get install -y g++
 
-CMD python /usr/bin/presidium-anaylzer/anaylzer/__main__.py
+ADD requirements.txt /usr/bin/presidium-anaylzer
+
+RUN pip install -r requirements.txt
+
+COPY . /usr/bin/presidium-anaylzer/
+
+CMD python analyzer/__main__.py

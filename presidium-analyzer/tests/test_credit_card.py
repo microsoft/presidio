@@ -20,5 +20,5 @@ def test_credit_card_text1():
     text_file = open(path, 'r')
     match = matcher.Matcher()
     results = match.analyze_text(text_file.read(), types)
-    assert (len(results) == 2)
+    assert (len(results) == 3)
     assert (results[1].probability == 1)

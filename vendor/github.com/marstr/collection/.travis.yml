@@ -1,0 +1,15 @@
+language: go
+
+go: 
+  - 1.7
+  - 1.8
+  - 1.9
+
+install:
+ - go get -u github.com/golang/lint/golint
+
+script:
+ - go test -v -cover
+ - test -z "$(golint | tee /dev/stderr)"
+ - test -z "$(go vet | tee /dev/stderr | grep error)"
+ - test -z "$(gofmt -l *.go | tee /dev/stderr)"

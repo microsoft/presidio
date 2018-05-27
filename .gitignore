@@ -118,7 +118,8 @@ venv.bak/
 
 .vscode
 
-debug*
+debug.test
+debug
 
 /bin/
 /presidium-anonymizer/rootfs/presidium-anonymizer
@@ -128,3 +129,4 @@ debug*
 /presidium-scheduler/rootfs/presidium-scheduler
 /tests/testdata/*-generated.*
 .DS_Store
+/vendor/**/.git

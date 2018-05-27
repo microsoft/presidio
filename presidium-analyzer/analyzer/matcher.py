@@ -85,7 +85,7 @@ class Matcher(object):
                     # res.probability = self.__calculate_probability__(
                     #     doc, current_field, start)
                     logging.info(
-                        f"FieldType: '{res.fieldType}' Value: '{res.value}' Span: '{start}:{end}' probability: {res.probability} ")
+                        f"FieldType: '{res.fieldType}' Value: '{res.value}' Span: '{start}:{end}' probability: '{res.probability}'")
                     # if res.probability > 0:
                     results.append(res)
 

@@ -2,7 +2,7 @@ rbac:
   enabled: false
 
 consul:
-  service: consul-consul:8500
+  service: consul-consul.consul:8500
 
 api:
   registry: presidiumio

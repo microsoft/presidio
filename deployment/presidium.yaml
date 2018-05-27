@@ -1,0 +1,165 @@
+---
+# Source: presidium/templates/analyzer-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: presidium-analyzer
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3001
+    targetPort: 3001
+    protocol: TCP
+    name: presidium-analyzer
+  selector:
+    app: presidium-analyzer
+---
+# Source: presidium/templates/anonymizer-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: presidium-anonymizer
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3001
+    targetPort: 3001
+    protocol: TCP
+    name: presidium-anonymizer
+  selector:
+    app: presidium-anonymizer
+---
+# Source: presidium/templates/api-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: presidium-api
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: presidium-api
+  selector:
+    app: presidium-api
+---
+# Source: presidium/templates/analyzer-deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: presidium-analyzer
+  labels:
+    app: presidium-analyzer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: presidium-analyzer
+    spec:
+      containers:
+      - name: presidium
+        image: "presidiumio/presidium-analyzer:800cc36"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3001
+        env:
+          - name: presidium_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: GRPC_PORT
+            value: "3001"
+      
+---
+# Source: presidium/templates/anonymizer-deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: presidium-anonymizer
+  labels:
+    app: presidium-anonymizer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: presidium-anonymizer
+    spec:
+      containers:
+      - name: presidium
+        image: "presidiumio/presidium-anonymizer:800cc36"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3001
+        env:
+          - name: presidium_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: GRPC_PORT
+            value: "3001"
+      
+---
+# Source: presidium/templates/api-deployment.yaml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: presidium-api
+  labels:
+    app: presidium-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: presidium-api
+    spec:
+      containers:
+      - name: presidium
+        image: "presidiumio/presidium-api:800cc36"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+
+        env:
+          - name: presidium_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: WEB_PORT
+            value: "8080"
+          - name: CONSUL_HTTP_ADDR
+            value: consul-consul.consul.svc.cluster.local:8500
+      
+      initContainers:
+      - name: "presidium-registrator"
+        image: "presidiumio/presidium-registrator:800cc36"
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: CONSUL_HTTP_ADDR
+            value: consul-consul.consul.svc.cluster.local:8500
+          - name: REDIS_HOST
+            value: redis-master
+          - name: REDIS_PORT
+            value: "6379"
+          - name: ANALYZER_SVC_HOST
+            value: presidium-analyzer
+          - name: ANALYZER_SVC_PORT
+            value: "3001"
+          - name: ANONYMIZER_SVC_HOST
+            value: presidium-anonymizer
+          - name: ANONYMIZER_SVC_PORT
+            value: "3001"
+    
+

@@ -28,8 +28,9 @@ The [design document](/docs/design.MD) introduces Presidium concepts and archite
 
 ## Quickstart
 
-## Samples
-
+1. Install [Presidium](docs/installation.md)
+2. Create a Presidium project
+3. Start using the Presidium analyze and anonymize services
 
 
 

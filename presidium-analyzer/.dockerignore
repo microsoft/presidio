@@ -1,7 +1,7 @@
 # Exclude everything by default
 *
 # Make an exception for presidium source code
-!presidium/*
+!analyzer/*
 !model*
 !setup*
 !requirements.txt
