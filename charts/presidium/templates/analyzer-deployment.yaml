@@ -1,4 +1,4 @@
-analyzerVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: {{ template "presidium.fullname" . }}-analyzer

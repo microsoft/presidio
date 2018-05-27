@@ -17,8 +17,8 @@ const tag = "presidium"
 
 //New service discovery store
 func New() sd.Store {
-
-	client, err := api.NewClient(api.DefaultConfig())
+	config := api.DefaultConfig()
+	client, err := api.NewClient(config)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}

@@ -24,9 +24,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "presidium.api.fullname" -}}
 {{ include "presidium.fullname" . | printf "%s-api" }}
 {{- end -}}
-{{- define "presidium.scanner.fullname" -}}
-{{ include "presidium.fullname" . | printf "%s-scanner" }}
-{{- end -}}
 {{- define "presidium.scheduler.fullname" -}}
 {{ include "presidium.fullname" . | printf "%s-scheduler" }}
 {{- end -}}

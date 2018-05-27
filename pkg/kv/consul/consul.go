@@ -16,7 +16,8 @@ type consul struct {
 //New Return new KV store
 func New() kv.Store {
 
-	client, err := api.NewClient(api.DefaultConfig())
+	config := api.DefaultConfig()
+	client, err := api.NewClient(config)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}

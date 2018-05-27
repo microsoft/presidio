@@ -16,7 +16,7 @@ var (
 func main() {
 
 	if webPort == "" {
-		log.Fatal("WEB_PORT env vars must me set.")
+		log.Fatal("WEB_PORT env var must me set.")
 	}
 
 	port, err := strconv.Atoi(webPort)

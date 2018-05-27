@@ -1,13 +1,16 @@
 rbac:
   enabled: false
 
+consul:
+  service: consul-consul:8500
+
 api:
   registry: presidiumio
   name: presidium-api
   # tag:
   service:
     name: presidium-api
-    type: ClusterIP
+    type: LoadBalancer
     externalPort: 80
     internalPort: 8080
   # Configure liveness probes except `httpGet` and the belongings
@@ -16,6 +19,14 @@ api:
   # Configure readiness probes except `httpGet` and the belongings
   #readinessProbe:
   #  initialDelaySeconds: 20
+
+registrator:
+  registry: presidiumio
+  name: presidium-registrator
+  # tag:
+  redis:
+    host: redis-master
+    port: 6379
 
 analyzer:
   registry: presidiumio
@@ -27,12 +38,22 @@ analyzer:
     externalPort: 3001
     internalPort: 3001
 
-analyzer:
+anonymizer:
   registry: presidiumio
   name: presidium-anonymizer
   # tag:
   service:
     name: presidium-anonymizer
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
+scheduler:
+  registry: presidiumio
+  name: presidium-scheduler
+  # tag:
+  service:
+    name: presidium-scheduler
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
