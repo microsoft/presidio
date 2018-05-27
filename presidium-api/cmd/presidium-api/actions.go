@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/presidium-io/presidium/pkg/service-discovery/consul"
 
 	log "github.com/presidium-io/presidium/pkg/logger"
 	"github.com/presidium-io/presidium/pkg/rpc"
@@ -18,9 +19,19 @@ var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
 
 func setupGrpcServices() {
-	analyzerSvcHost = os.Getenv("ANALYZER_SVC_HOST")
-	anonymizerSvcHost = os.Getenv("ANONYMIZER_SVC_HOST")
+	store := consul.New()
 	var err error
+	var analyzerSvcHost, anonymizerSvcHost string
+
+	analyzerSvcHost, err = store.GetService("analyzer")
+	if err != nil {
+		log.Fatal(fmt.Sprintf("analyzer service address is empty %q", err))
+	}
+
+	anonymizerSvcHost, err = store.GetService("anonymizer")
+	if err != nil {
+		log.Fatal(fmt.Sprintf("anonymizer service address is empty %q", err))
+	}
 
 	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost)
 	if err != nil {

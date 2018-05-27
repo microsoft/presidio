@@ -5,8 +5,8 @@ DOCKER_REGISTRY    ?= presidium-io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidium-anonymizer presidium-api presidium-scanner presidium-scheduler
-IMAGES      = presidium-anonymizer presidium-api presidium-analyzer presidium-scanner presidium-scheduler
+BINS        = presidium-anonymizer presidium-api presidium-scanner presidium-scheduler presidium-registrator
+IMAGES      = presidium-anonymizer presidium-api presidium-analyzer presidium-scanner presidium-scheduler presidium-registrator
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
@@ -65,8 +65,12 @@ test: test-style
 test: test-unit
 # Unit tests. Local only.
 .PHONY: test-unit
-test-unit: vendor
+test-unit: vendor clean
+	docker run --rm --name test-consul -d -p 8300:8300 -p 8301:8301 -p 8302:8302 -p 8400:8400 -p 8500:8500 -p 8600:8600 consul
+	docker run --rm --name test-redis -d -p 6379:6379 redis
 	go test -v ./...
+	docker rm test-redis -f
+	docker rm test-consul -f
 
 .PHONY: test-functional
 test-functional: vendor
@@ -82,35 +86,40 @@ format: format-go
 format-go:
 	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/presidium-io/presidium
 
-HAS_GOMETALINTER := $(shell command -v gometalinter;)
-HAS_DEP          := $(shell command -v dep;)
-HAS_GIT          := $(shell command -v git;)
-
-vendor:
-ifndef HAS_GIT
-	$(error You must install git)
-endif
-ifndef HAS_DEP
-	go get -u github.com/golang/dep/cmd/dep
-endif
-ifndef HAS_GOMETALINTER
-	go get -u github.com/alecthomas/gometalinter
-	gometalinter --install
-endif
-	dep ensure
-
-
-.PHONY: bootstrap
-bootstrap: vendor
-
-make-docs:
+make-docs: vendor
 	docker run --rm -v $(shell pwd)/docs:/out -v $(shell pwd)/pkg/types:/protos pseudomuto/protoc-gen-doc --doc_opt=markdown,proto.md
 .PHONY: docs
 docs: make-docs
 
-make-proto:
+make-proto: vendor
 	python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. ./*.proto
 	protoc -I . --go_out=plugins=grpc:. ./*.proto
 
 .PHONY: proto
 proto: make-proto
+
+make-clean:
+	-docker rm test-consul -f
+	-docker rm test-redis -f
+
+.PHONY: clean
+clean: make-clean
+
+HAS_GOMETALINTER := $(shell command -v gometalinter 2>/dev/null)
+HAS_GIT          := $(shell command -v git 2>/dev/null)
+HAS_DOCKER		 := $(shell command -v docker 2>/dev/null)
+
+vendor:
+ifndef HAS_GIT
+	$(error You must install git)
+endif
+ifndef HAS_DOCKER
+	$(error You must install Docker)
+endif
+ifndef HAS_GOMETALINTER
+	go get -u github.com/alecthomas/gometalinter
+	gometalinter --install
+endif
+	
+.PHONY: bootstrap
+bootstrap: vendor

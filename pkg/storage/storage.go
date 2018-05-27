@@ -82,29 +82,28 @@ func (a *API) getFiles(container stow.Container) error {
 
 func (a *API) readObject(item stow.Item) (string, string, string, int64, error) {
 	name := item.Name()
-	etag, _ := item.ETag()
+	eTag, _ := item.ETag()
 	size, _ := item.Size()
-
 	if a.cache != nil {
-		key := etag
+		key := eTag
 		val, err := a.cache.Get(key)
 		if val != "" || err != nil {
-			return name, etag, "", size, err
+			return name, eTag, "", size, err
 		}
 	}
 
 	r, err := item.Open()
 	if err != nil {
-		return name, etag, "", size, err
+		return name, eTag, "", size, err
 	}
 	defer r.Close()
 
 	body, err := ioutil.ReadAll(r)
 	if err != nil {
-		return name, etag, "", size, err
+		return name, eTag, "", size, err
 	}
 
-	logger.Info(fmt.Sprintf("Read file %s ETag: %s Size:%d", item.Name(), etag, size))
-	return name, etag, string(body), size, nil
+	logger.Info(fmt.Sprintf("Read file %s ETag: %s Size:%d", item.Name(), eTag, size))
+	return name, eTag, string(body), size, nil
 
 }

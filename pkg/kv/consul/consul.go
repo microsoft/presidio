@@ -14,7 +14,7 @@ type consul struct {
 }
 
 //New Return new KV store
-func New() kv.KVStore {
+func New() kv.Store {
 
 	client, err := api.NewClient(api.DefaultConfig())
 	if err != nil {

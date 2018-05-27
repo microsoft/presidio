@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 
@@ -11,15 +10,13 @@ import (
 )
 
 var (
-	webPort           = os.Getenv("WEB_PORT")
-	analyzerSvcHost   = os.Getenv("ANALYZER_SVC_HOST")
-	anonymizerSvcHost = os.Getenv("ANONYMIZER_SVC_HOST")
+	webPort = os.Getenv("WEB_PORT")
 )
 
 func main() {
 
-	if webPort == "" || analyzerSvcHost == "" || anonymizerSvcHost == "" {
-		log.Fatal(fmt.Sprintf("WEB_PORT (currently [%s]) ANALYZER_SVC_HOST (currently [%s]) and ANONYMIZER_SVC_HOST (currently [%s]) env vars must me set.", webPort, analyzerSvcHost, anonymizerSvcHost))
+	if webPort == "" {
+		log.Fatal("WEB_PORT env vars must me set.")
 	}
 
 	port, err := strconv.Atoi(webPort)
