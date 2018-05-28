@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/presidium-io/presidium.svg?branch=development)](https://travis-ci.org/presidium-io/presidium)
+
+
 # Presidium - Data loss prevention
 **A context aware, blazing fast, customizable data loss prevention service**
 
@@ -32,5 +35,39 @@ The [design document](/docs/design.MD) introduces Presidium concepts and archite
 2. Create a Presidium project
 3. Start using the Presidium analyze and anonymize services
 
+
+***Sample 1***
+
+1. Create an analyzer project
+```
+echo -n '{"fieldTypes":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+```
+
+2. Analyze text
+```
+echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+```
+
+***Sample 2***
+
+1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD)
+```
+echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","configuration":{"fieldTypeTransformations":[{"fieldTypes":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fieldTypes":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+```
+
+2. Anonymize text
+```
+echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":<my-analyze-template-name>, "AnonymizeTemplateId":<my-anonymize-template-name>  }' | http 104.214.226.151/api/v1/projects/<my-project>/anonymize
+```
+
+***Load test***
+
+1. Create a project (see previous step)
+2. Edit  `post.lua`. Change the template name
+3. Run [wrk](https://github.com/wg/wrk)
+
+```
+wrk -t2 -c2 -d30s -s post.lua http://<api-service-address>/api/v1/projects/<my-project>/analyze
+```
 
 

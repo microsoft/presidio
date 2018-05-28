@@ -20,6 +20,8 @@ matrix:
       go:
       - "1.10"
       go_import_path: github.com/presidium-io/presidium
-      script:
+      before_install:
       - go get github.com/pkg/errors
+      script:
+      - make test
       - make docker-build
