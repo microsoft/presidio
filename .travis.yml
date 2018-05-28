@@ -22,7 +22,8 @@ matrix:
       go_import_path: github.com/presidium-io/presidium
       before_install:
       - go get github.com/pkg/errors
-      - go get -u gopkg.in/alecthomas/gometalinter.v2
+      - go get -u github.com/alecthomas/gometalinter
+      - gometalinter --install
       script:
       - make test
       - make docker-build
