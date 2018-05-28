@@ -22,6 +22,7 @@ matrix:
       go_import_path: github.com/presidium-io/presidium
       before_install:
       - go get github.com/pkg/errors
+      - go get github.com/stretchr/testify
       - go get -u github.com/alecthomas/gometalinter
       - gometalinter --install
       script:
