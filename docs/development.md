@@ -16,6 +16,12 @@ It is recommended to work with macOS, Linux or [WSL](https://docs.microsoft.com/
 docker run --name dev-consul -d -p 8300:8300 -p 8301:8301 -p 8302:8302 -p 8400:8400 -p 8500:8500 -p 8600:8600 consul
 ```
 
+Consul create volumes to persist data. If the container is stopped, don't remove it. Just start it.
+
+```
+docker start dev-consul
+```
+
 3. Redis
 ```
 docker run --name dev-redis -d -p 6379:6379 redis
