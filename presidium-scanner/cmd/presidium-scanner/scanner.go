@@ -2,90 +2,58 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/graymeta/stow"
 	"github.com/presidium-io/presidium/pkg/cache"
 	_ "github.com/presidium-io/presidium/pkg/storage"
 )
 
-// ScanAndAnalyaze checks if the file needs to be scanned.
-// if it is send it to the analyzer and updates the Redis cache that it was scanned.
-func ScanAndAnalyaze(redisCache *cache.Cache, container stow.Container, item stow.Item, wg *sync.WaitGroup) {
-	defer wg.Done()
+// ScanAndAnalyze checks if the file needs to be scanned.
+// if it is send it to the analyzer and updates the cache that it was scanned.
+func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item) {
+	var err error
+	var val, fileContent, etag string
 
-	// Check if item was scanned in the past (if it's in Redis)
-	filePath := getFilePath(container.Name(), item.Name())
-	val, err := (*redisCache).Get(filePath)
-
+	// Check if item was scanned in the past (if it's in cache)
+	etag, err = item.ETag()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println("ERROR:", err)
 		return
 	}
 
-	// Value not found in redis. Need to scan the file and update Redis
+	val, err = (*cache).Get(etag)
+	if err != nil {
+		log.Println("ERROR:", err)
+		return
+	}
+
+	// Value not found in the cache. Need to scan the file and update the cache
 	if val == "" {
-		fileContent, error := readFileContent(item)
-		if error != nil {
-			log.Fatal(error.Error())
+		fileContent, err = readFileContent(item)
+		if err != nil {
+			log.Println("ERROR:", err)
 			return
 		}
 
 		// Replace with a call to analayzer
 		fmt.Println(fileContent)
 
-		etag, error := item.ETag()
-		if error != nil {
-			log.Fatal(error.Error())
+		if err != nil {
+			log.Println("ERROR:", err)
 			return
 		}
 
-		ri := &redisItem{
-			ETag: etag,
-			Name: item.Name(),
-		}
-
-		error = writeItemToRedis(redisCache, ri, filePath)
-		if error != nil {
-			log.Fatal(error.Error())
+		err = (*cache).Set(etag, item.Name())
+		if err != nil {
+			log.Println("ERROR:", err)
 		}
 		return
 	}
 
-	// value was found in Redis, validate that the Etags are equal - which means that the file was already scanned
-	ri := redisItem{}
-
-	if err = json.Unmarshal([]byte(val), &ri); err != nil {
-		log.Fatal(err.Error())
-		return
-	}
-
-	fmt.Println(ri)
-	etag, err := item.ETag()
-
-	if err != nil {
-		log.Fatal(err.Error())
-		return
-	}
-
-	if etag != ri.ETag {
-		// file was changed, scan again and update redis
-		ri.ETag = etag
-		err = writeItemToRedis(redisCache, &ri, filePath)
-		log.Fatal(err.Error())
-	}
-}
-
-// file path is structure is: containerName/fileName
-func getFilePath(container string, file string) string {
-	var buffer bytes.Buffer
-	buffer.WriteString(container)
-	buffer.WriteString("/")
-	buffer.WriteString(file)
-	return buffer.String()
+	// Otherwise skip- item was already scanned
+	log.Println("Item was already scanned", item.Name())
 }
 
 // Read the content of the cloud item
@@ -109,14 +77,4 @@ func readFileContent(item stow.Item) (string, error) {
 	err = reader.Close()
 
 	return fileContent, err
-}
-
-func writeItemToRedis(redisCache *cache.Cache, ri *redisItem, filePath string) error {
-	byteArr, error := json.Marshal(ri)
-	if error != nil {
-		return error
-	}
-
-	error = (*redisCache).Set(filePath, string(byteArr))
-	return error
 }

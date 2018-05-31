@@ -1,22 +1,31 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"sync"
+	"os"
 
 	"github.com/graymeta/stow"
+	"github.com/korovkin/limiter"
 	"github.com/presidium-io/presidium/pkg/cache"
 	"github.com/presidium-io/presidium/pkg/cache/redis"
 	"github.com/presidium-io/presidium/pkg/service-discovery/consul"
 	_ "github.com/presidium-io/presidium/pkg/storage"
 )
 
-type redisItem struct {
-	Name string
-	ETag string
-}
+var (
+	storageName   = "ilanastorage" //"ilanastorage"
+	storageKey    = ""
+	kind          = "azure"
+	containerName = "container1"
+	grpcPort      = os.Getenv("GRPC_PORT")
+)
 
 func main() {
+	if grpcPort == "" {
+		log.Fatal(fmt.Sprintf("GRPC_PORT (currently [%s]) env var must me set.", grpcPort))
+	}
+
 	store := consul.New()
 	redisService, err := store.GetService("redis")
 	if err != nil {
@@ -28,13 +37,13 @@ func main() {
 	// flag.Parse()
 	// logger.Info(fmt.Sprintf("Scanning project %s", *projectID))
 
-	redisCache := redis.New(
+	cache := redis.New(
 		redisService,
 		"", // no password set
 		0,  // use default DB
 	)
 
-	readFromContainer(&redisCache)
+	readFromContainer(&cache)
 
 	// _, err := consul.GetKVPair(*projectID)
 	// if err != nil {
@@ -43,36 +52,35 @@ func main() {
 
 }
 
-func readFromContainer(redisCache *cache.Cache) {
-	//csf := stow.ConfigMap{"account": "ilanastorage", "key": ""}
-	csf := stow.ConfigMap{"account": "presidiumtests", "key": ""}
-	kind := "azure"
+func readFromContainer(cache *cache.Cache) {
+	csf := stow.ConfigMap{"account": storageName, "key": storageKey}
+	kind := kind
 	location, err := stow.Dial(kind, csf)
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
 
-	//containers := make([]stow.Container, 1)
-	err = stow.WalkContainers(location, stow.NoPrefix, 100, func(c stow.Container, err error) error {
+	defer location.Close()
+
+	container, err := location.CreateContainer(containerName)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	limit := limiter.NewConcurrencyLimiter(10)
+	err = stow.Walk(container, stow.CursorStart, 100, func(item stow.Item, err error) error {
 		if err != nil {
 			return err
 		}
 
-		var wg sync.WaitGroup
-		err = stow.Walk(c, stow.CursorStart, 100, func(item stow.Item, err error) error {
-			wg.Add(1)
-			if err != nil {
-				return err
-			}
-
-			go ScanAndAnalyaze(redisCache, c, item, &wg)
-			return nil
+		limit.Execute(func() {
+			ScanAndAnalyze(cache, container, item)
 		})
-		wg.Wait()
 
-		return err
+		return nil
 	})
+	limit.Wait()
+
 	if err != nil {
 		log.Fatal(err.Error())
 		return

@@ -25,7 +25,7 @@ def serve():
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(Analyzer(), server)
-    server.add_insecure_port('[::]:3001')
+    server.add_insecure_port('[::]:3000')
     server.start()
     try:
         while True:
