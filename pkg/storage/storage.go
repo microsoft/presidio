@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/graymeta/stow"
-	"github.com/graymeta/stow/azure"
-	"github.com/graymeta/stow/s3"
+	"github.com/presidium-io/stow"
+	"github.com/presidium-io/stow/azure"
+	"github.com/presidium-io/stow/s3"
 
 	"github.com/presidium-io/presidium/pkg/cache"
 	"github.com/presidium-io/presidium/pkg/logger"

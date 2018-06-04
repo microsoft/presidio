@@ -129,4 +129,4 @@ debug
 /presidium-scheduler/rootfs/presidium-scheduler
 /tests/testdata/*-generated.*
 .DS_Store
-/vendor/**/.git
+vendor/
