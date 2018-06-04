@@ -21,8 +21,10 @@ matrix:
       - "1.10"
       go_import_path: github.com/presidium-io/presidium
       before_install:
+      - curl https://glide.sh/get | sh
       - go get github.com/pkg/errors
-      - go get github.com/stretchr/testify
+      - glide up -v
+      - go get github.com/pkg/errors
       - go get -u github.com/alecthomas/gometalinter
       - gometalinter --install
       script:
