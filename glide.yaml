@@ -9,10 +9,10 @@ import:
   version: ^1.1.0
   subpackages:
   - proto
-- package: github.com/aws/aws-sdk-go
-- package: github.com/Azure/azure-sdk-for-go
-- package: github.com/Azure/go-autorest
 - package: github.com/presidium-io/stow
+  subpackages:
+  - azure
+  - aws
 - package: github.com/hashicorp/consul
   version: ^1.1.0
   subpackages:
@@ -36,6 +36,7 @@ import:
   - batch/v1
   - core/v1
 - package: k8s.io/apimachinery
+  version: kubernetes-1.10.0
   subpackages:
   - pkg/apis/meta/v1
 - package: k8s.io/client-go

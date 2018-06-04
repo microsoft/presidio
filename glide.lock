@@ -1,10 +1,10 @@
-hash: d12797ae7b5a33526d0e30a770b227c03dafe0054cc83c0f2b38f2bc5ee16c19
-updated: 2018-06-04T16:03:47.114875+03:00
+hash: d5a4b4440c45440a3a6d7f61558a8f59ac2a702ebbc1bc83f77d39351f8c671b
+updated: 2018-06-04T17:20:58.231732+03:00
 imports:
 - name: github.com/armon/go-metrics
   version: 783273d703149aaeb9897cf58613d5af48861c25
 - name: github.com/aws/aws-sdk-go
-  version: 854f9d07a932452f1552955e127e50ba5ebb25cc
+  version: b2e866cc3d25372c6bde1ce18dbbf11862e954e9
   subpackages:
   - aws
   - aws/awserr
@@ -34,7 +34,7 @@ imports:
   - service/s3
   - service/sts
 - name: github.com/Azure/azure-sdk-for-go
-  version: 4650843026a7fdec254a8d9cf893693a254edd0b
+  version: 372468613aa2441986867c6cdd09af7f14a9866c
   subpackages:
   - storage
   - version
@@ -115,24 +115,29 @@ imports:
 - name: github.com/jmespath/go-jmespath
   version: c2b33e8439af944379acbdd9c3a5fe0bc44bd8a5
 - name: github.com/json-iterator/go
-  version: 13f86432b882000a51c6e610c620974462691a97
+  version: 2ddf6d758266fcb080a4f9e054b9f292c85e6798
 - name: github.com/marstr/guid
   version: 8bdf7d1a087ccc975cf37dd6507da50698fd19ca
 - name: github.com/mattn/go-isatty
   version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
 - name: github.com/mitchellh/go-homedir
   version: 3864e76763d94a6df2f9960b16a20a33da9f9a66
+- name: github.com/modern-go/concurrent
+  version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
+- name: github.com/modern-go/reflect2
+  version: 05fbef0ca5da472bbf96c9322b84a53edc03c9fd
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/presidium-io/stow
   version: 4ea85bf8ccfef46b011f0b181ea3bcc05efc2900
   subpackages:
+  - aws
   - azure
   - s3
 - name: github.com/satori/go.uuid
   version: 36e9d2ebbde5e3f13ab2e25625fd453271d6522e
 - name: github.com/spf13/pflag
-  version: 4c012f6dcd9546820e378d0bdda4d8fc772cdfea
+  version: 583c0c0531f06d5278b7d917446061adc344b5cd
 - name: github.com/ugorji/go
   version: f3cacc17c85ecb7f1b6a9e373ee85d1480919868
   subpackages:
