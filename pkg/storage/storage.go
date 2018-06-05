@@ -3,28 +3,34 @@ package storage
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/graymeta/stow"
 	"github.com/graymeta/stow/azure"
+	"github.com/korovkin/limiter"
+	//"github.com/graymeta/stow/google"
 	"github.com/graymeta/stow/s3"
 
 	"github.com/presidium-io/presidium/pkg/cache"
 	"github.com/presidium-io/presidium/pkg/logger"
+	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 //API storage
 type API struct {
 	cache    cache.Cache
 	location stow.Location
+	// TODO: need to refactor so storage won't be coupled with the analyzed service
+	analyzeService *message_types.AnalyzeServiceClient
 }
 
 //New storage
-func New(c cache.Cache, kind string, config stow.Config) (*API, error) {
+func New(c cache.Cache, kind string, config stow.Config, analyzeService *message_types.AnalyzeServiceClient) (*API, error) {
 	location, err := stow.Dial(kind, config)
 	if err != nil {
 		return &API{}, err
 	}
-	return &API{cache: c, location: location}, nil
+	return &API{cache: c, location: location, analyzeService: analyzeService}, nil
 }
 
 //CreateS3Config create S3 configuration
@@ -44,6 +50,28 @@ func CreateAzureConfig(account string, key string) (string, stow.ConfigMap) {
 	}
 }
 
+// CreateContainer create a conatiner/bucket or return a reference if already exists
+func (a *API) CreateContainer(name string) (stow.Container, error) {
+	conatiner, err := a.location.CreateContainer(name)
+	if err != nil {
+		if strings.Contains(err.Error(), "ContainerAlreadyExists") {
+			x, _ := a.location.Container(name)
+			return x, nil
+		}
+		return nil, err
+	}
+	return conatiner, nil
+}
+
+//CreatGoogleConfig create google configuration
+// func CreatGoogleConfig(configJson string, configProjectId string, configScopes string) (string, stow.ConfigMap) {
+// 	return "google", stow.ConfigMap{
+// 		google.ConfigJSON:      configJson,
+// 		google.ConfigProjectId: configProjectId,
+// 		google.ConfigScopes:    configScopes,
+// 	}
+// }
+
 //ListObjects list object in bucket/container
 func (a *API) ListObjects(container string) error {
 	err := stow.WalkContainers(a.location, stow.NoPrefix, 100, func(c stow.Container, err error) error {
@@ -62,7 +90,26 @@ func (a *API) ListObjects(container string) error {
 	})
 
 	return err
+}
 
+type walkFunc func(cache *cache.Cache, container stow.Container, item stow.Item, analyzeService *message_types.AnalyzeServiceClient)
+
+// WalkFiles walks over the files in 'container' and executes fn func
+func (a *API) WalkFiles(container stow.Container, fn walkFunc) error {
+	limit := limiter.NewConcurrencyLimiter(10)
+	err := stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
+		if err != nil {
+			return err
+		}
+
+		limit.Execute(func() {
+			fn(&a.cache, container, item, a.analyzeService)
+		})
+		return err
+	})
+	limit.Wait()
+
+	return err
 }
 
 func (a *API) getFiles(container stow.Container) error {
