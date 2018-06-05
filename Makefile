@@ -1,4 +1,4 @@
-DOCKER_REGISTRY    ?= presidiumiom
+DOCKER_REGISTRY    ?= presidiumio
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
