@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/graymeta/stow"
 	"github.com/presidium-io/presidium/pkg/cache"
 	message_types "github.com/presidium-io/presidium/pkg/types"
+	"github.com/presidium-io/stow"
 )
 
 // ScanAndAnalyze checks if the file needs to be scanned.

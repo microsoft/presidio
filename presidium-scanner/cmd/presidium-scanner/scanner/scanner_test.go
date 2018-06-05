@@ -10,12 +10,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/graymeta/stow"
 	"github.com/presidium-io/presidium/pkg/cache/testCache"
 	"github.com/presidium-io/presidium/pkg/storage"
 	message_types "github.com/presidium-io/presidium/pkg/types"
+	"github.com/presidium-io/stow"
 	"github.com/stretchr/testify/mock"
-	"google.golang.org/grpc"
 )
 
 var (

@@ -1,0 +1,51 @@
+package: github.com/presidium-io/presidium
+import:
+- package: github.com/gin-contrib/zap
+- package: github.com/gin-gonic/gin
+  version: ^1.2.0
+- package: github.com/go-redis/redis
+  version: ^6.12.0
+- package: github.com/golang/protobuf
+  version: ^1.1.0
+  subpackages:
+  - proto
+- package: github.com/presidium-io/stow
+  subpackages:
+  - azure
+  - aws
+- package: github.com/hashicorp/consul
+  version: ^1.1.0
+  subpackages:
+  - api
+- package: go.uber.org/zap
+  version: ^1.8.0
+  subpackages:
+  - zapcore
+- package: golang.org/x/net
+  subpackages:
+  - context
+- package: golang.org/x/sync
+  subpackages:
+  - errgroup
+- package: google.golang.org/grpc
+  version: ^1.12.0
+  subpackages:
+  - reflection
+- package: k8s.io/api
+  subpackages:
+  - batch/v1
+  - core/v1
+- package: k8s.io/apimachinery
+  version: kubernetes-1.10.0
+  subpackages:
+  - pkg/apis/meta/v1
+- package: k8s.io/client-go
+  version: ^7.0.0
+  subpackages:
+  - kubernetes
+  - rest
+testImport:
+- package: github.com/stretchr/testify
+  version: ^1.2.1
+  subpackages:
+  - assert
