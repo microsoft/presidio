@@ -13,13 +13,11 @@ certain). The raw probability number is provided for each finding:
     High (0.8 to 1)
 
 Low scores may introduce noise in the results, especially when a particular
-string matches multiple detectors. To limit the findings to high scores,
-select "High probability" on the right.
+string matches multiple detectors.
 
 More examples:
     Email address: foo@example.com
     Credit card number: 4012-8888-8888-1881
     No valid credit card number: 4012-8888-8888-1882
     Valid Credit card number: 375811111111123
-    National Provider Identifier: 2245119599
-    Driver's license: AC111991
+    Another Valid Credit card number: 5147 5899 4221 2775
