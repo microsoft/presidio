@@ -9,7 +9,7 @@ import sys
 
 
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
-    def __init__(self, ):
+    def __init__(self):
         self.match = matcher.Matcher()
 
     def Apply(self, request, context):
