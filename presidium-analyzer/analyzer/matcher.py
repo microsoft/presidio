@@ -133,14 +133,10 @@ class Matcher(object):
             res = self.__create_result(doc, current_field, ent.start_char,
                                        ent.end_char)
             res.probability = 0.8
-            # Don't add duplicate
-            if len(current_field.regexes) > 1 and any(
-                    x.location.start == ent.start_char and x.value == res.value
-                    for x in results):
-                continue
 
             if res is not None:
                 results.append(res)
+
         return results
 
     def analyze_text(self, text, field_type_filters):
