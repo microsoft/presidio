@@ -1,0 +1,24 @@
+{
+    "Vendor": true,
+    "Deadline": "2m",
+    "Sort": ["linter", "severity", "path", "line"],
+    "EnableGC": true,
+    "WarnUnmatchedDirective": true,
+    "DisableAll": true,
+    "Linters": {
+        "goimports": {
+            "Command": "goimports -l --local github.com/presidium-io/presidium"
+        }
+    },
+    "Enable": [
+        "deadcode",
+        "gofmt",
+        "goimports",
+        "golint",
+        "gosimple",
+        "ineffassign",
+        "misspell",
+        "unused",
+        "vet"
+    ]
+}

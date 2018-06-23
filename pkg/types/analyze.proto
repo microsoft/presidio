@@ -1,0 +1,23 @@
+syntax = "proto3";
+import "common.proto";
+package types;
+
+
+message Results {
+  repeated Result results = 1;
+}
+
+message AnalyzeApiRequest {
+  string text = 1;
+  string analyzeTemplateId = 2;
+}
+
+message AnalyzeRequest {
+  string value = 1;
+  repeated string fields = 2;
+  string minProbability = 3;
+}
+
+service AnalyzeService {
+  rpc Apply (AnalyzeRequest) returns (Results) {}
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+import "common.proto";
+
+package types;
+
+message AnonymizeApiRequest {
+  string text = 1;
+  string analyzeTemplateId = 2;
+  string anonymizeTemplateId = 3;
+}
+
+message AnonymizeRequest {
+  string text = 1;
+  AnonymizeTemplate template = 2;
+  repeated Result results = 3;
+}
+
+message AnonymizeTemplate {
+    string name = 1;
+    string displayName = 2;
+    string description = 3;
+    string createTime = 4;
+    string modifiedTime = 5;
+    Configuration configuration = 6;
+}
+message Configuration {
+  repeated FieldTypeTransformation fieldTypeTransformations = 1;
+  repeated RecordTransformation recordTransformations = 2;
+}
+
+message FieldTypeTransformation {
+  repeated FieldType fieldTypes = 1;
+  Transformation transformation = 2;
+}
+
+
+
+message AnonymizeResponse {
+  string text = 1;
+}
+
+service AnonymizeService {
+  rpc Apply (AnonymizeRequest) returns (AnonymizeResponse) {}
+}

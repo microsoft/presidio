@@ -1,0 +1,32 @@
+sudo: required
+services:
+  - docker
+branches:
+  only:
+  - gh-pages
+  - /.*/
+matrix:
+  include:
+    - language: python
+      cache: pip
+      python:
+        - "3.6"
+      install:
+      - pip install -r presidium-analyzer/requirements.txt
+      script:
+      - cd presidium-analyzer
+      - pytest
+    - language: go
+      go:
+      - "1.10"
+      go_import_path: github.com/presidium-io/presidium
+      before_install:
+      - curl https://glide.sh/get | sh
+      - go get github.com/pkg/errors
+      - glide up -v
+      - go get github.com/pkg/errors
+      - go get -u github.com/alecthomas/gometalinter
+      - gometalinter --install
+      script:
+      - make test
+      - make docker-build
