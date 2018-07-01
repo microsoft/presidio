@@ -6,13 +6,14 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/presidium-io/stow"
+
 	"github.com/presidium-io/presidium/pkg/cache/redis"
 	"github.com/presidium-io/presidium/pkg/rpc"
 	"github.com/presidium-io/presidium/pkg/service-discovery/consul"
 	"github.com/presidium-io/presidium/pkg/storage"
 	message_types "github.com/presidium-io/presidium/pkg/types"
 	"github.com/presidium-io/presidium/presidium-scanner/cmd/presidium-scanner/scanner"
-	"github.com/presidium-io/stow"
 )
 
 var (
