@@ -49,9 +49,9 @@ func CreateAzureConfig(account string, key string) (string, stow.ConfigMap) {
 	}
 }
 
-// CreateContainer create a conatiner/bucket or return a reference if already exists
+// CreateContainer create a container/bucket or return a reference if already exists
 func (a *API) CreateContainer(name string) (stow.Container, error) {
-	conatiner, err := a.location.CreateContainer(name)
+	container, err := a.location.CreateContainer(name)
 	if err != nil {
 		if strings.Contains(err.Error(), "ContainerAlreadyExists") {
 			x, _ := a.location.Container(name)
@@ -59,7 +59,7 @@ func (a *API) CreateContainer(name string) (stow.Container, error) {
 		}
 		return nil, err
 	}
-	return conatiner, nil
+	return container, nil
 }
 
 //CreatGoogleConfig create google configuration

@@ -65,6 +65,7 @@ test: test-unit
 test-unit: vendor clean
 	docker run --rm --name test-consul -d -p 8300:8300 -p 8301:8301 -p 8302:8302 -p 8400:8400 -p 8500:8500 -p 8600:8600 consul
 	docker run --rm --name test-redis -d -p 6379:6379 redis
+	docker run -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v /emulator:/opt/azurite/folder arafato/azurite
 	go test -v ./...
 	docker rm test-redis -f
 	docker rm test-consul -f

@@ -8,20 +8,19 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/presidium-io/stow"
+	"github.com/stretchr/testify/mock"
+	"google.golang.org/grpc"
 
 	"github.com/presidium-io/presidium/pkg/cache/testCache"
 	"github.com/presidium-io/presidium/pkg/storage"
 	message_types "github.com/presidium-io/presidium/pkg/types"
-	"github.com/presidium-io/stow"
-	"github.com/stretchr/testify/mock"
 )
 
 var (
 	// Azure emulator connection string
 	storageName = "devstoreaccount1"
 	storageKey  = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
-	kind        = "azure"
 )
 
 type MyMockedObject struct {
@@ -29,7 +28,10 @@ type MyMockedObject struct {
 }
 
 func (m *MyMockedObject) Apply(ctx context.Context, in *message_types.AnalyzeRequest, opts ...grpc.CallOption) (*message_types.Results, error) {
-	return nil, nil
+	args := m.Mock.Called()
+	x := args.Get(0)
+	y := x.(*message_types.Results)
+	return y, args.Error(1)
 }
 
 func TestAzureScanAndAnalyze(t *testing.T) {
@@ -53,7 +55,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	}
 	content := "Please call me. My phone number is (555) 253-0000."
 	var serviceMock message_types.AnalyzeServiceClient = analyzeService
-	analyzeService.On("Apply", mock.Anything, mock.Anything).Return(results)
+	analyzeService.On("Apply", mock.Anything, mock.Anything).Return(results, nil)
 
 	api, _ := storage.New(testCache, kind, config, &serviceMock)
 
@@ -75,8 +77,10 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		ScanAndAnalyze(&testCache, container, item, &serviceMock)
 
+		ScanAndAnalyze(&testCache, container, item, &serviceMock)
+		// assert.Equal(t, 1, res)
+		// assert.Equal(t, nil, err)
 		return nil
 	})
 	t.Log(buf.String())
@@ -84,5 +88,4 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 		log.Fatal(err.Error())
 		return
 	}
-	assert.Equal(t, storageName, storageKey)
 }
