@@ -45,7 +45,7 @@ The [design document](/docs/design.md) introduces Presidium concepts and archite
 
 1. Create an analyzer project
 ```
-echo -n '{"fieldTypes":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+echo -n '{"fields":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
 ```
 
 2. Analyze text
@@ -55,9 +55,21 @@ echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 49
 
 ***Sample 2***
 
+1. Create an analyzer project
+```
+echo -n '{"fields":["PHONE_NUMBER", "LOCATION", "DATE_TIME"]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+```
+
+2. Analyze text
+```
+echo -n '{"text":""We met yesterday morning in Seattle and his phone number is (212) 555 1234"", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+```
+
+***Sample 3***
+
 1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD)
 ```
-echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","configuration":{"fieldTypeTransformations":[{"fieldTypes":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fieldTypes":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","configuration":{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
 ```
 
 2. Anonymize text
