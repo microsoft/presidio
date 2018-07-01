@@ -76,7 +76,7 @@ echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","configuration":{"f
 
 2. Anonymize text
 ```
-echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":<my-analyze-template-name>, "AnonymizeTemplateId":<my-anonymize-template-name>  }' | http 104.214.226.151/api/v1/projects/<my-project>/anonymize
+echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":<my-analyze-template-name>, "AnonymizeTemplateId":<my-anonymize-template-name>  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
 ```
 
 ***Load test***
