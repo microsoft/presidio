@@ -3,7 +3,7 @@ import regex as re
 
 import en_core_web_sm
 
-from protocol import common_pb2
+import common_pb2
 
 from field_types import field_type, types
 from field_types.globally import ner

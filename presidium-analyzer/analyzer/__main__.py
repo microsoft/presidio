@@ -1,11 +1,12 @@
 import logging
 import matcher
 import grpc
-from protocol import analyze_pb2
-from protocol import analyze_pb2_grpc
+import analyze_pb2
+import analyze_pb2_grpc
 from concurrent import futures
 import time
 import sys
+import os
 
 
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
@@ -29,10 +30,11 @@ def serve():
         port = 3001
 
     server.add_insecure_port('[::]:' + str(port))
+    logging.info("Starting GRPC listener at port " + port)
     server.start()
     try:
         while True:
-            time.sleep(sys.maxint)
+            time.sleep(0)
     except KeyboardInterrupt:
         server.stop(0)
 
