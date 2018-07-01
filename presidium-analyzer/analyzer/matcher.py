@@ -163,4 +163,5 @@ class Matcher(object):
             else:
                 self.__check_pattern(doc, results, current_field)
 
+        results.sort(key=lambda x: x.location.start, reverse=False)
         return results
