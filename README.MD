@@ -41,6 +41,8 @@ The [design document](/docs/design.md) introduces Presidium concepts and archite
 3. Start using the Presidium analyze and anonymize services
 
 
+**Note:** Examples are made with [HTTPie](https://httpie.org/)
+
 ***Sample 1***
 
 1. Create an analyzer project
