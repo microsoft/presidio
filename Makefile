@@ -7,7 +7,7 @@ IMAGES      = presidium-anonymizer presidium-api presidium-analyzer presidium-sc
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
-IMAGE_TAG ?= ${VERSION}
+PRESIDIUM_LABEL := $(if $(PRESIDIUM_LABEL),$(PRESIDIUM_LABEL),latest)
 LDFLAGS   += -X github.com/presidium-io/presidium/pkg/version.Version=$(VERSION)
 
 CX_OSES = linux windows darwin
@@ -34,14 +34,14 @@ docker-build: build-docker-bins
 docker-build: $(addsuffix -image,$(IMAGES))
 
 %-image:
-	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(IMAGE_TAG) $*
+	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIUM_LABEL) $*
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:
-	docker push $(DOCKER_REGISTRY)/$*:$(IMAGE_TAG)
+	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIUM_LABEL)
 
 # Cross-compile binaries for our CX targets.
 # Mainly, this is for presidium-cross-compile

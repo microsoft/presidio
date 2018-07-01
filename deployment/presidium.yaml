@@ -60,8 +60,8 @@ spec:
     spec:
       containers:
       - name: presidium
-        image: "presidiumio/presidium-analyzer:9ac736fe"
-        imagePullPolicy: IfNotPresent
+        image: "presidiumio/presidium-analyzer:unstable"
+        imagePullPolicy: Always
         ports:
         - containerPort: 3001
         env:
@@ -89,8 +89,8 @@ spec:
     spec:
       containers:
       - name: presidium
-        image: "presidiumio/presidium-anonymizer:9ac736fe"
-        imagePullPolicy: IfNotPresent
+        image: "presidiumio/presidium-anonymizer:unstable"
+        imagePullPolicy: Always
         ports:
         - containerPort: 3001
         env:
@@ -118,8 +118,8 @@ spec:
     spec:
       containers:
       - name: presidium
-        image: "presidiumio/presidium-api:9ac736fe"
-        imagePullPolicy: IfNotPresent
+        image: "presidiumio/presidium-api:unstable"
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -140,15 +140,15 @@ spec:
           - name: WEB_PORT
             value: "8080"
           - name: CONSUL_HTTP_ADDR
-            value: consul-consul.consul.svc.cluster.local:8500
+            value: consul-presidium.consul.svc.cluster.local:8500
       
       initContainers:
       - name: "presidium-registrator"
-        image: "presidiumio/presidium-registrator:9ac736fe"
-        imagePullPolicy: IfNotPresent
+        image: "presidiumio/presidium-registrator:unstable"
+        imagePullPolicy: Always
         env:
           - name: CONSUL_HTTP_ADDR
-            value: consul-consul.consul.svc.cluster.local:8500
+            value: consul.presidium.svc.cluster.local:8500
           - name: REDIS_HOST
             value: redis-master
           - name: REDIS_PORT

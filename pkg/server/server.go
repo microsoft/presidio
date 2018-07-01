@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/sync/errgroup"
-
 	"github.com/presidium-io/presidium/pkg/logger"
+	"golang.org/x/sync/errgroup"
 )
 
 var (
@@ -34,7 +34,7 @@ func Setup(_port int) *gin.Engine {
 	//   - Logs to stdout.
 	//   - RFC3339 with UTC time format.
 	r.Use(ginzap.Ginzap(logger.GetInstance(), time.RFC3339, true))
-
+	r.Use(cors.Default())
 	r.GET("/healthz", healthCheck)
 	port = _port
 	return r
