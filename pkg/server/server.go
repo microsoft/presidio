@@ -11,8 +11,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
-	"github.com/presidium-io/presidium/pkg/logger"
 	"golang.org/x/sync/errgroup"
+
+	"github.com/presidium-io/presidium/pkg/logger"
 )
 
 var (
