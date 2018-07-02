@@ -122,43 +122,6 @@ DESCRIPTOR.message_types_by_name['Results'] = _RESULTS
 DESCRIPTOR.message_types_by_name['AnalyzeRequest'] = _ANALYZEREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-<<<<<<< HEAD
-Results = _reflection.GeneratedProtocolMessageType('Results', (_message.Message,), dict(
-  DESCRIPTOR = _RESULTS,
-  __module__ = 'analyze_pb2'
-  # @@protoc_insertion_point(class_scope:types.Results)
-  ))
-_sym_db.RegisterMessage(Results)
-
-AnalyzeRequest = _reflection.GeneratedProtocolMessageType('AnalyzeRequest', (_message.Message,), dict(
-  DESCRIPTOR = _ANALYZEREQUEST,
-  __module__ = 'analyze_pb2'
-  # @@protoc_insertion_point(class_scope:types.AnalyzeRequest)
-  ))
-_sym_db.RegisterMessage(AnalyzeRequest)
-
-
-
-_ANALYZESERVICE = _descriptor.ServiceDescriptor(
-  name='AnalyzeService',
-  full_name='types.AnalyzeService',
-  file=DESCRIPTOR,
-  index=0,
-  options=None,
-  serialized_start=130,
-  serialized_end=196,
-  methods=[
-  _descriptor.MethodDescriptor(
-    name='Apply',
-    full_name='types.AnalyzeService.Apply',
-    index=0,
-    containing_service=None,
-    input_type=_ANALYZEREQUEST,
-    output_type=_RESULTS,
-    options=None,
-  ),
-])
-=======
 Results = _reflection.GeneratedProtocolMessageType(
     'Results',
     (_message.Message, ),
@@ -198,7 +161,6 @@ _ANALYZESERVICE = _descriptor.ServiceDescriptor(
             options=None,
         ),
     ])
->>>>>>> development
 _sym_db.RegisterServiceDescriptor(_ANALYZESERVICE)
 
 DESCRIPTOR.services_by_name['AnalyzeService'] = _ANALYZESERVICE

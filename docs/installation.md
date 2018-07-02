@@ -37,8 +37,4 @@ $ conduit dashboard
 ```
 $ kubectl create namespace presidium
 $ conduit inject deployment/presidium.yaml | kubectl apply -f - --namespace presidium
-<<<<<<< HEAD
 ```
-=======
-```
->>>>>>> development
