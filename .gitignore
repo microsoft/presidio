@@ -125,6 +125,7 @@ debug
 /presidium-anonymizer/rootfs/presidium-anonymizer
 /presidium-analyzer/rootfs/presidium-analyzer
 /presidium-api/rootfs/presidium-api
+/presidium-registrator/rootfs/presidium-registrator
 /presidium-scanner/rootfs/presidium-scanner
 /presidium-scheduler/rootfs/presidium-scheduler
 /tests/testdata/*-generated.*

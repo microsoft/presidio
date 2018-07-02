@@ -29,13 +29,18 @@ docker run --name dev-redis -d -p 6379:6379 redis
 
 4. Install go 1.10 and Python 3.6
 
-5. Protobuf generator tools
+5. Install vendored packages via [glide](https://github.com/Masterminds/glide#install)
+```
+glide up -v
+```
+
+6. Protobuf generator tools
 
     * `https://github.com/golang/protobuf`
 
     * `https://grpc.io/docs/tutorials/basic/python.html`
 
-6. To generate proto files, run the following commands in `$GOPATH/src/github.com/presidium-io/presidium/pkg/types` folder
+7. To generate proto files, run the following commands in `$GOPATH/src/github.com/presidium-io/presidium/pkg/types` folder
 
 ```
 python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. ./*.proto

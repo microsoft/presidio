@@ -4,7 +4,7 @@
 
 1. Install [consul](https://hub.kubeapps.com/charts/stable/consul)
 ```
-$ helm install --name consul stable/consul --namespace consul
+$ helm install --name consul stable/consul --namespace kube-system
 ```
 
 2. Install [Redis](https://hub.kubeapps.com/charts/stable/redis)
@@ -37,4 +37,8 @@ $ conduit dashboard
 ```
 $ kubectl create namespace presidium
 $ conduit inject deployment/presidium.yaml | kubectl apply -f - --namespace presidium
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> development

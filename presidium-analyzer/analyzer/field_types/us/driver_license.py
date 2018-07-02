@@ -59,7 +59,6 @@ states_formats = {
 
 
 class DriverLicense(object):
-
     def is_valid(self, dl_number):
         for _, dl_state_value in states_formats.items():
             is_valid = bool(re.match(dl_state_value, dl_number, re.IGNORECASE))

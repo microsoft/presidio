@@ -1,10 +1,10 @@
-hash: d5a4b4440c45440a3a6d7f61558a8f59ac2a702ebbc1bc83f77d39351f8c671b
-updated: 2018-06-05T15:14:49.250619403+03:00
+hash: 68db8c4597ffadcdefb51cf13132d943c5639859b121f139ab5090cbb036f8e7
+updated: 2018-07-02T16:37:53.168032156+03:00
 imports:
 - name: github.com/armon/go-metrics
-  version: 783273d703149aaeb9897cf58613d5af48861c25
+  version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
 - name: github.com/aws/aws-sdk-go
-  version: 399dd2df8c1bc8a3a69c3c264bc4ea1fb5a7da73
+  version: 172c0567c0ef24c4d381ab80a471c9e1baa635ec
   subpackages:
   - aws
   - aws/awserr
@@ -37,7 +37,7 @@ imports:
   - service/s3
   - service/sts
 - name: github.com/Azure/azure-sdk-for-go
-  version: 514bddd77de93dd0349ada5fbe250077ddc619ff
+  version: 7971189ecf5a584b9211f2527737f94bb979644e
   subpackages:
   - storage
   - version
@@ -52,6 +52,8 @@ imports:
   version: 01aeca54ebda6e0fbfafd0a524d234159c05ec20
 - name: github.com/ghodss/yaml
   version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
+- name: github.com/gin-contrib/cors
+  version: 6f0a820f94bea07359ec77c26855ca8cf6762739
 - name: github.com/gin-contrib/sse
   version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
 - name: github.com/gin-contrib/zap
@@ -62,7 +64,7 @@ imports:
   - binding
   - render
 - name: github.com/go-ini/ini
-  version: 06f5f3d67269ccec1fe5fe4134ba6e982984f7f5
+  version: cec2bdc49009247305a260b082a18e802d0fe292
 - name: github.com/go-redis/redis
   version: 83fb42932f6145ce52df09860384a4653d2d332a
   subpackages:
@@ -98,7 +100,7 @@ imports:
   - compiler
   - extensions
 - name: github.com/hashicorp/consul
-  version: 5174058f0d2bda63fa5198ab96c33d9a909c58ed
+  version: 28141971f966e99916da2c5e461dd968746491cd
   subpackages:
   - api
 - name: github.com/hashicorp/go-cleanhttp
@@ -120,7 +122,7 @@ imports:
 - name: github.com/joho/godotenv
   version: 1709ab122c988931ad53508747b3c061400c2984
 - name: github.com/json-iterator/go
-  version: 2ddf6d758266fcb080a4f9e054b9f292c85e6798
+  version: 13f86432b882000a51c6e610c620974462691a97
 - name: github.com/korovkin/limiter
   version: 6b837f5fd4961699dd0ad0a42aca5a236db0a212
 - name: github.com/marstr/guid
@@ -129,10 +131,8 @@ imports:
   version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
 - name: github.com/mitchellh/go-homedir
   version: 3864e76763d94a6df2f9960b16a20a33da9f9a66
-- name: github.com/modern-go/concurrent
-  version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
-- name: github.com/modern-go/reflect2
-  version: 05fbef0ca5da472bbf96c9322b84a53edc03c9fd
+- name: github.com/mitchellh/mapstructure
+  version: bb74f1db0675b241733089d5a1faa5dd8b0ef57b
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/presidium-io/stow
@@ -144,9 +144,9 @@ imports:
 - name: github.com/satori/go.uuid
   version: 36e9d2ebbde5e3f13ab2e25625fd453271d6522e
 - name: github.com/spf13/pflag
-  version: 583c0c0531f06d5278b7d917446061adc344b5cd
+  version: 4c012f6dcd9546820e378d0bdda4d8fc772cdfea
 - name: github.com/ugorji/go
-  version: f3cacc17c85ecb7f1b6a9e373ee85d1480919868
+  version: 7d51bbe6161dcb8f32a1252c27668ce36e3ef16b
   subpackages:
   - codec
 - name: go.uber.org/atomic
@@ -196,24 +196,25 @@ imports:
   subpackages:
   - rate
 - name: google.golang.org/genproto
-  version: 81158efcc9f219c511e4d3c0d61a0e6e49c01a24
+  version: ff3583edef7de132f219f0efc00e097cabcc0ec0
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 41344da2231b913fa3d983840a57a6b1b7b631a1
+  version: 168a6198bcb0ef175f7dacec0b8691fc141dc9b8
   subpackages:
   - balancer
   - balancer/base
   - balancer/roundrobin
-  - channelz
   - codes
   - connectivity
   - credentials
   - encoding
   - encoding/proto
-  - grpclb/grpc_lb_v1/messages
   - grpclog
   - internal
+  - internal/backoff
+  - internal/channelz
+  - internal/grpcrand
   - keepalive
   - metadata
   - naming
@@ -359,9 +360,9 @@ testImports:
   subpackages:
   - difflib
 - name: github.com/stretchr/objx
-  version: 0ab728f62c7f6fcd754334f7931c2dd659dce1d1
+  version: b8b73a35e9830ae509858c10dec5866b4d5c8bff
 - name: github.com/stretchr/testify
-  version: 12b6f73e6084dad08a7c6e575284b177ecafbc71
+  version: f35b8ab0b5a2cef36673838d662e249dd9c94686
   subpackages:
   - assert
   - mock

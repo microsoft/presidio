@@ -29,4 +29,29 @@ matrix:
       - gometalinter --install
       script:
       - make test
-      - make docker-build
+      after_success:
+      - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
+        export PRESIDIUM_LABEL="unstable";
+        fi
+      - if [ "$TRAVIS_TAG" != "" ]; then
+        export PRESIDIUM_LABEL="$TRAVIS_TAG";
+        fi
+      - echo $TRAVIS_PULL_REQUEST
+      - echo $TRAVIS_BRANCH
+      - echo $PRESIDIUM_LABEL
+      - if [ -n "$PRESIDIUM_LABEL" ]; then
+        echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin &&
+        make docker-build docker-push &&
+        if [ "$PRESIDIUM_LABEL" != "unstable" ]; then
+        docker tag "presidiumio/presidium-registrator:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-registrator:stable-amd64 &&
+        docker push presidiumio/presidium-registrator:stable-amd64;
+        docker tag "presidiumio/presidium-api:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-api:stable-amd64 &&
+        docker push presidiumio/presidium-api:stable-amd64;
+        docker tag "presidiumio/presidium-analyzer:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-analyzer:stable-amd64 &&
+        docker push presidiumio/presidium-analyzer:stable-amd64;
+        docker tag "presidiumio/presidium-anonymizer:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-anonymizer:stable-amd64 &&
+        docker push presidiumio/presidium-anonymizer:stable-amd64;
+        fi
+        fi
+      - echo "Done."
+

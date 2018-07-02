@@ -14,8 +14,8 @@ def test_phone_number_simple():
 
 
 def test_phone_number_text1():
-    path = os.getcwd() + '/tests/data/text1.txt'
+    path = os.path.dirname(__file__) + '/data/text1.txt'
     text_file = open(path, 'r')
     match = matcher.Matcher()
     results = match.analyze_text(text_file.read(), types)
-    assert (len(results) == 1)
+    assert (len(results) == 2)

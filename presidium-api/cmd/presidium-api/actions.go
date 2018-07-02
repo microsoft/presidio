@@ -70,6 +70,7 @@ func (api *API) anonymize(c *gin.Context) {
 			return
 		}
 
+		id = anonymizeAPIRequest.AnonymizeTemplateId
 		anonymizeRes := api.invokeAnonymize(project, id, anonymizeAPIRequest.Text, analyzeRes.Results, c)
 		if anonymizeRes == nil {
 			return
