@@ -91,7 +91,7 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	}
 	srv := *anonymizeService
 	anonymizeTemplate := &message_types.AnonymizeTemplate{}
-	err = templates.ConvertJSON2Interface(result, anonymizeTemplate)
+	err = templates.ConvertJSONToInterface(result, anonymizeTemplate)
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to convert template %q", err))
 		return nil

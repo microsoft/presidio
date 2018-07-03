@@ -83,12 +83,12 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	case "analyze":
 		var analyzerTemplate message_types.AnalyzeRequest
 		if c.BindJSON(&analyzerTemplate) == nil {
-			return pkg_templates.ConvertInterface2Json(analyzerTemplate)
+			return pkg_templates.ConvertInterfaceToJSON(analyzerTemplate)
 		}
 	case "anonymize":
 		var anonymizeTemplate message_types.AnonymizeTemplate
 		if c.BindJSON(&anonymizeTemplate) == nil {
-			return pkg_templates.ConvertInterface2Json(anonymizeTemplate)
+			return pkg_templates.ConvertInterfaceToJSON(anonymizeTemplate)
 		}
 	}
 

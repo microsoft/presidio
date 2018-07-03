@@ -17,7 +17,7 @@ func GetAnalyzeRequest(templates *t.Templates, analyzeKey string) (*message_type
 	}
 
 	analyzeRequest := &message_types.AnalyzeRequest{}
-	err = t.ConvertJSON2Interface(template, analyzeRequest)
+	err = t.ConvertJSONToInterface(template, analyzeRequest)
 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to convert template %q", err)

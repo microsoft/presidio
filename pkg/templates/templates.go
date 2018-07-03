@@ -19,25 +19,30 @@ func New(s kv.Store) *Templates {
 	return &Templates{kvStore: s}
 }
 
+//GetFieldTypes return the available fields
 func GetFieldTypes() (string, error) {
-	result, err := ConvertInterface2Json(message_types.FieldTypes)
+	result, err := ConvertInterfaceToJSON(message_types.FieldTypes)
 	return result, err
 }
 
+// CreateKey creates template key in the structure: project/action/id
 func CreateKey(project string, action string, id string) string {
 	key := fmt.Sprintf("%s/%s/%s", project, action, id)
 	return key
 }
 
+// GetTemplate from key store
 func (templates *Templates) GetTemplate(key string) (string, error) {
 	return templates.kvStore.GetKVPair(key)
 }
 
+// InsertTemplate inserts a template to the key store
 func (templates *Templates) InsertTemplate(project string, action string, id string, value string) error {
 	key := CreateKey(project, action, id)
 	return templates.kvStore.PutKVPair(key, value)
 }
 
+// UpdateTemplate updates the template in the key store
 func (templates *Templates) UpdateTemplate(project string, action string, id string, value string) error {
 	key := CreateKey(project, action, id)
 	err := templates.kvStore.DeleteKVPair(key)
@@ -47,12 +52,14 @@ func (templates *Templates) UpdateTemplate(project string, action string, id str
 	return templates.kvStore.PutKVPair(key, value)
 }
 
+// DeleteTemplate deletes a template from key store
 func (templates *Templates) DeleteTemplate(project string, action string, id string) error {
 	key := CreateKey(project, action, id)
 	return templates.kvStore.DeleteKVPair(key)
 }
 
-func ConvertInterface2Json(template interface{}) (string, error) {
+// ConvertInterfaceToJSON convert go interface to json
+func ConvertInterfaceToJSON(template interface{}) (string, error) {
 	b, err := json.Marshal(template)
 	if err != nil {
 		return "", err
@@ -60,7 +67,8 @@ func ConvertInterface2Json(template interface{}) (string, error) {
 	return string(b), nil
 }
 
-func ConvertJSON2Interface(template string, convertTo interface{}) error {
+// ConvertJSONToInterface convert Json to go Interface
+func ConvertJSONToInterface(template string, convertTo interface{}) error {
 	err := json.Unmarshal([]byte(template), &convertTo)
 	return err
 }
