@@ -11,7 +11,10 @@ import (
 	"github.com/presidium-io/stow/s3"
 
 	"github.com/presidium-io/presidium/pkg/cache"
+	"github.com/presidium-io/presidium/pkg/kv/consul"
 	"github.com/presidium-io/presidium/pkg/logger"
+	request "github.com/presidium-io/presidium/pkg/request"
+	templates "github.com/presidium-io/presidium/pkg/templates"
 	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
@@ -91,18 +94,25 @@ func (a *API) ListObjects(container string) error {
 	return err
 }
 
-type walkFunc func(cache *cache.Cache, container stow.Container, item stow.Item, analyzeService *message_types.AnalyzeServiceClient)
+type walkFunc func(cache *cache.Cache, container stow.Container, item stow.Item, analyzeService *message_types.AnalyzeServiceClient, analyzeRequest *message_types.AnalyzeRequest)
 
 // WalkFiles walks over the files in 'container' and executes fn func
-func (a *API) WalkFiles(container stow.Container, fn walkFunc) error {
+func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string) error {
 	limit := limiter.NewConcurrencyLimiter(10)
-	err := stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
+	t := templates.New(consul.New())
+	analyzeRequest, err := request.GetAnalyzeRequest(t, analyzeKey)
+
+	if err != nil {
+		return err
+	}
+
+	err = stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
 		if err != nil {
 			return err
 		}
 
 		limit.Execute(func() {
-			fn(&a.cache, container, item, a.analyzeService)
+			fn(&a.cache, container, item, a.analyzeService, analyzeRequest)
 		})
 		return err
 	})
