@@ -9,9 +9,10 @@ import (
 	"github.com/presidium-io/presidium/pkg/service-discovery/consul"
 
 	log "github.com/presidium-io/presidium/pkg/logger"
-	request "github.com/presidium-io/presidium/pkg/request"
+	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 	"github.com/presidium-io/presidium/pkg/rpc"
 
+	helper "github.com/presidium-io/presidium/pkg/helper"
 	server "github.com/presidium-io/presidium/pkg/server"
 	templates "github.com/presidium-io/presidium/pkg/templates"
 	message_types "github.com/presidium-io/presidium/pkg/types"
@@ -91,7 +92,7 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	}
 	srv := *anonymizeService
 	anonymizeTemplate := &message_types.AnonymizeTemplate{}
-	err = templates.ConvertJSONToInterface(result, anonymizeTemplate)
+	err = helper.ConvertJSONToInterface(result, anonymizeTemplate)
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to convert template %q", err))
 		return nil
@@ -111,14 +112,15 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 
 func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.Results {
 	analyzeKey := templates.CreateKey(project, "analyze", id)
-	analyzeRequest, err := request.GetAnalyzeRequest(api.templates, analyzeKey)
+	analyzeRequest, err := analyzer.GetAnalyzeRequest(api.templates, analyzeKey)
 
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, err.Error())
 		return nil
 	}
 
-	analyzeResult, err := request.InvokeAnalyze(c, analyzeService, analyzeRequest, text)
+	analyzerObj := analyzer.New(analyzeService)
+	analyzeResult, err := analyzerObj.InvokeAnalyze(c, analyzeRequest, text)
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, err.Error())
 		return nil

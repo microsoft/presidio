@@ -3,8 +3,7 @@ package templates
 import (
 	"fmt"
 
-	"encoding/json"
-
+	helper "github.com/presidium-io/presidium/pkg/helper"
 	"github.com/presidium-io/presidium/pkg/kv"
 	message_types "github.com/presidium-io/presidium/pkg/types"
 )
@@ -21,7 +20,7 @@ func New(s kv.Store) *Templates {
 
 //GetFieldTypes return the available fields
 func GetFieldTypes() (string, error) {
-	result, err := ConvertInterfaceToJSON(message_types.FieldTypes)
+	result, err := helper.ConvertInterfaceToJSON(message_types.FieldTypes)
 	return result, err
 }
 
@@ -56,19 +55,4 @@ func (templates *Templates) UpdateTemplate(project string, action string, id str
 func (templates *Templates) DeleteTemplate(project string, action string, id string) error {
 	key := CreateKey(project, action, id)
 	return templates.kvStore.DeleteKVPair(key)
-}
-
-// ConvertInterfaceToJSON convert go interface to json
-func ConvertInterfaceToJSON(template interface{}) (string, error) {
-	b, err := json.Marshal(template)
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
-}
-
-// ConvertJSONToInterface convert Json to go Interface
-func ConvertJSONToInterface(template string, convertTo interface{}) error {
-	err := json.Unmarshal([]byte(template), &convertTo)
-	return err
 }

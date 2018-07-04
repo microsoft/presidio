@@ -9,13 +9,14 @@ import (
 	"github.com/presidium-io/stow"
 
 	"github.com/presidium-io/presidium/pkg/cache"
-	request "github.com/presidium-io/presidium/pkg/request"
+	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 // ScanAndAnalyze checks if the file needs to be scanned.
 // Then sends it to the analyzer and updates the cache that it was scanned.
-func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item, analyzeService *message_types.AnalyzeServiceClient,
+func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item,
+	analyzerModule *analyzer.Analyzer,
 	analyzeRequest *message_types.AnalyzeRequest) {
 	var err error
 	var val, fileContent, etag string
@@ -43,7 +44,7 @@ func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item
 		}
 		log.Println(fileContent)
 
-		results, err := request.InvokeAnalyze(context.Background(), analyzeService, analyzeRequest, fileContent)
+		results, err := (*analyzerModule).InvokeAnalyze(context.Background(), analyzeRequest, fileContent)
 		if err != nil {
 			log.Println("ERROR:", err)
 			return

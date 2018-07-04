@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	helper "github.com/presidium-io/presidium/pkg/helper"
 	server "github.com/presidium-io/presidium/pkg/server"
 	pkg_templates "github.com/presidium-io/presidium/pkg/templates"
 	message_types "github.com/presidium-io/presidium/pkg/types"
@@ -18,7 +19,7 @@ func getFieldTypes(c *gin.Context) {
 	server.WriteResponse(c, http.StatusOK, result)
 }
 
-func (api API) getActionTemplate(c *gin.Context) {
+func (api *API) getActionTemplate(c *gin.Context) {
 	action := c.Param("action")
 	project := c.Param("project")
 	id := c.Param("id")
@@ -31,7 +32,7 @@ func (api API) getActionTemplate(c *gin.Context) {
 	server.WriteResponse(c, http.StatusOK, result)
 }
 
-func (api API) postActionTemplate(c *gin.Context) {
+func (api *API) postActionTemplate(c *gin.Context) {
 	action := c.Param("action")
 	project := c.Param("project")
 	id := c.Param("id")
@@ -48,7 +49,7 @@ func (api API) postActionTemplate(c *gin.Context) {
 	server.WriteResponse(c, http.StatusOK, "Template added successfully")
 }
 
-func (api API) patchActionTemplate(c *gin.Context) {
+func (api *API) patchActionTemplate(c *gin.Context) {
 	action := c.Param("action")
 	project := c.Param("project")
 	id := c.Param("id")
@@ -65,7 +66,7 @@ func (api API) patchActionTemplate(c *gin.Context) {
 	server.WriteResponse(c, http.StatusOK, "Template updated successfully")
 }
 
-func (api API) deleteActionTemplate(c *gin.Context) {
+func (api *API) deleteActionTemplate(c *gin.Context) {
 	action := c.Param("action")
 	project := c.Param("project")
 	id := c.Param("id")
@@ -83,12 +84,12 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	case "analyze":
 		var analyzerTemplate message_types.AnalyzeRequest
 		if c.BindJSON(&analyzerTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(analyzerTemplate)
+			return helper.ConvertInterfaceToJSON(analyzerTemplate)
 		}
 	case "anonymize":
 		var anonymizeTemplate message_types.AnonymizeTemplate
 		if c.BindJSON(&anonymizeTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(anonymizeTemplate)
+			return helper.ConvertInterfaceToJSON(anonymizeTemplate)
 		}
 	}
 

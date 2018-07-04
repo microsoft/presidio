@@ -1,12 +1,27 @@
-package request
+package analyzer
 
 import (
 	"context"
 	"fmt"
 
+	helper "github.com/presidium-io/presidium/pkg/helper"
 	t "github.com/presidium-io/presidium/pkg/templates"
 	message_types "github.com/presidium-io/presidium/pkg/types"
 )
+
+// Analyzer interface for Invoking
+type Analyzer interface {
+	InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.Results, error)
+}
+
+type analyzer struct {
+	analyzeService *message_types.AnalyzeServiceClient
+}
+
+// New analyzer struct
+func New(analyzeService *message_types.AnalyzeServiceClient) Analyzer {
+	return &analyzer{analyzeService: analyzeService}
+}
 
 // GetAnalyzeRequest returns analyze request for a specific project and id
 func GetAnalyzeRequest(templates *t.Templates, analyzeKey string) (*message_types.AnalyzeRequest, error) {
@@ -17,7 +32,7 @@ func GetAnalyzeRequest(templates *t.Templates, analyzeKey string) (*message_type
 	}
 
 	analyzeRequest := &message_types.AnalyzeRequest{}
-	err = t.ConvertJSONToInterface(template, analyzeRequest)
+	err = helper.ConvertJSONToInterface(template, analyzeRequest)
 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to convert template %q", err)
@@ -26,9 +41,9 @@ func GetAnalyzeRequest(templates *t.Templates, analyzeKey string) (*message_type
 }
 
 // InvokeAnalyze returns the analyze results
-func InvokeAnalyze(c context.Context, analyzeService *message_types.AnalyzeServiceClient, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.Results, error) {
+func (analyzer *analyzer) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.Results, error) {
 	analyzeRequest.Value = text
-	srv := *analyzeService
+	srv := *analyzer.analyzeService
 
 	analyzeResult, err := srv.Apply(c, analyzeRequest)
 	if err != nil {
