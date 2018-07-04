@@ -3,9 +3,9 @@ package templates
 import (
 	"fmt"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	helper "github.com/presidium-io/presidium/pkg/helper"
 	"github.com/presidium-io/presidium/pkg/kv"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 //Templates kv store
@@ -20,7 +20,7 @@ func New(s kv.Store) *Templates {
 
 //GetFieldTypes return the available fields
 func GetFieldTypes() (string, error) {
-	result, err := helper.ConvertInterfaceToJSON(message_types.FieldTypes)
+	result, err := helper.ConvertInterfaceToJSON(message_types.FieldTypes_value)
 	return result, err
 }
 

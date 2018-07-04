@@ -10,12 +10,12 @@ import (
 	"github.com/presidium-io/stow/azure"
 	"github.com/presidium-io/stow/s3"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	"github.com/presidium-io/presidium/pkg/cache"
 	"github.com/presidium-io/presidium/pkg/kv/consul"
 	"github.com/presidium-io/presidium/pkg/logger"
 	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 	templates "github.com/presidium-io/presidium/pkg/templates"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 //API storage

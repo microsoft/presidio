@@ -1,7 +1,7 @@
 package transformations
 
 import (
-	message_types "github.com/presidium-io/presidium/pkg/types"
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 )
 
 //RedactValue ...

@@ -17,7 +17,7 @@ class AnalyzeServiceStub(object):
     self.Apply = channel.unary_unary(
         '/types.AnalyzeService/Apply',
         request_serializer=analyze__pb2.AnalyzeRequest.SerializeToString,
-        response_deserializer=analyze__pb2.Results.FromString,
+        response_deserializer=analyze__pb2.AnalyzeResponse.FromString,
         )
 
 
@@ -38,7 +38,7 @@ def add_AnalyzeServiceServicer_to_server(servicer, server):
       'Apply': grpc.unary_unary_rpc_method_handler(
           servicer.Apply,
           request_deserializer=analyze__pb2.AnalyzeRequest.FromString,
-          response_serializer=analyze__pb2.Results.SerializeToString,
+          response_serializer=analyze__pb2.AnalyzeResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

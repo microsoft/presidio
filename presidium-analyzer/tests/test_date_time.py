@@ -12,4 +12,4 @@ def test_date_time_simple():
     name = 'May 1st'
     results = match.analyze_text(name + " is the workers holiday", types)
 
-    assert results[0].value == name
+    assert results[0].text == name

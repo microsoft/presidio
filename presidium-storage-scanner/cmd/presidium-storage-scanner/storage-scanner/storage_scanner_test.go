@@ -13,11 +13,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	"github.com/presidium-io/presidium/pkg/cache"
 	cache_mock "github.com/presidium-io/presidium/pkg/cache/mock"
 	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 	"github.com/presidium-io/presidium/pkg/storage"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 var (
@@ -30,9 +30,9 @@ type MyMockedObject struct {
 	mock.Mock
 }
 
-func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.Results, error) {
+func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.AnalyzeResponse, error) {
 	args := m.Mock.Called()
-	y := args.Get(0).(*message_types.Results)
+	y := args.Get(0).(*message_types.AnalyzeResponse)
 	return y, args.Error(1)
 }
 
@@ -72,22 +72,22 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	assert.Contains(t, buf.String(), "Item was already scanned file1")
 }
 
-func getAnalyzerMockResult() *message_types.Results {
+func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 	location := &message_types.Location{
 		Start: 153, End: 163, Length: 10,
 	}
-	result := [](*message_types.Result){
-		&message_types.Result{
-			FieldType:   "PHONE_NUMBER",
-			Value:       "(555) 253-0000",
+	results := [](*message_types.AnalyzeResult){
+		&message_types.AnalyzeResult{
+			Field:       message_types.FieldTypes_PHONE_NUMBER,
+			Text:        "(555) 253-0000",
 			Probability: 1.0,
 			Location:    location,
 		},
 	}
-	results := &message_types.Results{
-		Results: result,
+	response := &message_types.AnalyzeResponse{
+		AnalyzeResults: results,
 	}
-	return results
+	return response
 }
 
 func scanAndAnalyaze(container stow.Container, testCache cache.Cache, serviceMock analyzer.Analyzer) {

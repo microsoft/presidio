@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/presidium-io/presidium/pkg/types"
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 )
 
 func TestReplace1Element(t *testing.T) {
@@ -16,40 +16,36 @@ func TestReplace1Element(t *testing.T) {
 	replace := message_types.ReplaceValue{
 		NewValue: "<phone-number>",
 	}
-	var fieldTypes = make([]*message_types.FieldType, 0)
-	fieldTypes = append(fieldTypes, &message_types.PhoneNumber)
+	var fieldTypes = make([]message_types.FieldTypes, 0)
+	fieldTypes = append(fieldTypes, message_types.FieldTypes_PHONE_NUMBER)
 
 	transformation := message_types.Transformation{
 		ReplaceValue: &replace,
 	}
 	//Create infotype transformation
 	fieldTypeTransformation := message_types.FieldTypeTransformation{
-		FieldTypes:     fieldTypes,
+		Fields:         fieldTypes,
 		Transformation: &transformation,
 	}
 
 	var fieldTypeTransformationArray = make([]*message_types.FieldTypeTransformation, 0)
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
 
-	config := message_types.Configuration{
+	anonymizerTemplate := message_types.AnonymizeTemplate{
+		Name:                     message_types.FieldTypes_PHONE_NUMBER.String(),
+		DisplayName:              "Phone number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
-	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:          message_types.PhoneNumber.Name,
-		DisplayName:   "Phone number",
-		Configuration: &config,
-	}
-
-	var result message_types.Result
+	var result message_types.AnalyzeResult
 	result.Location = &message_types.Location{
 		Start: 19,
 		End:   30,
 	}
-	result.Value = "058-5559943"
-	result.FieldType = message_types.PhoneNumber.Name
+	result.Text = "058-5559943"
+	result.Field = message_types.FieldTypes_PHONE_NUMBER
 
-	var resultArray = make([]*message_types.Result, 0)
+	var resultArray = make([]*message_types.AnalyzeResult, 0)
 	resultArray = append(resultArray, &result)
 
 	output, err := ApplyAnonymizerTemplate(text, resultArray, &anonymizerTemplate)
@@ -67,48 +63,44 @@ func TestReplace2Elements(t *testing.T) {
 	replace := message_types.ReplaceValue{
 		NewValue: "<phone-number>",
 	}
-	var fieldTypes = make([]*message_types.FieldType, 0)
-	fieldTypes = append(fieldTypes, &message_types.PhoneNumber)
+	var fieldTypes = make([]message_types.FieldTypes, 0)
+	fieldTypes = append(fieldTypes, message_types.FieldTypes_PHONE_NUMBER)
 
 	transformation := message_types.Transformation{
 		ReplaceValue: &replace,
 	}
 	//Create infotype transformation
 	fieldTypeTransformation := message_types.FieldTypeTransformation{
-		FieldTypes:     fieldTypes,
+		Fields:         fieldTypes,
 		Transformation: &transformation,
 	}
 
 	var fieldTypeTransformationArray = make([]*message_types.FieldTypeTransformation, 0)
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
 
-	config := message_types.Configuration{
+	anonymizerTemplate := message_types.AnonymizeTemplate{
+		Name:                     message_types.FieldTypes_PHONE_NUMBER.String(),
+		DisplayName:              "Phone number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
-	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:          message_types.PhoneNumber.Name,
-		DisplayName:   "Phone number",
-		Configuration: &config,
-	}
-
-	var result1 message_types.Result
+	var result1 message_types.AnalyzeResult
 	result1.Location = &message_types.Location{
 		Start: 19,
 		End:   30,
 	}
-	result1.Value = "058-5559943"
-	result1.FieldType = message_types.PhoneNumber.Name
+	result1.Text = "058-5559943"
+	result1.Field = message_types.FieldTypes_PHONE_NUMBER
 
-	var result2 message_types.Result
+	var result2 message_types.AnalyzeResult
 	result2.Location = &message_types.Location{
 		Start: 49,
 		End:   60,
 	}
-	result2.Value = "444-2341232"
-	result2.FieldType = message_types.PhoneNumber.Name
+	result2.Text = "444-2341232"
+	result2.Field = message_types.FieldTypes_PHONE_NUMBER
 
-	var resultArray = make([]*message_types.Result, 0)
+	var resultArray = make([]*message_types.AnalyzeResult, 0)
 	resultArray = append(resultArray, &result1, &result2)
 
 	output, err := ApplyAnonymizerTemplate(text, resultArray, &anonymizerTemplate)
@@ -126,70 +118,66 @@ func TestReplace3Elements(t *testing.T) {
 	replace := message_types.ReplaceValue{
 		NewValue: "<phone-number>",
 	}
-	var fieldTypes1 = make([]*message_types.FieldType, 0)
-	fieldTypes1 = append(fieldTypes1, &message_types.PhoneNumber)
+	var fieldTypes1 = make([]message_types.FieldTypes, 0)
+	fieldTypes1 = append(fieldTypes1, message_types.FieldTypes_PHONE_NUMBER)
 
 	transformation1 := message_types.Transformation{
 		ReplaceValue: &replace,
 	}
 	//Create infotype transformation
 	fieldTypeTransformation1 := message_types.FieldTypeTransformation{
-		FieldTypes:     fieldTypes1,
+		Fields:         fieldTypes1,
 		Transformation: &transformation1,
 	}
 
 	redact := message_types.RedactValue{}
 
-	var fieldTypes2 = make([]*message_types.FieldType, 0)
-	fieldTypes2 = append(fieldTypes2, &message_types.CreditCard)
+	var fieldTypes2 = make([]message_types.FieldTypes, 0)
+	fieldTypes2 = append(fieldTypes2, message_types.FieldTypes_CREDIT_CARD)
 
 	transformation2 := message_types.Transformation{
 		RedactValue: &redact,
 	}
 	//Create infotype transformation
 	fieldTypeTransformation2 := message_types.FieldTypeTransformation{
-		FieldTypes:     fieldTypes2,
+		Fields:         fieldTypes2,
 		Transformation: &transformation2,
 	}
 
 	var fieldTypeTransformationArray = make([]*message_types.FieldTypeTransformation, 0)
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation1, &fieldTypeTransformation2)
 
-	config := message_types.Configuration{
+	anonymizerTemplate := message_types.AnonymizeTemplate{
+		Name:                     message_types.FieldTypes_PHONE_NUMBER.String(),
+		DisplayName:              "Phone number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
-	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:          message_types.PhoneNumber.Name,
-		DisplayName:   "Phone number",
-		Configuration: &config,
-	}
-
-	var result1 message_types.Result
+	var result1 message_types.AnalyzeResult
 	result1.Location = &message_types.Location{
 		Start: 19,
 		End:   30,
 	}
-	result1.Value = "058-5559943"
-	result1.FieldType = message_types.PhoneNumber.Name
+	result1.Text = "058-5559943"
+	result1.Field = message_types.FieldTypes_PHONE_NUMBER
 
-	var result2 message_types.Result
+	var result2 message_types.AnalyzeResult
 	result2.Location = &message_types.Location{
 		Start: 50,
 		End:   69,
 	}
-	result2.Value = "5555-5555-5555-5555"
-	result2.FieldType = message_types.CreditCard.Name
+	result2.Text = "5555-5555-5555-5555"
+	result2.Field = message_types.FieldTypes_CREDIT_CARD
 
-	var result3 message_types.Result
+	var result3 message_types.AnalyzeResult
 	result3.Location = &message_types.Location{
 		Start: 84,
 		End:   95,
 	}
-	result3.Value = "444-2341232"
-	result3.FieldType = message_types.PhoneNumber.Name
+	result3.Text = "444-2341232"
+	result3.Field = message_types.FieldTypes_PHONE_NUMBER
 
-	var resultArray = make([]*message_types.Result, 0)
+	var resultArray = make([]*message_types.AnalyzeResult, 0)
 
 	resultArray = append(resultArray, &result1, &result2, &result3)
 

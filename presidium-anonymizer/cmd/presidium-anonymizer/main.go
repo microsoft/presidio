@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"os"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	log "github.com/presidium-io/presidium/pkg/logger"
 	"github.com/presidium-io/presidium/pkg/rpc"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 	handler "github.com/presidium-io/presidium/presidium-anonymizer/cmd/presidium-anonymizer/anonymizer"
 )
 
@@ -37,6 +37,6 @@ func main() {
 }
 
 func (s *server) Apply(ctx context.Context, r *message_types.AnonymizeRequest) (*message_types.AnonymizeResponse, error) {
-	res, err := handler.ApplyAnonymizerTemplate(r.Text, r.Results, r.Template)
+	res, err := handler.ApplyAnonymizerTemplate(r.Text, r.AnalyzeResults, r.Template)
 	return &message_types.AnonymizeResponse{Text: res}, err
 }

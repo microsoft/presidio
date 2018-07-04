@@ -1,10 +1,10 @@
-hash: 68db8c4597ffadcdefb51cf13132d943c5639859b121f139ab5090cbb036f8e7
-updated: 2018-07-02T16:37:53.168032156+03:00
+hash: c8f4d8f499a1037c836cb769ce7dc89c01d0b2eb153e9e91e00f93b1c546838c
+updated: 2018-07-04T22:59:14.315706+03:00
 imports:
 - name: github.com/armon/go-metrics
   version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
 - name: github.com/aws/aws-sdk-go
-  version: 172c0567c0ef24c4d381ab80a471c9e1baa635ec
+  version: 7df58ee4df0ad022b1b0c7e7aef5845e43587476
   subpackages:
   - aws
   - aws/awserr
@@ -36,18 +36,41 @@ imports:
   - private/protocol/xml/xmlutil
   - service/s3
   - service/sts
+- name: github.com/Azure/azure-amqp-common-go
+  version: 8d02d4e77aba80165452199bb9bb24a82eb3b219
+  subpackages:
+  - aad
+  - auth
+  - cbs
+  - conn
+  - internal
+  - internal/tracing
+  - log
+  - persist
+  - rpc
+  - sas
+  - uuid
+- name: github.com/Azure/azure-event-hubs-go
+  version: 2abafea1af288084b5b20bc9e251a3ed515dd411
+  subpackages:
+  - internal
+  - mgmt
 - name: github.com/Azure/azure-sdk-for-go
-  version: 7971189ecf5a584b9211f2527737f94bb979644e
+  version: fbe7db0e3f9793ba3e5704efbab84f51436c136e
   subpackages:
   - storage
   - version
 - name: github.com/Azure/go-autorest
-  version: d4e6b95c12a08b4de2d48b45d5b4d594e5d32fab
+  version: 1ff28809256a84bb6966640ff3d0371af82ccba4
   subpackages:
   - autorest
   - autorest/adal
   - autorest/azure
   - autorest/date
+- name: github.com/confluentinc/confluent-kafka-go
+  version: 4b95efdf79393768915f66f699f5efe3ad54b601
+  subpackages:
+  - kafka
 - name: github.com/dgrijalva/jwt-go
   version: 01aeca54ebda6e0fbfafd0a524d234159c05ec20
 - name: github.com/ghodss/yaml
@@ -76,7 +99,7 @@ imports:
   - internal/singleflight
   - internal/util
 - name: github.com/gogo/protobuf
-  version: c0656edd0d9eab7c66d1eb0c568f9039345796f7
+  version: 30cf7ac33676b5786e78c746683f0d4cd64fa75b
   subpackages:
   - proto
   - sortkeys
@@ -91,6 +114,8 @@ imports:
   - ptypes/any
   - ptypes/duration
   - ptypes/timestamp
+- name: github.com/google/btree
+  version: 7d79101e329e5a3adf994758c578dab82b90c017
 - name: github.com/google/gofuzz
   version: 44d81051d367757e1c7c6a5a86423ece9afcf63c
 - name: github.com/googleapis/gnostic
@@ -99,6 +124,10 @@ imports:
   - OpenAPIv2
   - compiler
   - extensions
+- name: github.com/gregjones/httpcache
+  version: 787624de3eb7bd915c329cba748687a3b22666a6
+  subpackages:
+  - diskcache
 - name: github.com/hashicorp/consul
   version: 28141971f966e99916da2c5e461dd968746491cd
   subpackages:
@@ -122,7 +151,7 @@ imports:
 - name: github.com/joho/godotenv
   version: 1709ab122c988931ad53508747b3c061400c2984
 - name: github.com/json-iterator/go
-  version: 13f86432b882000a51c6e610c620974462691a97
+  version: f2b4162afba35581b6d4a50d3b8f34e33c144682
 - name: github.com/korovkin/limiter
   version: 6b837f5fd4961699dd0ad0a42aca5a236db0a212
 - name: github.com/marstr/guid
@@ -133,8 +162,23 @@ imports:
   version: 3864e76763d94a6df2f9960b16a20a33da9f9a66
 - name: github.com/mitchellh/mapstructure
   version: bb74f1db0675b241733089d5a1faa5dd8b0ef57b
+- name: github.com/modern-go/concurrent
+  version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
+- name: github.com/modern-go/reflect2
+  version: 05fbef0ca5da472bbf96c9322b84a53edc03c9fd
+- name: github.com/opentracing/opentracing-go
+  version: bd9c3193394760d98b2fa6ebb2291f0cd1d06a7d
+  subpackages:
+  - ext
+  - log
+- name: github.com/peterbourgon/diskv
+  version: 5f041e8faa004a95c88a202771f4cc3e991971e6
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
+- name: github.com/presidium-io/presidium-genproto
+  version: c0a37c4fc459ad9f3b95a2baf39ad2a59deaaf59
+  subpackages:
+  - golang
 - name: github.com/presidium-io/stow
   version: 4ea85bf8ccfef46b011f0b181ea3bcc05efc2900
   subpackages:
@@ -143,8 +187,6 @@ imports:
   - s3
 - name: github.com/satori/go.uuid
   version: 36e9d2ebbde5e3f13ab2e25625fd453271d6522e
-- name: github.com/spf13/pflag
-  version: 4c012f6dcd9546820e378d0bdda4d8fc772cdfea
 - name: github.com/ugorji/go
   version: 7d51bbe6161dcb8f32a1252c27668ce36e3ef16b
   subpackages:
@@ -162,8 +204,10 @@ imports:
   - internal/exit
   - zapcore
 - name: golang.org/x/crypto
-  version: 81e90905daefcd6fd217b62423c0908922eadb30
+  version: 49796115aa4b964c318aad4f3084fdb41e9aa067
   subpackages:
+  - pkcs12
+  - pkcs12/internal/rc2
   - ssh/terminal
 - name: golang.org/x/net
   version: 1c05540f6879653db88113bc4a2b70aec4bd491f
@@ -200,7 +244,7 @@ imports:
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 168a6198bcb0ef175f7dacec0b8691fc141dc9b8
+  version: 40cd6b15e2880b88deb091b0fcb091694285fcb0
   subpackages:
   - balancer
   - balancer/base
@@ -214,6 +258,7 @@ imports:
   - internal
   - internal/backoff
   - internal/channelz
+  - internal/envconfig
   - internal/grpcrand
   - keepalive
   - metadata
@@ -235,7 +280,7 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 670d4cfef0544295bc27a114dbac37980d83185a
 - name: k8s.io/api
-  version: 73d903622b7391f3312dcbac6483fed484e185f8
+  version: 072894a440bdee3a891dea811fe42902311cd2a3
   subpackages:
   - admissionregistration/v1alpha1
   - admissionregistration/v1beta1
@@ -261,12 +306,13 @@ imports:
   - rbac/v1alpha1
   - rbac/v1beta1
   - scheduling/v1alpha1
+  - scheduling/v1beta1
   - settings/v1alpha1
   - storage/v1
   - storage/v1alpha1
   - storage/v1beta1
 - name: k8s.io/apimachinery
-  version: 302974c03f7e50f16561ba237db776ab93594ef6
+  version: 103fd098999dc9c0c88536f5c9ad2e5da39373ae
   subpackages:
   - pkg/api/errors
   - pkg/api/meta
@@ -304,7 +350,7 @@ imports:
   - pkg/watch
   - third_party/forked/golang/reflect
 - name: k8s.io/client-go
-  version: 23781f4d6632d88e869066eaebb743857aa1ef9b
+  version: 7d04d0e2a0a1a4d4a1cd6baa432a2301492e4e65
   subpackages:
   - discovery
   - kubernetes
@@ -333,12 +379,14 @@ imports:
   - kubernetes/typed/rbac/v1alpha1
   - kubernetes/typed/rbac/v1beta1
   - kubernetes/typed/scheduling/v1alpha1
+  - kubernetes/typed/scheduling/v1beta1
   - kubernetes/typed/settings/v1alpha1
   - kubernetes/typed/storage/v1
   - kubernetes/typed/storage/v1alpha1
   - kubernetes/typed/storage/v1beta1
   - pkg/apis/clientauthentication
   - pkg/apis/clientauthentication/v1alpha1
+  - pkg/apis/clientauthentication/v1beta1
   - pkg/version
   - plugin/pkg/client/auth/exec
   - rest
@@ -348,8 +396,13 @@ imports:
   - tools/reference
   - transport
   - util/cert
+  - util/connrotation
   - util/flowcontrol
   - util/integer
+- name: pack.ag/amqp
+  version: e6aeb3d8e5ac68426935114ac2a430c32391e5a7
+  subpackages:
+  - internal/testconn
 testImports:
 - name: github.com/davecgh/go-spew
   version: 782f4967f2dc4564575ca782fe2d04090b5faca8

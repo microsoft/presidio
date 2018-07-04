@@ -8,11 +8,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/presidium-io/stow"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	"github.com/presidium-io/presidium/pkg/cache/redis"
 	"github.com/presidium-io/presidium/pkg/rpc"
 	"github.com/presidium-io/presidium/pkg/service-discovery/consul"
 	"github.com/presidium-io/presidium/pkg/storage"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 	scanner "github.com/presidium-io/presidium/presidium-storage-scanner/cmd/presidium-storage-scanner/storage-scanner"
 )
 

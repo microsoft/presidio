@@ -26,7 +26,7 @@ class CreditCard(field_type.FieldType):
         return checksum % 10
 
     def __santize_value(self):
-        self.sanitized_value = self.value.replace('-', '').replace(' ', '')
+        self.sanitized_value = self.text.replace('-', '').replace(' ', '')
 
     def check_checksum(self):
         self.__santize_value()

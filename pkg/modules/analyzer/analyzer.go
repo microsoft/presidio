@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	helper "github.com/presidium-io/presidium/pkg/helper"
 	t "github.com/presidium-io/presidium/pkg/templates"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 // Analyzer interface for Invoking
 type Analyzer interface {
-	InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.Results, error)
+	InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.AnalyzeResponse, error)
 }
 
 type analyzer struct {
@@ -41,14 +41,14 @@ func GetAnalyzeRequest(templates *t.Templates, analyzeKey string) (*message_type
 }
 
 // InvokeAnalyze returns the analyze results
-func (analyzer *analyzer) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.Results, error) {
-	analyzeRequest.Value = text
+func (analyzer *analyzer) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.AnalyzeResponse, error) {
+	analyzeRequest.Text = text
 	srv := *analyzer.analyzeService
 
-	analyzeResult, err := srv.Apply(c, analyzeRequest)
+	analyzeResponse, err := srv.Apply(c, analyzeRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	return analyzeResult, nil
+	return analyzeResponse, nil
 }

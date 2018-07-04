@@ -3,9 +3,9 @@ package rpc
 import (
 	"time"
 
-	"google.golang.org/grpc"
+	grpc "google.golang.org/grpc"
 
-	message_types "github.com/presidium-io/presidium/pkg/types"
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 )
 
 func connect(addr string) (*grpc.ClientConn, error) {

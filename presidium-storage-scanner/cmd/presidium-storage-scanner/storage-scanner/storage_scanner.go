@@ -8,9 +8,9 @@ import (
 
 	"github.com/presidium-io/stow"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	"github.com/presidium-io/presidium/pkg/cache"
 	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 // ScanAndAnalyze checks if the file needs to be scanned.
@@ -50,9 +50,9 @@ func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item
 			return
 		}
 
-		for _, r := range results.Results {
+		for _, r := range results.AnalyzeResults {
 			log.Println(fmt.Sprintf("Found: %q, propability: %f, Location: start:%d end:%d length:%d",
-				r.FieldType, r.Probability, r.Location.Start, r.Location.End, r.Location.Length))
+				r.Field, r.Probability, r.Location.Start, r.Location.End, r.Location.Length))
 		}
 
 		err = (*cache).Set(etag, item.Name())

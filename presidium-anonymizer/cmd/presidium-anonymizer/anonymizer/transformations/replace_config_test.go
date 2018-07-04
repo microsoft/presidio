@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/presidium-io/presidium/pkg/types"
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 )
 
 func TestReplaceValueSize1(t *testing.T) {

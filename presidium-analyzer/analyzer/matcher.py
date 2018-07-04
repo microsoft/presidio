@@ -4,6 +4,7 @@ import regex as re
 import en_core_web_sm
 
 import common_pb2
+import template_pb2
 
 from field_types import field_type, types
 from field_types.globally import ner
@@ -49,14 +50,14 @@ class Matcher(object):
 
     def __create_result(self, doc, current_field, start, end):
 
-        res = common_pb2.Result()
-        res.fieldType = current_field.name
-        res.value = current_field.value
+        res = common_pb2.AnalyzeResult()
+        res.field = common_pb2.FieldTypes.Value(current_field.name)
+        res.text = current_field.text
 
         # Validate checksum
         if current_field.should_check_checksum:
             if current_field.check_checksum() is False:
-                logging.info("Checksum failed for " + current_field.value)
+                logging.info("Checksum failed for " + current_field.text)
                 return None
             else:
                 res.probability = 1.0
@@ -69,7 +70,7 @@ class Matcher(object):
         res.location.length = end - start
 
         logging.info(
-            f"FieldType: '{res.fieldType}' Value: '{res.value}' Span: '{start}:{end}' Probability: '{res.probability}'"
+            f"field: '{res.field}' Value: '{res.text}' Span: '{start}:{end}' Probability: '{res.probability}'"
         )
         return res
 
@@ -84,10 +85,10 @@ class Matcher(object):
                     concurrent=True):
 
                 start, end = match.span()
-                current_field.value = doc.text[start:end]
+                current_field.text = doc.text[start:end]
 
                 # Skip empty results
-                if current_field.value == '':
+                if current_field.text == '':
                     continue
 
                 res = self.__create_result(doc, current_field, start, end)
@@ -96,7 +97,7 @@ class Matcher(object):
 
                 # Don't add duplicate
                 if len(current_field.regexes) > 1 and any(
-                        x.location.start == start and x.value == res.value
+                        x.location.start == start and x.text == res.text
                         for x in results):
                     continue
 
@@ -129,7 +130,7 @@ class Matcher(object):
             if self.__match_ner(ent.label_, field_type_filter) is False:
                 continue
             current_field.name = field_type_filter
-            current_field.value = ent.text
+            current_field.text = ent.text
             res = self.__create_result(doc, current_field, ent.start_char,
                                        ent.end_char)
             res.probability = 0.8

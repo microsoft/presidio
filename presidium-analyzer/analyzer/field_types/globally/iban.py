@@ -25,4 +25,4 @@ class Iban(field_type.FieldType):
             return int(_number_iban(iban)) % 97 == 1
 
         return __generate_iban_check_digits(
-            self.value) == unchecked_iban[2:4] and __valid_iban(self.value)
+            self.text) == unchecked_iban[2:4] and __valid_iban(self.text)

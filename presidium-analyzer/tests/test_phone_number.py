@@ -10,7 +10,7 @@ def test_phone_number_simple():
     number = '052-5552606'
     results = match.analyze_text('my phone number is ' + number, types)
 
-    assert results[0].value == number
+    assert results[0].text == number
 
 
 def test_phone_number_text1():

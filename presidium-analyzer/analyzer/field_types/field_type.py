@@ -1,7 +1,7 @@
 class FieldType(object):
 
     name = "Field Type Name"
-    value = ""
+    text = ""
     regexes = {}
     contexts = []
     should_check_checksum = False

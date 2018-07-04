@@ -8,10 +8,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	helper "github.com/presidium-io/presidium/pkg/helper"
 	server "github.com/presidium-io/presidium/pkg/server"
 	pkg_templates "github.com/presidium-io/presidium/pkg/templates"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 func getFieldTypes(c *gin.Context) {

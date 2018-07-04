@@ -25,7 +25,7 @@ class Crypto(field_type.FieldType):
 
     def check_checksum(self):
         try:
-            bcbytes = __decode_base58(self.value, 25)
+            bcbytes = __decode_base58(self.text, 25)
             return bcbytes[-4:] == sha256(sha256(
                 bcbytes[:-4]).digest()).digest()[:4]
         except Exception:

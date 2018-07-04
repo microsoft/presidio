@@ -12,10 +12,10 @@ import (
 	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 	"github.com/presidium-io/presidium/pkg/rpc"
 
+	message_types "github.com/presidium-io/presidium-genproto/golang"
 	helper "github.com/presidium-io/presidium/pkg/helper"
 	server "github.com/presidium-io/presidium/pkg/server"
 	templates "github.com/presidium-io/presidium/pkg/templates"
-	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
 var analyzeService *message_types.AnalyzeServiceClient
@@ -74,7 +74,7 @@ func (api *API) anonymize(c *gin.Context) {
 		}
 
 		id = anonymizeAPIRequest.AnonymizeTemplateId
-		anonymizeRes := api.invokeAnonymize(project, id, anonymizeAPIRequest.Text, analyzeRes.Results, c)
+		anonymizeRes := api.invokeAnonymize(project, id, anonymizeAPIRequest.Text, analyzeRes.AnalyzeResults, c)
 		if anonymizeRes == nil {
 			return
 		}
@@ -82,7 +82,7 @@ func (api *API) anonymize(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeAnonymize(project string, id string, text string, results []*message_types.Result, c *gin.Context) *message_types.AnonymizeResponse {
+func (api *API) invokeAnonymize(project string, id string, text string, results []*message_types.AnalyzeResult, c *gin.Context) *message_types.AnonymizeResponse {
 	anonymizeKey := templates.CreateKey(project, "anonymize", id)
 	result, err := api.templates.GetTemplate(anonymizeKey)
 
@@ -98,9 +98,9 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 		return nil
 	}
 	request := &message_types.AnonymizeRequest{
-		Template: anonymizeTemplate,
-		Text:     text,
-		Results:  results,
+		Template:       anonymizeTemplate,
+		Text:           text,
+		AnalyzeResults: results,
 	}
 	res, err := srv.Apply(c, request)
 	if err != nil {
@@ -110,7 +110,7 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	return res
 }
 
-func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.Results {
+func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.AnalyzeResponse {
 	analyzeKey := templates.CreateKey(project, "analyze", id)
 	analyzeRequest, err := analyzer.GetAnalyzeRequest(api.templates, analyzeKey)
 
@@ -120,10 +120,10 @@ func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Con
 	}
 
 	analyzerObj := analyzer.New(analyzeService)
-	analyzeResult, err := analyzerObj.InvokeAnalyze(c, analyzeRequest, text)
+	analyzeResponse, err := analyzerObj.InvokeAnalyze(c, analyzeRequest, text)
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, err.Error())
 		return nil
 	}
-	return analyzeResult
+	return analyzeResponse
 }

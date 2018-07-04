@@ -1,16 +1,18 @@
 from field_types.globally import credit_card, crypto, email, ip, iban, domain, ner
 from field_types.us import phone
+from analyzer import common_pb2
 
 types_refs = {
-    "CREDIT_CARD": credit_card.CreditCard(),
-    "CRYPTO": crypto.Crypto(),
-    "DATE_TIME": ner.Ner(),
-    "DOMAIN_NAME": domain.Domain(),
-    "EMAIL_ADDRESS": email.Email(),
-    "IBAN_CODE": iban.Iban(),
-    "IP_ADDRESS": ip.Ip(),
-    "NRP": ner.Ner(),
-    "LOCATION": ner.Ner(),
-    "PERSON": ner.Ner(),
-    "PHONE_NUMBER": phone.Phone(),
+    common_pb2.FieldTypes.Name(common_pb2.CREDIT_CARD):
+    credit_card.CreditCard(),
+    common_pb2.FieldTypes.Name(common_pb2.CRYPTO): crypto.Crypto(),
+    common_pb2.FieldTypes.Name(common_pb2.DATE_TIME): ner.Ner(),
+    common_pb2.FieldTypes.Name(common_pb2.DOMAIN_NAME): domain.Domain(),
+    common_pb2.FieldTypes.Name(common_pb2.EMAIL_ADDRESS): email.Email(),
+    common_pb2.FieldTypes.Name(common_pb2.IBAN_CODE): iban.Iban(),
+    common_pb2.FieldTypes.Name(common_pb2.IP_ADDRESS): ip.Ip(),
+    common_pb2.FieldTypes.Name(common_pb2.NRP): ner.Ner(),
+    common_pb2.FieldTypes.Name(common_pb2.LOCATION): ner.Ner(),
+    common_pb2.FieldTypes.Name(common_pb2.PERSON): ner.Ner(),
+    common_pb2.FieldTypes.Name(common_pb2.PHONE_NUMBER): phone.Phone(),
 }
