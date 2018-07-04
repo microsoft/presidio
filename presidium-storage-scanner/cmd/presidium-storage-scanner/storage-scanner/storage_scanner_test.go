@@ -11,12 +11,13 @@ import (
 	"github.com/presidium-io/stow"
 	"github.com/stretchr/testify/mock"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/presidium-io/presidium/pkg/cache"
 	cache_mock "github.com/presidium-io/presidium/pkg/cache/mock"
 	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 	"github.com/presidium-io/presidium/pkg/storage"
 	message_types "github.com/presidium-io/presidium/pkg/types"
-	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -67,6 +68,8 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	scanAndAnalyaze(container, testCache, serviceMock)
 	// validate output
 	assert.Contains(t, buf.String(), "Found: \"PHONE_NUMBER\", propability: 1.000000, Location: start:153 end:163 length:10")
+	scanAndAnalyaze(container, testCache, serviceMock)
+	assert.Contains(t, buf.String(), "Item was already scanned file1")
 }
 
 func getAnalyzerMockResult() *message_types.Results {
