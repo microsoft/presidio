@@ -9,9 +9,12 @@ import (
 	"github.com/presidium-io/presidium/pkg/service-discovery/consul"
 
 	log "github.com/presidium-io/presidium/pkg/logger"
+	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 	"github.com/presidium-io/presidium/pkg/rpc"
 
+	helper "github.com/presidium-io/presidium/pkg/helper"
 	server "github.com/presidium-io/presidium/pkg/server"
+	templates "github.com/presidium-io/presidium/pkg/templates"
 	message_types "github.com/presidium-io/presidium/pkg/types"
 )
 
@@ -80,7 +83,8 @@ func (api *API) anonymize(c *gin.Context) {
 }
 
 func (api *API) invokeAnonymize(project string, id string, text string, results []*message_types.Result, c *gin.Context) *message_types.AnonymizeResponse {
-	result, err := api.getTemplate(project, "anonymize", id)
+	anonymizeKey := templates.CreateKey(project, "anonymize", id)
+	result, err := api.templates.GetTemplate(anonymizeKey)
 
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to retrieve template %q", err))
@@ -88,7 +92,7 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	}
 	srv := *anonymizeService
 	anonymizeTemplate := &message_types.AnonymizeTemplate{}
-	err = convertJSON2Interface(result, anonymizeTemplate)
+	err = helper.ConvertJSONToInterface(result, anonymizeTemplate)
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to convert template %q", err))
 		return nil
@@ -105,25 +109,21 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	}
 	return res
 }
-func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.Results {
-	result, err := api.getTemplate(project, "analyze", id)
 
-	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to retrieve template %q", err))
-		return nil
-	}
-	srv := *analyzeService
-	analyzeRequest := &message_types.AnalyzeRequest{}
-	err = convertJSON2Interface(result, analyzeRequest)
-	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to convert template %q", err))
-		return nil
-	}
-	analyzeRequest.Value = text
-	res, err := srv.Apply(c, analyzeRequest)
+func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.Results {
+	analyzeKey := templates.CreateKey(project, "analyze", id)
+	analyzeRequest, err := analyzer.GetAnalyzeRequest(api.templates, analyzeKey)
+
 	if err != nil {
 		server.WriteResponse(c, http.StatusBadRequest, err.Error())
 		return nil
 	}
-	return res
+
+	analyzerObj := analyzer.New(analyzeService)
+	analyzeResult, err := analyzerObj.InvokeAnalyze(c, analyzeRequest, text)
+	if err != nil {
+		server.WriteResponse(c, http.StatusBadRequest, err.Error())
+		return nil
+	}
+	return analyzeResult
 }

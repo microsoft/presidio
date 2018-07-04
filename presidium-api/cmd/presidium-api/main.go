@@ -28,7 +28,6 @@ func main() {
 	setupGrpcServices()
 
 	api := New(consul.New())
-
 	v1 := r.Group("/api/v1")
 	{
 		v1.GET("fieldTypes", getFieldTypes)

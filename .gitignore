@@ -126,7 +126,7 @@ debug
 /presidium-analyzer/rootfs/presidium-analyzer
 /presidium-api/rootfs/presidium-api
 /presidium-registrator/rootfs/presidium-registrator
-/presidium-scanner/rootfs/presidium-scanner
+/presidium-storage-scanner/rootfs/presidium-storage-scanner
 /presidium-scheduler/rootfs/presidium-scheduler
 /tests/testdata/*-generated.*
 .DS_Store
