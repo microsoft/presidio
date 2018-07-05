@@ -34,13 +34,15 @@ docker run --name dev-redis -d -p 6379:6379 redis
 glide up -v
 ```
 
-6. Protobuf generator tools
+6. Install [librdkafka](https://github.com/confluentinc/confluent-kafka-go#installing-librdkafka)
+
+7. Protobuf generator tools
 
     * `https://github.com/golang/protobuf`
 
     * `https://grpc.io/docs/tutorials/basic/python.html`
 
-7. To generate proto files, run the following commands in `$GOPATH/src/github.com/presidium-io/presidium/pkg/types` folder
+8. To generate proto files, clone [presidium-genproto](https://github.com/presidium-io/presidium-genproto) and run the following commands in `$GOPATH/src/github.com/presidium-io/presidium-genproto/src` folder
 
 ```
 python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. ./*.proto
