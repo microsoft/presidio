@@ -1,5 +1,11 @@
 from field_types.globally import credit_card, crypto, email, ip, iban, domain, ner
 from field_types.us import phone
+
+import os, sys
+parentPath = os.path.abspath("..")
+if parentPath not in sys.path:
+    sys.path.insert(0, parentPath)
+
 from analyzer import common_pb2
 
 types_refs = {

@@ -71,7 +71,7 @@ echo -n '{"text":""We met yesterday morning in Seattle and his phone number is (
 
 1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD)
 ```
-echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","configuration":{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","fieldTypeTransformations":[{"fields":[],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
 ```
 
 2. Anonymize text
