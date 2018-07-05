@@ -150,11 +150,14 @@ class Matcher(object):
 
         doc = self.nlp(text)
         results = []
+        field_type_string_filters = []
         if field_type_filters is None or field_type_filters == []:
-            field_type_filters = types.types_refs.keys()
+            field_type_string_filters = types.types_refs.keys()
+        else:
+            field_type_string_filters = field_type_filters.keys()
 
-        for field_type_filter in field_type_filters:
-            current_field = types.types_refs[field_type_filter]
+        for field_type_string_filter in field_type_string_filters:
+            current_field = types.types_refs[field_type_string_filter]
 
             # Check for ner field
             if isinstance(current_field, type(ner.Ner())):
