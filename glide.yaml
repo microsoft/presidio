@@ -31,6 +31,7 @@ import:
   subpackages:
   - errgroup
 - package: google.golang.org/grpc
+  version: ^1.12.0
   subpackages:
   - reflection
 - package: k8s.io/client-go
