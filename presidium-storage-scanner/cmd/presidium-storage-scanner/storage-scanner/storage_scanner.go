@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/presidium-io/stow"
 
@@ -20,6 +21,14 @@ func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item
 	analyzeRequest *message_types.AnalyzeRequest) {
 	var err error
 	var val, fileContent, etag string
+
+	// Check if file type supported
+	ext := filepath.Ext(item.Name())
+
+	if ext != ".txt" && ext != ".csv" && ext != ".json" && ext != ".tsv" {
+		log.Println("Expected: file extension txt, csv, json, tsv, received:", ext)
+		return
+	}
 
 	// Check if the item was scanned in the past (if it's in cache)
 	etag, err = item.ETag()
@@ -67,10 +76,8 @@ func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item
 }
 
 // Read the content of the cloud item
-// TODO: Validate it's a text file
 func readFileContent(item stow.Item) (string, error) {
 	reader, err := item.Open()
-
 	if err != nil {
 		return "", err
 	}

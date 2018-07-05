@@ -1,5 +1,5 @@
-hash: c8f4d8f499a1037c836cb769ce7dc89c01d0b2eb153e9e91e00f93b1c546838c
-updated: 2018-07-04T22:59:14.315706+03:00
+hash: 5a14d0d68ac9157d381d4fbd0c03273f6d01dafe5cd32231deba7021abdeb10f
+updated: 2018-07-05T12:21:43.690233253+03:00
 imports:
 - name: github.com/armon/go-metrics
   version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
@@ -244,7 +244,7 @@ imports:
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 40cd6b15e2880b88deb091b0fcb091694285fcb0
+  version: 168a6198bcb0ef175f7dacec0b8691fc141dc9b8
   subpackages:
   - balancer
   - balancer/base
@@ -258,7 +258,6 @@ imports:
   - internal
   - internal/backoff
   - internal/channelz
-  - internal/envconfig
   - internal/grpcrand
   - keepalive
   - metadata
