@@ -10,4 +10,5 @@ RUN pip install -r requirements.txt
 
 COPY . /usr/bin/presidium-anaylzer/
 
-CMD python analyzer/__main__.py
+WORKDIR /usr/bin/presidium-anaylzer/analyzer
+CMD python __main__.py

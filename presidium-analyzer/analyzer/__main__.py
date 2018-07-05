@@ -14,10 +14,10 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         self.match = matcher.Matcher()
 
     def Apply(self, request, context):
-        results = analyze_pb2.Results()
-        results.results.extend(
-            self.match.analyze_text(request.value, request.fields))
-        return results
+        response = analyze_pb2.AnalyzeResponse()
+        response.analyzeResults.extend(
+            self.match.analyze_text(request.text, request.fields))
+        return response
 
 
 def serve():
