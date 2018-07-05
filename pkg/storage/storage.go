@@ -65,6 +65,11 @@ func (a *API) CreateContainer(name string) (stow.Container, error) {
 	return container, nil
 }
 
+// RemoveContainer removes a container/bucket from the storage
+func (a *API) RemoveContainer(name string) error {
+	return a.location.RemoveContainer(name)
+}
+
 //CreatGoogleConfig create google configuration
 // func CreatGoogleConfig(configJson string, configProjectId string, configScopes string) (string, stow.ConfigMap) {
 // 	return "google", stow.ConfigMap{
