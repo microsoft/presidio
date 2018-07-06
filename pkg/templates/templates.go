@@ -20,7 +20,7 @@ func New(s kv.Store) *Templates {
 
 //GetFieldTypes return the available fields
 func GetFieldTypes() (string, error) {
-	result, err := helper.ConvertInterfaceToJSON(message_types.FieldTypes_value)
+	result, err := helper.ConvertInterfaceToJSON(message_types.FieldTypesEnum_value)
 	return result, err
 }
 
