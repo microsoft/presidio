@@ -26,7 +26,7 @@ Presidium leverages
 
 * [Kubernetes](https://kubernetes.io/)
 * [Consul](https://www.consul.io/)
-* [Conduit](https://conduit.io/)
+* [Istio](https://istio.io)
 * [spaCy](https://spacy.io/)
 * [Redis](https://redis.io/)
 * [GRPC](https://grpc.io)

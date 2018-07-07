@@ -1,40 +1,32 @@
 # Presidium
 
-## Kubernetes installation
+## Installation - Kubernetes 1.9+ with RBAC
 
-1. Install [consul](https://hub.kubeapps.com/charts/stable/consul)
-```
-$ helm install --name consul stable/consul --namespace kube-system
-```
+1. Install [Helm](https://github.com/kubernetes/helm) with [RBAC](https://github.com/kubernetes/helm/blob/master/docs/rbac.md#tiller-and-role-based-access-control)
 
-2. Install [Redis](https://hub.kubeapps.com/charts/stable/redis)
+2. Install [consul](https://hub.kubeapps.com/charts/stable/consul) (Presidium internal database and service discovery)
 ```
-$ helm install --name redis stable/redis --set usePassword=false --namespace presidium
+$ helm install --name consul stable/consul --namespace presidium-system
 ```
 
-* **First time only - Install the Conduit CLI**
-
+3. Install [Redis](https://hub.kubeapps.com/charts/stable/redis) (Cache for storage and database scanners)
 ```
-$ curl https://run.conduit.io/install | sh
-```
-
-3. Install Conduit
-
-```
-$ conduit install | kubectl apply -f -
+$ helm install --name redis stable/redis --set usePassword=false --namespace presidium-system
 ```
 
-4. View the dashboard!
+4. Install [Istio](https://istio.io/docs/setup/kubernetes/quick-start/#download-and-prepare-for-the-installation) (Service Mesh for Presidium services)
 
+5. Install [Traefik](https://github.com/kubernetes/charts/tree/master/stable/traefik) (Ingress controller for Presidium API)
 ```
-$ conduit dashboard
+helm install --name traefik --set rbac.enabled=true stable/traefik --version 1.33.1 --namespace kube-system
 ```
 
-5. Verify that consul and Redis are installed correctly
+6. Verify that consul, Redis Traefik and Istio are installed correctly
 
-6. Inject and Deploy
+7. Deploy
 
 ```
 $ kubectl create namespace presidium
-$ conduit inject deployment/presidium.yaml | kubectl apply -f - --namespace presidium
+$ kubectl label namespace presidium istio-injection=enabled
+$ kubectl apply -f /deployment/presidium.yaml --namespace presidium
 ```

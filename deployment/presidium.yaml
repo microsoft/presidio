@@ -1,4 +1,20 @@
 ---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: presidium-ingress
+  namespace: presidium
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: presidium-api
+          servicePort: 3000
+---
 # Source: presidium/templates/analyzer-service.yaml
 apiVersion: v1
 kind: Service
@@ -140,7 +156,7 @@ spec:
           - name: WEB_PORT
             value: "8080"
           - name: CONSUL_HTTP_ADDR
-            value: consul.presidium.svc.cluster.local:8500
+            value: consul.presidium-system.svc.cluster.local:8500
       
       initContainers:
       - name: "presidium-registrator"
@@ -148,9 +164,9 @@ spec:
         imagePullPolicy: Always
         env:
           - name: CONSUL_HTTP_ADDR
-            value: consul.presidium.svc.cluster.local:8500
+            value: consul.presidium-system.svc.cluster.local:8500
           - name: REDIS_HOST
-            value: redis-master
+            value: redis-master.presidium-system.svc.cluster.local
           - name: REDIS_PORT
             value: "6379"
           - name: ANALYZER_SVC_HOST

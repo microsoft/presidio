@@ -6,7 +6,7 @@
 - [analyze.proto](#analyze.proto)
     - [AnalyzeApiRequest](#types.AnalyzeApiRequest)
     - [AnalyzeRequest](#types.AnalyzeRequest)
-    - [Results](#types.Results)
+    - [AnalyzeResponse](#types.AnalyzeResponse)
   
   
   
@@ -17,9 +17,6 @@
     - [AnonymizeApiRequest](#types.AnonymizeApiRequest)
     - [AnonymizeRequest](#types.AnonymizeRequest)
     - [AnonymizeResponse](#types.AnonymizeResponse)
-    - [AnonymizeTemplate](#types.AnonymizeTemplate)
-    - [Configuration](#types.Configuration)
-    - [FieldTypeTransformation](#types.FieldTypeTransformation)
   
   
   
@@ -27,14 +24,11 @@
   
 
 - [common.proto](#common.proto)
+    - [AnalyzeResult](#types.AnalyzeResult)
     - [FieldType](#types.FieldType)
     - [Location](#types.Location)
-    - [RecordTransformation](#types.RecordTransformation)
-    - [RedactValue](#types.RedactValue)
-    - [ReplaceValue](#types.ReplaceValue)
-    - [Result](#types.Result)
-    - [Transformation](#types.Transformation)
   
+    - [FieldTypeNames](#types.FieldTypeNames)
   
   
   
@@ -43,6 +37,18 @@
     - [Job](#types.Job)
     - [Schedule](#types.Schedule)
     - [Trigger](#types.Trigger)
+  
+  
+  
+  
+
+- [template.proto](#template.proto)
+    - [AnalyzeTemplate](#types.AnalyzeTemplate)
+    - [AnonymizeTemplate](#types.AnonymizeTemplate)
+    - [FieldTypeTransformation](#types.FieldTypeTransformation)
+    - [RedactValue](#types.RedactValue)
+    - [ReplaceValue](#types.ReplaceValue)
+    - [Transformation](#types.Transformation)
   
   
   
@@ -62,7 +68,7 @@
 <a name="types.AnalyzeApiRequest"/>
 
 ### AnalyzeApiRequest
-
+AnalyzeApiRequest represents the request to the API HTTP service
 
 
 | Field | Type | Label | Description |
@@ -78,13 +84,13 @@
 <a name="types.AnalyzeRequest"/>
 
 ### AnalyzeRequest
-
+AnalyzeRequest represents the request to the analyze service via GRPC
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | value | [string](#string) |  |  |
-| fields | [string](#string) | repeated |  |
+| analyzeTemplate | [AnalyzeTemplate](#types.AnalyzeTemplate) |  |  |
 | minProbability | [string](#string) |  |  |
 
 
@@ -92,15 +98,15 @@
 
 
 
-<a name="types.Results"/>
+<a name="types.AnalyzeResponse"/>
 
-### Results
-
+### AnalyzeResponse
+AnalyzeResponse represents the analyze service response
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| results | [Result](#types.Result) | repeated |  |
+| analyzeResults | [AnalyzeResult](#types.AnalyzeResult) | repeated |  |
 
 
 
@@ -120,7 +126,7 @@
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Apply | [AnalyzeRequest](#types.AnalyzeRequest) | [Results](#types.AnalyzeRequest) |  |
+| Apply | [AnalyzeRequest](#types.AnalyzeRequest) | [AnalyzeResponse](#types.AnalyzeRequest) |  |
 
  
 
@@ -136,7 +142,7 @@
 <a name="types.AnonymizeApiRequest"/>
 
 ### AnonymizeApiRequest
-
+AnonymizeApiRequest represents the request to the API HTTP service
 
 
 | Field | Type | Label | Description |
@@ -153,14 +159,14 @@
 <a name="types.AnonymizeRequest"/>
 
 ### AnonymizeRequest
-
+AnonymizeRequest represents the request to the anonymize service via GRPC
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | text | [string](#string) |  |  |
 | template | [AnonymizeTemplate](#types.AnonymizeTemplate) |  |  |
-| results | [Result](#types.Result) | repeated |  |
+| analyzeResults | [AnalyzeResult](#types.AnalyzeResult) | repeated |  |
 
 
 
@@ -170,64 +176,12 @@
 <a name="types.AnonymizeResponse"/>
 
 ### AnonymizeResponse
-
+AnonymizeResponse represents the anonymize service response
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | text | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="types.AnonymizeTemplate"/>
-
-### AnonymizeTemplate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| displayName | [string](#string) |  |  |
-| description | [string](#string) |  |  |
-| createTime | [string](#string) |  |  |
-| modifiedTime | [string](#string) |  |  |
-| configuration | [Configuration](#types.Configuration) |  |  |
-
-
-
-
-
-
-<a name="types.Configuration"/>
-
-### Configuration
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| fieldTypeTransformations | [FieldTypeTransformation](#types.FieldTypeTransformation) | repeated |  |
-| recordTransformations | [RecordTransformation](#types.RecordTransformation) | repeated |  |
-
-
-
-
-
-
-<a name="types.FieldTypeTransformation"/>
-
-### FieldTypeTransformation
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| fieldTypes | [FieldType](#types.FieldType) | repeated |  |
-| transformation | [Transformation](#types.Transformation) |  |  |
 
 
 
@@ -260,6 +214,24 @@
 
 
 
+<a name="types.AnalyzeResult"/>
+
+### AnalyzeResult
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| text | [string](#string) |  |  |
+| fieldType | [string](#string) |  |  |
+| probability | [float](#float) |  |  |
+| location | [Location](#types.Location) |  |  |
+
+
+
+
+
+
 <a name="types.FieldType"/>
 
 ### FieldType
@@ -268,7 +240,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
+| name | [FieldTypeNames](#types.FieldTypeNames) |  |  |
 | languageCode | [string](#string) |  |  |
 
 
@@ -287,86 +259,36 @@
 | start | [sint32](#sint32) |  |  |
 | end | [sint32](#sint32) |  |  |
 | length | [sint32](#sint32) |  |  |
-| newStart | [sint32](#sint32) |  |  |
-| newEnd | [sint32](#sint32) |  |  |
-| newLength | [sint32](#sint32) |  |  |
-
-
-
-
-
-
-<a name="types.RecordTransformation"/>
-
-### RecordTransformation
-
-
-
-
-
-
-
-<a name="types.RedactValue"/>
-
-### RedactValue
-
-
-
-
-
-
-
-<a name="types.ReplaceValue"/>
-
-### ReplaceValue
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| newValue | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="types.Result"/>
-
-### Result
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| value | [string](#string) |  |  |
-| fieldType | [string](#string) |  |  |
-| probability | [float](#float) |  |  |
-| location | [Location](#types.Location) |  |  |
-| transformation | [Transformation](#types.Transformation) |  |  |
-
-
-
-
-
-
-<a name="types.Transformation"/>
-
-### Transformation
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| newValue | [string](#string) |  |  |
-| replaceValue | [ReplaceValue](#types.ReplaceValue) |  |  |
-| redactValue | [RedactValue](#types.RedactValue) |  |  |
+| newStart | [sint32](#sint32) |  | Not used in the template |
+| newEnd | [sint32](#sint32) |  | Not used in the template |
+| newLength | [sint32](#sint32) |  | Not used in the template |
 
 
 
 
 
  
+
+
+<a name="types.FieldTypeNames"/>
+
+### FieldTypeNames
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CREDIT_CARD | 0 |  |
+| CRYPTO | 1 |  |
+| DATE_TIME | 2 |  |
+| DOMAIN_NAME | 3 |  |
+| EMAIL_ADDRESS | 4 |  |
+| IBAN_CODE | 5 |  |
+| IP_ADDRESS | 6 |  |
+| NRP | 7 |  |
+| LOCATION | 8 |  |
+| PERSON | 9 |  |
+| PHONE_NUMBER | 10 |  |
+
 
  
 
@@ -424,6 +346,115 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | schedule | [Schedule](#types.Schedule) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="template.proto"/>
+<p align="right"><a href="#top">Top</a></p>
+
+## template.proto
+
+
+
+<a name="types.AnalyzeTemplate"/>
+
+### AnalyzeTemplate
+AnalyzeTemplate represents the analyze service template definition
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| fields | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="types.AnonymizeTemplate"/>
+
+### AnonymizeTemplate
+AnonymizeTemplate represents the anonymize service template definition
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| displayName | [string](#string) |  |  |
+| description | [string](#string) |  |  |
+| createTime | [string](#string) |  |  |
+| modifiedTime | [string](#string) |  |  |
+| fieldTypeTransformations | [FieldTypeTransformation](#types.FieldTypeTransformation) | repeated |  |
+
+
+
+
+
+
+<a name="types.FieldTypeTransformation"/>
+
+### FieldTypeTransformation
+FieldTypeTransformation represents the transformation for array of fields types
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| fields | [FieldType](#types.FieldType) | repeated |  |
+| transformation | [Transformation](#types.Transformation) |  |  |
+
+
+
+
+
+
+<a name="types.RedactValue"/>
+
+### RedactValue
+
+
+
+
+
+
+
+<a name="types.ReplaceValue"/>
+
+### ReplaceValue
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| newValue | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="types.Transformation"/>
+
+### Transformation
+Transformation represents the transformation type
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| newValue | [string](#string) |  | Not used in the template |
+| replaceValue | [ReplaceValue](#types.ReplaceValue) |  |  |
+| redactValue | [RedactValue](#types.RedactValue) |  |  |
 
 
 

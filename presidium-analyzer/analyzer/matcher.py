@@ -150,7 +150,8 @@ class Matcher(object):
         doc = self.nlp(text)
         results = []
         field_type_string_filters = []
-        if field_type_filters is None or field_type_filters == []:
+
+        if field_type_filters is None or not field_type_filters:
             field_type_string_filters = types.types_refs.keys()
         else:
             for field_type in field_type_filters:
