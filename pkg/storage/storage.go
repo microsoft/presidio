@@ -100,10 +100,12 @@ func (a *API) ListObjects(container string) error {
 }
 
 type walkFunc func(cache *cache.Cache, container stow.Container, item stow.Item, analyzer *analyzer.Analyzer,
-	analyzeRequest *message_types.AnalyzeRequest)
+	analyzeRequest *message_types.AnalyzeRequest) []byte
+
+type sendResultFunc func(results []byte)
 
 // WalkFiles walks over the files in 'container' and executes fn func
-func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string) error {
+func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string, sendResultFunc sendResultFunc) error {
 	limit := limiter.NewConcurrencyLimiter(10)
 	t := templates.New(consul.New())
 	analyzerObj := analyzer.New(a.analyzeService)
@@ -119,7 +121,8 @@ func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string
 		}
 
 		limit.Execute(func() {
-			fn(&a.cache, container, item, &analyzerObj, analyzeRequest)
+			result := fn(&a.cache, container, item, &analyzerObj, analyzeRequest)
+			sendResultFunc(result)
 		})
 		return err
 	})

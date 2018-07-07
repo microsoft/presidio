@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -30,6 +33,7 @@ var (
 
 	storageKind string
 	analyzeKey  string
+	webPort     string
 )
 
 func main() {
@@ -88,7 +92,7 @@ func main() {
 		return
 	}
 
-	err = storageAPI.WalkFiles(container, scanner.ScanAndAnalyze, analyzeKey)
+	err = storageAPI.WalkFiles(container, scanner.ScanAndAnalyze, analyzeKey, SendAnalyzeResult)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -104,6 +108,7 @@ func init() {
 	azureAccountName = os.Getenv("AZURE_ACCOUNT")
 	azureAccountKey = os.Getenv("AZURE_KEY")
 	azureContainer = os.Getenv("AZURE_CONTAINER")
+	webPort = os.Getenv("WEB_PORT")
 
 	s3AccessKeyID = os.Getenv("S3_ACCESS_KEY_ID")
 	s3SecretKey = os.Getenv("S3_SECRET_KEY")
@@ -136,4 +141,21 @@ func validateS3Connection(s3AccessKeyID string, s3SecretKey string, s3Region str
 	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
 		log.Fatal("S3_ACCESS_KEY_ID, S3_SECRET_KEY, S3_REGION, S3_BUCKET env vars must me set.")
 	}
+}
+
+func SendAnalyzeResult(result []byte) {
+	url := fmt.Sprintf("http://localhost/%s", webPort)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(result))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
 }
