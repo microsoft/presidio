@@ -66,11 +66,11 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	}()
 
 	// Act
-	scanAndAnalyaze(container, testCache, serviceMock)
+	scanAndAnalyze(container, testCache, serviceMock)
 
 	// validate output
-	assert.Contains(t, buf.String(), "Found: \"PHONE_NUMBER\", propability: 1.000000, Location: start:153 end:163 length:10")
-	scanAndAnalyaze(container, testCache, serviceMock)
+	assert.Contains(t, buf.String(), "Found: \"name:\\\"PHONE_NUMBER\\\" \", propability: 1.000000, Location: start:153 end:163 length:10")
+	scanAndAnalyze(container, testCache, serviceMock)
 	assert.Contains(t, buf.String(), "Item was already scanned file1.txt")
 
 	// test cleanup
@@ -104,7 +104,7 @@ func TestFileExtension(t *testing.T) {
 	}()
 
 	// Act
-	scanAndAnalyaze(container, testCache, serviceMock)
+	scanAndAnalyze(container, testCache, serviceMock)
 
 	// validate output
 	assert.Contains(t, buf.String(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
@@ -119,7 +119,7 @@ func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 	}
 	results := [](*message_types.AnalyzeResult){
 		&message_types.AnalyzeResult{
-			Field:       message_types.FieldTypes_PHONE_NUMBER,
+			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PHONE_NUMBER.String()},
 			Text:        "(555) 253-0000",
 			Probability: 1.0,
 			Location:    location,
@@ -131,7 +131,7 @@ func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 	return response
 }
 
-func scanAndAnalyaze(container stow.Container, testCache cache.Cache, serviceMock analyzer.Analyzer) {
+func scanAndAnalyze(container stow.Container, testCache cache.Cache, serviceMock analyzer.Analyzer) {
 	var analyzeRequest *message_types.AnalyzeRequest
 	err := stow.Walk(container, stow.CursorStart, 100, func(item stow.Item, err error) error {
 		if err != nil {

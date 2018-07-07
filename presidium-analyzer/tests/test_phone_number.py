@@ -1,8 +1,11 @@
 from analyzer import matcher
+from analyzer import common_pb2
 import logging
 import os
 
-types = ["PHONE_NUMBER"]
+fieldType = common_pb2.FieldTypes()
+fieldType.name = "PHONE_NUMBER"
+types = [fieldType]
 
 
 def test_phone_number_simple():

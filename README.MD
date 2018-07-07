@@ -59,7 +59,7 @@ echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 49
 
 1. Create an analyzer project
 ```
-echo -n '{"fields":["PHONE_NUMBER", "LOCATION", "DATE_TIME"]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"]}}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
 ```
 
 2. Analyze text

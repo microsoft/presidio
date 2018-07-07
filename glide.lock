@@ -1,10 +1,10 @@
 hash: 5a14d0d68ac9157d381d4fbd0c03273f6d01dafe5cd32231deba7021abdeb10f
-updated: 2018-07-05T12:21:43.690233253+03:00
+updated: 2018-07-06T08:20:28.073311+03:00
 imports:
 - name: github.com/armon/go-metrics
   version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
 - name: github.com/aws/aws-sdk-go
-  version: 7df58ee4df0ad022b1b0c7e7aef5845e43587476
+  version: 2a14182c3ceee916649d54eb2c16ebe8e57ee326
   subpackages:
   - aws
   - aws/awserr
@@ -176,7 +176,7 @@ imports:
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/presidium-io/presidium-genproto
-  version: c0a37c4fc459ad9f3b95a2baf39ad2a59deaaf59
+  version: 961f2f00b9b1e07fbd3dd1a328b17423d73db13b
   subpackages:
   - golang
 - name: github.com/presidium-io/stow

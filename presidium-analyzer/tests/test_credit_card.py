@@ -1,10 +1,13 @@
 from analyzer import matcher
+from analyzer import common_pb2
 import logging
 import os
 
 # https://www.datatrans.ch/showcase/test-cc-numbers
 
-types = ["CREDIT_CARD"]
+fieldType = common_pb2.FieldTypes()
+fieldType.name = "CREDIT_CARD"
+types = [fieldType]
 
 
 def test_valid_credit_card():

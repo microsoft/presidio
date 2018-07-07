@@ -1,9 +1,12 @@
 from analyzer import matcher
+from analyzer import common_pb2
 import logging
 
 import os
 
-types = ["DATE_TIME"]
+fieldType = common_pb2.FieldTypes()
+fieldType.name = "DATE_TIME"
+types = [fieldType]
 
 
 def test_date_time_simple():

@@ -60,7 +60,7 @@ func findRelevantResultsToChange(results []*message_types.AnalyzeResult, config 
 				//Apply to selected fieldtypes
 				for _, result := range results {
 					for _, fieldType := range transformations.Fields {
-						if fieldType == result.Field {
+						if fieldType.Name == result.Field.Name {
 							relevantResults = append(relevantResults, result)
 							break //No more than one transformation per fieldtype
 						}
@@ -87,7 +87,7 @@ func calculateLocations(results []*message_types.AnalyzeResult, config *message_
 			}
 
 			for _, fieldType := range transformations.Fields {
-				if fieldType == result.Field {
+				if fieldType.Name == result.Field.Name {
 					setValue(transformations.Transformation)
 					resultsTransformations[i] = transformations.Transformation
 					break

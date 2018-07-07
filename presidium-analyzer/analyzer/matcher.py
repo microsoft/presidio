@@ -51,7 +51,7 @@ class Matcher(object):
     def __create_result(self, doc, current_field, start, end):
 
         res = common_pb2.AnalyzeResult()
-        res.field = common_pb2.FieldTypes.Value(current_field.name)
+        res.field.name = current_field.name
         res.text = current_field.text
 
         # Validate checksum
@@ -125,11 +125,10 @@ class Matcher(object):
 
         return False
 
-    def __check_ner(self, doc, results, current_field, field_type_filter):
+    def __check_ner(self, doc, results, current_field):
         for ent in doc.ents:
-            if self.__match_ner(ent.label_, field_type_filter) is False:
+            if self.__match_ner(ent.label_, current_field.name) is False:
                 continue
-            current_field.name = field_type_filter
             current_field.text = ent.text
             res = self.__create_result(doc, current_field, ent.start_char,
                                        ent.end_char)
@@ -150,17 +149,20 @@ class Matcher(object):
 
         doc = self.nlp(text)
         results = []
+        field_type_string_filters = []
         if field_type_filters is None or field_type_filters == []:
-            field_type_filters = types.types_refs.keys()
+            field_type_string_filters = types.types_refs.keys()
+        else:
+            for field_type in field_type_filters:
+                field_type_string_filters.append(field_type.name)
 
-        for field_type_filter in field_type_filters:
-            current_field = types.types_refs[field_type_filter]
+        for field_type_string_filter in field_type_string_filters:
+            current_field = types.types_refs[field_type_string_filter]
 
             # Check for ner field
             if isinstance(current_field, type(ner.Ner())):
-                current_field.name = field_type_filters
-                self.__check_ner(doc, results, current_field,
-                                 field_type_filter)
+                current_field.name = field_type_string_filter
+                self.__check_ner(doc, results, current_field)
             else:
                 self.__check_pattern(doc, results, current_field)
 

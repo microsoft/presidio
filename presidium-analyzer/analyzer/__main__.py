@@ -3,6 +3,8 @@ import matcher
 import grpc
 import analyze_pb2
 import analyze_pb2_grpc
+import common_pb2
+import template_pb2
 from concurrent import futures
 import time
 import sys
@@ -14,10 +16,10 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         self.match = matcher.Matcher()
 
     def Apply(self, request, context):
-        results = analyze_pb2.Results()
-        results.results.extend(
-            self.match.analyze_text(request.value, request.fields))
-        return results
+        response = analyze_pb2.AnalyzeResponse()
+        response.analyzeResults.extend(
+            self.match.analyze_text(request.text, request.analyzeTemplate.fields))
+        return response
 
 
 def serve():
