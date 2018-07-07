@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/presidium-io/presidium.svg?branch=development)](https://travis-ci.org/presidium-io/presidium)
 
 
-# Presidium - Data loss prevention
-**A context aware, blazing fast, customizable data loss prevention service**
+# Presidium - Data Loss Prevention API
+**A context aware, born to the cloud, customizable data loss prevention service**
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/17064840/41805986-5a1c396a-76bc-11e8-986f-26dd73485e6c.png">
@@ -17,9 +17,26 @@ Presidium analyzes the text using predefined analyzers to identify patterns, for
 
 * Text analytics - Predefined analyzers with customizable fields.
 * Probability scores - Customize the sensitive text detection threshold.
-* Detailed analysis - Analytics results can be sent directly into data warehouse solutions for detailed analysis or export into other systems.
-* Workflow integration -  Create templates and monitor your data with periodic scans and integrate with various storage solutions such as Azure Storage, S3 and Google Cloud Storage.
-* Anonymization - Anonymize text and images
+* Anonymization - Anonymize sensitive text and images
+* Workflow and pipeline integration -  Monitor your data with periodic scans or events of
+  1. Storage solutions
+      - Azure Blob Storage
+      - S3
+      - Google Cloud Storage
+  2. Databases
+      - MySQL
+      - PostgreSQL
+      - Sql Server
+      - Oracle
+
+  and export the results for further analytics:
+  1. Databases
+  2. Data Warehouse
+  3. Streaming platform
+      - Kafka
+      - Azure Events Hubs
+      - Kinesis
+
 
 ## The Technology Stack
 Presidium leverages 
@@ -78,17 +95,6 @@ echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","fieldTypeTransform
 ```
 echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":<my-analyze-template-name>, "AnonymizeTemplateId":<my-anonymize-template-name>  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
 ```
-
-***Load test***
-
-1. Create a project (see previous step)
-2. Edit  `post.lua`. Change the template name
-3. Run [wrk](https://github.com/wg/wrk)
-
-```
-wrk -t2 -c2 -d30s -s post.lua http://<api-service-address>/api/v1/projects/<my-project>/analyze
-```
-
 
 <hr>
 <div>Logo made with <a href="https://www.designevo.com/en/" title="Free Online Logo Maker">DesignEvo</a></div>

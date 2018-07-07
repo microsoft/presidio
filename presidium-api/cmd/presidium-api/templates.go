@@ -26,7 +26,7 @@ func (api *API) getActionTemplate(c *gin.Context) {
 	key := pkg_templates.CreateKey(project, action, id)
 	result, err := api.templates.GetTemplate(key)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to retrieve template %q", err))
+		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to retrieve template %s %q", key, err))
 		return
 	}
 	server.WriteResponse(c, http.StatusOK, result)

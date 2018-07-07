@@ -14,8 +14,7 @@ matrix:
       install:
       - pip install -r presidium-analyzer/requirements.txt
       script:
-      - cd presidium-analyzer
-      - pytest
+      - make python-test
     - language: go
       go:
       - "1.10"
@@ -34,7 +33,7 @@ matrix:
       - go get -u github.com/alecthomas/gometalinter
       - gometalinter --install
       script:
-      - make test
+      - make go-test
       after_success:
       - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
         export PRESIDIUM_LABEL="unstable";
