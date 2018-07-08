@@ -29,9 +29,15 @@ docker run --name dev-redis -d -p 6379:6379 redis
 
 4. Install go 1.10 and Python 3.6
 
-5. Install vendored packages via [glide](https://github.com/Masterminds/glide#install)
+5. Install the golang packages via [glide](https://github.com/Masterminds/glide#install)
 ```
 glide up -v
+```
+***Note you might need to delete the glide cache folder `~/.glide/cache`***
+
+6. Install the Python packages for the analyzer in the `presidium-analyzer` folder
+```
+pip3 install -r requirements.txt
 ```
 
 6. Install [librdkafka](https://github.com/confluentinc/confluent-kafka-go#installing-librdkafka)
@@ -50,4 +56,22 @@ python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. ./*.proto
 
 ```
 protoc -I . --go_out=plugins=grpc:. ./*.proto
+```
+
+
+## Development notes
+- Build the bins with `make build`
+- Build the the Docker image with `make docker-build`
+- Push the Docker images with `make docker-push`
+- Run the tests with `make test`
+- Adding a file in go requires the `make go-format` command before running and building the service.
+
+## Load test
+
+1. Create a project.
+2. Edit  `post.lua`. Change the template name
+3. Run [wrk](https://github.com/wg/wrk)
+
+```
+wrk -t2 -c2 -d30s -s post.lua http://<api-service-address>/api/v1/projects/<my-project>/analyze
 ```

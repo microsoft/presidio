@@ -58,11 +58,25 @@ build-release: presidium-cross-compile
 
 # All non-functional tests
 .PHONY: test
-test: test-style
-test: test-unit
+test: python-test
+test: go-test
+
+# All non-functional python tests
+.PHONY: python-test
+python-test: python-test-unit
 # Unit tests. Local only.
-.PHONY: test-unit
-test-unit: vendor clean
+.PHONY: python-test-unit
+python-test-unit: 
+	cd presidium-analyzer
+	pytest --log-cli-level=0 
+
+# All non-functional go tests
+.PHONY: go-test
+go-test: go-test-style
+go-test: go-test-unit
+# Unit tests. Local only.
+.PHONY: go-test-unit
+go-test-unit: vendor clean
 	docker run --rm --name test-consul -d -p 8300:8300 -p 8301:8301 -p 8302:8302 -p 8400:8400 -p 8500:8500 -p 8600:8600 consul
 	docker run --rm --name test-redis -d -p 6379:6379 redis
 	docker run --rm --name test-azure-emulator -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite
@@ -73,15 +87,12 @@ test-unit: vendor clean
 .PHONY: test-functional
 test-functional: vendor
 
-.PHONY: test-style
-test-style:
+.PHONY: go-test-style
+go-test-style:
 	gometalinter --config ./gometalinter.json ./...
 
-.PHONY: format
-format: format-go
-
-.PHONY: format-go
-format-go:
+.PHONY: go-format
+go-format:
 	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/presidium-io/presidium
 
 make-docs: vendor
