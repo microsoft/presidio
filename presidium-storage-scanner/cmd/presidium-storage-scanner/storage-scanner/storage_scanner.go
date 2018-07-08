@@ -3,7 +3,6 @@ package storageScanner
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"path/filepath"
@@ -15,18 +14,11 @@ import (
 	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
 )
 
-type scanResult struct {
-	Field        string
-	Probability  float32
-	FileName     string
-	ConainerName string
-}
-
 // ScanAndAnalyze checks if the file needs to be scanned.
 // Then sends it to the analyzer and updates the cache that it was scanned.
-func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item,
+func ScanAndAnalyze(cache *cache.Cache, item stow.Item,
 	analyzerModule *analyzer.Analyzer,
-	analyzeRequest *message_types.AnalyzeRequest) []byte {
+	analyzeRequest *message_types.AnalyzeRequest) []*message_types.AnalyzeResult {
 	var err error
 	var val, fileContent, etag string
 
@@ -67,20 +59,9 @@ func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item
 			return nil
 		}
 
-		var scanResults []scanResult
 		for _, r := range results.AnalyzeResults {
-			sResult := scanResult{
-				r.Field.String(), r.Probability, item.Name(), container.Name(),
-			}
-			scanResults = append(scanResults, sResult)
-
 			log.Println(fmt.Sprintf("Found: %q, propability: %f, Location: start:%d end:%d length:%d",
 				r.Field, r.Probability, r.Location.Start, r.Location.End, r.Location.Length))
-		}
-		scanResultsByteArray, err := json.Marshal(scanResults)
-		if err != nil {
-			log.Fatal("Cannot encode to JSON ", err)
-			return nil
 		}
 
 		err = (*cache).Set(etag, item.Name())
@@ -88,7 +69,7 @@ func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item
 			log.Println("ERROR:", err)
 		}
 
-		return scanResultsByteArray
+		return results.AnalyzeResults
 	}
 
 	// Otherwise skip- item was already scanned

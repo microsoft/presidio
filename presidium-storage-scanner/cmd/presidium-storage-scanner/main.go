@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -31,9 +28,10 @@ var (
 	s3Region      string
 	s3Bucket      string
 
-	storageKind string
-	analyzeKey  string
-	webPort     string
+	storageKind       string
+	analyzeKey        string
+	grpcPort          string
+	databinderService *message_types.DatabinderServiceClient
 )
 
 func main() {
@@ -108,7 +106,7 @@ func init() {
 	azureAccountName = os.Getenv("AZURE_ACCOUNT")
 	azureAccountKey = os.Getenv("AZURE_KEY")
 	azureContainer = os.Getenv("AZURE_CONTAINER")
-	webPort = os.Getenv("WEB_PORT")
+	grpcPort = os.Getenv("GRPC_PORT")
 
 	s3AccessKeyID = os.Getenv("S3_ACCESS_KEY_ID")
 	s3SecretKey = os.Getenv("S3_SECRET_KEY")
@@ -120,6 +118,16 @@ func init() {
 
 	if storageKind == "" {
 		log.Fatal("STORAGE_KIND env var must me set")
+	}
+
+	if grpcPort == "" {
+		// Set to deafult
+		grpcPort = "5000"
+	}
+
+	databinderService, err = rpc.SetupDataBinderService(fmt.Sprintf("http://localhost/%s", grpcPort))
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Connection to databinder service failed %q", err))
 	}
 
 	switch storageKind {
@@ -143,19 +151,14 @@ func validateS3Connection(s3AccessKeyID string, s3SecretKey string, s3Region str
 	}
 }
 
-func SendAnalyzeResult(result []byte) {
-	url := fmt.Sprintf("http://localhost/%s", webPort)
+func SendAnalyzeResult(result []*message_types.AnalyzeResponse) {
+	srv := *databinderService
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(result))
-	req.Header.Set("Content-Type", "application/json")
+	databinderRequest := &message_types.DatabinderRequest{}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	analyzeResponse, err := srv.Apply(c, analyzeRequest)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 }

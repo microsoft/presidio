@@ -99,10 +99,10 @@ func (a *API) ListObjects(container string) error {
 	return err
 }
 
-type walkFunc func(cache *cache.Cache, container stow.Container, item stow.Item, analyzer *analyzer.Analyzer,
-	analyzeRequest *message_types.AnalyzeRequest) []byte
+type walkFunc func(cache *cache.Cache, item stow.Item, analyzer *analyzer.Analyzer,
+	analyzeRequest *message_types.AnalyzeRequest) []*message_types.AnalyzeResult
 
-type sendResultFunc func(results []byte)
+type sendResultFunc func(results []*message_types.AnalyzeResult)
 
 // WalkFiles walks over the files in 'container' and executes fn func
 func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string, sendResultFunc sendResultFunc) error {
@@ -121,7 +121,7 @@ func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string
 		}
 
 		limit.Execute(func() {
-			result := fn(&a.cache, container, item, &analyzerObj, analyzeRequest)
+			result := fn(&a.cache, item, &analyzerObj, analyzeRequest)
 			sendResultFunc(result)
 		})
 		return err

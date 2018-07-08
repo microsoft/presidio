@@ -38,3 +38,13 @@ func SetupAnalyzerService(address string) (*message_types.AnalyzeServiceClient, 
 	client := message_types.NewAnalyzeServiceClient(conn)
 	return &client, nil
 }
+
+//SetupDataBinderService ...
+func SetupDataBinderService(address string) (*message_types.DatabinderServiceClient, error) {
+	conn, err := connect(address)
+	if err != nil {
+		return nil, err
+	}
+	client := message_types.NewDatabinderServiceClient(conn)
+	return &client, nil
+}
