@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"path/filepath"
 
 	"github.com/presidium-io/stow"
 
@@ -22,13 +21,13 @@ func ScanAndAnalyze(cache *cache.Cache, item stow.Item,
 	var err error
 	var val, fileContent, etag string
 
-	// Check if file type supported
-	ext := filepath.Ext(item.Name())
+	// // Check if file type supported
+	// ext := filepath.Ext(item.Name())
 
-	if ext != ".txt" && ext != ".csv" && ext != ".json" && ext != ".tsv" {
-		log.Println("Expected: file extension txt, csv, json, tsv, received:", ext)
-		return nil
-	}
+	// if ext != ".txt" && ext != ".csv" && ext != ".json" && ext != ".tsv" {
+	// 	log.Println("Expected: file extension txt, csv, json, tsv, received:", ext)
+	// 	return nil
+	// }
 
 	// Check if the item was scanned in the past (if it's in cache)
 	etag, err = item.ETag()

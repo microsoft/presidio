@@ -1,5 +1,5 @@
 hash: 5a14d0d68ac9157d381d4fbd0c03273f6d01dafe5cd32231deba7021abdeb10f
-updated: 2018-07-08T11:52:56.977987858+03:00
+updated: 2018-07-08T12:39:35.432845581+03:00
 imports:
 - name: github.com/armon/go-metrics
   version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
@@ -99,7 +99,7 @@ imports:
   - internal/singleflight
   - internal/util
 - name: github.com/gogo/protobuf
-  version: 30cf7ac33676b5786e78c746683f0d4cd64fa75b
+  version: c0656edd0d9eab7c66d1eb0c568f9039345796f7
   subpackages:
   - proto
   - sortkeys
@@ -176,9 +176,7 @@ imports:
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/presidium-io/presidium-genproto
-  version: d37d776b134e547ddcaf55884b5866a9873abf8a
-  subpackages:
-  - golang
+  version: d7397483e082ae9793efb6524bba61fa3ad9d6c2
 - name: github.com/presidium-io/stow
   version: 4ea85bf8ccfef46b011f0b181ea3bcc05efc2900
   subpackages:

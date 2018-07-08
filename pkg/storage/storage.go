@@ -102,7 +102,7 @@ func (a *API) ListObjects(container string) error {
 type walkFunc func(cache *cache.Cache, item stow.Item, analyzer *analyzer.Analyzer,
 	analyzeRequest *message_types.AnalyzeRequest) []*message_types.AnalyzeResult
 
-type sendResultFunc func(results []*message_types.AnalyzeResult)
+type sendResultFunc func(results []*message_types.AnalyzeResult, path string)
 
 // WalkFiles walks over the files in 'container' and executes fn func
 func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string, sendResultFunc sendResultFunc) error {
@@ -122,7 +122,10 @@ func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string
 
 		limit.Execute(func() {
 			result := fn(&a.cache, item, &analyzerObj, analyzeRequest)
-			sendResultFunc(result)
+			if len(result) > 0 {
+				sendResultFunc(result, item.URL().Path)
+			}
+
 		})
 		return err
 	})

@@ -138,7 +138,7 @@ func scanAndAnalyze(container stow.Container, testCache cache.Cache, serviceMock
 			return err
 		}
 
-		ScanAndAnalyze(&testCache, container, item, &serviceMock, analyzeRequest)
+		ScanAndAnalyze(&testCache, item, &serviceMock, analyzeRequest)
 		return nil
 	})
 

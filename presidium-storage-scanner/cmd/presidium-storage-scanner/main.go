@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -90,7 +91,7 @@ func main() {
 		return
 	}
 
-	err = storageAPI.WalkFiles(container, scanner.ScanAndAnalyze, analyzeKey, SendAnalyzeResult)
+	err = storageAPI.WalkFiles(container, scanner.ScanAndAnalyze, analyzeKey, sendAnalyzeResult)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -121,11 +122,11 @@ func init() {
 	}
 
 	if grpcPort == "" {
-		// Set to deafult
+		// Set to default
 		grpcPort = "5000"
 	}
 
-	databinderService, err = rpc.SetupDataBinderService(fmt.Sprintf("http://localhost/%s", grpcPort))
+	databinderService, err = rpc.SetupDataBinderService(fmt.Sprintf("localhost:%s", grpcPort))
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Connection to databinder service failed %q", err))
 	}
@@ -151,14 +152,22 @@ func validateS3Connection(s3AccessKeyID string, s3SecretKey string, s3Region str
 	}
 }
 
-func SendAnalyzeResult(result []*message_types.AnalyzeResponse) {
+func sendAnalyzeResult(results []*message_types.AnalyzeResult, path string) {
 	srv := *databinderService
 
-	databinderRequest := &message_types.DatabinderRequest{}
-
-	analyzeResponse, err := srv.Apply(c, analyzeRequest)
-	if err != nil {
-		return nil, err
+	for _, element := range results {
+		// Remove PII from results
+		element.Text = ""
 	}
 
+	databinderRequest := &message_types.DatabinderRequest{
+		AnalyzeResults: results,
+		Path:           path,
+	}
+
+	databinderResponse, err := srv.Apply(context.Background(), databinderRequest)
+	if err != nil {
+		log.Println("ERROR:", err)
+	}
+	log.Println(databinderResponse)
 }
