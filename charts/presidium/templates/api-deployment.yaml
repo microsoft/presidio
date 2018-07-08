@@ -17,7 +17,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.api.registry }}/{{ .Values.api.name }}:{{ default .Chart.AppVersion .Values.api.tag }}"
-        imagePullPolicy: {{ default "IfNotPresent" .Values.api.pullPolicy }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.api.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.api.service.internalPort }}
         livenessProbe:
@@ -44,7 +44,7 @@ spec:
       initContainers:
       - name: "{{ .Chart.Name }}-registrator"
         image: "{{ .Values.registrator.registry }}/{{ .Values.registrator.name }}:{{ default .Chart.AppVersion .Values.registrator.tag }}"
-        imagePullPolicy: {{ default "IfNotPresent" .Values.registrator.pullPolicy }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.registrator.imagePullPolicy }}
         env:
           - name: CONSUL_HTTP_ADDR
             value: {{ .Values.consul.service}}

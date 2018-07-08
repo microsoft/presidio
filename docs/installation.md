@@ -18,15 +18,22 @@ $ helm install --name redis stable/redis --set usePassword=false --namespace pre
 
 5. Install [Traefik](https://github.com/kubernetes/charts/tree/master/stable/traefik) (Ingress controller for Presidium API)
 ```
-helm install --name traefik --set rbac.enabled=true stable/traefik --version 1.33.1 --namespace kube-system
+$ helm install --name traefik --set rbac.enabled=true stable/traefik --version 1.33.1 --namespace kube-system
 ```
 
 6. Verify that consul, Redis Traefik and Istio are installed correctly
 
-7. Deploy
-
+7. Create namespace and label it
 ```
 $ kubectl create namespace presidium
 $ kubectl label namespace presidium istio-injection=enabled
+```
+
+8. Deploy 
+```
 $ kubectl apply -f /deployment/presidium.yaml --namespace presidium
+```
+or from `/charts/presidium`
+```
+$ helm install --name presidium-demo . --namespace presidium
 ```

@@ -14,11 +14,10 @@ spec:
       labels:
         app: {{ template "presidium.fullname" . }}-analyzer
     spec:
-      serviceAccountName: {{ template "presidium.analyzer.fullname" . }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.analyzer.registry }}/{{ .Values.analyzer.name }}:{{ default .Chart.AppVersion .Values.analyzer.tag }}"
-        imagePullPolicy: {{ default "IfNotPresent" .Values.analyzer.pullPolicy }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.analyzer.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.analyzer.service.internalPort }}
         env:

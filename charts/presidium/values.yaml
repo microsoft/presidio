@@ -2,7 +2,10 @@ rbac:
   enabled: false
 
 consul:
-  service: consul-consul.consul:8500
+  service: consul.presidium-system.svc.cluster.local:8500
+
+ingress:
+  class: traefik
 
 api:
   registry: presidiumio
@@ -10,8 +13,8 @@ api:
   # tag:
   service:
     name: presidium-api
-    type: LoadBalancer
-    externalPort: 80
+    type: ClusterIP
+    externalPort: 8080
     internalPort: 8080
   # Configure liveness probes except `httpGet` and the belongings
   #livenessProbe:
@@ -24,6 +27,7 @@ registrator:
   registry: presidiumio
   name: presidium-registrator
   # tag:
+  imagePullPolicy: Always
   redis:
     host: redis-master
     port: 6379
@@ -32,6 +36,7 @@ analyzer:
   registry: presidiumio
   name: presidium-analyzer
   # tag:
+  imagePullPolicy: Always
   service:
     name: presidium-analyzer
     type: ClusterIP
@@ -42,6 +47,7 @@ anonymizer:
   registry: presidiumio
   name: presidium-anonymizer
   # tag:
+  imagePullPolicy: Always
   service:
     name: presidium-anonymizer
     type: ClusterIP
@@ -51,6 +57,7 @@ anonymizer:
 scheduler:
   registry: presidiumio
   name: presidium-scheduler
+  imagePullPolicy: Always
   # tag:
   service:
     name: presidium-scheduler
