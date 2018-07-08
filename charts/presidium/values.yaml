@@ -12,7 +12,6 @@ api:
   name: presidium-api
   # tag:
   service:
-    name: presidium-api
     type: ClusterIP
     externalPort: 8080
     internalPort: 8080
@@ -38,7 +37,6 @@ analyzer:
   # tag:
   imagePullPolicy: Always
   service:
-    name: presidium-analyzer
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
@@ -49,7 +47,6 @@ anonymizer:
   # tag:
   imagePullPolicy: Always
   service:
-    name: presidium-anonymizer
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
@@ -60,7 +57,6 @@ scheduler:
   imagePullPolicy: Always
   # tag:
   service:
-    name: presidium-scheduler
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001

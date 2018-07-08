@@ -53,11 +53,11 @@ spec:
           - name: REDIS_PORT
             value: {{ .Values.registrator.redis.port | quote }}
           - name: ANALYZER_SVC_HOST
-            value: {{ .Values.analyzer.service.name}}
+            value:  {{ template "presidium.analyzer.fullname" . }}
           - name: ANALYZER_SVC_PORT
             value: {{ .Values.analyzer.service.externalPort | quote }}
           - name: ANONYMIZER_SVC_HOST
-            value: {{ .Values.anonymizer.service.name}}
+            value:  {{ template "presidium.anonymizer.fullname" . }}
           - name: ANONYMIZER_SVC_PORT
             value: {{ .Values.anonymizer.service.externalPort | quote }}
     {{ if .Values.privateRegistry }}imagePullSecrets:
