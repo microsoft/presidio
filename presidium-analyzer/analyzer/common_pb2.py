@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='common.proto',
   package='types',
   syntax='proto3',
-  serialized_pb=_b('\n\x0c\x63ommon.proto\x12\x05types\"0\n\nFieldTypes\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x14\n\x0clanguageCode\x18\x02 \x01(\t\"w\n\rAnalyzeResult\x12\x0c\n\x04text\x18\x01 \x01(\t\x12 \n\x05\x66ield\x18\x02 \x01(\x0b\x32\x11.types.FieldTypes\x12\x13\n\x0bprobability\x18\x03 \x01(\x02\x12!\n\x08location\x18\x04 \x01(\x0b\x32\x0f.types.Location\"k\n\x08Location\x12\r\n\x05start\x18\x01 \x01(\x11\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x11\x12\x0e\n\x06length\x18\x03 \x01(\x11\x12\x10\n\x08newStart\x18\x04 \x01(\x11\x12\x0e\n\x06newEnd\x18\x05 \x01(\x11\x12\x11\n\tnewLength\x18\x06 \x01(\x11*\xb4\x01\n\x0e\x46ieldTypesEnum\x12\x0f\n\x0b\x43REDIT_CARD\x10\x00\x12\n\n\x06\x43RYPTO\x10\x01\x12\r\n\tDATE_TIME\x10\x02\x12\x0f\n\x0b\x44OMAIN_NAME\x10\x03\x12\x11\n\rEMAIL_ADDRESS\x10\x04\x12\r\n\tIBAN_CODE\x10\x05\x12\x0e\n\nIP_ADDRESS\x10\x06\x12\x07\n\x03NRP\x10\x07\x12\x0c\n\x08LOCATION\x10\x08\x12\n\n\x06PERSON\x10\t\x12\x10\n\x0cPHONE_NUMBER\x10\nb\x06proto3')
+  serialized_pb=_b('\n\x0c\x63ommon.proto\x12\x05types\"0\n\nFieldTypes\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x14\n\x0clanguageCode\x18\x02 \x01(\t\"w\n\rAnalyzeResult\x12\x0c\n\x04text\x18\x01 \x01(\t\x12 \n\x05\x66ield\x18\x02 \x01(\x0b\x32\x11.types.FieldTypes\x12\x13\n\x0bprobability\x18\x03 \x01(\x02\x12!\n\x08location\x18\x04 \x01(\x0b\x32\x0f.types.Location\"k\n\x08Location\x12\r\n\x05start\x18\x01 \x01(\x11\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x11\x12\x0e\n\x06length\x18\x03 \x01(\x11\x12\x10\n\x08newStart\x18\x04 \x01(\x11\x12\x0e\n\x06newEnd\x18\x05 \x01(\x11\x12\x11\n\tnewLength\x18\x06 \x01(\x11*\x89\x02\n\x0e\x46ieldTypesEnum\x12\x0f\n\x0b\x43REDIT_CARD\x10\x00\x12\n\n\x06\x43RYPTO\x10\x01\x12\r\n\tDATE_TIME\x10\x02\x12\x0f\n\x0b\x44OMAIN_NAME\x10\x03\x12\x11\n\rEMAIL_ADDRESS\x10\x04\x12\r\n\tIBAN_CODE\x10\x05\x12\x0e\n\nIP_ADDRESS\x10\x06\x12\x07\n\x03NRP\x10\x07\x12\x0c\n\x08LOCATION\x10\x08\x12\n\n\x06PERSON\x10\t\x12\x10\n\x0cPHONE_NUMBER\x10\n\x12\x12\n\x0eUS_BANK_NUMBER\x10\x0b\x12\x15\n\x11US_DRIVER_LICENSE\x10\x0c\x12\x0b\n\x07US_ITIN\x10\r\x12\x0f\n\x0bUS_PASSPORT\x10\x0e\x12\n\n\x06US_SSN\x10\x0f\x62\x06proto3')
 )
 
 _FIELDTYPESENUM = _descriptor.EnumDescriptor(
@@ -73,11 +73,31 @@ _FIELDTYPESENUM = _descriptor.EnumDescriptor(
       name='PHONE_NUMBER', index=10, number=10,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='US_BANK_NUMBER', index=11, number=11,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='US_DRIVER_LICENSE', index=12, number=12,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='US_ITIN', index=13, number=13,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='US_PASSPORT', index=14, number=14,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='US_SSN', index=15, number=15,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
   serialized_start=304,
-  serialized_end=484,
+  serialized_end=569,
 )
 _sym_db.RegisterEnumDescriptor(_FIELDTYPESENUM)
 
@@ -93,6 +113,11 @@ NRP = 7
 LOCATION = 8
 PERSON = 9
 PHONE_NUMBER = 10
+US_BANK_NUMBER = 11
+US_DRIVER_LICENSE = 12
+US_ITIN = 13
+US_PASSPORT = 14
+US_SSN = 15
 
 
 

@@ -77,6 +77,7 @@ class Matcher(object):
             for match in re.finditer(
                     check_type_value,
                     doc.text,
+                    flags=re.IGNORECASE | re.DOTALL | re.MULTILINE,
                     overlapped=False,
                     partial=False,
                     concurrent=True):
@@ -88,14 +89,17 @@ class Matcher(object):
                 if current_field.text == '':
                     continue
 
-                res = self.__create_result(doc, current_field, start, end)
-                if res is None or res.probability == 0:
-                    continue
-
                 # Don't add duplicate
                 if len(current_field.regexes) > 1 and any(
-                        x.location.start == start and x.text == res.text
+                        ((x.location.start == start) or (
+                            x.location.end == end)) and
+                        ((x.text == current_field.text) or (
+                            x.field.name == current_field.name))
                         for x in results):
+                    continue
+
+                res = self.__create_result(doc, current_field, start, end)
+                if res is None or res.probability == 0:
                     continue
 
                 # Don't add overlap
