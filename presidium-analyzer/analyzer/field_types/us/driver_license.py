@@ -27,7 +27,7 @@ class UsDriverLicense(field_type.FieldType):
         'AZ': r'[a-z][0-9]{8}\b|[0-9]{9}\b',
         'AR': r'[0-9]{4,9}\b',
         'CA': r'[a-z]{1}[0-9]{7}\b',
-        'CO': r'[0-9]{9}\b|[a-z]{1}[0-9]{3,6}\b|[a-z]{2,2}[0-9]{2,5}\b',
+        'CO': r'[0-9]{9}\b|[a-z]{1}[0-9]{3,6}\b|[a-z]{2}[0-9]{2,5}\b',
         'CT': r'[0-9]{9}\b',
         'DE': r'[0-9]{1,7}\b',
         'DC': r'[0-9]{7}\b|[0-9]{9}\b',
@@ -81,6 +81,8 @@ class UsDriverLicense(field_type.FieldType):
         # use cases
         new_regexes = dict()
         for regex in self.regexes.values():
-            if regex not in new_regexes.values():
-                new_regexes[str(len(new_regexes) + 1)] = regex
-        regexes = new_regexes
+            splitted = regex.split('|')
+            for split in splitted:
+                if split not in new_regexes.values():
+                    new_regexes[str(len(new_regexes) + 1)] = split
+        self.regexes = new_regexes
