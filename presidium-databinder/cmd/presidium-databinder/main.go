@@ -51,6 +51,7 @@ func main() {
 	// err = helper.ConvertJSONToInterface(template, analyzeRequest)
 
 	// foreach databinder -  init DB
+	initDatabase()
 	databinderArray = append(databinderArray, databinder{Name: "mysql", ConnectionStringK8sKey: ""})
 
 	// Listen for client requests

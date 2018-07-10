@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/presidium-io/stow"
+
 	message_types "github.com/presidium-io/presidium-genproto/golang"
 	c "github.com/presidium-io/presidium/pkg/cache"
 	"github.com/presidium-io/presidium/pkg/modules/analyzer"
-	"github.com/presidium-io/stow"
 )
 
 // ScanAndAnalyze checks if the file needs to be scanned.
@@ -20,7 +21,7 @@ func ScanAndAnalyze(cache *c.Cache, item stow.Item,
 	var err error
 	var val, fileContent, etag string
 
-	// // Check if file type supported
+	// Check if file type supported
 	// ext := filepath.Ext(item.Name())
 
 	// if ext != ".txt" && ext != ".csv" && ext != ".json" && ext != ".tsv" {
@@ -60,11 +61,6 @@ func ScanAndAnalyze(cache *c.Cache, item stow.Item,
 		for _, r := range results.AnalyzeResults {
 			log.Println(fmt.Sprintf("Found: %q, propability: %f, Location: start:%d end:%d length:%d",
 				r.Field, r.Probability, r.Location.Start, r.Location.End, r.Location.Length))
-		}
-
-		err = (*cache).Set(etag, item.Name())
-		if err != nil {
-			log.Println("ERROR:", err)
 		}
 
 		return results.AnalyzeResults
