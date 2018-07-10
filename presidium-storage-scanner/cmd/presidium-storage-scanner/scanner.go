@@ -1,4 +1,4 @@
-package storageScanner
+package main
 
 import (
 	"bytes"
@@ -6,16 +6,15 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/presidium-io/stow"
-
 	message_types "github.com/presidium-io/presidium-genproto/golang"
-	"github.com/presidium-io/presidium/pkg/cache"
-	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
+	c "github.com/presidium-io/presidium/pkg/cache"
+	"github.com/presidium-io/presidium/pkg/modules/analyzer"
+	"github.com/presidium-io/stow"
 )
 
 // ScanAndAnalyze checks if the file needs to be scanned.
 // Then sends it to the analyzer and updates the cache that it was scanned.
-func ScanAndAnalyze(cache *cache.Cache, item stow.Item,
+func ScanAndAnalyze(cache *c.Cache, item stow.Item,
 	analyzerModule *analyzer.Analyzer,
 	analyzeRequest *message_types.AnalyzeRequest) []*message_types.AnalyzeResult {
 	var err error

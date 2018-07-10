@@ -31,3 +31,7 @@ func (c *mockCache) Get(key string) (string, error) {
 
 	return "", nil
 }
+
+func (c *mockCache) Delete(key string) {
+	delete(c.c, key)
+}

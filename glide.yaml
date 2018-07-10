@@ -1,5 +1,7 @@
 package: github.com/presidium-io/presidium
 import:
+- package: cloud.google.com/go
+  version: ^0.24.0
 - package: github.com/gin-contrib/zap
 - package: github.com/gin-contrib/cors
 - package: github.com/gin-gonic/gin

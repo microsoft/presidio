@@ -10,29 +10,23 @@ import (
 	"github.com/presidium-io/stow/azure"
 	"github.com/presidium-io/stow/s3"
 
-	message_types "github.com/presidium-io/presidium-genproto/golang"
 	"github.com/presidium-io/presidium/pkg/cache"
-	"github.com/presidium-io/presidium/pkg/kv/consul"
 	"github.com/presidium-io/presidium/pkg/logger"
-	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
-	templates "github.com/presidium-io/presidium/pkg/templates"
 )
 
 //API storage
 type API struct {
 	cache    cache.Cache
 	location stow.Location
-	// TODO: need to refactor so storage won't be coupled with the analyzed service
-	analyzeService *message_types.AnalyzeServiceClient
 }
 
 //New storage
-func New(c cache.Cache, kind string, config stow.Config, analyzeService *message_types.AnalyzeServiceClient) (*API, error) {
+func New(c cache.Cache, kind string, config stow.Config) (*API, error) {
 	location, err := stow.Dial(kind, config)
 	if err != nil {
 		return &API{}, err
 	}
-	return &API{cache: c, location: location, analyzeService: analyzeService}, nil
+	return &API{cache: c, location: location}, nil
 }
 
 //CreateS3Config create S3 configuration
@@ -99,33 +93,20 @@ func (a *API) ListObjects(container string) error {
 	return err
 }
 
-type walkFunc func(cache *cache.Cache, item stow.Item, analyzer *analyzer.Analyzer,
-	analyzeRequest *message_types.AnalyzeRequest) []*message_types.AnalyzeResult
-
-type sendResultFunc func(results []*message_types.AnalyzeResult, path string)
+// walkFunc contain the logic that need to be implemented on each of the items in the container
+type walkFunc func(item stow.Item)
 
 // WalkFiles walks over the files in 'container' and executes fn func
-func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string, sendResultFunc sendResultFunc) error {
+func (a *API) WalkFiles(container stow.Container, walkFunc walkFunc) error {
 	limit := limiter.NewConcurrencyLimiter(10)
-	t := templates.New(consul.New())
-	analyzerObj := analyzer.New(a.analyzeService)
-	analyzeRequest, err := analyzer.GetAnalyzeRequest(t, analyzeKey)
 
-	if err != nil {
-		return err
-	}
-
-	err = stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
+	err := stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
 		if err != nil {
 			return err
 		}
 
 		limit.Execute(func() {
-			result := fn(&a.cache, item, &analyzerObj, analyzeRequest)
-			if len(result) > 0 {
-				sendResultFunc(result, item.URL().Path)
-			}
-
+			walkFunc(item)
 		})
 		return err
 	})

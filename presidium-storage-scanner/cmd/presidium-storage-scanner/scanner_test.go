@@ -1,8 +1,9 @@
-package storageScanner
+package main
 
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -10,13 +11,14 @@ import (
 
 	"github.com/presidium-io/stow"
 	"github.com/stretchr/testify/mock"
+	"google.golang.org/grpc"
 
 	"github.com/stretchr/testify/assert"
 
 	message_types "github.com/presidium-io/presidium-genproto/golang"
-	"github.com/presidium-io/presidium/pkg/cache"
+	c "github.com/presidium-io/presidium/pkg/cache"
 	cache_mock "github.com/presidium-io/presidium/pkg/cache/mock"
-	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
+	"github.com/presidium-io/presidium/pkg/modules/analyzer"
 	"github.com/presidium-io/presidium/pkg/storage"
 )
 
@@ -24,6 +26,8 @@ var (
 	// Azure emulator connection string
 	storageName = "devstoreaccount1"
 	storageKey  = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+	testCache   c.Cache
+	serviceMock analyzer.Analyzer
 )
 
 type MyMockedObject struct {
@@ -36,27 +40,26 @@ func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *messag
 	return y, args.Error(1)
 }
 
+func (m *MyMockedObject) Apply(ctx context.Context, in *message_types.DatabinderRequest, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+	args := m.Mock.Called()
+	var result *message_types.DatabinderResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*message_types.DatabinderResponse)
+	}
+	return result, args.Error(1)
+}
+
 func TestAzureScanAndAnalyze(t *testing.T) {
-	var testCache = cache_mock.New()
+	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
-	content := "Please call me. My phone number is (555) 253-0000."
-	var analyzeService *message_types.AnalyzeServiceClient
-
 	analyzerObj := &MyMockedObject{}
-	var serviceMock analyzer.Analyzer = analyzerObj
+	serviceMock = analyzerObj
 	analyzerObj.On("InvokeAnalyze", mock.Anything, mock.Anything, mock.Anything).Return(getAnalyzerMockResult(), nil)
 
-	api, _ := storage.New(testCache, kind, config, analyzeService)
-
-	container, err := api.CreateContainer("test")
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	// Add data to
-	md1 := map[string]interface{}{"stowmetadata": "foo"}
-	container.Put("file1.txt", strings.NewReader(content), int64(len(content)), md1)
+	api, _ := storage.New(testCache, kind, config)
+	container := createContainer(api)
+	putItem("file1.txt", container, api)
 
 	// Set log output
 	var buf bytes.Buffer
@@ -66,11 +69,11 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	}()
 
 	// Act
-	scanAndAnalyze(container, testCache, serviceMock)
+	api.WalkFiles(container, scanFile)
 
 	// validate output
 	assert.Contains(t, buf.String(), "Found: \"name:\\\"PHONE_NUMBER\\\" \", propability: 1.000000, Location: start:153 end:163 length:10")
-	scanAndAnalyze(container, testCache, serviceMock)
+	api.WalkFiles(container, scanFile)
 	assert.Contains(t, buf.String(), "Item was already scanned file1.txt")
 
 	// test cleanup
@@ -78,23 +81,16 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 }
 
 func TestFileExtension(t *testing.T) {
-	var testCache = cache_mock.New()
+	// Setup
+	testCache := cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
-	var analyzeService *message_types.AnalyzeServiceClient
 	analyzerObj := &MyMockedObject{}
-	var serviceMock analyzer.Analyzer = analyzerObj
+	serviceMock = analyzerObj
 
-	api, _ := storage.New(testCache, kind, config, analyzeService)
-
-	container, err := api.CreateContainer("test")
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	// Add data to
-	md1 := map[string]interface{}{"stowmetadata": "foo"}
-	container.Put("file1.jpg", strings.NewReader("content"), int64(len("content")), md1)
+	api, _ := storage.New(testCache, kind, config)
+	container := createContainer(api)
+	putItem("file1.jpg", container, api)
 
 	// Set log output
 	var buf bytes.Buffer
@@ -104,13 +100,36 @@ func TestFileExtension(t *testing.T) {
 	}()
 
 	// Act
-	scanAndAnalyze(container, testCache, serviceMock)
+	api.WalkFiles(container, scanFile)
 
-	// validate output
+	// Assert
 	assert.Contains(t, buf.String(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
 
 	// test cleanup
 	api.RemoveContainer("test")
+}
+
+func TestSendResultToDataBinder(t *testing.T) {
+	// Setup
+	testCache = cache_mock.New()
+	kind, config := storage.CreateAzureConfig(storageName, storageKey)
+	api, _ := storage.New(testCache, kind, config)
+
+	container := createContainer(api)
+	item := putItem("file1.jpg", container, api)
+
+	etag, _ := item.ETag()
+	testCache.Set(etag, item.Name())
+	dataBinderSrv := &MyMockedObject{}
+	var databinderMock message_types.DatabinderServiceClient = dataBinderSrv
+	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, fmt.Errorf("some error"))
+
+	// Actk
+	sendResultToDataBinder(item, getAnalyzerMockResult().AnalyzeResults, testCache, &databinderMock)
+
+	// Assert
+	val, _ := testCache.Get(etag)
+	assert.Empty(t, val)
 }
 
 func getAnalyzerMockResult() *message_types.AnalyzeResponse {
@@ -131,19 +150,27 @@ func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 	return response
 }
 
-func scanAndAnalyze(container stow.Container, testCache cache.Cache, serviceMock analyzer.Analyzer) {
+func scanFile(item stow.Item) {
 	var analyzeRequest *message_types.AnalyzeRequest
-	err := stow.Walk(container, stow.CursorStart, 100, func(item stow.Item, err error) error {
-		if err != nil {
-			return err
-		}
+	ScanAndAnalyze(&testCache, item, &serviceMock, analyzeRequest)
+}
 
-		ScanAndAnalyze(&testCache, item, &serviceMock, analyzeRequest)
-		return nil
-	})
-
+func createContainer(api *storage.API) stow.Container {
+	container, err := api.CreateContainer("test")
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
+	return container
+}
+
+func putItem(itemName string, container stow.Container, api *storage.API) stow.Item {
+	content := "Please call me. My phone number is (555) 253-0000."
+
+	// Add data to
+	md1 := map[string]interface{}{"stowmetadata": "foo"}
+	item, err := container.Put(itemName, strings.NewReader(content), int64(len(content)), md1)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return item
 }
