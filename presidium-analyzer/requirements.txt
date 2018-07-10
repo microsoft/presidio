@@ -4,3 +4,4 @@ grpcio
 grpcio-tools
 futures
 regex
+validators

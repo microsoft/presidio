@@ -1,11 +1,8 @@
 import logging
 import regex as re
-
 import en_core_web_sm
-
 import common_pb2
 import template_pb2
-
 from field_types import field_type, types
 from field_types.globally import ner
 
@@ -16,7 +13,7 @@ class Matcher(object):
         Load spacy model once
         """
 
-        self.nlp = en_core_web_sm.load()
+        self.nlp = en_core_web_sm.load(disable=['parser', 'tagger', 'textcat'])
 
     def __calculate_probability(self, doc, current_field, start):
 
@@ -56,7 +53,7 @@ class Matcher(object):
 
         # Validate checksum
         if current_field.should_check_checksum:
-            if current_field.check_checksum() is False:
+            if current_field.check_checksum() is not True:
                 logging.info("Checksum failed for " + current_field.text)
                 return None
             else:

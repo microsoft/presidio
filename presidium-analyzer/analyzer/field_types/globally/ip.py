@@ -2,7 +2,7 @@ from field_types import field_type
 
 
 class Ip(field_type.FieldType):
-    name = "IP"
+    name = "IP_ADDRESS"
     context = ["ip", "ipv4", "ipv6"]
     regexes = {
         "ipv4":

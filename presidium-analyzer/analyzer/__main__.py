@@ -17,8 +17,9 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def Apply(self, request, context):
         response = analyze_pb2.AnalyzeResponse()
-        response.analyzeResults.extend(
-            self.match.analyze_text(request.text, request.analyzeTemplate.fields))
+        results = self.match.analyze_text(
+            request.text, request.analyzeTemplate.fields)
+        response.analyzeResults.extend(results)
         return response
 
 

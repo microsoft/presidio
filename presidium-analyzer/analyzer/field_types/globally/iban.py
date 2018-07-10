@@ -3,7 +3,7 @@ from field_types import field_type
 
 
 class Iban(field_type.FieldType):
-    name = "IBAN"
+    name = "IBAN_CODE"
     context = ["iban"]
     should_check_checksum = True
     regexes = {

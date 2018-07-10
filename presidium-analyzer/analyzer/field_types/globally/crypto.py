@@ -12,21 +12,21 @@ class Crypto(field_type.FieldType):
         u'(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])'
     }
 
-    digits58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
     """Copied from:
     http://rosettacode.org/wiki/Bitcoin/address_validation#Python
     """
 
-    def __decode_base58(bc, length):
+    def __decode_base58(self, bc, length):
+        digits58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
         n = 0
         for char in bc:
             n = n * 58 + digits58.index(char)
         return n.to_bytes(length, 'big')
 
     def check_checksum(self):
-        try:
-            bcbytes = __decode_base58(self.text, 25)
-            return bcbytes[-4:] == sha256(sha256(
-                bcbytes[:-4]).digest()).digest()[:4]
-        except Exception:
-            return False
+        # try:
+        bcbytes = self.__decode_base58(self.text, 25)
+        return bcbytes[-4:] == sha256(sha256(
+            bcbytes[:-4]).digest()).digest()[:4]
+        # except Exception:
+        #    return False
