@@ -8,7 +8,7 @@ ingress:
   class: traefik
 
 api:
-  registry: presidioio
+  registry: praesidio
   name: presidio-api
   # tag:
   service:
@@ -23,7 +23,7 @@ api:
   #  initialDelaySeconds: 20
 
 registrator:
-  registry: presidioio
+  registry: praesidio
   name: presidio-registrator
   # tag:
   imagePullPolicy: Always
@@ -32,7 +32,7 @@ registrator:
     port: 6379
 
 analyzer:
-  registry: presidioio
+  registry: praesidio
   name: presidio-analyzer
   # tag:
   imagePullPolicy: Always
@@ -42,7 +42,7 @@ analyzer:
     internalPort: 3001
 
 anonymizer:
-  registry: presidioio
+  registry: praesidio
   name: presidio-anonymizer
   # tag:
   imagePullPolicy: Always
@@ -52,7 +52,7 @@ anonymizer:
     internalPort: 3001
 
 scheduler:
-  registry: presidioio
+  registry: praesidio
   name: presidio-scheduler
   imagePullPolicy: Always
   # tag:

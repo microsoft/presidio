@@ -76,7 +76,7 @@ spec:
     spec:
       containers:
       - name: presidio
-        image: "presidioio/presidio-analyzer:unstable"
+        image: "praesidio/presidio-analyzer:unstable"
         imagePullPolicy: Always
         ports:
         - containerPort: 3001
@@ -105,7 +105,7 @@ spec:
     spec:
       containers:
       - name: presidio
-        image: "presidioio/presidio-anonymizer:unstable"
+        image: "praesidio/presidio-anonymizer:unstable"
         imagePullPolicy: Always
         ports:
         - containerPort: 3001
@@ -134,7 +134,7 @@ spec:
     spec:
       containers:
       - name: presidio
-        image: "presidioio/presidio-api:unstable"
+        image: "praesidio/presidio-api:unstable"
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -160,7 +160,7 @@ spec:
       
       initContainers:
       - name: "presidio-registrator"
-        image: "presidioio/presidio-registrator:unstable"
+        image: "praesidio/presidio-registrator:unstable"
         imagePullPolicy: Always
         env:
           - name: CONSUL_HTTP_ADDR
