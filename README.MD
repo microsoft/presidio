@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/presid-io/presidio.svg?branch=development)](https://travis-ci.org/presid-io/presidio)
 
 
-# presidio - Data Loss Prevention API
+# Presidio - Data Loss Prevention API
 **A context aware, born to the cloud, customizable data loss prevention service**
 
 <p align="center">
@@ -10,8 +10,8 @@
 
 ## Description
 
-presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data. 
-presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
+Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data. 
+Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
 
 ## Features
 
@@ -39,7 +39,7 @@ presidio analyzes the text using predefined analyzers to identify patterns, form
 
 
 ## The Technology Stack
-presidio leverages 
+Presidio leverages 
 
 * [Kubernetes](https://kubernetes.io/)
 * [Consul](https://www.consul.io/)
@@ -49,13 +49,13 @@ presidio leverages
 * [GRPC](https://grpc.io)
 
 
-The [design document](/docs/design.md) introduces presidio concepts and architecture.
+The [design document](/docs/design.md) introduces Presidio concepts and architecture.
 
 ## Quickstart
 
-1. Install [presidio](docs/installation.md)
-2. Create a presidio project
-3. Start using the presidio analyze and anonymize services
+1. Install [Presidio](docs/installation.md)
+2. Create a Presidio project
+3. Start using the Presidio analyze and anonymize services
 
 
 **Note:** Examples are made with [HTTPie](https://httpie.org/)
