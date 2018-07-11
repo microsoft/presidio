@@ -6,7 +6,7 @@ import os
 
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD)
-types = []
+types = [fieldType]
 
 
 def test_valid_credit_card():
