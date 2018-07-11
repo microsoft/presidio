@@ -7,7 +7,7 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/presidium-io/presidium/pkg/logger"
+	"github.com/presid-io/presidio/pkg/logger"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -41,7 +41,7 @@ func CreateJob(namespace string, name string, image string, commands []string) {
 			Template: apiv1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"app": "presidium",
+						"app": "presidio",
 					},
 				},
 				Spec: apiv1.PodSpec{

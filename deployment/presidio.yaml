@@ -1,0 +1,181 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: presidio-ingress
+  namespace: presidio
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: presidio-api
+          servicePort: 3000
+---
+# Source: presidio/templates/analyzer-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: presidio-analyzer
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3001
+    targetPort: 3001
+    protocol: TCP
+    name: presidio-analyzer
+  selector:
+    app: presidio-analyzer
+---
+# Source: presidio/templates/anonymizer-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: presidio-anonymizer
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3001
+    targetPort: 3001
+    protocol: TCP
+    name: presidio-anonymizer
+  selector:
+    app: presidio-anonymizer
+---
+# Source: presidio/templates/api-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: presidio-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 8080
+    protocol: TCP
+    name: presidio-api
+  selector:
+    app: presidio-api
+---
+# Source: presidio/templates/analyzer-deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: presidio-analyzer
+  labels:
+    app: presidio-analyzer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: presidio-analyzer
+    spec:
+      containers:
+      - name: presidio
+        image: "presidioio/presidio-analyzer:unstable"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3001
+        env:
+          - name: presidio_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: GRPC_PORT
+            value: "3001"
+      
+---
+# Source: presidio/templates/anonymizer-deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: presidio-anonymizer
+  labels:
+    app: presidio-anonymizer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: presidio-anonymizer
+    spec:
+      containers:
+      - name: presidio
+        image: "presidioio/presidio-anonymizer:unstable"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3001
+        env:
+          - name: presidio_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: GRPC_PORT
+            value: "3001"
+      
+---
+# Source: presidio/templates/api-deployment.yaml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: presidio-api
+  labels:
+    app: presidio-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: presidio-api
+    spec:
+      containers:
+      - name: presidio
+        image: "presidioio/presidio-api:unstable"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+
+        env:
+          - name: presidio_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: WEB_PORT
+            value: "8080"
+          - name: CONSUL_HTTP_ADDR
+            value: consul.presidio-system.svc.cluster.local:8500
+      
+      initContainers:
+      - name: "presidio-registrator"
+        image: "presidioio/presidio-registrator:unstable"
+        imagePullPolicy: Always
+        env:
+          - name: CONSUL_HTTP_ADDR
+            value: consul.presidio-system.svc.cluster.local:8500
+          - name: REDIS_HOST
+            value: redis-master.presidio-system.svc.cluster.local
+          - name: REDIS_PORT
+            value: "6379"
+          - name: ANALYZER_SVC_HOST
+            value: presidio-analyzer
+          - name: ANALYZER_SVC_PORT
+            value: "3001"
+          - name: ANONYMIZER_SVC_HOST
+            value: presidio-anonymizer
+          - name: ANONYMIZER_SVC_PORT
+            value: "3001"
+    
+

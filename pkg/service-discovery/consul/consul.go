@@ -5,15 +5,15 @@ import (
 
 	"github.com/hashicorp/consul/api"
 
-	"github.com/presidium-io/presidium/pkg/logger"
-	sd "github.com/presidium-io/presidium/pkg/service-discovery"
+	"github.com/presid-io/presidio/pkg/logger"
+	sd "github.com/presid-io/presidio/pkg/service-discovery"
 )
 
 type consul struct {
 	sd *api.Client
 }
 
-const tag = "presidium"
+const tag = "presidio"
 
 //New service discovery store
 func New() sd.Store {

@@ -1,22 +1,22 @@
-# Presidium
+# presidio
 
 ## Installation - Kubernetes 1.9+ with RBAC
 
 1. Install [Helm](https://github.com/kubernetes/helm) with [RBAC](https://github.com/kubernetes/helm/blob/master/docs/rbac.md#tiller-and-role-based-access-control)
 
-2. Install [consul](https://hub.kubeapps.com/charts/stable/consul) (Presidium internal database and service discovery)
+2. Install [consul](https://hub.kubeapps.com/charts/stable/consul) (presidio internal database and service discovery)
 ```
-$ helm install --name consul stable/consul --namespace presidium-system
+$ helm install --name consul stable/consul --namespace presidio-system
 ```
 
 3. Install [Redis](https://hub.kubeapps.com/charts/stable/redis) (Cache for storage and database scanners)
 ```
-$ helm install --name redis stable/redis --set usePassword=false --namespace presidium-system
+$ helm install --name redis stable/redis --set usePassword=false --namespace presidio-system
 ```
 
-4. Install [Istio](https://istio.io/docs/setup/kubernetes/quick-start/#download-and-prepare-for-the-installation) (Service Mesh for Presidium services)
+4. Install [Istio](https://istio.io/docs/setup/kubernetes/quick-start/#download-and-prepare-for-the-installation) (Service Mesh for presidio services)
 
-5. Install [Traefik](https://github.com/kubernetes/charts/tree/master/stable/traefik) (Ingress controller for Presidium API)
+5. Install [Traefik](https://github.com/kubernetes/charts/tree/master/stable/traefik) (Ingress controller for presidio API)
 ```
 $ helm install --name traefik --set rbac.enabled=true stable/traefik --version 1.33.1 --namespace kube-system
 ```
@@ -25,15 +25,15 @@ $ helm install --name traefik --set rbac.enabled=true stable/traefik --version 1
 
 7. Create namespace and label it
 ```
-$ kubectl create namespace presidium
-$ kubectl label namespace presidium istio-injection=enabled
+$ kubectl create namespace presidio
+$ kubectl label namespace presidio istio-injection=enabled
 ```
 
 8. Deploy 
 ```
-$ kubectl apply -f /deployment/presidium.yaml --namespace presidium
+$ kubectl apply -f /deployment/presidio.yaml --namespace presidio
 ```
-or from `/charts/presidium`
+or from `/charts/presidio`
 ```
-$ helm install --name presidium-demo . --namespace presidium
+$ helm install --name presidio-demo . --namespace presidio
 ```

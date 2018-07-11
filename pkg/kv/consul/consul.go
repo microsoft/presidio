@@ -5,8 +5,8 @@ import (
 
 	"github.com/hashicorp/consul/api"
 
-	"github.com/presidium-io/presidium/pkg/kv"
-	"github.com/presidium-io/presidium/pkg/logger"
+	"github.com/presid-io/presidio/pkg/kv"
+	"github.com/presid-io/presidio/pkg/logger"
 )
 
 type consul struct {

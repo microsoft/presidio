@@ -6,16 +6,16 @@ import (
 	"strings"
 
 	"github.com/korovkin/limiter"
-	"github.com/presidium-io/stow"
-	"github.com/presidium-io/stow/azure"
-	"github.com/presidium-io/stow/s3"
+	"github.com/presid-io/stow"
+	"github.com/presid-io/stow/azure"
+	"github.com/presid-io/stow/s3"
 
-	message_types "github.com/presidium-io/presidium-genproto/golang"
-	"github.com/presidium-io/presidium/pkg/cache"
-	"github.com/presidium-io/presidium/pkg/kv/consul"
-	"github.com/presidium-io/presidium/pkg/logger"
-	analyzer "github.com/presidium-io/presidium/pkg/modules/analyzer"
-	templates "github.com/presidium-io/presidium/pkg/templates"
+	message_types "github.com/presid-io/presidio-genproto/golang"
+	"github.com/presid-io/presidio/pkg/cache"
+	"github.com/presid-io/presidio/pkg/kv/consul"
+	"github.com/presid-io/presidio/pkg/logger"
+	analyzer "github.com/presid-io/presidio/pkg/modules/analyzer"
+	templates "github.com/presid-io/presidio/pkg/templates"
 )
 
 //API storage

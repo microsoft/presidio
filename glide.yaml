@@ -1,4 +1,4 @@
-package: github.com/presidium-io/presidium
+package: github.com/presid-io/presidio
 import:
 - package: github.com/gin-contrib/zap
 - package: github.com/gin-contrib/cors
@@ -10,9 +10,9 @@ import:
   version: ^1.1.0
   subpackages:
   - proto
-- package: github.com/presidium-io/presidium-genproto
+- package: github.com/presid-io/presidio-genproto
 - package: github.com/Azure/azure-event-hubs-go
-- package: github.com/presidium-io/stow
+- package: github.com/presid-io/stow
   subpackages:
   - azure
   - aws

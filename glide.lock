@@ -1,10 +1,10 @@
-hash: 5a14d0d68ac9157d381d4fbd0c03273f6d01dafe5cd32231deba7021abdeb10f
-updated: 2018-07-06T08:20:28.073311+03:00
+hash: 795d511aa331324f7db52bf371594d9c8b09d8625c2e028dcce462cd586d0311
+updated: 2018-07-11T17:59:13.561426+03:00
 imports:
 - name: github.com/armon/go-metrics
   version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
 - name: github.com/aws/aws-sdk-go
-  version: 2a14182c3ceee916649d54eb2c16ebe8e57ee326
+  version: c01ebd0d48a4772fd28a0b684db0f36882dc995c
   subpackages:
   - aws
   - aws/awserr
@@ -37,7 +37,7 @@ imports:
   - service/s3
   - service/sts
 - name: github.com/Azure/azure-amqp-common-go
-  version: 8d02d4e77aba80165452199bb9bb24a82eb3b219
+  version: e05d7e9b03e1fd3a074d0f0b819bad445e3a0a69
   subpackages:
   - aad
   - auth
@@ -51,7 +51,7 @@ imports:
   - sas
   - uuid
 - name: github.com/Azure/azure-event-hubs-go
-  version: 2abafea1af288084b5b20bc9e251a3ed515dd411
+  version: fbff7e5d87fa647a80ea5059107c7309ac391b6c
   subpackages:
   - internal
   - mgmt
@@ -87,7 +87,7 @@ imports:
   - binding
   - render
 - name: github.com/go-ini/ini
-  version: cec2bdc49009247305a260b082a18e802d0fe292
+  version: af26abd521cd7697481572fdbc4a53cbea3dde1b
 - name: github.com/go-redis/redis
   version: 83fb42932f6145ce52df09860384a4653d2d332a
   subpackages:
@@ -175,12 +175,12 @@ imports:
   version: 5f041e8faa004a95c88a202771f4cc3e991971e6
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
-- name: github.com/presidium-io/presidium-genproto
-  version: 961f2f00b9b1e07fbd3dd1a328b17423d73db13b
+- name: github.com/presid-io/presidio-genproto
+  version: afb63f7061b60fd9699284c265c69af247f7deb8
   subpackages:
   - golang
-- name: github.com/presidium-io/stow
-  version: 4ea85bf8ccfef46b011f0b181ea3bcc05efc2900
+- name: github.com/presid-io/stow
+  version: 4a4bff6141dc5aa397f78bbc3096ffdd2be73ef3
   subpackages:
   - aws
   - azure
@@ -240,7 +240,7 @@ imports:
   subpackages:
   - rate
 - name: google.golang.org/genproto
-  version: ff3583edef7de132f219f0efc00e097cabcc0ec0
+  version: e92b116572682a5b432ddd840aeaba2a559eeff1
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc

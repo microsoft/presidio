@@ -1,14 +1,14 @@
-DOCKER_REGISTRY    ?= presidiumio
+DOCKER_REGISTRY    ?= presidioio
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidium-anonymizer presidium-api presidium-storage-scanner presidium-scheduler presidium-registrator
-IMAGES      = presidium-anonymizer presidium-api presidium-analyzer presidium-storage-scanner presidium-scheduler presidium-registrator
+BINS        = presidio-anonymizer presidio-api presidio-storage-scanner presidio-scheduler presidio-registrator
+IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-storage-scanner presidio-scheduler presidio-registrator
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
-PRESIDIUM_LABEL := $(if $(PRESIDIUM_LABEL),$(PRESIDIUM_LABEL),latest)
-LDFLAGS   += -X github.com/presidium-io/presidium/pkg/version.Version=$(VERSION)
+presidio_LABEL := $(if $(presidio_LABEL),$(presidio_LABEL),latest)
+LDFLAGS   += -X github.com/presid-io/presidio/pkg/version.Version=$(VERSION)
 
 CX_OSES = linux windows darwin
 CX_ARCHS = amd64
@@ -34,17 +34,17 @@ docker-build: build-docker-bins
 docker-build: $(addsuffix -image,$(IMAGES))
 
 %-image:
-	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIUM_LABEL) $*
+	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(presidio_LABEL) $*
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:
-	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIUM_LABEL)
+	docker push $(DOCKER_REGISTRY)/$*:$(presidio_LABEL)
 
 # Cross-compile binaries for our CX targets.
-# Mainly, this is for presidium-cross-compile
+# Mainly, this is for presidio-cross-compile
 %-cross-compile: vendor
 	@for os in $(CX_OSES); do \
 		echo "building $$os"; \
@@ -54,7 +54,7 @@ docker-push: $(addsuffix -push,$(IMAGES))
 	done
 
 .PHONY: build-release
-build-release: presidium-cross-compile
+build-release: presidio-cross-compile
 
 # All non-functional tests
 .PHONY: test
@@ -67,7 +67,7 @@ python-test: python-test-unit
 # Unit tests. Local only.
 .PHONY: python-test-unit
 python-test-unit: 
-	cd presidium-analyzer
+	cd presidio-analyzer
 	pytest --log-cli-level=0 
 
 # All non-functional go tests
@@ -93,7 +93,7 @@ go-test-style:
 
 .PHONY: go-format
 go-format:
-	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/presidium-io/presidium
+	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/presid-io/presidio
 
 make-docs: vendor
 	docker run --rm -v $(shell pwd)/docs:/out -v $(shell pwd)/pkg/types:/protos pseudomuto/protoc-gen-doc --doc_opt=markdown,proto.md

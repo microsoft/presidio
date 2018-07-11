@@ -1,0 +1,37 @@
+Welcome to the Data Loss Prevention Demo.
+
+Type or paste some text here to test the DLP API. Findings appear below.
+
+For example, strings like this one produce a PHONE_NUMBER finding:
+    "Please call me. My phone number is (555) 253-0000."
+
+Customizing:
+To choose classification categories, click "Info types" on the right.
+
+Certainty:
+Findings are ranked on a certainty scale of 0 (least certain) to 1 (most
+certain). The raw certainty number is provided for each finding:
+    Low (0.0 to 0.499)
+    Medium (0.5 to 0.799)
+    High (0.8 to 1)
+
+Low scores may introduce noise in the results, especially when a particular
+string matches multiple detectors. To limit the findings to high scores,
+select "High certainty" on the right.
+
+More examples:
+    Email address: foo@example.com
+    Credit card number: 4012-8888-8888-1881
+    National Provider Identifier: 1245319599
+    Drivers license: AC333991
+
+To show or hide this text, select "Welcome text" on the right.
+
+Note: This DLP API demo does not represent a final product from Google,
+and we make no warranty of any kind. Errors may occur. You are solely
+responsible for any action you may take in reliance on this demo.
+
+Data that you submit to the demo will remain in the browser until you close
+it. For classification, the data is sent to our API, which retains data only
+for processing and does not store data on persistent media. We may compile
+aggregate data, but such data is not associated with any particular user.

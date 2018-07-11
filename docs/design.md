@@ -1,7 +1,7 @@
-# Presidium design
+# presidio design
 
 _This is a living document, and is kept up to date with the current state of
-Presidium. It is a high-level explanation of the Presidium design._
+presidio. It is a high-level explanation of the presidio design._
 
 !![persidium design](https://user-images.githubusercontent.com/17064840/42417551-034ff1ea-8296-11e8-8913-002ed9904fab.png)
 

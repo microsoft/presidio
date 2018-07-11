@@ -1,0 +1,62 @@
+rbac:
+  enabled: false
+
+consul:
+  service: consul.presidio-system.svc.cluster.local:8500
+
+ingress:
+  class: traefik
+
+api:
+  registry: presidioio
+  name: presidio-api
+  # tag:
+  service:
+    type: ClusterIP
+    externalPort: 8080
+    internalPort: 8080
+  # Configure liveness probes except `httpGet` and the belongings
+  #livenessProbe:
+  #  initialDelaySeconds: 20
+  # Configure readiness probes except `httpGet` and the belongings
+  #readinessProbe:
+  #  initialDelaySeconds: 20
+
+registrator:
+  registry: presidioio
+  name: presidio-registrator
+  # tag:
+  imagePullPolicy: Always
+  redis:
+    host: redis-master
+    port: 6379
+
+analyzer:
+  registry: presidioio
+  name: presidio-analyzer
+  # tag:
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
+anonymizer:
+  registry: presidioio
+  name: presidio-anonymizer
+  # tag:
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
+scheduler:
+  registry: presidioio
+  name: presidio-scheduler
+  imagePullPolicy: Always
+  # tag:
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
