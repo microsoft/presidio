@@ -5,7 +5,7 @@
 **A context aware, born to the cloud, customizable data loss prevention service**
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/17064840/41805986-5a1c396a-76bc-11e8-986f-26dd73485e6c.png">
+<img width="200" alt="logo-presidio" src="https://user-images.githubusercontent.com/17064840/42585165-8fc7b820-853d-11e8-9450-4ce426fb5fe0.png">
 </p>
 
 ## Description
