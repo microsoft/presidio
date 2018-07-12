@@ -84,7 +84,7 @@ func main() {
 			}
 		}
 
-		writeToCache(item, cache)
+		writeItemToCache(item, cache)
 	})
 
 	if err != nil {
@@ -92,7 +92,7 @@ func main() {
 	}
 }
 
-func writeToCache(item stow.Item, cache cache.Cache) {
+func writeItemToCache(item stow.Item, cache cache.Cache) {
 	// If writing to databinder succeeded - update the cache
 	etag, err := item.ETag()
 	if err != nil {

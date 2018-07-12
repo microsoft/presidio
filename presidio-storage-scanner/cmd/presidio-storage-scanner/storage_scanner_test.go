@@ -70,7 +70,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 		assert.Equal(t, len(results), 1)
 		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
 		assert.Equal(t, results[0].Probability, 1.000000)
-		writeToCache(item, testCache)
+		writeItemToCache(item, testCache)
 	})
 
 	api.WalkFiles(container, func(item stow.Item) {

@@ -1,4 +1,4 @@
-package main
+package databaseBinder
 
 import (
 	"time"
@@ -6,10 +6,23 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
-
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	log "github.com/presid-io/presidio/pkg/logger"
+	"github.com/presid-io/presidio/pkg/modules/databinder"
 )
+
+type dBDataBinder struct {
+	driverName       string
+	connectionString string
+	engine           *xorm.Engine
+}
+
+// New returns new instance of DB Data writter
+func New(driverName string, connectionString string) databinder.DataBinder {
+	db := dBDataBinder{driverName: driverName, connectionString: connectionString}
+	db.Init()
+	return &db
+}
 
 // Analyze results table scheme
 type analyzerResult struct {
@@ -22,32 +35,28 @@ type analyzerResult struct {
 	Timestamp     time.Time `xorm:"created"`
 }
 
-var engine *xorm.Engine
-
-func initDatabase() {
+func (databinder *dBDataBinder) Init() {
 	var err error
 
 	// Connect to DB
-	engine, err = xorm.NewEngine(driverName, connectionString)
+	databinder.engine, err = xorm.NewEngine(databinder.driverName, databinder.connectionString)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	// Create table if not exists
-	//engine.DropTables(&analyzerResult{})
-	err = engine.CreateTables(&analyzerResult{})
+	err = databinder.engine.CreateTables(&analyzerResult{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
 }
 
 func (r *analyzerResult) TableName() string {
-	// TODO: CHANGE
-	return "users"
+	// TODO: CHANGE NAME
+	return "analyzerresults"
 }
 
-func writeResultsToDB(results []*message_types.AnalyzeResult, path string) error {
+func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}
 
 	for _, element := range results {
@@ -61,7 +70,7 @@ func writeResultsToDB(results []*message_types.AnalyzeResult, path string) error
 	}
 
 	// Add rows to table
-	_, err := engine.Insert(&analyzerResultArray)
+	_, err := databinder.engine.Insert(&analyzerResultArray)
 	if err != nil {
 		log.Error(err.Error())
 		return err

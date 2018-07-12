@@ -15,20 +15,17 @@ import (
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	"github.com/presid-io/presidio/pkg/kv/consul"
+	"github.com/presid-io/presidio/pkg/modules/databinder"
 	"github.com/presid-io/presidio/pkg/rpc"
+	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/database"
 )
-
-type databinder struct {
-	Name                   string
-	ConnectionStringK8sKey string
-}
 
 var (
 	grpcPort         = os.Getenv("GRPC_PORT")
 	driverName       string
 	connectionString string
 	template         *templates.Templates
-	databinderArray  []databinder
+	databinderArray  []*databinder.DataBinder
 )
 
 type server struct{}
@@ -42,17 +39,22 @@ func main() {
 	template = templates.New(consul.New())
 
 	// Get template key from env variable(???)
-	key := "???"
+	// key := "???"
 
-	// Load template from consul
-	template.GetTemplate(key)
+	// // Load template from consul
+	// t, err = template.GetTemplate(key)
 
 	// databinderRequest := &message_types.AnalyzeRequest{}
 	// err = helper.ConvertJSONToInterface(template, analyzeRequest)
 
-	// foreach databinder -  init DB
-	initDatabase()
-	databinderArray = append(databinderArray, databinder{Name: "mysql", ConnectionStringK8sKey: ""})
+	// foreach databinder -  init databinder
+
+	// TEMP VALUES!!!
+
+	if isDatabase(driverName) {
+		dbwritter := databaseBinder.New(driverName, connectionString)
+		databinderArray = append(databinderArray, &dbwritter)
+	}
 
 	// Listen for client requests
 	if err := s.Serve(lis); err != nil {
@@ -89,13 +91,10 @@ func (s *server) Apply(ctx context.Context, r *message_types.DatabinderRequest) 
 	var errstrings []string
 
 	for _, element := range databinderArray {
-		if isDatabase(element.Name) {
-			err := writeResultsToDB(r.AnalyzeResults, r.Path)
-			if err != nil {
-				errstrings = append(errstrings, err.Error())
-			}
+		err := (*element).WriteResults(r.AnalyzeResults, r.Path)
+		if err != nil {
+			errstrings = append(errstrings, err.Error())
 		}
-		// TODO: Add other outputs support
 	}
 
 	return nil, fmt.Errorf(strings.Join(errstrings, "\n"))

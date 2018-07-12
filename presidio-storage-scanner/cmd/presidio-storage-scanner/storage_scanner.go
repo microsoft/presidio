@@ -27,7 +27,7 @@ func ScanAndAnalyze(cache *c.Cache, item stow.Item,
 		return nil, fmt.Errorf("Expected: file extension txt, csv, json, tsv, received: %s", ext)
 	}
 
-	// Check if the item was scanned in the past (if it's in cache)
+	// Check if the item was scanned in the past (if it's in the cache)
 	etag, err = item.ETag()
 	if err != nil {
 		return nil, err
