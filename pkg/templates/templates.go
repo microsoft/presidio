@@ -3,9 +3,9 @@ package templates
 import (
 	"fmt"
 
-	message_types "github.com/presidium-io/presidium-genproto/golang"
-	helper "github.com/presidium-io/presidium/pkg/helper"
-	"github.com/presidium-io/presidium/pkg/kv"
+	message_types "github.com/presid-io/presidio-genproto/golang"
+	helper "github.com/presid-io/presidio/pkg/helper"
+	"github.com/presid-io/presidio/pkg/kv"
 )
 
 //Templates kv store

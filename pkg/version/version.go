@@ -1,4 +1,4 @@
 package version
 
-// Version is the current version of the Presidium suite of services.
+// Version is the current version of the presidio suite of services.
 var Version = ""

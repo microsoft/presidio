@@ -35,7 +35,7 @@ glide up -v
 ```
 ***Note you might need to delete the glide cache folder `~/.glide/cache`***
 
-6. Install the Python packages for the analyzer in the `presidium-analyzer` folder
+6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
 ```
 pip3 install -r requirements.txt
 ```
@@ -48,7 +48,7 @@ pip3 install -r requirements.txt
 
     * `https://grpc.io/docs/tutorials/basic/python.html`
 
-8. To generate proto files, clone [presidium-genproto](https://github.com/presidium-io/presidium-genproto) and run the following commands in `$GOPATH/src/github.com/presidium-io/presidium-genproto/src` folder
+8. To generate proto files, clone [presidio-genproto](https://github.com/presid-io/presidio-genproto) and run the following commands in `$GOPATH/src/github.com/presid-io/presidio-genproto/src` folder
 
 ```
 python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. ./*.proto

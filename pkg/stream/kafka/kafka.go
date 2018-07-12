@@ -5,8 +5,8 @@ import (
 
 	api "github.com/confluentinc/confluent-kafka-go/kafka"
 
-	"github.com/presidium-io/presidium/pkg/logger"
-	"github.com/presidium-io/presidium/pkg/stream"
+	"github.com/presid-io/presidio/pkg/logger"
+	"github.com/presid-io/presidio/pkg/stream"
 )
 
 type kafka struct {

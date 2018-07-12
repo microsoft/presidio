@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	log "github.com/presidium-io/presidium/pkg/logger"
+	log "github.com/presid-io/presidio/pkg/logger"
 )
 
 //SetupClient setup grpc listener

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	message_types "github.com/presidium-io/presidium-genproto/golang"
-	helper "github.com/presidium-io/presidium/pkg/helper"
-	t "github.com/presidium-io/presidium/pkg/templates"
+	message_types "github.com/presid-io/presidio-genproto/golang"
+	helper "github.com/presid-io/presidio/pkg/helper"
+	t "github.com/presid-io/presidio/pkg/templates"
 )
 
 // Analyzer interface for Invoking

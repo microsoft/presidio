@@ -1,0 +1,64 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "presidio.fullname" . }}-api
+  labels:
+    app: {{ template "presidio.fullname" . }}-api
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "presidio.fullname" . }}-api
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.api.registry }}/{{ .Values.api.name }}:{{ default .Chart.AppVersion .Values.api.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.api.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.api.service.internalPort }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.api.service.internalPort }}
+{{ if .Values.api.livenessProbe }}{{ toYaml .Values.api.livenessProbe | indent 10 }}{{ end }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.api.service.internalPort }}
+{{ if .Values.api.readinessProbe }}{{ toYaml .Values.api.readinessProbe | indent 10 }}{{ end }}
+        env:
+          - name: presidio_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: WEB_PORT
+            value: {{ .Values.api.service.internalPort | quote }}
+          - name: CONSUL_HTTP_ADDR
+            value: {{ .Values.consul.service}}
+      {{ if .Values.privateRegistry }}imagePullSecrets:
+        - name: {{.Values.privateRegistry}}{{ end }}
+      initContainers:
+      - name: "{{ .Chart.Name }}-registrator"
+        image: "{{ .Values.registrator.registry }}/{{ .Values.registrator.name }}:{{ default .Chart.AppVersion .Values.registrator.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.registrator.imagePullPolicy }}
+        env:
+          - name: CONSUL_HTTP_ADDR
+            value: {{ .Values.consul.service}}
+          - name: REDIS_HOST
+            value: {{ .Values.registrator.redis.host}}
+          - name: REDIS_PORT
+            value: {{ .Values.registrator.redis.port | quote }}
+          - name: ANALYZER_SVC_HOST
+            value:  {{ template "presidio.analyzer.fullname" . }}
+          - name: ANALYZER_SVC_PORT
+            value: {{ .Values.analyzer.service.externalPort | quote }}
+          - name: ANONYMIZER_SVC_HOST
+            value:  {{ template "presidio.anonymizer.fullname" . }}
+          - name: ANONYMIZER_SVC_PORT
+            value: {{ .Values.anonymizer.service.externalPort | quote }}
+    {{ if .Values.privateRegistry }}imagePullSecrets:
+        - name: {{.Values.privateRegistry}}{{ end }}

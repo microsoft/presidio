@@ -122,12 +122,12 @@ debug.test
 debug
 
 /bin/
-/presidium-anonymizer/rootfs/presidium-anonymizer
-/presidium-analyzer/rootfs/presidium-analyzer
-/presidium-api/rootfs/presidium-api
-/presidium-registrator/rootfs/presidium-registrator
-/presidium-storage-scanner/rootfs/presidium-storage-scanner
-/presidium-scheduler/rootfs/presidium-scheduler
+/presidio-anonymizer/rootfs/presidio-anonymizer
+/presidio-analyzer/rootfs/presidio-analyzer
+/presidio-api/rootfs/presidio-api
+/presidio-registrator/rootfs/presidio-registrator
+/presidio-storage-scanner/rootfs/presidio-storage-scanner
+/presidio-scheduler/rootfs/presidio-scheduler
 /tests/testdata/*-generated.*
 .DS_Store
 vendor/

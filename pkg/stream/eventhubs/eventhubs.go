@@ -6,8 +6,8 @@ import (
 
 	api "github.com/Azure/azure-event-hubs-go"
 
-	"github.com/presidium-io/presidium/pkg/logger"
-	"github.com/presidium-io/presidium/pkg/stream"
+	"github.com/presid-io/presidio/pkg/logger"
+	"github.com/presid-io/presidio/pkg/stream"
 )
 
 type eventhubs struct {

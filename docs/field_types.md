@@ -1,4 +1,5 @@
 <h1>Supported Fields</h1>
+<h2>Global</h2>
 <table>
   <tbody>
     <tr>
@@ -136,6 +137,75 @@
         </p>
       </td>
       <td>Custom logic, pattern match and context</td>
+    </tr>
+  </tbody>
+</table>
+<h2>USA</h2>
+<table>
+  <tbody>
+    <tr>
+      <th>FieldType</th>
+      <th>Description</th>
+      <th>Detection Method</th>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          <span>US_BANK_NUMBER</span>
+        </code>
+      </td>
+      <td>
+        <p>A
+          <em>US bank account number</em> is between 8 to 17 digits.</p>
+      </td>
+      <td>Pattern match and context</td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          <span>US_DRIVER_LICENSE</span>
+        </code>
+      </td>
+      <td>
+        <p>A
+          <em>US driver license</em>.  according to https://ntsi.com/drivers-license-format/</p>
+      </td>
+      <td>Pattern match and context</td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          <span>US_ITIN</span>
+        </code>
+      </td>
+      <td>
+        <p><em>US Individual Taxpayer Identification Number (ITIN).</em> Nine digits that start with a "9" and contain a "7" or "8" as the 4 digit.</p>
+      </td>
+      <td>Pattern match and context</td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          <span>US_PASSPORT</span>
+        </code>
+      </td>
+      <td>
+        <p>A
+          <em>US passport number</em> with 9 digits.</p>
+      </td>
+      <td>Pattern match and context</td>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          <span>US_SSN</span>
+        </code>
+      </td>
+      <td>
+        <p>An
+          <em>US Social Security Number (SSN)</em> with 9 digits<./p>
+      </td>
+      <td>Pattern match and context</td>
     </tr>
   </tbody>
 </table>

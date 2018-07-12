@@ -12,13 +12,13 @@ matrix:
       python:
         - "3.6"
       install:
-      - pip install -r presidium-analyzer/requirements.txt
+      - pip install -r presidio-analyzer/requirements.txt
       script:
       - make python-test
     - language: go
       go:
       - "1.10"
-      go_import_path: github.com/presidium-io/presidium
+      go_import_path: github.com/presid-io/presidio
       before_install:
       - git clone https://github.com/edenhill/librdkafka.git
       - cd librdkafka
@@ -36,26 +36,26 @@ matrix:
       - make go-test
       after_success:
       - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
-        export PRESIDIUM_LABEL="unstable";
+        export presidio_LABEL="unstable";
         fi
       - if [ "$TRAVIS_TAG" != "" ]; then
-        export PRESIDIUM_LABEL="$TRAVIS_TAG";
+        export presidio_LABEL="$TRAVIS_TAG";
         fi
       - echo $TRAVIS_PULL_REQUEST
       - echo $TRAVIS_BRANCH
-      - echo $PRESIDIUM_LABEL
-      - if [ -n "$PRESIDIUM_LABEL" ]; then
+      - echo $presidio_LABEL
+      - if [ -n "$presidio_LABEL" ]; then
         echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin &&
         make docker-build docker-push &&
-        if [ "$PRESIDIUM_LABEL" != "unstable" ]; then
-        docker tag "presidiumio/presidium-registrator:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-registrator:stable-amd64 &&
-        docker push presidiumio/presidium-registrator:stable-amd64;
-        docker tag "presidiumio/presidium-api:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-api:stable-amd64 &&
-        docker push presidiumio/presidium-api:stable-amd64;
-        docker tag "presidiumio/presidium-analyzer:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-analyzer:stable-amd64 &&
-        docker push presidiumio/presidium-analyzer:stable-amd64;
-        docker tag "presidiumio/presidium-anonymizer:$PRESIDIUM_LABEL-amd64" presidiumio/presidium-anonymizer:stable-amd64 &&
-        docker push presidiumio/presidium-anonymizer:stable-amd64;
+        if [ "$presidio_LABEL" != "unstable" ]; then
+        docker tag "presidioio/presidio-registrator:$presidio_LABEL-amd64" presidioio/presidio-registrator:stable-amd64 &&
+        docker push presidioio/presidio-registrator:stable-amd64;
+        docker tag "presidioio/presidio-api:$presidio_LABEL-amd64" presidioio/presidio-api:stable-amd64 &&
+        docker push presidioio/presidio-api:stable-amd64;
+        docker tag "presidioio/presidio-analyzer:$presidio_LABEL-amd64" presidioio/presidio-analyzer:stable-amd64 &&
+        docker push presidioio/presidio-analyzer:stable-amd64;
+        docker tag "presidioio/presidio-anonymizer:$presidio_LABEL-amd64" presidioio/presidio-anonymizer:stable-amd64 &&
+        docker push presidioio/presidio-anonymizer:stable-amd64;
         fi
         fi
       - echo "Done."

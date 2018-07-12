@@ -7,7 +7,7 @@
     "DisableAll": true,
     "Linters": {
         "goimports": {
-            "Command": "goimports -l --local github.com/presidium-io/presidium"
+            "Command": "goimports -l --local github.com/presid-io/presidio"
         }
     },
     "Enable": [

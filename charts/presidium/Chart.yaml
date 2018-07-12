@@ -1,6 +1,0 @@
-apiVersion: v1
-description: A context aware, blazing fast, customizable data loss prevention service
-name: presidium
-version: cc838ac
-# Note that we use appVersion to get images, so make sure this is correct.
-appVersion: cc838ac

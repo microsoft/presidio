@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/presidium-io/presidium/pkg/logger"
+	"github.com/presid-io/presidio/pkg/logger"
 )
 
 var (

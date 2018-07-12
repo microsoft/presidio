@@ -1,17 +1,17 @@
-[![Build Status](https://travis-ci.org/presidium-io/presidium.svg?branch=development)](https://travis-ci.org/presidium-io/presidium)
+[![Build Status](https://travis-ci.org/presid-io/presidio.svg?branch=development)](https://travis-ci.org/presid-io/presidio)
 
 
-# Presidium - Data Loss Prevention API
+# Presidio - Data Loss Prevention API
 **A context aware, born to the cloud, customizable data loss prevention service**
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/17064840/41805986-5a1c396a-76bc-11e8-986f-26dd73485e6c.png">
+<img width="200" alt="logo-presidio" src="https://user-images.githubusercontent.com/17064840/42585165-8fc7b820-853d-11e8-9450-4ce426fb5fe0.png">
 </p>
 
 ## Description
 
-Presidium *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data. 
-Presidium analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
+Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data. 
+Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
 
 ## Features
 
@@ -39,7 +39,7 @@ Presidium analyzes the text using predefined analyzers to identify patterns, for
 
 
 ## The Technology Stack
-Presidium leverages 
+Presidio leverages 
 
 * [Kubernetes](https://kubernetes.io/)
 * [Consul](https://www.consul.io/)
@@ -49,13 +49,13 @@ Presidium leverages
 * [GRPC](https://grpc.io)
 
 
-The [design document](/docs/design.md) introduces Presidium concepts and architecture.
+The [design document](/docs/design.md) introduces Presidio concepts and architecture.
 
 ## Quickstart
 
-1. Install [Presidium](docs/installation.md)
-2. Create a Presidium project
-3. Start using the Presidium analyze and anonymize services
+1. Install [Presidio](docs/installation.md)
+2. Create a Presidio project
+3. Start using the Presidio analyze and anonymize services
 
 
 **Note:** Examples are made with [HTTPie](https://httpie.org/)
