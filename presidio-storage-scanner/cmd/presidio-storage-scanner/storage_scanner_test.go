@@ -124,7 +124,7 @@ func TestSendResultToDataBinderReturnsErrorOnError(t *testing.T) {
 	err := sendResultToDataBinder(item, getAnalyzerMockResult().AnalyzeResults, testCache, &databinderMock)
 
 	// Assert
-	assert.Equal(t, err.Error(), err)
+	assert.EqualValues(t, err.Error(), "some error")
 }
 
 func getAnalyzerMockResult() *message_types.AnalyzeResponse {
