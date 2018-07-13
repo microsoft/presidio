@@ -7,12 +7,9 @@ class UsPassport(field_type.FieldType):
         "us",
         "united",
         "states"
-        "usa"
         "passport",
         "number",
-        "no",
         "passport#",
-        "#",
         "passportid",
         "passportno",
         "passportnumber",
