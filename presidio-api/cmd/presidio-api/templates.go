@@ -46,10 +46,10 @@ func (api *API) postActionTemplate(c *gin.Context) {
 		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to add template %q", err))
 		return
 	}
-	server.WriteResponse(c, http.StatusOK, "Template added successfully")
+	server.WriteResponse(c, http.StatusCreated, "Template added successfully ")
 }
 
-func (api *API) patchActionTemplate(c *gin.Context) {
+func (api *API) putActionTemplate(c *gin.Context) {
 	action := c.Param("action")
 	project := c.Param("project")
 	id := c.Param("id")
@@ -75,7 +75,7 @@ func (api *API) deleteActionTemplate(c *gin.Context) {
 		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to delete template %q", err))
 		return
 	}
-	server.WriteResponse(c, http.StatusOK, "Template deleted successfully")
+	server.WriteResponse(c, http.StatusNoContent, "")
 }
 
 //TODO: Need to better validate templates

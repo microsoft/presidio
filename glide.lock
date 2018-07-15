@@ -1,10 +1,10 @@
-hash: 795d511aa331324f7db52bf371594d9c8b09d8625c2e028dcce462cd586d0311
-updated: 2018-07-11T17:59:13.561426+03:00
+hash: 8608a494e9ee4792ffe163225fff9957dc309bbcf40877fe2fdd35df7ffaa57d
+updated: 2018-07-14T17:16:47.741162+03:00
 imports:
 - name: github.com/armon/go-metrics
-  version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
+  version: 3c58d8115a78a6879e5df75ae900846768d36895
 - name: github.com/aws/aws-sdk-go
-  version: c01ebd0d48a4772fd28a0b684db0f36882dc995c
+  version: 1cd6e9f75ea1031d5215bfd2d2fca702f61d699a
   subpackages:
   - aws
   - aws/awserr
@@ -25,6 +25,7 @@ imports:
   - aws/signer/v4
   - internal/sdkio
   - internal/sdkrand
+  - internal/sdkuri
   - internal/shareddefaults
   - private/protocol
   - private/protocol/eventstream
@@ -56,7 +57,7 @@ imports:
   - internal
   - mgmt
 - name: github.com/Azure/azure-sdk-for-go
-  version: fbe7db0e3f9793ba3e5704efbab84f51436c136e
+  version: 34e80a61f817f18afd85d0c6d12ee6400d6506b2
   subpackages:
   - storage
   - version
@@ -68,7 +69,7 @@ imports:
   - autorest/azure
   - autorest/date
 - name: github.com/confluentinc/confluent-kafka-go
-  version: 4b95efdf79393768915f66f699f5efe3ad54b601
+  version: 5e4d04e05fc319ce5996a867aafef29059f26862
   subpackages:
   - kafka
 - name: github.com/dgrijalva/jwt-go
@@ -87,7 +88,7 @@ imports:
   - binding
   - render
 - name: github.com/go-ini/ini
-  version: af26abd521cd7697481572fdbc4a53cbea3dde1b
+  version: 358ee7663966325963d4e8b2e1fbd570c5195153
 - name: github.com/go-redis/redis
   version: 83fb42932f6145ce52df09860384a4653d2d332a
   subpackages:
@@ -129,7 +130,7 @@ imports:
   subpackages:
   - diskcache
 - name: github.com/hashicorp/consul
-  version: 28141971f966e99916da2c5e461dd968746491cd
+  version: 39f93f011e591c842acc8053a7f5972aa6e592fd
   subpackages:
   - api
 - name: github.com/hashicorp/go-cleanhttp
@@ -176,7 +177,7 @@ imports:
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/presid-io/presidio-genproto
-  version: afb63f7061b60fd9699284c265c69af247f7deb8
+  version: 40772c8219a0a664f9f71fea547a954a0c687031
   subpackages:
   - golang
 - name: github.com/presid-io/stow
@@ -188,7 +189,7 @@ imports:
 - name: github.com/satori/go.uuid
   version: 36e9d2ebbde5e3f13ab2e25625fd453271d6522e
 - name: github.com/ugorji/go
-  version: 7d51bbe6161dcb8f32a1252c27668ce36e3ef16b
+  version: 2e1067cd04ec91c6fdf491ac8028c9d3aea73ab4
   subpackages:
   - codec
 - name: go.uber.org/atomic

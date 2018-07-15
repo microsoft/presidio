@@ -1,3 +1,5 @@
+
+
 class FieldType(object):
 
     name = "Field Type Name"

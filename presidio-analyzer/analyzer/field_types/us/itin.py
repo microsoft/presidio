@@ -8,8 +8,6 @@ class UsItin(field_type.FieldType):
         "taxpayer",
         "itin",
         "itins",
-        "social",
-        "security",
         "ssn",
         "tax"
         "id",

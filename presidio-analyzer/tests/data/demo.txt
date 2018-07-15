@@ -1,0 +1,9 @@
+Welcome to the Data Loss Prevention Demo.
+
+For example, strings like this one produce a PHONE_NUMBER finding:
+    "Please call me. My phone number is (555) 253-0000."
+
+    Email address: test@presidio.site
+    Credit card number: 4012-8888-8888-1881
+    Social Security Number: 078-05-1120
+    John's driver license: AC3549211

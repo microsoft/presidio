@@ -6,10 +6,8 @@ class CreditCard(field_type.FieldType):
     should_check_checksum = True
     context = ["credit", "card"]
     regexes = {
-        # "cd": r'\b(?:\d[ -]*?){13,16}\b'
-        "creditcard1": u'((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))(?![\\d])',
-        # "creditcard2":
-        # u'(4\d{3})(-?|\040*)(\d{4}(-?|\040*?)){3}',
+        "all": u'((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))(?![\\d])',
+        "diners": r'\b3(?:0[0-5]|[68][0-9])[0-9]{11}\b',
     }
 
     def __luhn_checksum(self):
