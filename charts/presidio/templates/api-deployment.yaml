@@ -43,7 +43,7 @@ spec:
         - name: {{.Values.privateRegistry}}{{ end }}
       initContainers:
       - name: "{{ .Chart.Name }}-registrator"
-        image: "{{ .Values.registrator.registry }}/{{ .Values.registrator.name }}:{{ default .Chart.AppVersion .Values.registrator.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.registrator.name }}:{{ default .Chart.AppVersion .Values.registrator.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.registrator.imagePullPolicy }}
         env:
           - name: CONSUL_HTTP_ADDR
