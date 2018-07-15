@@ -33,7 +33,7 @@ func setupGrpcServices() {
 
 	anonymizerSvcHost, err = store.GetService("anonymizer")
 	if err != nil {
-		log.Fatal(	("anonymizer service address is empty %q", err))
+		log.Fatal(fmt.Sprintf("anonymizer service address is empty %q", err))
 	}
 
 	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost)

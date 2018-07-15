@@ -66,16 +66,19 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 
 	// Act
 	api.WalkFiles(container, func(item stow.Item) {
-		results, _ := ScanAndAnalyze(&testCache, item, &serviceMock, nil)
+		itemPath := scannerObj.GetItemPath(item)
+		uniqueID, _ := scannerObj.GetItemUniqueID(item)
+		results, _ := AnalyzeItem(&testCache, uniqueID, &serviceMock, nil, item)
 		// validate output
 		assert.Equal(t, len(results), 1)
 		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
 		assert.Equal(t, results[0].Probability, 1.000000)
-		writeItemToCache(item, testCache)
+		writeItemToCache(uniqueID, itemPath, testCache)
 	})
 
 	api.WalkFiles(container, func(item stow.Item) {
-		results, err := ScanAndAnalyze(&testCache, item, &serviceMock, analyzeRequest)
+		uniqueID, _ := scannerObj.GetItemUniqueID(item)
+		results, err := AnalyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 0)
 		assert.Equal(t, err, nil)
@@ -98,7 +101,8 @@ func TestFileExtension(t *testing.T) {
 	putItem("file1.jpg", container, api)
 	// Assert
 	api.WalkFiles(container, func(item stow.Item) {
-		results, err := ScanAndAnalyze(&testCache, item, &serviceMock, nil)
+		uniqueID, _ := scannerObj.GetItemUniqueID(item)
+		results, err := AnalyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 0)
 		assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
@@ -116,13 +120,13 @@ func TestSendResultToDataBinderReturnsErrorOnError(t *testing.T) {
 
 	container := createContainer(api)
 	item := putItem("file1.jpg", container, api)
-
+	itemPath := scannerObj.GetItemPath(item)
 	dataBinderSrv := &MyMockedObject{}
 	var databinderMock message_types.DatabinderServiceClient = dataBinderSrv
 	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("some error"))
 
 	// Act
-	err := sendResultToDataBinder(item, getAnalyzerMockResult().AnalyzeResults, testCache, &databinderMock)
+	err := sendResultToDataBinder(itemPath, getAnalyzerMockResult().AnalyzeResults, testCache, &databinderMock)
 
 	// Assert
 	assert.EqualValues(t, err.Error(), "some error")

@@ -6,6 +6,7 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/modules/databinder"
@@ -45,16 +46,20 @@ func (databinder *dBDataBinder) Init() {
 	}
 
 	// Create table if not exists
+	err = databinder.engine.DropTables(&analyzerResult{})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 	err = databinder.engine.CreateTables(&analyzerResult{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 }
 
-func (r *analyzerResult) TableName() string {
-	// TODO: CHANGE NAME
-	return "analyzerresults"
-}
+// func (r *analyzerResult) TableName() string {
+// 	// TODO: CHANGE NAME
+// 	return "analyzerresults"
+// }
 
 func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}

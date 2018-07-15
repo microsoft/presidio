@@ -22,7 +22,7 @@ import (
 
 var (
 	grpcPort         = os.Getenv("GRPC_PORT")
-	driverName       string
+	bindType         string
 	connectionString string
 	template         *templates.Templates
 	databinderArray  []*databinder.DataBinder
@@ -51,8 +51,8 @@ func main() {
 
 	// TEMP VALUES!!!
 
-	if isDatabase(driverName) {
-		dbwritter := databaseBinder.New(driverName, connectionString)
+	if isDatabase(bindType) {
+		dbwritter := databaseBinder.New(bindType, connectionString)
 		databinderArray = append(databinderArray, &dbwritter)
 	}
 
@@ -68,12 +68,11 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// TODO: Remove!!
-	driverName = os.Getenv("DRIVER_NAME")
+	bindType = os.Getenv("BIND_TYPE")
 	connectionString = os.Getenv("DB_CONNECTION_STRING")
 
-	if driverName == "" {
-		log.Fatal("DRIVER_NAME env var must me set")
+	if bindType == "" {
+		log.Fatal("BIND_TYPE env var must me set")
 	}
 
 	if connectionString == "" {

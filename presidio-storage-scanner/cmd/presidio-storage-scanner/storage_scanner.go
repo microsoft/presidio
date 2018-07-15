@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/presid-io/stow"
+
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	c "github.com/presid-io/presidio/pkg/cache"
 	"github.com/presid-io/presidio/pkg/modules/analyzer"
-	"github.com/presid-io/stow"
 )
 
 // ScanAndAnalyze checks if the file needs to be scanned.
