@@ -49,7 +49,7 @@ func main() {
 			return
 		}
 
-		scanResult, err = AnalyzeItem(&cache, uniqueID, &analyzerObj, analyzeRequest, item)
+		scanResult, err = analyzeItem(&cache, uniqueID, &analyzerObj, analyzeRequest, item)
 		if err != nil {
 			log.Error(fmt.Sprintf("error scanning file: %s, error: %q", itemPath, err.Error()))
 			return
@@ -164,9 +164,9 @@ func init() {
 	}
 }
 
-// AnalyzeItem checks if the file needs to be scanned.
+// analyzeItem checks if the file needs to be scanned.
 // Then sends it to the analyzer and updates the cache that it was scanned.
-func AnalyzeItem(cache *cache.Cache,
+func analyzeItem(cache *cache.Cache,
 	uniqueID string,
 	analyzerModule *analyzer.Analyzer,
 	analyzeRequest *message_types.AnalyzeRequest,

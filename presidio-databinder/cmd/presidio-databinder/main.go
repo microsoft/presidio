@@ -95,7 +95,11 @@ func (s *server) Apply(ctx context.Context, r *message_types.DatabinderRequest) 
 		}
 	}
 
-	return nil, fmt.Errorf(strings.Join(errstrings, "\n"))
+	var combinedError error
+	if len(errstrings) > 0 {
+		combinedError = fmt.Errorf(strings.Join(errstrings, "\n"))
+	}
+	return &message_types.DatabinderResponse{}, combinedError
 }
 
 func isDatabase(target string) bool {

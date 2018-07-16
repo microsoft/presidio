@@ -126,7 +126,7 @@ debug
 /presidio-analyzer/rootfs/presidio-analyzer
 /presidio-api/rootfs/presidio-api
 /presidio-registrator/rootfs/presidio-registrator
-/presidio-storage-scanner/rootfs/presidio-storage-scanner
+/presidio-scanner/rootfs/presidio-scanner
 /presidio-scheduler/rootfs/presidio-scheduler
 /tests/testdata/*-generated.*
 .DS_Store
