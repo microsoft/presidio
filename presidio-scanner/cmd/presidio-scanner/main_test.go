@@ -63,6 +63,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	api.RemoveContainer("test")
 	container := createContainer(api)
 	putItem("file1.txt", container, api)
+	scannerObj = createScanner("azure")
 
 	// Act
 	api.WalkFiles(container, func(item stow.Item) {
@@ -72,7 +73,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 		// validate output
 		assert.Equal(t, len(results), 1)
 		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
-		assert.Equal(t, results[0].Probability, 1.000000)
+		assert.Equal(t, results[0].Probability, float32(1))
 		writeItemToCache(uniqueID, itemPath, testCache)
 	})
 
@@ -99,6 +100,7 @@ func TestFileExtension(t *testing.T) {
 	api, _ := storage.New(testCache, kind, config)
 	container := createContainer(api)
 	putItem("file1.jpg", container, api)
+	scannerObj = createScanner("azure")
 	// Assert
 	api.WalkFiles(container, func(item stow.Item) {
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)

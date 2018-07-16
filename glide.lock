@@ -1,14 +1,14 @@
 hash: cfc29ef48938432a8244561c80a8769aa1d0b42ef7be9dc3edc49fb7a7ed02c6
-updated: 2018-07-12T12:07:57.840429457+03:00
+updated: 2018-07-16T10:56:09.438188858+03:00
 imports:
 - name: cloud.google.com/go
-  version: 777200caa7fb8936aed0f12b1fd79af64cc83ec9
+  version: aad3f485ee528456e0768f20397b4d9dd941e755
   subpackages:
   - civil
 - name: github.com/armon/go-metrics
-  version: 58588f401c2cc130a7308a52ca3bc6c0a76db04b
+  version: 3c58d8115a78a6879e5df75ae900846768d36895
 - name: github.com/aws/aws-sdk-go
-  version: b546aa7e916413e7ba7f706fc0d8c9a143aec45a
+  version: 1cd6e9f75ea1031d5215bfd2d2fca702f61d699a
   subpackages:
   - aws
   - aws/awserr
@@ -29,6 +29,7 @@ imports:
   - aws/signer/v4
   - internal/sdkio
   - internal/sdkrand
+  - internal/sdkuri
   - internal/shareddefaults
   - private/protocol
   - private/protocol/eventstream
@@ -60,7 +61,7 @@ imports:
   - internal
   - mgmt
 - name: github.com/Azure/azure-sdk-for-go
-  version: fbe7db0e3f9793ba3e5704efbab84f51436c136e
+  version: 34e80a61f817f18afd85d0c6d12ee6400d6506b2
   subpackages:
   - storage
   - version
@@ -95,7 +96,7 @@ imports:
   - binding
   - render
 - name: github.com/go-ini/ini
-  version: af26abd521cd7697481572fdbc4a53cbea3dde1b
+  version: 358ee7663966325963d4e8b2e1fbd570c5195153
 - name: github.com/go-redis/redis
   version: 83fb42932f6145ce52df09860384a4653d2d332a
   subpackages:
@@ -115,7 +116,7 @@ imports:
 - name: github.com/go-xorm/xorm
   version: ad69f7d8f0861a29438154bb0a20b60501298480
 - name: github.com/gogo/protobuf
-  version: c0656edd0d9eab7c66d1eb0c568f9039345796f7
+  version: 7d68e886eac4f7e34d0d82241a6273d6c304c5cf
   subpackages:
   - proto
   - sortkeys
@@ -145,7 +146,7 @@ imports:
   subpackages:
   - diskcache
 - name: github.com/hashicorp/consul
-  version: 28141971f966e99916da2c5e461dd968746491cd
+  version: 39f93f011e591c842acc8053a7f5972aa6e592fd
   subpackages:
   - api
 - name: github.com/hashicorp/go-cleanhttp
@@ -167,7 +168,7 @@ imports:
 - name: github.com/joho/godotenv
   version: 1709ab122c988931ad53508747b3c061400c2984
 - name: github.com/json-iterator/go
-  version: 2ddf6d758266fcb080a4f9e054b9f292c85e6798
+  version: f2b4162afba35581b6d4a50d3b8f34e33c144682
 - name: github.com/korovkin/limiter
   version: 6b837f5fd4961699dd0ad0a42aca5a236db0a212
 - name: github.com/lib/pq
@@ -181,7 +182,7 @@ imports:
 - name: github.com/mitchellh/go-homedir
   version: 3864e76763d94a6df2f9960b16a20a33da9f9a66
 - name: github.com/mitchellh/mapstructure
-  version: bb74f1db0675b241733089d5a1faa5dd8b0ef57b
+  version: f15292f7a699fcc1a38a80977f80a046874ba8ac
 - name: github.com/modern-go/concurrent
   version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
 - name: github.com/modern-go/reflect2
@@ -208,7 +209,7 @@ imports:
 - name: github.com/satori/go.uuid
   version: 36e9d2ebbde5e3f13ab2e25625fd453271d6522e
 - name: github.com/ugorji/go
-  version: 7d51bbe6161dcb8f32a1252c27668ce36e3ef16b
+  version: 2e1067cd04ec91c6fdf491ac8028c9d3aea73ab4
   subpackages:
   - codec
 - name: go.uber.org/atomic
@@ -338,18 +339,9 @@ imports:
 - name: k8s.io/apimachinery
   version: 103fd098999dc9c0c88536f5c9ad2e5da39373ae
   subpackages:
-  - pkg/api/equality
   - pkg/api/errors
   - pkg/api/meta
   - pkg/api/resource
-  - pkg/api/resource
-  - pkg/api/testing
-  - pkg/api/testing/fuzzer
-  - pkg/api/testing/fuzzer
-  - pkg/api/testing/roundtrip
-  - pkg/apis/meta/fuzzer
-  - pkg/apis/meta/fuzzer
-  - pkg/apis/meta/v1
   - pkg/apis/meta/v1
   - pkg/apis/meta/v1/unstructured
   - pkg/apis/meta/v1beta1
@@ -358,10 +350,7 @@ imports:
   - pkg/fields
   - pkg/labels
   - pkg/runtime
-  - pkg/runtime
   - pkg/runtime/schema
-  - pkg/runtime/schema
-  - pkg/runtime/serializer
   - pkg/runtime/serializer
   - pkg/runtime/serializer/json
   - pkg/runtime/serializer/protobuf
@@ -370,12 +359,9 @@ imports:
   - pkg/runtime/serializer/versioning
   - pkg/selection
   - pkg/types
-  - pkg/types
   - pkg/util/clock
-  - pkg/util/diff
   - pkg/util/errors
   - pkg/util/framer
-  - pkg/util/intstr
   - pkg/util/intstr
   - pkg/util/json
   - pkg/util/net

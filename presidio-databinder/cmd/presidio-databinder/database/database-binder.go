@@ -3,9 +3,13 @@ package databaseBinder
 import (
 	"time"
 
+	// import mssql driver
 	_ "github.com/denisenkom/go-mssqldb"
+	// import mysql driver
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+	// import postegrsql
+	_ "github.com/lib/pq"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	log "github.com/presid-io/presidio/pkg/logger"

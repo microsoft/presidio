@@ -10,7 +10,6 @@ import (
 	"github.com/presid-io/presidio/pkg/templates"
 
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"google.golang.org/grpc/reflection"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
