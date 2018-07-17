@@ -50,20 +50,16 @@ func (databinder *dBDataBinder) Init() {
 	}
 
 	// Create table if not exists
-	err = databinder.engine.DropTables(&analyzerResult{})
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	err = databinder.engine.CreateTables(&analyzerResult{})
+	err = databinder.engine.Table(getTableName()).CreateTable(&analyzerResult{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 }
 
-// func (r *analyzerResult) TableName() string {
-// 	// TODO: CHANGE NAME
-// 	return "analyzerresults"
-// }
+func getTableName() string {
+	// TODO: CHANGE NAME
+	return "analyzerresults"
+}
 
 func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}
@@ -79,7 +75,7 @@ func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeRes
 	}
 
 	// Add rows to table
-	_, err := databinder.engine.Insert(&analyzerResultArray)
+	_, err := databinder.engine.Table(getTableName()).Insert(&analyzerResultArray)
 	if err != nil {
 		log.Error(err.Error())
 		return err

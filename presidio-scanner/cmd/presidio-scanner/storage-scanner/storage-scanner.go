@@ -3,7 +3,6 @@ package storageScanner
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/joho/godotenv"
@@ -13,6 +12,8 @@ import (
 	log "github.com/presid-io/presidio/pkg/logger"
 	scanner "github.com/presid-io/presidio/pkg/modules/scanner"
 	"github.com/presid-io/presidio/pkg/storage"
+	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/aws"
+	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/azure"
 )
 
 type storageScanner struct {
@@ -20,19 +21,6 @@ type storageScanner struct {
 	containerName string
 	config        stow.ConfigMap
 }
-
-var (
-	// Azure Parameters
-	azureAccountName string
-	azureAccountKey  string
-	azureContainer   string
-
-	// S3 Parameters
-	s3AccessKeyID string
-	s3SecretKey   string
-	s3Region      string
-	s3Bucket      string
-)
 
 // New returns new instance of DB Data writter
 func New(kind string) scanner.Scanner {
@@ -75,24 +63,16 @@ func (scanner *storageScanner) Init() {
 		log.Fatal("Error loading .env file")
 	}
 
-	azureAccountName = os.Getenv("AZURE_ACCOUNT")
-	azureAccountKey = os.Getenv("AZURE_KEY")
-	azureContainer = os.Getenv("AZURE_CONTAINER")
-
-	s3AccessKeyID = os.Getenv("S3_ACCESS_KEY_ID")
-	s3SecretKey = os.Getenv("S3_SECRET_KEY")
-	s3Region = os.Getenv("S3_REGION")
-	s3Bucket = os.Getenv("S3_BUCKET")
-
 	switch scanner.kind {
 	case "azure":
-		validateAzureConnection(azureAccountName, azureAccountKey, azureContainer)
+		scanner.config, scanner.containerName = azure.InitBlobStorage()
 	case "s3":
-		validateS3Connection(s3AccessKeyID, s3SecretKey, s3Region, s3Bucket)
-		// TODO: Add case for google
+		scanner.config, scanner.containerName = aws.InitS3()
+	// case "google":
+	// 	// Add support
+	default:
+		log.Fatal("Unknown storage kind")
 	}
-
-	scanner.setupStorage()
 }
 
 // Read the content of the cloud item
@@ -135,36 +115,4 @@ func (scanner *storageScanner) WalkItems(cache cache.Cache, walkFunction scanner
 	})
 
 	return err
-}
-
-func (scanner *storageScanner) setupStorage() {
-	var config stow.ConfigMap
-	var containerName string
-	switch scanner.kind {
-	case "azure":
-		_, config = storage.CreateAzureConfig(azureAccountName, azureAccountKey)
-		containerName = azureContainer
-	case "s3":
-		_, config = storage.CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region)
-		containerName = s3Bucket
-	// case "google":
-	// 	// Add support
-	default:
-		log.Fatal("Unknown storage kind")
-	}
-
-	scanner.config = config
-	scanner.containerName = containerName
-}
-
-func validateAzureConnection(azureAccountKey string, azureAccountName string, azureContainer string) {
-	if azureAccountKey == "" || azureAccountName == "" || azureContainer == "" {
-		log.Fatal("AZURE_ACCOUNT, AZURE_KEY, AZURE_CONTAINER env vars must me set.")
-	}
-}
-
-func validateS3Connection(s3AccessKeyID string, s3SecretKey string, s3Region string, s3Bucket string) {
-	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
-		log.Fatal("S3_ACCESS_KEY_ID, S3_SECRET_KEY, S3_REGION, S3_BUCKET env vars must me set.")
-	}
 }
