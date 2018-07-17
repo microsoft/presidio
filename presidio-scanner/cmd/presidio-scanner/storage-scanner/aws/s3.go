@@ -4,8 +4,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/presid-io/presidio/pkg/storage"
 	"github.com/presid-io/stow"
+
+	"github.com/presid-io/presidio/pkg/storage"
 )
 
 // InitS3 inits the storage with the supplied credentials
