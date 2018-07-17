@@ -73,7 +73,7 @@ imports:
   - autorest/azure
   - autorest/date
 - name: github.com/confluentinc/confluent-kafka-go
-  version: 4b95efdf79393768915f66f699f5efe3ad54b601
+  version: 5e4d04e05fc319ce5996a867aafef29059f26862
   subpackages:
   - kafka
 - name: github.com/denisenkom/go-mssqldb

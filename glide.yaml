@@ -14,6 +14,8 @@ import:
   - proto
 - package: github.com/presid-io/presidio-genproto
 - package: github.com/Azure/azure-event-hubs-go
+- package: github.com/confluentinc/confluent-kafka-go
+  version: ^0.11.4
 - package: github.com/presid-io/stow
   subpackages:
   - azure
@@ -36,6 +38,9 @@ import:
   version: ^1.12.0
   subpackages:
   - reflection
+- package: k8s.io/apimachinery
+  subpackages:
+  - pkg/apis/meta/v1
 - package: k8s.io/client-go
   version: ^8.0.0
   subpackages:

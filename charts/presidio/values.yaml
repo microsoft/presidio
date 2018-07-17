@@ -1,14 +1,13 @@
-rbac:
-  enabled: false
+registry: praesidio
 
 consul:
   service: consul.presidio-system.svc.cluster.local:8500
 
 ingress:
+  enabled: true
   class: traefik
 
 api:
-  registry: praesidio
   name: presidio-api
   # tag:
   service:
@@ -23,7 +22,6 @@ api:
   #  initialDelaySeconds: 20
 
 registrator:
-  registry: praesidio
   name: presidio-registrator
   # tag:
   imagePullPolicy: Always
@@ -32,7 +30,6 @@ registrator:
     port: 6379
 
 analyzer:
-  registry: praesidio
   name: presidio-analyzer
   # tag:
   imagePullPolicy: Always
@@ -42,7 +39,6 @@ analyzer:
     internalPort: 3001
 
 anonymizer:
-  registry: praesidio
   name: presidio-anonymizer
   # tag:
   imagePullPolicy: Always
@@ -52,7 +48,6 @@ anonymizer:
     internalPort: 3001
 
 scheduler:
-  registry: praesidio
   name: presidio-scheduler
   imagePullPolicy: Always
   # tag:

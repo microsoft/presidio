@@ -40,7 +40,7 @@ func main() {
 			{
 				action.GET(":id", api.getActionTemplate)
 				action.POST(":id", api.postActionTemplate)
-				action.PATCH(":id", api.patchActionTemplate)
+				action.PATCH(":id", api.putActionTemplate)
 				action.DELETE(":id", api.deleteActionTemplate)
 			}
 		}
