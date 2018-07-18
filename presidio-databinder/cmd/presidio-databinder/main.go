@@ -30,6 +30,8 @@ var (
 type server struct{}
 
 func main() {
+	initDataBinder()
+
 	// Setup server
 	lis, s := rpc.SetupClient(grpcPort)
 
@@ -56,7 +58,7 @@ func main() {
 	}
 }
 
-func init() {
+func initDataBinder() {
 	godotenv.Load()
 
 	bindType = os.Getenv("BIND_TYPE")
