@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"os"
 
 	"strings"
 	"testing"
@@ -29,6 +30,7 @@ var (
 	serviceMock analyzer.Analyzer
 )
 
+// Mocks
 type MyMockedObject struct {
 	mock.Mock
 }
@@ -51,7 +53,9 @@ func (m *MyMockedObject) Apply(ctx context.Context, in *message_types.Databinder
 	return result, args.Error(1)
 }
 
+// TESTS
 func TestAzureScanAndAnalyze(t *testing.T) {
+	setTestEnvironmentVars()
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
@@ -91,6 +95,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 
 func TestFileExtension(t *testing.T) {
 	// Setup
+	setTestEnvironmentVars()
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
@@ -116,6 +121,7 @@ func TestFileExtension(t *testing.T) {
 
 func TestSendResultToDataBinderReturnsErrorOnError(t *testing.T) {
 	// Setup
+	setTestEnvironmentVars()
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 	api, _ := storage.New(kind, config, 10)
@@ -168,4 +174,10 @@ func putItem(itemName string, container stow.Container, api *storage.API) stow.I
 		log.Fatal(err.Error())
 	}
 	return item
+}
+
+func setTestEnvironmentVars() {
+	os.Setenv("AZURE_ACCOUNT", storageName)
+	os.Setenv("AZURE_KEY", storageKey)
+	os.Setenv("AZURE_CONTAINER", "test")
 }
