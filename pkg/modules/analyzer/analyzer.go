@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
-	helper "github.com/presid-io/presidio/pkg/helper"
 	t "github.com/presid-io/presidio/pkg/templates"
 )
 
@@ -32,7 +31,7 @@ func GetAnalyzeRequest(templates *t.Templates, analyzeKey string) (*message_type
 	}
 
 	analyzeRequest := &message_types.AnalyzeRequest{}
-	err = helper.ConvertJSONToInterface(template, analyzeRequest)
+	err = t.ConvertJSONToInterface(template, analyzeRequest)
 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to convert template %q", err)

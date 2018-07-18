@@ -1,7 +1,7 @@
 package main
 
 import (
-	scanner "github.com/presid-io/presidio/pkg/modules/scanner"
+	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 	storage_scanner "github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner"
 )
 

@@ -37,7 +37,3 @@ func (c *redis) Get(key string) (string, error) {
 		return val, nil
 	}
 }
-
-func (c *redis) Delete(key string) {
-	c.client.Del(key)
-}

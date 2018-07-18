@@ -59,7 +59,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	serviceMock = analyzerObj
 	analyzerObj.On("InvokeAnalyze", mock.Anything, mock.Anything, mock.Anything).Return(getAnalyzerMockResult(), nil)
 
-	api, _ := storage.New(testCache, kind, config)
+	api, _ := storage.New(kind, config, 10)
 	api.RemoveContainer("test")
 	container := createContainer(api)
 	putItem("file1.txt", container, api)
@@ -97,7 +97,7 @@ func TestFileExtension(t *testing.T) {
 	analyzerObj := &MyMockedObject{}
 	serviceMock = analyzerObj
 
-	api, _ := storage.New(testCache, kind, config)
+	api, _ := storage.New(kind, config, 10)
 	container := createContainer(api)
 	putItem("file1.jpg", container, api)
 	scannerObj = createScanner("azure")
@@ -118,7 +118,7 @@ func TestSendResultToDataBinderReturnsErrorOnError(t *testing.T) {
 	// Setup
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
-	api, _ := storage.New(testCache, kind, config)
+	api, _ := storage.New(kind, config, 10)
 
 	container := createContainer(api)
 	item := putItem("file1.jpg", container, api)

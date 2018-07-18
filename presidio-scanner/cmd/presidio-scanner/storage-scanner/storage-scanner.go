@@ -1,17 +1,15 @@
 package storageScanner
 
 import (
-	"bytes"
 	"fmt"
 	"path/filepath"
 
 	"github.com/joho/godotenv"
 	"github.com/presid-io/stow"
 
-	"github.com/presid-io/presidio/pkg/cache"
 	log "github.com/presid-io/presidio/pkg/logger"
-	scanner "github.com/presid-io/presidio/pkg/modules/scanner"
 	"github.com/presid-io/presidio/pkg/storage"
+	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/aws"
 	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/azure"
 )
@@ -79,25 +77,11 @@ func (scanner *storageScanner) Init() {
 func (scanner *storageScanner) GetItemContent(input interface{}) (string, error) {
 	// cast to stow item
 	stowInput := input.(stow.Item)
-	reader, err := stowInput.Open()
-	if err != nil {
-		return "", err
-	}
-
-	buf := new(bytes.Buffer)
-
-	if _, err = buf.ReadFrom(reader); err != nil {
-		return "", err
-	}
-
-	fileContent := buf.String()
-	err = reader.Close()
-
-	return fileContent, err
+	return storage.ReadObject(stowInput)
 }
 
-func (scanner *storageScanner) WalkItems(cache cache.Cache, walkFunction scanner.WalkFunc) error {
-	storageAPI, err := storage.New(cache, scanner.kind, scanner.config)
+func (scanner *storageScanner) WalkItems(walkFunction scanner.WalkFunc) error {
+	storageAPI, err := storage.New(scanner.kind, scanner.config, 10)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

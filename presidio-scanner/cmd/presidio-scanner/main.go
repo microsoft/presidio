@@ -13,11 +13,11 @@ import (
 	kv_consul "github.com/presid-io/presidio/pkg/kv/consul"
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/modules/analyzer"
-	scanner "github.com/presid-io/presidio/pkg/modules/scanner"
 	"github.com/presid-io/presidio/pkg/rpc"
 	"github.com/presid-io/presidio/pkg/service-discovery"
 	"github.com/presid-io/presidio/pkg/service-discovery/consul"
 	"github.com/presid-io/presidio/pkg/templates"
+	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
 
 var (
@@ -31,6 +31,7 @@ var (
 
 func main() {
 	// Setup objects
+	initScanner()
 	var err error
 	store := consul.New()
 
@@ -39,7 +40,7 @@ func main() {
 	databinderService := setupDataBinderService()
 	scannerObj = createScanner(storageKind)
 
-	err = scannerObj.WalkItems(cache, func(item interface{}) {
+	err = scannerObj.WalkItems(func(item interface{}) {
 		var scanResult []*message_types.AnalyzeResult
 
 		itemPath := scannerObj.GetItemPath(item)
@@ -94,12 +95,7 @@ func sendResultToDataBinder(scannedPath string, results []*message_types.Analyze
 	}
 
 	_, err := srv.Apply(context.Background(), databinderRequest)
-	if err != nil {
-		log.Error(err.Error())
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func setupDataBinderService() *message_types.DatabinderServiceClient {
@@ -143,14 +139,10 @@ func setupCache(store sd.Store) cache.Cache {
 	)
 }
 
-func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+func initScanner() {
+	godotenv.Load()
 
 	grpcPort = os.Getenv("GRPC_PORT")
-
 	storageKind = os.Getenv("STORAGE_KIND")
 	analyzeKey = os.Getenv("ANALYZE_KEY")
 
@@ -188,8 +180,7 @@ func analyzeItem(cache *cache.Cache,
 	if val == "" {
 		itemContent, err := scannerObj.GetItemContent(item)
 		if err != nil {
-			log.Error(fmt.Sprintf("error getting item's content, error: %q", err.Error()))
-			return nil, err
+			return nil, fmt.Errorf("error getting item's content, error: %q", err.Error())
 		}
 
 		results, err := (*analyzerModule).InvokeAnalyze(context.Background(), analyzeRequest, itemContent)

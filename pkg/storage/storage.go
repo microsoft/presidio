@@ -1,32 +1,31 @@
 package storage
 
 import (
-	"fmt"
-	"io/ioutil"
+	"bytes"
 	"strings"
 
 	"github.com/korovkin/limiter"
 	"github.com/presid-io/stow"
 	"github.com/presid-io/stow/azure"
 	"github.com/presid-io/stow/s3"
-
-	"github.com/presid-io/presidio/pkg/cache"
-	"github.com/presid-io/presidio/pkg/logger"
 )
 
 //API storage
 type API struct {
-	cache    cache.Cache
-	location stow.Location
+	location         stow.Location
+	concurrencyLimit int
 }
 
-//New storage
-func New(c cache.Cache, kind string, config stow.Config) (*API, error) {
+//New initialize a new storage instance.
+// Kind is the storage kind: s3/blob storage/ google cloud.
+// config holds the storage connection string
+// concurrencyLimit is the limit for how many item needs to be scanned at once.
+func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
 	location, err := stow.Dial(kind, config)
 	if err != nil {
 		return &API{}, err
 	}
-	return &API{cache: c, location: location}, nil
+	return &API{location: location, concurrencyLimit: concurrencyLimit}, nil
 }
 
 //CreateS3Config create S3 configuration
@@ -73,32 +72,12 @@ func (a *API) RemoveContainer(name string) error {
 // 	}
 // }
 
-//ListObjects list object in bucket/container
-func (a *API) ListObjects(container string) error {
-	err := stow.WalkContainers(a.location, stow.NoPrefix, 100, func(c stow.Container, err error) error {
-		if err != nil {
-			return err
-		}
-		if c.Name() == container {
-			logger.Info("Found container " + c.Name())
-			err = a.getFiles(c)
-			if err != nil {
-				return err
-			}
-
-		}
-		return nil
-	})
-
-	return err
-}
-
 // walkFunc contain the logic that need to be implemented on each of the items in the container
 type walkFunc func(item stow.Item)
 
 // WalkFiles walks over the files in 'container' and executes fn func
 func (a *API) WalkFiles(container stow.Container, walkFunc walkFunc) error {
-	limit := limiter.NewConcurrencyLimiter(10)
+	limit := limiter.NewConcurrencyLimiter(a.concurrencyLimit)
 
 	err := stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
 		if err != nil {
@@ -115,45 +94,21 @@ func (a *API) WalkFiles(container stow.Container, walkFunc walkFunc) error {
 	return err
 }
 
-func (a *API) getFiles(container stow.Container) error {
-	err := stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
-		if err != nil {
-			return err
-		}
-		name, etag, body, size, err1 := a.readObject(item)
-		if name == "" || etag == "" || body == "" || size == 0 || err1 != nil {
-
-		}
-		return err
-	})
-
-	return err
-}
-
-func (a *API) readObject(item stow.Item) (string, string, string, int64, error) {
-	name := item.Name()
-	eTag, _ := item.ETag()
-	size, _ := item.Size()
-	if a.cache != nil {
-		key := eTag
-		val, err := a.cache.Get(key)
-		if val != "" || err != nil {
-			return name, eTag, "", size, err
-		}
-	}
-
-	r, err := item.Open()
+// ReadObject reads the item's content
+func ReadObject(item stow.Item) (string, error) {
+	reader, err := item.Open()
 	if err != nil {
-		return name, eTag, "", size, err
-	}
-	defer r.Close()
-
-	body, err := ioutil.ReadAll(r)
-	if err != nil {
-		return name, eTag, "", size, err
+		return "", err
 	}
 
-	logger.Info(fmt.Sprintf("Read file %s ETag: %s Size:%d", item.Name(), eTag, size))
-	return name, eTag, string(body), size, nil
+	buf := new(bytes.Buffer)
 
+	if _, err = buf.ReadFrom(reader); err != nil {
+		return "", err
+	}
+
+	fileContent := buf.String()
+	err = reader.Close()
+
+	return fileContent, err
 }

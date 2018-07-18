@@ -1,6 +1,7 @@
 package databaseBinder
 
 import (
+	"fmt"
 	"time"
 
 	// import mssql driver
@@ -8,12 +9,14 @@ import (
 	// import mysql driver
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
-	// import postegrsql
+	// import postegrsql driver
 	_ "github.com/lib/pq"
+	// import sqlite driver
+	_ "github.com/mattn/go-sqlite3"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/modules/databinder"
+	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
 )
 
 type dBDataBinder struct {
@@ -58,7 +61,7 @@ func (databinder *dBDataBinder) Init() {
 
 func getTableName() string {
 	// TODO: CHANGE NAME
-	return "analyzerresults"
+	return "newtable"
 }
 
 func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
@@ -81,5 +84,6 @@ func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeRes
 		return err
 	}
 
+	log.Info(fmt.Sprintf("%d rows were written to the DB successfully", len(results)))
 	return nil
 }

@@ -6,17 +6,17 @@ import (
 	"os"
 	"strings"
 
+	"github.com/joho/godotenv"
+
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/templates"
 
-	"github.com/joho/godotenv"
 	"google.golang.org/grpc/reflection"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	"github.com/presid-io/presidio/pkg/kv/consul"
-	"github.com/presid-io/presidio/pkg/modules/databinder"
 	"github.com/presid-io/presidio/pkg/rpc"
-	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/database"
+	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
 )
 
 var (
@@ -44,16 +44,11 @@ func main() {
 	// t, err = template.GetTemplate(key)
 
 	// databinderRequest := &message_types.AnalyzeRequest{}
-	// err = helper.ConvertJSONToInterface(template, analyzeRequest)
+	// err = template.ConvertJSONToInterface(template, analyzeRequest)
 
 	// foreach databinder -  init databinder
-
 	// TEMP VALUES!!!
-
-	if isDatabase(bindType) {
-		dbwritter := databaseBinder.New(bindType, connectionString)
-		databinderArray = append(databinderArray, &dbwritter)
-	}
+	createDatabiner(bindType)
 
 	// Listen for client requests
 	if err := s.Serve(lis); err != nil {
@@ -62,10 +57,7 @@ func main() {
 }
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 
 	bindType = os.Getenv("BIND_TYPE")
 	connectionString = os.Getenv("DB_CONNECTION_STRING")
