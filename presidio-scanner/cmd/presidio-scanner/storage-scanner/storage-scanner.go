@@ -56,10 +56,7 @@ func (scanner *storageScanner) GetItemUniqueID(input interface{}) (string, error
 }
 
 func (scanner *storageScanner) Init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 
 	switch scanner.kind {
 	case "azure":
