@@ -40,6 +40,11 @@ glide up -v
 pip3 install -r requirements.txt
 ```
 
+Install pytest package for testing:
+```
+pip3 install -U pytest
+```
+
 6. Install [librdkafka](https://github.com/confluentinc/confluent-kafka-go#installing-librdkafka)
 
 7. Protobuf generator tools
