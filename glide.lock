@@ -1,5 +1,5 @@
-hash: cfc29ef48938432a8244561c80a8769aa1d0b42ef7be9dc3edc49fb7a7ed02c6
-updated: 2018-07-16T10:56:09.438188858+03:00
+hash: 1065be7140ad7d8a59b58bcbe53452f1e702fb60d465da61f4e0f374a132ba41
+updated: 2018-07-19T16:33:14.491927161+03:00
 imports:
 - name: cloud.google.com/go
   version: aad3f485ee528456e0768f20397b4d9dd941e755
@@ -8,7 +8,7 @@ imports:
 - name: github.com/armon/go-metrics
   version: 3c58d8115a78a6879e5df75ae900846768d36895
 - name: github.com/aws/aws-sdk-go
-  version: 1cd6e9f75ea1031d5215bfd2d2fca702f61d699a
+  version: dd706c0d8202acb4e3d9c0a852198a32276d7487
   subpackages:
   - aws
   - aws/awserr
@@ -61,7 +61,7 @@ imports:
   - internal
   - mgmt
 - name: github.com/Azure/azure-sdk-for-go
-  version: 34e80a61f817f18afd85d0c6d12ee6400d6506b2
+  version: d041d9bad02bf4e381da73720d3e2934d76a0194
   subpackages:
   - storage
   - version
@@ -108,7 +108,7 @@ imports:
   - internal/singleflight
   - internal/util
 - name: github.com/go-sql-driver/mysql
-  version: 749ddf1598b47e3cd909414bda735fe790ef3d30
+  version: 99ff426eb706cffe92ff3d058e168b278cabf7c7
 - name: github.com/go-xorm/builder
   version: dc8bf48f58fab2b4da338ffd25191905fd741b8f
 - name: github.com/go-xorm/core
@@ -116,7 +116,7 @@ imports:
 - name: github.com/go-xorm/xorm
   version: ad69f7d8f0861a29438154bb0a20b60501298480
 - name: github.com/gogo/protobuf
-  version: 7d68e886eac4f7e34d0d82241a6273d6c304c5cf
+  version: 636bf0302bc95575d69441b25a2603156ffdddf1
   subpackages:
   - proto
   - sortkeys
@@ -179,6 +179,8 @@ imports:
   version: 8bdf7d1a087ccc975cf37dd6507da50698fd19ca
 - name: github.com/mattn/go-isatty
   version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+- name: github.com/mattn/go-sqlite3
+  version: b3511bfdd742af558b54eb6160aca9446d762a19
 - name: github.com/mitchellh/go-homedir
   version: 3864e76763d94a6df2f9960b16a20a33da9f9a66
 - name: github.com/mitchellh/mapstructure
@@ -197,7 +199,7 @@ imports:
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/presid-io/presidio-genproto
-  version: 40772c8219a0a664f9f71fea547a954a0c687031
+  version: 42015c03ae2d92de36ef821b26d6512697a28252
   subpackages:
   - golang
 - name: github.com/presid-io/stow
@@ -266,7 +268,7 @@ imports:
   subpackages:
   - cloudsql
 - name: google.golang.org/genproto
-  version: e92b116572682a5b432ddd840aeaba2a559eeff1
+  version: fedd2861243fd1a8152376292b921b394c7bef7e
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc

@@ -1,12 +1,14 @@
 package scanner
 
+import message_types "github.com/presid-io/presidio-genproto/golang"
+
 // WalkFunc is the function the is executed on the scanned item
 type WalkFunc func(item interface{})
 
 // Scanner interface represent the supported scanner methods.
 type Scanner interface {
 	//Init the scanner
-	Init()
+	Init(inputConfig *message_types.InputConfig)
 
 	//GetItemUniqueID returns the scanned item unique id
 	GetItemUniqueID(item interface{}) (string, error)

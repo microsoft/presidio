@@ -10,7 +10,6 @@ import (
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	"github.com/presid-io/presidio/pkg/cache"
 	"github.com/presid-io/presidio/pkg/cache/redis"
-	kv_consul "github.com/presid-io/presidio/pkg/kv/consul"
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/modules/analyzer"
 	"github.com/presid-io/presidio/pkg/rpc"
@@ -21,26 +20,25 @@ import (
 )
 
 var (
-	storageKind    string
-	analyzeKey     string
-	grpcPort       string
-	analyzeRequest *message_types.AnalyzeRequest
-	analyzerObj    analyzer.Analyzer
-	scannerObj     scanner.Scanner
+	storageKind     string
+	grpcPort        string
+	analyzeRequest  *message_types.AnalyzeRequest
+	analyzerObj     analyzer.Analyzer
+	scannerObj      scanner.Scanner
+	scannerTemplate *message_types.ScannerTemplate
 )
 
 func main() {
 	// Setup objects
 	initScanner()
-	var err error
 	store := consul.New()
 
 	cache := setupCache(store)
 	setupAnalyzerObjects(store)
 	databinderService := setupDataBinderService()
-	scannerObj = createScanner(storageKind)
+	scannerObj = createScanner(scannerTemplate)
 
-	err = scannerObj.WalkItems(func(item interface{}) {
+	err := scannerObj.WalkItems(func(item interface{}) {
 		var scanResult []*message_types.AnalyzeResult
 
 		itemPath := scannerObj.GetItemPath(item)
@@ -62,6 +60,8 @@ func main() {
 				log.Error(fmt.Sprintf("error sending file to databinder: %s, error: %q", itemPath, err.Error()))
 				return
 			}
+			log.Info(fmt.Sprintf("%d results were sent to t databinder successfully", len(scanResult)))
+
 		}
 
 		writeItemToCache(uniqueID, itemPath, cache)
@@ -103,6 +103,12 @@ func setupDataBinderService() *message_types.DatabinderServiceClient {
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Connection to databinder service failed %q", err))
 	}
+
+	_, err = (*databinderService).Init(context.Background(), scannerTemplate.DatabinderTemplate)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 	return databinderService
 }
 
@@ -119,9 +125,13 @@ func setupAnalyzerObjects(store sd.Store) {
 		log.Fatal(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
 
-	t := templates.New(kv_consul.New())
 	analyzerObj = analyzer.New(analyzeService)
-	analyzeRequest, err = analyzer.GetAnalyzeRequest(t, analyzeKey)
+
+	// TODO: change scanner template to receive analyzer request
+	analyzeRequest = &message_types.AnalyzeRequest{
+		AnalyzeTemplate: scannerTemplate.GetAnalyzeTemplate(),
+		MinProbability:  scannerTemplate.GetMinProbability(),
+	}
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -142,14 +152,21 @@ func setupCache(store sd.Store) cache.Cache {
 func initScanner() {
 	godotenv.Load()
 
-	grpcPort = os.Getenv("GRPC_PORT")
-	storageKind = os.Getenv("STORAGE_KIND")
-	analyzeKey = os.Getenv("ANALYZE_KEY")
+	scannerObj := os.Getenv("SCANNER_TEMPLATE")
+	template := &message_types.ScannerTemplate{}
+	err := templates.ConvertJSONToInterface(scannerObj, template)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error formating scanner template %q", err.Error()))
+	}
+	scannerTemplate = template
+	storageKind = scannerTemplate.Kind
 
 	if storageKind == "" {
-		log.Fatal("STORAGE_KIND env var must me set")
+		log.Fatal("storage king var must me set")
 	}
 
+	// TODO: Change!!
+	grpcPort = os.Getenv("GRPC_PORT")
 	if grpcPort == "" {
 		// Set to default
 		grpcPort = "5000"

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/joho/godotenv"
 	"github.com/presid-io/stow"
 
+	message_types "github.com/presid-io/presidio-genproto/golang"
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/storage"
 	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
@@ -21,8 +21,9 @@ type storageScanner struct {
 }
 
 // New returns new instance of DB Data writter
-func New(kind string) scanner.Scanner {
+func New(kind string, inputConfig *message_types.InputConfig) scanner.Scanner {
 	scanner := storageScanner{kind: kind}
+	scanner.Init(inputConfig)
 	return &scanner
 }
 
@@ -55,14 +56,12 @@ func (scanner *storageScanner) GetItemUniqueID(input interface{}) (string, error
 	return etag, nil
 }
 
-func (scanner *storageScanner) Init() {
-	godotenv.Load()
-
+func (scanner *storageScanner) Init(inputConfig *message_types.InputConfig) {
 	switch scanner.kind {
 	case "azure":
-		scanner.config, scanner.containerName = azure.InitBlobStorage()
+		scanner.config, scanner.containerName = azure.InitBlobStorage(inputConfig)
 	case "s3":
-		scanner.config, scanner.containerName = aws.InitS3()
+		scanner.config, scanner.containerName = aws.InitS3(inputConfig)
 	// case "google":
 	// 	// Add support
 	default:

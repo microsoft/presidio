@@ -23,11 +23,17 @@ type dBDataBinder struct {
 	driverName       string
 	connectionString string
 	engine           *xorm.Engine
+	tableName        string
 }
 
 // New returns new instance of DB Data writter
-func New(driverName string, connectionString string) databinder.DataBinder {
-	db := dBDataBinder{driverName: driverName, connectionString: connectionString}
+func New(driverName string, connectionString string, tableName string) databinder.DataBinder {
+	// default table name
+	if tableName == "" {
+		tableName = "scannerresult"
+	}
+
+	db := dBDataBinder{driverName: driverName, connectionString: connectionString, tableName: tableName}
 	db.Init()
 	return &db
 }
@@ -53,15 +59,10 @@ func (databinder *dBDataBinder) Init() {
 	}
 
 	// Create table if not exists
-	err = databinder.engine.Table(getTableName()).CreateTable(&analyzerResult{})
+	err = databinder.engine.Table(databinder.tableName).CreateTable(&analyzerResult{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-}
-
-func getTableName() string {
-	// TODO: CHANGE NAME
-	return "newtable"
 }
 
 func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
@@ -78,7 +79,7 @@ func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeRes
 	}
 
 	// Add rows to table
-	_, err := databinder.engine.Table(getTableName()).Insert(&analyzerResultArray)
+	_, err := databinder.engine.Table(databinder.tableName).Insert(&analyzerResultArray)
 	if err != nil {
 		log.Error(err.Error())
 		return err

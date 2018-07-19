@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"os"
 
 	"strings"
 	"testing"
@@ -44,6 +43,11 @@ func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *messag
 	return result, args.Error(1)
 }
 
+func (m *MyMockedObject) Init(ctx context.Context, databinderTemplate *message_types.DatabinderTemplate, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+	// Currently not in use.
+	return nil, nil
+}
+
 func (m *MyMockedObject) Apply(ctx context.Context, in *message_types.DatabinderRequest, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
 	args := m.Mock.Called()
 	var result *message_types.DatabinderResponse
@@ -55,7 +59,6 @@ func (m *MyMockedObject) Apply(ctx context.Context, in *message_types.Databinder
 
 // TESTS
 func TestAzureScanAndAnalyze(t *testing.T) {
-	setTestEnvironmentVars()
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
@@ -67,7 +70,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	api.RemoveContainer("test")
 	container := createContainer(api)
 	putItem("file1.txt", container, api)
-	scannerObj = createScanner("azure")
+	scannerObj = createScanner(getScannerTemplate())
 
 	// Act
 	api.WalkFiles(container, func(item stow.Item) {
@@ -95,7 +98,6 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 
 func TestFileExtension(t *testing.T) {
 	// Setup
-	setTestEnvironmentVars()
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
@@ -105,7 +107,7 @@ func TestFileExtension(t *testing.T) {
 	api, _ := storage.New(kind, config, 10)
 	container := createContainer(api)
 	putItem("file1.jpg", container, api)
-	scannerObj = createScanner("azure")
+	scannerObj = createScanner(getScannerTemplate())
 	// Assert
 	api.WalkFiles(container, func(item stow.Item) {
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
@@ -121,7 +123,6 @@ func TestFileExtension(t *testing.T) {
 
 func TestSendResultToDataBinderReturnsErrorOnError(t *testing.T) {
 	// Setup
-	setTestEnvironmentVars()
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 	api, _ := storage.New(kind, config, 10)
@@ -176,8 +177,16 @@ func putItem(itemName string, container stow.Container, api *storage.API) stow.I
 	return item
 }
 
-func setTestEnvironmentVars() {
-	os.Setenv("AZURE_ACCOUNT", storageName)
-	os.Setenv("AZURE_KEY", storageKey)
-	os.Setenv("AZURE_CONTAINER", "test")
+func getScannerTemplate() *message_types.ScannerTemplate {
+	scannerTemplate := &message_types.ScannerTemplate{
+		InputConfig: &message_types.InputConfig{
+			BlobStorageConfig: &message_types.BlobStorageConfig{
+				AccountName:   storageName,
+				AccountKey:    storageKey,
+				ContainerName: "test",
+			},
+		},
+		Kind: "azure",
+	}
+	return scannerTemplate
 }
