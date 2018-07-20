@@ -3,10 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/presid-io/presidio/pkg/service-discovery/consul"
 
 	log "github.com/presid-io/presidio/pkg/logger"
 	analyzer "github.com/presid-io/presidio/pkg/modules/analyzer"
@@ -22,25 +21,33 @@ var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
 
 func setupGrpcServices() {
-	store := consul.New()
 	var err error
-	var analyzerSvcHost, anonymizerSvcHost string
 
-	analyzerSvcHost, err = store.GetService("analyzer")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("analyzer service address is empty %q", err))
+	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
+	if analyzerSvcHost == "" {
+		log.Fatal("analyzer service address is empty")
 	}
 
-	anonymizerSvcHost, err = store.GetService("anonymizer")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("anonymizer service address is empty %q", err))
+	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
+	if analyzerSvcPort == "" {
+		log.Fatal("analyzer service port is empty")
 	}
 
-	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost)
+	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
+	if anonymizerSvcHost == "" {
+		log.Fatal("anonymizer service address is empty")
+	}
+
+	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
+	if anonymizerSvcPort == "" {
+		log.Fatal("anonymizer service port is empty")
+	}
+
+	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
-	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost)
+	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
 	}

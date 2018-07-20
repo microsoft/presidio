@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
-	"log"
+
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/presid-io/stow"
 
+	log "github.com/presid-io/presidio/pkg/logger"
+
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	"github.com/presid-io/presidio/pkg/cache/redis"
 	"github.com/presid-io/presidio/pkg/rpc"
-	"github.com/presid-io/presidio/pkg/service-discovery/consul"
 	"github.com/presid-io/presidio/pkg/storage"
 	scanner "github.com/presid-io/presidio/presidio-storage-scanner/cmd/presidio-storage-scanner/storage-scanner"
 )
@@ -34,29 +35,38 @@ var (
 
 func main() {
 	var err error
-	store := consul.New()
 
-	var analyzerSvcHost, redisService string
 	var analyzeService *message_types.AnalyzeServiceClient
 
-	redisService, err = store.GetService("redis")
-	if err != nil {
-		log.Fatal(err.Error())
-		return
+	redisHost := os.Getenv("REDIS_HOST")
+	if redisHost == "" {
+		log.Fatal("redis address is empty")
 	}
 
-	analyzerSvcHost, err = store.GetService("analyzer")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("analyzer service address is empty %q", err))
+	redisPort := os.Getenv("REDIS_SVC_PORT")
+	if redisPort == "" {
+		log.Fatal("redis port is empty")
 	}
 
-	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost)
+	redisAddress := redisHost + ":" + redisPort
+
+	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
+	if analyzerSvcHost == "" {
+		log.Fatal("analyzer service address is empty")
+	}
+
+	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
+	if analyzerSvcPort == "" {
+		log.Fatal("analyzer service port is empty")
+	}
+
+	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to analyzer service failed %q", err))
+		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
 
 	cache := redis.New(
-		redisService,
+		redisAddress,
 		"", // no password set
 		0,  // use default DB
 	)

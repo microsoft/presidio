@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= praesidio
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-api presidio-storage-scanner presidio-scheduler presidio-registrator
-IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-storage-scanner presidio-scheduler presidio-registrator
+BINS        = presidio-anonymizer presidio-api presidio-storage-scanner presidio-scheduler
+IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-storage-scanner presidio-scheduler
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
@@ -77,12 +77,10 @@ go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
 go-test-unit: vendor clean
-	docker run --rm --name test-consul -d -p 8300:8300 -p 8301:8301 -p 8302:8302 -p 8400:8400 -p 8500:8500 -p 8600:8600 consul
 	docker run --rm --name test-redis -d -p 6379:6379 redis
 	docker run --rm --name test-azure-emulator -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite
 	go test -v ./...
 	docker rm test-redis -f
-	docker rm test-consul -f
 	docker rm test-azure-emulator -f
 .PHONY: test-functional
 test-functional: vendor
@@ -108,7 +106,6 @@ make-proto: vendor
 proto: make-proto
 
 make-clean:
-	-docker rm test-consul -f
 	-docker rm test-redis -f
 
 .PHONY: clean

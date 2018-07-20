@@ -42,7 +42,6 @@ Presidio analyzes the text using predefined analyzers to identify patterns, form
 Presidio leverages 
 
 * [Kubernetes](https://kubernetes.io/)
-* [Consul](https://www.consul.io/)
 * [Istio](https://istio.io)
 * [spaCy](https://spacy.io/)
 * [Redis](https://redis.io/)

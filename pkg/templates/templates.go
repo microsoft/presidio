@@ -5,17 +5,17 @@ import (
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	helper "github.com/presid-io/presidio/pkg/helper"
-	"github.com/presid-io/presidio/pkg/kv"
+	"github.com/presid-io/presidio/pkg/platform"
 )
 
 //Templates kv store
 type Templates struct {
-	kvStore kv.Store
+	platformStore platform.Store
 }
 
 //New KV store
-func New(s kv.Store) *Templates {
-	return &Templates{kvStore: s}
+func New(s platform.Store) *Templates {
+	return &Templates{platformStore: s}
 }
 
 //GetFieldTypes return the available fields
@@ -32,27 +32,27 @@ func CreateKey(project string, action string, id string) string {
 
 // GetTemplate from key store
 func (templates *Templates) GetTemplate(key string) (string, error) {
-	return templates.kvStore.GetKVPair(key)
+	return templates.platformStore.GetKVPair(key)
 }
 
 // InsertTemplate inserts a template to the key store
 func (templates *Templates) InsertTemplate(project string, action string, id string, value string) error {
 	key := CreateKey(project, action, id)
-	return templates.kvStore.PutKVPair(key, value)
+	return templates.platformStore.PutKVPair(key, value)
 }
 
 // UpdateTemplate updates the template in the key store
 func (templates *Templates) UpdateTemplate(project string, action string, id string, value string) error {
 	key := CreateKey(project, action, id)
-	err := templates.kvStore.DeleteKVPair(key)
+	err := templates.platformStore.DeleteKVPair(key)
 	if err != nil {
 		return err
 	}
-	return templates.kvStore.PutKVPair(key, value)
+	return templates.platformStore.PutKVPair(key, value)
 }
 
 // DeleteTemplate deletes a template from key store
 func (templates *Templates) DeleteTemplate(project string, action string, id string) error {
 	key := CreateKey(project, action, id)
-	return templates.kvStore.DeleteKVPair(key)
+	return templates.platformStore.DeleteKVPair(key)
 }

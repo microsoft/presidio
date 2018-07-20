@@ -14,6 +14,7 @@ spec:
       labels:
         app: {{ template "presidio.fullname" . }}-api
     spec:
+      serviceAccountName: {{ template "presidio.fullname" . }}-api
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.registry }}/{{ .Values.api.name }}:{{ default .Chart.AppVersion .Values.api.tag }}"
@@ -37,21 +38,10 @@ spec:
                 fieldPath: metadata.namespace
           - name: WEB_PORT
             value: {{ .Values.api.service.internalPort | quote }}
-          - name: CONSUL_HTTP_ADDR
-            value: {{ .Values.consul.service}}
-      {{ if .Values.privateRegistry }}imagePullSecrets:
-        - name: {{.Values.privateRegistry}}{{ end }}
-      initContainers:
-      - name: "{{ .Chart.Name }}-registrator"
-        image: "{{ .Values.registry }}/{{ .Values.registrator.name }}:{{ default .Chart.AppVersion .Values.registrator.tag }}"
-        imagePullPolicy: {{ default "IfNotPresent" .Values.registrator.imagePullPolicy }}
-        env:
-          - name: CONSUL_HTTP_ADDR
-            value: {{ .Values.consul.service}}
           - name: REDIS_HOST
-            value: {{ .Values.registrator.redis.host}}
+            value: {{ .Values.redis.host}}
           - name: REDIS_PORT
-            value: {{ .Values.registrator.redis.port | quote }}
+            value: {{ .Values.redis.port | quote }}
           - name: ANALYZER_SVC_HOST
             value:  {{ template "presidio.analyzer.fullname" . }}
           - name: ANALYZER_SVC_PORT
@@ -60,5 +50,5 @@ spec:
             value:  {{ template "presidio.anonymizer.fullname" . }}
           - name: ANONYMIZER_SVC_PORT
             value: {{ .Values.anonymizer.service.externalPort | quote }}
-    {{ if .Values.privateRegistry }}imagePullSecrets:
+      {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}
