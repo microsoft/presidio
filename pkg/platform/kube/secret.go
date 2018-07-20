@@ -30,11 +30,6 @@ func (s *store) PutKVPair(key string, value string) error {
 
 	secrets := s.client.CoreV1().Secrets(s.namespace)
 
-	_, err := secrets.Get(key, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
 	secret := &apiv1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: key,
@@ -43,7 +38,13 @@ func (s *store) PutKVPair(key string, value string) error {
 			key: value,
 		},
 	}
-	_, err = secrets.Create(secret)
+
+	_, err := secrets.Get(key, metav1.GetOptions{})
+	if err != nil {
+		_, err = secrets.Create(secret)
+		return err
+	}
+	_, err = secrets.Update(secret)
 	return err
 }
 
