@@ -38,6 +38,7 @@ matrix:
       - gometalinter --install
       script:
       - make go-test
+      - make test-functional
       after_success:
       - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
         export presidio_LABEL="unstable";
