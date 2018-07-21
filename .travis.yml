@@ -55,8 +55,6 @@ matrix:
         echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin &&
         make docker-build docker-push &&
         if [ "$presidio_LABEL" != "unstable" ]; then
-        docker tag "presidioio/presidio-registrator:$presidio_LABEL-amd64" presidioio/presidio-registrator:stable-amd64 &&
-        docker push presidioio/presidio-registrator:stable-amd64;
         docker tag "presidioio/presidio-api:$presidio_LABEL-amd64" presidioio/presidio-api:stable-amd64 &&
         docker push presidioio/presidio-api:stable-amd64;
         docker tag "presidioio/presidio-analyzer:$presidio_LABEL-amd64" presidioio/presidio-analyzer:stable-amd64 &&

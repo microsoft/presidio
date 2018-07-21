@@ -24,11 +24,7 @@ $ kubectl create namespace presidio
 $ kubectl label namespace presidio istio-injection=enabled
 ```
 
-7. Deploy 
-```
-$ kubectl apply -f /deployment/presidio.yaml --namespace presidio
-```
-or from `/charts/presidio`
+7. Deploy from `/charts/presidio`
 ```
 $ helm install --name presidio-demo . --namespace presidio
 ```
