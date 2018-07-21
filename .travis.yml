@@ -19,6 +19,8 @@ matrix:
       go:
       - "1.10"
       go_import_path: github.com/presid-io/presidio
+      env:
+      - DEP_VERSION="0.4.1"
       before_install:
       # Install kafka lib
       - git clone https://github.com/edenhill/librdkafka.git
