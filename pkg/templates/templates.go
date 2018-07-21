@@ -26,7 +26,7 @@ func GetFieldTypes() (string, error) {
 
 // CreateKey creates template key in the structure: project/action/id
 func CreateKey(project string, action string, id string) string {
-	key := fmt.Sprintf("%s/%s/%s", project, action, id)
+	key := fmt.Sprintf("%s@%s@%s", project, action, id)
 	return key
 }
 

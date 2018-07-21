@@ -28,7 +28,7 @@ func main() {
 	}
 
 	r := server.Setup(port)
-	setupGrpcServices()
+	setupGRPCServices()
 
 	var api *API
 

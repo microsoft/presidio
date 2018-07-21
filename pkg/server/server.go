@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/presid-io/presidio/pkg/logger"
+	log "github.com/presid-io/presidio/pkg/logger"
 )
 
 var (
@@ -34,7 +34,7 @@ func Setup(_port int) *gin.Engine {
 	//   - Logs all requests, like a combined access and error log.
 	//   - Logs to stdout.
 	//   - RFC3339 with UTC time format.
-	r.Use(ginzap.Ginzap(logger.GetInstance(), time.RFC3339, true))
+	r.Use(ginzap.Ginzap(log.GetInstance(), time.RFC3339, true))
 	r.Use(cors.Default())
 	r.GET("/healthz", healthCheck)
 	port = _port
@@ -53,7 +53,7 @@ func Start(r *gin.Engine) {
 	})
 
 	if err := g.Wait(); err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 }
 
@@ -62,14 +62,14 @@ func Stop() {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 
-	logger.Info("Shutdown Server ...")
+	log.Info("Shutdown Server ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
-	logger.Info("Server exiting")
+	log.Info("Server exiting")
 }
 func healthCheck(c *gin.Context) {
 	WriteResponse(c, http.StatusOK, gin.H{

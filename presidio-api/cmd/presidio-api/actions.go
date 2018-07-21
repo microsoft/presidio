@@ -20,7 +20,7 @@ import (
 var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
 
-func setupGrpcServices() {
+func setupGRPCServices() {
 	var err error
 
 	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
@@ -47,7 +47,7 @@ func setupGrpcServices() {
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
-	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + analyzerSvcPort)
+	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
 	}
@@ -94,14 +94,14 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	result, err := api.templates.GetTemplate(anonymizeKey)
 
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to retrieve template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return nil
 	}
 	srv := *anonymizeService
 	anonymizeTemplate := &message_types.AnonymizeTemplate{}
 	err = helper.ConvertJSONToInterface(result, anonymizeTemplate)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to convert template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return nil
 	}
 	request := &message_types.AnonymizeRequest{
@@ -111,7 +111,7 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	}
 	res, err := srv.Apply(c, request)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, err.Error())
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
 	}
 	return res
@@ -122,14 +122,14 @@ func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Con
 	analyzeRequest, err := analyzer.GetAnalyzeRequest(api.templates, analyzeKey)
 
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, err.Error())
+		c.AbortWithError(http.StatusBadRequest, err)
 		return nil
 	}
 
 	analyzerObj := analyzer.New(analyzeService)
 	analyzeResponse, err := analyzerObj.InvokeAnalyze(c, analyzeRequest, text)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, err.Error())
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
 	}
 	return analyzeResponse

@@ -13,14 +13,15 @@ func TestPutKVPair(t *testing.T) {
 	}
 
 	value := "value1"
-	err := store.PutKVPair("key1", value)
+	key := "key@key@key"
+	err := store.PutKVPair(key, value)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	time.Sleep(time.Millisecond)
 
-	v1, _ := store.GetKVPair("key1")
+	v1, _ := store.GetKVPair(key)
 	if v1 != value {
 		t.Fatal("expected value is different")
 	}
@@ -32,7 +33,7 @@ func TestDeleteKVPair(t *testing.T) {
 		path: os.TempDir(),
 	}
 
-	key := "key1"
+	key := "key@key@key"
 	err := store.PutKVPair(key, "somevalue")
 	if err != nil {
 		t.Fatal(err)
