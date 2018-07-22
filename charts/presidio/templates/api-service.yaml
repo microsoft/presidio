@@ -1,7 +1,8 @@
+{{ $fullname := include "presidio.api.fullname" . }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "presidio.api.fullname" . }}
+  name: {{ $fullname }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: "{{ .Release.Name }}"
@@ -14,4 +15,4 @@ spec:
     protocol: TCP
     name: {{ .Values.api.service.name }}
   selector:
-    app: {{ template "presidio.api.fullname" . }}
+    app: {{ $fullname }}

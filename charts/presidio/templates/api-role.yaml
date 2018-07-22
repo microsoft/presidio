@@ -1,8 +1,9 @@
+{{ $fullname := include "presidio.api.fullname" . }}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ template "presidio.fullname" . }}-api
+  name: {{ $fullname }}
   labels:
     app: {{ template "presidio.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -11,9 +12,9 @@ metadata:
 automountServiceAccountToken: true
 ---
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: {{ template "presidio.rbac.version" }}
 metadata:
-  name: {{ template "presidio.fullname" . }}-api
+  name: {{ $fullname }}
   labels:
     app: {{ template "presidio.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -22,12 +23,12 @@ metadata:
 rules:
 - apiGroups: [""] # "" indicates the core API group
   resources: ["secrets"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  verbs: ["get", "create", "update", "patch", "delete"]
 ---
 kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: {{ template "presidio.rbac.version" }}
 metadata:
-  name: {{ template "presidio.fullname" . }}-api
+  name: {{ $fullname }}
   labels:
     app: {{ template "presidio.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -35,8 +36,8 @@ metadata:
     heritage: "{{ .Release.Service }}"
 subjects:
 - kind: ServiceAccount
-  name: {{ template "presidio.fullname" . }}-api
+  name: {{ $fullname }}
 roleRef:
   kind: Role
-  name: {{ template "presidio.fullname" . }}-api
+  name: {{ $fullname }}
   apiGroup: rbac.authorization.k8s.io

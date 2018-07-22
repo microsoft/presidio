@@ -1,9 +1,10 @@
+{{ $fullname := include "presidio.api.fullname" . }}
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "presidio.fullname" . }}-api
+  name: {{ $fullname }}
   labels:
-    app: {{ template "presidio.fullname" . }}-api
+    app: {{ $fullname }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
@@ -12,9 +13,9 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "presidio.fullname" . }}-api
+        app: {{ $fullname }}
     spec:
-      serviceAccountName: {{ template "presidio.fullname" . }}-api
+      serviceAccountName: {{ $fullname }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.registry }}/{{ .Values.api.name }}:{{ default .Chart.AppVersion .Values.api.tag }}"

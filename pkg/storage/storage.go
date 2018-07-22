@@ -50,12 +50,12 @@ func (a *API) CreateContainer(name string) (stow.Container, error) {
 	container, err := a.location.CreateContainer(name)
 	if err != nil {
 		if strings.Contains(err.Error(), "ContainerAlreadyExists") {
-			x, _ := a.location.Container(name)
-			return x, nil
+			x, err1 := a.location.Container(name)
+			return x, err1
 		}
 		return nil, err
 	}
-	return container, nil
+	return container, err
 }
 
 // RemoveContainer removes a container/bucket from the storage

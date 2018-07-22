@@ -13,12 +13,14 @@
     "Enable": [
         "deadcode",
         "gofmt",
+        "gocyclo",
         "goimports",
         "golint",
         "gosimple",
         "ineffassign",
         "misspell",
         "unused",
-        "vet"
+        "vet",
+        "gas"
     ]
 }

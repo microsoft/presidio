@@ -1,9 +1,10 @@
+{{ $fullname := include "presidio.analyzer.fullname" . }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "presidio.fullname" . }}-analyzer
+  name: {{ $fullname }}
   labels:
-    app: {{ template "presidio.fullname" . }}-analyzer
+    app: {{ $fullname }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
@@ -12,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "presidio.fullname" . }}-analyzer
+        app: {{ $fullname }}
     spec:
       containers:
       - name: {{ .Chart.Name }}

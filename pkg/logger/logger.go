@@ -18,9 +18,13 @@ var once sync.Once
 func init() {
 	// once ensures the singleton is initialized only once
 	once.Do(func() {
+		var err error
 		config := zap.NewDevelopmentConfig()
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-		singleton, _ = config.Build()
+		singleton, err = config.Build()
+		if err != nil {
+			panic(err.Error())
+		}
 	})
 }
 

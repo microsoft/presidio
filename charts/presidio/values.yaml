@@ -4,10 +4,6 @@ redis:
     host: redis-master
     port: 6379
 
-ingress:
-  enabled: true
-  class: traefik
-
 api:
   name: presidio-api
   # tag:
@@ -22,6 +18,10 @@ api:
   # Configure readiness probes except `httpGet` and the belongings
   #readinessProbe:
   #  initialDelaySeconds: 20
+
+  ingress:
+    enabled: true
+    class: traefik
 
 analyzer:
   name: presidio-analyzer
