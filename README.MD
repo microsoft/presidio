@@ -48,7 +48,6 @@ alt="Intro" width="320" height="200" border="10" /></a>
 Presidio leverages 
 
 * [Kubernetes](https://kubernetes.io/)
-* [Istio](https://istio.io)
 * [spaCy](https://spacy.io/)
 * [Redis](https://redis.io/)
 * [GRPC](https://grpc.io)

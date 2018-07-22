@@ -10,7 +10,7 @@ import (
 
 func connect(addr string) (*grpc.ClientConn, error) {
 
-	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(1*time.Second), grpc.WithBackoffMaxDelay(1*time.Second))
+	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(1*time.Second), grpc.WithBackoffMaxDelay(1*time.Second), grpc.WithBalancerName("round_robin"))
 	if err != nil {
 		return nil, err
 	}
