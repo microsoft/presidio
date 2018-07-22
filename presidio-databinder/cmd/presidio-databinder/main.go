@@ -23,7 +23,6 @@ var (
 type server struct{}
 
 func main() {
-	// TODO: where should I get this value from?
 	if grpcPort == "" {
 		// Set to default
 		grpcPort = "5000"

@@ -8,10 +8,6 @@ import (
 	"github.com/presid-io/stow"
 	"github.com/presid-io/stow/azure"
 	"github.com/presid-io/stow/s3"
-
-	analyzer "github.com/presid-io/presidio/pkg/modules/analyzer"
-	"github.com/presid-io/presidio/pkg/platform"
-	templates "github.com/presid-io/presidio/pkg/templates"
 )
 
 //API storage
@@ -80,16 +76,8 @@ func (a *API) RemoveContainer(name string) error {
 type walkFunc func(item stow.Item)
 
 // WalkFiles walks over the files in 'container' and executes fn func
-func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string, store platform.Store) error {
+func (a *API) WalkFiles(container stow.Container, walkFunc walkFunc) error {
 	limit := limiter.NewConcurrencyLimiter(a.concurrencyLimit)
-
-	t := templates.New(store)
-	analyzerObj := analyzer.New(a.analyzeService)
-	analyzeRequest, err := analyzer.GetAnalyzeRequest(t, analyzeKey)
-
-	if err != nil {
-		return err
-	}
 
 	err := stow.Walk(container, stow.NoPrefix, 100, func(item stow.Item, err error) error {
 		if err != nil {

@@ -34,7 +34,7 @@ type MyMockedObject struct {
 	mock.Mock
 }
 
-func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.AnalyzeResponse, error) {
+func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest) (*message_types.AnalyzeResponse, error) {
 	args := m.Mock.Called()
 	var result *message_types.AnalyzeResponse
 	if args.Get(0) != nil {
@@ -71,12 +71,14 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	container := createContainer(api)
 	putItem("file1.txt", container, api)
 	scannerObj = createScanner(getScannerTemplate())
+	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	// Act
 	api.WalkFiles(container, func(item stow.Item) {
 		itemPath := scannerObj.GetItemPath(item)
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, nil, item)
+
+		results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 1)
 		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
@@ -108,6 +110,8 @@ func TestFileExtension(t *testing.T) {
 	container := createContainer(api)
 	putItem("file1.jpg", container, api)
 	scannerObj = createScanner(getScannerTemplate())
+	analyzeRequest := &message_types.AnalyzeRequest{}
+
 	// Assert
 	api.WalkFiles(container, func(item stow.Item) {
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)

@@ -13,8 +13,6 @@ import (
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/modules/analyzer"
 	"github.com/presid-io/presidio/pkg/rpc"
-	"github.com/presid-io/presidio/pkg/service-discovery"
-	"github.com/presid-io/presidio/pkg/service-discovery/consul"
 	"github.com/presid-io/presidio/pkg/templates"
 	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
@@ -31,10 +29,9 @@ var (
 func main() {
 	// Setup objects
 	initScanner()
-	store := consul.New()
 
-	cache := setupCache(store)
-	setupAnalyzerObjects(store)
+	cache := setupCache()
+	setupAnalyzerObjects()
 	databinderService := setupDataBinderService()
 	scannerObj = createScanner(scannerTemplate)
 
@@ -113,40 +110,52 @@ func setupDataBinderService() *message_types.DatabinderServiceClient {
 }
 
 // Init functions
-func setupAnalyzerObjects(store sd.Store) {
-	var err error
-	analyzerSvcHost, err := store.GetService("analyzer")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("analyzer service address is empty %q", err))
+func setupAnalyzerObjects() {
+	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
+	if analyzerSvcHost == "" {
+		log.Fatal("analyzer service address is empty")
 	}
 
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcHost)
+	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
+	if analyzerSvcPort == "" {
+		log.Fatal("analyzer service port is empty")
+	}
+
+	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to analyzer service failed %q", err))
+		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
 
 	analyzerObj = analyzer.New(analyzeService)
 
-	// TODO: change scanner template to receive analyzer request
 	analyzeRequest = &message_types.AnalyzeRequest{
 		AnalyzeTemplate: scannerTemplate.GetAnalyzeTemplate(),
 		MinProbability:  scannerTemplate.GetMinProbability(),
 	}
+
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 }
 
-func setupCache(store sd.Store) cache.Cache {
-	redisService, err := store.GetService("redis")
-	if err != nil {
-		log.Fatal(err.Error())
+func setupCache() cache.Cache {
+	redisHost := os.Getenv("REDIS_HOST")
+	if redisHost == "" {
+		log.Fatal("redis address is empty")
 	}
-	return redis.New(
-		redisService,
-		"", // no password set TODO: Add password
+
+	redisPort := os.Getenv("REDIS_SVC_PORT")
+	if redisPort == "" {
+		log.Fatal("redis port is empty")
+	}
+
+	redisAddress := redisHost + ":" + redisPort
+	cache := redis.New(
+		redisAddress,
+		"", // no password set
 		0,  // use default DB
 	)
+	return cache
 }
 
 func initScanner() {
@@ -200,7 +209,8 @@ func analyzeItem(cache *cache.Cache,
 			return nil, fmt.Errorf("error getting item's content, error: %q", err.Error())
 		}
 
-		results, err := (*analyzerModule).InvokeAnalyze(context.Background(), analyzeRequest, itemContent)
+		analyzeRequest.Text = itemContent
+		results, err := (*analyzerModule).InvokeAnalyze(context.Background(), analyzeRequest)
 		if err != nil {
 			return nil, err
 		}
