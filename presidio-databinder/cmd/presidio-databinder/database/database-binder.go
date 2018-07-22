@@ -19,7 +19,7 @@ import (
 	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
 )
 
-type dBDataBinder struct {
+type dbDataBinder struct {
 	driverName       string
 	connectionString string
 	engine           *xorm.Engine
@@ -33,7 +33,7 @@ func New(driverName string, connectionString string, tableName string) databinde
 		tableName = "scannerresult"
 	}
 
-	db := dBDataBinder{driverName: driverName, connectionString: connectionString, tableName: tableName}
+	db := dbDataBinder{driverName: driverName, connectionString: connectionString, tableName: tableName}
 	db.Init()
 	return &db
 }
@@ -49,7 +49,7 @@ type analyzerResult struct {
 	Timestamp     time.Time `xorm:"created"`
 }
 
-func (databinder *dBDataBinder) Init() {
+func (databinder *dbDataBinder) Init() {
 	var err error
 
 	// Connect to DB
@@ -65,7 +65,7 @@ func (databinder *dBDataBinder) Init() {
 	}
 }
 
-func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
+func (databinder *dbDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}
 
 	for _, element := range results {
@@ -81,7 +81,6 @@ func (databinder *dBDataBinder) WriteResults(results []*message_types.AnalyzeRes
 	// Add rows to table
 	_, err := databinder.engine.Table(databinder.tableName).Insert(&analyzerResultArray)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 
