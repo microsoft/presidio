@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= praesidio
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-api presidio-storage-scanner presidio-scheduler
-IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-storage-scanner presidio-scheduler
+BINS        = presidio-anonymizer presidio-api presidio-scanner presidio-scheduler presidio-databinder
+IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-scanner presidio-scheduler presidio-databinder
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}

@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
-	helper "github.com/presid-io/presidio/pkg/helper"
 	server "github.com/presid-io/presidio/pkg/server"
 	pkg_templates "github.com/presid-io/presidio/pkg/templates"
 )
@@ -82,12 +81,12 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	case "analyze":
 		var analyzerTemplate message_types.AnalyzeTemplate
 		if c.BindJSON(&analyzerTemplate) == nil {
-			return helper.ConvertInterfaceToJSON(analyzerTemplate)
+			return pkg_templates.ConvertInterfaceToJSON(analyzerTemplate)
 		}
 	case "anonymize":
 		var anonymizeTemplate message_types.AnonymizeTemplate
 		if c.BindJSON(&anonymizeTemplate) == nil {
-			return helper.ConvertInterfaceToJSON(anonymizeTemplate)
+			return pkg_templates.ConvertInterfaceToJSON(anonymizeTemplate)
 		}
 	}
 
