@@ -12,7 +12,6 @@ import (
 	"github.com/presid-io/presidio/pkg/rpc"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
-	helper "github.com/presid-io/presidio/pkg/helper"
 	server "github.com/presid-io/presidio/pkg/server"
 	templates "github.com/presid-io/presidio/pkg/templates"
 )
@@ -99,7 +98,7 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	}
 	srv := *anonymizeService
 	anonymizeTemplate := &message_types.AnonymizeTemplate{}
-	err = helper.ConvertJSONToInterface(result, anonymizeTemplate)
+	err = templates.ConvertJSONToInterface(result, anonymizeTemplate)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return nil

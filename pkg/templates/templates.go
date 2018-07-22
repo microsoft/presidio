@@ -1,10 +1,10 @@
 package templates
 
 import (
+	"encoding/json"
 	"fmt"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
-	helper "github.com/presid-io/presidio/pkg/helper"
 	"github.com/presid-io/presidio/pkg/platform"
 )
 
@@ -22,7 +22,7 @@ func New(s platform.Store) *Templates {
 
 //GetFieldTypes return the available fields
 func GetFieldTypes() (string, error) {
-	result, err := helper.ConvertInterfaceToJSON(message_types.FieldTypesEnum_value)
+	result, err := ConvertInterfaceToJSON(message_types.FieldTypesEnum_value)
 	return result, err
 }
 
@@ -57,4 +57,19 @@ func (templates *Templates) UpdateTemplate(project string, action string, id str
 func (templates *Templates) DeleteTemplate(project string, action string, id string) error {
 	key := CreateKey(project, action, id)
 	return templates.platformStore.DeleteKVPair(key)
+}
+
+// ConvertJSONToInterface convert Json to go Interface
+func ConvertJSONToInterface(template string, convertTo interface{}) error {
+	err := json.Unmarshal([]byte(template), &convertTo)
+	return err
+}
+
+// ConvertInterfaceToJSON convert go interface to json
+func ConvertInterfaceToJSON(template interface{}) (string, error) {
+	b, err := json.Marshal(template)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
