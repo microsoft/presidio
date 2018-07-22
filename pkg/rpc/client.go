@@ -10,7 +10,7 @@ import (
 
 func connect(addr string) (*grpc.ClientConn, error) {
 
-	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(1*time.Second), grpc.WithBackoffMaxDelay(1*time.Second))
+	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(1*time.Second), grpc.WithBackoffMaxDelay(1*time.Second), grpc.WithBalancerName("round_robin"))
 	if err != nil {
 		return nil, err
 	}
@@ -36,5 +36,15 @@ func SetupAnalyzerService(address string) (*message_types.AnalyzeServiceClient, 
 		return nil, err
 	}
 	client := message_types.NewAnalyzeServiceClient(conn)
+	return &client, nil
+}
+
+//SetupDataBinderService ...
+func SetupDataBinderService(address string) (*message_types.DatabinderServiceClient, error) {
+	conn, err := connect(address)
+	if err != nil {
+		return nil, err
+	}
+	client := message_types.NewDatabinderServiceClient(conn)
 	return &client, nil
 }

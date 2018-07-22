@@ -6,6 +6,7 @@ import template_pb2
 from field_types import field_type, field_factory
 from field_types.globally import ner
 
+CONTEXT_SIMILARITY_THRESHOLD = 0.65
 
 class Matcher(object):
     def __init__(self):
@@ -15,52 +16,46 @@ class Matcher(object):
 
         self.nlp = en_core_web_sm.load()
 
-    def __calculate_probability(self, doc, current_field, start):
+    def __calculate_context_similarity(self, context, field):
+        '''context similarity = max similarity between context token and a field keyword'''
+        lemmatized_context = list(map(lambda t: t.lemma_, self.nlp(context.lower())))
+        max_similarity = 0.0
 
-        probability = 0.0
-        base_token = None
-        for token in doc:
-            if token.idx == start:
-                base_token = token
-                break
+        for context_token in lemmatized_context:
+            for keyword in field.context:
+                similarity = self.nlp(context_token).similarity(self.nlp(keyword)) 
+                if similarity >= CONTEXT_SIMILARITY_THRESHOLD:
+                    max_similarity = max(max_similarity, similarity)
 
-        if base_token is None:
-            return 0
+        return min(max_similarity, 1)
 
-        start_index = base_token.i - 7
-        factor = 0.3
+    def __calculate_probability(self, doc, context, field, start):
+        if field.should_check_checksum:
+            if field.check_checksum() is not True:
+                logging.info("Checksum failed for " + field.text)
+                return 0
+            else:
+                return 1.0
 
-        if start_index < 0:
-            start_index = 0
+        probability = 0.5
+        factor = 0.5
 
-        for token in doc:
-            if token.i == base_token.i:
-                break
-            if token.i >= start_index:
-                if token.text.lower() in current_field.context:
-                    probability = probability + factor
-                    if probability >= 1.0:
-                        probability = 1.0
-                        break
+        '''calculate probability based on context '''
+        context_similarity = self.__calculate_context_similarity(context, field)
+        if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
+            probability += context_similarity * factor
 
-        return probability
-
-    def __create_result(self, doc, current_field, start, end):
+        return min(probability, 1)
+        
+    def __create_result(self, doc, context, current_field, start, end):
 
         res = common_pb2.AnalyzeResult()
         res.field.name = current_field.name
         res.text = current_field.text
 
         # Validate checksum
-        if current_field.should_check_checksum:
-            if current_field.check_checksum() is not True:
-                logging.info("Checksum failed for " + current_field.text)
-                return None
-            else:
-                res.probability = 1.0
-        else:
-            res.probability = self.__calculate_probability(
-                doc, current_field, start)
+        res.probability = self.__calculate_probability(
+                doc, context, current_field, start)
 
         res.location.start = start
         res.location.end = end
@@ -71,34 +66,51 @@ class Matcher(object):
         )
         return res
 
-    def __check_pattern(self, doc, results, current_field):
-        for _, check_type_value in current_field.regexes.items():
+    def __get_context(self, doc, matches):
+        '''returns the context of the matches, that is, all text without the actual matches'''
+        
+        context = ''
+        context_idx = 0
+        
+        for match in iter(matches):
+            start, end = match.span()
+            context += doc.text[context_idx:start]
+            context_idx = end + 1
+        
+        if (context_idx < len(doc.text)):
+            context += doc.text[context_idx:len(doc.text)]
+        
+        return context
 
-            for match in re.finditer(
+    def __check_pattern(self, doc, results, field):
+        for _, check_type_value in field.regexes.items():
+            matches = re.finditer(
                     check_type_value,
                     doc.text,
                     flags=re.IGNORECASE | re.DOTALL | re.MULTILINE,
                     overlapped=False,
                     partial=False,
-                    concurrent=True):
-
+                    concurrent=True)
+            
+            for match in matches:
                 start, end = match.span()
-                current_field.text = doc.text[start:end]
+                field.text = doc.text[start:end]
+                context = doc.text[0:start] + doc.text[end + 1:]
 
                 # Skip empty results
-                if current_field.text == '':
+                if field.text == '':
                     continue
 
                 # Don't add duplicate
-                if len(current_field.regexes) > 1 and any(
+                if len(field.regexes) > 1 and any(
                         ((x.location.start == start) or (
                             x.location.end == end)) and
                         ((
-                            x.field.name == current_field.name))
+                            x.field.name == field.name))
                         for x in results):
                     continue
 
-                res = self.__create_result(doc, current_field, start, end)
+                res = self.__create_result(doc, context, field, start, end)
                 if res is None or res.probability == 0:
                     continue
 

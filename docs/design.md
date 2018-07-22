@@ -1,9 +1,14 @@
-# presidio design
+# Presidio design
 
 _This is a living document, and is kept up to date with the current state of
 presidio. It is a high-level explanation of the presidio design._
 
-!![persidium design](https://user-images.githubusercontent.com/17064840/42417551-034ff1ea-8296-11e8-8913-002ed9904fab.png)
+## Framework Deployment
+
+
+## Kubernetes Deployment
+
+![persidium design](https://user-images.githubusercontent.com/17064840/43044585-7246191e-8db1-11e8-8aab-f6ef69265c0e.png)
 
 This architecture gives us the following advantages:
 * Resiliency for inter-service communications: Circuit-breaking, retries and timeouts, fault injection, fault handling, load balancing and failover.

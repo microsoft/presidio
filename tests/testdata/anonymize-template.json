@@ -1,0 +1,23 @@
+{
+    "name": "ANONYMIZER",
+    "displayName": "Phone number and Credit card",
+    "fieldTypeTransformations": [{
+            "fields": [{
+                "name": "PHONE_NUMBER"
+            }],
+            "transformation": {
+                "replaceValue": {
+                    "newValue": "\u003cphone-number\u003e"
+                }
+            }
+        },
+        {
+            "fields": [{
+                "name": "CREDIT_CARD"
+            }],
+            "transformation": {
+                "redactValue": {}
+            }
+        }
+    ]
+}

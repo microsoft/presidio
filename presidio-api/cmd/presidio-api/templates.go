@@ -1,22 +1,18 @@
 package main
 
 import (
-	"fmt"
-
 	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
-	helper "github.com/presid-io/presidio/pkg/helper"
 	server "github.com/presid-io/presidio/pkg/server"
 	pkg_templates "github.com/presid-io/presidio/pkg/templates"
 )
 
 func getFieldTypes(c *gin.Context) {
-	result, _ := pkg_templates.GetFieldTypes()
-	server.WriteResponse(c, http.StatusOK, result)
+	server.WriteResponse(c, http.StatusOK, message_types.FieldTypesEnum_value)
 }
 
 func (api *API) getActionTemplate(c *gin.Context) {
@@ -26,7 +22,7 @@ func (api *API) getActionTemplate(c *gin.Context) {
 	key := pkg_templates.CreateKey(project, action, id)
 	result, err := api.templates.GetTemplate(key)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to retrieve template %s %q", key, err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	server.WriteResponse(c, http.StatusOK, result)
@@ -38,12 +34,12 @@ func (api *API) postActionTemplate(c *gin.Context) {
 	id := c.Param("id")
 	value, err := validateTemplate(action, c)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to add template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	err = api.templates.InsertTemplate(project, action, id, value)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to add template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	server.WriteResponse(c, http.StatusCreated, "Template added successfully ")
@@ -55,12 +51,12 @@ func (api *API) putActionTemplate(c *gin.Context) {
 	id := c.Param("id")
 	value, err := validateTemplate(action, c)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to update template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	err = api.templates.UpdateTemplate(project, action, id, value)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to update template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
 	server.WriteResponse(c, http.StatusOK, "Template updated successfully")
@@ -72,7 +68,7 @@ func (api *API) deleteActionTemplate(c *gin.Context) {
 	id := c.Param("id")
 	err := api.templates.DeleteTemplate(project, action, id)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to delete template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	server.WriteResponse(c, http.StatusNoContent, "")
@@ -82,14 +78,14 @@ func (api *API) deleteActionTemplate(c *gin.Context) {
 func validateTemplate(action string, c *gin.Context) (string, error) {
 	switch action {
 	case "analyze":
-		var analyzerTemplate message_types.AnalyzeRequest
+		var analyzerTemplate message_types.AnalyzeTemplate
 		if c.BindJSON(&analyzerTemplate) == nil {
-			return helper.ConvertInterfaceToJSON(analyzerTemplate)
+			return pkg_templates.ConvertInterfaceToJSON(analyzerTemplate)
 		}
 	case "anonymize":
 		var anonymizeTemplate message_types.AnonymizeTemplate
 		if c.BindJSON(&anonymizeTemplate) == nil {
-			return helper.ConvertInterfaceToJSON(anonymizeTemplate)
+			return pkg_templates.ConvertInterfaceToJSON(anonymizeTemplate)
 		}
 	}
 

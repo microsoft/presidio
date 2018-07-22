@@ -13,6 +13,12 @@
 Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data. 
 Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
 
+<p align="center">
+<a href="https://www.youtube.com/watch?feature=player_embedded&v=S6-dwBF75do
+" target="_blank"><img src="https://user-images.githubusercontent.com/17064840/43032053-85d70174-8cb6-11e8-9c0e-609c5950fd55.png" 
+alt="Intro" width="320" height="200" border="10" /></a>
+</p>
+
 ## Features
 
 * Text analytics - Predefined analyzers with customizable fields.
@@ -42,8 +48,6 @@ Presidio analyzes the text using predefined analyzers to identify patterns, form
 Presidio leverages 
 
 * [Kubernetes](https://kubernetes.io/)
-* [Consul](https://www.consul.io/)
-* [Istio](https://istio.io)
 * [spaCy](https://spacy.io/)
 * [Redis](https://redis.io/)
 * [GRPC](https://grpc.io)
@@ -76,19 +80,19 @@ echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 49
 
 1. Create an analyzer project
 ```
-echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"]}}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"}]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
 ```
 
 2. Analyze text
 ```
-echo -n '{"text":""We met yesterday morning in Seattle and his phone number is (212) 555 1234"", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+echo -n '{"text":"We met yesterday morning in Seattle and his phone number is (212) 555 1234", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
 ```
 
 ***Sample 3***
 
 1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD)
 ```
-echo -n '{"name":"PHONE_NUMBER","displayName":"Phone number","fieldTypeTransformations":[{"fields":[],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+echo -n '{"name":"ANONYMIZER","displayName":"Phone number and Credit card","fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
 ```
 
 2. Anonymize text

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/presid-io/presidio/pkg/kv"
+	"github.com/presid-io/presidio/pkg/platform"
 	t "github.com/presid-io/presidio/pkg/templates"
 )
 
@@ -11,7 +11,7 @@ type API struct {
 }
 
 //New KV store
-func New(s kv.Store) *API {
+func New(s platform.Store) *API {
 	template := t.New(s)
 	return &API{templates: template}
 }

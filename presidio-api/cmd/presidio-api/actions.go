@@ -3,17 +3,14 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/presid-io/presidio/pkg/service-discovery/consul"
-
 	log "github.com/presid-io/presidio/pkg/logger"
-	analyzer "github.com/presid-io/presidio/pkg/modules/analyzer"
 	"github.com/presid-io/presidio/pkg/rpc"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
-	helper "github.com/presid-io/presidio/pkg/helper"
 	server "github.com/presid-io/presidio/pkg/server"
 	templates "github.com/presid-io/presidio/pkg/templates"
 )
@@ -21,26 +18,34 @@ import (
 var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
 
-func setupGrpcServices() {
-	store := consul.New()
+func setupGRPCServices() {
 	var err error
-	var analyzerSvcHost, anonymizerSvcHost string
 
-	analyzerSvcHost, err = store.GetService("analyzer")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("analyzer service address is empty %q", err))
+	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
+	if analyzerSvcHost == "" {
+		log.Fatal("analyzer service address is empty")
 	}
 
-	anonymizerSvcHost, err = store.GetService("anonymizer")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("anonymizer service address is empty %q", err))
+	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
+	if analyzerSvcPort == "" {
+		log.Fatal("analyzer service port is empty")
 	}
 
-	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost)
+	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
+	if anonymizerSvcHost == "" {
+		log.Fatal("anonymizer service address is empty")
+	}
+
+	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
+	if anonymizerSvcPort == "" {
+		log.Fatal("anonymizer service port is empty")
+	}
+
+	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
-	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost)
+	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
 	}
@@ -87,14 +92,14 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	result, err := api.templates.GetTemplate(anonymizeKey)
 
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to retrieve template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return nil
 	}
 	srv := *anonymizeService
 	anonymizeTemplate := &message_types.AnonymizeTemplate{}
-	err = helper.ConvertJSONToInterface(result, anonymizeTemplate)
+	err = templates.ConvertJSONToInterface(result, anonymizeTemplate)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, fmt.Sprintf("Failed to convert template %q", err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return nil
 	}
 	request := &message_types.AnonymizeRequest{
@@ -104,7 +109,7 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	}
 	res, err := srv.Apply(c, request)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, err.Error())
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
 	}
 	return res
@@ -112,18 +117,40 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 
 func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.AnalyzeResponse {
 	analyzeKey := templates.CreateKey(project, "analyze", id)
-	analyzeRequest, err := analyzer.GetAnalyzeRequest(api.templates, analyzeKey)
+	analyzeRequest, err := getAnalyzeRequest(api.templates, analyzeKey)
 
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, err.Error())
+		c.AbortWithError(http.StatusBadRequest, err)
 		return nil
 	}
 
-	analyzerObj := analyzer.New(analyzeService)
-	analyzeResponse, err := analyzerObj.InvokeAnalyze(c, analyzeRequest, text)
+	analyzeRequest.Text = text
+
+	srv := *analyzeService
+	analyzeResponse, err := srv.Apply(c, analyzeRequest)
 	if err != nil {
-		server.WriteResponse(c, http.StatusBadRequest, err.Error())
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
 	}
+
 	return analyzeResponse
+}
+
+func getAnalyzeRequest(apiTemplates *templates.Templates, analyzeKey string) (*message_types.AnalyzeRequest, error) {
+	template, err := apiTemplates.GetTemplate(analyzeKey)
+
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve template %q", err)
+	}
+
+	analyzeTemplate := &message_types.AnalyzeTemplate{}
+	err = templates.ConvertJSONToInterface(template, analyzeTemplate)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to convert template %q", err)
+	}
+	analyzeRequest := &message_types.AnalyzeRequest{
+		AnalyzeTemplate: analyzeTemplate,
+	}
+
+	return analyzeRequest, nil
 }

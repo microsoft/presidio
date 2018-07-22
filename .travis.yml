@@ -19,21 +19,28 @@ matrix:
       go:
       - "1.10"
       go_import_path: github.com/presid-io/presidio
+      env:
+      - DEP_VERSION="0.4.1"
       before_install:
+      # Install kafka lib
       - git clone https://github.com/edenhill/librdkafka.git
       - cd librdkafka
       - ./configure --prefix /usr
       - make
       - sudo make install
       - cd ..
-      - curl https://glide.sh/get | sh
+      # Download dep to bin folder in $GOPATH
+      - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
+       # Make dep executable
+      - chmod +x $GOPATH/bin/dep
       - go get github.com/pkg/errors
-      - glide up -v
-      - go get github.com/pkg/errors
+      - dep ensure
+      # Install gometalinter
       - go get -u github.com/alecthomas/gometalinter
       - gometalinter --install
       script:
       - make go-test
+      - make test-functional
       after_success:
       - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
         export presidio_LABEL="unstable";
@@ -48,8 +55,6 @@ matrix:
         echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin &&
         make docker-build docker-push &&
         if [ "$presidio_LABEL" != "unstable" ]; then
-        docker tag "presidioio/presidio-registrator:$presidio_LABEL-amd64" presidioio/presidio-registrator:stable-amd64 &&
-        docker push presidioio/presidio-registrator:stable-amd64;
         docker tag "presidioio/presidio-api:$presidio_LABEL-amd64" presidioio/presidio-api:stable-amd64 &&
         docker push presidioio/presidio-api:stable-amd64;
         docker tag "presidioio/presidio-analyzer:$presidio_LABEL-amd64" presidioio/presidio-analyzer:stable-amd64 &&

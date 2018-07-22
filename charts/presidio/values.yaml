@@ -1,15 +1,13 @@
 registry: praesidio
 
-consul:
-  service: consul.presidio-system.svc.cluster.local:8500
-
-ingress:
-  enabled: true
-  class: traefik
+redis:
+    host: redis-master
+    port: 6379
 
 api:
   name: presidio-api
   # tag:
+  imagePullPolicy: Always
   service:
     type: ClusterIP
     externalPort: 8080
@@ -21,13 +19,9 @@ api:
   #readinessProbe:
   #  initialDelaySeconds: 20
 
-registrator:
-  name: presidio-registrator
-  # tag:
-  imagePullPolicy: Always
-  redis:
-    host: redis-master
-    port: 6379
+  ingress:
+    enabled: true
+    class: traefik
 
 analyzer:
   name: presidio-analyzer

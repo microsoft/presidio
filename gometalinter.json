@@ -1,6 +1,6 @@
 {
     "Vendor": true,
-    "Deadline": "2m",
+    "Deadline": "5m",
     "Sort": ["linter", "severity", "path", "line"],
     "EnableGC": true,
     "WarnUnmatchedDirective": true,
@@ -13,12 +13,14 @@
     "Enable": [
         "deadcode",
         "gofmt",
+        "gocyclo",
         "goimports",
         "golint",
         "gosimple",
         "ineffassign",
         "misspell",
         "unused",
-        "vet"
+        "vet",
+        "gas"
     ]
 }
