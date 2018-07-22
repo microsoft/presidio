@@ -98,7 +98,7 @@ test-functional: vendor docker-build
 	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(presidio_LABEL)
 	sleep 5
 	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_HOST=test-presidio-analyzer -e ANALYZER_SVC_PORT=3000 -e ANONYMIZER_SVC_HOST=test-presidio-anonymizer -e ANONYMIZER_SVC_PORT=3001 $(DOCKER_REGISTRY)/presidio-api:$(presidio_LABEL)
-	go test --tags functional ./tests
+	go test --tags functional ./tests -count=1
 	docker rm test-presidio-api -f
 	docker rm test-presidio-analyzer -f
 	docker rm test-presidio-anonymizer -f

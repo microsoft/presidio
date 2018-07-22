@@ -30,7 +30,7 @@ type MyMockedObject struct {
 	mock.Mock
 }
 
-func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest, text string) (*message_types.AnalyzeResponse, error) {
+func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest) (*message_types.AnalyzeResponse, error) {
 	args := m.Mock.Called()
 	y := args.Get(0).(*message_types.AnalyzeResponse)
 	return y, args.Error(1)
@@ -132,7 +132,7 @@ func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 }
 
 func scanAndAnalyze(container stow.Container, testCache cache.Cache, serviceMock analyzer.Analyzer) {
-	var analyzeRequest *message_types.AnalyzeRequest
+	analyzeRequest := &message_types.AnalyzeRequest{}
 	err := stow.Walk(container, stow.CursorStart, 100, func(item stow.Item, err error) error {
 		if err != nil {
 			return err
