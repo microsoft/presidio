@@ -12,8 +12,7 @@ import (
 )
 
 func getFieldTypes(c *gin.Context) {
-	result, _ := pkg_templates.GetFieldTypes()
-	server.WriteResponse(c, http.StatusOK, result)
+	server.WriteResponse(c, http.StatusOK, message_types.FieldTypesEnum_value)
 }
 
 func (api *API) getActionTemplate(c *gin.Context) {
