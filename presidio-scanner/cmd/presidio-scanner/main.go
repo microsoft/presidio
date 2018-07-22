@@ -11,7 +11,6 @@ import (
 	"github.com/presid-io/presidio/pkg/cache"
 	"github.com/presid-io/presidio/pkg/cache/redis"
 	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/modules/analyzer"
 	"github.com/presid-io/presidio/pkg/rpc"
 	"github.com/presid-io/presidio/pkg/templates"
 	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
@@ -21,7 +20,7 @@ var (
 	storageKind     string
 	grpcPort        string
 	analyzeRequest  *message_types.AnalyzeRequest
-	analyzerObj     analyzer.Analyzer
+	analyzeService  *message_types.AnalyzeServiceClient
 	scannerObj      scanner.Scanner
 	scannerTemplate *message_types.ScannerTemplate
 )
@@ -45,7 +44,7 @@ func main() {
 			return
 		}
 
-		scanResult, err = analyzeItem(&cache, uniqueID, &analyzerObj, analyzeRequest, item)
+		scanResult, err = analyzeItem(&cache, uniqueID, analyzeService, analyzeRequest, item)
 		if err != nil {
 			log.Error(fmt.Sprintf("error scanning file: %s, error: %q", itemPath, err.Error()))
 			return
@@ -121,12 +120,11 @@ func setupAnalyzerObjects() {
 		log.Fatal("analyzer service port is empty")
 	}
 
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
+	var err error
+	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
-
-	analyzerObj = analyzer.New(analyzeService)
 
 	analyzeRequest = &message_types.AnalyzeRequest{
 		AnalyzeTemplate: scannerTemplate.GetAnalyzeTemplate(),
@@ -186,7 +184,7 @@ func initScanner() {
 // Then sends it to the analyzer and updates the cache that it was scanned.
 func analyzeItem(cache *cache.Cache,
 	uniqueID string,
-	analyzerModule *analyzer.Analyzer,
+	analyzeService *message_types.AnalyzeServiceClient,
 	analyzeRequest *message_types.AnalyzeRequest,
 	item interface{}) ([]*message_types.AnalyzeResult, error) {
 	var err error
@@ -210,7 +208,9 @@ func analyzeItem(cache *cache.Cache,
 		}
 
 		analyzeRequest.Text = itemContent
-		results, err := (*analyzerModule).InvokeAnalyze(context.Background(), analyzeRequest)
+
+		srv := *analyzeService
+		results, err := srv.Apply(context.Background(), analyzeRequest)
 		if err != nil {
 			return nil, err
 		}

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
 	"github.com/presid-io/presidio/pkg/platform"
 )
 
@@ -18,12 +17,6 @@ type Templates struct {
 //New KV store
 func New(s platform.Store) *Templates {
 	return &Templates{platformStore: s}
-}
-
-//GetFieldTypes return the available fields
-func GetFieldTypes() (string, error) {
-	result, err := ConvertInterfaceToJSON(message_types.FieldTypesEnum_value)
-	return result, err
 }
 
 // CreateKey creates template key in the structure: project/action/id

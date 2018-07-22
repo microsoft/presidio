@@ -17,7 +17,6 @@ import (
 	c "github.com/presid-io/presidio/pkg/cache"
 	cache_mock "github.com/presid-io/presidio/pkg/cache/mock"
 	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/modules/analyzer"
 	"github.com/presid-io/presidio/pkg/storage"
 )
 
@@ -26,15 +25,19 @@ var (
 	storageName = "devstoreaccount1"
 	storageKey  = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
 	testCache   c.Cache
-	serviceMock analyzer.Analyzer
+	serviceMock message_types.AnalyzeServiceClient
 )
 
 // Mocks
-type MyMockedObject struct {
+type ScannerMockedObject struct {
 	mock.Mock
 }
 
-func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *message_types.AnalyzeRequest) (*message_types.AnalyzeResponse, error) {
+type DatabinderMockedObject struct {
+	mock.Mock
+}
+
+func (m *ScannerMockedObject) Apply(c context.Context, analyzeRequest *message_types.AnalyzeRequest, opts ...grpc.CallOption) (*message_types.AnalyzeResponse, error) {
 	args := m.Mock.Called()
 	var result *message_types.AnalyzeResponse
 	if args.Get(0) != nil {
@@ -43,12 +46,12 @@ func (m *MyMockedObject) InvokeAnalyze(c context.Context, analyzeRequest *messag
 	return result, args.Error(1)
 }
 
-func (m *MyMockedObject) Init(ctx context.Context, databinderTemplate *message_types.DatabinderTemplate, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+func (m *DatabinderMockedObject) Init(ctx context.Context, databinderTemplate *message_types.DatabinderTemplate, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
 	// Currently not in use.
 	return nil, nil
 }
 
-func (m *MyMockedObject) Apply(ctx context.Context, in *message_types.DatabinderRequest, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+func (m *DatabinderMockedObject) Apply(ctx context.Context, in *message_types.DatabinderRequest, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
 	args := m.Mock.Called()
 	var result *message_types.DatabinderResponse
 	if args.Get(0) != nil {
@@ -62,9 +65,9 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
-	analyzerObj := &MyMockedObject{}
-	serviceMock = analyzerObj
-	analyzerObj.On("InvokeAnalyze", mock.Anything, mock.Anything, mock.Anything).Return(getAnalyzerMockResult(), nil)
+	analyzeService := &ScannerMockedObject{}
+	serviceMock = analyzeService
+	analyzeService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(getAnalyzerMockResult(), nil)
 
 	api, _ := storage.New(kind, config, 10)
 	api.RemoveContainer("test")
@@ -103,8 +106,8 @@ func TestFileExtension(t *testing.T) {
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
-	analyzerObj := &MyMockedObject{}
-	serviceMock = analyzerObj
+	analyzeService := &ScannerMockedObject{}
+	serviceMock = analyzeService
 
 	api, _ := storage.New(kind, config, 10)
 	container := createContainer(api)
@@ -125,7 +128,7 @@ func TestFileExtension(t *testing.T) {
 	api.RemoveContainer("test")
 }
 
-func TestSendResultToDataBinderReturnsErrorOnError(t *testing.T) {
+func TestSendResultToDataBinderReturnsError(t *testing.T) {
 	// Setup
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
@@ -134,7 +137,7 @@ func TestSendResultToDataBinderReturnsErrorOnError(t *testing.T) {
 	container := createContainer(api)
 	item := putItem("file1.jpg", container, api)
 	itemPath := scannerObj.GetItemPath(item)
-	dataBinderSrv := &MyMockedObject{}
+	dataBinderSrv := &DatabinderMockedObject{}
 	var databinderMock message_types.DatabinderServiceClient = dataBinderSrv
 	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("some error"))
 

@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	log "github.com/presid-io/presidio/pkg/logger"
-	analyzer "github.com/presid-io/presidio/pkg/modules/analyzer"
 	"github.com/presid-io/presidio/pkg/rpc"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
@@ -118,19 +117,40 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 
 func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.AnalyzeResponse {
 	analyzeKey := templates.CreateKey(project, "analyze", id)
-	analyzeRequest, err := analyzer.GetAnalyzeRequest(api.templates, analyzeKey)
+	analyzeRequest, err := getAnalyzeRequest(api.templates, analyzeKey)
 
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return nil
 	}
 
-	analyzerObj := analyzer.New(analyzeService)
 	analyzeRequest.Text = text
-	analyzeResponse, err := analyzerObj.InvokeAnalyze(c, analyzeRequest)
+
+	srv := *analyzeService
+	analyzeResponse, err := srv.Apply(c, analyzeRequest)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
 	}
+
 	return analyzeResponse
+}
+
+func getAnalyzeRequest(apiTemplates *templates.Templates, analyzeKey string) (*message_types.AnalyzeRequest, error) {
+	template, err := apiTemplates.GetTemplate(analyzeKey)
+
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve template %q", err)
+	}
+
+	analyzeTemplate := &message_types.AnalyzeTemplate{}
+	err = templates.ConvertJSONToInterface(template, analyzeTemplate)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to convert template %q", err)
+	}
+	analyzeRequest := &message_types.AnalyzeRequest{
+		AnalyzeTemplate: analyzeTemplate,
+	}
+
+	return analyzeRequest, nil
 }
