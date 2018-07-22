@@ -17,6 +17,12 @@ func (s *store) GetKVPair(key string) (string, error) {
 		return "", err
 	}
 
+	for k, v := range secret.Data {
+		if k == key {
+			return string(v), nil
+		}
+	}
+
 	for k, v := range secret.StringData {
 		if k == key {
 			return v, nil

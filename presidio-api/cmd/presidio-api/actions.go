@@ -127,7 +127,8 @@ func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Con
 	}
 
 	analyzerObj := analyzer.New(analyzeService)
-	analyzeResponse, err := analyzerObj.InvokeAnalyze(c, analyzeRequest, text)
+	analyzeRequest.Text = text
+	analyzeResponse, err := analyzerObj.InvokeAnalyze(c, analyzeRequest)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil

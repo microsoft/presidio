@@ -52,8 +52,8 @@ func ScanAndAnalyze(cache *cache.Cache, container stow.Container, item stow.Item
 			return
 		}
 		log.Println(fileContent)
-
-		results, err := (*analyzerModule).InvokeAnalyze(context.Background(), analyzeRequest, fileContent)
+		analyzeRequest.Text = fileContent
+		results, err := (*analyzerModule).InvokeAnalyze(context.Background(), analyzeRequest)
 		if err != nil {
 			log.Println("ERROR:", err)
 			return

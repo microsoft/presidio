@@ -80,7 +80,7 @@ func (api *API) deleteActionTemplate(c *gin.Context) {
 func validateTemplate(action string, c *gin.Context) (string, error) {
 	switch action {
 	case "analyze":
-		var analyzerTemplate message_types.AnalyzeRequest
+		var analyzerTemplate message_types.AnalyzeTemplate
 		if c.BindJSON(&analyzerTemplate) == nil {
 			return helper.ConvertInterfaceToJSON(analyzerTemplate)
 		}
