@@ -1,7 +1,8 @@
 registry: praesidio
 
-consul:
-  service: consul.presidio-system.svc.cluster.local:8500
+redis:
+    host: redis-master
+    port: 6379
 
 ingress:
   enabled: true
@@ -10,6 +11,7 @@ ingress:
 api:
   name: presidio-api
   # tag:
+  imagePullPolicy: Always
   service:
     type: ClusterIP
     externalPort: 8080
@@ -20,14 +22,6 @@ api:
   # Configure readiness probes except `httpGet` and the belongings
   #readinessProbe:
   #  initialDelaySeconds: 20
-
-registrator:
-  name: presidio-registrator
-  # tag:
-  imagePullPolicy: Always
-  redis:
-    host: redis-master
-    port: 6379
 
 analyzer:
   name: presidio-analyzer

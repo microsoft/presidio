@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= praesidio
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-api presidio-scanner presidio-scheduler presidio-registrator presidio-databinder
-IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-scanner presidio-scheduler presidio-registrator presidio-databinder
+BINS        = presidio-anonymizer presidio-api presidio-scanner presidio-scheduler presidio-databinder
+IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-scanner presidio-scheduler presidio-databinder
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
@@ -32,6 +32,9 @@ build-docker-bins: $(addsuffix -docker-bin,$(BINS))
 .PHONY: docker-build
 docker-build: build-docker-bins
 docker-build: $(addsuffix -image,$(IMAGES))
+
+%-image:
+	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(presidio_LABEL) $*
 
 %-image:
 	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(presidio_LABEL) $*
@@ -77,15 +80,30 @@ go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
 go-test-unit: vendor clean
-	docker run --rm --name test-consul -d -p 8300:8300 -p 8301:8301 -p 8302:8302 -p 8400:8400 -p 8500:8500 -p 8600:8600 consul
+	-docker rm test-redis -f
+	-docker rm test-azure-emulator -f
 	docker run --rm --name test-redis -d -p 6379:6379 redis
 	docker run --rm --name test-azure-emulator -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite
 	go test -v ./...
 	docker rm test-redis -f
-	docker rm test-consul -f
 	docker rm test-azure-emulator -f
+	
 .PHONY: test-functional
-test-functional: vendor
+test-functional: vendor docker-build
+	-docker rm test-presidio-api -f
+	-docker rm test-presidio-analyzer -f
+	-docker rm test-presidio-anonymizer -f
+	-docker network create testnetwork
+	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 $(DOCKER_REGISTRY)/presidio-analyzer:$(presidio_LABEL)
+	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(presidio_LABEL)
+	sleep 5
+	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_HOST=test-presidio-analyzer -e ANALYZER_SVC_PORT=3000 -e ANONYMIZER_SVC_HOST=test-presidio-anonymizer -e ANONYMIZER_SVC_PORT=3001 $(DOCKER_REGISTRY)/presidio-api:$(presidio_LABEL)
+	go test --tags functional ./tests -count=1
+	docker rm test-presidio-api -f
+	docker rm test-presidio-analyzer -f
+	docker rm test-presidio-anonymizer -f
+	docker network rm testnetwork
+
 
 .PHONY: go-test-style
 go-test-style:
@@ -108,7 +126,6 @@ make-proto: vendor
 proto: make-proto
 
 make-clean:
-	-docker rm test-consul -f
 	-docker rm test-redis -f
 
 .PHONY: clean

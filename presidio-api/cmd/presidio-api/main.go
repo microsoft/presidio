@@ -4,13 +4,20 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/presid-io/presidio/pkg/kv/consul"
 	log "github.com/presid-io/presidio/pkg/logger"
+	"github.com/presid-io/presidio/pkg/platform/kube"
+	"github.com/presid-io/presidio/pkg/platform/local"
+
 	server "github.com/presid-io/presidio/pkg/server"
 )
 
 var (
-	webPort = os.Getenv("WEB_PORT")
+	webPort   = os.Getenv("WEB_PORT")
+	namespace = os.Getenv("presidio_NAMESPACE")
+)
+
+const (
+	envKubeConfig = "KUBECONFIG"
 )
 
 func main() {
@@ -25,35 +32,76 @@ func main() {
 	}
 
 	r := server.Setup(port)
-	setupGrpcServices()
+	setupGRPCServices()
 
-	api := New(consul.New())
+	var api *API
+
+	// Kubernetes platform
+	if namespace != "" {
+		store, err := kube.New(namespace, "", kubeConfigPath())
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		api = New(store)
+	} else {
+		// Local platform
+		store, err := local.New(os.TempDir())
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		api = New(store)
+	}
+
+	// api/v1 group
 	v1 := r.Group("/api/v1")
 	{
+		// GET available field types
 		v1.GET("fieldTypes", getFieldTypes)
 
+		// templates group
 		templates := v1.Group("/templates/:project")
 		{
 			// /api/v1/templates/123/analyze/1234
 			// /api/v1/templates/123/anonymize/1234
 			action := templates.Group("/:action")
 			{
+				// GET template
 				action.GET(":id", api.getActionTemplate)
+				// POST template
 				action.POST(":id", api.postActionTemplate)
-				action.PATCH(":id", api.putActionTemplate)
+				// PUT, update template
+				action.PUT(":id", api.putActionTemplate)
+				// DELETE template
 				action.DELETE(":id", api.deleteActionTemplate)
 			}
 		}
 
+		// Actions group
 		projects := v1.Group("projects/:project")
 		{
+			// Analyze text
 			// /api/v1/projects/123/analyze
 			projects.POST("/analyze", api.analyze)
 
+			// Anonymize text
 			// /api/v1/projects/123/anonymize
 			projects.POST("/anonymize", api.anonymize)
 		}
 
 	}
 	server.Start(r)
+}
+
+func kubeConfigPath() string {
+	if v, ok := os.LookupEnv(envKubeConfig); ok {
+		return v
+	}
+	defConfig := os.ExpandEnv("$HOME/.kube/config")
+	if _, err := os.Stat(defConfig); err == nil {
+		log.Info("Using config from " + defConfig)
+		return defConfig
+	}
+
+	// If we get here, we might be in-Pod.
+	return ""
 }

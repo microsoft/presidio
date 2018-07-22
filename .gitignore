@@ -125,8 +125,12 @@ debug
 /presidio-anonymizer/rootfs/presidio-anonymizer
 /presidio-analyzer/rootfs/presidio-analyzer
 /presidio-api/rootfs/presidio-api
+<<<<<<< HEAD
 /presidio-registrator/rootfs/presidio-registrator
 /presidio-scanner/rootfs/presidio-scanner
+=======
+/presidio-storage-scanner/rootfs/presidio-storage-scanner
+>>>>>>> development
 /presidio-scheduler/rootfs/presidio-scheduler
 /presidio-databinder/rootfs/presidio-databinder
 /tests/testdata/*-generated.*
