@@ -16,6 +16,10 @@ var (
 	namespace = os.Getenv("presidio_NAMESPACE")
 )
 
+const (
+	envKubeConfig = "KUBECONFIG"
+)
+
 func main() {
 
 	if webPort == "" {
@@ -34,7 +38,7 @@ func main() {
 
 	// Kubernetes platform
 	if namespace != "" {
-		store, err := kube.New(namespace)
+		store, err := kube.New(namespace, "", kubeConfigPath())
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -86,4 +90,18 @@ func main() {
 
 	}
 	server.Start(r)
+}
+
+func kubeConfigPath() string {
+	if v, ok := os.LookupEnv(envKubeConfig); ok {
+		return v
+	}
+	defConfig := os.ExpandEnv("$HOME/.kube/config")
+	if _, err := os.Stat(defConfig); err == nil {
+		log.Info("Using config from " + defConfig)
+		return defConfig
+	}
+
+	// If we get here, we might be in-Pod.
+	return ""
 }

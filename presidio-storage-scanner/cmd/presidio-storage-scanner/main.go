@@ -12,6 +12,7 @@ import (
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	"github.com/presid-io/presidio/pkg/cache/redis"
+	"github.com/presid-io/presidio/pkg/platform/kube"
 	"github.com/presid-io/presidio/pkg/rpc"
 	"github.com/presid-io/presidio/pkg/storage"
 	scanner "github.com/presid-io/presidio/presidio-storage-scanner/cmd/presidio-storage-scanner/storage-scanner"
@@ -31,6 +32,11 @@ var (
 
 	storageKind string
 	analyzeKey  string
+	namespace   = os.Getenv("presidio_NAMESPACE")
+)
+
+const (
+	envKubeConfig = "KUBECONFIG"
 )
 
 func main() {
@@ -89,16 +95,20 @@ func main() {
 	storageAPI, err := storage.New(cache, storageKind, config, analyzeService)
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
 
 	container, err := storageAPI.CreateContainer(containerName)
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
 
-	err = storageAPI.WalkFiles(container, scanner.ScanAndAnalyze, analyzeKey)
+	store, err := kube.New(namespace, "", kubeConfigPath())
+	if err != nil {
+		log.Fatal(err.Error())
+
+	}
+
+	err = storageAPI.WalkFiles(container, scanner.ScanAndAnalyze, analyzeKey, store)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -146,4 +156,18 @@ func validateS3Connection(s3AccessKeyID string, s3SecretKey string, s3Region str
 	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
 		log.Fatal("S3_ACCESS_KEY_ID, S3_SECRET_KEY, S3_REGION, S3_BUCKET env vars must me set.")
 	}
+}
+
+func kubeConfigPath() string {
+	if v, ok := os.LookupEnv(envKubeConfig); ok {
+		return v
+	}
+	defConfig := os.ExpandEnv("$HOME/.kube/config")
+	if _, err := os.Stat(defConfig); err == nil {
+		log.Info("Using config from " + defConfig)
+		return defConfig
+	}
+
+	// If we get here, we might be in-Pod.
+	return ""
 }

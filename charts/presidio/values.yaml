@@ -17,11 +17,11 @@ api:
     externalPort: 8080
     internalPort: 8080
   # Configure liveness probes except `httpGet` and the belongings
-    livenessProbe:
-      initialDelaySeconds: 20
+  #livenessProbe:
+  #  initialDelaySeconds: 20
   # Configure readiness probes except `httpGet` and the belongings
-    readinessProbe:
-      initialDelaySeconds: 20
+  #readinessProbe:
+  #  initialDelaySeconds: 20
 
 analyzer:
   name: presidio-analyzer

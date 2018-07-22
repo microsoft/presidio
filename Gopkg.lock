@@ -219,6 +219,12 @@
   revision = "9cad4c3443a7200dd6400aef47183728de563a38"
 
 [[projects]]
+  name = "github.com/imdario/mergo"
+  packages = ["."]
+  revision = "9316a62528ac99aaecb4e47eadd6dc8aa6533d58"
+  version = "v0.3.5"
+
+[[projects]]
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
   revision = "0b12d6b5"
@@ -320,6 +326,12 @@
   packages = ["."]
   revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
   version = "v1.2.0"
+
+[[projects]]
+  name = "github.com/spf13/pflag"
+  packages = ["."]
+  revision = "583c0c0531f06d5278b7d917446061adc344b5cd"
+  version = "v1.0.1"
 
 [[projects]]
   name = "github.com/stretchr/objx"
@@ -646,13 +658,18 @@
     "rest",
     "rest/watch",
     "testing",
+    "tools/auth",
+    "tools/clientcmd",
     "tools/clientcmd/api",
+    "tools/clientcmd/api/latest",
+    "tools/clientcmd/api/v1",
     "tools/metrics",
     "tools/reference",
     "transport",
     "util/cert",
     "util/connrotation",
     "util/flowcontrol",
+    "util/homedir",
     "util/integer"
   ]
   revision = "7d04d0e2a0a1a4d4a1cd6baa432a2301492e4e65"
@@ -676,6 +693,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "52a740d5137801f33301e0a8dcb0debfac30de331b12884448de890f34b69cd1"
+  inputs-digest = "8c22edcd52b2d3e22a91bdafa4db1906d399760b38d6e017fd1a448b4a32612f"
   solver-name = "gps-cdcl"
   solver-version = 1

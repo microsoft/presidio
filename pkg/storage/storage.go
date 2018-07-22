@@ -3,7 +3,6 @@ package storage
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strings"
 
 	"github.com/korovkin/limiter"
@@ -15,7 +14,7 @@ import (
 	"github.com/presid-io/presidio/pkg/cache"
 	"github.com/presid-io/presidio/pkg/logger"
 	analyzer "github.com/presid-io/presidio/pkg/modules/analyzer"
-	"github.com/presid-io/presidio/pkg/platform/kube"
+	"github.com/presid-io/presidio/pkg/platform"
 	templates "github.com/presid-io/presidio/pkg/templates"
 )
 
@@ -26,10 +25,6 @@ type API struct {
 	// TODO: need to refactor so storage won't be coupled with the analyzed service
 	analyzeService *message_types.AnalyzeServiceClient
 }
-
-var (
-	namespace = os.Getenv("presidio_NAMESPACE")
-)
 
 //New storage
 func New(c cache.Cache, kind string, config stow.Config, analyzeService *message_types.AnalyzeServiceClient) (*API, error) {
@@ -108,12 +103,9 @@ type walkFunc func(cache *cache.Cache, container stow.Container, item stow.Item,
 	analyzeRequest *message_types.AnalyzeRequest)
 
 // WalkFiles walks over the files in 'container' and executes fn func
-func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string) error {
+func (a *API) WalkFiles(container stow.Container, fn walkFunc, analyzeKey string, store platform.Store) error {
 	limit := limiter.NewConcurrencyLimiter(10)
-	store, err := kube.New(namespace)
-	if err != nil {
-		return err
-	}
+
 	t := templates.New(store)
 	analyzerObj := analyzer.New(a.analyzeService)
 	analyzeRequest, err := analyzer.GetAnalyzeRequest(t, analyzeKey)
