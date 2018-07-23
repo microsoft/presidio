@@ -19,8 +19,8 @@ func HashValue(text *string, location message_types.Location) error {
 
 	before := runeText[:location.NewStart]
 	after := runeText[pos:]
-	cureValue := string(runeText[location.NewStart:pos])
-	concat := string(before) + hash(cureValue) + string(after)
+	curValue := string(runeText[location.NewStart:pos])
+	concat := string(before) + hash(curValue) + string(after)
 	runeText = []rune(concat)
 	*text = string(runeText)
 	return nil
