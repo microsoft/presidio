@@ -17,6 +17,7 @@ import (
 
 var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
+var jobService *message_types.JobServiceClient
 
 func setupGRPCServices() {
 	var err error
@@ -118,6 +119,13 @@ func (api *API) invokeJobScheduler(project string, scanId string, c *gin.Context
 		api.getTemplate(project, "anonymize", scanTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
 	}
 
+	srv := *jobService
+	res, err := srv.Apply(c, request)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return nil
+	}
+	return res
 }
 
 func (api *API) invokeAnonymize(project string, id string, text string, results []*message_types.AnalyzeResult, c *gin.Context) *message_types.AnonymizeResponse {
