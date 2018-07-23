@@ -7,6 +7,7 @@ from field_types import field_type, field_factory
 from field_types.globally import ner
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
+NER_PROBABILITY = 0.8
 
 class Matcher(object):
     def __init__(self):
@@ -66,21 +67,8 @@ class Matcher(object):
         )
         return res
 
-    def __get_context(self, doc, matches):
-        '''returns the context of the matches, that is, all text without the actual matches'''
-        
-        context = ''
-        context_idx = 0
-        
-        for match in iter(matches):
-            start, end = match.span()
-            context += doc.text[context_idx:start]
-            context_idx = end + 1
-        
-        if (context_idx < len(doc.text)):
-            context += doc.text[context_idx:len(doc.text)]
-        
-        return context
+    def __get_context(self, doc, start, end):
+        return doc.text[0:start] + doc.text[end + 1:]
 
     def __check_pattern(self, doc, results, field):
         for _, check_type_value in field.regexes.items():
@@ -95,7 +83,7 @@ class Matcher(object):
             for match in matches:
                 start, end = match.span()
                 field.text = doc.text[start:end]
-                context = doc.text[0:start] + doc.text[end + 1:]
+                context = self.__get_context(doc, start, end)
 
                 # Skip empty results
                 if field.text == '':
@@ -143,9 +131,10 @@ class Matcher(object):
             if self.__match_ner(ent.label_, current_field.name) is False:
                 continue
             current_field.text = ent.text
-            res = self.__create_result(doc, current_field, ent.start_char,
+            context = self.__get_context(doc, ent.start_char, ent.end_char)
+            res = self.__create_result(doc, context, current_field, ent.start_char,
                                        ent.end_char)
-            res.probability = 0.8
+            res.probability = NER_PROBABILITY
 
             if res is not None:
                 results.append(res)
