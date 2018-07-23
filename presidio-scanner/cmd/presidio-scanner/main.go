@@ -17,12 +17,12 @@ import (
 )
 
 var (
-	storageKind     string
-	grpcPort        string
-	analyzeRequest  *message_types.AnalyzeRequest
-	analyzeService  *message_types.AnalyzeServiceClient
-	scannerObj      scanner.Scanner
-	scannerTemplate *message_types.ScannerTemplate
+	storageKind    string
+	grpcPort       string
+	analyzeRequest *message_types.AnalyzeRequest
+	analyzeService *message_types.AnalyzeServiceClient
+	scannerObj     scanner.Scanner
+	scanRequest    *message_types.ScanRequest
 )
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 	cache := setupCache()
 	setupAnalyzerObjects()
 	databinderService := setupDataBinderService()
-	scannerObj = createScanner(scannerTemplate)
+	scannerObj = createScanner(scanRequest)
 
 	err := scannerObj.WalkItems(func(item interface{}) {
 		var scanResult []*message_types.AnalyzeResult
@@ -100,7 +100,7 @@ func setupDataBinderService() *message_types.DatabinderServiceClient {
 		log.Fatal(fmt.Sprintf("Connection to databinder service failed %q", err))
 	}
 
-	_, err = (*databinderService).Init(context.Background(), scannerTemplate.DatabinderTemplate)
+	_, err = (*databinderService).Init(context.Background(), scanRequest.DatabinderTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -127,8 +127,8 @@ func setupAnalyzerObjects() {
 	}
 
 	analyzeRequest = &message_types.AnalyzeRequest{
-		AnalyzeTemplate: scannerTemplate.GetAnalyzeTemplate(),
-		MinProbability:  scannerTemplate.GetMinProbability(),
+		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
+		MinProbability:  scanRequest.GetMinProbability(),
 	}
 
 	if err != nil {
@@ -160,13 +160,13 @@ func initScanner() {
 	godotenv.Load()
 
 	scannerObj := os.Getenv("SCANNER_TEMPLATE")
-	template := &message_types.ScannerTemplate{}
+	template := &message_types.ScanRequest{}
 	err := templates.ConvertJSONToInterface(scannerObj, template)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Error formating scanner template %q", err.Error()))
 	}
-	scannerTemplate = template
-	storageKind = scannerTemplate.Kind
+	scanRequest = template
+	storageKind = scanRequest.Kind
 
 	if storageKind == "" {
 		log.Fatal("storage king var must me set")
