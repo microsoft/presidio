@@ -1,6 +1,6 @@
 import logging
 import regex as re
-import en_core_web_sm
+import en_core_web_lg
 import common_pb2
 import template_pb2
 from field_types import field_type, field_factory
@@ -8,6 +8,8 @@ from field_types.globally import ner
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 NER_PROBABILITY = 0.8
+CONTEXT_PREFIX_COUNT = 3
+CONTEXT_SUFFIX_COUNT = 0
 
 class Matcher(object):
     def __init__(self):
@@ -15,40 +17,53 @@ class Matcher(object):
         Load spacy model once
         """
 
-        self.nlp = en_core_web_sm.load()
+        self.nlp = en_core_web_lg.load()
 
     def __calculate_context_similarity(self, context, field):
-        '''context similarity = max similarity between context token and a field keyword'''
+        # Context similarity = max similarity between context token and a keyword in field.context
         lemmatized_context = list(map(lambda t: t.lemma_, self.nlp(context.lower())))
         max_similarity = 0.0
 
         for context_token in lemmatized_context:
             for keyword in field.context:
+                # To be removed after changing the keywords to be weighted keywords * Reges weights 
+                if keyword in ["card", "number"]:
+                    continue
                 similarity = self.nlp(context_token).similarity(self.nlp(keyword)) 
                 if similarity >= CONTEXT_SIMILARITY_THRESHOLD:
                     max_similarity = max(max_similarity, similarity)
 
         return min(max_similarity, 1)
 
-    def __calculate_probability(self, doc, context, field, start):
+    def __calculate_probability(self, doc, field, start, end):
         if field.should_check_checksum:
             if field.check_checksum() is not True:
                 logging.info("Checksum failed for " + field.text)
                 return 0
             else:
                 return 1.0
+        
+        # Ignore matches with partial tokens
+        probability = 0.0
+        base_token = None
+        for token in doc:
+            if token.idx == start:
+                base_token = token
+                break
 
-        probability = 0.5
-        factor = 0.5
+        if base_token is None:
+            return 0
 
-        '''calculate probability based on context '''
+        # Calculate probability based on context
+         
+        context = self.__extract_context(doc, start, end)
         context_similarity = self.__calculate_context_similarity(context, field)
         if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
-            probability += context_similarity * factor
+            probability += context_similarity
 
         return min(probability, 1)
         
-    def __create_result(self, doc, context, current_field, start, end):
+    def __create_result(self, doc, current_field, start, end):
 
         res = common_pb2.AnalyzeResult()
         res.field.name = current_field.name
@@ -56,7 +71,7 @@ class Matcher(object):
 
         # Validate checksum
         res.probability = self.__calculate_probability(
-                doc, context, current_field, start)
+            doc, current_field, start, end)
 
         res.location.start = start
         res.location.end = end
@@ -67,8 +82,17 @@ class Matcher(object):
         )
         return res
 
-    def __get_context(self, doc, start, end):
-        return doc.text[0:start] + doc.text[end + 1:]
+    def __extract_context(self, doc, start, end):
+        prefix = doc.text[0:start].split()
+        suffix = doc.text[end + 1:].split()
+        context = ''
+
+        context += ' '.join(prefix[max(0, len(prefix) - CONTEXT_PREFIX_COUNT): len(prefix)])
+        context += ' '
+        context += ' '.join(suffix[0: min(CONTEXT_SUFFIX_COUNT, len(suffix))])
+
+        return context
+
 
     def __check_pattern(self, doc, results, field):
         for _, check_type_value in field.regexes.items():
@@ -83,7 +107,6 @@ class Matcher(object):
             for match in matches:
                 start, end = match.span()
                 field.text = doc.text[start:end]
-                context = self.__get_context(doc, start, end)
 
                 # Skip empty results
                 if field.text == '':
@@ -98,7 +121,7 @@ class Matcher(object):
                         for x in results):
                     continue
 
-                res = self.__create_result(doc, context, field, start, end)
+                res = self.__create_result(doc, field, start, end)
                 if res is None or res.probability == 0:
                     continue
 
@@ -131,8 +154,7 @@ class Matcher(object):
             if self.__match_ner(ent.label_, current_field.name) is False:
                 continue
             current_field.text = ent.text
-            context = self.__get_context(doc, ent.start_char, ent.end_char)
-            res = self.__create_result(doc, context, current_field, ent.start_char,
+            res = self.__create_result(doc, current_field, ent.start_char,
                                        ent.end_char)
             res.probability = NER_PROBABILITY
 
@@ -151,7 +173,7 @@ class Matcher(object):
 
         Args:
             text: text to analyzer.
-            field_type_filters: filters array such as ["PERSON", "LOCATION"]
+            field_type_filters: filters array such as [{"name":PERSON"},{"name": "LOCATION"}]
         """
 
         results = []
