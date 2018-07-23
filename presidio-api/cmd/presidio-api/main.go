@@ -86,6 +86,10 @@ func main() {
 			// Anonymize text
 			// /api/v1/projects/123/anonymize
 			projects.POST("/anonymize", api.anonymize)
+
+			// Schedule scanning job
+			// /api/v1/projects/123/schedule
+			projects.POST("/schedule", api.schedule)
 		}
 
 	}

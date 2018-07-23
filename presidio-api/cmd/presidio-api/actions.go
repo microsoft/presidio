@@ -87,6 +87,39 @@ func (api *API) anonymize(c *gin.Context) {
 	}
 }
 
+func (api *API) schedule(c *gin.Context) {
+	var jobTemplate message_types.JobTemplate
+
+	if c.Bind(&jobTemplate) == nil {
+
+		scanId := jobTemplate.ScanTemplateId
+		project := c.Param("project")
+		scheulderResponse := api.invokeJobScheduler(project, scanId, c)
+		if scheulderResponse == nil {
+			return
+		}
+
+		server.WriteResponse(c, http.StatusOK, scheulderResponse)
+	}
+}
+
+func (api *API) invokeJobScheduler(project string, scanId string, c *gin.Context) *message_types.JobResponse {
+	scanTemplate := &message_types.ScanTemplate{}
+	api.getTemplate(project, "scan", scanId, scanTemplate, c)
+
+	databinderTemplate := &message_types.DatabinderTemplate{}
+	api.getTemplate(project, "databinder", scanTemplate.DatabinderTemplateId, databinderTemplate, c)
+
+	analyzeTemplate := &message_types.AnalyzeTemplate{}
+	api.getTemplate(project, "analyze", scanTemplate.AnalyzeTemplateId, analyzeTemplate, c)
+
+	anonymizeTemplate := &message_types.AnonymizeTemplate{}
+	if scanTemplate.AnonymizeTemplateId != "" {
+		api.getTemplate(project, "anonymize", scanTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
+	}
+
+}
+
 func (api *API) invokeAnonymize(project string, id string, text string, results []*message_types.AnalyzeResult, c *gin.Context) *message_types.AnonymizeResponse {
 	anonymizeKey := templates.CreateKey(project, "anonymize", id)
 	result, err := api.templates.GetTemplate(anonymizeKey)
@@ -153,4 +186,16 @@ func getAnalyzeRequest(apiTemplates *templates.Templates, analyzeKey string) (*m
 	}
 
 	return analyzeRequest, nil
+}
+
+func (api *API) getTemplate(project string, action string, id string, obj interface{}, c *gin.Context) {
+	key := templates.CreateKey(project, action, id)
+	template, err := api.templates.GetTemplate(key)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+	}
+	err = templates.ConvertJSONToInterface(template, obj)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+	}
 }
