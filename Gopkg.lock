@@ -89,8 +89,8 @@
     "service/s3",
     "service/sts"
   ]
-  revision = "8cf662a972fa7fba8f2c1ec57648cf840e2bb401"
-  version = "v1.14.30"
+  revision = "bc3f534c19ffdf835e524e11f0f825b3eaf541c3"
+  version = "v1.14.31"
 
 [[projects]]
   name = "github.com/confluentinc/confluent-kafka-go"
@@ -171,8 +171,8 @@
     "internal/singleflight",
     "internal/util"
   ]
-  revision = "83fb42932f6145ce52df09860384a4653d2d332a"
-  version = "v6.12.0"
+  revision = "3143c672b64e5edbf92410f2e14cdc893428cfbf"
+  version = "v6.13.0"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
@@ -363,7 +363,7 @@
   branch = "master"
   name = "github.com/presid-io/presidio-genproto"
   packages = ["golang"]
-  revision = "42015c03ae2d92de36ef821b26d6512697a28252"
+  revision = "55ecee71a77966c9b358a35b22a0f99fae1caadc"
 
 [[projects]]
   branch = "master"
@@ -510,7 +510,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "fedd2861243fd1a8152376292b921b394c7bef7e"
+  revision = "02b4e95473316948020af0b7a4f0f22c73929b0e"
 
 [[projects]]
   name = "google.golang.org/grpc"
