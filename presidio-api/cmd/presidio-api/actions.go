@@ -92,10 +92,8 @@ func (api *API) schedule(c *gin.Context) {
 	var jobTemplate message_types.JobTemplate
 
 	if c.Bind(&jobTemplate) == nil {
-
-		scanId := jobTemplate.ScanTemplateId
 		project := c.Param("project")
-		scheulderResponse := api.invokeJobScheduler(project, scanId, c)
+		scheulderResponse := api.invokeJobScheduler(jobTemplate, project, c)
 		if scheulderResponse == nil {
 			return
 		}
@@ -104,7 +102,8 @@ func (api *API) schedule(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeJobScheduler(project string, scanId string, c *gin.Context) *message_types.JobResponse {
+func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, project string,  c *gin.Context) *message_types.JobResponse {
+	scanId := jobTemplate.ScanTemplateId
 	scanTemplate := &message_types.ScanTemplate{}
 	api.getTemplate(project, "scan", scanId, scanTemplate, c)
 
@@ -119,6 +118,21 @@ func (api *API) invokeJobScheduler(project string, scanId string, c *gin.Context
 		api.getTemplate(project, "anonymize", scanTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
 	}
 
+	scanRequest := &message_types.ScanRequest{
+		AnalyzeTemplate: analyzeTemplate,
+		AnonymizeTemplate: anonymizeTemplate,
+		DatabinderTemplate: databinderTemplate,
+		InputConfig: scanTemplate.InputConfig,
+		Kind: scanTemplate.Kind,
+		MinProbability: scanTemplate.MinProbability,
+	}
+
+	request := &message_types.JobRequest{
+		Name: jobTemplate.Name,
+		Description: jobTemplate.Description,
+		Trigger: jobTemplate.Trigger,
+		ScanRequest: scanRequest
+	}
 	srv := *jobService
 	res, err := srv.Apply(c, request)
 	if err != nil {

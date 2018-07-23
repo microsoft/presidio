@@ -100,8 +100,8 @@
 [[projects]]
   name = "github.com/go-redis/redis"
   packages = [".","internal","internal/consistenthash","internal/hashtag","internal/pool","internal/proto","internal/singleflight","internal/util"]
-  revision = "3143c672b64e5edbf92410f2e14cdc893428cfbf"
-  version = "v6.13.0"
+  revision = "77d71282abdf84c93d5a8669d22ced3dc52b48b2"
+  version = "v6.13.1"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
@@ -268,7 +268,7 @@
   branch = "master"
   name = "github.com/presid-io/presidio-genproto"
   packages = ["golang"]
-  revision = "55ecee71a77966c9b358a35b22a0f99fae1caadc"
+  revision = "4b417e5ee0489709ac2205167067bccce42e6b4d"
 
 [[projects]]
   branch = "master"
