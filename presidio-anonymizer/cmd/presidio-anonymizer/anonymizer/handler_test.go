@@ -189,3 +189,97 @@ func TestReplace3Elements(t *testing.T) {
 
 	assert.Equal(t, expected, output)
 }
+func TestHash1Element(t *testing.T) {
+
+	text := "My phone number is 058-5559943"
+	expected := "My phone number is 3501713873"
+
+	hash := message_types.HashValue{}
+	var fieldTypes = make([]*message_types.FieldTypes, 0)
+
+	fieldTypes = append(fieldTypes, &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PHONE_NUMBER.String()})
+
+	transformation := message_types.Transformation{
+		HashValue: &hash,
+	}
+	//Create infotype transformation
+	fieldTypeTransformation := message_types.FieldTypeTransformation{
+		Fields:         fieldTypes,
+		Transformation: &transformation,
+	}
+
+	var fieldTypeTransformationArray = make([]*message_types.FieldTypeTransformation, 0)
+	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
+
+	anonymizerTemplate := message_types.AnonymizeTemplate{
+		Name:                     message_types.FieldTypesEnum_PHONE_NUMBER.String(),
+		DisplayName:              "Phone number",
+		FieldTypeTransformations: fieldTypeTransformationArray,
+	}
+
+	var result message_types.AnalyzeResult
+	result.Location = &message_types.Location{
+		Start: 19,
+		End:   30,
+	}
+	result.Text = "058-5559943"
+	result.Field = &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PHONE_NUMBER.String()}
+
+	var resultArray = make([]*message_types.AnalyzeResult, 0)
+	resultArray = append(resultArray, &result)
+
+	output, err := ApplyAnonymizerTemplate(text, resultArray, &anonymizerTemplate)
+	if err != nil {
+		assert.Error(t, err)
+	}
+	assert.Equal(t, expected, output)
+}
+
+func TestMask1Element(t *testing.T) {
+	text := "My credit card is 4061724061724061"
+	expected := "My credit card is 40617240********"
+
+	mask := message_types.MaskValue{
+		MaskingCharacter: "*",
+		CharsToMask:      8,
+		FromEnd:          true,
+	}
+	var fieldTypes = make([]*message_types.FieldTypes, 0)
+
+	fieldTypes = append(fieldTypes, &message_types.FieldTypes{Name: message_types.FieldTypesEnum_CREDIT_CARD.String()})
+
+	transformation := message_types.Transformation{
+		MaskValue: &mask,
+	}
+	//Create infotype transformation
+	fieldTypeTransformation := message_types.FieldTypeTransformation{
+		Fields:         fieldTypes,
+		Transformation: &transformation,
+	}
+
+	var fieldTypeTransformationArray = make([]*message_types.FieldTypeTransformation, 0)
+	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
+
+	anonymizerTemplate := message_types.AnonymizeTemplate{
+		Name:                     message_types.FieldTypesEnum_CREDIT_CARD.String(),
+		DisplayName:              "Credit card number",
+		FieldTypeTransformations: fieldTypeTransformationArray,
+	}
+
+	var result message_types.AnalyzeResult
+	result.Location = &message_types.Location{
+		Start: 18,
+		End:   34,
+	}
+	result.Text = "4061724061724061"
+	result.Field = &message_types.FieldTypes{Name: message_types.FieldTypesEnum_CREDIT_CARD.String()}
+
+	var resultArray = make([]*message_types.AnalyzeResult, 0)
+	resultArray = append(resultArray, &result)
+
+	output, err := ApplyAnonymizerTemplate(text, resultArray, &anonymizerTemplate)
+	if err != nil {
+		assert.Error(t, err)
+	}
+	assert.Equal(t, expected, output)
+}
