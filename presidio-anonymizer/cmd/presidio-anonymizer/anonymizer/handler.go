@@ -47,6 +47,12 @@ func ApplyAnonymizerTemplate(text string, results []*message_types.AnalyzeResult
 				return "", err
 			}
 		}
+		if transformation.MaskValue != nil {
+			err := methods.MaskValue(&text, *result.Location, transformation.MaskValue.MaskingCharacter, transformation.MaskValue.CharsToMask, transformation.MaskValue.FromEnd)
+			if err != nil {
+				return "", err
+			}
+		}
 	}
 
 	return text, nil

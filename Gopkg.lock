@@ -171,8 +171,8 @@
     "internal/singleflight",
     "internal/util"
   ]
-  revision = "3143c672b64e5edbf92410f2e14cdc893428cfbf"
-  version = "v6.13.0"
+  revision = "77d71282abdf84c93d5a8669d22ced3dc52b48b2"
+  version = "v6.13.1"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
@@ -363,7 +363,7 @@
   branch = "master"
   name = "github.com/presid-io/presidio-genproto"
   packages = ["golang"]
-  revision = "55ecee71a77966c9b358a35b22a0f99fae1caadc"
+  revision = "1b7d5d237afc515bdf62d9b8bee63c0af47bd004"
 
 [[projects]]
   branch = "master"
@@ -442,7 +442,7 @@
     "pkcs12/internal/rc2",
     "ssh/terminal"
   ]
-  revision = "a2144134853fc9a27a7b1e3eb4f19f1a76df13c9"
+  revision = "c126467f60eb25f8f27e5a981f32a87e3965053f"
 
 [[projects]]
   branch = "master"

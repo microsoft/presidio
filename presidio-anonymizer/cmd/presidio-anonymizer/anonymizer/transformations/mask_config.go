@@ -7,8 +7,8 @@ import (
 )
 
 //MaskValue ...
-func MaskValue(text *string, location message_types.Location, replaceWith string, charsToReplace int, fromEnd bool) error {
-
+func MaskValue(text *string, location message_types.Location, replaceWith string, charsToReplace int32, fromEnd bool) error {
+	charsToReplaceInt := int(charsToReplace)
 	pos := location.NewStart + location.Length
 	if int32(len(*text)) < pos {
 		return errors.New("Indexes for values: are out of bounds")
@@ -21,16 +21,16 @@ func MaskValue(text *string, location message_types.Location, replaceWith string
 	before := runeText[:location.NewStart]
 	after := runeText[pos:]
 	curValue := string(runeText[location.NewStart:pos])
-	if charsToReplace > len(curValue) {
-		charsToReplace = len(curValue)
+	if charsToReplaceInt > len(curValue) {
+		charsToReplaceInt = len(curValue)
 	}
 	runeCur := []rune(curValue)
 	if !fromEnd {
-		for i := 0; i < charsToReplace; i++ {
+		for i := 0; i < charsToReplaceInt; i++ {
 			runeCur[i] = runeReplaceWith
 		}
 	} else {
-		for i := len(curValue) - 1; i > len(curValue)-1-charsToReplace; i-- {
+		for i := len(curValue) - 1; i > len(curValue)-1-charsToReplaceInt; i-- {
 			runeCur[i] = runeReplaceWith
 		}
 	}

@@ -39,3 +39,18 @@ func TestMaskValue1(t *testing.T) {
 
 	assert.Equal(t, expected, str)
 }
+
+func TestMaskValue2(t *testing.T) {
+
+	var str = "this is a 123456"
+
+	var locations = make([]message_types.Location, 2)
+	index0 := message_types.Location{
+		NewStart: 10,
+		End:      14,
+		Length:   6,
+	}
+	locations[0] = index0
+	err := MaskValue(&str, locations[0], "##", 3, false)
+	assert.Error(t, err, "Replace Char should be single")
+}
