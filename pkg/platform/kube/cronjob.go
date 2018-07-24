@@ -15,23 +15,16 @@ func (s *store) CreateCronJob(name string, image string, schedule string, comman
 	cronjob := &v1beta1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
+			Labels: map[string]string{
+				"app": "presidio",
+			}
 		},
 		Spec: v1beta1.CronJobSpec{
 			Schedule: schedule,
 			JobTemplate: v1beta1.JobTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{
-						"app": "presidio",
-					},
-				},
 				Spec: batchv1.JobSpec{
 					BackoffLimit: int32Ptr(5),
 					Template: apiv1.PodTemplateSpec{
-						ObjectMeta: metav1.ObjectMeta{
-							Labels: map[string]string{
-								"app": "presidio",
-							},
-						},
 						Spec: apiv1.PodSpec{
 							Containers: []apiv1.Container{
 								{
