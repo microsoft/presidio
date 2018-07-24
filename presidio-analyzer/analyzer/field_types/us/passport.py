@@ -1,21 +1,23 @@
-from field_types import field_type
-
+from field_types import field_type, field_pattern
 
 class UsPassport(field_type.FieldType):
     name = "US_PASSPORT"
     context = [
         "us",
         "united",
-        "states"
+        "states",
         "passport",
         "number",
         "passport#",
-        "passportid",
-        "passportno",
-        "passportnumber",
         "travel",
         "document"]
-    regexes = {
-        "passport":
-        r'[0-9]{9}\b',
-    }
+
+    patterns = []
+
+    pattern = field_pattern.FieldPattern()
+    pattern.name = 'Passport (weak)'
+    pattern.regex = r'(\b[0-9]{9}\b)'
+    pattern.strength = 0.05
+    pattern.examples = {'140514722'}
+    patterns.append(pattern)
+

@@ -121,7 +121,7 @@ class Matcher(object):
                     continue
 
                 # Don't add duplicate
-                if len(field.regexes) > 1 and any(
+                if len(field.patterns) > 1 and any(
                         ((x.location.start == start) or (
                             x.location.end == end)) and
                         ((
