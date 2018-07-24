@@ -4,20 +4,35 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	"k8s.io/api/batch/v1beta1"
 	apiv1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+//JobContainerDetails
+type ContainerDetails struct {
+	Name     string
+	Image    string
+	Commands []string
+}
+
 //CreateJob create k8s job
-func (s *store) CreateCronJob(name string, image string, schedule string, commands []string) error {
+func (s *store) CreateCronJob(name string, schedule string, containerDetailsArray []ContainerDetails) error {
 	jobsClient := s.client.BatchV1beta1().CronJobs(s.namespace)
+
+	var containers []apiv1.Container
+	for _, containerDetails := range containerDetailsArray {
+		containers = append(containers, apiv1.Container{
+			Name:    containerDetails.Name,
+			Command: containerDetails.Commands,
+			Image:   containerDetails.Image,
+		})
+	}
 
 	cronjob := &v1beta1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 			Labels: map[string]string{
 				"app": "presidio",
-			}
+			},
 		},
 		Spec: v1beta1.CronJobSpec{
 			Schedule: schedule,
@@ -26,13 +41,7 @@ func (s *store) CreateCronJob(name string, image string, schedule string, comman
 					BackoffLimit: int32Ptr(5),
 					Template: apiv1.PodTemplateSpec{
 						Spec: apiv1.PodSpec{
-							Containers: []apiv1.Container{
-								{
-									Name:    name,
-									Image:   image,
-									Command: commands,
-								},
-							},
+							Containers:    containers,
 							RestartPolicy: "never",
 						},
 					},
@@ -55,10 +64,6 @@ func (s *store) ListCronJobs() ([]string, error) {
 	}
 
 	for _, job := range list.Items {
-		metadata, err := meta.Accessor(job)
-		if err != nil {
-			return nil, err
-		}
 		names = append(names, job.GetName())
 	}
 	return names, nil
