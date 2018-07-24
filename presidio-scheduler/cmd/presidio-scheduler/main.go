@@ -9,6 +9,8 @@ import (
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
 	log "github.com/presid-io/presidio/pkg/logger"
+	"github.com/presid-io/presidio/pkg/platform"
+	"github.com/presid-io/presidio/pkg/platform/kube"
 	"github.com/presid-io/presidio/pkg/rpc"
 )
 
@@ -17,6 +19,7 @@ type server struct{}
 var (
 	grpcPort  = os.Getenv("GRPC_PORT")
 	namespace = os.Getenv("presidio_NAMESPACE")
+	store     platform.Store
 )
 
 const (
@@ -27,6 +30,11 @@ func main() {
 
 	if grpcPort == "" {
 		log.Fatal(fmt.Sprintf("GRPC_PORT (currently [%s]) env var must me set.", grpcPort))
+	}
+	var err error
+	store, err = kube.New(namespace, "", kubeConfigPath())
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 
 	lis, s := rpc.SetupClient(grpcPort)
@@ -46,7 +54,7 @@ func (s *server) Apply(ctx context.Context, r *message_types.JobRequest) (*messa
 }
 
 func applySchedulerRequest(r *message_types.JobRequest) (*message_types.JobResponse, error) {
-
+	store.CreateCronJob()
 	return &message_types.JobResponse{}, nil
 }
 
