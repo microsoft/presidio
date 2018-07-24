@@ -20,7 +20,7 @@ func TestMaskValue1(t *testing.T) {
 	}
 	index1 := message_types.Location{
 		NewStart: 21,
-		End:      25,
+		End:      26,
 		Length:   5,
 	}
 	locations[0] = index0

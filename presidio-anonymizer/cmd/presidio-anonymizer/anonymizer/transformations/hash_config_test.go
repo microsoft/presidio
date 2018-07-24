@@ -16,12 +16,12 @@ func TestHashValue1(t *testing.T) {
 	index0 := message_types.Location{
 		NewStart: 10,
 		End:      14,
-		Length:   4,
+		Length:   6,
 	}
 	index1 := message_types.Location{
-		NewStart: 27,
-		End:      31,
-		Length:   4,
+		NewStart: 25,
+		End:      30,
+		Length:   5,
 	}
 	locations[0] = index0
 	locations[1] = index1
@@ -35,7 +35,7 @@ func TestHashValue1(t *testing.T) {
 		assert.Error(t, err)
 	}
 
-	expected := "this is a 425748966156 and 40419098051"
+	expected := "this is a 2576725674 and 1566801428"
 
 	assert.Equal(t, expected, str)
 }
