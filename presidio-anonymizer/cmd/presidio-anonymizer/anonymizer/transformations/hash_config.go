@@ -20,15 +20,22 @@ func HashValue(text *string, location message_types.Location) error {
 	before := runeText[:location.NewStart]
 	after := runeText[pos:]
 	curValue := string(runeText[location.NewStart:pos])
-	concat := string(before) + hash(curValue) + string(after)
+	hash, err := hash(curValue)
+	if err != nil {
+		return err
+	}
+	concat := string(before) + hash + string(after)
 	runeText = []rune(concat)
 	*text = string(runeText)
 	return nil
 }
 
-func hash(s string) string {
+func hash(s string) (string, error) {
 	h := fnv.New32a()
-	h.Write([]byte(s))
+	_, err := h.Write([]byte(s))
+	if err != nil {
+		return "", err
+	}
 	result := h.Sum32()
-	return fmt.Sprint(result)
+	return fmt.Sprint(result), nil
 }

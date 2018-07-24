@@ -74,6 +74,10 @@ func (api *API) analyze(c *gin.Context) {
 	}
 }
 
+func isTemplateIDInitialized(template *message_types.AnalyzeTemplate, templateID string) bool {
+	return template == nil && templateID != ""
+}
+
 func (api *API) anonymize(c *gin.Context) {
 	var anonymizeAPIRequest message_types.AnonymizeApiRequest
 
@@ -83,7 +87,7 @@ func (api *API) anonymize(c *gin.Context) {
 		id := anonymizeAPIRequest.AnalyzeTemplateId
 		project := c.Param("project")
 
-		if analyzeTemplate == nil && anonymizeAPIRequest.AnalyzeTemplateId != "" {
+		if isTemplateIDInitialized(analyzeTemplate, anonymizeAPIRequest.AnalyzeTemplateId) {
 			analyzeTemplate = &message_types.AnalyzeTemplate{}
 			api.getTemplate(project, "analyze", id, analyzeTemplate, c)
 		} else if analyzeTemplate == nil {
