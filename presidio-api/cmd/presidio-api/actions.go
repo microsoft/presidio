@@ -61,8 +61,9 @@ func (api *API) analyze(c *gin.Context) {
 		if analyzeTemplate == nil && analyzeAPIRequest.AnalyzeTemplateId != "" {
 			analyzeTemplate = &message_types.AnalyzeTemplate{}
 			api.getTemplate(c.Param("project"), "analyze", analyzeAPIRequest.AnalyzeTemplateId, analyzeTemplate, c)
-		} else {
+		} else if analyzeTemplate == nil {
 			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
+			return
 		}
 
 		res := api.invokeAnalyze(analyzeTemplate, analyzeAPIRequest.Text, c)
@@ -85,8 +86,9 @@ func (api *API) anonymize(c *gin.Context) {
 		if analyzeTemplate == nil && anonymizeAPIRequest.AnalyzeTemplateId != "" {
 			analyzeTemplate = &message_types.AnalyzeTemplate{}
 			api.getTemplate(project, "analyze", id, analyzeTemplate, c)
-		} else {
+		} else if analyzeTemplate == nil {
 			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
+			return
 		}
 
 		analyzeRes := api.invokeAnalyze(analyzeTemplate, anonymizeAPIRequest.Text, c)
@@ -102,8 +104,9 @@ func (api *API) anonymize(c *gin.Context) {
 			if err != nil {
 				c.AbortWithError(http.StatusBadRequest, err)
 			}
-		} else {
+		} else if anonymizeTemplate == nil {
 			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
+			return
 		}
 
 		anonymizeRes := api.invokeAnonymize(anonymizeTemplate, anonymizeAPIRequest.Text, analyzeRes.AnalyzeResults, c)
