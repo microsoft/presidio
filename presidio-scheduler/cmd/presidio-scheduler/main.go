@@ -15,7 +15,12 @@ import (
 type server struct{}
 
 var (
-	grpcPort = os.Getenv("GRPC_PORT")
+	grpcPort  = os.Getenv("GRPC_PORT")
+	namespace = os.Getenv("presidio_NAMESPACE")
+)
+
+const (
+	envKubeConfig = "KUBECONFIG"
 )
 
 func main() {
@@ -41,6 +46,21 @@ func (s *server) Apply(ctx context.Context, r *message_types.JobRequest) (*messa
 }
 
 func applySchedulerRequest(r *message_types.JobRequest) (*message_types.JobResponse, error) {
-	// Create the cron job
+
 	return &message_types.JobResponse{}, nil
+}
+
+// TODO: duplicate from api- refactor to pkg
+func kubeConfigPath() string {
+	if v, ok := os.LookupEnv(envKubeConfig); ok {
+		return v
+	}
+	defConfig := os.ExpandEnv("$HOME/.kube/config")
+	if _, err := os.Stat(defConfig); err == nil {
+		log.Info("Using config from " + defConfig)
+		return defConfig
+	}
+
+	// If we get here, we might be in-Pod.
+	return ""
 }
