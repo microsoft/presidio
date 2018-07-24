@@ -34,7 +34,7 @@ matrix:
        # Make dep executable
       - chmod +x $GOPATH/bin/dep
       - go get github.com/pkg/errors
-      - dep ensure -update
+      - dep ensure
       # Install gometalinter
       - go get -u github.com/alecthomas/gometalinter
       - gometalinter --install

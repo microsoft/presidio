@@ -9,25 +9,26 @@ import (
 )
 
 //HashValue ...
-func HashValue(text *string, location message_types.Location) error {
-
-	pos := location.NewStart + location.Length
-	if int32(len(*text)) < pos {
-		return errors.New("Indexes for values: are out of bounds")
+func HashValue(text string, location message_types.Location) (string, error) {
+	if location.Length == 0 {
+		location.Length = location.End - location.Start
 	}
-	runeText := []rune(*text)
+	pos := location.Start + location.Length
+	if int32(len(text)) < pos {
+		return "", errors.New("Indexes for values: are out of bounds")
+	}
+	runeText := []rune(text)
 
-	before := runeText[:location.NewStart]
+	before := runeText[:location.Start]
 	after := runeText[pos:]
-	curValue := string(runeText[location.NewStart:pos])
-	hash, err := hash(curValue)
+	curValue := string(runeText[location.Start:pos])
+	value, err := hash(curValue)
 	if err != nil {
-		return err
+		return "", err
 	}
-	concat := string(before) + hash + string(after)
+	concat := string(before) + value + string(after)
 	runeText = []rune(concat)
-	*text = string(runeText)
-	return nil
+	return string(runeText), nil
 }
 
 func hash(s string) (string, error) {

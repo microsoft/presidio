@@ -171,8 +171,8 @@
     "internal/singleflight",
     "internal/util"
   ]
-  revision = "77d71282abdf84c93d5a8669d22ced3dc52b48b2"
-  version = "v6.13.1"
+  revision = "480db94d33e6088e08d628833b6c0705451d24bb"
+  version = "v6.13.2"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
