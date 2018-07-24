@@ -97,7 +97,7 @@ echo -n '{"name":"ANONYMIZER","displayName":"Phone number and Credit card","fiel
 
 2. Anonymize text
 ```
-echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":<my-analyze-template-name>, "AnonymizeTemplateId":<my-anonymize-template-name>  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
+echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
 ```
 
 <hr>
