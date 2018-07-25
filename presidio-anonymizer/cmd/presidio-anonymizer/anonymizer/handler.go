@@ -25,7 +25,11 @@ func ApplyAnonymizerTemplate(text string, results []*message_types.AnalyzeResult
 	for i := len(results) - 1; i >= 0; i-- {
 
 		result := results[i]
+		transformed := false
 		for _, transformations := range template.FieldTypeTransformations {
+			if transformed {
+				break
+			}
 			if transformations.Fields == nil {
 				text, err = transformField(transformations.Transformation, result, text)
 				if err != nil {
@@ -40,6 +44,7 @@ func ApplyAnonymizerTemplate(text string, results []*message_types.AnalyzeResult
 					if err != nil {
 						return "", err
 					}
+					transformed = true
 					break
 				}
 			}
