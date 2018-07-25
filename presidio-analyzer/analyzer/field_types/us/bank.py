@@ -4,18 +4,14 @@ from field_types import field_type, field_pattern
 class UsBank(field_type.FieldType):
     name = "US_BANK_NUMBER"
     context = [
-        "us",
-        "united",
-        "states"
-        "checking",
+        "bank"
+        "checking", #TODO: change to "checking account" as part of keyphrase change
         "number",
         "account",
         "account#",
-        "#",
         "acct",
         "saving",
-        "debit"
-        "bank"]
+        "debit"]
     
     patterns = []
 

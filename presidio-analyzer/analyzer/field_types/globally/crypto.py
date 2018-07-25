@@ -1,16 +1,24 @@
 from hashlib import sha256
-from field_types import field_type
+from field_types import field_type, field_pattern
 
 
 class Crypto(field_type.FieldType):
     name = "CRYPTO"
-    context = ["btc", "bitcoin", "crypto"]
+    context = [
+        "wallet",
+        "btc", 
+        "bitcoin", 
+        "crypto"]
+
     should_check_checksum = True
 
-    regexes = {
-        "btc":
-        u'(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])'
-    }
+    patterns = []
+
+    pattern = field_pattern.FieldPattern()
+    pattern.regex = u'(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])'
+    pattern.name = 'BTC (Medium)'
+    pattern.strength = 0.5
+    patterns.append(pattern)
 
     """Copied from:
     http://rosettacode.org/wiki/Bitcoin/address_validation#Python
