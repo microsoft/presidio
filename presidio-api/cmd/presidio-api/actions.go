@@ -102,7 +102,7 @@ func (api *API) schedule(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, project string,  c *gin.Context) *message_types.JobResponse {
+func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, project string, c *gin.Context) *message_types.JobResponse {
 	scanId := jobTemplate.ScanTemplateId
 	scanTemplate := &message_types.ScanTemplate{}
 	api.getTemplate(project, "scan", scanId, scanTemplate, c)
@@ -119,19 +119,19 @@ func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, projec
 	}
 
 	scanRequest := &message_types.ScanRequest{
-		AnalyzeTemplate: analyzeTemplate,
-		AnonymizeTemplate: anonymizeTemplate,
+		AnalyzeTemplate:    analyzeTemplate,
+		AnonymizeTemplate:  anonymizeTemplate,
 		DatabinderTemplate: databinderTemplate,
-		InputConfig: scanTemplate.InputConfig,
-		Kind: scanTemplate.Kind,
-		MinProbability: scanTemplate.MinProbability,
+		InputConfig:        scanTemplate.InputConfig,
+		Kind:               scanTemplate.Kind,
+		MinProbability:     scanTemplate.MinProbability,
 	}
 
 	request := &message_types.JobRequest{
-		Name: jobTemplate.Name,
+		Name:        jobTemplate.Name,
 		Description: jobTemplate.Description,
-		Trigger: jobTemplate.Trigger,
-		ScanRequest: scanRequest
+		Trigger:     jobTemplate.Trigger,
+		ScanRequest: scanRequest,
 	}
 	srv := *jobService
 	res, err := srv.Apply(c, request)

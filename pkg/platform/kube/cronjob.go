@@ -1,29 +1,23 @@
 package kube
 
 import (
+	"github.com/presid-io/presidio/pkg/platform"
 	batchv1 "k8s.io/api/batch/v1"
 	"k8s.io/api/batch/v1beta1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-//JobContainerDetails
-type ContainerDetails struct {
-	Name     string
-	Image    string
-	Commands []string
-}
-
 //CreateJob create k8s job
-func (s *store) CreateCronJob(name string, schedule string, containerDetailsArray []ContainerDetails) error {
+func (s *store) CreateCronJob(name string, schedule string, containerDetailsArray []platform.ContainerDetails) error {
 	jobsClient := s.client.BatchV1beta1().CronJobs(s.namespace)
 
 	var containers []apiv1.Container
 	for _, containerDetails := range containerDetailsArray {
 		containers = append(containers, apiv1.Container{
-			Name:    containerDetails.Name,
-			Command: containerDetails.Commands,
-			Image:   containerDetails.Image,
+			Name:  containerDetails.Name,
+			Image: containerDetails.Image,
+			Env:   containerDetails.EnvVars,
 		})
 	}
 

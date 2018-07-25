@@ -159,7 +159,7 @@ func setupCache() cache.Cache {
 func initScanner() {
 	godotenv.Load()
 
-	scannerObj := os.Getenv("SCANNER_TEMPLATE")
+	scannerObj := os.Getenv("SCANNER_REQUEST")
 	template := &message_types.ScanRequest{}
 	err := templates.ConvertJSONToInterface(scannerObj, template)
 	if err != nil {
