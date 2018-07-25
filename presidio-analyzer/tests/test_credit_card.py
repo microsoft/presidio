@@ -1,5 +1,5 @@
-from analyzer import matcher
-from analyzer import common_pb2
+from analyzer import matcher, common_pb2
+from tests import *
 import os
 
 # https://www.datatrans.ch/showcase/test-cc-numbers
@@ -7,7 +7,6 @@ import os
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD)
 types = [fieldType]
-match = matcher.Matcher()
 
 def test_valid_credit_card():
     number = '4012888888881881 4012-8888-8888-1881 4012 8888 8888 1881'

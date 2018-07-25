@@ -1,12 +1,10 @@
-from analyzer import matcher
-from analyzer import common_pb2
-
+from analyzer import matcher, common_pb2
+from tests import *
 
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.PERSON)
 types = [fieldType]
 
-match = matcher.Matcher()
 
 def test_person_name_simple():
     name = 'John Oliver'

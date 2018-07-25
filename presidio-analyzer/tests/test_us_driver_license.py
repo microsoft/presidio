@@ -1,12 +1,11 @@
-from analyzer import matcher
-from analyzer import common_pb2
+from analyzer import matcher, common_pb2
+from tests import *
 import os
 
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.US_DRIVER_LICENSE)
 types = [fieldType]
 
-match = matcher.Matcher()
 
 def test_valid_us_driver_license():
     num = 'H12234567'

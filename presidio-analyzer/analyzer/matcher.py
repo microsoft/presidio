@@ -98,9 +98,9 @@ class Matcher(object):
         return context
 
     def __check_pattern(self, doc, results, field):
-        prev_match_strength = 0.0
+        max_matched_strength = 0.0
         for pattern in field.patterns:
-            if pattern.strength <= prev_match_strength:
+            if pattern.strength <= max_matched_strength:
                 break
             result_found = False
 
@@ -143,7 +143,7 @@ class Matcher(object):
                 result_found = True
             
             if result_found:
-                prev_match_strength = pattern.strength
+                max_matched_strength = pattern.strength
 
     def __match_ner(self, label, field_type):
         if field_type == "LOCATION" and (label == 'GPE'

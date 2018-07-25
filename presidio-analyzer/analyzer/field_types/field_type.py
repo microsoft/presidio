@@ -1,3 +1,4 @@
+from field_types import field_pattern
 
 
 class FieldType(object):

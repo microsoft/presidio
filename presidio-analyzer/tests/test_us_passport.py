@@ -1,11 +1,9 @@
-from analyzer import matcher
-from analyzer import common_pb2
+from analyzer import matcher, common_pb2
+from tests import *
 
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.US_PASSPORT)
 types = [fieldType]
-
-match = matcher.Matcher()
 
 def test_valid_us_passport_no_context():
     num = '912803456'

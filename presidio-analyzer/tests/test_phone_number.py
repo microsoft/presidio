@@ -1,11 +1,9 @@
-from analyzer import matcher
-from analyzer import common_pb2
+from analyzer import matcher, common_pb2
+from tests import *
 
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.PHONE_NUMBER)
 types = [fieldType]
-
-match = matcher.Matcher()
 
 def test_phone_number_strong_match_no_context():
     number = '(425) 882 9090'
@@ -14,6 +12,7 @@ def test_phone_number_strong_match_no_context():
     assert len(results) == 1
     assert results[0].text == number
     assert results[0].probability > 0.69 and results[0].probability < 1
+
 
 def test_phone_number_strong_match_with_phone_context():
     number = '(425) 882-9090'
@@ -24,6 +23,7 @@ def test_phone_number_strong_match_with_phone_context():
     assert results[0].text == number
     assert results[0].probability == 1
 
+
 def test_phone_number_strong_match_with_similar_context():
     number = '(425) 882-9090'
     context = 'I am available at '
@@ -32,6 +32,7 @@ def test_phone_number_strong_match_with_similar_context():
     assert len(results) == 1
     assert results[0].text == number
     assert results[0].probability > 0.69 
+
 
 def test_phone_number_strong_match_with_irrelevant_context():
     number = '(425) 882-9090'
@@ -96,6 +97,7 @@ def test_phone_number_low_match_with_phone_context():
     assert len(results) == 1
     assert results[0].text == number
     assert results[0].probability > 0.39 and results[0].probability < 0.7
+
 
 def test_phone_numbers_lemmatized_context_phones():
     number1 = '052 5552606'

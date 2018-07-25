@@ -14,10 +14,10 @@ class UsPassport(field_type.FieldType):
 
     patterns = []
 
+    # Weak pattern: all passport numbers are a weak match, e.g., 14019033
     pattern = field_pattern.FieldPattern()
-    pattern.name = 'Passport (weak)'
     pattern.regex = r'(\b[0-9]{9}\b)'
+    pattern.name = 'Passport (weak)'
     pattern.strength = 0.05
-    pattern.examples = {'140514722'}
     patterns.append(pattern)
 

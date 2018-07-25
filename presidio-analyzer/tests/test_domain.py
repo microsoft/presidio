@@ -1,11 +1,10 @@
-from analyzer import matcher
-from analyzer import common_pb2
+from analyzer import matcher, common_pb2
+from tests import *
+
 
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.DOMAIN_NAME)
 types = [fieldType]
-
-match = matcher.Matcher()
 
 def test_valid_domain():
     domain = 'microsoft.com 192.168.0.1'
