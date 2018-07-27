@@ -3,7 +3,7 @@ from field_types import field_type, field_pattern
 
 
 class Email(field_type.FieldType):
-    name = "EMAIL"
+    name = "EMAIL_ADDRESS"
     should_check_checksum = True
     context = [
         "email"
@@ -16,7 +16,6 @@ class Email(field_type.FieldType):
     pattern.name = 'Email (Medium)'
     pattern.strength = 0.5
     patterns.append(pattern)
-
 
     def check_checksum(self):
         return validators.email(self.text)
