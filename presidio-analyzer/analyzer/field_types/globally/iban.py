@@ -1,13 +1,19 @@
 import string
-from field_types import field_type
+from field_types import field_type, field_pattern
 
 
 class Iban(field_type.FieldType):
     name = "IBAN_CODE"
     context = ["iban"]
     should_check_checksum = True
-    regexes = {
-        "iban": u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'}
+
+    patterns = []
+
+    pattern = field_pattern.FieldPattern()
+    pattern.regex = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
+    pattern.name = 'Iban (Medium)'
+    pattern.strength = 0.5
+    patterns.append(pattern)
 
     def check_checksum(self):
         LETTERS = {

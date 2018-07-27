@@ -1,5 +1,5 @@
-from analyzer import matcher
-from analyzer import common_pb2
+from analyzer import matcher, common_pb2
+from tests import *
 import logging
 import os
 
@@ -10,14 +10,12 @@ types = [fieldType]
 
 
 def test_valid_ipv4():
-    match = matcher.Matcher()
     ip = 'microsoft.com 192.168.0.1'
     results = match.analyze_text('the ip is ' + ip, types)
     assert len(results) == 1
 
 
 def test_invalid_ipv4():
-    match = matcher.Matcher()
     ip = '192.168.0'
     results = match.analyze_text('the ip is ' + ip, types)
     assert len(results) == 0
