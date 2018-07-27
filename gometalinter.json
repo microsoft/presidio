@@ -20,7 +20,6 @@
         "ineffassign",
         "misspell",
         "unused",
-        "vet",
-        "gas"
+        "vet"
     ]
 }
