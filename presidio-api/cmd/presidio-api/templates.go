@@ -12,7 +12,11 @@ import (
 )
 
 func getFieldTypes(c *gin.Context) {
-	server.WriteResponse(c, http.StatusOK, message_types.FieldTypesEnum_value)
+	var fieldTypeArray []message_types.FieldTypes
+	for key := range message_types.FieldTypesEnum_value {
+		fieldTypeArray = append(fieldTypeArray, message_types.FieldTypes{Name: key})
+	}
+	server.WriteResponse(c, http.StatusOK, fieldTypeArray)
 }
 
 func (api *API) getActionTemplate(c *gin.Context) {

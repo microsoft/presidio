@@ -6,9 +6,9 @@ import (
 	storage_scanner "github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner"
 )
 
-func createScanner(scannerTemplate *message_types.ScannerTemplate) scanner.Scanner {
-	if scannerTemplate.GetKind() == "s3" || scannerTemplate.GetKind() == "azure" {
-		storageScanner := storage_scanner.New(scannerTemplate.GetKind(), scannerTemplate.GetInputConfig())
+func createScanner(scanRequest *message_types.ScanRequest) scanner.Scanner {
+	if scanRequest.GetKind() == "s3" || scanRequest.GetKind() == "azure" {
+		storageScanner := storage_scanner.New(scanRequest.GetKind(), scanRequest.GetInputConfig())
 		return storageScanner
 	}
 	return nil

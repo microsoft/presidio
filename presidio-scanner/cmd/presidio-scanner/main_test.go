@@ -73,7 +73,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 	api.RemoveContainer("test")
 	container := createContainer(api)
 	putItem("file1.txt", container, api)
-	scannerObj = createScanner(getScannerTemplate())
+	scannerObj = createScanner(getScannerRequest())
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	// Act
@@ -112,7 +112,7 @@ func TestFileExtension(t *testing.T) {
 	api, _ := storage.New(kind, config, 10)
 	container := createContainer(api)
 	putItem("file1.jpg", container, api)
-	scannerObj = createScanner(getScannerTemplate())
+	scannerObj = createScanner(getScannerRequest())
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	// Assert
@@ -184,8 +184,8 @@ func putItem(itemName string, container stow.Container, api *storage.API) stow.I
 	return item
 }
 
-func getScannerTemplate() *message_types.ScannerTemplate {
-	scannerTemplate := &message_types.ScannerTemplate{
+func getScannerRequest() *message_types.ScanRequest {
+	return &message_types.ScanRequest{
 		InputConfig: &message_types.InputConfig{
 			BlobStorageConfig: &message_types.BlobStorageConfig{
 				AccountName:   storageName,
@@ -195,5 +195,4 @@ func getScannerTemplate() *message_types.ScannerTemplate {
 		},
 		Kind: "azure",
 	}
-	return scannerTemplate
 }
