@@ -1,16 +1,15 @@
 from field_types import field_type, field_pattern
-from tests import *
 
 
 class CreditCard(field_type.FieldType):
     name = "CREDIT_CARD"
     should_check_checksum = True
     context = [
-        "credit", 
+        "credit",
         "card",
         "visa",
         "mastercard",
-        #"american express" #TODO: add after adding keyphrase support
+        # "american express" #TODO: add after adding keyphrase support
         "amex",
         "discover",
         "jcb",
@@ -28,7 +27,8 @@ class CreditCard(field_type.FieldType):
     pattern.strength = 0.3
     patterns.append(pattern)
 
-    # Dinesr credit card - weak pattern is used, since credit cards has checksum
+    # Dinesr credit card - weak pattern is used, since credit cards has
+    # checksum
     pattern = field_pattern.FieldPattern()
     pattern.regex = r'\b3(?:0[0-5]|[68][0-9])[0-9]{11}\b'
     pattern.name = 'Diners (weak)'
@@ -36,7 +36,6 @@ class CreditCard(field_type.FieldType):
     patterns.append(pattern)
 
     patterns.sort(key=lambda p: p.strength, reverse=True)
-
 
     def __luhn_checksum(self):
         def digits_of(n):

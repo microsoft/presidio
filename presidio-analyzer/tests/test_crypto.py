@@ -7,13 +7,15 @@ types = [fieldType]
 
 # Generate random address https://www.bitaddress.org/
 
+
 def test_valid_btc():
     wallet = '16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ'
     results = match.analyze_text(wallet, types)
-    
+
     assert len(results) == 1
     assert results[0].text == wallet
     assert results[0].probability == 1
+
 
 def test_valid_btc_with_exact_context():
     wallet = '16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ'
@@ -28,5 +30,5 @@ def test_valid_btc_with_exact_context():
 def test_invalid_btc():
     wallet = '16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ2'
     results = match.analyze_text('my wallet address is ' + wallet, types)
-    
+
     assert len(results) == 0

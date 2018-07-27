@@ -13,6 +13,7 @@ def test_valid_us_ssn():
     assert len(results) == 1
 '''
 
+
 def test_invalid_us_itin():
     num = '078-05-11201'
     results = match.analyze_text('my ssn is ' + num, types)

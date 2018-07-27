@@ -9,12 +9,12 @@ types = [fieldType]
 def test_valid_email():
     email = 'my email is info@presidio.site'
     results = match.analyze_text('the email is ' + email, types)
-    
+
     assert len(results) == 1
 
 
 def test_invalid_email():
     email = 'my email is info@presidio.'
     results = match.analyze_text('the email is ' + email, types)
-    
+
     assert len(results) == 0
