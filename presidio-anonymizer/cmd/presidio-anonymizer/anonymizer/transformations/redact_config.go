@@ -5,6 +5,6 @@ import (
 )
 
 //RedactValue ...
-func RedactValue(text *string, location message_types.Location, newValue string) error {
+func RedactValue(text string, location message_types.Location, newValue string) (string, error) {
 	return ReplaceValue(text, location, newValue)
 }

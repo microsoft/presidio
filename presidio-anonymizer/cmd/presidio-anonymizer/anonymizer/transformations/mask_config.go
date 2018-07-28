@@ -7,20 +7,23 @@ import (
 )
 
 //MaskValue ...
-func MaskValue(text *string, location message_types.Location, replaceWith string, charsToReplace int32, fromEnd bool) error {
+func MaskValue(text string, location message_types.Location, replaceWith string, charsToReplace int32, fromEnd bool) (string, error) {
 	charsToReplaceInt := int(charsToReplace)
-	pos := location.NewStart + location.Length
-	if int32(len(*text)) < pos {
-		return errors.New("Indexes for values: are out of bounds")
+	if location.Length == 0 {
+		location.Length = location.End - location.Start
+	}
+	pos := location.Start + location.Length
+	if int32(len(text)) < pos {
+		return "", errors.New("Indexes for values: are out of bounds")
 	}
 	if int32(len(replaceWith)) != 1 {
-		return errors.New("Replace Char should be single")
+		return "", errors.New("Replace Char should be single")
 	}
 	runeReplaceWith := []rune(replaceWith)[0]
-	runeText := []rune(*text)
-	before := runeText[:location.NewStart]
+	runeText := []rune(text)
+	before := runeText[:location.Start]
 	after := runeText[pos:]
-	curValue := string(runeText[location.NewStart:pos])
+	curValue := string(runeText[location.Start:pos])
 	if charsToReplaceInt > len(curValue) {
 		charsToReplaceInt = len(curValue)
 	}
@@ -36,6 +39,6 @@ func MaskValue(text *string, location message_types.Location, replaceWith string
 	}
 	concat := string(before) + string(runeCur) + string(after)
 	runeText = []rune(concat)
-	*text = string(runeText)
-	return nil
+
+	return string(runeText), nil
 }

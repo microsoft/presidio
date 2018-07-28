@@ -1,6 +1,7 @@
 package anonymizer
 
 import (
+	"errors"
 	"sort"
 
 	message_types "github.com/presid-io/presidio-genproto/golang"
@@ -16,41 +17,36 @@ func (a sortedResults) Less(i, j int) bool { return a[i].Location.Start < a[j].L
 //ApplyAnonymizerTemplate ...
 func ApplyAnonymizerTemplate(text string, results []*message_types.AnalyzeResult, template *message_types.AnonymizeTemplate) (string, error) {
 
-	relevantResults := findRelevantResultsToChange(results, template)
-
 	//Sort results by start location to verify order
-	sort.Sort(sortedResults(relevantResults))
-
-	//Calculate relative locations of new values
-	resultsTransformations := calculateLocations(relevantResults, template)
+	sort.Sort(sortedResults(results))
 
 	//Apply new values
-	for i, result := range relevantResults {
+	var err error
+	for i := len(results) - 1; i >= 0; i-- {
 
-		transformation := resultsTransformations[i]
+		result := results[i]
+		transformed := false
+		for _, transformations := range template.FieldTypeTransformations {
+			if transformed {
+				break
+			}
+			if transformations.Fields == nil {
+				text, err = transformField(transformations.Transformation, result, text)
+				if err != nil {
+					return "", err
+				}
+				break
+			}
 
-		if transformation.ReplaceValue != nil {
-			err := methods.ReplaceValue(&text, *result.Location, transformation.NewValue)
-			if err != nil {
-				return "", err
-			}
-		}
-		if transformation.RedactValue != nil {
-			err := methods.RedactValue(&text, *result.Location, transformation.NewValue)
-			if err != nil {
-				return "", err
-			}
-		}
-		if transformation.HashValue != nil {
-			err := methods.HashValue(&text, *result.Location)
-			if err != nil {
-				return "", err
-			}
-		}
-		if transformation.MaskValue != nil {
-			err := methods.MaskValue(&text, *result.Location, transformation.MaskValue.MaskingCharacter, transformation.MaskValue.CharsToMask, transformation.MaskValue.FromEnd)
-			if err != nil {
-				return "", err
+			for _, fieldType := range transformations.Fields {
+				if fieldType.Name == result.Field.Name {
+					text, err = transformField(transformations.Transformation, result, text)
+					if err != nil {
+						return "", err
+					}
+					transformed = true
+					break
+				}
 			}
 		}
 	}
@@ -58,83 +54,23 @@ func ApplyAnonymizerTemplate(text string, results []*message_types.AnalyzeResult
 	return text, nil
 }
 
-//Find relevant results to change based on the template
-func findRelevantResultsToChange(results []*message_types.AnalyzeResult, config *message_types.AnonymizeTemplate) []*message_types.AnalyzeResult {
-	var relevantResults = make([]*message_types.AnalyzeResult, 0)
+func transformField(transformation *message_types.Transformation, result *message_types.AnalyzeResult, text string) (string, error) {
 
-	if config.FieldTypeTransformations != nil {
-		for _, transformations := range config.FieldTypeTransformations {
-			//Apply to all fieldtypes
-			if transformations.Fields == nil {
-				relevantResults = results
-				break //No more than one transformation per fieldtype
-			} else {
-				//Apply to selected fieldtypes
-				for _, result := range results {
-					for _, fieldType := range transformations.Fields {
-						if fieldType.Name == result.Field.Name {
-							relevantResults = append(relevantResults, result)
-							break //No more than one transformation per fieldtype
-						}
-					}
-				}
-			}
-		}
-	}
-	return relevantResults
-}
-
-func calculateLocations(results []*message_types.AnalyzeResult, config *message_types.AnonymizeTemplate) []*message_types.Transformation {
-
-	var resultsTransformations = make([]*message_types.Transformation, len(results))
-	var locations = make([]message_types.Location, len(results))
-
-	// Assign new values
-	for i, result := range results {
-		for _, transformations := range config.FieldTypeTransformations {
-			if transformations.Fields == nil {
-				setValue(transformations.Transformation)
-				resultsTransformations[i] = transformations.Transformation
-				break
-			}
-
-			for _, fieldType := range transformations.Fields {
-				if fieldType.Name == result.Field.Name {
-					setValue(transformations.Transformation)
-					resultsTransformations[i] = transformations.Transformation
-					break
-				}
-			}
-		}
-
-		locations[i] = *result.Location
-		results[i] = result
-	}
-
-	//Calculate new indexes
-	for i := 0; i < len(locations); i++ {
-		sliceLocations := locations[i:]
-		newLocations := methods.CalculateNewIndexes(sliceLocations, int32(len(resultsTransformations[i].NewValue)))
-
-		//Change returned locations in original array
-		j := i
-		for _, loc := range newLocations {
-			locations[j] = loc
-			j++
-		}
-		results[i].Location = &newLocations[0]
-	}
-	return resultsTransformations
-}
-
-func setValue(transformation *message_types.Transformation) {
-	var value string
 	if transformation.ReplaceValue != nil {
-		value = transformation.ReplaceValue.NewValue
+		result, err := methods.ReplaceValue(text, *result.Location, transformation.ReplaceValue.NewValue)
+		return result, err
 	}
 	if transformation.RedactValue != nil {
-		value = " "
+		result, err := methods.RedactValue(text, *result.Location, " ")
+		return result, err
 	}
-	transformation.NewValue = value
-
+	if transformation.HashValue != nil {
+		result, err := methods.HashValue(text, *result.Location)
+		return result, err
+	}
+	if transformation.MaskValue != nil {
+		result, err := methods.MaskValue(text, *result.Location, transformation.MaskValue.MaskingCharacter, transformation.MaskValue.CharsToMask, transformation.MaskValue.FromEnd)
+		return result, err
+	}
+	return "", errors.New("Transformation not found")
 }
