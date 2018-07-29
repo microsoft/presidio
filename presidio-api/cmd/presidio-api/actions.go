@@ -42,6 +42,16 @@ func setupGRPCServices() {
 		log.Fatal("anonymizer service port is empty")
 	}
 
+	schedulerSvcHost := os.Getenv("SCHEDULER_SVC_HOST")
+	if anonymizerSvcHost == "" {
+		log.Fatal("scheduler service address is empty")
+	}
+
+	schedulerSvcPort := os.Getenv("SCHEDULER_SVC_PORT")
+	if anonymizerSvcPort == "" {
+		log.Fatal("scheduler service port is empty")
+	}
+
 	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
@@ -49,6 +59,11 @@ func setupGRPCServices() {
 	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
+	}
+
+	jobService, err = rpc.SetupSchedulerService(schedulerSvcHost + ":" + schedulerSvcPort)
+	if err != nil {
+		log.Error(fmt.Sprintf("Connection to scheduler service failed %q", err))
 	}
 
 }

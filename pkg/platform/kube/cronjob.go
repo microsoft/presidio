@@ -1,11 +1,12 @@
 package kube
 
 import (
-	"github.com/presid-io/presidio/pkg/platform"
 	batchv1 "k8s.io/api/batch/v1"
 	"k8s.io/api/batch/v1beta1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/presid-io/presidio/pkg/platform"
 )
 
 //CreateJob create k8s job
@@ -36,7 +37,7 @@ func (s *store) CreateCronJob(name string, schedule string, containerDetailsArra
 					Template: apiv1.PodTemplateSpec{
 						Spec: apiv1.PodSpec{
 							Containers:    containers,
-							RestartPolicy: "never",
+							RestartPolicy: "Never",
 						},
 					},
 				},

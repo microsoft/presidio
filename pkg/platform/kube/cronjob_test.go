@@ -4,7 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/fake"
+
+	"github.com/presid-io/presidio/pkg/platform"
 )
 
 func TestCreateAndDeleteCronJob(t *testing.T) {
@@ -15,11 +18,13 @@ func TestCreateAndDeleteCronJob(t *testing.T) {
 		namespace: "default",
 	}
 
-	containerDetails := []ContainerDetails{
-		ContainerDetails{
-			Commands: []string{"a", "b"},
-			Name:     "jobName",
-			Image:    "imageName",
+	containerDetails := []platform.ContainerDetails{
+		platform.ContainerDetails{
+			EnvVars: []apiv1.EnvVar{
+				apiv1.EnvVar{Name: "envVar1", Value: "envVarval"},
+			},
+			Name:  "jobName",
+			Image: "imageName",
 		},
 	}
 

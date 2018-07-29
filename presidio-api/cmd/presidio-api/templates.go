@@ -91,6 +91,21 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 		if c.BindJSON(&anonymizeTemplate) == nil {
 			return pkg_templates.ConvertInterfaceToJSON(anonymizeTemplate)
 		}
+	case "scan":
+		var scanTemplate message_types.ScanTemplate
+		if c.BindJSON(&scanTemplate) == nil {
+			return pkg_templates.ConvertInterfaceToJSON(scanTemplate)
+		}
+	case "databinder":
+		var databinderTemplate message_types.DatabinderTemplate
+		if c.BindJSON(&databinderTemplate) == nil {
+			return pkg_templates.ConvertInterfaceToJSON(databinderTemplate)
+		}
+	case "schedule":
+		var jobTemplate message_types.JobTemplate
+		if c.BindJSON(&jobTemplate) == nil {
+			return pkg_templates.ConvertInterfaceToJSON(jobTemplate)
+		}
 	}
 
 	return "", errors.New("No template found")
