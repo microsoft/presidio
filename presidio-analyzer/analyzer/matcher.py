@@ -1,10 +1,16 @@
 import logging
 import regex as re
-import en_core_web_sm
+import en_core_web_lg
 import common_pb2
 import template_pb2
-from field_types import field_type, field_factory
+from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
+
+CONTEXT_SIMILARITY_THRESHOLD = 0.65
+CONTEXT_SIMILARITY_FACTOR = 0.5
+NER_STRENGTH = 0.7
+CONTEXT_PREFIX_COUNT = 3
+CONTEXT_SUFFIX_COUNT = 0
 
 
 class Matcher(object):
@@ -13,92 +19,123 @@ class Matcher(object):
         Load spacy model once
         """
 
-        self.nlp = en_core_web_sm.load()
+        self.nlp = en_core_web_lg.load(disable=['parser', 'tagger'])
 
-    def __calculate_probability(self, doc, current_field, start):
-
-        probability = 0.0
-        base_token = None
+    def __is_token_start(self, doc, start):
         for token in doc:
             if token.idx == start:
-                base_token = token
-                break
+                return True
 
-        if base_token is None:
+        return False
+
+    def __calculate_context_similarity(self, context, field):
+        # Context similarity = max similarity between context token and a
+        # keyword in field.context
+        lowered = context.lower()
+        lemmatized_context = list(map(lambda t: t.lemma_, self.nlp(lowered)))
+        max_similarity = 0.0
+
+        # TODO: remove after changing the keywords to be weighted
+        if 'card' in field.context:
+            field.context.remove('card')
+        if 'number' in field.context:
+            field.context.remove('number')
+
+        for context in self.nlp.pipe(lemmatized_context):
+            for keyword in self.nlp.pipe(field.context):
+                similarity = context.similarity(keyword)
+                if similarity >= CONTEXT_SIMILARITY_THRESHOLD:
+                    max_similarity = max(max_similarity, similarity)
+
+        return min(max_similarity, 1)
+
+    def __calculate_probability(self, doc, match_strength, field, start, end):
+        if field.should_check_checksum:
+            if field.check_checksum() is not True:
+                logging.info("Checksum failed for " + field.text)
+                return 0
+            else:
+                return 1.0
+
+        # Ignore matches with partial tokens
+        if not self.__is_token_start(doc, start):
             return 0
 
-        start_index = base_token.i - 7
-        factor = 0.3
+        # Base probability according to the pattern strength
+        probability = match_strength
 
-        if start_index < 0:
-            start_index = 0
+        # Calculate probability based on context
+        context = self.__extract_context(doc, start, end)
+        context_similarity = self.__calculate_context_similarity(
+            context, field)
+        if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
+            probability += context_similarity * CONTEXT_SIMILARITY_FACTOR
 
-        for token in doc:
-            if token.i == base_token.i:
-                break
-            if token.i >= start_index:
-                if token.text.lower() in current_field.context:
-                    probability = probability + factor
-                    if probability >= 1.0:
-                        probability = 1.0
-                        break
+        return min(probability, 1)
 
-        return probability
-
-    def __create_result(self, doc, current_field, start, end):
+    def __create_result(self, doc, match_strength, field, start, end):
 
         res = common_pb2.AnalyzeResult()
-        res.field.name = current_field.name
-        res.text = current_field.text
+        res.field.name = field.name
+        res.text = field.text
 
         # Validate checksum
-        if current_field.should_check_checksum:
-            if current_field.check_checksum() is not True:
-                logging.info("Checksum failed for " + current_field.text)
-                return None
-            else:
-                res.probability = 1.0
-        else:
-            res.probability = self.__calculate_probability(
-                doc, current_field, start)
+        res.probability = self.__calculate_probability(doc, match_strength,
+                                                       field, start, end)
 
         res.location.start = start
         res.location.end = end
         res.location.length = end - start
 
-        logging.info(
-            f"field: '{res.field}' Value: '{res.text}' Span: '{start}:{end}' Probability: '{res.probability}'"
-        )
+        logging.info("field: %s Value: %s Span: '%s:%s' Score: %.2f",
+                     res.field, res.text, start, end, res.probability)
         return res
 
-    def __check_pattern(self, doc, results, current_field):
-        for _, check_type_value in current_field.regexes.items():
+    def __extract_context(self, doc, start, end):
+        prefix = doc.text[0:start].split()
+        suffix = doc.text[end + 1:].split()
+        context = ''
 
-            for match in re.finditer(
-                    check_type_value,
-                    doc.text,
-                    flags=re.IGNORECASE | re.DOTALL | re.MULTILINE,
-                    overlapped=False,
-                    partial=False,
-                    concurrent=True):
+        context += ' '.join(
+            prefix[max(0,
+                       len(prefix) - CONTEXT_PREFIX_COUNT):len(prefix)])
+        context += ' '
+        context += ' '.join(suffix[0:min(CONTEXT_SUFFIX_COUNT, len(suffix))])
 
+        return context
+
+    def __check_pattern(self, doc, results, field):
+        max_matched_strength = 0.0
+        for pattern in field.patterns:
+            if pattern.strength <= max_matched_strength:
+                break
+            result_found = False
+
+            matches = re.finditer(
+                pattern.regex,
+                doc.text,
+                flags=re.IGNORECASE | re.DOTALL | re.MULTILINE,
+                overlapped=False,
+                partial=False,
+                concurrent=True)
+
+            for match in matches:
                 start, end = match.span()
-                current_field.text = doc.text[start:end]
+                field.text = doc.text[start:end]
 
                 # Skip empty results
-                if current_field.text == '':
+                if field.text == '':
                     continue
 
                 # Don't add duplicate
-                if len(current_field.regexes) > 1 and any(
-                        ((x.location.start == start) or (
-                            x.location.end == end)) and
-                        ((
-                            x.field.name == current_field.name))
-                        for x in results):
+                if len(field.patterns) > 1 and any(
+                    ((x.location.start == start) or (x.location.end == end))
+                        and ((x.field.name == field.name)) for x in results):
                     continue
 
-                res = self.__create_result(doc, current_field, start, end)
+                res = self.__create_result(doc, pattern.strength, field, start,
+                                           end)
+
                 if res is None or res.probability == 0:
                     continue
 
@@ -108,32 +145,35 @@ class Matcher(object):
                 #     continue
 
                 results.append(res)
+                result_found = True
 
-    def __match_ner(self, label, field_type_filter):
-        if field_type_filter == "LOCATION" and (label == 'GPE'
-                                                or label == 'LOC'):
+            if result_found:
+                max_matched_strength = pattern.strength
+
+    def __match_ner(self, label, field_type):
+        if field_type == "LOCATION" and (label == 'GPE' or label == 'LOC'):
             return True
 
-        if field_type_filter == "PERSON" and label == 'PERSON':
+        if field_type == "PERSON" and label == 'PERSON':
             return True
 
-        if field_type_filter == "DATE_TIME" and (label == 'DATE'
-                                                 or label == 'TIME'):
+        if field_type == "DATE_TIME" and (label == 'DATE' or label == 'TIME'):
             return True
 
-        if field_type_filter == "NRP" and label == 'NORP':
+        if field_type == "NRP" and label == 'NORP':
             return True
 
         return False
 
-    def __check_ner(self, doc, results, current_field):
+    def __check_ner(self, doc, results, field):
         for ent in doc.ents:
-            if self.__match_ner(ent.label_, current_field.name) is False:
+            if self.__match_ner(ent.label_, field.name) is False:
                 continue
-            current_field.text = ent.text
-            res = self.__create_result(doc, current_field, ent.start_char,
-                                       ent.end_char)
-            res.probability = 0.8
+            field.text = ent.text
+            # TODO FIX
+            res = self.__create_result(doc, NER_STRENGTH, field,
+                                       ent.start_char, ent.end_char)
+            # res.probability = NER_PROBABILITY
 
             if res is not None:
                 results.append(res)
@@ -150,7 +190,7 @@ class Matcher(object):
 
         Args:
             text: text to analyzer.
-            field_type_filters: filters array such as ["PERSON", "LOCATION"]
+            field_type_filters: filters array such as [{"name":PERSON"},{"name": "LOCATION"}]
         """
 
         results = []
@@ -167,6 +207,9 @@ class Matcher(object):
         for field_type_string_filter in field_type_string_filters:
             current_field = field_factory.FieldFactory.create(
                 field_type_string_filter)
+
+            if current_field is None:
+                continue
 
             # Check for ner field
             if isinstance(current_field, type(ner.Ner())):

@@ -126,3 +126,4 @@ debug
 /tests/testdata/*-generated.*
 .DS_Store
 vendor/
+*.db

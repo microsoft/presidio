@@ -26,7 +26,13 @@ dep ensure
 pip3 install -r requirements.txt
 ```
 
-5. Install [librdkafka](https://github.com/confluentinc/confluent-kafka-go#installing-librdkafka)
+Install pytest package for testing:
+```
+pip3 install -U pytest
+```
+
+4. Install [librdkafka](https://github.com/confluentinc/confluent-kafka-go#installing-librdkafka)
+
 
 6. Protobuf generator tools
 

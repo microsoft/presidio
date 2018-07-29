@@ -13,19 +13,22 @@ import os
 
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self):
+        logging.basicConfig(
+            format='%(asctime)s:%(levelname)s:%(message)s',
+            level=logging.DEBUG)
         self.match = matcher.Matcher()
 
     def Apply(self, request, context):
         response = analyze_pb2.AnalyzeResponse()
-        results = self.match.analyze_text(
-            request.text, request.analyzeTemplate.fields)
+        results = self.match.analyze_text(request.text,
+                                          request.analyzeTemplate.fields)
         response.analyzeResults.extend(results)
         return response
 
 
 def serve():
 
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(Analyzer(), server)
 
     port = os.environ['GRPC_PORT']

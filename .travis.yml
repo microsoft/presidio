@@ -12,7 +12,7 @@ matrix:
       python:
         - "3.6"
       install:
-      - pip install -r presidio-analyzer/requirements.txt
+      - travis_wait pip install -r presidio-analyzer/requirements.txt
       script:
       - make python-test
     - language: go

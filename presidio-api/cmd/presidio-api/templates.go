@@ -13,7 +13,7 @@ import (
 
 func getFieldTypes(c *gin.Context) {
 	var fieldTypeArray []message_types.FieldTypes
-	for key, _ := range message_types.FieldTypesEnum_value {
+	for key := range message_types.FieldTypesEnum_value {
 		fieldTypeArray = append(fieldTypeArray, message_types.FieldTypes{Name: key})
 	}
 	server.WriteResponse(c, http.StatusOK, fieldTypeArray)

@@ -57,9 +57,17 @@ func (api *API) analyze(c *gin.Context) {
 	var analyzeAPIRequest message_types.AnalyzeApiRequest
 
 	if c.Bind(&analyzeAPIRequest) == nil {
-		id := analyzeAPIRequest.AnalyzeTemplateId
-		project := c.Param("project")
-		res := api.invokeAnalyze(project, id, analyzeAPIRequest.Text, c)
+		analyzeTemplate := analyzeAPIRequest.AnalyzeTemplate
+
+		if analyzeTemplate == nil && analyzeAPIRequest.AnalyzeTemplateId != "" {
+			analyzeTemplate = &message_types.AnalyzeTemplate{}
+			api.getTemplate(c.Param("project"), "analyze", analyzeAPIRequest.AnalyzeTemplateId, analyzeTemplate, c)
+		} else if analyzeTemplate == nil {
+			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
+			return
+		}
+
+		res := api.invokeAnalyze(analyzeTemplate, analyzeAPIRequest.Text, c)
 		if res == nil {
 			return
 		}
@@ -67,20 +75,46 @@ func (api *API) analyze(c *gin.Context) {
 	}
 }
 
+func isTemplateIDInitialized(template *message_types.AnalyzeTemplate, templateID string) bool {
+	return template == nil && templateID != ""
+}
+
 func (api *API) anonymize(c *gin.Context) {
 	var anonymizeAPIRequest message_types.AnonymizeApiRequest
 
 	if c.Bind(&anonymizeAPIRequest) == nil {
-
+		var err error
+		analyzeTemplate := anonymizeAPIRequest.AnalyzeTemplate
 		id := anonymizeAPIRequest.AnalyzeTemplateId
 		project := c.Param("project")
-		analyzeRes := api.invokeAnalyze(project, id, anonymizeAPIRequest.Text, c)
+
+		if isTemplateIDInitialized(analyzeTemplate, anonymizeAPIRequest.AnalyzeTemplateId) {
+			analyzeTemplate = &message_types.AnalyzeTemplate{}
+			api.getTemplate(project, "analyze", id, analyzeTemplate, c)
+		} else if analyzeTemplate == nil {
+			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
+			return
+		}
+
+		analyzeRes := api.invokeAnalyze(analyzeTemplate, anonymizeAPIRequest.Text, c)
 		if analyzeRes == nil {
 			return
 		}
 
-		id = anonymizeAPIRequest.AnonymizeTemplateId
-		anonymizeRes := api.invokeAnonymize(project, id, anonymizeAPIRequest.Text, analyzeRes.AnalyzeResults, c)
+		anonymizeTemplate := anonymizeAPIRequest.AnonymizeTemplate
+		if anonymizeTemplate == nil && anonymizeAPIRequest.AnonymizeTemplateId != "" {
+			id = anonymizeAPIRequest.AnonymizeTemplateId
+			anonymizeTemplate = &message_types.AnonymizeTemplate{}
+			api.getTemplate(project, "anonymize", id, anonymizeTemplate, c)
+			if err != nil {
+				c.AbortWithError(http.StatusBadRequest, err)
+			}
+		} else if anonymizeTemplate == nil {
+			c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
+			return
+		}
+
+		anonymizeRes := api.invokeAnonymize(anonymizeTemplate, anonymizeAPIRequest.Text, analyzeRes.AnalyzeResults, c)
 		if anonymizeRes == nil {
 			return
 		}
@@ -103,9 +137,9 @@ func (api *API) schedule(c *gin.Context) {
 }
 
 func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, project string, c *gin.Context) *message_types.JobResponse {
-	scanId := jobTemplate.ScanTemplateId
+	scanID := jobTemplate.ScanTemplateId
 	scanTemplate := &message_types.ScanTemplate{}
-	api.getTemplate(project, "scan", scanId, scanTemplate, c)
+	api.getTemplate(project, "scan", scanID, scanTemplate, c)
 
 	databinderTemplate := &message_types.DatabinderTemplate{}
 	api.getTemplate(project, "databinder", scanTemplate.DatabinderTemplateId, databinderTemplate, c)
@@ -142,21 +176,9 @@ func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, projec
 	return res
 }
 
-func (api *API) invokeAnonymize(project string, id string, text string, results []*message_types.AnalyzeResult, c *gin.Context) *message_types.AnonymizeResponse {
-	anonymizeKey := templates.CreateKey(project, "anonymize", id)
-	result, err := api.templates.GetTemplate(anonymizeKey)
-
-	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return nil
-	}
+func (api *API) invokeAnonymize(anonymizeTemplate *message_types.AnonymizeTemplate, text string, results []*message_types.AnalyzeResult, c *gin.Context) *message_types.AnonymizeResponse {
 	srv := *anonymizeService
-	anonymizeTemplate := &message_types.AnonymizeTemplate{}
-	err = templates.ConvertJSONToInterface(result, anonymizeTemplate)
-	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return nil
-	}
+
 	request := &message_types.AnonymizeRequest{
 		Template:       anonymizeTemplate,
 		Text:           text,
@@ -170,16 +192,11 @@ func (api *API) invokeAnonymize(project string, id string, text string, results 
 	return res
 }
 
-func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Context) *message_types.AnalyzeResponse {
-	analyzeKey := templates.CreateKey(project, "analyze", id)
-	analyzeRequest, err := getAnalyzeRequest(api.templates, analyzeKey)
-
-	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return nil
+func (api *API) invokeAnalyze(analyzeTemplate *message_types.AnalyzeTemplate, text string, c *gin.Context) *message_types.AnalyzeResponse {
+	analyzeRequest := &message_types.AnalyzeRequest{
+		AnalyzeTemplate: analyzeTemplate,
+		Text:            text,
 	}
-
-	analyzeRequest.Text = text
 
 	srv := *analyzeService
 	analyzeResponse, err := srv.Apply(c, analyzeRequest)
@@ -189,25 +206,6 @@ func (api *API) invokeAnalyze(project string, id string, text string, c *gin.Con
 	}
 
 	return analyzeResponse
-}
-
-func getAnalyzeRequest(apiTemplates *templates.Templates, analyzeKey string) (*message_types.AnalyzeRequest, error) {
-	template, err := apiTemplates.GetTemplate(analyzeKey)
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to retrieve template %q", err)
-	}
-
-	analyzeTemplate := &message_types.AnalyzeTemplate{}
-	err = templates.ConvertJSONToInterface(template, analyzeTemplate)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to convert template %q", err)
-	}
-	analyzeRequest := &message_types.AnalyzeRequest{
-		AnalyzeTemplate: analyzeTemplate,
-	}
-
-	return analyzeRequest, nil
 }
 
 func (api *API) getTemplate(project string, action string, id string, obj interface{}, c *gin.Context) {
