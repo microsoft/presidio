@@ -70,6 +70,7 @@ def test_valid_us_itin_medium_match_exact_context():
     assert results[0].probability > 0.6 and results[0].probability < 0.9
 
 
+
 def test_invalid_us_itin():
     num = '911-89-1234'
     results = match.analyze_text(num, types)

@@ -45,7 +45,7 @@ def test_invalid_us_driver_license_weak_WA():
 def test_valid_us_driver_license_weak_lphanumeric():
     num = 'H12234567'
     results = match.analyze_text(num, types)
-    
+
     assert len(results) == 1
     assert results[0].text == num
     assert results[0].probability > 0.29 and results[0].probability < 0.49
@@ -55,7 +55,7 @@ def test_valid_us_driver_license_weak_lphanumeric_exact_context():
     num = 'H12234567'
     context = 'my driver license is '
     results = match.analyze_text(context + num, types)
-    
+
     assert len(results) == 1
     assert results[0].text == num
     assert results[0].probability > 0.59 and results[0].probability < 0.91
@@ -66,7 +66,7 @@ def test_valid_us_driver_license_weak_lphanumeric_exact_context():
 def test_invalid_us_driver_license():
     num = 'C12T345672'
     results = match.analyze_text('my driver license is ' + num, types)
-    
+
     assert len(results) == 0
 '''
 
