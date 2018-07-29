@@ -58,19 +58,8 @@ def test_phone_number_medium_match_with_phone_context():
     
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1
+    assert results[0].probability > 0.75 and results[0].probability < 0.9
 
-''' This test fails since available is not close enough to phone --> requires experimentation with language model
-
-def test_phone_number_medium_match_with_similar_context():
-    number = '425 8829090'
-    context = 'I am available at '
-    results = match.analyze_text(context + number, types)
-    
-    assert len(results) == 1
-    assert results[0].text == number
-    assert results[0].probability > 0.59 and results[0].probability < 0.8
-'''
 
 def test_phone_number_medium_match_with_irrelevant_context():
     number = '425 8829090'
@@ -81,22 +70,24 @@ def test_phone_number_medium_match_with_irrelevant_context():
     assert results[0].text == number
     assert results[0].probability > 0.29 and results[0].probability < 0.51
 
-def test_phone_number_low_match_no_context():
+
+def test_phone_number_weak_match_no_context():
     number = '4258829090'
     results = match.analyze_text(number, types)
     
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.1 and results[0].probability < 0.3
+    assert results[0].probability > 0 and results[0].probability < 0.3
 
-def test_phone_number_low_match_with_phone_context():
+
+def test_phone_number_weak_match_with_phone_context():
     number = '4258829090'
     context = 'my phone number is '
     results = match.analyze_text(context + number, types)
     
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.39 and results[0].probability < 0.7
+    assert results[0].probability > 0.59 and results[0].probability < 0.81
 
 
 def test_phone_numbers_lemmatized_context_phones():
@@ -106,6 +97,6 @@ def test_phone_numbers_lemmatized_context_phones():
     
     assert len(results) == 2
     assert results[0].text == number1
-    assert results[0].probability == 1
+    assert results[0].probability > 0.75 and results[0].probability < 0.9
     assert results[1].text == number2
-    assert results[0].probability == 1
+    assert results[0].probability > 0.75 and results[0].probability < 0.9

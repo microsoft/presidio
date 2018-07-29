@@ -6,7 +6,6 @@ class UsBank(field_type.FieldType):
     context = [
         "bank"
         "checking", #TODO: change to "checking account" as part of keyphrase change
-        "number",
         "account",
         "account#",
         "acct",

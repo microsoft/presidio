@@ -147,7 +147,7 @@ def test_valid_visa_debit_credit_card():
     assert len(results) == 1
     assert results[0].text == number
     assert results[0].probability == 1.0
-
+    
 
 def test_valid_visa_electron_credit_card():
     number = '4917300800000000'

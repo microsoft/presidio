@@ -7,9 +7,10 @@ from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
-CONTEXT_SIMILARITY_FACTOR = 0.5
-NER_STRENGTH = 0.7
-CONTEXT_PREFIX_COUNT = 3
+CONTEXT_SIMILARITY_FACTOR = 0.35
+MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
+NER_STRENGTH = 0.85
+CONTEXT_PREFIX_COUNT = 5
 CONTEXT_SUFFIX_COUNT = 0
 
 class Matcher(object):
@@ -64,6 +65,7 @@ class Matcher(object):
         context_similarity = self.__calculate_context_similarity(context, field)
         if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
             probability += context_similarity * CONTEXT_SIMILARITY_FACTOR
+            probability = max(probability, MIN_SCORE_WITH_CONTEXT_SIMILARITY)
 
         return min(probability, 1)
         
@@ -98,7 +100,7 @@ class Matcher(object):
         return context
 
     def __check_pattern(self, doc, results, field):
-        max_matched_strength = 0.0
+        max_matched_strength = -1.0
         for pattern in field.patterns:
             if pattern.strength <= max_matched_strength:
                 break
@@ -170,7 +172,6 @@ class Matcher(object):
             #TODO FIX
             res = self.__create_result(doc, NER_STRENGTH, field, ent.start_char,
                                        ent.end_char)
-            #res.probability = NER_PROBABILITY
 
             if res is not None:
                 results.append(res)

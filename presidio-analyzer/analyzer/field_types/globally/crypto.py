@@ -16,7 +16,7 @@ class Crypto(field_type.FieldType):
 
     pattern = field_pattern.FieldPattern()
     pattern.regex = u'(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])'
-    pattern.name = 'BTC (Medium)'
+    pattern.name = 'Crypto (Medium)'
     pattern.strength = 0.5
     patterns.append(pattern)
 
