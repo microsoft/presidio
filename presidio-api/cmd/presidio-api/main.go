@@ -88,7 +88,7 @@ func main() {
 			projects.POST("/anonymize", api.anonymize)
 
 			// Schedule scanning cron job
-			// /api/v1/projects/123/schedulescheduleCronJob
+			// /api/v1/projects/123/schedule-cronjob
 			projects.POST("/schedule-cronjob", api.scheduleCronJob)
 		}
 

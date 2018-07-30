@@ -138,11 +138,11 @@ func (api *API) anonymize(c *gin.Context) {
 }
 
 func (api *API) scheduleCronJob(c *gin.Context) {
-	var cronApiJobRequest message_types.CronJobApiRequest
+	var cronAPIJobRequest message_types.CronJobApiRequest
 
-	if c.Bind(&cronApiJobRequest) == nil {
+	if c.Bind(&cronAPIJobRequest) == nil {
 		project := c.Param("project")
-		scheulderResponse := api.invokeCronJobScheduler(cronApiJobRequest, project, c)
+		scheulderResponse := api.invokeCronJobScheduler(cronAPIJobRequest, project, c)
 		if scheulderResponse == nil {
 			return
 		}
@@ -151,9 +151,9 @@ func (api *API) scheduleCronJob(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeCronJobScheduler(cronJobApiRequest message_types.CronJobApiRequest, project string, c *gin.Context) *message_types.CronJobResponse {
+func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobApiRequest, project string, c *gin.Context) *message_types.CronJobResponse {
 	cronJobTemplate := &message_types.CronJobTemplate{}
-	api.getTemplate(project, "schedule-cronjob", cronJobApiRequest.CronJobTemplateId, cronJobTemplate, c)
+	api.getTemplate(project, "schedule-cronjob", cronJobAPIRequest.CronJobTemplateId, cronJobTemplate, c)
 
 	scanID := cronJobTemplate.ScanTemplateId
 	scanTemplate := &message_types.ScanTemplate{}
