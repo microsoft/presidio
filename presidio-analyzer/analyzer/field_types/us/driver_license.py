@@ -52,7 +52,7 @@ class UsDriverLicense(field_type.FieldType):
 
     '''
     # Regex per state
-    '''
+   
     regexes = {
         'AL': r'^[0-9]{1,7}\b',
         'AK': r'^[0-9]{1,7}\b',
