@@ -10,7 +10,7 @@ import (
 )
 
 // InitS3 inits the storage with the supplied credentials
-func InitS3(inputConfig *message_types.InputConfig) (stow.ConfigMap, string) {
+func InitS3(inputConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
 	s3AccessKeyID := inputConfig.S3Config.GetAccessId()
 	s3SecretKey := inputConfig.S3Config.GetAccessKey()
 	s3Region := inputConfig.S3Config.GetRegion()

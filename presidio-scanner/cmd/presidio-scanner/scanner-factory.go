@@ -8,7 +8,7 @@ import (
 
 func createScanner(scanRequest *message_types.ScanRequest) scanner.Scanner {
 	if scanRequest.GetKind() == "s3" || scanRequest.GetKind() == "azure" {
-		storageScanner := storage_scanner.New(scanRequest.GetKind(), scanRequest.GetInputConfig())
+		storageScanner := storage_scanner.New(scanRequest.GetKind(), scanRequest.GetCloudStorageConfig())
 		return storageScanner
 	}
 	return nil

@@ -40,7 +40,9 @@ func TestDataBinderInit(t *testing.T) {
 	// databinders array is empty
 	assert.Empty(t, databinderArray)
 
-	databinder[0].ConnectionString = "./test.db?cache=shared&mode=rwc"
+	databinder[0].DbConfig = &message_types.DBConfig{
+		ConnectionString: "./test.db?cache=shared&mode=rwc",
+	}
 	databinderTemplate.Databinder = databinder
 	s.Init(context.Background(), databinderTemplate)
 

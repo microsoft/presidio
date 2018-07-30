@@ -21,7 +21,7 @@ type storageScanner struct {
 }
 
 // New returns new instance of DB Data writter
-func New(kind string, inputConfig *message_types.InputConfig) scanner.Scanner {
+func New(kind string, inputConfig *message_types.CloudStorageConfig) scanner.Scanner {
 	scanner := storageScanner{kind: kind}
 	scanner.Init(inputConfig)
 	return &scanner
@@ -56,7 +56,7 @@ func (scanner *storageScanner) GetItemUniqueID(input interface{}) (string, error
 	return etag, nil
 }
 
-func (scanner *storageScanner) Init(inputConfig *message_types.InputConfig) {
+func (scanner *storageScanner) Init(inputConfig *message_types.CloudStorageConfig) {
 	switch scanner.kind {
 	case "azure":
 		scanner.config, scanner.containerName = azure.InitBlobStorage(inputConfig)

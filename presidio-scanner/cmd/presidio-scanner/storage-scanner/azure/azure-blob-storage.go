@@ -10,7 +10,7 @@ import (
 )
 
 // InitBlobStorage inits the storage with the supplied credentials
-func InitBlobStorage(inputConfig *message_types.InputConfig) (stow.ConfigMap, string) {
+func InitBlobStorage(inputConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
 	azureAccountName := inputConfig.BlobStorageConfig.GetAccountName()
 	azureAccountKey := inputConfig.BlobStorageConfig.GetAccountKey()
 	azureContainer := inputConfig.BlobStorageConfig.GetContainerName()

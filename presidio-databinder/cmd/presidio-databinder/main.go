@@ -45,19 +45,17 @@ func (s *server) Init(ctx context.Context, databinderTemplate *message_types.Dat
 		return &message_types.DatabinderResponse{}, fmt.Errorf("databinderTemplate must me set")
 	}
 
+	var err error
 	// initialize each of the databinders
 	for _, databinder := range databinderTemplate.Databinder {
 		if databinder.GetBindType() == "" {
 			return &message_types.DatabinderResponse{}, fmt.Errorf("bindType var must me set")
 		}
-		if databinder.GetConnectionString() == "" {
-			return &message_types.DatabinderResponse{}, fmt.Errorf("connectionString var must me set")
-		}
 
-		createDatabiner(databinder.GetBindType(), databinder.GetConnectionString(), databinder.GetTableName())
+		err = createDatabiner(databinder)
 	}
 
-	return &message_types.DatabinderResponse{}, nil
+	return &message_types.DatabinderResponse{}, err
 }
 
 func (s *server) Apply(ctx context.Context, r *message_types.DatabinderRequest) (*message_types.DatabinderResponse, error) {

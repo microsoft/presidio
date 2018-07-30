@@ -268,7 +268,7 @@
   branch = "master"
   name = "github.com/presid-io/presidio-genproto"
   packages = ["golang"]
-  revision = "c3c4670196d04196e07d4d99834b28c4bca03121"
+  revision = "83c491affec94f44575e4929650e900dc4036f78"
 
 [[projects]]
   branch = "master"

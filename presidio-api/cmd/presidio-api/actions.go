@@ -174,7 +174,7 @@ func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobAp
 		AnalyzeTemplate:    analyzeTemplate,
 		AnonymizeTemplate:  anonymizeTemplate,
 		DatabinderTemplate: databinderTemplate,
-		InputConfig:        scanTemplate.InputConfig,
+		CloudStorageConfig: scanTemplate.CloudStorageConfig,
 		Kind:               scanTemplate.Kind,
 		MinProbability:     scanTemplate.MinProbability,
 	}
