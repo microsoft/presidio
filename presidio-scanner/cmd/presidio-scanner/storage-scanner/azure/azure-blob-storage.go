@@ -1,7 +1,7 @@
 package azure
 
 import (
-	"log"
+	log "github.com/presid-io/presidio/pkg/logger"
 
 	"github.com/presid-io/stow"
 

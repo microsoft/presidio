@@ -17,7 +17,7 @@ import (
 
 var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
-var jobService *message_types.JobServiceClient
+var cronJobService *message_types.CronJobServiceClient
 
 func setupGRPCServices() {
 	var err error
@@ -61,7 +61,7 @@ func setupGRPCServices() {
 		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
 	}
 
-	jobService, err = rpc.SetupSchedulerService(schedulerSvcHost + ":" + schedulerSvcPort)
+	cronJobService, err = rpc.SetupCronJobService(schedulerSvcHost + ":" + schedulerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to scheduler service failed %q", err))
 	}
@@ -137,12 +137,12 @@ func (api *API) anonymize(c *gin.Context) {
 	}
 }
 
-func (api *API) schedule(c *gin.Context) {
-	var jobTemplate message_types.JobTemplate
+func (api *API) scheduleCronJob(c *gin.Context) {
+	var cronApiJobRequest message_types.CronJobApiRequest
 
-	if c.Bind(&jobTemplate) == nil {
+	if c.Bind(&cronApiJobRequest) == nil {
 		project := c.Param("project")
-		scheulderResponse := api.invokeJobScheduler(jobTemplate, project, c)
+		scheulderResponse := api.invokeCronJobScheduler(cronApiJobRequest, project, c)
 		if scheulderResponse == nil {
 			return
 		}
@@ -151,8 +151,11 @@ func (api *API) schedule(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, project string, c *gin.Context) *message_types.JobResponse {
-	scanID := jobTemplate.ScanTemplateId
+func (api *API) invokeCronJobScheduler(cronJobApiRequest message_types.CronJobApiRequest, project string, c *gin.Context) *message_types.CronJobResponse {
+	cronJobTemplate := &message_types.CronJobTemplate{}
+	api.getTemplate(project, "schedule-cronjob", cronJobApiRequest.CronJobTemplateId, cronJobTemplate, c)
+
+	scanID := cronJobTemplate.ScanTemplateId
 	scanTemplate := &message_types.ScanTemplate{}
 	api.getTemplate(project, "scan", scanID, scanTemplate, c)
 
@@ -176,13 +179,13 @@ func (api *API) invokeJobScheduler(jobTemplate message_types.JobTemplate, projec
 		MinProbability:     scanTemplate.MinProbability,
 	}
 
-	request := &message_types.JobRequest{
-		Name:        jobTemplate.Name,
-		Description: jobTemplate.Description,
-		Trigger:     jobTemplate.Trigger,
+	request := &message_types.CronJobRequest{
+		Name:        cronJobTemplate.Name,
+		Description: cronJobTemplate.Description,
+		Trigger:     cronJobTemplate.Trigger,
 		ScanRequest: scanRequest,
 	}
-	srv := *jobService
+	srv := *cronJobService
 	res, err := srv.Apply(c, request)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

@@ -19,9 +19,9 @@ func TestCreateAndDeleteCronJob(t *testing.T) {
 	}
 
 	containerDetails := []platform.ContainerDetails{
-		platform.ContainerDetails{
+		{
 			EnvVars: []apiv1.EnvVar{
-				apiv1.EnvVar{Name: "envVar1", Value: "envVarval"},
+				{Name: "envVar1", Value: "envVarval"},
 			},
 			Name:  "jobName",
 			Image: "imageName",

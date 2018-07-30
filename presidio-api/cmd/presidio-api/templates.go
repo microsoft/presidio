@@ -83,30 +83,27 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	switch action {
 	case "analyze":
 		var analyzerTemplate message_types.AnalyzeTemplate
-		if c.BindJSON(&analyzerTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(analyzerTemplate)
-		}
+		return bindAndConvert(analyzerTemplate, c)
 	case "anonymize":
 		var anonymizeTemplate message_types.AnonymizeTemplate
-		if c.BindJSON(&anonymizeTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(anonymizeTemplate)
-		}
+		return bindAndConvert(anonymizeTemplate, c)
 	case "scan":
 		var scanTemplate message_types.ScanTemplate
-		if c.BindJSON(&scanTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(scanTemplate)
-		}
+		return bindAndConvert(scanTemplate, c)
 	case "databinder":
 		var databinderTemplate message_types.DatabinderTemplate
-		if c.BindJSON(&databinderTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(databinderTemplate)
-		}
-	case "schedule":
-		var jobTemplate message_types.JobTemplate
-		if c.BindJSON(&jobTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(jobTemplate)
-		}
+		return bindAndConvert(databinderTemplate, c)
+	case "schedule-cronjob":
+		var cronjobTemplate message_types.CronJobTemplate
+		return bindAndConvert(cronjobTemplate, c)
 	}
 
+	return "", errors.New("No template found")
+}
+
+func bindAndConvert(template interface{}, c *gin.Context) (string, error) {
+	if c.BindJSON(&template) == nil {
+		return pkg_templates.ConvertInterfaceToJSON(template)
+	}
 	return "", errors.New("No template found")
 }

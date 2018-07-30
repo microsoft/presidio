@@ -37,5 +37,9 @@ spec:
             value:  {{ template "presidio.analyzer.fullname" . }}
           - name: ANALYZER_SVC_PORT
             value: {{ .Values.analyzer.service.externalPort | quote }}
+          - name: DATABINDER_IMAGE_NAME
+            value: {{ .Values.registry }}/{{ .Values.databinder.name }}:{{ default .Chart.AppVersion .Values.databinder.tag }}
+          - name: SCANNER_IMAGE_NAME
+            value: {{ .Values.registry }}/{{ .Values.scanner.name }}:{{ default .Chart.AppVersion .Values.scanner.tag }}
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}

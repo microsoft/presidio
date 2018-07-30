@@ -42,6 +42,7 @@ func (s *store) CreateCronJob(name string, schedule string, containerDetailsArra
 					},
 				},
 			},
+			ConcurrencyPolicy: v1beta1.ForbidConcurrent,
 		},
 	}
 

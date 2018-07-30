@@ -21,13 +21,17 @@ import (
 type server struct{}
 
 var (
-	grpcPort        = os.Getenv("GRPC_PORT")
-	namespace       = os.Getenv("presidio_NAMESPACE")
-	analyzerSvcHost = os.Getenv("ANALYZER_SVC_HOST")
-	analyzerSvcPort = os.Getenv("ANALYZER_SVC_PORT")
-	// redisSvcHost    = os.Getenv("REDIS_SVC_HOST")
-	// redisSvcPort    = os.Getenv("REDIS_SVC_PORT")
-	store platform.Store
+	grpcPort = os.Getenv("GRPC_PORT")
+	// Currently not supported, will be in use once we'll move to configmaps. default port is 5000
+	databinderGrpcPort = os.Getenv("DATABINDER_GRPC_PORT")
+	namespace          = os.Getenv("presidio_NAMESPACE")
+	analyzerSvcHost    = os.Getenv("ANALYZER_SVC_HOST")
+	analyzerSvcPort    = os.Getenv("ANALYZER_SVC_PORT")
+	redisSvcHost       = os.Getenv("REDIS_HOST")
+	redisSvcPort       = os.Getenv("REDIS_PORT")
+	databinderImage    = os.Getenv("DATABINDER_IMAGE_NAME")
+	scannerImage       = os.Getenv("SCANNER_IMAGE_NAME")
+	store              platform.Store
 )
 
 const (
@@ -45,13 +49,13 @@ func main() {
 		log.Fatal("analyzer service port is empty")
 	}
 
-	// if redisSvcHost == "" {
-	// 	log.Fatal("redis service address is empty")
-	// }
+	if redisSvcHost == "" {
+		log.Fatal("redis service address is empty")
+	}
 
-	// if redisSvcPort == "" {
-	// 	log.Fatal("redis service port is empty")
-	// }
+	if redisSvcPort == "" {
+		log.Fatal("redis service port is empty")
+	}
 
 	var err error
 	store, err = kube.New(namespace, "", kubeConfigPath())
@@ -61,7 +65,7 @@ func main() {
 
 	lis, s := rpc.SetupClient(grpcPort)
 
-	message_types.RegisterJobServiceServer(s, &server{})
+	message_types.RegisterCronJobServiceServer(s, &server{})
 	reflection.Register(s)
 
 	if err := s.Serve(lis); err != nil {
@@ -69,40 +73,40 @@ func main() {
 	}
 }
 
-func (s *server) Apply(ctx context.Context, r *message_types.JobRequest) (*message_types.JobResponse, error) {
+func (s *server) Apply(ctx context.Context, r *message_types.CronJobRequest) (*message_types.CronJobResponse, error) {
 	_, err := applySchedulerRequest(r)
-	return &message_types.JobResponse{}, err
+	return &message_types.CronJobResponse{}, err
 }
 
-func applySchedulerRequest(r *message_types.JobRequest) (*message_types.JobResponse, error) {
+func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.CronJobResponse, error) {
 	scanRequest, err := json.Marshal(r.ScanRequest)
 	if err != nil {
-		return &message_types.JobResponse{}, err
+		return &message_types.CronJobResponse{}, err
 	}
 
 	//s := &store
 	err = store.CreateCronJob(r.Name, r.Trigger.Schedule.GetRecurrencePeriodDuration(), []platform.ContainerDetails{
-		platform.ContainerDetails{
+		{
 			Name:  "databinder",
-			Image: "praesidio/presidio-databinder:latest",
+			Image: databinderImage,
 			EnvVars: []apiv1.EnvVar{
-				apiv1.EnvVar{Name: "GRPC_PORT", Value: "5000"},
+				{Name: "GRPC_PORT", Value: databinderGrpcPort},
 			},
 		},
-		platform.ContainerDetails{
+		{
 			Name:  "scanner",
-			Image: "praesidio/presidio-scanner:latest",
+			Image: scannerImage,
 			EnvVars: []apiv1.EnvVar{
-				apiv1.EnvVar{Name: "GRPC_PORT", Value: "5000"},
-				apiv1.EnvVar{Name: "REDIS_HOST", Value: "redis-master.presidio-system.svc.cluster.local"},
-				apiv1.EnvVar{Name: "REDIS_SVC_PORT", Value: "6379"},
-				apiv1.EnvVar{Name: "ANALYZER_SVC_HOST", Value: analyzerSvcHost},
-				apiv1.EnvVar{Name: "ANALYZER_SVC_PORT", Value: analyzerSvcPort},
-				apiv1.EnvVar{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
+				{Name: "GRPC_PORT", Value: databinderGrpcPort},
+				{Name: "REDIS_HOST", Value: redisSvcHost},
+				{Name: "REDIS_SVC_PORT", Value: redisSvcPort},
+				{Name: "ANALYZER_SVC_HOST", Value: analyzerSvcHost},
+				{Name: "ANALYZER_SVC_PORT", Value: analyzerSvcPort},
+				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
 			},
 		},
 	})
-	return &message_types.JobResponse{}, err
+	return &message_types.CronJobResponse{}, err
 }
 
 // TODO: duplication from presidio api- refactor to pkg

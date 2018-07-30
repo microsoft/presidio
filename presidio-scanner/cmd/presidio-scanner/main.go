@@ -56,7 +56,7 @@ func main() {
 				log.Error(fmt.Sprintf("error sending file to databinder: %s, error: %q", itemPath, err.Error()))
 				return
 			}
-			log.Info(fmt.Sprintf("%d results were sent to t databinder successfully", len(scanResult)))
+			log.Info(fmt.Sprintf("%d results were sent to the databinder successfully", len(scanResult)))
 
 		}
 
