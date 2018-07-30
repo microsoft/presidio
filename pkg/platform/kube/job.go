@@ -30,7 +30,7 @@ func (s *store) CreateJob(name string, image string, commands []string) error {
 							Command: commands,
 						},
 					},
-					RestartPolicy: "Never",
+					RestartPolicy: "OnFailure",
 				},
 			},
 		},

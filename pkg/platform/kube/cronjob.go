@@ -37,7 +37,7 @@ func (s *store) CreateCronJob(name string, schedule string, containerDetailsArra
 					Template: apiv1.PodTemplateSpec{
 						Spec: apiv1.PodSpec{
 							Containers:    containers,
-							RestartPolicy: "Never",
+							RestartPolicy: "OnFailure",
 						},
 					},
 				},
