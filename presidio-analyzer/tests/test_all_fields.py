@@ -10,4 +10,4 @@ def test_all_fields_from_file():
     text_file = open(path, 'r')
     text = text_file.read()
     results = match.analyze_text(text, types)
-    assert len(results) == 8
+    assert len(results) == 6

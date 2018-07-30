@@ -172,7 +172,7 @@ class Matcher(object):
             if self.__match_ner(ent.label_, field.name) is False:
                 continue
             field.text = ent.text
-            
+
             #TODO FIX
             res = self.__create_result(doc, NER_STRENGTH, field, ent.start_char,
                                        ent.end_char)
@@ -183,8 +183,8 @@ class Matcher(object):
         return results
 
     def __sanitize_text(self, text):
-        # text = text.replace('\n', ' ')
-        # text = text.replace('\r', ' ')
+        text = text.replace('\n', ' ')
+        text = text.replace('\r', ' ')
         return text
 
     def analyze_text(self, text, field_type_filters):
