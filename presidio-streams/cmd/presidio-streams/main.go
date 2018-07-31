@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/joho/godotenv"
+
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/rpc"
@@ -11,7 +14,6 @@ import (
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
 	"github.com/Microsoft/presidio/pkg/templates"
-	"os"
 )
 
 var (
@@ -25,7 +27,8 @@ var (
 func main() {
 	setupAnalyzerObjects()
 	initStream()
-	//st := createStream()
+	setupDataBinderService()
+	_ = createStream()
 
 }
 

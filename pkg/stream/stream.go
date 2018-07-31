@@ -8,4 +8,5 @@ type Stream interface {
 	Receive(receiveFunc ReceiveFunc) error
 }
 
+//ReceiveFunc  function reference
 type ReceiveFunc func(string)

@@ -18,7 +18,6 @@ setuptools.setup(
         'spacy==2.0.11',
         'grpcio>=1.13.0',
         'grpcio-tools>=1.13.0',
-        'regex>=2018.07.11',
         'validators>=0.12.2'],
     # dependency_links=[SPACY_MODEL],
     include_package_data=True,

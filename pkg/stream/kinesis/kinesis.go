@@ -3,16 +3,18 @@ package kinesis
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	kin "github.com/aws/aws-sdk-go/service/kinesis"
 	consumer "github.com/harlow/kinesis-consumer"
 	checkpoint "github.com/harlow/kinesis-consumer/checkpoint/redis"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/stream"
-	"os"
-	"os/signal"
-	"time"
 )
 
 type kinesis struct {
