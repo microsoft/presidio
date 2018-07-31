@@ -3,7 +3,6 @@ package kube
 import (
 	batchv1 "k8s.io/api/batch/v1"
 	apiv1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -31,7 +30,7 @@ func (s *store) CreateJob(name string, image string, commands []string) error {
 							Command: commands,
 						},
 					},
-					RestartPolicy: "never",
+					RestartPolicy: "OnFailure",
 				},
 			},
 		},
@@ -50,12 +49,13 @@ func (s *store) ListJobs() ([]string, error) {
 		return nil, err
 	}
 
-	for job := range list.Items {
-		metadata, err := meta.Accessor(job)
-		if err != nil {
-			return nil, err
-		}
-		names = append(names, metadata.GetName())
+	for _, job := range list.Items {
+		// TODO: add label
+		// metadata, err := meta.Accessor(job)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		names = append(names, job.GetName())
 	}
 	return names, nil
 }

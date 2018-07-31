@@ -10,8 +10,6 @@ import (
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/storage"
 	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
-	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/aws"
-	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/azure"
 )
 
 type storageScanner struct {
@@ -21,7 +19,7 @@ type storageScanner struct {
 }
 
 // New returns new instance of DB Data writter
-func New(kind string, inputConfig *message_types.InputConfig) scanner.Scanner {
+func New(kind string, inputConfig *message_types.CloudStorageConfig) scanner.Scanner {
 	scanner := storageScanner{kind: kind}
 	scanner.Init(inputConfig)
 	return &scanner
@@ -56,12 +54,12 @@ func (scanner *storageScanner) GetItemUniqueID(input interface{}) (string, error
 	return etag, nil
 }
 
-func (scanner *storageScanner) Init(inputConfig *message_types.InputConfig) {
+func (scanner *storageScanner) Init(inputConfig *message_types.CloudStorageConfig) {
 	switch scanner.kind {
-	case "azure":
-		scanner.config, scanner.containerName = azure.InitBlobStorage(inputConfig)
-	case "s3":
-		scanner.config, scanner.containerName = aws.InitS3(inputConfig)
+	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_azureblob):
+		scanner.config, scanner.containerName = storage.InitBlobStorage(inputConfig)
+	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_s3):
+		scanner.config, scanner.containerName = storage.InitS3(inputConfig)
 	// case "google":
 	// 	// Add support
 	default:

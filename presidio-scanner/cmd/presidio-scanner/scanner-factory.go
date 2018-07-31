@@ -7,8 +7,9 @@ import (
 )
 
 func createScanner(scanRequest *message_types.ScanRequest) scanner.Scanner {
-	if scanRequest.GetKind() == "s3" || scanRequest.GetKind() == "azure" {
-		storageScanner := storage_scanner.New(scanRequest.GetKind(), scanRequest.GetInputConfig())
+	switch scanRequest.GetKind() {
+	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_azureblob), message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_s3):
+		storageScanner := storage_scanner.New(scanRequest.GetKind(), scanRequest.GetCloudStorageConfig())
 		return storageScanner
 	}
 	return nil

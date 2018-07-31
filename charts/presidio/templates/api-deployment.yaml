@@ -51,5 +51,9 @@ spec:
             value:  {{ template "presidio.anonymizer.fullname" . }}
           - name: ANONYMIZER_SVC_PORT
             value: {{ .Values.anonymizer.service.externalPort | quote }}
+          - name: SCHEDULER_SVC_HOST
+            value:  {{ template "presidio.scheduler.fullname" . }}
+          - name: SCHEDULER_SVC_PORT
+            value: {{ .Values.scheduler.service.externalPort | quote }}
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}
