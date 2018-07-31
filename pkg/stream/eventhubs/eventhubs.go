@@ -6,8 +6,8 @@ import (
 
 	api "github.com/Azure/azure-event-hubs-go"
 
-	"github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/stream"
+	"github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/stream"
 )
 
 type eventhubs struct {
@@ -25,6 +25,11 @@ func New() stream.Stream {
 	return &eventhubs{
 		hub: hub,
 	}
+}
+
+//Receive message from eventhub topic
+func (e *eventhubs) Receive(receiveFunc stream.ReceiveFunc) error {
+	return nil
 }
 
 //Send message to eventhub

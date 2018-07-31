@@ -11,7 +11,8 @@ You can install Presidio as a service or use it as a framework
 
 1. Analyzer
 ```
-pip3 install presidio-analyzer
+$ pip3 install presidio-analyzer
+$ pip3 install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.0.0/en_core_web_lg-2.0.0.tar.gz
 ```
 
 2. Download the Presidio Anonymizer latest version from Presidio GitHub releases.

@@ -3,7 +3,7 @@ package kube
 import (
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/presid-io/presidio/pkg/platform"
+	"github.com/Microsoft/presidio/pkg/platform"
 )
 
 // store represents a store engine

@@ -18,7 +18,7 @@ matrix:
     - language: go
       go:
       - "1.10"
-      go_import_path: github.com/presid-io/presidio
+      go_import_path: github.com/Microsoft/presidio
       env:
       - DEP_VERSION="0.4.1"
       before_install:

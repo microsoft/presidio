@@ -6,10 +6,10 @@ import (
 
 	"github.com/presid-io/stow"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/storage"
-	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/storage"
+	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
 
 type storageScanner struct {

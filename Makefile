@@ -2,13 +2,14 @@ DOCKER_REGISTRY    ?= praesidio
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-api presidio-scanner presidio-scheduler presidio-databinder
-IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-scanner presidio-scheduler presidio-databinder
+BINS        = presidio-anonymizer presidio-api presidio-scanner presidio-scheduler presidio-databinder presidio-streams
+IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-scanner presidio-scheduler presidio-databinder presidio-streams
+
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
-presidio_LABEL := $(if $(presidio_LABEL),$(presidio_LABEL),latest)
-LDFLAGS   += -X github.com/presid-io/presidio/pkg/version.Version=$(VERSION)
+PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
+LDFLAGS   += -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
 
 CX_OSES = linux windows darwin
 CX_ARCHS = amd64
@@ -21,43 +22,27 @@ build: $(BINS)
 $(BINS): vendor
 	go build -ldflags '$(LDFLAGS)' -o bin/$@ ./$@/cmd/$@
 
-# Cross-compile for Docker+Linux
-build-docker-bins: $(addsuffix -docker-bin,$(BINS))
+build-docker-base: 
+	docker build -t presidio-golang -f golang.Dockerfile .
+	docker build -t presidio-alpine -f alpine.Dockerfile .
 
-%-docker-bin: vendor
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '$(LDFLAGS)' -o ./$*/rootfs/$* ./$*/cmd/$*
 
 # To use docker-build, you need to have Docker installed and configured. You should also set
 # DOCKER_REGISTRY to your own personal registry if you are not pushing to the official upstream.
 .PHONY: docker-build
-docker-build: build-docker-bins
+docker-build: build-docker-base
+#docker-build: build-docker-bins
 docker-build: $(addsuffix -image,$(IMAGES))
 
 %-image:
-	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(presidio_LABEL) $*
-
-%-image:
-	docker build $(DOCKER_BUILD_FLAGS) -t $(DOCKER_REGISTRY)/$*:$(presidio_LABEL) $*
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg VERSION=$(VERSION) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:
-	docker push $(DOCKER_REGISTRY)/$*:$(presidio_LABEL)
-
-# Cross-compile binaries for our CX targets.
-# Mainly, this is for presidio-cross-compile
-%-cross-compile: vendor
-	@for os in $(CX_OSES); do \
-		echo "building $$os"; \
-		for arch in $(CX_ARCHS); do \
-			GOOS=$$os GOARCH=$$arch CGO_ENABLED=0 go build -ldflags '$(LDFLAGS)' -o ./bin/$*-$$os-$$arch ./$*/cmd/$*; \
-		done;\
-	done
-
-.PHONY: build-release
-build-release: presidio-cross-compile
+	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 
 # All non-functional tests
 .PHONY: test
@@ -94,10 +79,10 @@ test-functional: vendor docker-build
 	-docker rm test-presidio-analyzer -f
 	-docker rm test-presidio-anonymizer -f
 	-docker network create testnetwork
-	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 $(DOCKER_REGISTRY)/presidio-analyzer:$(presidio_LABEL)
-	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(presidio_LABEL)
+	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 $(DOCKER_REGISTRY)/presidio-analyzer:$(PRESIDIO_LABEL)
+	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(PRESIDIO_LABEL)
 	sleep 30
-	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_HOST=test-presidio-analyzer -e ANALYZER_SVC_PORT=3000 -e ANONYMIZER_SVC_HOST=test-presidio-anonymizer -e ANONYMIZER_SVC_PORT=3001 $(DOCKER_REGISTRY)/presidio-api:$(presidio_LABEL)
+	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_HOST=test-presidio-analyzer -e ANALYZER_SVC_PORT=3000 -e ANONYMIZER_SVC_HOST=test-presidio-anonymizer -e ANONYMIZER_SVC_PORT=3001 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
 	go test --tags functional ./tests -count=1
 	docker rm test-presidio-api -f
 	docker rm test-presidio-analyzer -f
@@ -111,7 +96,7 @@ go-test-style:
 
 .PHONY: go-format
 go-format:
-	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/presid-io/presidio
+	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/Microsoft/presidio
 
 make-docs: vendor
 	docker run --rm -v $(shell pwd)/docs:/out -v $(shell pwd)/pkg/types:/protos pseudomuto/protoc-gen-doc --doc_opt=markdown,proto.md

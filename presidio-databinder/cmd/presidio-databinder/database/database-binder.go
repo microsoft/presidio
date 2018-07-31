@@ -14,9 +14,9 @@ import (
 	// import sqlite driver
 	_ "github.com/mattn/go-sqlite3"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
 )
 
 type dbDataBinder struct {

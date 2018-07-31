@@ -1,7 +1,7 @@
 package mock
 
 import (
-	"github.com/presid-io/presidio/pkg/cache"
+	"github.com/Microsoft/presidio/pkg/cache"
 )
 
 type mockCache struct {

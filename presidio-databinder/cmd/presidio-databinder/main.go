@@ -6,13 +6,13 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/presid-io/presidio/pkg/logger"
+	log "github.com/Microsoft/presidio/pkg/logger"
 
 	"google.golang.org/grpc/reflection"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	"github.com/presid-io/presidio/pkg/rpc"
-	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/rpc"
+	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
 )
 
 var (

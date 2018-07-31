@@ -6,9 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	server "github.com/presid-io/presidio/pkg/server"
-	pkg_templates "github.com/presid-io/presidio/pkg/templates"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	server "github.com/Microsoft/presidio/pkg/server"
+	pkg_templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
 func getFieldTypes(c *gin.Context) {
