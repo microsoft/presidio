@@ -2,12 +2,15 @@ package storage
 
 import (
 	"bytes"
+	"log"
 	"strings"
 
 	"github.com/korovkin/limiter"
 	"github.com/presid-io/stow"
 	"github.com/presid-io/stow/azure"
 	"github.com/presid-io/stow/s3"
+
+	message_types "github.com/presid-io/presidio-genproto/golang"
 )
 
 //API storage
@@ -21,6 +24,10 @@ type API struct {
 // config holds the storage connection string
 // concurrencyLimit is the limit for how many item needs to be scanned at once.
 func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
+	if kind == "azureblob" {
+		// Change name kind to match stow expectations
+		kind = "azure"
+	}
 	location, err := stow.Dial(kind, config)
 	if err != nil {
 		return &API{}, err
@@ -37,12 +44,37 @@ func CreateS3Config(accessKeyID string, secretKey string, region string) (string
 	}
 }
 
+// InitS3 inits the storage with the supplied credentials
+func InitS3(inputConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+	s3AccessKeyID := inputConfig.S3Config.GetAccessId()
+	s3SecretKey := inputConfig.S3Config.GetAccessKey()
+	s3Region := inputConfig.S3Config.GetRegion()
+	s3Bucket := inputConfig.S3Config.GetBucketName()
+	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
+		log.Fatal("accessId, accessKey, region, bucket must me set for s3 storage kind.")
+	}
+	_, config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region)
+	return config, s3Bucket
+}
+
 //CreateAzureConfig create azure configuration
 func CreateAzureConfig(account string, key string) (string, stow.ConfigMap) {
-	return "azure", stow.ConfigMap{
+	return "azureblob", stow.ConfigMap{
 		azure.ConfigAccount: account,
 		azure.ConfigKey:     key,
 	}
+}
+
+// InitBlobStorage inits the storage with the supplied credentials
+func InitBlobStorage(inputConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+	azureAccountName := inputConfig.BlobStorageConfig.GetAccountName()
+	azureAccountKey := inputConfig.BlobStorageConfig.GetAccountKey()
+	azureContainer := inputConfig.BlobStorageConfig.GetContainerName()
+	if azureAccountKey == "" || azureAccountName == "" || azureContainer == "" {
+		log.Fatal("accountName, AccountKey and containerName vars must me set for azure config.")
+	}
+	_, config := CreateAzureConfig(azureAccountName, azureAccountKey)
+	return config, azureContainer
 }
 
 // CreateContainer create a container/bucket or return a reference if already exists

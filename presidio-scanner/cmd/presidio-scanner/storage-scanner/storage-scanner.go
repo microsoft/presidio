@@ -10,8 +10,6 @@ import (
 	log "github.com/presid-io/presidio/pkg/logger"
 	"github.com/presid-io/presidio/pkg/storage"
 	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
-	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/aws"
-	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/storage-scanner/azure"
 )
 
 type storageScanner struct {
@@ -58,10 +56,10 @@ func (scanner *storageScanner) GetItemUniqueID(input interface{}) (string, error
 
 func (scanner *storageScanner) Init(inputConfig *message_types.CloudStorageConfig) {
 	switch scanner.kind {
-	case "azure":
-		scanner.config, scanner.containerName = azure.InitBlobStorage(inputConfig)
-	case "s3":
-		scanner.config, scanner.containerName = aws.InitS3(inputConfig)
+	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_azureblob):
+		scanner.config, scanner.containerName = storage.InitBlobStorage(inputConfig)
+	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_s3):
+		scanner.config, scanner.containerName = storage.InitS3(inputConfig)
 	// case "google":
 	// 	// Add support
 	default:

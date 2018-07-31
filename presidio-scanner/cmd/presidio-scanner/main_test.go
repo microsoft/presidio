@@ -193,6 +193,6 @@ func getScannerRequest() *message_types.ScanRequest {
 				ContainerName: "test",
 			},
 		},
-		Kind: "azure",
+		Kind: "azureblob",
 	}
 }
