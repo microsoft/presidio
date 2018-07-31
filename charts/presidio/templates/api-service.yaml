@@ -1,0 +1,18 @@
+{{ $fullname := include "presidio.api.fullname" . }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  type: {{ .Values.api.service.type }}
+  ports:
+  - port: {{ .Values.api.service.externalPort }}
+    targetPort: {{ .Values.api.service.internalPort }}
+    protocol: TCP
+    name: {{ .Values.api.service.name }}
+  selector:
+    app: {{ $fullname }}

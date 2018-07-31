@@ -1,0 +1,32 @@
+{{ $fullname := include "presidio.analyzer.fullname" . }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}
+  labels:
+    app: {{ $fullname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ $fullname }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.registry }}/{{ .Values.analyzer.name }}:{{ default .Chart.AppVersion .Values.analyzer.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.analyzer.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.analyzer.service.internalPort }}
+        env:
+          - name: presidio_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: GRPC_PORT
+            value: {{ .Values.analyzer.service.internalPort | quote }}
+      {{ if .Values.privateRegistry }}imagePullSecrets:
+        - name: {{.Values.privateRegistry}}{{ end }}

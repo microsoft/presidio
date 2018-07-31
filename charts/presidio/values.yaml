@@ -1,0 +1,59 @@
+registry: praesidio
+
+redis:
+    host: redis-master.presidio-system.svc.cluster.local
+    port: 6379
+
+api:
+  name: presidio-api
+  # tag:
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 8080
+    internalPort: 8080
+  # Configure liveness probes except `httpGet` and the belongings
+  #livenessProbe:
+  #  initialDelaySeconds: 20
+  # Configure readiness probes except `httpGet` and the belongings
+  #readinessProbe:
+  #  initialDelaySeconds: 20
+
+  ingress:
+    enabled: true
+    class: traefik
+
+analyzer:
+  name: presidio-analyzer
+  # tag:
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
+anonymizer:
+  name: presidio-anonymizer
+  # tag:
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
+scheduler:
+  name: presidio-scheduler
+  imagePullPolicy: Always
+  # tag:
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
+scanner:
+  name: presidio-scanner
+  # tag:
+
+databinder:
+  name: presidio-databinder
+  # tag:

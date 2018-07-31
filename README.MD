@@ -1,0 +1,108 @@
+[![Build Status](https://travis-ci.org/Microsoft/presidio.svg?branch=development)](https://travis-ci.org/Microsoft/presidio)
+
+
+# Presidio - Data Loss Prevention API
+**A context aware, born to the cloud, customizable data loss prevention service**
+
+:warning: ***This project is experimental and should not be used for production***
+
+## Description
+
+Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data. 
+Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
+
+## Features
+
+* Text analytics - Predefined analyzers with customizable fields.
+* Probability scores - Customize the sensitive text detection threshold.
+* Anonymization - Anonymize sensitive text and images
+* Workflow and pipeline integration -  Monitor your data with periodic scans or events of
+  1. Storage solutions
+      - Azure Blob Storage
+      - S3
+      - Google Cloud Storage
+  2. Databases
+      - MySQL
+      - PostgreSQL
+      - Sql Server
+      - Oracle
+
+  and export the results for further analytics:
+  1. Databases
+  2. Data Warehouse
+  3. Streaming platform
+      - Kafka
+      - Azure Events Hubs
+      - Kinesis
+
+
+## The Technology Stack
+Presidio leverages 
+
+* [Kubernetes](https://kubernetes.io/)
+* [spaCy](https://spacy.io/)
+* [Redis](https://redis.io/)
+* [GRPC](https://grpc.io)
+
+
+The [design document](/docs/design.md) introduces Presidio concepts and architecture.
+
+## Quickstart
+
+1. Install [Presidio](docs/installation.md)
+2. Create a Presidio project
+3. Start using the Presidio analyze and anonymize services
+
+
+**Note:** Examples are made with [HTTPie](https://httpie.org/)
+
+***Sample 1***
+
+1. Create an analyzer project
+```
+echo -n '{"fields":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+```
+
+2. Analyze text
+```
+echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+```
+
+***Sample 2***
+
+1. Create an analyzer project
+```
+echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"}]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+```
+
+2. Analyze text
+```
+echo -n '{"text":"We met yesterday morning in Seattle and his phone number is (212) 555 1234", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+```
+
+***Sample 3***
+
+1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD)
+```
+echo -n '{"name":"ANONYMIZER","displayName":"Phone number and Credit card","fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+```
+
+2. Anonymize text
+```
+echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
+```
+
+
+# Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

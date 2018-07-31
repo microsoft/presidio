@@ -1,0 +1,73 @@
+sudo: required
+services:
+  - docker
+branches:
+  only:
+  - gh-pages
+  - /.*/
+matrix:
+  include:
+    - language: python
+      cache: pip
+      python:
+        - "3.6"
+      install:
+      - travis_wait pip install -r presidio-analyzer/requirements.txt
+      script:
+      - make python-test
+    - language: go
+      go:
+      - "1.10"
+      go_import_path: github.com/Microsoft/presidio
+      env:
+      - DEP_VERSION="0.4.1"
+      before_install:
+      # Install kafka lib
+      - git clone https://github.com/edenhill/librdkafka.git
+      - cd librdkafka
+      - ./configure --prefix /usr
+      - make
+      - sudo make install
+      - cd ..
+      # Download dep to bin folder in $GOPATH
+      - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
+       # Make dep executable
+      - chmod +x $GOPATH/bin/dep
+      - go get github.com/pkg/errors
+      - dep ensure
+      # Install gometalinter
+      - go get -u github.com/alecthomas/gometalinter
+      - gometalinter --install
+      script:
+      - make go-test
+      - make test-functional
+      after_success:
+      - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
+        export presidio_LABEL="unstable";
+        fi
+      - if [ "$TRAVIS_TAG" != "" ]; then
+        export presidio_LABEL="$TRAVIS_TAG";
+        fi
+      - echo $TRAVIS_PULL_REQUEST
+      - echo $TRAVIS_BRANCH
+      - echo $presidio_LABEL
+      - if [ -n "$presidio_LABEL" ]; then
+        echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin &&
+        travis_wait make docker-build docker-push &&
+        if [ "$presidio_LABEL" != "unstable" ]; then
+        docker tag "presidioio/presidio-api:$presidio_LABEL-amd64" presidioio/presidio-api:stable-amd64 &&
+        docker push presidioio/presidio-api:stable-amd64;
+        docker tag "presidioio/presidio-analyzer:$presidio_LABEL-amd64" presidioio/presidio-analyzer:stable-amd64 &&
+        travis_wait docker push presidioio/presidio-analyzer:stable-amd64;
+        docker tag "presidioio/presidio-anonymizer:$presidio_LABEL-amd64" presidioio/presidio-anonymizer:stable-amd64 &&
+        docker push presidioio/presidio-anonymizer:stable-amd64;
+        docker tag "presidioio/presidio-scanner:$presidio_LABEL-amd64" presidioio/presidio-scanner:stable-amd64 &&
+        docker push presidioio/presidio-scanner:stable-amd64;
+        docker tag "presidioio/presidio-databinder:$presidio_LABEL-amd64" presidioio/presidio-databinder:stable-amd64 &&
+        docker push presidioio/presidio-databinder:stable-amd64;
+        docker tag "presidioio/presidio-scheduler:$presidio_LABEL-amd64" presidioio/presidio-scheduler:stable-amd64 &&
+        docker push presidioio/presidio-scheduler:stable-amd64;
+        fi
+        fi
+      - echo "Done."
+
