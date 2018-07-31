@@ -1,23 +1,15 @@
-[![Build Status](https://travis-ci.org/presid-io/presidio.svg?branch=development)](https://travis-ci.org/presid-io/presidio)
+[![Build Status](https://travis-ci.org/Microsoft/presidio.svg?branch=development)](https://travis-ci.org/Microsoft/presidio)
 
 
 # Presidio - Data Loss Prevention API
 **A context aware, born to the cloud, customizable data loss prevention service**
 
-<p align="center">
-<img width="200" alt="logo-presidio" src="https://user-images.githubusercontent.com/17064840/42585165-8fc7b820-853d-11e8-9450-4ce426fb5fe0.png">
-</p>
+:warning: ***This project is experimental and should not be used for production***
 
 ## Description
 
 Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data. 
 Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
-
-<p align="center">
-<a href="https://www.youtube.com/watch?feature=player_embedded&v=S6-dwBF75do
-" target="_blank"><img src="https://user-images.githubusercontent.com/17064840/43032053-85d70174-8cb6-11e8-9c0e-609c5950fd55.png" 
-alt="Intro" width="320" height="200" border="10" /></a>
-</p>
 
 ## Features
 
@@ -100,7 +92,17 @@ echo -n '{"name":"ANONYMIZER","displayName":"Phone number and Credit card","fiel
 echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
 ```
 
-<hr>
-<div>Logo made with <a href="https://www.designevo.com/en/" title="Free Online Logo Maker">DesignEvo</a></div>
 
+# Contributing
 
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

@@ -49,10 +49,11 @@
     "autorest/adal",
     "autorest/azure",
     "autorest/date",
+    "logger",
     "version"
   ]
-  revision = "bca49d5b51a50dc5bb17bbf6204c711c6dbded06"
-  version = "v10.14.0"
+  revision = "dd94e014aaf16d1df746762e392aa201c1b4c461"
+  version = "v10.15.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -81,16 +82,20 @@
     "private/protocol",
     "private/protocol/eventstream",
     "private/protocol/eventstream/eventstreamapi",
+    "private/protocol/json/jsonutil",
+    "private/protocol/jsonrpc",
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
     "private/protocol/restxml",
     "private/protocol/xml/xmlutil",
+    "service/kinesis",
+    "service/kinesis/kinesisiface",
     "service/s3",
     "service/sts"
   ]
-  revision = "bc3f534c19ffdf835e524e11f0f825b3eaf541c3"
-  version = "v1.14.31"
+  revision = "8475c414b1bd58b8cc214873a8854e3a621e67d7"
+  version = "v1.15.0"
 
 [[projects]]
   name = "github.com/confluentinc/confluent-kafka-go"
@@ -258,6 +263,15 @@
   revision = "9cad4c3443a7200dd6400aef47183728de563a38"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/harlow/kinesis-consumer"
+  packages = [
+    ".",
+    "checkpoint/redis"
+  ]
+  revision = "23811ec99aa59f870dbc29f74cb5efc345e001fd"
+
+[[projects]]
   name = "github.com/imdario/mergo"
   packages = ["."]
   revision = "9316a62528ac99aaecb4e47eadd6dc8aa6533d58"
@@ -361,13 +375,13 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/presid-io/presidio-genproto"
+  name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
-  revision = "1b7d5d237afc515bdf62d9b8bee63c0af47bd004"
+  revision = "5add567f20bd7f8578a60fda82e9bb26cf67915a"
 
 [[projects]]
   branch = "master"
-  name = "github.com/presid-io/stow"
+  name = "github.com/Microsoft/stow"
   packages = [
     ".",
     "azure",
@@ -456,7 +470,7 @@
     "internal/timeseries",
     "trace"
   ]
-  revision = "a680a1efc54dd51c040b3b5ce4939ea3cf2ea0d1"
+  revision = "c4299a1a0d8524c11563db160fbf9bddbceadb21"
 
 [[projects]]
   branch = "master"
@@ -471,7 +485,7 @@
     "unix",
     "windows"
   ]
-  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
+  revision = "bd9dbc187b6e1dacfdd2722a87e83093c2d7bd6e"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -510,7 +524,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "02b4e95473316948020af0b7a4f0f22c73929b0e"
+  revision = "2a72893556e4d1f6c795a4c039314c9fa751eedb"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -557,6 +571,19 @@
   packages = ["."]
   revision = "d2d2541c53f18d2a059457998ce2876cc8e67cbf"
   version = "v0.9.1"
+
+[[projects]]
+  name = "gopkg.in/redis.v5"
+  packages = [
+    ".",
+    "internal",
+    "internal/consistenthash",
+    "internal/hashtag",
+    "internal/pool",
+    "internal/proto"
+  ]
+  revision = "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+  version = "v5.2.9"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
@@ -748,12 +775,12 @@
     ".",
     "internal/testconn"
   ]
-  revision = "751cf0d4eb77d69534dabeff0f3afb2a0eb8588c"
-  version = "v0.6.2"
+  revision = "5dba116cc9e06d56dbd69570b1c4048b06e71b6f"
+  version = "v0.6.3"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "665fc5b3a89ac7732872575a3e22622377692bb37706d6b39c5b39bd330c663b"
+  inputs-digest = "48af13817b8e2c9b49373cfe186bf8ca8f3ee74664554b36e885ffde7529d46d"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,6 +1,6 @@
 package scanner
 
-import message_types "github.com/presid-io/presidio-genproto/golang"
+import message_types "github.com/Microsoft/presidio-genproto/golang"
 
 // WalkFunc is the function the is executed on the scanned item
 type WalkFunc func(item interface{})

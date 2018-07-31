@@ -12,7 +12,7 @@ setuptools.setup(
     description="Presidio analyzer package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/presid-io/presidio",
+    url="https://github.com/Microsoft/presidio",
     packages=setuptools.find_packages(exclude=('tests')),
     install_requires=[
         'spacy==2.0.11',

@@ -5,7 +5,7 @@ import (
 
 	grpc "google.golang.org/grpc"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func connect(addr string) (*grpc.ClientConn, error) {

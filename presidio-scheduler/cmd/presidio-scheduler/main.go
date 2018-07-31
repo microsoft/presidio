@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "github.com/presid-io/presidio/pkg/logger"
+	_ "github.com/Microsoft/presidio/pkg/logger"
 )
 
 func main() {

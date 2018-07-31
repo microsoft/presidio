@@ -7,12 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/rpc"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/rpc"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	server "github.com/presid-io/presidio/pkg/server"
-	templates "github.com/presid-io/presidio/pkg/templates"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	server "github.com/Microsoft/presidio/pkg/server"
+	templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
 var analyzeService *message_types.AnalyzeServiceClient

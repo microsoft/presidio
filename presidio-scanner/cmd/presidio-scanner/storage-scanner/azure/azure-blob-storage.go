@@ -5,8 +5,8 @@ import (
 
 	"github.com/presid-io/stow"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	"github.com/presid-io/presidio/pkg/storage"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/storage"
 )
 
 // InitBlobStorage inits the storage with the supplied credentials

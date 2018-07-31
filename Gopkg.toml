@@ -3,6 +3,10 @@
   version = "0.4.0"
 
 [[constraint]]
+  name = "github.com/harlow/kinesis-consumer"
+  branch = "master"
+  
+[[constraint]]
   name = "github.com/confluentinc/confluent-kafka-go"
   version = "0.11.4"
 
@@ -32,7 +36,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/presid-io/presidio-genproto"
+  name = "github.com/Microsoft/presidio-genproto"
 
 [[constraint]]
   branch = "master"

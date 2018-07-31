@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/rpc"
-	handler "github.com/presid-io/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/rpc"
+	handler "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer"
 )
 
 type server struct{}

@@ -3,10 +3,10 @@ package aws
 import (
 	"log"
 
-	"github.com/presid-io/stow"
+	"github.com/Microsoft/stow"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	"github.com/presid-io/presidio/pkg/storage"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/storage"
 )
 
 // InitS3 inits the storage with the supplied credentials

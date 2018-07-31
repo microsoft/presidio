@@ -3,7 +3,7 @@ package transformations
 import (
 	"errors"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //MaskValue ...
