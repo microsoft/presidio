@@ -1,10 +1,20 @@
 package main
 
-import "github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/database"
+import (
+	"fmt"
 
-func createDatabiner(bindType string, connectionString string, tableName string) {
-	if isDatabase(bindType) {
-		dbwritter := databaseBinder.New(bindType, connectionString, tableName)
+	message_types "github.com/presid-io/presidio-genproto/golang"
+	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/database"
+)
+
+func createDatabiner(databinder *message_types.Databinder) error {
+	if isDatabase(databinder.GetBindType()) {
+		if databinder.DbConfig.GetConnectionString() == "" {
+			return fmt.Errorf("connectionString var must me set")
+		}
+		dbwritter := databaseBinder.New(databinder.GetBindType(), databinder.DbConfig.GetConnectionString(), databinder.DbConfig.GetTableName())
 		databinderArray = append(databinderArray, &dbwritter)
 	}
+
+	return nil
 }

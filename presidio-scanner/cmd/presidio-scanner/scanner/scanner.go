@@ -8,7 +8,7 @@ type WalkFunc func(item interface{})
 // Scanner interface represent the supported scanner methods.
 type Scanner interface {
 	//Init the scanner
-	Init(inputConfig *message_types.InputConfig)
+	Init(inputConfig *message_types.CloudStorageConfig)
 
 	//GetItemUniqueID returns the scanned item unique id
 	GetItemUniqueID(item interface{}) (string, error)

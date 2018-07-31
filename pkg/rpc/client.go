@@ -48,3 +48,13 @@ func SetupDataBinderService(address string) (*message_types.DatabinderServiceCli
 	client := message_types.NewDatabinderServiceClient(conn)
 	return &client, nil
 }
+
+//SetupCronJobService ...
+func SetupCronJobService(address string) (*message_types.CronJobServiceClient, error) {
+	conn, err := connect(address)
+	if err != nil {
+		return nil, err
+	}
+	client := message_types.NewCronJobServiceClient(conn)
+	return &client, nil
+}

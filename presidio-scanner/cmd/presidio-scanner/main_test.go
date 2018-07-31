@@ -186,13 +186,13 @@ func putItem(itemName string, container stow.Container, api *storage.API) stow.I
 
 func getScannerRequest() *message_types.ScanRequest {
 	return &message_types.ScanRequest{
-		InputConfig: &message_types.InputConfig{
+		CloudStorageConfig: &message_types.CloudStorageConfig{
 			BlobStorageConfig: &message_types.BlobStorageConfig{
 				AccountName:   storageName,
 				AccountKey:    storageKey,
 				ContainerName: "test",
 			},
 		},
-		Kind: "azure",
+		Kind: "azureblob",
 	}
 }

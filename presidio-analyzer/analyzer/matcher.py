@@ -7,9 +7,10 @@ from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
-CONTEXT_SIMILARITY_FACTOR = 0.5
-NER_STRENGTH = 0.7
-CONTEXT_PREFIX_COUNT = 3
+CONTEXT_SIMILARITY_FACTOR = 0.35
+MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
+NER_STRENGTH = 0.85
+CONTEXT_PREFIX_COUNT = 5
 CONTEXT_SUFFIX_COUNT = 0
 
 
@@ -70,6 +71,7 @@ class Matcher(object):
             context, field)
         if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
             probability += context_similarity * CONTEXT_SIMILARITY_FACTOR
+            probability = max(probability, MIN_SCORE_WITH_CONTEXT_SIMILARITY)
 
         return min(probability, 1)
 
@@ -105,7 +107,7 @@ class Matcher(object):
         return context
 
     def __check_pattern(self, doc, results, field):
-        max_matched_strength = 0.0
+        max_matched_strength = -1.0
         for pattern in field.patterns:
             if pattern.strength <= max_matched_strength:
                 break
@@ -170,10 +172,10 @@ class Matcher(object):
             if self.__match_ner(ent.label_, field.name) is False:
                 continue
             field.text = ent.text
-            # TODO FIX
-            res = self.__create_result(doc, NER_STRENGTH, field,
-                                       ent.start_char, ent.end_char)
-            # res.probability = NER_PROBABILITY
+
+            #TODO FIX
+            res = self.__create_result(doc, NER_STRENGTH, field, ent.start_char,
+                                       ent.end_char)
 
             if res is not None:
                 results.append(res)
@@ -181,8 +183,8 @@ class Matcher(object):
         return results
 
     def __sanitize_text(self, text):
-        # text = text.replace('\n', ' ')
-        # text = text.replace('\r', ' ')
+        text = text.replace('\n', ' ')
+        text = text.replace('\r', ' ')
         return text
 
     def analyze_text(self, text, field_type_filters):

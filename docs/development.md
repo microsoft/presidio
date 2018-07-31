@@ -43,11 +43,11 @@ pip3 install -U pytest
 8. To generate proto files, clone [presidio-genproto](https://github.com/Microsoft/presidio-genproto) and run the following commands in `$GOPATH/src/github.com/Microsoft/presidio-genproto/src` folder
 
     ```
-    python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. ./*.proto
+    python -m grpc_tools.protoc -I . --python_out=../python --grpc_python_out=../python ./*.proto
     ```
 
     ```
-    protoc -I . --go_out=plugins=grpc:. ./*.proto
+    protoc -I . --go_out=plugins=grpc:../golang ./*.proto
     ```
 
 
