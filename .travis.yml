@@ -61,6 +61,12 @@ matrix:
         docker push presidioio/presidio-analyzer:stable-amd64;
         docker tag "presidioio/presidio-anonymizer:$presidio_LABEL-amd64" presidioio/presidio-anonymizer:stable-amd64 &&
         docker push presidioio/presidio-anonymizer:stable-amd64;
+        docker tag "presidioio/presidio-scanner:$presidio_LABEL-amd64" presidioio/presidio-scanner:stable-amd64 &&
+        docker push presidioio/presidio-scanner:stable-amd64;
+        docker tag "presidioio/presidio-databinder:$presidio_LABEL-amd64" presidioio/presidio-databinder:stable-amd64 &&
+        docker push presidioio/presidio-databinder:stable-amd64;
+        docker tag "presidioio/presidio-scheduler:$presidio_LABEL-amd64" presidioio/presidio-scheduler:stable-amd64 &&
+        docker push presidioio/presidio-scheduler:stable-amd64;
         fi
         fi
       - echo "Done."
