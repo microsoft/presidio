@@ -10,7 +10,7 @@ import (
 	"github.com/presid-io/stow/azure"
 	"github.com/presid-io/stow/s3"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //API storage
