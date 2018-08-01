@@ -2,7 +2,7 @@
 
 
 # Presidio - Data Loss Prevention API
-**A context aware, born to the cloud, customizable data loss prevention service**
+**Context aware, born to the cloud, customizable data loss prevention service**
 
 :warning: ***This project is experimental and should not be used for production***
 
