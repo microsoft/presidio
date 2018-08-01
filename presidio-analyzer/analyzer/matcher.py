@@ -201,7 +201,7 @@ class Matcher(object):
 
             # Check for ner field
         if isinstance(current_field, type(ner.Ner())):
-            current_field.name = field_type_string_filter
+            current_field.name = payload.field_type_string_filter
             self.__check_ner(payload.doc, payload.results, current_field)
         else:
             self.__check_pattern(payload.doc, payload.results, current_field)

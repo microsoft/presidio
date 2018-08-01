@@ -40,4 +40,4 @@ matrix:
       - gometalinter --install
       script:
       - make go-test
-      - make test-functional
+      - travis_wait make test-functional
