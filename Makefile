@@ -1,4 +1,4 @@
-DOCKER_REGISTRY    ?= Microsoft
+DOCKER_REGISTRY    ?= microsoft
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
