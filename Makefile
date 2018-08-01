@@ -1,4 +1,4 @@
-DOCKER_REGISTRY    ?= praesidio
+DOCKER_REGISTRY    ?= Microsoft
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
