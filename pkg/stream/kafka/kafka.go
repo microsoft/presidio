@@ -5,27 +5,66 @@ import (
 
 	api "github.com/confluentinc/confluent-kafka-go/kafka"
 
-	"github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/stream"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/stream"
 )
 
 type kafka struct {
 	producer *api.Producer
+	consumer *api.Consumer
 	topic    string
 }
 
-//New Return new Kafka stream
-func New(address string, topic string) stream.Stream {
+//NewProducer Return new Kafka Producer stream
+func NewProducer(address string, topic string) stream.Stream {
 
 	p, err := api.NewProducer(&api.ConfigMap{"bootstrap.servers": address})
 	if err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	return &kafka{
 		producer: p,
 		topic:    topic,
 	}
+}
+
+//NewConsumer Return new Kafka Consumer stream
+func NewConsumer(address string, topic string) stream.Stream {
+
+	c, err := api.NewConsumer(&api.ConfigMap{
+		"bootstrap.servers": address,
+		"group.id":          "presidio",
+		"auto.offset.reset": "earliest",
+	})
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	err = c.SubscribeTopics([]string{topic}, nil)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	return &kafka{
+		consumer: c,
+		topic:    topic,
+	}
+}
+
+//Receive message from kafka topic
+func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
+
+	for {
+		msg, err := k.consumer.ReadMessage(-1)
+		if err != nil {
+			return err
+		}
+		receiveFunc(string(msg.Value))
+	}
+	return nil
 }
 
 //Send message to kafka topic
@@ -37,9 +76,9 @@ func (k *kafka) Send(message string) error {
 			switch ev := e.(type) {
 			case *api.Message:
 				if ev.TopicPartition.Error != nil {
-					logger.Error(fmt.Sprintf("Delivery failed: %v\n", ev.TopicPartition))
+					log.Error(fmt.Sprintf("Delivery failed: %v\n", ev.TopicPartition))
 				} else {
-					logger.Info(fmt.Sprintf("Delivered message to %v\n", ev.TopicPartition))
+					log.Info(fmt.Sprintf("Delivered message to %v\n", ev.TopicPartition))
 				}
 			}
 		}

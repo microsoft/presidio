@@ -4,7 +4,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
-	log "github.com/presid-io/presidio/pkg/logger"
+	log "github.com/Microsoft/presidio/pkg/logger"
 )
 
 // GetClient creates a config from the given master and kubeconfig

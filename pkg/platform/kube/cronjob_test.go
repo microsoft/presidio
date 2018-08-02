@@ -7,7 +7,7 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"github.com/presid-io/presidio/pkg/platform"
+	"github.com/Microsoft/presidio/pkg/platform"
 )
 
 func TestCreateAndDeleteCronJob(t *testing.T) {

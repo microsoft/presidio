@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/cloudstorage"
-	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/database"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/cloudstorage"
+	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/database"
 )
 
 func createDatabiner(databinder *message_types.Databinder) error {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/presid-io/presidio/pkg/platform"
+	"github.com/Microsoft/presidio/pkg/platform"
 )
 
 const separator = "."

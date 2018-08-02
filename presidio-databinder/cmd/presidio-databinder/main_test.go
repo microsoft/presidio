@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
 	"github.com/stretchr/testify/assert"
+
+	message_types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func TestIsDatabase(t *testing.T) {

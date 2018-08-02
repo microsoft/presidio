@@ -11,11 +11,11 @@ import (
 
 	apiv1 "k8s.io/api/core/v1"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/platform"
-	"github.com/presid-io/presidio/pkg/platform/kube"
-	"github.com/presid-io/presidio/pkg/rpc"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/Microsoft/presidio/pkg/platform/kube"
+	"github.com/Microsoft/presidio/pkg/rpc"
 )
 
 type server struct{}

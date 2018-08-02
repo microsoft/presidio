@@ -1,4 +1,4 @@
-import validators
+import tldextract
 from field_types import field_type, field_pattern
 
 
@@ -19,6 +19,10 @@ class Domain(field_type.FieldType):
     pattern.strength = 0.5
 
     patterns.append(pattern)
-    
+
     def check_checksum(self):
-        return validators.domain(self.text)
+        result = tldextract.extract(self.text)
+        if result.fqdn is not '':
+            return True
+        else:
+            return False

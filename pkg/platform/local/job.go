@@ -3,7 +3,7 @@ package local
 import (
 	"errors"
 
-	"github.com/presid-io/presidio/pkg/platform"
+	"github.com/Microsoft/presidio/pkg/platform"
 )
 
 func (s *store) CreateJob(name string, image string, commands []string) error {

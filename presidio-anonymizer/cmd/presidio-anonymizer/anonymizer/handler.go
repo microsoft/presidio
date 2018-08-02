@@ -4,8 +4,8 @@ import (
 	"errors"
 	"sort"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	methods "github.com/presid-io/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	methods "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations"
 )
 
 type sortedResults []*message_types.AnalyzeResult

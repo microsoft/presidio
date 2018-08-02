@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"path/filepath"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/storage"
-	"github.com/presid-io/presidio/pkg/templates"
-	"github.com/presid-io/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/storage"
+	"github.com/Microsoft/presidio/pkg/templates"
+	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
 	"github.com/presid-io/stow"
 )
 
