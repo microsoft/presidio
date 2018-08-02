@@ -6,21 +6,19 @@ with open(os.path.dirname(os.path.abspath(__file__)) + '/../README.MD', "r") as 
 
 setuptools.setup(
     name="presidio_analyzer",
-    version="0.0.1",
-    author="Tomer Rosenthal",
-    author_email="olipoopo@gmail.com",
+    version="0.1.0",
+    author="Presidio team",
+    author_email="presidioteam@microsoft.com",
     description="Presidio analyzer package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/presid-io/presidio",
+    url="https://github.com/Microsoft/presidio",
     packages=setuptools.find_packages(exclude=('tests')),
     install_requires=[
         'spacy==2.0.11',
         'grpcio>=1.13.0',
         'grpcio-tools>=1.13.0',
-        'regex>=2018.07.11',
-        'validators>=0.12.2'],
-    # dependency_links=[SPACY_MODEL],
+        'tldextract>=2.2.0'],
     include_package_data=True,
     license='MIT',
     classifiers=[

@@ -1,10 +1,9 @@
 from analyzer import matcher
 from tests import *
+import datetime
 import os
 
 types = []
-
-import datetime
 
 def test_all_fields_from_file():
     start_time = datetime.datetime.now()
@@ -16,4 +15,4 @@ def test_all_fields_from_file():
     
     assert len(results) == 6
     assert test_time.seconds < 1
-    print('test_all_fields runtime: {} seconds, {} microseconds'.format(test_time.seconds, test_time.microseconds))
+    print('test_all_fields runtime: {} seconds, {} microseconds'.format(test_time.seconds, test_time.microseconds)

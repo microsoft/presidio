@@ -7,13 +7,13 @@ import (
 
 	"github.com/joho/godotenv"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	"github.com/presid-io/presidio/pkg/cache"
-	"github.com/presid-io/presidio/pkg/cache/redis"
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/rpc"
-	"github.com/presid-io/presidio/pkg/templates"
-	"github.com/presid-io/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/cache"
+	"github.com/Microsoft/presidio/pkg/cache/redis"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/rpc"
+	"github.com/Microsoft/presidio/pkg/templates"
+	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
 
 var (
@@ -56,7 +56,7 @@ func main() {
 				log.Error(fmt.Sprintf("error sending file to databinder: %s, error: %q", itemPath, err.Error()))
 				return
 			}
-			log.Info(fmt.Sprintf("%d results were sent to t databinder successfully", len(scanResult)))
+			log.Info(fmt.Sprintf("%d results were sent to the databinder successfully", len(scanResult)))
 
 		}
 
@@ -159,7 +159,7 @@ func setupCache() cache.Cache {
 func initScanner() {
 	godotenv.Load()
 
-	scannerObj := os.Getenv("SCANNER_TEMPLATE")
+	scannerObj := os.Getenv("SCANNER_REQUEST")
 	template := &message_types.ScanRequest{}
 	err := templates.ConvertJSONToInterface(scannerObj, template)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 
 	grpc "google.golang.org/grpc"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func connect(addr string) (*grpc.ClientConn, error) {
@@ -46,5 +46,15 @@ func SetupDataBinderService(address string) (*message_types.DatabinderServiceCli
 		return nil, err
 	}
 	client := message_types.NewDatabinderServiceClient(conn)
+	return &client, nil
+}
+
+//SetupCronJobService ...
+func SetupCronJobService(address string) (*message_types.CronJobServiceClient, error) {
+	conn, err := connect(address)
+	if err != nil {
+		return nil, err
+	}
+	client := message_types.NewCronJobServiceClient(conn)
 	return &client, nil
 }

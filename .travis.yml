@@ -18,7 +18,7 @@ matrix:
     - language: go
       go:
       - "1.10"
-      go_import_path: github.com/presid-io/presidio
+      go_import_path: github.com/Microsoft/presidio
       env:
       - DEP_VERSION="0.4.1"
       before_install:
@@ -40,28 +40,4 @@ matrix:
       - gometalinter --install
       script:
       - make go-test
-      - make test-functional
-      after_success:
-      - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "development" ]; then
-        export presidio_LABEL="unstable";
-        fi
-      - if [ "$TRAVIS_TAG" != "" ]; then
-        export presidio_LABEL="$TRAVIS_TAG";
-        fi
-      - echo $TRAVIS_PULL_REQUEST
-      - echo $TRAVIS_BRANCH
-      - echo $presidio_LABEL
-      - if [ -n "$presidio_LABEL" ]; then
-        echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin &&
-        make docker-build docker-push &&
-        if [ "$presidio_LABEL" != "unstable" ]; then
-        docker tag "presidioio/presidio-api:$presidio_LABEL-amd64" presidioio/presidio-api:stable-amd64 &&
-        docker push presidioio/presidio-api:stable-amd64;
-        docker tag "presidioio/presidio-analyzer:$presidio_LABEL-amd64" presidioio/presidio-analyzer:stable-amd64 &&
-        docker push presidioio/presidio-analyzer:stable-amd64;
-        docker tag "presidioio/presidio-anonymizer:$presidio_LABEL-amd64" presidioio/presidio-anonymizer:stable-amd64 &&
-        docker push presidioio/presidio-anonymizer:stable-amd64;
-        fi
-        fi
-      - echo "Done."
-
+      - travis_wait make test-functional

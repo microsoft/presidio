@@ -7,16 +7,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/rpc"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/rpc"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	server "github.com/presid-io/presidio/pkg/server"
-	templates "github.com/presid-io/presidio/pkg/templates"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	server "github.com/Microsoft/presidio/pkg/server"
+	templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
 var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
+var cronJobService *message_types.CronJobServiceClient
 
 func setupGRPCServices() {
 	var err error
@@ -41,6 +42,16 @@ func setupGRPCServices() {
 		log.Fatal("anonymizer service port is empty")
 	}
 
+	schedulerSvcHost := os.Getenv("SCHEDULER_SVC_HOST")
+	if anonymizerSvcHost == "" {
+		log.Fatal("scheduler service address is empty")
+	}
+
+	schedulerSvcPort := os.Getenv("SCHEDULER_SVC_PORT")
+	if anonymizerSvcPort == "" {
+		log.Fatal("scheduler service port is empty")
+	}
+
 	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
@@ -48,6 +59,11 @@ func setupGRPCServices() {
 	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
+	}
+
+	cronJobService, err = rpc.SetupCronJobService(schedulerSvcHost + ":" + schedulerSvcPort)
+	if err != nil {
+		log.Error(fmt.Sprintf("Connection to scheduler service failed %q", err))
 	}
 
 }
@@ -119,6 +135,63 @@ func (api *API) anonymize(c *gin.Context) {
 		}
 		server.WriteResponse(c, http.StatusOK, anonymizeRes)
 	}
+}
+
+func (api *API) scheduleCronJob(c *gin.Context) {
+	var cronAPIJobRequest message_types.CronJobApiRequest
+
+	if c.Bind(&cronAPIJobRequest) == nil {
+		project := c.Param("project")
+		scheulderResponse := api.invokeCronJobScheduler(cronAPIJobRequest, project, c)
+		if scheulderResponse == nil {
+			return
+		}
+
+		server.WriteResponse(c, http.StatusOK, scheulderResponse)
+	}
+}
+
+func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobApiRequest, project string, c *gin.Context) *message_types.CronJobResponse {
+	cronJobTemplate := &message_types.CronJobTemplate{}
+	api.getTemplate(project, "schedule-cronjob", cronJobAPIRequest.CronJobTemplateId, cronJobTemplate, c)
+
+	scanID := cronJobTemplate.ScanTemplateId
+	scanTemplate := &message_types.ScanTemplate{}
+	api.getTemplate(project, "scan", scanID, scanTemplate, c)
+
+	databinderTemplate := &message_types.DatabinderTemplate{}
+	api.getTemplate(project, "databinder", scanTemplate.DatabinderTemplateId, databinderTemplate, c)
+
+	analyzeTemplate := &message_types.AnalyzeTemplate{}
+	api.getTemplate(project, "analyze", scanTemplate.AnalyzeTemplateId, analyzeTemplate, c)
+
+	anonymizeTemplate := &message_types.AnonymizeTemplate{}
+	if scanTemplate.AnonymizeTemplateId != "" {
+		api.getTemplate(project, "anonymize", scanTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
+	}
+
+	scanRequest := &message_types.ScanRequest{
+		AnalyzeTemplate:    analyzeTemplate,
+		AnonymizeTemplate:  anonymizeTemplate,
+		DatabinderTemplate: databinderTemplate,
+		CloudStorageConfig: scanTemplate.CloudStorageConfig,
+		Kind:               scanTemplate.Kind,
+		MinProbability:     scanTemplate.MinProbability,
+	}
+
+	request := &message_types.CronJobRequest{
+		Name:        cronJobTemplate.Name,
+		Description: cronJobTemplate.Description,
+		Trigger:     cronJobTemplate.Trigger,
+		ScanRequest: scanRequest,
+	}
+	srv := *cronJobService
+	res, err := srv.Apply(c, request)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return nil
+	}
+	return res
 }
 
 func (api *API) invokeAnonymize(anonymizeTemplate *message_types.AnonymizeTemplate, text string, results []*message_types.AnalyzeResult, c *gin.Context) *message_types.AnonymizeResponse {

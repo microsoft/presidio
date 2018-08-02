@@ -1,5 +1,21 @@
-FROM alpine:3.7
+FROM golang:1.10-alpine AS build-env
 
-COPY rootfs/presidio-scheduler /usr/bin/presidio-scheduler
+ARG NAME=presidio-scheduler
+ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
+ARG VERSION=latest
 
-CMD /usr/bin/presidio-scheduler
+ADD ./${NAME} ${PRESIDIOPATH}/${NAME}
+ADD ./vendor ${PRESIDIOPATH}/vendor
+ADD ./pkg ${PRESIDIOPATH}/pkg
+
+WORKDIR ${PRESIDIOPATH}/${NAME}/cmd/${NAME}
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Microsoft/presidio/pkg/version.Version=${VERSION}' -o /usr/bin/${NAME}
+
+#----------------------------
+
+FROM alpine:3.8
+
+ARG NAME=presidio-scheduler
+WORKDIR  /usr/bin/
+COPY --from=build-env /usr/bin/${NAME} /usr/bin/
+CMD  /usr/bin/presidio-scheduler

@@ -1,4 +1,4 @@
-import validators
+import tldextract
 from field_types import field_type, field_pattern
 
 
@@ -18,4 +18,8 @@ class Email(field_type.FieldType):
     patterns.append(pattern)
 
     def check_checksum(self):
-        return validators.email(self.text)
+        result = tldextract.extract(self.text)
+        if result.fqdn is not '':
+            return True
+        else:
+            return False

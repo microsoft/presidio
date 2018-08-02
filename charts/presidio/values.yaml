@@ -1,7 +1,7 @@
-registry: praesidio
+registry: Microsoft
 
 redis:
-    host: redis-master
+    host: redis-master.presidio-system.svc.cluster.local
     port: 6379
 
 api:
@@ -49,3 +49,11 @@ scheduler:
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
+
+scanner:
+  name: presidio-scanner
+  # tag:
+
+databinder:
+  name: presidio-databinder
+  # tag:

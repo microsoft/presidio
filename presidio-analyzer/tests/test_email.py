@@ -1,6 +1,7 @@
 from analyzer import matcher, common_pb2
 from tests import *
 
+
 fieldType = common_pb2.FieldTypes()
 fieldType.name = common_pb2.FieldTypesEnum.Name(common_pb2.EMAIL_ADDRESS)
 types = [fieldType]

@@ -3,7 +3,7 @@ package redis
 import (
 	r "github.com/go-redis/redis"
 
-	"github.com/presid-io/presidio/pkg/cache"
+	"github.com/Microsoft/presidio/pkg/cache"
 )
 
 type redis struct {

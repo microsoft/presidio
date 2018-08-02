@@ -1,14 +1,13 @@
 FROM python:3.6.5-slim-stretch
 
-WORKDIR /usr/bin/presidio-anaylzer
+ARG NAME=presidio-analyzer
 
-RUN apt-get update && apt-get install -y g++
+RUN apt-get update && apt-get install -y g++ && rm -rf /var/lib/apt/lists/*
 
-ADD requirements.txt /usr/bin/presidio-anaylzer
+ADD ./${NAME} /usr/bin/${NAME}
 
-RUN pip install -r requirements.txt
+WORKDIR /usr/bin/${NAME}
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /usr/bin/presidio-anaylzer/
-
-WORKDIR /usr/bin/presidio-anaylzer/analyzer
+WORKDIR /usr/bin/${NAME}/analyzer
 CMD python __main__.py

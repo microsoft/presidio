@@ -13,11 +13,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	c "github.com/presid-io/presidio/pkg/cache"
-	cache_mock "github.com/presid-io/presidio/pkg/cache/mock"
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/storage"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	c "github.com/Microsoft/presidio/pkg/cache"
+	cache_mock "github.com/Microsoft/presidio/pkg/cache/mock"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/storage"
 )
 
 var (
@@ -186,13 +186,13 @@ func putItem(itemName string, container stow.Container, api *storage.API) stow.I
 
 func getScannerRequest() *message_types.ScanRequest {
 	return &message_types.ScanRequest{
-		InputConfig: &message_types.InputConfig{
+		CloudStorageConfig: &message_types.CloudStorageConfig{
 			BlobStorageConfig: &message_types.BlobStorageConfig{
 				AccountName:   storageName,
 				AccountKey:    storageKey,
 				ContainerName: "test",
 			},
 		},
-		Kind: "azure",
+		Kind: "azureblob",
 	}
 }

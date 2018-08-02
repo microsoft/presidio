@@ -4,11 +4,11 @@ import (
 	"os"
 	"strconv"
 
-	log "github.com/presid-io/presidio/pkg/logger"
-	"github.com/presid-io/presidio/pkg/platform/kube"
-	"github.com/presid-io/presidio/pkg/platform/local"
+	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform/kube"
+	"github.com/Microsoft/presidio/pkg/platform/local"
 
-	server "github.com/presid-io/presidio/pkg/server"
+	server "github.com/Microsoft/presidio/pkg/server"
 )
 
 var (
@@ -86,6 +86,10 @@ func main() {
 			// Anonymize text
 			// /api/v1/projects/123/anonymize
 			projects.POST("/anonymize", api.anonymize)
+
+			// Schedule scanning cron job
+			// /api/v1/projects/123/schedule-cronjob
+			projects.POST("/schedule-cronjob", api.scheduleCronJob)
 		}
 
 	}

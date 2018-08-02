@@ -5,6 +5,7 @@ import common_pb2
 import template_pb2
 from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
+from concurrent import futures
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 CONTEXT_SIMILARITY_FACTOR = 0.35
@@ -188,7 +189,6 @@ class Matcher(object):
                 continue
             field.text = ent.text
 
-            #TODO FIX
             res = self.__create_result(doc, NER_STRENGTH, field, ent.start_char,
                                        ent.end_char)
 
@@ -201,6 +201,23 @@ class Matcher(object):
         text = text.replace('\n', ' ')
         text = text.replace('\r', ' ')
         return text
+
+    def new(self, name, data):
+        return type(name, (object,), data)
+
+    def analyze_field_type(self, payload):
+        current_field = field_factory.FieldFactory.create(
+            payload.field_type_string_filter)
+
+        if current_field is None:
+            return
+
+            # Check for ner field
+        if isinstance(current_field, type(ner.Ner())):
+            current_field.name = payload.field_type_string_filter
+            self.__check_ner(payload.doc, payload.results, current_field)
+        else:
+            self.__check_pattern(payload.doc, payload.results, current_field)
 
     def analyze_text(self, text, field_type_filters):
         """Analyze text.
@@ -221,19 +238,17 @@ class Matcher(object):
 
         sanitized_text = self.__sanitize_text(text)
         doc = self.nlp(sanitized_text)
+
+        payloads = []
         for field_type_string_filter in field_type_string_filters:
-            current_field = field_factory.FieldFactory.create(
-                field_type_string_filter)
+            payload = self.new('Payload',
+                               {'doc': doc,
+                                'field_type_string_filter': field_type_string_filter,
+                                'results': results})
+            payloads.append(payload)
 
-            if current_field is None:
-                continue
-
-            # Check for ner field
-            if isinstance(current_field, type(ner.Ner())):
-                current_field.name = field_type_string_filter
-                self.__check_ner(doc, results, current_field)
-            else:
-                self.__check_pattern(doc, results, current_field)
+        with futures.ThreadPoolExecutor() as executor:
+            executor.map(self.analyze_field_type, payloads)
 
         results.sort(key=lambda x: x.location.start, reverse=False)
         return results

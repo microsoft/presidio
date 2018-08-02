@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/presid-io/presidio/pkg/platform"
-	t "github.com/presid-io/presidio/pkg/templates"
+	"github.com/Microsoft/presidio/pkg/platform"
+	t "github.com/Microsoft/presidio/pkg/templates"
 )
 
 //API kv store

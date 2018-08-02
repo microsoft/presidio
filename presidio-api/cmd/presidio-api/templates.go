@@ -6,9 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
-	server "github.com/presid-io/presidio/pkg/server"
-	pkg_templates "github.com/presid-io/presidio/pkg/templates"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
+	server "github.com/Microsoft/presidio/pkg/server"
+	pkg_templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
 func getFieldTypes(c *gin.Context) {
@@ -83,15 +83,27 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	switch action {
 	case "analyze":
 		var analyzerTemplate message_types.AnalyzeTemplate
-		if c.BindJSON(&analyzerTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(analyzerTemplate)
-		}
+		return bindAndConvert(analyzerTemplate, c)
 	case "anonymize":
 		var anonymizeTemplate message_types.AnonymizeTemplate
-		if c.BindJSON(&anonymizeTemplate) == nil {
-			return pkg_templates.ConvertInterfaceToJSON(anonymizeTemplate)
-		}
+		return bindAndConvert(anonymizeTemplate, c)
+	case "scan":
+		var scanTemplate message_types.ScanTemplate
+		return bindAndConvert(scanTemplate, c)
+	case "databinder":
+		var databinderTemplate message_types.DatabinderTemplate
+		return bindAndConvert(databinderTemplate, c)
+	case "schedule-cronjob":
+		var cronjobTemplate message_types.CronJobTemplate
+		return bindAndConvert(cronjobTemplate, c)
 	}
 
+	return "", errors.New("No template found")
+}
+
+func bindAndConvert(template interface{}, c *gin.Context) (string, error) {
+	if c.BindJSON(&template) == nil {
+		return pkg_templates.ConvertInterfaceToJSON(template)
+	}
 	return "", errors.New("No template found")
 }

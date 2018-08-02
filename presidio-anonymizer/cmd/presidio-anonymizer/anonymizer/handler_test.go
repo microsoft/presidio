@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/presid-io/presidio-genproto/golang"
+	message_types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func TestReplace1Element(t *testing.T) {
