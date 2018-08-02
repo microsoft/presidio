@@ -173,6 +173,7 @@ func ReadObject(item stow.Item) (string, error) {
 	return fileContent, err
 }
 
+// PutItem writes a new item to the container
 func PutItem(name string, content string, container stow.Container) error {
 	r := strings.NewReader(content)
 	size := int64(len(content))

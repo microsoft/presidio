@@ -27,14 +27,14 @@ type dbDataBinder struct {
 }
 
 // New returns new instance of DB Data writter
-func New(databinder *message_types.Databinder) databinder.DataBinder {
+func New(databinder *message_types.Databinder, kind string) databinder.DataBinder {
 	// default table name
 	tableName := databinder.DbConfig.GetTableName()
 	if tableName == "" {
 		tableName = "scannerresult"
 	}
 
-	db := dbDataBinder{driverName: databinder.GetBindType(), connectionString: databinder.DbConfig.GetConnectionString(), tableName: tableName}
+	db := dbDataBinder{driverName: kind, connectionString: databinder.DbConfig.GetConnectionString(), tableName: tableName}
 	db.Init()
 	return &db
 }
@@ -106,7 +106,6 @@ func (databinder *dbDataBinder) WriteAnalyzeResults(results []*message_types.Ana
 }
 
 func (databinder *dbDataBinder) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
-
 	r := anonymizerResult{
 		AnonymizedText: result.Text,
 		Path:           path,

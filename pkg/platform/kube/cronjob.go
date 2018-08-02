@@ -16,9 +16,10 @@ func (s *store) CreateCronJob(name string, schedule string, containerDetailsArra
 	var containers []apiv1.Container
 	for _, containerDetails := range containerDetailsArray {
 		containers = append(containers, apiv1.Container{
-			Name:  containerDetails.Name,
-			Image: containerDetails.Image,
-			Env:   containerDetails.EnvVars,
+			Name:            containerDetails.Name,
+			Image:           containerDetails.Image,
+			Env:             containerDetails.EnvVars,
+			ImagePullPolicy: containerDetails.ImagePullPolicy,
 		})
 	}
 

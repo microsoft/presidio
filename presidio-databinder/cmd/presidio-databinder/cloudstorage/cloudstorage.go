@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/presid-io/stow"
+
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
 	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
-	"github.com/presid-io/stow"
 )
 
 type cloudStorageDataBinder struct {
@@ -19,8 +20,8 @@ type cloudStorageDataBinder struct {
 }
 
 // New returns new instance of DB Data writter
-func New(databinder *message_types.Databinder) databinder.DataBinder {
-	db := cloudStorageDataBinder{kind: databinder.GetBindType(), cloudStorageConfig: databinder.GetCloudStorageConfig()}
+func New(databinder *message_types.Databinder, kind string) databinder.DataBinder {
+	db := cloudStorageDataBinder{kind: kind, cloudStorageConfig: databinder.GetCloudStorageConfig()}
 	db.Init()
 	return &db
 }

@@ -6,21 +6,20 @@ import (
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/cloudstorage"
 	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/database"
+	databinderInterface "github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
 )
 
-func createDatabiner(databinder *message_types.Databinder) error {
-	if isDatabase(databinder.GetBindType()) {
+func createDatabiner(databinder *message_types.Databinder, kind string) (databinderInterface.DataBinder, error) {
+	if isDatabase(kind) {
 		if databinder.DbConfig.GetConnectionString() == "" {
-			return fmt.Errorf("connectionString var must me set")
+			return nil, fmt.Errorf("connectionString var must me set")
 		}
-		dbwritter := databaseBinder.New(databinder)
-		databinderArray = append(databinderArray, &dbwritter)
-	} else if isCloudStorage(databinder.GetBindType()) {
-		cloudStorageBinder := cloudStorageBinder.New(databinder)
-		databinderArray = append(databinderArray, &cloudStorageBinder)
+		return databaseBinder.New(databinder, kind), nil
+	} else if isCloudStorage(kind) {
+		return cloudStorageBinder.New(databinder, kind), nil
 	}
 
-	return nil
+	return nil, fmt.Errorf("unknown databinder kind")
 }
 
 func isDatabase(target string) bool {

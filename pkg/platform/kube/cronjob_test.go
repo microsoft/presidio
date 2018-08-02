@@ -23,8 +23,9 @@ func TestCreateAndDeleteCronJob(t *testing.T) {
 			EnvVars: []apiv1.EnvVar{
 				{Name: "envVar1", Value: "envVarval"},
 			},
-			Name:  "jobName",
-			Image: "imageName",
+			Name:            "jobName",
+			Image:           "imageName",
+			ImagePullPolicy: apiv1.PullAlways,
 		},
 	}
 

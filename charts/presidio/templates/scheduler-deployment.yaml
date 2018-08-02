@@ -45,5 +45,9 @@ spec:
             value: {{ .Values.registry }}/{{ .Values.databinder.name }}:{{ default .Chart.AppVersion .Values.databinder.tag }}
           - name: SCANNER_IMAGE_NAME
             value: {{ .Values.registry }}/{{ .Values.scanner.name }}:{{ default .Chart.AppVersion .Values.scanner.tag }}
+          - name: SCANNER_IMAGE_PULL_POLICY
+            value: {{ default "IfNotPresent" .Values.scanner.imagePullPolicy }}
+          - name: DATABINDER_PULL_POLICY
+            value: {{ default "IfNotPresent" .Values.databinder.imagePullPolicy }}
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}

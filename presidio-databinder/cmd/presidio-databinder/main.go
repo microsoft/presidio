@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"os"
 	"strings"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
 
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
@@ -16,26 +18,29 @@ import (
 )
 
 var (
-	grpcPort        = os.Getenv("GRPC_PORT")
-	databinderArray []*databinder.DataBinder
+	grpcPort             = os.Getenv("GRPC_PORT")
+	analyzerDataBinder   databinder.DataBinder
+	anonymizerDataBinder databinder.DataBinder
+	grpcServer           *grpc.Server
+	lis                  net.Listener
 )
 
 type server struct{}
 
 func main() {
+	log.Info("starting!")
 	if grpcPort == "" {
 		// Set to default
 		grpcPort = "5000"
 	}
 
 	// Setup server
-	lis, s := rpc.SetupClient(grpcPort)
+	lis, grpcServer = rpc.SetupClient(grpcPort)
 
-	message_types.RegisterDatabinderServiceServer(s, &server{})
-	reflection.Register(s)
+	message_types.RegisterDatabinderServiceServer(grpcServer, &server{})
+	reflection.Register(grpcServer)
 
-	// Listen for client requests
-	if err := s.Serve(lis); err != nil {
+	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatal(err.Error())
 	}
 }
@@ -46,37 +51,52 @@ func (s *server) Init(ctx context.Context, databinderTemplate *message_types.Dat
 	}
 
 	var err error
-	// initialize each of the databinders
-	for _, databinder := range databinderTemplate.Databinder {
-		if databinder.GetBindType() == "" {
-			return &message_types.DatabinderResponse{}, fmt.Errorf("bindType var must me set")
-		}
 
-		err = createDatabiner(databinder)
+	// initialize each of the databinders
+	if databinderTemplate.AnalyzerKind != "" {
+		analyzerDataBinder, err = createDatabiner(databinderTemplate.Databinder, databinderTemplate.AnalyzerKind)
+		if err != nil {
+			return &message_types.DatabinderResponse{}, err
+		}
+	}
+
+	if databinderTemplate.AnonymizerKind != "" {
+		anonymizerDataBinder, err = createDatabiner(databinderTemplate.Databinder, databinderTemplate.AnonymizerKind)
+		if err != nil {
+			return &message_types.DatabinderResponse{}, err
+		}
 	}
 
 	return &message_types.DatabinderResponse{}, err
+}
+
+func (s *server) Completion(ctx context.Context, completionMessage *message_types.CompletionMessage) (*message_types.DatabinderResponse, error) {
+	// os.Exit(0)
+	log.Info("connection closed!")
+	return &message_types.DatabinderResponse{}, nil
 }
 
 func (s *server) Apply(ctx context.Context, r *message_types.DatabinderRequest) (*message_types.DatabinderResponse, error) {
 	// create a slice for the errors
 	var errstrings []string
 
-	for _, element := range databinderArray {
-		err := (*element).WriteAnalyzeResults(r.AnalyzeResults, r.Path)
+	if analyzerDataBinder != nil {
+		err := analyzerDataBinder.WriteAnalyzeResults(r.AnalyzeResults, r.Path)
 		if err != nil {
 			errstrings = append(errstrings, err.Error())
 		}
+	}
+
+	if anonymizerDataBinder != nil {
 		if r.AnonymizeResult != nil {
 			log.Info(fmt.Sprintf("sending anonymized result: %s", r.Path))
-			err := (*element).WriteAnonymizeResults(r.AnonymizeResult, r.Path)
+			err := anonymizerDataBinder.WriteAnonymizeResults(r.AnonymizeResult, r.Path)
 			if err != nil {
 				errstrings = append(errstrings, err.Error())
 			}
 		} else {
 			log.Info(fmt.Sprintf("path %s has no anonymize result", r.Path))
 		}
-
 	}
 
 	var combinedError error
