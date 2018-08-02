@@ -27,6 +27,8 @@ var (
 	namespace          = os.Getenv("presidio_NAMESPACE")
 	analyzerSvcHost    = os.Getenv("ANALYZER_SVC_HOST")
 	analyzerSvcPort    = os.Getenv("ANALYZER_SVC_PORT")
+	anonymizerSvcHost  = os.Getenv("ANONYMIZER_SVC_HOST")
+	anonymizerSvcPort  = os.Getenv("ANONYMIZER_SVC_PORT")
 	redisSvcHost       = os.Getenv("REDIS_HOST")
 	redisSvcPort       = os.Getenv("REDIS_PORT")
 	databinderImage    = os.Getenv("DATABINDER_IMAGE_NAME")
@@ -47,6 +49,13 @@ func main() {
 	}
 	if analyzerSvcPort == "" {
 		log.Fatal("analyzer service port is empty")
+	}
+
+	if anonymizerSvcHost == "" {
+		log.Fatal("anonymizer service address is empty")
+	}
+	if anonymizerSvcPort == "" {
+		log.Fatal("anonymizer service port is empty")
 	}
 
 	if redisSvcHost == "" {
@@ -102,6 +111,8 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 				{Name: "REDIS_SVC_PORT", Value: redisSvcPort},
 				{Name: "ANALYZER_SVC_HOST", Value: analyzerSvcHost},
 				{Name: "ANALYZER_SVC_PORT", Value: analyzerSvcPort},
+				{Name: "ANONYMIZER_SVC_HOST", Value: anonymizerSvcHost},
+				{Name: "ANONYMIZER_SVC_PORT", Value: anonymizerSvcPort},
 				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
 			},
 		},

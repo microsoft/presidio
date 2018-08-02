@@ -37,6 +37,10 @@ spec:
             value:  {{ template "presidio.analyzer.fullname" . }}
           - name: ANALYZER_SVC_PORT
             value: {{ .Values.analyzer.service.externalPort | quote }}
+          - name: ANONYMIZER_SVC_HOST
+            value:  {{ template "presidio.anonymizer.fullname" . }}
+          - name: ANONYMIZER_SVC_PORT
+            value: {{ .Values.anonymizer.service.externalPort | quote }}
           - name: DATABINDER_IMAGE_NAME
             value: {{ .Values.registry }}/{{ .Values.databinder.name }}:{{ default .Chart.AppVersion .Values.databinder.tag }}
           - name: SCANNER_IMAGE_NAME

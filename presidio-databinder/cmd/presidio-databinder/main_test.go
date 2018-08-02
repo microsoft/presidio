@@ -4,9 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	message_types "github.com/presid-io/presidio-genproto/golang"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsDatabase(t *testing.T) {
@@ -16,6 +15,13 @@ func TestIsDatabase(t *testing.T) {
 	assert.True(t, isDatabase("postgres"))
 	assert.True(t, isDatabase("sqlite3"))
 	assert.False(t, isDatabase("kafka"))
+}
+
+func TestIsCloudStorage(t *testing.T) {
+	assert.True(t, isCloudStorage("s3"))
+	assert.True(t, isCloudStorage("azureblob"))
+	assert.True(t, isCloudStorage("googlestorage"))
+	assert.True(t, isCloudStorage("postgres"))
 }
 
 func TestDataBinderInit(t *testing.T) {

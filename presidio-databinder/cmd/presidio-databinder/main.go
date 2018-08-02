@@ -63,10 +63,20 @@ func (s *server) Apply(ctx context.Context, r *message_types.DatabinderRequest) 
 	var errstrings []string
 
 	for _, element := range databinderArray {
-		err := (*element).WriteResults(r.AnalyzeResults, r.Path)
+		err := (*element).WriteAnalyzeResults(r.AnalyzeResults, r.Path)
 		if err != nil {
 			errstrings = append(errstrings, err.Error())
 		}
+		if r.AnonymizeResult != nil {
+			log.Info(fmt.Sprintf("sending anonymized result: %s", r.Path))
+			err := (*element).WriteAnonymizeResults(r.AnonymizeResult, r.Path)
+			if err != nil {
+				errstrings = append(errstrings, err.Error())
+			}
+		} else {
+			log.Info(fmt.Sprintf("path %s has no anonymize result", r.Path))
+		}
+
 	}
 
 	var combinedError error
@@ -74,13 +84,4 @@ func (s *server) Apply(ctx context.Context, r *message_types.DatabinderRequest) 
 		combinedError = fmt.Errorf(strings.Join(errstrings, "\n"))
 	}
 	return &message_types.DatabinderResponse{}, combinedError
-}
-
-func isDatabase(target string) bool {
-	return target == message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_mssql) ||
-		target == message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_mysql) ||
-		target == message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_oracle) ||
-		target == message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_oracle) ||
-		target == message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_postgres) ||
-		target == message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_sqlite3)
 }

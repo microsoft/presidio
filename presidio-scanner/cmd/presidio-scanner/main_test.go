@@ -81,7 +81,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 		itemPath := scannerObj.GetItemPath(item)
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
 
-		results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
+		_, results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 1)
 		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
@@ -91,7 +91,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 
 	api.WalkFiles(container, func(item stow.Item) {
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
+		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 0)
 		assert.Equal(t, err, nil)
@@ -118,7 +118,7 @@ func TestFileExtension(t *testing.T) {
 	// Assert
 	api.WalkFiles(container, func(item stow.Item) {
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
+		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 0)
 		assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
@@ -142,7 +142,7 @@ func TestSendResultToDataBinderReturnsError(t *testing.T) {
 	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("some error"))
 
 	// Act
-	err := sendResultToDataBinder(itemPath, getAnalyzerMockResult().AnalyzeResults, testCache, &databinderMock)
+	err := sendResultToDataBinder(itemPath, getAnalyzerMockResult().AnalyzeResults, &message_types.AnonymizeResponse{}, testCache, &databinderMock)
 
 	// Assert
 	assert.EqualValues(t, err.Error(), "some error")
