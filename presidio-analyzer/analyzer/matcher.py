@@ -30,12 +30,26 @@ class Matcher(object):
 
         return False
 
+
+    def __context_to_keywords(self, context):
+        nlp_context = self.nlp(context)
+
+        # Remove punctionation, stop words and take lemma form and remove duplicates
+        keywords = list(filter(lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
+        keywords = list(set(map(lambda k: k.lemma_, keywords)))
+
+        return keywords
+
+
     def __calculate_context_similarity(self, context, field):
+        # Find keywords in context
+        matched_keywords = list(filter(lambda kw: kw in context, field.context))
+        if(matched_keywords):
+            return 1
 
         # Context similarity = max similarity between context token and a
         # keyword in field.context
-        lowered = context.lower()
-        lemmatized_context = list(map(lambda t: t.lemma_, self.nlp(lowered)))
+        context_keywords = self.__context_to_keywords(context)
         max_similarity = 0.0
 
         # TODO: remove after changing the keywords to be weighted
@@ -44,9 +58,9 @@ class Matcher(object):
         if 'number' in field.context:
             field.context.remove('number')
 
-        for context in self.nlp.pipe(lemmatized_context):
+        for context_keyword in self.nlp.pipe(context_keywords):
             for keyword in self.nlp.pipe(field.context):
-                similarity = context.similarity(keyword)
+                similarity = context_keyword.similarity(keyword)
                 if similarity >= CONTEXT_SIMILARITY_THRESHOLD:
                     max_similarity = max(max_similarity, similarity)
 
@@ -67,7 +81,7 @@ class Matcher(object):
         # Base probability according to the pattern strength
         probability = match_strength
 
-        # Calculate probability based on context
+        # Add context similarity
         context = self.__extract_context(doc, start, end)
         context_similarity = self.__calculate_context_similarity(
             context, field)
@@ -178,7 +192,6 @@ class Matcher(object):
                 continue
             field.text = ent.text
 
-            # TODO FIX
             res = self.__create_result(doc, NER_STRENGTH, field, ent.start_char,
                                        ent.end_char)
 
