@@ -83,9 +83,12 @@ class Matcher(object):
         res.field.name = field.name
         res.text = field.text
 
-        # Validate checksum
-        res.probability = self.__calculate_probability(doc, match_strength,
-                                                       field, start, end)
+        # check score
+        if isinstance(field, type(ner.Ner())):
+            res.probability = NER_STRENGTH
+        else:
+            res.probability = self.__calculate_probability(doc, match_strength,
+                                                           field, start, end)
 
         res.location.start = start
         res.location.end = end
@@ -189,10 +192,10 @@ class Matcher(object):
         text = text.replace('\r', ' ')
         return text
 
-    def new(self, name, data):
+    def __new_payload(self, name, data):
         return type(name, (object,), data)
 
-    def analyze_field_type(self, payload):
+    def __analyze_field_type(self, payload):
         current_field = field_factory.FieldFactory.create(
             payload.field_type_string_filter)
 
@@ -228,14 +231,16 @@ class Matcher(object):
 
         payloads = []
         for field_type_string_filter in field_type_string_filters:
-            payload = self.new('Payload',
-                               {'doc': doc,
-                                'field_type_string_filter': field_type_string_filter,
-                                'results': results})
+            payload = self.__new_payload('Payload',
+                                         {
+                                             'doc': doc,
+                                             'field_type_string_filter': field_type_string_filter,
+                                             'results': results
+                                         })
             payloads.append(payload)
 
         with futures.ThreadPoolExecutor() as executor:
-            executor.map(self.analyze_field_type, payloads)
+            executor.map(self.__analyze_field_type, payloads)
 
         results.sort(key=lambda x: x.location.start, reverse=False)
         return results
