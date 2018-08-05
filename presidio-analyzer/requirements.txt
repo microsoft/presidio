@@ -3,3 +3,4 @@ spacy
 grpcio
 grpcio-tools
 tldextract
+knack

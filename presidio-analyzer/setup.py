@@ -1,8 +1,8 @@
 import setuptools
 import os.path
 
-with open(os.path.dirname(os.path.abspath(__file__)) + '/../README.MD', "r") as fh:
-    long_description = fh.read()
+# with open(os.path.dirname(os.path.abspath(__file__)) + '/../README.MD', "r") as fh:
+#     long_description = fh.read()
 
 setuptools.setup(
     name="presidio_analyzer",
@@ -10,17 +10,25 @@ setuptools.setup(
     author="Presidio team",
     author_email="presidioteam@microsoft.com",
     description="Presidio analyzer package",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
+    # long_description=long_description,
+    # long_description_content_type="text/markdown",
     url="https://github.com/Microsoft/presidio",
-    packages=setuptools.find_packages(exclude=('tests')),
+    packages=[
+        'analyzer',
+        'analyzer.field_types',
+        'analyzer.field_types.us',
+        'analyzer.field_types.globally'],
     install_requires=[
-        'spacy==2.0.11',
         'grpcio>=1.13.0',
         'grpcio-tools>=1.13.0',
-        'tldextract>=2.2.0'],
+        'tldextract>=2.2.0',
+        'knack>=0.4.2'],
     include_package_data=True,
     license='MIT',
+    scripts=[
+        'analyzer/presidio-analyzer',
+        'analyzer/presidio-analyzer.bat',
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

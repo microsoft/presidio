@@ -3,7 +3,9 @@ from concurrent import futures
 import regex as re
 import en_core_web_lg
 import common_pb2
-from field_types import field_factory
+import template_pb2
+import tldextract
+from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
@@ -20,6 +22,10 @@ class Matcher(object):
         Load spacy model once
         """
 
+        # Caching top level domains
+        tldextract.extract("")
+
+        # Load spaCy lg model
         self.nlp = en_core_web_lg.load(disable=['parser', 'tagger'])
 
 
@@ -33,6 +39,17 @@ class Matcher(object):
 
         return keywords
 
+
+    def __context_to_keywords(self, context):
+        nlp_context = self.nlp(context)
+
+        # Remove punctionation, stop words and take lemma form and remove
+        # duplicates
+        keywords = list(filter(
+            lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
+        keywords = list(set(map(lambda k: k.lemma_, keywords)))
+
+        return keywords
 
     def __calculate_context_similarity(self, context, field):
         context_keywords = self.__context_to_keywords(context)
@@ -84,9 +101,12 @@ class Matcher(object):
         res.field.name = field.name
         res.text = field.text
 
-        # Validate checksum
-        res.probability = self.__calculate_probability(doc, match_strength,
-                                                       field, start, end)
+        # check score
+        if isinstance(field, type(ner.Ner())):
+            res.probability = NER_STRENGTH
+        else:
+            res.probability = self.__calculate_probability(doc, match_strength,
+                                                           field, start, end)
 
         res.location.start = start
         res.location.end = end
@@ -189,10 +209,10 @@ class Matcher(object):
         text = text.replace('\r', ' ')
         return text
 
-    def new(self, name, data):
+    def __new_payload(self, name, data):
         return type(name, (object,), data)
 
-    def analyze_field_type(self, payload):
+    def __analyze_field_type(self, payload):
         current_field = field_factory.FieldFactory.create(
             payload.field_type_string_filter)
 
@@ -228,14 +248,16 @@ class Matcher(object):
 
         payloads = []
         for field_type_string_filter in field_type_string_filters:
-            payload = self.new('Payload',
-                               {'doc': doc,
-                                'field_type_string_filter': field_type_string_filter,
-                                'results': results})
+            payload = self.__new_payload('Payload',
+                                         {
+                                             'doc': doc,
+                                             'field_type_string_filter': field_type_string_filter,
+                                             'results': results
+                                         })
             payloads.append(payload)
 
-        with futures.ThreadPoolExecutor() as executor:
-            executor.map(self.analyze_field_type, payloads)
+        with futures.ThreadPoolExecutor(max_workers=10) as executor:
+            executor.map(self.__analyze_field_type, payloads)
 
         results.sort(key=lambda x: x.location.start, reverse=False)
         return results
