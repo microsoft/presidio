@@ -64,7 +64,6 @@ func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
 		}
 		receiveFunc(string(msg.Value))
 	}
-	return nil
 }
 
 //Send message to kafka topic

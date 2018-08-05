@@ -24,16 +24,18 @@ type dbDataBinder struct {
 	connectionString string
 	engine           *xorm.Engine
 	tableName        string
+	resultKind       string
 }
 
 // New returns new instance of DB Data writter
-func New(driverName string, connectionString string, tableName string) databinder.DataBinder {
+func New(databinder *message_types.Databinder, dataBinderKind string, resultKind string) databinder.DataBinder {
 	// default table name
+	tableName := databinder.DbConfig.GetTableName()
 	if tableName == "" {
 		tableName = "scannerresult"
 	}
 
-	db := dbDataBinder{driverName: driverName, connectionString: connectionString, tableName: tableName}
+	db := dbDataBinder{driverName: dataBinderKind, connectionString: databinder.DbConfig.GetConnectionString(), tableName: tableName, resultKind: resultKind}
 	db.Init()
 	return &db
 }
@@ -49,6 +51,13 @@ type analyzerResult struct {
 	Timestamp     time.Time `xorm:"created"`
 }
 
+type anonymizerResult struct {
+	ID             int64 `xorm:"id pk not null autoincr"`
+	Path           string
+	AnonymizedText string    `xorm:"text"`
+	Timestamp      time.Time `xorm:"created"`
+}
+
 func (databinder *dbDataBinder) Init() {
 	var err error
 
@@ -59,13 +68,20 @@ func (databinder *dbDataBinder) Init() {
 	}
 
 	// Create table if not exists
-	err = databinder.engine.Table(databinder.tableName).CreateTable(&analyzerResult{})
-	if err != nil {
-		log.Fatal(err.Error())
+	if databinder.resultKind == "analyze" {
+		err = databinder.engine.Table(databinder.tableName).CreateTable(&analyzerResult{})
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	} else if databinder.resultKind == "anonymize" {
+		err = databinder.engine.Table(databinder.tableName).CreateTable(&anonymizerResult{})
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 }
 
-func (databinder *dbDataBinder) WriteResults(results []*message_types.AnalyzeResult, path string) error {
+func (databinder *dbDataBinder) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}
 
 	for _, element := range results {
@@ -84,6 +100,23 @@ func (databinder *dbDataBinder) WriteResults(results []*message_types.AnalyzeRes
 		return err
 	}
 
-	log.Info(fmt.Sprintf("%d rows were written to the DB successfully", len(results)))
+	log.Info(fmt.Sprintf("path: %s, %d analyzed rows were written to the DB successfully", path, len(results)))
+	return nil
+}
+
+func (databinder *dbDataBinder) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
+	r := anonymizerResult{
+		AnonymizedText: result.Text,
+		Path:           path,
+	}
+
+	// Add row to table
+	_, err := databinder.engine.Table(databinder.tableName).Insert(&r)
+	if err != nil {
+		log.Error(fmt.Sprintf("error analyzeing %s", path))
+		return err
+	}
+
+	log.Info(fmt.Sprintf("path: %s, anonymized result was written to the DB successfully, ", path))
 	return nil
 }

@@ -54,17 +54,12 @@ func (scanner *storageScanner) GetItemUniqueID(input interface{}) (string, error
 	return etag, nil
 }
 
-func (scanner *storageScanner) Init(inputConfig *message_types.CloudStorageConfig) {
-	switch scanner.kind {
-	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_azureblob):
-		scanner.config, scanner.containerName = storage.InitBlobStorage(inputConfig)
-	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_s3):
-		scanner.config, scanner.containerName = storage.InitS3(inputConfig)
-	// case "google":
-	// 	// Add support
-	default:
+func (scanner *storageScanner) Init(cloudStorageConfig *message_types.CloudStorageConfig) {
+	config, containerName, err := storage.Init(scanner.kind, cloudStorageConfig)
+	if err != nil {
 		log.Fatal("Unknown storage kind")
 	}
+	scanner.config, scanner.containerName = config, containerName
 }
 
 // Read the content of the cloud item

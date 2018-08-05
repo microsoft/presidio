@@ -16,9 +16,10 @@ func (s *store) CreateCronJob(name string, schedule string, containerDetailsArra
 	var containers []apiv1.Container
 	for _, containerDetails := range containerDetailsArray {
 		containers = append(containers, apiv1.Container{
-			Name:  containerDetails.Name,
-			Image: containerDetails.Image,
-			Env:   containerDetails.EnvVars,
+			Name:            containerDetails.Name,
+			Image:           containerDetails.Image,
+			Env:             containerDetails.EnvVars,
+			ImagePullPolicy: containerDetails.ImagePullPolicy,
 		})
 	}
 
@@ -30,10 +31,12 @@ func (s *store) CreateCronJob(name string, schedule string, containerDetailsArra
 			},
 		},
 		Spec: v1beta1.CronJobSpec{
-			Schedule: schedule,
+			Schedule:                   schedule,
+			SuccessfulJobsHistoryLimit: int32Ptr(0),
 			JobTemplate: v1beta1.JobTemplateSpec{
 				Spec: batchv1.JobSpec{
 					BackoffLimit: int32Ptr(5),
+					Completions:  int32Ptr(1),
 					Template: apiv1.PodTemplateSpec{
 						Spec: apiv1.PodSpec{
 							Containers:    containers,
