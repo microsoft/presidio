@@ -52,8 +52,10 @@ scheduler:
 
 scanner:
   name: presidio-scanner
+  imagePullPolicy: Always
   # tag:
 
 databinder:
   name: presidio-databinder
+  imagePullPolicy: Always
   # tag:

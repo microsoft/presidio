@@ -29,6 +29,7 @@ type Store interface {
 	DeleteCronJob(name string) error
 }
 
+// ConvertPullPolicyStringToType converts job policy string to pull polcy type
 func ConvertPullPolicyStringToType(pullPolicy string) apiv1.PullPolicy {
 	switch pullPolicy {
 	case "Always":

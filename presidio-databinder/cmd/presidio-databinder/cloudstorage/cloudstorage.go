@@ -59,7 +59,7 @@ func (databinder *cloudStorageDataBinder) WriteAnalyzeResults(results []*message
 		return err
 	}
 
-	log.Info(fmt.Sprintf("%d rows were written to the DB successfully", len(results)))
+	log.Info(fmt.Sprintf("%d rows were written to the cloud storage successfully", len(results)))
 	return nil
 }
 

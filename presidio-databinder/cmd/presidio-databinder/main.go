@@ -71,8 +71,9 @@ func (s *server) Init(ctx context.Context, databinderTemplate *message_types.Dat
 }
 
 func (s *server) Completion(ctx context.Context, completionMessage *message_types.CompletionMessage) (*message_types.DatabinderResponse, error) {
-	// os.Exit(0)
 	log.Info("connection closed!")
+	os.Exit(0)
+
 	return &message_types.DatabinderResponse{}, nil
 }
 

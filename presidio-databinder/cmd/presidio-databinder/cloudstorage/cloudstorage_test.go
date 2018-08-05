@@ -34,13 +34,12 @@ func TestAddActionToFilePath(t *testing.T) {
 
 func TestResultWrittenToStorage(t *testing.T) {
 	// Setup
-	containerName := "test"
+	containerName := "cloudstoragetest"
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 	api, _ := storage.New(kind, config, 10)
 	api.RemoveContainer(containerName)
 
 	databinder := &message_types.Databinder{
-		BindType: "azureblob",
 		CloudStorageConfig: &message_types.CloudStorageConfig{
 			BlobStorageConfig: &message_types.BlobStorageConfig{
 				AccountKey:    storageKey,
@@ -50,7 +49,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 		},
 	}
 
-	cloudStorage := New(databinder)
+	cloudStorage := New(databinder, "azureblob")
 	resultsPath := "someDir/SomeFile.txt"
 	anonymizeResponse := &message_types.AnonymizeResponse{
 		Text: "<Person> live is <Location>",

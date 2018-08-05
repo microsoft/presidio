@@ -50,6 +50,10 @@ func (m *DatabinderMockedObject) Init(ctx context.Context, databinderTemplate *m
 	// Currently not in use.
 	return nil, nil
 }
+func (m *DatabinderMockedObject) Completion(ctx context.Context, databinderTemplate *message_types.CompletionMessage, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+	// Currently not in use.
+	return nil, nil
+}
 
 func (m *DatabinderMockedObject) Apply(ctx context.Context, in *message_types.DatabinderRequest, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
 	args := m.Mock.Called()
@@ -110,6 +114,7 @@ func TestFileExtension(t *testing.T) {
 	serviceMock = analyzeService
 
 	api, _ := storage.New(kind, config, 10)
+	api.RemoveContainer("test")
 	container := createContainer(api)
 	putItem("file1.jpg", container, api)
 	scannerObj = createScanner(getScannerRequest())
@@ -134,6 +139,7 @@ func TestSendResultToDataBinderReturnsError(t *testing.T) {
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 	api, _ := storage.New(kind, config, 10)
 
+	api.RemoveContainer("test")
 	container := createContainer(api)
 	item := putItem("file1.jpg", container, api)
 	itemPath := scannerObj.GetItemPath(item)

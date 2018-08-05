@@ -83,12 +83,8 @@ func main() {
 	}
 
 	// notify databinder that scanner is done
-	_, err = (*databinderService).Completion(context.Background(), &message_types.CompletionMessage{})
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	(*databinderService).Completion(context.Background(), &message_types.CompletionMessage{})
 	log.Info("Done!")
-	os.Exit(0)
 }
 
 func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, path string) (*message_types.AnonymizeResponse, error) {
