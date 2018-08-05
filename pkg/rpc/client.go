@@ -10,20 +10,18 @@ import (
 	"google.golang.org/grpc/codes"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
-	//"google.golang.org/grpc/resolver"
 )
 
 func connect(addr string) (*grpc.ClientConn, error) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	callOpts := []grpc_retry.CallOption{
 		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(1 * time.Second)),
 		grpc_retry.WithCodes(codes.NotFound, codes.Aborted),
+		grpc_retry.WithMax(5),
 	}
-
-	//resolver.SetDefaultScheme("dns")
 
 	conn, err := grpc.DialContext(ctx, addr,
 		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(callOpts...)),

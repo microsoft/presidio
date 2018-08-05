@@ -20,7 +20,6 @@ var anonymizeService *message_types.AnonymizeServiceClient
 var cronJobService *message_types.CronJobServiceClient
 
 func setupGRPCServices() {
-	var err error
 
 	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
 	if analyzerSvcHost == "" {
@@ -46,17 +45,30 @@ func setupGRPCServices() {
 	schedulerSvcHost := os.Getenv("SCHEDULER_SVC_HOST")
 	schedulerSvcPort := os.Getenv("SCHEDULER_SVC_PORT")
 
-	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
+	analyzerAddress := analyzerSvcHost + ":" + analyzerSvcPort
+	anonymizerAddress := anonymizerSvcHost + ":" + anonymizerSvcPort
+
+	var schedulerAddress string
+	if schedulerSvcHost != "" && schedulerSvcPort != "" {
+		schedulerAddress = schedulerSvcHost + ":" + schedulerSvcPort
+	}
+	connectGRPCServices(analyzerAddress, anonymizerAddress, schedulerAddress)
+
+}
+
+func connectGRPCServices(analyzerAddress string, anonymizerAddress string, schedulerAddress string) {
+	var err error
+	analyzeService, err = rpc.SetupAnalyzerService(analyzerAddress)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
-	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
+	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerAddress)
 	if err != nil {
 		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
 	}
 
-	if schedulerSvcHost != "" && schedulerSvcPort != "" {
-		cronJobService, err = rpc.SetupCronJobService(schedulerSvcHost + ":" + schedulerSvcPort)
+	if schedulerAddress != "" {
+		cronJobService, err = rpc.SetupCronJobService(schedulerAddress)
 		if err != nil {
 			log.Error(fmt.Sprintf("Connection to scheduler service failed %q", err))
 		}
