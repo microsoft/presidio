@@ -328,6 +328,18 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:d84c274ffdfd7ce6b4efd64ee776648459009d1f542440b1faa32cb7ed9aba84"
+  name = "github.com/grpc-ecosystem/go-grpc-middleware"
+  packages = [
+    "retry",
+    "util/backoffutils",
+    "util/metautils",
+  ]
+  pruneopts = "UT"
+  revision = "e9c5d9645c437ab1b204cff969a2c0fb16cd4276"
+
+[[projects]]
+  branch = "master"
   digest = "1:e7fa2200102f1e689ef8a5b1397f146d96cbe9f69254a6b44e008f880add2184"
   name = "github.com/harlow/kinesis-consumer"
   packages = [
@@ -653,7 +665,7 @@
   revision = "2a72893556e4d1f6c795a4c039314c9fa751eedb"
 
 [[projects]]
-  digest = "1:d51efa1a467f426c6c490a450f9e064ef27ca3181fc9cc960996664be3c1b80a"
+  digest = "1:76332e947f184a2dc091db40f22c7089ada36bbc577793074639695af85a10fd"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -669,7 +681,9 @@
     "internal",
     "internal/backoff",
     "internal/channelz",
+    "internal/envconfig",
     "internal/grpcrand",
+    "internal/transport",
     "keepalive",
     "metadata",
     "naming",
@@ -682,11 +696,10 @@
     "stats",
     "status",
     "tap",
-    "transport",
   ]
   pruneopts = "UT"
-  revision = "168a6198bcb0ef175f7dacec0b8691fc141dc9b8"
-  version = "v1.13.0"
+  revision = "32fb0ac620c32ba40a4626ddf94d90d12cce3455"
+  version = "v1.14.0"
 
 [[projects]]
   digest = "1:cbc72c4c4886a918d6ab4b95e347ffe259846260f99ebdd8a198c2331cf2b2e9"
@@ -941,6 +954,7 @@
     "github.com/go-redis/redis",
     "github.com/go-sql-driver/mysql",
     "github.com/go-xorm/xorm",
+    "github.com/grpc-ecosystem/go-grpc-middleware/retry",
     "github.com/harlow/kinesis-consumer",
     "github.com/harlow/kinesis-consumer/checkpoint/redis",
     "github.com/joho/godotenv",
@@ -957,7 +971,9 @@
     "golang.org/x/net/context",
     "golang.org/x/sync/errgroup",
     "google.golang.org/grpc",
+    "google.golang.org/grpc/codes",
     "google.golang.org/grpc/reflection",
+    "google.golang.org/grpc/resolver",
     "k8s.io/api/batch/v1",
     "k8s.io/api/batch/v1beta1",
     "k8s.io/api/core/v1",

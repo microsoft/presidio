@@ -28,7 +28,7 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
 
 def serve():
 
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(Analyzer(), server)
 
     port = os.environ['GRPC_PORT']

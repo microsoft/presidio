@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net"
 
-	"google.golang.org/grpc"
-
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"google.golang.org/grpc"
 )
 
 //SetupClient setup grpc listener
