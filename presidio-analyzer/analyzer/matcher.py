@@ -30,20 +30,23 @@ class Matcher(object):
 
         return False
 
-
     def __context_to_keywords(self, context):
         nlp_context = self.nlp(context)
 
-        # Remove punctionation, stop words and take lemma form and remove duplicates
-        keywords = list(filter(lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
+        # Remove punctionation, stop words and take lemma form and remove
+        # duplicates
+        keywords = list(filter(
+            lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
         keywords = list(set(map(lambda k: k.lemma_, keywords)))
 
         return keywords
 
-
     def __calculate_context_similarity(self, context, field):
         # Find keywords in context
-        matched_keywords = list(filter(lambda kw: kw in context, field.context))
+        matched_keywords = list(
+            filter(
+                lambda kw: kw in context,
+                field.context))
         if(matched_keywords):
             return 1
 
@@ -252,7 +255,7 @@ class Matcher(object):
                                          })
             payloads.append(payload)
 
-        with futures.ThreadPoolExecutor() as executor:
+        with futures.ThreadPoolExecutor(max_workers=10) as executor:
             executor.map(self.__analyze_field_type, payloads)
 
         results.sort(key=lambda x: x.location.start, reverse=False)

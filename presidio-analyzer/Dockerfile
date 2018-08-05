@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 ADD ./${NAME}/analyzer /usr/bin/${NAME}/analyzer
 WORKDIR /usr/bin/${NAME}/analyzer
-CMD python __main__.py
+CMD python __main__.py serve
