@@ -23,13 +23,6 @@ class Matcher(object):
 
         self.nlp = en_core_web_lg.load(disable=['parser', 'tagger'])
 
-    def __is_token_start(self, doc, start):
-        for token in doc:
-            if token.idx == start:
-                return True
-
-        return False
-
 
     def __context_to_keywords(self, context):
         nlp_context = self.nlp(context)
@@ -73,10 +66,6 @@ class Matcher(object):
                 return 0
             else:
                 return 1.0
-
-        # Ignore matches with partial tokens
-        if not self.__is_token_start(doc, start):
-            return 0
 
         # Base probability according to the pattern strength
         probability = match_strength
