@@ -12,7 +12,9 @@ def test_all_fields_from_file():
     text = text_file.read()
     results = match.analyze_text(text, types)
     test_time = datetime.datetime.now() - start_time
-    
+
     assert len(results) == 6
     assert test_time.seconds < 1
-    print('test_all_fields runtime: {} seconds, {} microseconds'.format(test_time.seconds, test_time.microseconds))
+    print('test_all_fields runtime: {} seconds, {} microseconds'.format(
+        test_time.seconds, test_time.microseconds))
+

@@ -51,12 +51,13 @@
   version = "1.9.0"
 
 [[constraint]]
-  branch = "master"
-  name = "golang.org/x/sync"
+  name = "google.golang.org/grpc"
+  version = "1.14.0"
 
 [[constraint]]
-  name = "google.golang.org/grpc"
-  version = "1.12.0"
+  name = "github.com/grpc-ecosystem/go-grpc-middleware"
+  branch = "master"
+
 
 [[constraint]]
   name = "k8s.io/api"

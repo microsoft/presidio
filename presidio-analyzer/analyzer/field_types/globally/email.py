@@ -12,7 +12,7 @@ class Email(field_type.FieldType):
     patterns = []
 
     pattern = field_pattern.FieldPattern()
-    pattern.regex = r"([a-z0-9!#$%&'*+\/=?^_`{|.}~-]+@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)"
+    pattern.regex = r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b"
     pattern.name = 'Email (Medium)'
     pattern.strength = 0.5
     patterns.append(pattern)
