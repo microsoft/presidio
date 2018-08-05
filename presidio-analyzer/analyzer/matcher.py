@@ -3,6 +3,7 @@ import regex as re
 import en_core_web_lg
 import common_pb2
 import template_pb2
+import tldextract
 from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
 from concurrent import futures
@@ -21,6 +22,10 @@ class Matcher(object):
         Load spacy model once
         """
 
+        # Caching top level domains
+        tldextract.extract("")
+
+        # Load spaCy lg model
         self.nlp = en_core_web_lg.load(disable=['parser', 'tagger'])
 
     def __is_token_start(self, doc, start):
