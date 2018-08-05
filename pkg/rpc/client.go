@@ -3,14 +3,33 @@ package rpc
 import (
 	"time"
 
-	grpc "google.golang.org/grpc"
-
+	"context"
 	message_types "github.com/Microsoft/presidio-genproto/golang"
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
+	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	//"google.golang.org/grpc/resolver"
 )
 
 func connect(addr string) (*grpc.ClientConn, error) {
 
-	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(1*time.Second), grpc.WithBackoffMaxDelay(1*time.Second), grpc.WithBalancerName("round_robin"))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	callOpts := []grpc_retry.CallOption{
+		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(1 * time.Second)),
+		grpc_retry.WithCodes(codes.NotFound, codes.Aborted),
+	}
+
+	//resolver.SetDefaultScheme("dns")
+
+	conn, err := grpc.DialContext(ctx, addr,
+		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(callOpts...)),
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+		grpc.WithBackoffMaxDelay(5*time.Second),
+		grpc.WithBalancerName("round_robin"))
+
 	if err != nil {
 		return nil, err
 	}
