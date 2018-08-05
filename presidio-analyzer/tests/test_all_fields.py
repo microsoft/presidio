@@ -5,7 +5,6 @@ import os
 
 types = []
 
-
 def test_all_fields_from_file():
     start_time = datetime.datetime.now()
     path = os.path.dirname(__file__) + '/data/demo.txt'
@@ -18,3 +17,4 @@ def test_all_fields_from_file():
     assert test_time.seconds < 1
     print('test_all_fields runtime: {} seconds, {} microseconds'.format(
         test_time.seconds, test_time.microseconds))
+
