@@ -1,11 +1,10 @@
 import logging
+from concurrent import futures
 import regex as re
 import en_core_web_lg
 import common_pb2
-import template_pb2
-from field_types import field_type, field_factory, field_pattern
+from field_types import field_factory
 from field_types.globally import ner
-from concurrent import futures
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 CONTEXT_SIMILARITY_FACTOR = 0.35
@@ -28,20 +27,14 @@ class Matcher(object):
         nlp_context = self.nlp(context)
 
         # Remove punctionation, stop words and take lemma form and remove duplicates
-        keywords = list(filter(lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
+        keywords = list(filter(
+            lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
         keywords = list(set(map(lambda k: k.lemma_, keywords)))
 
         return keywords
 
 
     def __calculate_context_similarity(self, context, field):
-        # Find keywords in context
-        matched_keywords = list(filter(lambda kw: kw in context, field.context))
-        if(matched_keywords):
-            return 1
-
-        # Context similarity = max similarity between context token and a
-        # keyword in field.context
         context_keywords = self.__context_to_keywords(context)
         max_similarity = 0.0
 
@@ -51,9 +44,14 @@ class Matcher(object):
         if 'number' in field.context:
             field.context.remove('number')
 
+        # Context similarity = max similarity between context token and a
+        # keyword in field.context
         for context_keyword in self.nlp.pipe(context_keywords):
             for keyword in self.nlp.pipe(field.context):
-                similarity = context_keyword.similarity(keyword)
+                if keyword == context_keyword:
+                    similarity = 1
+                else:
+                    similarity = context_keyword.similarity(keyword)
                 if similarity >= CONTEXT_SIMILARITY_THRESHOLD:
                     max_similarity = max(max_similarity, similarity)
 
@@ -62,7 +60,7 @@ class Matcher(object):
     def __calculate_probability(self, doc, match_strength, field, start, end):
         if field.should_check_checksum:
             if field.check_checksum() is not True:
-                logging.info("Checksum failed for " + field.text)
+                logging.info('Checksum failed for %s', field.text)
                 return 0
             else:
                 return 1.0
