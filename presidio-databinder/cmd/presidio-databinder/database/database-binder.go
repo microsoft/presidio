@@ -24,17 +24,18 @@ type dbDataBinder struct {
 	connectionString string
 	engine           *xorm.Engine
 	tableName        string
+	resultKind       string
 }
 
 // New returns new instance of DB Data writter
-func New(databinder *message_types.Databinder, kind string) databinder.DataBinder {
+func New(databinder *message_types.Databinder, dataBinderKind string, resultKind string) databinder.DataBinder {
 	// default table name
 	tableName := databinder.DbConfig.GetTableName()
 	if tableName == "" {
 		tableName = "scannerresult"
 	}
 
-	db := dbDataBinder{driverName: kind, connectionString: databinder.DbConfig.GetConnectionString(), tableName: tableName}
+	db := dbDataBinder{driverName: dataBinderKind, connectionString: databinder.DbConfig.GetConnectionString(), tableName: tableName, resultKind: resultKind}
 	db.Init()
 	return &db
 }
@@ -57,10 +58,6 @@ type anonymizerResult struct {
 	Timestamp      time.Time `xorm:"created"`
 }
 
-func (databinder *dbDataBinder) getAnonymizerTableName() string {
-	return fmt.Sprintf("%sAnonymized", databinder.tableName)
-}
-
 func (databinder *dbDataBinder) Init() {
 	var err error
 
@@ -71,14 +68,16 @@ func (databinder *dbDataBinder) Init() {
 	}
 
 	// Create table if not exists
-	err = databinder.engine.Table(databinder.tableName).CreateTable(&analyzerResult{})
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	err = databinder.engine.Table(databinder.getAnonymizerTableName()).CreateTable(&anonymizerResult{})
-	if err != nil {
-		log.Fatal(err.Error())
+	if databinder.resultKind == "analyze" {
+		err = databinder.engine.Table(databinder.tableName).CreateTable(&analyzerResult{})
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	} else if databinder.resultKind == "anonymize" {
+		err = databinder.engine.Table(databinder.tableName).CreateTable(&anonymizerResult{})
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 }
 
@@ -112,7 +111,7 @@ func (databinder *dbDataBinder) WriteAnonymizeResults(result *message_types.Anon
 	}
 
 	// Add row to table
-	_, err := databinder.engine.Table(databinder.getAnonymizerTableName()).Insert(&r)
+	_, err := databinder.engine.Table(databinder.tableName).Insert(&r)
 	if err != nil {
 		log.Error(fmt.Sprintf("error analyzeing %s", path))
 		return err

@@ -19,9 +19,9 @@ var (
 )
 
 func TestAddActionToFilePath(t *testing.T) {
-	path := "/enron/blair-l/sent_items/186..txt"
+	path := "/dir1/dir2/dir3/filename.txt"
 	newp := addActionToFilePath(path, "action")
-	assert.Equal(t, newp, "enron/blair-l/sent_items/186.-action.txt")
+	assert.Equal(t, newp, "dir1/dir2/dir3/filename-action.txt")
 
 	path = "/dir/file"
 	newp = addActionToFilePath(path, "action")

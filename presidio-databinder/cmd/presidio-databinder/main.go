@@ -54,14 +54,14 @@ func (s *server) Init(ctx context.Context, databinderTemplate *message_types.Dat
 
 	// initialize each of the databinders
 	if databinderTemplate.AnalyzerKind != "" {
-		analyzerDataBinder, err = createDatabiner(databinderTemplate.Databinder, databinderTemplate.AnalyzerKind)
+		analyzerDataBinder, err = createDatabiner(databinderTemplate.Databinder, databinderTemplate.AnalyzerKind, "analyze")
 		if err != nil {
 			return &message_types.DatabinderResponse{}, err
 		}
 	}
 
 	if databinderTemplate.AnonymizerKind != "" {
-		anonymizerDataBinder, err = createDatabiner(databinderTemplate.Databinder, databinderTemplate.AnonymizerKind)
+		anonymizerDataBinder, err = createDatabiner(databinderTemplate.Databinder, databinderTemplate.AnonymizerKind, "anonymize")
 		if err != nil {
 			return &message_types.DatabinderResponse{}, err
 		}

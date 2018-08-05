@@ -4,10 +4,12 @@ import (
 	"time"
 
 	"context"
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+
+	message_types "github.com/Microsoft/presidio-genproto/golang"
 	//"google.golang.org/grpc/resolver"
 )
 
