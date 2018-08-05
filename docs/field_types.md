@@ -212,5 +212,3 @@
 </table>
 
 <hr/>
-
-Prev: [Install](install.md) `|` Next: [Framework Tutorial](tutorial_framework.md)

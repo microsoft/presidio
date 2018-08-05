@@ -11,8 +11,8 @@ New to Presidio or to DLP systems in general? Well, you came to the right place:
 
 - [Presidio overview](overview.md)
 - [Install Guide](install.md)
-- [Supported Field Types](field-types.md)
-- [Framework Tutorial](tutorial-framework.md)
-- [Service Tutorial](tutorial-service.md)
+- [Supported Field Types](field_types.md)
+- [Framework Tutorial](tutorial_framework.md)
+- [Service Tutorial](tutorial_service.md)
 - [Design](design.md)
 - [Develop Presidio](development.md)
