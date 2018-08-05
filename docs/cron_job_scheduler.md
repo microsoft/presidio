@@ -14,7 +14,7 @@ Supported database solutions: MySQL, SQL Server, SQLite3, PostgreSQL and Oracle.
 
 
 
-To schedule a predioc data scan you need to set the following objects:
+To schedule a predioc data scan you need to set the following objects. <br>
 **Note:** Examples are made with [HTTPie](https://httpie.org/)
 
 ### Analyzer Template:
@@ -102,11 +102,19 @@ For Azure Blob Storage, use the configuration same as the example:
 #### Databases configuration
 We are using [Xorm](http://xorm.io/docs/) for DB connection. Please refer to the documentation for additonal information. 
 
-Connection strings:
-* MySql: <userName>@<serverName>:<password>@tcp(<serverName>.<hostName>:3306)/<databaseName>?allowNativePasswords=true&tls=true
-* PostgreSQL: postgres://<userName>@<serverName>:<password>@<serverName>.<hostName>/<databaseName>?sslmode=verify-full
-* SQL Server: odbc:server=<serverName>.database.windows.net;user id=<userId>;password=<password>;port=1433;database=<databaseName>
-
+Connection strings
+* MySql
+```
+<userName>@<serverName>:<password>@tcp(<serverName>.<hostName>:3306)/<databaseName>?allowNativePasswords=true&tls=true
+```
+* PostgreSQL
+```
+ postgres://<userName>@<serverName>:<password>@<serverName>.<hostName>/<databaseName>?sslmode=verify-full
+ ```
+* SQL Server
+``` 
+odbc:server=<serverName>.database.windows.net;user id=<userId>;password=<password>;port=1433;database=<databaseName>
+```
 
 ### Scanner Template:
  ```
