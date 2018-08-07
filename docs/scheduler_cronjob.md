@@ -3,7 +3,7 @@
 When running Presidio on a Kubernetes cluster you can set a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) to scan your data periodicly.
 You will need to configure the scan's input and the destination to which the analyzed and anonymized results will be stored.
 
-![Design](https://user-images.githubusercontent.com/13463870/43762945-0ec1b1e0-9a32-11e8-980a-e1b3308d1aa7.jpg)
+![Design](https://user-images.githubusercontent.com/13463870/43763824-70493396-9a34-11e8-9aa7-090057012369.jpg)
 
 * A detailed design of the Ingerss Control and the API Serivce can be found  [here](./design.md).
 
@@ -16,22 +16,22 @@ You will need to configure the scan's input and the destination to which the ana
 
 ## Supported Input Sources
 
-- Supported storage solutions:
-  - Azure Blob Storage
-  - AWS S3
-  - More data types will be added soon!
+* Supported storage solutions:
+  * Azure Blob Storage
+  * AWS S3
+  * More data types will be added soon!
 
 ## Supported Output Destinations
 
-- Supported storage solutions:
-  - Azure Blob Storage
-  - AWS S3
-- Supported database solutions:
-  - MySQL
-  - SQL Server
-  - SQLite3
-  - PostgreSQL
-  - Oracle
+* Supported storage solutions:
+  * Azure Blob Storage
+  * AWS S3
+* Supported database solutions:
+  * MySQL
+  * SQL Server
+  * SQLite3
+  * PostgreSQL
+  * Oracle
 
 ## Job Configuration
 
@@ -39,6 +39,7 @@ To schedule a predioc data scan the following objects should be set.
 **Note:** Examples are given using the [HTTPie](https://httpie.org/) syntax.
 
 ### 1. Analyzer Template
+
 Defines which fields the input should be scanned for.  
 A list of all the supported fields can be found [here](./field_types.md).
 ```
