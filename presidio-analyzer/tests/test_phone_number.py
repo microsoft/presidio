@@ -24,6 +24,15 @@ def test_phone_number_strong_match_with_phone_context():
     assert results[0].text == number
     assert results[0].probability == 1
 
+def test_phone_number_strong_match_with_phone_context_no_space():
+    number = '(425) 882-9090'
+    context = 'my phone number is:'
+    results = match.analyze_text(context + number, types)
+
+    assert len(results) == 1
+    assert results[0].text == number
+    assert results[0].probability == 1
+
 
 def test_phone_number_strong_match_with_similar_context():
     number = '(425) 882-9090'

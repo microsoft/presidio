@@ -7,6 +7,9 @@ type DataBinder interface {
 	// Init the specified databinder
 	Init()
 
-	// WriteResults write the analyzer results to the specified databinder
-	WriteResults(results []*message_types.AnalyzeResult, path string) error
+	// WriteAnalyzeResults write the analyzer results to the specified databinder
+	WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error
+
+	// WriteAnonymizeResults write the analyzer results to the specified databinder
+	WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error
 }

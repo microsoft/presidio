@@ -50,6 +50,10 @@ func (m *DatabinderMockedObject) Init(ctx context.Context, databinderTemplate *m
 	// Currently not in use.
 	return nil, nil
 }
+func (m *DatabinderMockedObject) Completion(ctx context.Context, databinderTemplate *message_types.CompletionMessage, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+	// Currently not in use.
+	return nil, nil
+}
 
 func (m *DatabinderMockedObject) Apply(ctx context.Context, in *message_types.DatabinderRequest, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
 	args := m.Mock.Called()
@@ -81,7 +85,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 		itemPath := scannerObj.GetItemPath(item)
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
 
-		results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
+		_, results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 1)
 		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
@@ -91,7 +95,7 @@ func TestAzureScanAndAnalyze(t *testing.T) {
 
 	api.WalkFiles(container, func(item stow.Item) {
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
+		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 0)
 		assert.Equal(t, err, nil)
@@ -110,6 +114,7 @@ func TestFileExtension(t *testing.T) {
 	serviceMock = analyzeService
 
 	api, _ := storage.New(kind, config, 10)
+	api.RemoveContainer("test")
 	container := createContainer(api)
 	putItem("file1.jpg", container, api)
 	scannerObj = createScanner(getScannerRequest())
@@ -118,7 +123,7 @@ func TestFileExtension(t *testing.T) {
 	// Assert
 	api.WalkFiles(container, func(item stow.Item) {
 		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
+		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
 		// validate output
 		assert.Equal(t, len(results), 0)
 		assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
@@ -134,6 +139,7 @@ func TestSendResultToDataBinderReturnsError(t *testing.T) {
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 	api, _ := storage.New(kind, config, 10)
 
+	api.RemoveContainer("test")
 	container := createContainer(api)
 	item := putItem("file1.jpg", container, api)
 	itemPath := scannerObj.GetItemPath(item)
@@ -142,7 +148,7 @@ func TestSendResultToDataBinderReturnsError(t *testing.T) {
 	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("some error"))
 
 	// Act
-	err := sendResultToDataBinder(itemPath, getAnalyzerMockResult().AnalyzeResults, testCache, &databinderMock)
+	err := sendResultToDataBinder(itemPath, getAnalyzerMockResult().AnalyzeResults, &message_types.AnonymizeResponse{}, testCache, &databinderMock)
 
 	// Assert
 	assert.EqualValues(t, err.Error(), "some error")

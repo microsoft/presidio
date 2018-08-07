@@ -1,6 +1,6 @@
 FROM alpine:3.8
 
-RUN apk add --no-cache --virtual .fetch-deps ca-certificates tar
+RUN apk add --no-cache --update ca-certificates tar
 RUN apk add --no-cache openssl pkgconfig g++
 
 RUN mkdir -p /root/librdkafka
@@ -30,7 +30,7 @@ RUN cd "librdkafka" && \
     make install
 
 RUN cd / && \
-  apk del .fetch-deps .build-deps && \
-  rm -rf /root/librdkafka
-  
+    apk del .build-deps && \
+    rm -rf /root/librdkafka
+
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2

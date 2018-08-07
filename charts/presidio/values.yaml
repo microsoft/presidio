@@ -1,4 +1,4 @@
-registry: praesidio
+registry: Microsoft
 
 redis:
     host: redis-master.presidio-system.svc.cluster.local
@@ -52,8 +52,10 @@ scheduler:
 
 scanner:
   name: presidio-scanner
+  imagePullPolicy: Always
   # tag:
 
 databinder:
   name: presidio-databinder
+  imagePullPolicy: Always
   # tag:

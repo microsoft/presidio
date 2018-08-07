@@ -67,14 +67,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:03b8472e3588d9ea83eb222859eedc6eb35273dd8b4f966dfb40af3e26b7725b"
+  digest = "1:009ab5343f900f9e74ba8d578a10925ed06c8e0b2dbff85e523bd549831832e5"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "83c491affec94f44575e4929650e900dc4036f78"
+  revision = "b37a2afec0f75812e70d38ae1b96f12b90f2a1de"
 
 [[projects]]
-  digest = "1:13d1e7511195b8310c3c433fcde64247149fbb737757e230dc2bdf2c9069eb5f"
+  digest = "1:8e279933b3471c06b303289aba34c96a30591f516de33268b42b2f16b64ee685"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -114,8 +114,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "8475c414b1bd58b8cc214873a8854e3a621e67d7"
-  version = "v1.15.0"
+  revision = "f70339bb6af843c8ab1974381b3f4fcaee2b1a41"
+  version = "v1.15.5"
 
 [[projects]]
   digest = "1:a878821c51a2390c0c958d179e7e19ec42cf55a9cce6d4bdbc61d7421b209014"
@@ -328,6 +328,18 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:d84c274ffdfd7ce6b4efd64ee776648459009d1f542440b1faa32cb7ed9aba84"
+  name = "github.com/grpc-ecosystem/go-grpc-middleware"
+  packages = [
+    "retry",
+    "util/backoffutils",
+    "util/metautils",
+  ]
+  pruneopts = "UT"
+  revision = "e9c5d9645c437ab1b204cff969a2c0fb16cd4276"
+
+[[projects]]
+  branch = "master"
   digest = "1:e7fa2200102f1e689ef8a5b1397f146d96cbe9f69254a6b44e008f880add2184"
   name = "github.com/harlow/kinesis-consumer"
   packages = [
@@ -338,12 +350,12 @@
   revision = "23811ec99aa59f870dbc29f74cb5efc345e001fd"
 
 [[projects]]
-  digest = "1:3e260afa138eab6492b531a3b3d10ab4cb70512d423faa78b8949dec76e66a21"
+  digest = "1:8eb1de8112c9924d59bf1d3e5c26f5eaa2bfc2a5fcbb92dc1c2e4546d695f277"
   name = "github.com/imdario/mergo"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9316a62528ac99aaecb4e47eadd6dc8aa6533d58"
-  version = "v0.3.5"
+  revision = "9f23e2d6bd2a77f959b2bf6acdbefd708a83a4a4"
+  version = "v0.3.6"
 
 [[projects]]
   digest = "1:e22af8c7518e1eab6f2eab2b7d7558927f816262586cd6ed9f349c97a6c285c4"
@@ -568,11 +580,11 @@
     "ssh/terminal",
   ]
   pruneopts = "UT"
-  revision = "c126467f60eb25f8f27e5a981f32a87e3965053f"
+  revision = "56440b844dfe139a8ac053f4ecac0b20b79058f4"
 
 [[projects]]
   branch = "master"
-  digest = "1:35dc91eff9861545fea1fd5e723a72202aaeb668f7cda7c415a226ea9e00c35d"
+  digest = "1:b5c3834d33445efdc5a8dcb154bed9e4c211edadbf02f6f5cc20c5e9be26a499"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -584,7 +596,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "c4299a1a0d8524c11563db160fbf9bddbceadb21"
+  revision = "f4c29de78a2a91c00474a2e689954305c350adf9"
 
 [[projects]]
   branch = "master"
@@ -596,14 +608,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8742e6e73627b2877c3f723bc1823d5667ec59011242480309dc90fa862512aa"
+  digest = "1:bdd70b95d2f0faaad6d9e259aad84738c6bdeb8f45245be6487e88df45f5a0f1"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "bd9dbc187b6e1dacfdd2722a87e83093c2d7bd6e"
+  revision = "0ffbfd41fbef8ffcf9b62b0b0aa3a5873ed7a4fe"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -650,10 +662,10 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
-  revision = "2a72893556e4d1f6c795a4c039314c9fa751eedb"
+  revision = "daca94659cb50e9f37c1b834680f2e46358f10b0"
 
 [[projects]]
-  digest = "1:d51efa1a467f426c6c490a450f9e064ef27ca3181fc9cc960996664be3c1b80a"
+  digest = "1:76332e947f184a2dc091db40f22c7089ada36bbc577793074639695af85a10fd"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -669,7 +681,9 @@
     "internal",
     "internal/backoff",
     "internal/channelz",
+    "internal/envconfig",
     "internal/grpcrand",
+    "internal/transport",
     "keepalive",
     "metadata",
     "naming",
@@ -682,11 +696,10 @@
     "stats",
     "status",
     "tap",
-    "transport",
   ]
   pruneopts = "UT"
-  revision = "168a6198bcb0ef175f7dacec0b8691fc141dc9b8"
-  version = "v1.13.0"
+  revision = "32fb0ac620c32ba40a4626ddf94d90d12cce3455"
+  version = "v1.14.0"
 
 [[projects]]
   digest = "1:cbc72c4c4886a918d6ab4b95e347ffe259846260f99ebdd8a198c2331cf2b2e9"
@@ -911,7 +924,7 @@
   name = "k8s.io/kube-openapi"
   packages = ["pkg/util/proto"]
   pruneopts = "UT"
-  revision = "d8ea2fe547a448256204cfc68dfee7b26c720acb"
+  revision = "e3762e86a74c878ffed47484592986685639c2cd"
 
 [[projects]]
   digest = "1:dbe168d18d4c5b1e9172020275a297340579ce4b05cbaacb41ae6f3e3007a913"
@@ -941,6 +954,7 @@
     "github.com/go-redis/redis",
     "github.com/go-sql-driver/mysql",
     "github.com/go-xorm/xorm",
+    "github.com/grpc-ecosystem/go-grpc-middleware/retry",
     "github.com/harlow/kinesis-consumer",
     "github.com/harlow/kinesis-consumer/checkpoint/redis",
     "github.com/joho/godotenv",
@@ -957,6 +971,7 @@
     "golang.org/x/net/context",
     "golang.org/x/sync/errgroup",
     "google.golang.org/grpc",
+    "google.golang.org/grpc/codes",
     "google.golang.org/grpc/reflection",
     "k8s.io/api/batch/v1",
     "k8s.io/api/batch/v1beta1",

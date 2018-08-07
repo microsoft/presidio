@@ -17,46 +17,61 @@ import (
 )
 
 var (
-	storageKind    string
-	grpcPort       string
-	analyzeRequest *message_types.AnalyzeRequest
-	analyzeService *message_types.AnalyzeServiceClient
-	scannerObj     scanner.Scanner
-	scanRequest    *message_types.ScanRequest
+	storageKind      string
+	grpcPort         string
+	analyzeRequest   *message_types.AnalyzeRequest
+	analyzeService   *message_types.AnalyzeServiceClient
+	anonymizeService *message_types.AnonymizeServiceClient
+	scannerObj       scanner.Scanner
+	scanRequest      *message_types.ScanRequest
 )
 
 func main() {
+	log.Info("start!")
 	// Setup objects
 	initScanner()
 
 	cache := setupCache()
 	setupAnalyzerObjects()
+	setupAnoymizerService()
 	databinderService := setupDataBinderService()
 	scannerObj = createScanner(scanRequest)
 
 	err := scannerObj.WalkItems(func(item interface{}) {
-		var scanResult []*message_types.AnalyzeResult
+		var analyzerResult []*message_types.AnalyzeResult
+		var text string
 
 		itemPath := scannerObj.GetItemPath(item)
 		uniqueID, err := scannerObj.GetItemUniqueID(item)
 		if err != nil {
-			log.Error(fmt.Sprintf("error getting item unique id: %s, error: %q", itemPath, err.Error()))
+			log.Error(fmt.Sprintf("error getting item path: %s, error: %q", itemPath, err.Error()))
 			return
 		}
 
-		scanResult, err = analyzeItem(&cache, uniqueID, analyzeService, analyzeRequest, item)
+		text, analyzerResult, err = analyzeItem(&cache, uniqueID, analyzeService, analyzeRequest, item)
 		if err != nil {
 			log.Error(fmt.Sprintf("error scanning file: %s, error: %q", itemPath, err.Error()))
 			return
 		}
 
-		if len(scanResult) > 0 {
-			err = sendResultToDataBinder(itemPath, scanResult, cache, databinderService)
+		if text == "" {
+			log.Info(fmt.Sprintf("item %s was already scanned", itemPath))
+		}
+
+		if len(analyzerResult) > 0 {
+			anonymizerResult, err := anonymizeItem(analyzerResult, text, itemPath)
+
+			if err != nil {
+				log.Error(fmt.Sprintf("error anonymizing item: %s, error: %q", itemPath, err.Error()))
+				return
+			}
+
+			err = sendResultToDataBinder(itemPath, analyzerResult, anonymizerResult, cache, databinderService)
 			if err != nil {
 				log.Error(fmt.Sprintf("error sending file to databinder: %s, error: %q", itemPath, err.Error()))
 				return
 			}
-			log.Info(fmt.Sprintf("%d results were sent to the databinder successfully", len(scanResult)))
+			log.Info(fmt.Sprintf("%d results were sent to the databinder successfully", len(analyzerResult)))
 
 		}
 
@@ -66,6 +81,25 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	// notify databinder that scanner is done
+	(*databinderService).Completion(context.Background(), &message_types.CompletionMessage{})
+	log.Info("Done!")
+}
+
+func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, path string) (*message_types.AnonymizeResponse, error) {
+	if scanRequest.AnonymizeTemplate != nil {
+		srv := *anonymizeService
+
+		anonymizeRequest := &message_types.AnonymizeRequest{
+			Template:       scanRequest.AnonymizeTemplate,
+			Text:           text,
+			AnalyzeResults: analyzeResults,
+		}
+		res, err := srv.Apply(context.Background(), anonymizeRequest)
+		return res, err
+	}
+	return nil, nil
 }
 
 func writeItemToCache(uniqueID string, scannedPath string, cache cache.Cache) {
@@ -76,18 +110,20 @@ func writeItemToCache(uniqueID string, scannedPath string, cache cache.Cache) {
 	}
 }
 
-func sendResultToDataBinder(scannedPath string, results []*message_types.AnalyzeResult, cache cache.Cache,
+func sendResultToDataBinder(scannedPath string, analyzeResults []*message_types.AnalyzeResult,
+	anonymizeResults *message_types.AnonymizeResponse, cache cache.Cache,
 	databinderService *message_types.DatabinderServiceClient) error {
 	srv := *databinderService
 
-	for _, element := range results {
+	for _, element := range analyzeResults {
 		// Remove PII from results
 		element.Text = ""
 	}
 
 	databinderRequest := &message_types.DatabinderRequest{
-		AnalyzeResults: results,
-		Path:           scannedPath,
+		AnalyzeResults:  analyzeResults,
+		AnonymizeResult: anonymizeResults,
+		Path:            scannedPath,
 	}
 
 	_, err := srv.Apply(context.Background(), databinderRequest)
@@ -129,6 +165,28 @@ func setupAnalyzerObjects() {
 	analyzeRequest = &message_types.AnalyzeRequest{
 		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
 		MinProbability:  scanRequest.GetMinProbability(),
+	}
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+}
+
+func setupAnoymizerService() {
+	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
+	if anonymizerSvcHost == "" {
+		log.Fatal("anonymizer service address is empty")
+	}
+
+	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
+	if anonymizerSvcPort == "" {
+		log.Fatal("anonymizer service port is empty")
+	}
+
+	var err error
+	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
+	if err != nil {
+		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
 	}
 
 	if err != nil {
@@ -186,25 +244,25 @@ func analyzeItem(cache *cache.Cache,
 	uniqueID string,
 	analyzeService *message_types.AnalyzeServiceClient,
 	analyzeRequest *message_types.AnalyzeRequest,
-	item interface{}) ([]*message_types.AnalyzeResult, error) {
+	item interface{}) (string, []*message_types.AnalyzeResult, error) {
 	var err error
 	var val string
 
 	err = scannerObj.IsContentSupported(item)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	val, err = (*cache).Get(uniqueID)
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
 	// Value not found in the cache. Need to scan the file and update the cache
 	if val == "" {
 		itemContent, err := scannerObj.GetItemContent(item)
 		if err != nil {
-			return nil, fmt.Errorf("error getting item's content, error: %q", err.Error())
+			return "", nil, fmt.Errorf("error getting item's content, error: %q", err.Error())
 		}
 
 		analyzeRequest.Text = itemContent
@@ -212,12 +270,12 @@ func analyzeItem(cache *cache.Cache,
 		srv := *analyzeService
 		results, err := srv.Apply(context.Background(), analyzeRequest)
 		if err != nil {
-			return nil, err
+			return "", nil, err
 		}
 
-		return results.AnalyzeResults, nil
+		return itemContent, results.AnalyzeResults, nil
 	}
 
 	// Otherwise skip- item was already scanned
-	return nil, nil
+	return "", nil, nil
 }

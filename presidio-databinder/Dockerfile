@@ -15,6 +15,8 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=1 && go build -a -installsuffix cgo -ldf
 
 FROM presidio-alpine
 
+RUN apk add --no-cache --update ca-certificates
+
 ARG NAME=presidio-databinder
 
 WORKDIR  /usr/bin/
