@@ -175,10 +175,7 @@ echo -n '{
       "accountKey": "<AccountKey>",
       "containerName": "<ContainerName>"
     }
-  },
-  "analyzeTemplateId": "<my-analyzer-template-name>",
-  "anonymizeTemplateId": "<my-anonymizer-template-name>",
-  "databinderTemplateId": "<my-databinder-template-name>"
+  }
 }' | http <api-service-address>/api/v1/templates/<my-project>/databinder/<my-scanner-template-name>
 ```
 
@@ -190,10 +187,6 @@ azureblob, s3.
 #### Cloud Storage Configuration
 
 Set \<cloudStorageConfig> as shown [here](#Storage-configuration).
-
-#### Analyzer, Anonymizer and Databinder IDs
-
-Set \<AnalyzerTemplateId>, \<AnonymizerTemplateId> and \<DatabinderTemplateId> according to the values provided in the previous configurations' http requests.  
 
 ### 5. Scheduler Template
 
@@ -209,13 +202,20 @@ echo -n '{
       "recurrencePeriodDuration": "* * * * *"
     }
   },
-  "scanTemplateId": "<my-scanner-template-name>"
+  "scanTemplateId": "<my-scanner-template-name>",
+  "analyzeTemplateId": "<my-analyzer-template-name>",
+  "anonymizeTemplateId": "<my-anonymizer-template-name>",
+  "databinderTemplateId": "<my-databinder-template-name>"
 }' | http <api-service-address>/api/v1/templates/<my-project>/schedule-cronjob/<my-scheduler-template-name>
 ```
 
+#### Analyzer, Anonymizer, Scanner and Databinder IDs
+
+Set \<AnalyzerTemplateId>, \<AnonymizerTemplateId>, \<ScanTemplateId> and \<DatabinderTemplateId> according to the values provided in the previous configurations' http requests.  
+
 #### Recurrence Configuration
 
-Set the '\<recurrencePeriodDuration>' according to the execution [interval](https://crontab.guru/every-1-minute) you'd like. </br>
+Set the '\<recurrencePeriodDuration>' according to the execution [interval](https://crontab.guru/every-1-minute) you'd like.  
 **Parallelism is not supported!** A new job won't be triggered until the previous job is finished.
 
 ### 6. Trigger the Cron Job
