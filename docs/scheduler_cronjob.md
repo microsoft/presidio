@@ -1,29 +1,54 @@
-# Monitor your data with periodic scans 
+# Monitor your data with periodic scans
 
+When running Presidio on a Kubernetes cluster you can set a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) to scan your data periodicly.
+You will need to configure the scan's input and the destination to which the analyzed and anonymized results will be stored.
 
-You can set a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) to scan your data periodicly.
-The scanner will look for new files in the provided storage and will analyzed/anonymize them and output the data into the selected output.
+![Design](https://user-images.githubusercontent.com/13463870/43762945-0ec1b1e0-9a32-11e8-980a-e1b3308d1aa7.jpg)
 
-#### Scanner
-Supported storage solutions: Azure blob storage, AWS S3. <br>
-More data types will be added soon!
+* A detailed design of the Ingerss Control and the API Serivce can be found  [here](./design.md).
 
-#### Output  
-Supported storage solutions: Azure blob storage, AWS S3. <br>
-Supported database solutions: MySQL, SQL Server, SQLite3, PostgreSQL and Oracle.
+## Job stages
 
+1. Retrieves all new items in the provided storage.
+2. Analyzes/anonymizes these new items.
+3. Outputs the data into a configured destination.
+4. Marks the items as scanned using a Redis cache.
 
+## Supported Input Sources
 
-To schedule a predioc data scan you need to set the following objects. <br>
-**Note:** Examples are made with [HTTPie](https://httpie.org/)
+- Supported storage solutions:
+  - Azure Blob Storage
+  - AWS S3
+  - More data types will be added soon!
 
-### Analyzer Template:
+## Supported Output Destinations
+
+- Supported storage solutions:
+  - Azure Blob Storage
+  - AWS S3
+- Supported database solutions:
+  - MySQL
+  - SQL Server
+  - SQLite3
+  - PostgreSQL
+  - Oracle
+
+## Job Configuration
+
+To schedule a predioc data scan the following objects should be set.  
+**Note:** Examples are given using the [HTTPie](https://httpie.org/) syntax.
+
+### 1. Analyzer Template
+Defines which fields the input should be scanned for.  
+A list of all the supported fields can be found [here](./field_types.md).
 ```
-echo -n '{"fields":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+echo -n '{"fields":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-analyzer-template-name>
 ```
 
-### Anoynimzer Template: 
-Anoynimzer Template is not mandatory, use it only if anonymization is needed
+### 2. Anoynimzer Template
+
+Defines the anonymization method that should be executed per each field.  
+If not provided, anonymization will not be done.
 ```
 echo -n '{
   "name": "ANONYMIZER",
@@ -52,11 +77,15 @@ echo -n '{
       }
     }
   ]
-}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymizer-template-name>
 ```
 
-### Databinder Template: 
-Configures the scanner output:
+### 3. Databinder Template
+
+Defines the job's output destination.  
+
+#### Example
+
 ```
 echo -n '{
   "analyzerKind": "<analyzerKind>",
@@ -77,10 +106,15 @@ echo -n '{
 }' | http <api-service-address>/api/v1/templates/<my-project>/databinder/<my-databinder-template-name>
 ```
 
-Supported Analyzer and Anonymizer kinds: azureblob, s3, mysql, mssql, postgres, sqlite3, oracle. <br>
+#### Analyzer and Anonymizer Kind
+
+Use one of the following values for \<analyzerKind> and \<anonymizerKind>:  
+azureblob, s3, mysql, mssql, postgres, sqlite3, oracle.
 
 #### Storage configuration
-For AWS S3 use the following configuration:
+
+For AWS S3, use the following configuration:
+```
 "cloudStorageConfig": {
 	"S3Config": {
 		"accessId": "<AccessId>",
@@ -89,35 +123,49 @@ For AWS S3 use the following configuration:
 		"bucketName": "<BucketName>"
 	}
 }
+```
 
-For Azure Blob Storage, use the configuration same as the example:
+For Azure Blob Storage, use the following configuration:
+```
 "cloudStorageConfig": {
-	"blobStorageConfig": {
-		"accountName": "<AccountName>",
-		"accountKey": "<AccountKey>",
-		"containerName": "<ContainerName>"
-      	}
+    "blobStorageConfig": {
+      "accountName": "<AccountName>",
+      "accountKey": "<AccountKey>",
+      "containerName": "<ContainerName>"
+          }
 }
+```
 
 #### Databases configuration
-We are using [Xorm](http://xorm.io/docs/) for DB connection. Please refer to the documentation for additonal information. 
 
-Connection strings
-* MySql
+We are using [Xorm](http://xorm.io/docs/) library for DB operations.  
+Please refer to Xorm's documentation for additonal information regarding the DB configuration. 
+
+##### Connection strings
+
+- MySql
+
 ```
 <userName>@<serverName>:<password>@tcp(<serverName>.<hostName>:3306)/<databaseName>?allowNativePasswords=true&tls=true
 ```
-* PostgreSQL
+
+- PostgreSQL
+
 ```
  postgres://<userName>@<serverName>:<password>@<serverName>.<hostName>/<databaseName>?sslmode=verify-full
  ```
-* SQL Server
+
+- SQL Server
+
 ``` 
 odbc:server=<serverName>.database.windows.net;user id=<userId>;password=<password>;port=1433;database=<databaseName>
 ```
 
-### Scanner Template:
- ```
+### 4. Scanner Template
+
+Defines the job's input source.  
+
+```
 echo -n '{
   "kind": "<ScannerKind>",
   "cloudStorageConfig": {
@@ -127,20 +175,29 @@ echo -n '{
       "containerName": "<ContainerName>"
     }
   },
-  "analyzeTemplateId": "<AnalyzerTemplateId>",
-  "anonymizeTemplateId": "<AnonymizerTemplateId>",
-  "databinderTemplateId": "<DatabinderTemplateId>"
-}' | http <api-service-address>/api/v1/templates/<my-project>/databinder/<my-databinder-template-name>
+  "analyzeTemplateId": "<my-analyzer-template-name>",
+  "anonymizeTemplateId": "<my-anonymizer-template-name>",
+  "databinderTemplateId": "<my-databinder-template-name>"
+}' | http <api-service-address>/api/v1/templates/<my-project>/databinder/<my-scanner-template-name>
 ```
 
-Anoynimzer Template is not mandatory, use it only if anonymization is needed. <br>
-Supported Scanner kind:
-* azureblob
-* s3
+#### Scanner Kind
 
-Set cloudStorageConfig as shown [here](#Storage-configuration)
+Use one of the following values for \<scannerKind>:  
+azureblob, s3.
 
-### Scheduler Template:
+#### Cloud Storage Configuration
+
+Set \<cloudStorageConfig> as shown [here](#Storage-configuration).
+
+#### Analyzer, Anonymizer and Databinder IDs
+
+Set \<AnalyzerTemplateId>, \<AnonymizerTemplateId> and \<DatabinderTemplateId> according to the values provided in the previous configurations' http requests.  
+
+### 5. Scheduler Template
+
+Defines the Cron job scheduler's configuration.
+
 ```
 echo -n '{
 {
@@ -151,15 +208,19 @@ echo -n '{
       "recurrencePeriodDuration": "* * * * *"
     }
   },
-  "scanTemplateId": "<ScanTemplateId>"
+  "scanTemplateId": "<my-scanner-template-name>"
 }' | http <api-service-address>/api/v1/templates/<my-project>/schedule-cronjob/<my-scheduler-template-name>
 ```
 
-You should define the 'recurrencePeriodDuration' according to the [interval](https://crontab.guru/every-1-minute) that you need. <br>
-Parallelism is not supported, and a new job won't be triggered until the previous job is finished.
+#### Recurrence Configuration
 
+Set the '\<recurrencePeriodDuration>' according to the execution [interval](https://crontab.guru/every-1-minute) you'd like. </br>
+**Parallelism is not supported!** A new job won't be triggered until the previous job is finished.
 
-### Trigger new Cron Job:
+### 6. Trigger the Cron Job
+
+Activates the Cron job with the above configuration.
+
 ```
-echo -n '{"CronJobTemplateId": "<cronjob-scheduleId>" }' | http <api-service-address>/api/v1/projects/proj1/schedule-cronjob
+echo -n '{"CronJobTemplateId": "<my-scheduler-template-name>" }' | http <api-service-address>/api/v1/projects/proj1/schedule-cronjob
 ```
