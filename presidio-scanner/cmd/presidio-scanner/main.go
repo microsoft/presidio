@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/item"
-
 	"github.com/joho/godotenv"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
@@ -19,20 +17,66 @@ import (
 )
 
 var (
-	grpcPort string
+	storageKind      string
+	grpcPort         string
+	analyzeRequest   *message_types.AnalyzeRequest
+	analyzeService   *message_types.AnalyzeServiceClient
+	anonymizeService *message_types.AnonymizeServiceClient
+	scannerObj       scanner.Scanner
+	scanRequest      *message_types.ScanRequest
 )
 
 func main() {
+	log.Info("start!")
 	// Setup objects
-	scanRequest := initScanner()
-	cache := setupCache()
-	analyzeRequest, analyzeService := setupAnalyzerObjects(scanRequest)
-	anonymizeService := setupAnoymizerService(scanRequest)
-	databinderService := setupDataBinderService(scanRequest.DatabinderTemplate)
-	scanner := createScanner(scanRequest)
+	initScanner()
 
-	// Scan
-	_, err := Scan(scanner, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, databinderService)
+	cache := setupCache()
+	setupAnalyzerObjects()
+	setupAnoymizerService()
+	databinderService := setupDataBinderService()
+	scannerObj = createScanner(scanRequest)
+
+	err := scannerObj.WalkItems(func(item interface{}) {
+		var analyzerResult []*message_types.AnalyzeResult
+		var text string
+
+		itemPath := scannerObj.GetItemPath(item)
+		uniqueID, err := scannerObj.GetItemUniqueID(item)
+		if err != nil {
+			log.Error(fmt.Sprintf("error getting item path: %s, error: %q", itemPath, err.Error()))
+			return
+		}
+
+		text, analyzerResult, err = analyzeItem(&cache, uniqueID, analyzeService, analyzeRequest, item)
+		if err != nil {
+			log.Error(fmt.Sprintf("error scanning file: %s, error: %q", itemPath, err.Error()))
+			return
+		}
+
+		if text == "" {
+			log.Info(fmt.Sprintf("item %s was already scanned", itemPath))
+		}
+
+		if len(analyzerResult) > 0 {
+			anonymizerResult, err := anonymizeItem(analyzerResult, text, itemPath)
+
+			if err != nil {
+				log.Error(fmt.Sprintf("error anonymizing item: %s, error: %q", itemPath, err.Error()))
+				return
+			}
+
+			err = sendResultToDataBinder(itemPath, analyzerResult, anonymizerResult, cache, databinderService)
+			if err != nil {
+				log.Error(fmt.Sprintf("error sending file to databinder: %s, error: %q", itemPath, err.Error()))
+				return
+			}
+			log.Info(fmt.Sprintf("%d results were sent to the databinder successfully", len(analyzerResult)))
+
+		}
+
+		writeItemToCache(uniqueID, itemPath, cache)
+	})
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -43,68 +87,12 @@ func main() {
 	log.Info("Done!")
 }
 
-//Scan the data
-func Scan(scanner scanner.Scanner, scanRequest *message_types.ScanRequest, cache cache.Cache,
-	analyzeService *message_types.AnalyzeServiceClient, analyzeRequest *message_types.AnalyzeRequest,
-	anonymizeService *message_types.AnonymizeServiceClient, databinderService *message_types.DatabinderServiceClient) (int, error) {
-
-	return scanner.Scan(func(item interface{}) (int, error) {
-		var analyzerResult []*message_types.AnalyzeResult
-		var text string
-
-		scanItem := createItem(scanRequest.Kind, item)
-		itemPath := scanItem.GetPath()
-		uniqueID, err := scanItem.GetUniqueID()
-		if err != nil {
-			log.Error(fmt.Sprintf("error getting item id: %s, error: %q", itemPath, err.Error()))
-			return 0, err
-		}
-
-		shouldScan, err := shouldScanItem(&cache, scanItem, uniqueID)
-		if err != nil {
-			log.Error(fmt.Sprintf("error getting item from cache: %s, error: %q", itemPath, err.Error()))
-			return 0, err
-		}
-
-		if shouldScan {
-			text, analyzerResult, err = analyzeItem(analyzeService, analyzeRequest, scanItem)
-			if err != nil {
-				log.Error(fmt.Sprintf("error scanning file: %s, error: %q", itemPath, err.Error()))
-				return 0, err
-			}
-
-			if len(analyzerResult) > 0 {
-				anonymizerResult, err := anonymizeItem(analyzerResult, text, itemPath, scanRequest.AnonymizeTemplate, anonymizeService)
-
-				if err != nil {
-					log.Error(fmt.Sprintf("error anonymizing item: %s, error: %q", itemPath, err.Error()))
-					return 0, err
-				}
-
-				err = sendResultToDataBinder(itemPath, analyzerResult, anonymizerResult, cache, databinderService)
-				if err != nil {
-					log.Error(fmt.Sprintf("error sending file to databinder: %s, error: %q", itemPath, err.Error()))
-					return 0, err
-				}
-				log.Info(fmt.Sprintf("%d results were sent to the databinder successfully", len(analyzerResult)))
-
-			}
-			writeItemToCache(uniqueID, itemPath, cache)
-			return 1, nil
-		} else {
-			log.Info(fmt.Sprintf("item %s was already scanned", itemPath))
-			return 0, nil
-		}
-	})
-}
-
-func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, path string, anonymizeTemplate *message_types.AnonymizeTemplate,
-	anonymizeService *message_types.AnonymizeServiceClient) (*message_types.AnonymizeResponse, error) {
-	if anonymizeTemplate != nil {
+func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, path string) (*message_types.AnonymizeResponse, error) {
+	if scanRequest.AnonymizeTemplate != nil {
 		srv := *anonymizeService
 
 		anonymizeRequest := &message_types.AnonymizeRequest{
-			Template:       anonymizeTemplate,
+			Template:       scanRequest.AnonymizeTemplate,
 			Text:           text,
 			AnalyzeResults: analyzeResults,
 		}
@@ -142,13 +130,13 @@ func sendResultToDataBinder(scannedPath string, analyzeResults []*message_types.
 	return err
 }
 
-func setupDataBinderService(databinderTemplate *message_types.DatabinderTemplate) *message_types.DatabinderServiceClient {
+func setupDataBinderService() *message_types.DatabinderServiceClient {
 	databinderService, err := rpc.SetupDataBinderService(fmt.Sprintf("localhost:%s", grpcPort))
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Connection to databinder service failed %q", err))
 	}
 
-	_, err = (*databinderService).Init(context.Background(), databinderTemplate)
+	_, err = (*databinderService).Init(context.Background(), scanRequest.DatabinderTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -157,7 +145,7 @@ func setupDataBinderService(databinderTemplate *message_types.DatabinderTemplate
 }
 
 // Init functions
-func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_types.AnalyzeRequest, *message_types.AnalyzeServiceClient) {
+func setupAnalyzerObjects() {
 	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
 	if analyzerSvcHost == "" {
 		log.Fatal("analyzer service address is empty")
@@ -168,25 +156,23 @@ func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_type
 		log.Fatal("analyzer service port is empty")
 	}
 
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
+	var err error
+	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to analyzer service failed %q", err))
+		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
 	}
 
-	analyzeRequest := &message_types.AnalyzeRequest{
+	analyzeRequest = &message_types.AnalyzeRequest{
 		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
 		MinProbability:  scanRequest.GetMinProbability(),
 	}
 
-	return analyzeRequest, analyzeService
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
 
-func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_types.AnonymizeServiceClient {
-	// Anonymize is not mandatory - initialize objects only if needed
-	if scanRequest.AnonymizeTemplate == nil {
-		return nil
-	}
-
+func setupAnoymizerService() {
 	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
 	if anonymizerSvcHost == "" {
 		log.Fatal("anonymizer service address is empty")
@@ -197,11 +183,15 @@ func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_type
 		log.Fatal("anonymizer service port is empty")
 	}
 
-	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
+	var err error
+	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to anonymizer service failed %q", err))
+		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
 	}
-	return anonymizeService
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
 
 func setupCache() cache.Cache {
@@ -224,64 +214,68 @@ func setupCache() cache.Cache {
 	return cache
 }
 
-func initScanner() *message_types.ScanRequest {
+func initScanner() {
 	godotenv.Load()
 
 	scannerObj := os.Getenv("SCANNER_REQUEST")
-	scanRequest := &message_types.ScanRequest{}
-	err := templates.ConvertJSONToInterface(scannerObj, scanRequest)
+	template := &message_types.ScanRequest{}
+	err := templates.ConvertJSONToInterface(scannerObj, template)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Error formating scanner request %q", err.Error()))
+		log.Fatal(fmt.Sprintf("Error formating scanner template %q", err.Error()))
 	}
+	scanRequest = template
+	storageKind = scanRequest.Kind
 
-	if scanRequest.Kind == "" {
+	if storageKind == "" {
 		log.Fatal("storage king var must me set")
 	}
 
+	// TODO: Change!!
 	grpcPort = os.Getenv("GRPC_PORT")
 	if grpcPort == "" {
 		// Set to default
 		grpcPort = "5000"
 	}
-
-	return scanRequest
 }
 
-func shouldScanItem(cache *cache.Cache, item item.Item, uniqueID string) (bool, error) {
-	err := item.IsContentTypeSupported()
-	if err != nil {
-		return false, err
-	}
-
-	val, err := (*cache).Get(uniqueID)
-	if err != nil {
-		return false, err
-	}
-
-	// if value is not in cache, cache.get will return ""
-	shouldScan := val == ""
-	return shouldScan, nil
-}
-
-// Sends analyzer scan request to the analyzer service and returns analyzer result
-func analyzeItem(
+// analyzeItem checks if the file needs to be scanned.
+// Then sends it to the analyzer and updates the cache that it was scanned.
+func analyzeItem(cache *cache.Cache,
+	uniqueID string,
 	analyzeService *message_types.AnalyzeServiceClient,
 	analyzeRequest *message_types.AnalyzeRequest,
-	item item.Item) (string, []*message_types.AnalyzeResult, error) {
+	item interface{}) (string, []*message_types.AnalyzeResult, error) {
+	var err error
+	var val string
 
-	// Value not found in the cache. Need to scan the file and update the cache
-	itemContent, err := item.GetContent()
-	if err != nil {
-		return "", nil, fmt.Errorf("error getting item's content, error: %q", err.Error())
-	}
-
-	analyzeRequest.Text = itemContent
-
-	srv := *analyzeService
-	results, err := srv.Apply(context.Background(), analyzeRequest)
+	err = scannerObj.IsContentSupported(item)
 	if err != nil {
 		return "", nil, err
 	}
 
-	return itemContent, results.AnalyzeResults, nil
+	val, err = (*cache).Get(uniqueID)
+	if err != nil {
+		return "", nil, err
+	}
+
+	// Value not found in the cache. Need to scan the file and update the cache
+	if val == "" {
+		itemContent, err := scannerObj.GetItemContent(item)
+		if err != nil {
+			return "", nil, fmt.Errorf("error getting item's content, error: %q", err.Error())
+		}
+
+		analyzeRequest.Text = itemContent
+
+		srv := *analyzeService
+		results, err := srv.Apply(context.Background(), analyzeRequest)
+		if err != nil {
+			return "", nil, err
+		}
+
+		return itemContent, results.AnalyzeResults, nil
+	}
+
+	// Otherwise skip- item was already scanned
+	return "", nil, nil
 }
