@@ -28,25 +28,25 @@ func main() {
 	cache := setupCache()
 	analyzeRequest, analyzeService := setupAnalyzerObjects(scanRequest)
 	anonymizeService := setupAnoymizerService(scanRequest)
-	databinderService := setupDataBinderService(scanRequest.DatabinderTemplate)
+	dataSyncService := setupDataSyncService(scanRequest.DataSyncTemplate)
 	scanner := createScanner(scanRequest)
 
 	// Scan
-	_, err := Scan(scanner, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, databinderService)
+	_, err := Scan(scanner, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, dataSyncService)
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	// notify databinder that scanner is done
-	(*databinderService).Completion(context.Background(), &message_types.CompletionMessage{})
+	// notify dataSync that scanner is done
+	(*dataSyncService).Completion(context.Background(), &message_types.CompletionMessage{})
 	log.Info("Done!")
 }
 
 //Scan the data
 func Scan(scanner scanner.Scanner, scanRequest *message_types.ScanRequest, cache cache.Cache,
 	analyzeService *message_types.AnalyzeServiceClient, analyzeRequest *message_types.AnalyzeRequest,
-	anonymizeService *message_types.AnonymizeServiceClient, databinderService *message_types.DatabinderServiceClient) (int, error) {
+	anonymizeService *message_types.AnonymizeServiceClient, dataSyncService *message_types.DataSyncServiceClient) (int, error) {
 
 	return scanner.Scan(func(item interface{}) (int, error) {
 		var analyzerResult []*message_types.AnalyzeResult
@@ -81,20 +81,20 @@ func Scan(scanner scanner.Scanner, scanRequest *message_types.ScanRequest, cache
 					return 0, err
 				}
 
-				err = sendResultToDataBinder(itemPath, analyzerResult, anonymizerResult, cache, databinderService)
+				err = sendResultToDataSync(itemPath, analyzerResult, anonymizerResult, cache, dataSyncService)
 				if err != nil {
-					log.Error(fmt.Sprintf("error sending file to databinder: %s, error: %q", itemPath, err.Error()))
+					log.Error(fmt.Sprintf("error sending file to dataSync: %s, error: %q", itemPath, err.Error()))
 					return 0, err
 				}
-				log.Info(fmt.Sprintf("%d results were sent to the databinder successfully", len(analyzerResult)))
+				log.Info(fmt.Sprintf("%d results were sent to the dataSync successfully", len(analyzerResult)))
 
 			}
 			writeItemToCache(uniqueID, itemPath, cache)
 			return 1, nil
-		} else {
-			log.Info(fmt.Sprintf("item %s was already scanned", itemPath))
-			return 0, nil
 		}
+
+		log.Info(fmt.Sprintf("item %s was already scanned", itemPath))
+		return 0, nil
 	})
 }
 
@@ -115,45 +115,45 @@ func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, p
 }
 
 func writeItemToCache(uniqueID string, scannedPath string, cache cache.Cache) {
-	// If writing to databinder succeeded - update the cache
+	// If writing to dataSync succeeded - update the cache
 	err := cache.Set(uniqueID, scannedPath)
 	if err != nil {
 		log.Error(err.Error())
 	}
 }
 
-func sendResultToDataBinder(scannedPath string, analyzeResults []*message_types.AnalyzeResult,
+func sendResultToDataSync(scannedPath string, analyzeResults []*message_types.AnalyzeResult,
 	anonymizeResults *message_types.AnonymizeResponse, cache cache.Cache,
-	databinderService *message_types.DatabinderServiceClient) error {
-	srv := *databinderService
+	dataSyncService *message_types.DataSyncServiceClient) error {
+	srv := *dataSyncService
 
 	for _, element := range analyzeResults {
 		// Remove PII from results
 		element.Text = ""
 	}
 
-	databinderRequest := &message_types.DatabinderRequest{
+	dataSyncRequest := &message_types.DataSyncRequest{
 		AnalyzeResults:  analyzeResults,
 		AnonymizeResult: anonymizeResults,
 		Path:            scannedPath,
 	}
 
-	_, err := srv.Apply(context.Background(), databinderRequest)
+	_, err := srv.Apply(context.Background(), dataSyncRequest)
 	return err
 }
 
-func setupDataBinderService(databinderTemplate *message_types.DatabinderTemplate) *message_types.DatabinderServiceClient {
-	databinderService, err := rpc.SetupDataBinderService(fmt.Sprintf("localhost:%s", grpcPort))
+func setupDataSyncService(dataSyncTemplate *message_types.DataSyncTemplate) *message_types.DataSyncServiceClient {
+	dataSyncService, err := rpc.SetupDataSyncService(fmt.Sprintf("localhost:%s", grpcPort))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to databinder service failed %q", err))
+		log.Fatal(fmt.Sprintf("Connection to dataSync service failed %q", err))
 	}
 
-	_, err = (*databinderService).Init(context.Background(), databinderTemplate)
+	_, err = (*dataSyncService).Init(context.Background(), dataSyncTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	return databinderService
+	return dataSyncService
 }
 
 // Init functions

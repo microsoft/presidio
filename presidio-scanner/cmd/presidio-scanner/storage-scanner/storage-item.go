@@ -15,6 +15,7 @@ type storageItem struct {
 	item stow.Item
 }
 
+// NewItem create new storage item
 func NewItem(item interface{}) item.Item {
 	stowItem := item.(stow.Item)
 	storageItem := storageItem{item: stowItem}

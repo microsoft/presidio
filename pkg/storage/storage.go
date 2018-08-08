@@ -40,10 +40,10 @@ func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
 // Init cloud storage config
 func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string, error) {
 	switch kind {
-	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_azureblob):
+	case message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_azureblob):
 		config, containerName := InitBlobStorage(cloudStorageConfig)
 		return config, containerName, nil
-	case message_types.DataBinderTypesEnum.String(message_types.DataBinderTypesEnum_s3):
+	case message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_s3):
 		config, containerName := InitS3(cloudStorageConfig)
 		return config, containerName, nil
 	// case "google":
@@ -54,12 +54,18 @@ func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (st
 }
 
 //CreateS3Config create S3 configuration
-func CreateS3Config(accessKeyID string, secretKey string, region string) (string, stow.ConfigMap) {
-	return "s3", stow.ConfigMap{
+func CreateS3Config(accessKeyID string, secretKey string, region string, endpoint string) (string, stow.ConfigMap) {
+	configMap := stow.ConfigMap{
 		s3.ConfigAccessKeyID: accessKeyID,
 		s3.ConfigSecretKey:   secretKey,
 		s3.ConfigRegion:      region,
 	}
+
+	if endpoint != "" {
+		configMap.Set(s3.ConfigEndpoint, endpoint)
+	}
+
+	return "s3", configMap
 }
 
 // InitS3 inits the storage with the supplied credentials
@@ -68,10 +74,11 @@ func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMa
 	s3SecretKey := cloudStorageConfig.S3Config.GetAccessKey()
 	s3Region := cloudStorageConfig.S3Config.GetRegion()
 	s3Bucket := cloudStorageConfig.S3Config.GetBucketName()
+	s3Endpoint := cloudStorageConfig.S3Config.GetEndpoint()
 	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
 		log.Fatal("accessId, accessKey, region, bucket must me set for s3 storage kind.")
 	}
-	_, config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region)
+	_, config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region, s3Endpoint)
 	return config, s3Bucket
 }
 

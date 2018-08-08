@@ -1,4 +1,4 @@
-package databaseBinder
+package database
 
 import (
 	"fmt"
@@ -16,10 +16,10 @@ import (
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
+	"github.com/Microsoft/presidio/presidio-datasync/cmd/presidio-datasync/datasync"
 )
 
-type dbDataBinder struct {
+type dbDataSync struct {
 	driverName       string
 	connectionString string
 	engine           *xorm.Engine
@@ -28,14 +28,14 @@ type dbDataBinder struct {
 }
 
 // New returns new instance of DB Data writter
-func New(databinder *message_types.Databinder, dataBinderKind string, resultKind string) databinder.DataBinder {
+func New(datasync *message_types.DataSync, dataSyncKind string, resultKind string) dataSync.DataSync {
 	// default table name
-	tableName := databinder.DbConfig.GetTableName()
+	tableName := datasync.DbConfig.GetTableName()
 	if tableName == "" {
 		tableName = "scannerresult"
 	}
 
-	db := dbDataBinder{driverName: dataBinderKind, connectionString: databinder.DbConfig.GetConnectionString(), tableName: tableName, resultKind: resultKind}
+	db := dbDataSync{driverName: dataSyncKind, connectionString: datasync.DbConfig.GetConnectionString(), tableName: tableName, resultKind: resultKind}
 	db.Init()
 	return &db
 }
@@ -58,30 +58,30 @@ type anonymizerResult struct {
 	Timestamp      time.Time `xorm:"created"`
 }
 
-func (databinder *dbDataBinder) Init() {
+func (datasync *dbDataSync) Init() {
 	var err error
 
 	// Connect to DB
-	databinder.engine, err = xorm.NewEngine(databinder.driverName, databinder.connectionString)
+	datasync.engine, err = xorm.NewEngine(datasync.driverName, datasync.connectionString)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	// Create table if not exists
-	if databinder.resultKind == "analyze" {
-		err = databinder.engine.Table(databinder.tableName).CreateTable(&analyzerResult{})
+	if datasync.resultKind == "analyze" {
+		err = datasync.engine.Table(datasync.tableName).CreateTable(&analyzerResult{})
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-	} else if databinder.resultKind == "anonymize" {
-		err = databinder.engine.Table(databinder.tableName).CreateTable(&anonymizerResult{})
+	} else if datasync.resultKind == "anonymize" {
+		err = datasync.engine.Table(datasync.tableName).CreateTable(&anonymizerResult{})
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 	}
 }
 
-func (databinder *dbDataBinder) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
+func (datasync *dbDataSync) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}
 
 	for _, element := range results {
@@ -95,7 +95,7 @@ func (databinder *dbDataBinder) WriteAnalyzeResults(results []*message_types.Ana
 	}
 
 	// Add rows to table
-	_, err := databinder.engine.Table(databinder.tableName).Insert(&analyzerResultArray)
+	_, err := datasync.engine.Table(datasync.tableName).Insert(&analyzerResultArray)
 	if err != nil {
 		return err
 	}
@@ -104,14 +104,14 @@ func (databinder *dbDataBinder) WriteAnalyzeResults(results []*message_types.Ana
 	return nil
 }
 
-func (databinder *dbDataBinder) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
+func (datasync *dbDataSync) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
 	r := anonymizerResult{
 		AnonymizedText: result.Text,
 		Path:           path,
 	}
 
 	// Add row to table
-	_, err := databinder.engine.Table(databinder.tableName).Insert(&r)
+	_, err := datasync.engine.Table(datasync.tableName).Insert(&r)
 	if err != nil {
 		log.Error(fmt.Sprintf("error analyzeing %s", path))
 		return err

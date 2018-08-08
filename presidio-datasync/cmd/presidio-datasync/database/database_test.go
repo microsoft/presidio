@@ -1,4 +1,4 @@
-package databaseBinder
+package database
 
 import (
 	"testing"
@@ -21,19 +21,19 @@ func TestResultWrittenToDb(t *testing.T) {
 	tableName := "testTable"
 	engine.DropTables(tableName)
 
-	binder := &message_types.Databinder{
+	sync := &message_types.DataSync{
 		DbConfig: &message_types.DBConfig{
 			ConnectionString: connectionString,
 			TableName:        tableName,
 		},
 	}
 
-	databinder := New(binder, dbKind, "analyze")
+	dataSync := New(sync, dbKind, "analyze")
 	resultsPath := "someDir/SomeFile.txt"
 
 	//Act
 	mockResult := getAnalyzerMockResult()
-	databinder.WriteAnalyzeResults(mockResult, resultsPath)
+	dataSync.WriteAnalyzeResults(mockResult, resultsPath)
 
 	//Verify
 	var sliceOfAnalyzeResult []analyzerResult
@@ -48,10 +48,10 @@ func TestResultWrittenToDb(t *testing.T) {
 	}
 
 	engine.DropTables(tableName)
-	databinder = New(binder, dbKind, "anonymize")
+	dataSync = New(sync, dbKind, "anonymize")
 
 	// Act
-	databinder.WriteAnonymizeResults(anonymizeResponse, resultsPath)
+	dataSync.WriteAnonymizeResults(anonymizeResponse, resultsPath)
 
 	// Verify
 	var sliceOfAnonymizeResult []anonymizerResult

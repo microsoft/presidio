@@ -55,7 +55,7 @@ scanner:
   imagePullPolicy: Always
   # tag:
 
-databinder:
-  name: presidio-databinder
+datasync:
+  name: presidio-datasync
   imagePullPolicy: Always
   # tag:

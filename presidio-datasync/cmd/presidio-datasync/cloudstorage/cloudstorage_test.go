@@ -1,4 +1,4 @@
-package cloudStorageBinder
+package cloudStorage
 
 import (
 	"strings"
@@ -39,7 +39,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 	api, _ := storage.New(kind, config, 10)
 	api.RemoveContainer(containerName)
 
-	databinder := &message_types.Databinder{
+	dataSync := &message_types.DataSync{
 		CloudStorageConfig: &message_types.CloudStorageConfig{
 			BlobStorageConfig: &message_types.BlobStorageConfig{
 				AccountKey:    storageKey,
@@ -49,7 +49,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 		},
 	}
 
-	cloudStorage := New(databinder, "azureblob")
+	cloudStorage := New(dataSync, "azureblob")
 	resultsPath := "someDir/SomeFile.txt"
 	anonymizeResponse := &message_types.AnonymizeResponse{
 		Text: "<Person> live is <Location>",
