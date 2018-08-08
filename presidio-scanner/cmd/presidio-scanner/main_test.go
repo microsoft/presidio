@@ -4,20 +4,19 @@ import (
 	"context"
 	"errors"
 
+	"github.com/stretchr/testify/assert"
+
 	"strings"
 	"testing"
-
-	"github.com/presid-io/stow"
-	"github.com/stretchr/testify/mock"
-	"google.golang.org/grpc"
-
-	"github.com/stretchr/testify/assert"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	c "github.com/Microsoft/presidio/pkg/cache"
 	cache_mock "github.com/Microsoft/presidio/pkg/cache/mock"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
+	"github.com/presid-io/stow"
+	"github.com/stretchr/testify/mock"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -25,7 +24,6 @@ var (
 	storageName = "devstoreaccount1"
 	storageKey  = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
 	testCache   c.Cache
-	serviceMock message_types.AnalyzeServiceClient
 )
 
 // Mocks
@@ -64,94 +62,102 @@ func (m *DatabinderMockedObject) Apply(ctx context.Context, in *message_types.Da
 	return result, args.Error(1)
 }
 
+type testItem struct {
+	path    string
+	content string
+}
+
 // TESTS
-func TestAzureScanAndAnalyze(t *testing.T) {
+func TestAzureScan(t *testing.T) {
+	// Test setup
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
-
-	analyzeService := &ScannerMockedObject{}
-	serviceMock = analyzeService
-	analyzeService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(getAnalyzerMockResult(), nil)
-
-	api, _ := storage.New(kind, config, 10)
-	api.RemoveContainer("test")
-	container := createContainer(api)
-	putItem("file1.txt", container, api)
-	scannerObj = createScanner(getScannerRequest())
+	scanRequest := &message_types.ScanRequest{
+		Kind: kind,
+	}
+	filePath := "dir/file1.txt"
+	container := InitContainer(kind, config)
+	putItems([]testItem{testItem{path: filePath}}, container)
+	scanner := createScanner(getScannerRequest())
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
+	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
+	databinderServiceMock := getDataBinderMock(nil)
+
 	// Act
-	api.WalkFiles(container, func(item stow.Item) {
-		itemPath := scannerObj.GetItemPath(item)
-		uniqueID, _ := scannerObj.GetItemUniqueID(item)
+	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &databinderServiceMock)
 
-		_, results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
-		// validate output
-		assert.Equal(t, len(results), 1)
-		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
-		assert.Equal(t, results[0].Probability, float32(1))
-		writeItemToCache(uniqueID, itemPath, testCache)
-	})
+	// Verify
+	item := getItem(filePath, container)
+	etag, _ := item.ETag()
+	cacheValue, _ := testCache.Get(etag)
 
-	api.WalkFiles(container, func(item stow.Item) {
-		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
-		// validate output
-		assert.Equal(t, len(results), 0)
-		assert.Equal(t, err, nil)
-	})
+	assert.Nil(t, err)
+	assert.Equal(t, "/devstoreaccount1/test/"+filePath, cacheValue)
+	assert.Equal(t, n, 1)
 
-	// test cleanup
-	api.RemoveContainer("test")
+	// On the second scan the item that was already scan should'nt be scanned again
+	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &databinderServiceMock)
+	assert.Nil(t, err)
+	assert.Equal(t, n, 0)
 }
 
 func TestFileExtension(t *testing.T) {
-	// Setup
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
 
-	analyzeService := &ScannerMockedObject{}
-	serviceMock = analyzeService
-
-	api, _ := storage.New(kind, config, 10)
-	api.RemoveContainer("test")
-	container := createContainer(api)
-	putItem("file1.jpg", container, api)
-	scannerObj = createScanner(getScannerRequest())
+	filePath := "dir/file1.jpg"
+	container := InitContainer(kind, config)
+	putItems([]testItem{testItem{path: filePath}}, container)
+	scanner := createScanner(getScannerRequest())
 	analyzeRequest := &message_types.AnalyzeRequest{}
+	scanRequest := &message_types.ScanRequest{
+		Kind: "azureblob",
+	}
 
-	// Assert
-	api.WalkFiles(container, func(item stow.Item) {
-		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
-		// validate output
-		assert.Equal(t, len(results), 0)
-		assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
-	})
+	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
+	databinderServiceMock := getDataBinderMock(nil)
 
-	// test cleanup
-	api.RemoveContainer("test")
+	// Act
+	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &databinderServiceMock)
+	assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
 }
 
 func TestSendResultToDataBinderReturnsError(t *testing.T) {
-	// Setup
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(storageName, storageKey)
-	api, _ := storage.New(kind, config, 10)
+	scanRequest := &message_types.ScanRequest{
+		Kind: "azureblob",
+	}
 
-	api.RemoveContainer("test")
-	container := createContainer(api)
-	item := putItem("file1.jpg", container, api)
-	itemPath := scannerObj.GetItemPath(item)
-	dataBinderSrv := &DatabinderMockedObject{}
-	var databinderMock message_types.DatabinderServiceClient = dataBinderSrv
-	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("some error"))
+	filePath := "dir/file1.jpg"
+	container := InitContainer(kind, config)
+	putItems([]testItem{testItem{path: filePath}}, container)
+	scanner := createScanner(getScannerRequest())
+	analyzeRequest := &message_types.AnalyzeRequest{}
+	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
+	databinderServiceMock := getDataBinderMock(errors.New("some error"))
 
 	// Act
-	err := sendResultToDataBinder(itemPath, getAnalyzerMockResult().AnalyzeResults, &message_types.AnonymizeResponse{}, testCache, &databinderMock)
+	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &databinderServiceMock)
 
-	// Assert
+	// Verify
 	assert.EqualValues(t, err.Error(), "some error")
+}
+
+// TEST HELPERS
+func getAnalyzeServiceMock(expectedResult *message_types.AnalyzeResponse) message_types.AnalyzeServiceClient {
+	analyzeService := &ScannerMockedObject{}
+	anlyzeServiceMock := analyzeService
+	analyzeService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(expectedResult, nil)
+	return anlyzeServiceMock
+}
+
+func getDataBinderMock(expectedError error) message_types.DatabinderServiceClient {
+	dataBinderSrv := &DatabinderMockedObject{}
+	var databinderMock message_types.DatabinderServiceClient = dataBinderSrv
+	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, expectedError)
+	return databinderMock
 }
 
 func getAnalyzerMockResult() *message_types.AnalyzeResponse {
@@ -172,6 +178,17 @@ func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 	return response
 }
 
+func InitContainer(kind string, config stow.ConfigMap) stow.Container {
+	api, _ := storage.New(kind, config, 10)
+	api.RemoveContainer("test")
+	return createContainer(api)
+}
+
+func getItem(name string, container stow.Container) stow.Item {
+	item, _ := container.Item(name)
+	return item
+}
+
 func createContainer(api *storage.API) stow.Container {
 	container, err := api.CreateContainer("test")
 	if err != nil {
@@ -180,14 +197,17 @@ func createContainer(api *storage.API) stow.Container {
 	return container
 }
 
-func putItem(itemName string, container stow.Container, api *storage.API) stow.Item {
-	content := "Please call me. My phone number is (555) 253-0000."
+func putItems(items []testItem, container stow.Container) {
+	for _, item := range items {
+		if item.content == "" {
+			item.content = "Please call me. My phone number is (555) 253-0000."
+		}
 
-	item, err := container.Put(itemName, strings.NewReader(content), int64(len(content)), nil)
-	if err != nil {
-		log.Fatal(err.Error())
+		_, err := container.Put(item.path, strings.NewReader(item.content), int64(len(item.content)), nil)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
-	return item
 }
 
 func getScannerRequest() *message_types.ScanRequest {
