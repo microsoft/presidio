@@ -32,28 +32,19 @@ class Matcher(object):
     def __context_to_keywords(self, context):
         nlp_context = self.nlp(context)
 
-        # Remove punctionation, stop words and take lemma form and remove duplicates
-        keywords = list(filter(
-            lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
-        keywords = list(set(map(lambda k: k.lemma_, keywords)))
-
-        return keywords
-
-
-    def __context_to_keywords(self, context):
-        nlp_context = self.nlp(context)
-
         # Remove punctionation, stop words and take lemma form and remove
         # duplicates
         keywords = list(filter(
             lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
-        keywords = list(set(map(lambda k: k.lemma_, keywords)))
+        keywords = list(set(map(lambda k: k.lemma_.lower(), keywords)))
 
         return keywords
 
+
     def __calculate_context_similarity(self, context, field):
+        # Context similarity is 1 if there's exact match between a keyword in context
+        # and any keyword in field.context 
         context_keywords = self.__context_to_keywords(context)
-        max_similarity = 0.0
 
         # TODO: remove after changing the keywords to be weighted
         if 'card' in field.context:
@@ -61,18 +52,13 @@ class Matcher(object):
         if 'number' in field.context:
             field.context.remove('number')
 
-        # Context similarity = max similarity between context token and a
-        # keyword in field.context
-        for context_keyword in self.nlp.pipe(context_keywords):
-            for keyword in self.nlp.pipe(field.context):
-                if keyword == context_keyword:
-                    similarity = 1
-                else:
-                    similarity = context_keyword.similarity(keyword)
-                if similarity >= CONTEXT_SIMILARITY_THRESHOLD:
-                    max_similarity = max(max_similarity, similarity)
-
-        return min(max_similarity, 1)
+        similarity = 0.0
+        for context_keyword in context_keywords:
+            if context_keyword in field.context:
+                similarity = 1
+                break
+        
+        return similarity
 
     def __calculate_probability(self, doc, match_strength, field, start, end):
         if field.should_check_checksum:
