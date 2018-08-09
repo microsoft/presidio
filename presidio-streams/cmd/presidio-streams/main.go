@@ -17,17 +17,17 @@ import (
 )
 
 var (
-	streamKind         string
-	dataBinderGRPCPort string
-	analyzeRequest     *message_types.AnalyzeRequest
-	analyzeService     *message_types.AnalyzeServiceClient
-	streamRequest      *message_types.StreamRequest
+	streamKind       string
+	datasinkGRPCPort string
+	analyzeRequest   *message_types.AnalyzeRequest
+	analyzeService   *message_types.AnalyzeServiceClient
+	streamRequest    *message_types.StreamRequest
 )
 
 func main() {
 	setupAnalyzerObjects()
 	initStream()
-	setupDataBinderService()
+	setupDatasinkService()
 	_ = createStream()
 
 }
@@ -49,25 +49,25 @@ func initStream() {
 	}
 
 	// TODO: Change!!
-	dataBinderGRPCPort = os.Getenv("DATABINDER_GRPC_PORT")
-	if dataBinderGRPCPort == "" {
+	datasinkGRPCPort = os.Getenv("DATASINK_GRPC_PORT")
+	if datasinkGRPCPort == "" {
 		// Set to default
-		dataBinderGRPCPort = "5000"
+		datasinkGRPCPort = "5000"
 	}
 }
 
-func setupDataBinderService() *message_types.DatabinderServiceClient {
-	databinderService, err := rpc.SetupDataBinderService(fmt.Sprintf("localhost:%s", dataBinderGRPCPort))
+func setupDatasinkService() *message_types.DatasinkServiceClient {
+	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("localhost:%s", datasinkGRPCPort))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to databinder service failed %q", err))
+		log.Fatal(fmt.Sprintf("Connection to datasink service failed %q", err))
 	}
 
-	_, err = (*databinderService).Init(context.Background(), streamRequest.DatabinderTemplate)
+	_, err = (*datasinkService).Init(context.Background(), streamRequest.DatasinkTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	return databinderService
+	return datasinkService
 }
 
 func setupAnalyzerObjects() {

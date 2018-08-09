@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= microsoft
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-api presidio-scanner presidio-scheduler presidio-databinder presidio-streams
-IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-scanner presidio-scheduler presidio-databinder presidio-streams
+BINS        = presidio-anonymizer presidio-api presidio-scanner presidio-scheduler presidio-datasink presidio-streams
+IMAGES      = presidio-anonymizer presidio-api presidio-analyzer presidio-scanner presidio-scheduler presidio-datasink presidio-streams
 
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
@@ -69,9 +69,11 @@ go-test-unit: vendor clean
 	-docker rm test-azure-emulator -f
 	docker run --rm --name test-redis -d -p 6379:6379 redis
 	docker run --rm --name test-azure-emulator -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite
+	docker run --rm --name test-s3-emulator -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock
 	go test -v ./...
 	docker rm test-redis -f
 	docker rm test-azure-emulator -f
+	docker rm test-s3-emulator -f
 	
 .PHONY: test-functional
 test-functional: vendor docker-build

@@ -25,38 +25,38 @@ func TestIsCloudStorage(t *testing.T) {
 	assert.False(t, isCloudStorage("postgres"))
 }
 
-func TestDataBinderInit(t *testing.T) {
+func TestDatasinkInit(t *testing.T) {
 	var s *server
-	databinderTemplate := &message_types.DatabinderTemplate{}
+	datasinkTemplate := &message_types.DatasinkTemplate{}
 
-	// validate databinder is initialized
-	_, err := s.Init(context.Background(), databinderTemplate)
-	assert.EqualError(t, err, "databinderTemplate must me set")
+	// validate datasink is initialized
+	_, err := s.Init(context.Background(), datasinkTemplate)
+	assert.EqualError(t, err, "datasinkTemplate must me set")
 
-	databinder := &message_types.Databinder{
+	datasink := &message_types.Datasink{
 		DbConfig: &message_types.DBConfig{
 			TableName: "name",
 		},
 	}
 
 	// validate connection string is set
-	databinderTemplate = &message_types.DatabinderTemplate{
+	datasinkTemplate = &message_types.DatasinkTemplate{
 		AnalyzerKind: "sqlite3",
-		Databinder:   databinder,
+		Datasink:     datasink,
 	}
-	_, err = s.Init(context.Background(), databinderTemplate)
+	_, err = s.Init(context.Background(), datasinkTemplate)
 	assert.EqualError(t, err, "connectionString var must me set")
 
-	// databinders are empty
-	assert.Empty(t, analyzerDataBinder)
-	assert.Empty(t, anonymizerDataBinder)
+	// datasinks are empty
+	assert.Empty(t, analyzerDatasink)
+	assert.Empty(t, anonymizerDatasink)
 
-	databinder.DbConfig.ConnectionString = "./test.db?cache=shared&mode=rwc"
+	datasink.DbConfig.ConnectionString = "./test.db?cache=shared&mode=rwc"
 
-	databinderTemplate.Databinder = databinder
-	s.Init(context.Background(), databinderTemplate)
+	datasinkTemplate.Datasink = datasink
+	s.Init(context.Background(), datasinkTemplate)
 
-	// validate databinder was created successfully
-	assert.NotEmpty(t, analyzerDataBinder)
-	assert.Empty(t, anonymizerDataBinder)
+	// validate datasink was created successfully
+	assert.NotEmpty(t, analyzerDatasink)
+	assert.Empty(t, anonymizerDatasink)
 }

@@ -35,13 +35,13 @@
   branch = "master"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
-  revision = "2be13f3a9ee0d84e3a72b229d00f4654f4e3011f"
+  revision = "e69feccc706ca4a7f25d78c35b0cf29d9c44a91b"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/csm","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/sdkio","internal/sdkrand","internal/sdkuri","internal/shareddefaults","private/protocol","private/protocol/eventstream","private/protocol/eventstream/eventstreamapi","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restxml","private/protocol/xml/xmlutil","service/kinesis","service/kinesis/kinesisiface","service/s3","service/sts"]
-  revision = "e2b22a3b42bdad95d52bf59f477bdcd57f38191d"
-  version = "v1.15.6"
+  revision = "f9728bfcd31e85d264b4ab20299bbbba241c00ca"
+  version = "v1.15.7"
 
 [[projects]]
   name = "github.com/confluentinc/confluent-kafka-go"
@@ -346,7 +346,7 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","http/httpguts","http2","http2/hpack","idna","internal/timeseries","trace"]
-  revision = "f4c29de78a2a91c00474a2e689954305c350adf9"
+  revision = "f9ce57c11b242f0f1599cf25c89d8cb02c45295a"
 
 [[projects]]
   branch = "master"
@@ -358,7 +358,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "2be389f392cd91df245b41638f818a1c041f0c08"
+  revision = "acbc56fc7007d2a01796d5bde54f39e3b3e95945"
 
 [[projects]]
   name = "golang.org/x/text"
