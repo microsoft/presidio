@@ -1,4 +1,4 @@
-registry: Microsoft
+registry: praesidio
 
 redis:
     host: redis-master.presidio-system.svc.cluster.local

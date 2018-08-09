@@ -10,9 +10,6 @@ import (
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/rpc"
-	"github.com/Microsoft/presidio/pkg/stream"
-	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
-	"github.com/Microsoft/presidio/pkg/stream/kafka"
 	"github.com/Microsoft/presidio/pkg/templates"
 )
 
@@ -28,7 +25,15 @@ func main() {
 	setupAnalyzerObjects()
 	initStream()
 	setupDataBinderService()
-	_ = createStream()
+	stream := createStream()
+	err := stream.Receive(receiveEvents)
+
+	if err != nil {
+		log.Error(err.Error())
+	}
+}
+
+func receiveEvents(data string) {
 
 }
 
@@ -95,18 +100,4 @@ func setupAnalyzerObjects() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-}
-
-func createStream() stream.Stream {
-	config := streamRequest.GetStreamConfig()
-	if streamRequest.GetKind() == "kafka" && config.KafkaConfig != nil {
-		k := kafka.NewConsumer(config.KafkaConfig.GetAddress(), config.KafkaConfig.GetTopic())
-		return k
-	}
-
-	if streamRequest.GetKind() == "eventhub" && config.EhConfig != nil {
-		e := eventhubs.New()
-		return e
-	}
-	return nil
 }

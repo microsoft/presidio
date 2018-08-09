@@ -23,8 +23,8 @@ $(BINS): vendor
 	go build -ldflags '$(LDFLAGS)' -o bin/$@ ./$@/cmd/$@
 
 build-docker-base: 
-	docker build -t presidio-golang -f golang.Dockerfile .
-	docker build -t presidio-alpine -f alpine.Dockerfile .
+	docker build -t presidio-golang -f pkg/platform/golang.Dockerfile .
+	docker build -t presidio-alpine -f pkg/platform/alpine.Dockerfile .
 
 
 # To use docker-build, you need to have Docker installed and configured. You should also set

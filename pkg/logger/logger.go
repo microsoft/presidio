@@ -19,8 +19,11 @@ func init() {
 	// once ensures the singleton is initialized only once
 	once.Do(func() {
 		var err error
+		level := zap.NewAtomicLevelAt(zap.DebugLevel)
 		config := zap.NewDevelopmentConfig()
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+		config.DisableStacktrace = true
+		config.Level = level
 		singleton, err = config.Build()
 		if err != nil {
 			panic(err.Error())
