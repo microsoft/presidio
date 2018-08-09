@@ -1,15 +1,15 @@
-package main
+// +build functional
+
+package tests
 
 import (
 	"context"
 	"errors"
-
-	"github.com/stretchr/testify/assert"
-
 	"strings"
 	"testing"
 
 	"github.com/presid-io/stow"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
 
@@ -18,6 +18,9 @@ import (
 	cache_mock "github.com/Microsoft/presidio/pkg/cache/mock"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
+	"github.com/Microsoft/presidio/pkg/templates"
+	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
+	s "github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
 
 var (
@@ -81,14 +84,14 @@ func TestS3Scan(t *testing.T) {
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := createScanner(scanRequest)
+	scanner := s.CreateScanner(scanRequest)
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -100,7 +103,7 @@ func TestS3Scan(t *testing.T) {
 	assert.Equal(t, n, 1)
 
 	// On the second scan the item that was already scan should'nt be scanned again
-	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err = s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Nil(t, err)
 	assert.Equal(t, n, 0)
 }
@@ -115,14 +118,14 @@ func TestAzureScan(t *testing.T) {
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := createScanner(getScannerRequest(kind))
+	scanner := s.CreateScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -134,7 +137,7 @@ func TestAzureScan(t *testing.T) {
 	assert.Equal(t, n, 1)
 
 	// On the second scan the item that was already scan should'nt be scanned again
-	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err = s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Nil(t, err)
 	assert.Equal(t, n, 0)
 }
@@ -146,7 +149,7 @@ func TestFileExtension(t *testing.T) {
 	filePath := "dir/file1.jpg"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := createScanner(getScannerRequest(kind))
+	scanner := s.CreateScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
 	scanRequest := &message_types.ScanRequest{
 		Kind: "azureblob",
@@ -156,7 +159,7 @@ func TestFileExtension(t *testing.T) {
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	_, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
 }
 
@@ -170,16 +173,64 @@ func TestSendResultToDatasinkReturnsError(t *testing.T) {
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := createScanner(getScannerRequest(kind))
+	scanner := s.CreateScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(errors.New("some error"))
 
 	// Act
-	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	_, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	assert.EqualValues(t, err.Error(), "some error")
+}
+
+func TestResultWrittenToStorage(t *testing.T) {
+	// Setup
+	containerName := "cloudstoragetest"
+	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
+	api, _ := storage.New(kind, config, 10)
+	api.RemoveContainer(containerName)
+
+	datasink := &message_types.Datasink{
+		CloudStorageConfig: &message_types.CloudStorageConfig{
+			BlobStorageConfig: &message_types.BlobStorageConfig{
+				AccountKey:    azureStorageKey,
+				AccountName:   azureStorageName,
+				ContainerName: containerName,
+			},
+		},
+	}
+
+	cloudStorage := cloudStorage.New(datasink, "azureblob")
+	resultsPath := "someDir/SomeFile.txt"
+	anonymizeResponse := &message_types.AnonymizeResponse{
+		Text: "<Person> live is <Location>",
+	}
+	//Act
+	cloudStorage.WriteAnalyzeResults(getAnalyzerMockResult().AnalyzeResults, resultsPath)
+	cloudStorage.WriteAnonymizeResults(anonymizeResponse, resultsPath)
+
+	//Verify
+	container, _ := api.CreateContainer(containerName)
+	count := 0
+
+	api.WalkFiles(container, func(item stow.Item) {
+		count++
+		if strings.Contains(item.Name(), "analyzed") {
+			analyzedFile, _ := storage.ReadObject(item)
+			expectedContent, _ := templates.ConvertInterfaceToJSON(getAnalyzerMockResult().AnalyzeResults)
+			assert.Equal(t, analyzedFile, expectedContent)
+		} else if strings.Contains(item.Name(), "anonymized") {
+			anonymizedFile, _ := storage.ReadObject(item)
+			assert.Equal(t, anonymizedFile, anonymizeResponse.Text)
+		}
+	})
+
+	assert.Equal(t, count, 2)
+
+	// Cleanup
+	api.RemoveContainer(containerName)
 }
 
 // TEST HELPERS
