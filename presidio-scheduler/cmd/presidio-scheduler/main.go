@@ -101,7 +101,7 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 
 	err = store.CreateCronJob(r.Name, r.Trigger.Schedule.GetRecurrencePeriodDuration(), []platform.ContainerDetails{
 		{
-			Name:  "dataSync",
+			Name:  "datasync",
 			Image: dataSyncImage,
 			EnvVars: []apiv1.EnvVar{
 				{Name: "GRPC_PORT", Value: dataSyncGrpcPort},

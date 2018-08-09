@@ -167,7 +167,7 @@ func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobAp
 	api.getTemplate(project, "scan", scanID, scanTemplate, c)
 
 	dataSyncTemplate := &message_types.DataSyncTemplate{}
-	api.getTemplate(project, "dataSync", cronJobTemplate.DataSyncTemplateId, dataSyncTemplate, c)
+	api.getTemplate(project, "datasync", cronJobTemplate.DataSyncTemplateId, dataSyncTemplate, c)
 
 	analyzeTemplate := &message_types.AnalyzeTemplate{}
 	api.getTemplate(project, "analyze", cronJobTemplate.AnalyzeTemplateId, analyzeTemplate, c)
