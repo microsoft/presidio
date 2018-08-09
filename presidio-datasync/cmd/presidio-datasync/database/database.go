@@ -113,7 +113,7 @@ func (datasync *dbDataSync) WriteAnonymizeResults(result *message_types.Anonymiz
 	// Add row to table
 	_, err := datasync.engine.Table(datasync.tableName).Insert(&r)
 	if err != nil {
-		log.Error(fmt.Sprintf("error analyzeing %s", path))
+		log.Error(fmt.Sprintf("error sending rows to anonymized table %s", path))
 		return err
 	}
 
