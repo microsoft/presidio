@@ -99,13 +99,21 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
 	scannerPolicy := platform.ConvertPullPolicyStringToType(scannerImagePullPolicy)
 
+	dataSinkEnvVars := []apiv1.EnvVar{
+		{Name: "GRPC_PORT", Value: datasinkGrpcPort},
+	}
+	if r.ScanRequest.DatasinkTemplate.Datasink.StreamConfig != nil {
+		if r.ScanRequest.DatasinkTemplate.AnalyzerKind == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub)
+		|| r.ScanRequest.DatasinkTemplate.AnonymizerKind == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub){
+			dataSinkEnvVars 
+		}
+	}
+
 	err = store.CreateCronJob(r.Name, r.Trigger.Schedule.GetRecurrencePeriodDuration(), []platform.ContainerDetails{
 		{
 			Name:  "datasink",
 			Image: datasinkImage,
-			EnvVars: []apiv1.EnvVar{
-				{Name: "GRPC_PORT", Value: datasinkGrpcPort},
-			},
+			EnvVars: dataSinkEnvVars,
 			ImagePullPolicy: datasinkPolicy,
 		},
 		{
