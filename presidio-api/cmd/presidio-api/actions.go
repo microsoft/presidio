@@ -166,21 +166,21 @@ func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobAp
 	scanTemplate := &message_types.ScanTemplate{}
 	api.getTemplate(project, "scan", scanID, scanTemplate, c)
 
-	databinderTemplate := &message_types.DatabinderTemplate{}
-	api.getTemplate(project, "databinder", scanTemplate.DatabinderTemplateId, databinderTemplate, c)
+	datasinkTemplate := &message_types.DatasinkTemplate{}
+	api.getTemplate(project, "datasink", cronJobTemplate.DatasinkTemplateId, datasinkTemplate, c)
 
 	analyzeTemplate := &message_types.AnalyzeTemplate{}
-	api.getTemplate(project, "analyze", scanTemplate.AnalyzeTemplateId, analyzeTemplate, c)
+	api.getTemplate(project, "analyze", cronJobTemplate.AnalyzeTemplateId, analyzeTemplate, c)
 
 	anonymizeTemplate := &message_types.AnonymizeTemplate{}
-	if scanTemplate.AnonymizeTemplateId != "" {
-		api.getTemplate(project, "anonymize", scanTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
+	if cronJobTemplate.AnonymizeTemplateId != "" {
+		api.getTemplate(project, "anonymize", cronJobTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
 	}
 
 	scanRequest := &message_types.ScanRequest{
 		AnalyzeTemplate:    analyzeTemplate,
 		AnonymizeTemplate:  anonymizeTemplate,
-		DatabinderTemplate: databinderTemplate,
+		DatasinkTemplate:   datasinkTemplate,
 		CloudStorageConfig: scanTemplate.CloudStorageConfig,
 		Kind:               scanTemplate.Kind,
 		MinProbability:     scanTemplate.MinProbability,

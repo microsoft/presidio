@@ -1,4 +1,4 @@
-package cloudStorageBinder
+package cloudStorage
 
 import (
 	"fmt"
@@ -10,29 +10,29 @@ import (
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
 	"github.com/Microsoft/presidio/pkg/templates"
-	"github.com/Microsoft/presidio/presidio-databinder/cmd/presidio-databinder/databinder"
+	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
-type cloudStorageDataBinder struct {
+type cloudStorageDatasink struct {
 	kind               string
 	cloudStorageConfig *message_types.CloudStorageConfig
 	container          stow.Container
 }
 
 // New returns new instance of DB Data writter
-func New(databinder *message_types.Databinder, kind string) databinder.DataBinder {
-	db := cloudStorageDataBinder{kind: kind, cloudStorageConfig: databinder.GetCloudStorageConfig()}
+func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
+	db := cloudStorageDatasink{kind: kind, cloudStorageConfig: datasink.GetCloudStorageConfig()}
 	db.Init()
 	return &db
 }
 
-func (databinder *cloudStorageDataBinder) Init() {
-	config, containerName, err := storage.Init(databinder.kind, databinder.cloudStorageConfig)
+func (datasink *cloudStorageDatasink) Init() {
+	config, containerName, err := storage.Init(datasink.kind, datasink.cloudStorageConfig)
 	if err != nil {
 		log.Fatal("Unknown storage kind")
 	}
 
-	storageAPI, err := storage.New(databinder.kind, config, 10)
+	storageAPI, err := storage.New(datasink.kind, config, 10)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -43,17 +43,17 @@ func (databinder *cloudStorageDataBinder) Init() {
 		log.Fatal(err.Error())
 	}
 
-	databinder.container = container
+	datasink.container = container
 }
 
-func (databinder *cloudStorageDataBinder) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
+func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
 	resultString, err := templates.ConvertInterfaceToJSON(results)
 	if err != nil {
 		log.Error(err.Error())
 		return err
 	}
 
-	err = storage.PutItem(addActionToFilePath(path, "analyzed"), resultString, databinder.container)
+	err = storage.PutItem(addActionToFilePath(path, "analyzed"), resultString, datasink.container)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -63,8 +63,8 @@ func (databinder *cloudStorageDataBinder) WriteAnalyzeResults(results []*message
 	return nil
 }
 
-func (databinder *cloudStorageDataBinder) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
-	err := storage.PutItem(addActionToFilePath(path, "anonymized"), result.Text, databinder.container)
+func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
+	err := storage.PutItem(addActionToFilePath(path, "anonymized"), result.Text, datasink.container)
 	if err != nil {
 		log.Error(err.Error())
 		return err

@@ -58,13 +58,13 @@ func SetupAnalyzerService(address string) (*message_types.AnalyzeServiceClient, 
 	return &client, nil
 }
 
-//SetupDataBinderService ...
-func SetupDataBinderService(address string) (*message_types.DatabinderServiceClient, error) {
+//SetupDatasinkService ...
+func SetupDatasinkService(address string) (*message_types.DatasinkServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
-	client := message_types.NewDatabinderServiceClient(conn)
+	client := message_types.NewDatasinkServiceClient(conn)
 	return &client, nil
 }
 

@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"github.com/stretchr/testify/assert"
+
 	"strings"
 	"testing"
 
 	"github.com/presid-io/stow"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
-
-	"github.com/stretchr/testify/assert"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	c "github.com/Microsoft/presidio/pkg/cache"
@@ -22,10 +22,13 @@ import (
 
 var (
 	// Azure emulator connection string
-	storageName = "devstoreaccount1"
-	storageKey  = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
-	testCache   c.Cache
-	serviceMock message_types.AnalyzeServiceClient
+	azureStorageName = "devstoreaccount1"
+	azureStorageKey  = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+	s3AccessID       = "foo"
+	s3AccessKey      = "bar"
+	s3Endpoint       = "http://localhost:9090"
+	s3Region         = "us-east-1"
+	testCache        c.Cache
 )
 
 // Mocks
@@ -33,7 +36,7 @@ type ScannerMockedObject struct {
 	mock.Mock
 }
 
-type DatabinderMockedObject struct {
+type DatasinkMockedObject struct {
 	mock.Mock
 }
 
@@ -46,112 +49,152 @@ func (m *ScannerMockedObject) Apply(c context.Context, analyzeRequest *message_t
 	return result, args.Error(1)
 }
 
-func (m *DatabinderMockedObject) Init(ctx context.Context, databinderTemplate *message_types.DatabinderTemplate, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+func (m *DatasinkMockedObject) Init(ctx context.Context, datasinkTemplate *message_types.DatasinkTemplate, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
 	// Currently not in use.
 	return nil, nil
 }
-func (m *DatabinderMockedObject) Completion(ctx context.Context, databinderTemplate *message_types.CompletionMessage, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+func (m *DatasinkMockedObject) Completion(ctx context.Context, datasinkTemplate *message_types.CompletionMessage, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
 	// Currently not in use.
 	return nil, nil
 }
 
-func (m *DatabinderMockedObject) Apply(ctx context.Context, in *message_types.DatabinderRequest, opts ...grpc.CallOption) (*message_types.DatabinderResponse, error) {
+func (m *DatasinkMockedObject) Apply(ctx context.Context, in *message_types.DatasinkRequest, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
 	args := m.Mock.Called()
-	var result *message_types.DatabinderResponse
+	var result *message_types.DatasinkResponse
 	if args.Get(0) != nil {
-		result = args.Get(0).(*message_types.DatabinderResponse)
+		result = args.Get(0).(*message_types.DatasinkResponse)
 	}
 	return result, args.Error(1)
 }
 
+type testItem struct {
+	path    string
+	content string
+}
+
 // TESTS
-func TestAzureScanAndAnalyze(t *testing.T) {
+func TestS3Scan(t *testing.T) {
+	// Test setup
 	testCache = cache_mock.New()
-	kind, config := storage.CreateAzureConfig(storageName, storageKey)
-
-	analyzeService := &ScannerMockedObject{}
-	serviceMock = analyzeService
-	analyzeService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(getAnalyzerMockResult(), nil)
-
-	api, _ := storage.New(kind, config, 10)
-	api.RemoveContainer("test")
-	container := createContainer(api)
-	putItem("file1.txt", container, api)
-	scannerObj = createScanner(getScannerRequest())
+	kind, config := storage.CreateS3Config(s3AccessID, s3AccessKey, s3Region, s3Endpoint)
+	scanRequest := getScannerRequest(kind)
+	filePath := "dir/file1.txt"
+	container := InitContainer(kind, config)
+	putItems([]testItem{{path: filePath}}, container)
+	scanner := createScanner(scanRequest)
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
+	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
+	datasinkServiceMock := getDatasinkMock(nil)
+
 	// Act
-	api.WalkFiles(container, func(item stow.Item) {
-		itemPath := scannerObj.GetItemPath(item)
-		uniqueID, _ := scannerObj.GetItemUniqueID(item)
+	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
-		_, results, _ := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
-		// validate output
-		assert.Equal(t, len(results), 1)
-		assert.Equal(t, results[0].GetField().Name, "PHONE_NUMBER")
-		assert.Equal(t, results[0].Probability, float32(1))
-		writeItemToCache(uniqueID, itemPath, testCache)
-	})
+	// Verify
+	item := getItem(filePath, container)
+	etag, _ := item.ETag()
+	cacheValue, _ := testCache.Get(etag)
 
-	api.WalkFiles(container, func(item stow.Item) {
-		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
-		// validate output
-		assert.Equal(t, len(results), 0)
-		assert.Equal(t, err, nil)
-	})
+	assert.Nil(t, err)
+	assert.Equal(t, "test/"+filePath, cacheValue)
+	assert.Equal(t, n, 1)
 
-	// test cleanup
-	api.RemoveContainer("test")
+	// On the second scan the item that was already scan should'nt be scanned again
+	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	assert.Nil(t, err)
+	assert.Equal(t, n, 0)
+}
+
+func TestAzureScan(t *testing.T) {
+	// Test setup
+	testCache = cache_mock.New()
+	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
+	scanRequest := &message_types.ScanRequest{
+		Kind: kind,
+	}
+	filePath := "dir/file1.txt"
+	container := InitContainer(kind, config)
+	putItems([]testItem{{path: filePath}}, container)
+	scanner := createScanner(getScannerRequest(kind))
+	analyzeRequest := &message_types.AnalyzeRequest{}
+
+	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
+	datasinkServiceMock := getDatasinkMock(nil)
+
+	// Act
+	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+
+	// Verify
+	item := getItem(filePath, container)
+	etag, _ := item.ETag()
+	cacheValue, _ := testCache.Get(etag)
+
+	assert.Nil(t, err)
+	assert.Equal(t, "/devstoreaccount1/test/"+filePath, cacheValue)
+	assert.Equal(t, n, 1)
+
+	// On the second scan the item that was already scan should'nt be scanned again
+	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	assert.Nil(t, err)
+	assert.Equal(t, n, 0)
 }
 
 func TestFileExtension(t *testing.T) {
-	// Setup
 	testCache = cache_mock.New()
-	kind, config := storage.CreateAzureConfig(storageName, storageKey)
+	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
 
-	analyzeService := &ScannerMockedObject{}
-	serviceMock = analyzeService
-
-	api, _ := storage.New(kind, config, 10)
-	api.RemoveContainer("test")
-	container := createContainer(api)
-	putItem("file1.jpg", container, api)
-	scannerObj = createScanner(getScannerRequest())
+	filePath := "dir/file1.jpg"
+	container := InitContainer(kind, config)
+	putItems([]testItem{{path: filePath}}, container)
+	scanner := createScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
+	scanRequest := &message_types.ScanRequest{
+		Kind: "azureblob",
+	}
 
-	// Assert
-	api.WalkFiles(container, func(item stow.Item) {
-		uniqueID, _ := scannerObj.GetItemUniqueID(item)
-		_, results, err := analyzeItem(&testCache, uniqueID, &serviceMock, analyzeRequest, item)
-		// validate output
-		assert.Equal(t, len(results), 0)
-		assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
-	})
-
-	// test cleanup
-	api.RemoveContainer("test")
-}
-
-func TestSendResultToDataBinderReturnsError(t *testing.T) {
-	// Setup
-	testCache = cache_mock.New()
-	kind, config := storage.CreateAzureConfig(storageName, storageKey)
-	api, _ := storage.New(kind, config, 10)
-
-	api.RemoveContainer("test")
-	container := createContainer(api)
-	item := putItem("file1.jpg", container, api)
-	itemPath := scannerObj.GetItemPath(item)
-	dataBinderSrv := &DatabinderMockedObject{}
-	var databinderMock message_types.DatabinderServiceClient = dataBinderSrv
-	dataBinderSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("some error"))
+	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
+	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	err := sendResultToDataBinder(itemPath, getAnalyzerMockResult().AnalyzeResults, &message_types.AnonymizeResponse{}, testCache, &databinderMock)
+	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
+}
 
-	// Assert
+func TestSendResultToDatasinkReturnsError(t *testing.T) {
+	testCache = cache_mock.New()
+	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
+	scanRequest := &message_types.ScanRequest{
+		Kind: "azureblob",
+	}
+
+	filePath := "dir/file1.txt"
+	container := InitContainer(kind, config)
+	putItems([]testItem{{path: filePath}}, container)
+	scanner := createScanner(getScannerRequest(kind))
+	analyzeRequest := &message_types.AnalyzeRequest{}
+	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
+	datasinkServiceMock := getDatasinkMock(errors.New("some error"))
+
+	// Act
+	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+
+	// Verify
 	assert.EqualValues(t, err.Error(), "some error")
+}
+
+// TEST HELPERS
+func getAnalyzeServiceMock(expectedResult *message_types.AnalyzeResponse) message_types.AnalyzeServiceClient {
+	analyzeService := &ScannerMockedObject{}
+	anlyzeServiceMock := analyzeService
+	analyzeService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(expectedResult, nil)
+	return anlyzeServiceMock
+}
+
+func getDatasinkMock(expectedError error) message_types.DatasinkServiceClient {
+	datasinkSrv := &DatasinkMockedObject{}
+	var datasinkMock message_types.DatasinkServiceClient = datasinkSrv
+	datasinkSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, expectedError)
+	return datasinkMock
 }
 
 func getAnalyzerMockResult() *message_types.AnalyzeResponse {
@@ -172,6 +215,17 @@ func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 	return response
 }
 
+func InitContainer(kind string, config stow.ConfigMap) stow.Container {
+	api, _ := storage.New(kind, config, 10)
+	api.RemoveContainer("test")
+	return createContainer(api)
+}
+
+func getItem(name string, container stow.Container) stow.Item {
+	item, _ := container.Item(name)
+	return item
+}
+
 func createContainer(api *storage.API) stow.Container {
 	container, err := api.CreateContainer("test")
 	if err != nil {
@@ -180,25 +234,42 @@ func createContainer(api *storage.API) stow.Container {
 	return container
 }
 
-func putItem(itemName string, container stow.Container, api *storage.API) stow.Item {
-	content := "Please call me. My phone number is (555) 253-0000."
+func putItems(items []testItem, container stow.Container) {
+	for _, item := range items {
+		if item.content == "" {
+			item.content = "Please call me. My phone number is (555) 253-0000."
+		}
 
-	item, err := container.Put(itemName, strings.NewReader(content), int64(len(content)), nil)
-	if err != nil {
-		log.Fatal(err.Error())
+		_, err := container.Put(item.path, strings.NewReader(item.content), int64(len(item.content)), nil)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
-	return item
 }
 
-func getScannerRequest() *message_types.ScanRequest {
+func getScannerRequest(kind string) *message_types.ScanRequest {
+	if kind == "azureblob" {
+		return &message_types.ScanRequest{
+			CloudStorageConfig: &message_types.CloudStorageConfig{
+				BlobStorageConfig: &message_types.BlobStorageConfig{
+					AccountName:   azureStorageName,
+					AccountKey:    azureStorageKey,
+					ContainerName: "test",
+				},
+			},
+			Kind: "azureblob",
+		}
+	}
 	return &message_types.ScanRequest{
 		CloudStorageConfig: &message_types.CloudStorageConfig{
-			BlobStorageConfig: &message_types.BlobStorageConfig{
-				AccountName:   storageName,
-				AccountKey:    storageKey,
-				ContainerName: "test",
+			S3Config: &message_types.S3Config{
+				AccessId:   s3AccessID,
+				AccessKey:  s3AccessKey,
+				Endpoint:   s3Endpoint,
+				Region:     s3Region,
+				BucketName: "test",
 			},
 		},
-		Kind: "azureblob",
+		Kind: "s3",
 	}
 }
