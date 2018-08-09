@@ -40,10 +40,10 @@ func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
 // Init cloud storage config
 func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string, error) {
 	switch kind {
-	case message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_azureblob):
+	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_azureblob):
 		config, containerName := InitBlobStorage(cloudStorageConfig)
 		return config, containerName, nil
-	case message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_s3):
+	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
 		config, containerName := InitS3(cloudStorageConfig)
 		return config, containerName, nil
 	// case "google":

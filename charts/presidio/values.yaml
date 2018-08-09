@@ -25,7 +25,7 @@ api:
 
 analyzer:
   name: presidio-analyzer
-  # tag:
+  # tag: 
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -55,7 +55,7 @@ scanner:
   imagePullPolicy: Always
   # tag:
 
-datasync:
-  name: presidio-datasync
+datasink:
+  name: presidio-datasink
   imagePullPolicy: Always
   # tag:

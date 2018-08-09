@@ -21,19 +21,19 @@ func TestResultWrittenToDb(t *testing.T) {
 	tableName := "testTable"
 	engine.DropTables(tableName)
 
-	sync := &message_types.DataSync{
+	sink := &message_types.Datasink{
 		DbConfig: &message_types.DBConfig{
 			ConnectionString: connectionString,
 			TableName:        tableName,
 		},
 	}
 
-	dataSync := New(sync, dbKind, "analyze")
+	datasink := New(sink, dbKind, "analyze")
 	resultsPath := "someDir/SomeFile.txt"
 
 	//Act
 	mockResult := getAnalyzerMockResult()
-	dataSync.WriteAnalyzeResults(mockResult, resultsPath)
+	datasink.WriteAnalyzeResults(mockResult, resultsPath)
 
 	//Verify
 	var sliceOfAnalyzeResult []analyzerResult
@@ -48,10 +48,10 @@ func TestResultWrittenToDb(t *testing.T) {
 	}
 
 	engine.DropTables(tableName)
-	dataSync = New(sync, dbKind, "anonymize")
+	datasink = New(sync, dbKind, "anonymize")
 
 	// Act
-	dataSync.WriteAnonymizeResults(anonymizeResponse, resultsPath)
+	datasink.WriteAnonymizeResults(anonymizeResponse, resultsPath)
 
 	// Verify
 	var sliceOfAnonymizeResult []anonymizerResult

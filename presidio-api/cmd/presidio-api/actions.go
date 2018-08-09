@@ -166,8 +166,8 @@ func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobAp
 	scanTemplate := &message_types.ScanTemplate{}
 	api.getTemplate(project, "scan", scanID, scanTemplate, c)
 
-	dataSyncTemplate := &message_types.DataSyncTemplate{}
-	api.getTemplate(project, "datasync", cronJobTemplate.DataSyncTemplateId, dataSyncTemplate, c)
+	datasinkTemplate := &message_types.DatasinkTemplate{}
+	api.getTemplate(project, "datasink", cronJobTemplate.DatasinkTemplateId, datasinkTemplate, c)
 
 	analyzeTemplate := &message_types.AnalyzeTemplate{}
 	api.getTemplate(project, "analyze", cronJobTemplate.AnalyzeTemplateId, analyzeTemplate, c)
@@ -180,7 +180,7 @@ func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobAp
 	scanRequest := &message_types.ScanRequest{
 		AnalyzeTemplate:    analyzeTemplate,
 		AnonymizeTemplate:  anonymizeTemplate,
-		DataSyncTemplate:   dataSyncTemplate,
+		DatasinkTemplate:   datasinkTemplate,
 		CloudStorageConfig: scanTemplate.CloudStorageConfig,
 		Kind:               scanTemplate.Kind,
 		MinProbability:     scanTemplate.MinProbability,

@@ -18,7 +18,7 @@ import (
 
 var (
 	streamKind       string
-	dataSyncGRPCPort string
+	datasinkGRPCPort string
 	analyzeRequest   *message_types.AnalyzeRequest
 	analyzeService   *message_types.AnalyzeServiceClient
 	streamRequest    *message_types.StreamRequest
@@ -27,7 +27,7 @@ var (
 func main() {
 	setupAnalyzerObjects()
 	initStream()
-	setupDataSyncService()
+	setupDatasinkService()
 	_ = createStream()
 
 }
@@ -49,25 +49,25 @@ func initStream() {
 	}
 
 	// TODO: Change!!
-	dataSyncGRPCPort = os.Getenv("DATASYNC_GRPC_PORT")
-	if dataSyncGRPCPort == "" {
+	datasinkGRPCPort = os.Getenv("DATASINK_GRPC_PORT")
+	if datasinkGRPCPort == "" {
 		// Set to default
-		dataSyncGRPCPort = "5000"
+		datasinkGRPCPort = "5000"
 	}
 }
 
-func setupDataSyncService() *message_types.DataSyncServiceClient {
-	dataSyncService, err := rpc.SetupDataSyncService(fmt.Sprintf("localhost:%s", dataSyncGRPCPort))
+func setupDatasinkService() *message_types.DatasinkServiceClient {
+	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("localhost:%s", datasinkGRPCPort))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to dataSync service failed %q", err))
+		log.Fatal(fmt.Sprintf("Connection to datasink service failed %q", err))
 	}
 
-	_, err = (*dataSyncService).Init(context.Background(), streamRequest.DataSyncTemplate)
+	_, err = (*datasinkService).Init(context.Background(), streamRequest.DatasinkTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	return dataSyncService
+	return datasinkService
 }
 
 func setupAnalyzerObjects() {

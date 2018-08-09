@@ -10,29 +10,29 @@ import (
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
 	"github.com/Microsoft/presidio/pkg/templates"
-	"github.com/Microsoft/presidio/presidio-datasync/cmd/presidio-datasync/datasync"
+	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
-type cloudStorageDataSync struct {
+type cloudStorageDatasink struct {
 	kind               string
 	cloudStorageConfig *message_types.CloudStorageConfig
 	container          stow.Container
 }
 
 // New returns new instance of DB Data writter
-func New(datasync *message_types.DataSync, kind string) dataSync.DataSync {
-	db := cloudStorageDataSync{kind: kind, cloudStorageConfig: datasync.GetCloudStorageConfig()}
+func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
+	db := cloudStorageDatasink{kind: kind, cloudStorageConfig: datasink.GetCloudStorageConfig()}
 	db.Init()
 	return &db
 }
 
-func (dataSync *cloudStorageDataSync) Init() {
-	config, containerName, err := storage.Init(dataSync.kind, dataSync.cloudStorageConfig)
+func (datasink *cloudStorageDatasink) Init() {
+	config, containerName, err := storage.Init(datasink.kind, datasink.cloudStorageConfig)
 	if err != nil {
 		log.Fatal("Unknown storage kind")
 	}
 
-	storageAPI, err := storage.New(dataSync.kind, config, 10)
+	storageAPI, err := storage.New(datasink.kind, config, 10)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -43,17 +43,17 @@ func (dataSync *cloudStorageDataSync) Init() {
 		log.Fatal(err.Error())
 	}
 
-	dataSync.container = container
+	datasink.container = container
 }
 
-func (dataSync *cloudStorageDataSync) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
+func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
 	resultString, err := templates.ConvertInterfaceToJSON(results)
 	if err != nil {
 		log.Error(err.Error())
 		return err
 	}
 
-	err = storage.PutItem(addActionToFilePath(path, "analyzed"), resultString, dataSync.container)
+	err = storage.PutItem(addActionToFilePath(path, "analyzed"), resultString, datasink.container)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -63,8 +63,8 @@ func (dataSync *cloudStorageDataSync) WriteAnalyzeResults(results []*message_typ
 	return nil
 }
 
-func (dataSync *cloudStorageDataSync) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
-	err := storage.PutItem(addActionToFilePath(path, "anonymized"), result.Text, dataSync.container)
+func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
+	err := storage.PutItem(addActionToFilePath(path, "anonymized"), result.Text, datasink.container)
 	if err != nil {
 		log.Error(err.Error())
 		return err

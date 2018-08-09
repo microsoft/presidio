@@ -90,9 +90,9 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	case "scan":
 		var scanTemplate message_types.ScanTemplate
 		return bindAndConvert(scanTemplate, c)
-	case "datasync":
-		var dataSyncTemplate message_types.DataSyncTemplate
-		return bindAndConvert(dataSyncTemplate, c)
+	case "datasink":
+		var datasinkTemplate message_types.DatasinkTemplate
+		return bindAndConvert(datasinkTemplate, c)
 	case "schedule-cronjob":
 		var cronjobTemplate message_types.CronJobTemplate
 		return bindAndConvert(cronjobTemplate, c)

@@ -9,7 +9,7 @@ import (
 
 func createScanner(scanRequest *message_types.ScanRequest) scanner.Scanner {
 	switch scanRequest.GetKind() {
-	case message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_azureblob), message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_s3):
+	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_azureblob), message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
 		storageScanner := storage_scanner.New(scanRequest.GetKind(), scanRequest.GetCloudStorageConfig())
 		return storageScanner
 	}
@@ -20,7 +20,7 @@ func createScanner(scanRequest *message_types.ScanRequest) scanner.Scanner {
 
 func createItem(kind string, item interface{}) item.Item {
 	switch kind {
-	case message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_azureblob), message_types.DataSyncTypesEnum.String(message_types.DataSyncTypesEnum_s3):
+	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_azureblob), message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
 		storageItem := storage_scanner.NewItem(item)
 		return storageItem
 	}

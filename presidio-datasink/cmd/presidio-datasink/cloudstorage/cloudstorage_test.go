@@ -39,7 +39,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 	api, _ := storage.New(kind, config, 10)
 	api.RemoveContainer(containerName)
 
-	dataSync := &message_types.DataSync{
+	datasink := &message_types.Datasink{
 		CloudStorageConfig: &message_types.CloudStorageConfig{
 			BlobStorageConfig: &message_types.BlobStorageConfig{
 				AccountKey:    storageKey,
@@ -49,7 +49,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 		},
 	}
 
-	cloudStorage := New(dataSync, "azureblob")
+	cloudStorage := New(datasink, "azureblob")
 	resultsPath := "someDir/SomeFile.txt"
 	anonymizeResponse := &message_types.AnonymizeResponse{
 		Text: "<Person> live is <Location>",

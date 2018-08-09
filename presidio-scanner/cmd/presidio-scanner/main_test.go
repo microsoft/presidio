@@ -36,7 +36,7 @@ type ScannerMockedObject struct {
 	mock.Mock
 }
 
-type DataSyncMockedObject struct {
+type DatasinkMockedObject struct {
 	mock.Mock
 }
 
@@ -49,20 +49,20 @@ func (m *ScannerMockedObject) Apply(c context.Context, analyzeRequest *message_t
 	return result, args.Error(1)
 }
 
-func (m *DataSyncMockedObject) Init(ctx context.Context, dataSyncTemplate *message_types.DataSyncTemplate, opts ...grpc.CallOption) (*message_types.DataSyncResponse, error) {
+func (m *DatasinkMockedObject) Init(ctx context.Context, datasinkTemplate *message_types.DatasinkTemplate, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
 	// Currently not in use.
 	return nil, nil
 }
-func (m *DataSyncMockedObject) Completion(ctx context.Context, dataSyncTemplate *message_types.CompletionMessage, opts ...grpc.CallOption) (*message_types.DataSyncResponse, error) {
+func (m *DatasinkMockedObject) Completion(ctx context.Context, datasinkTemplate *message_types.CompletionMessage, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
 	// Currently not in use.
 	return nil, nil
 }
 
-func (m *DataSyncMockedObject) Apply(ctx context.Context, in *message_types.DataSyncRequest, opts ...grpc.CallOption) (*message_types.DataSyncResponse, error) {
+func (m *DatasinkMockedObject) Apply(ctx context.Context, in *message_types.DatasinkRequest, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
 	args := m.Mock.Called()
-	var result *message_types.DataSyncResponse
+	var result *message_types.DatasinkResponse
 	if args.Get(0) != nil {
-		result = args.Get(0).(*message_types.DataSyncResponse)
+		result = args.Get(0).(*message_types.DatasinkResponse)
 	}
 	return result, args.Error(1)
 }
@@ -85,10 +85,10 @@ func TestS3Scan(t *testing.T) {
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
-	dataSyncServiceMock := getDataSyncMock(nil)
+	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &dataSyncServiceMock)
+	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -100,7 +100,7 @@ func TestS3Scan(t *testing.T) {
 	assert.Equal(t, n, 1)
 
 	// On the second scan the item that was already scan should'nt be scanned again
-	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &dataSyncServiceMock)
+	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Nil(t, err)
 	assert.Equal(t, n, 0)
 }
@@ -119,10 +119,10 @@ func TestAzureScan(t *testing.T) {
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
-	dataSyncServiceMock := getDataSyncMock(nil)
+	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &dataSyncServiceMock)
+	n, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -134,7 +134,7 @@ func TestAzureScan(t *testing.T) {
 	assert.Equal(t, n, 1)
 
 	// On the second scan the item that was already scan should'nt be scanned again
-	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &dataSyncServiceMock)
+	n, err = Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Nil(t, err)
 	assert.Equal(t, n, 0)
 }
@@ -153,14 +153,14 @@ func TestFileExtension(t *testing.T) {
 	}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
-	dataSyncServiceMock := getDataSyncMock(nil)
+	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &dataSyncServiceMock)
+	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
 }
 
-func TestSendResultToDataSyncReturnsError(t *testing.T) {
+func TestSendResultToDatasinkReturnsError(t *testing.T) {
 	testCache = cache_mock.New()
 	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
 	scanRequest := &message_types.ScanRequest{
@@ -173,10 +173,10 @@ func TestSendResultToDataSyncReturnsError(t *testing.T) {
 	scanner := createScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
-	dataSyncServiceMock := getDataSyncMock(errors.New("some error"))
+	datasinkServiceMock := getDatasinkMock(errors.New("some error"))
 
 	// Act
-	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &dataSyncServiceMock)
+	_, err := Scan(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	assert.EqualValues(t, err.Error(), "some error")
@@ -190,11 +190,11 @@ func getAnalyzeServiceMock(expectedResult *message_types.AnalyzeResponse) messag
 	return anlyzeServiceMock
 }
 
-func getDataSyncMock(expectedError error) message_types.DataSyncServiceClient {
-	dataSyncSrv := &DataSyncMockedObject{}
-	var dataSyncMock message_types.DataSyncServiceClient = dataSyncSrv
-	dataSyncSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, expectedError)
-	return dataSyncMock
+func getDatasinkMock(expectedError error) message_types.DatasinkServiceClient {
+	datasinkSrv := &DatasinkMockedObject{}
+	var datasinkMock message_types.DatasinkServiceClient = datasinkSrv
+	datasinkSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, expectedError)
+	return datasinkMock
 }
 
 func getAnalyzerMockResult() *message_types.AnalyzeResponse {

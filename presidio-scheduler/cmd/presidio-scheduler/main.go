@@ -23,7 +23,7 @@ type server struct{}
 var (
 	grpcPort = os.Getenv("GRPC_PORT")
 	// Currently not supported, will be in use once we'll move to configmaps. default port is 5000
-	dataSyncGrpcPort        = os.Getenv("DATASYNC_GRPC_PORT")
+	datasinkGrpcPort        = os.Getenv("DATASINK_GRPC_PORT")
 	namespace               = os.Getenv("presidio_NAMESPACE")
 	analyzerSvcHost         = os.Getenv("ANALYZER_SVC_HOST")
 	analyzerSvcPort         = os.Getenv("ANALYZER_SVC_PORT")
@@ -31,9 +31,9 @@ var (
 	anonymizerSvcPort       = os.Getenv("ANONYMIZER_SVC_PORT")
 	redisSvcHost            = os.Getenv("REDIS_HOST")
 	redisSvcPort            = os.Getenv("REDIS_PORT")
-	dataSyncImage           = os.Getenv("DATASYNC_IMAGE_NAME")
+	datasinkImage           = os.Getenv("DATASINK_IMAGE_NAME")
 	scannerImage            = os.Getenv("SCANNER_IMAGE_NAME")
-	dataSyncImagePullPolicy = os.Getenv("DATASYNC_IMAGE_PULL_POLICY")
+	datasinkImagePullPolicy = os.Getenv("DATASINK_IMAGE_PULL_POLICY")
 	scannerImagePullPolicy  = os.Getenv("SCANNER_IMAGE_PULL_POLICY")
 	store                   platform.Store
 )
@@ -96,23 +96,23 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 		return &message_types.CronJobResponse{}, err
 	}
 
-	dataSyncPolicy := platform.ConvertPullPolicyStringToType(dataSyncImagePullPolicy)
+	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
 	scannerPolicy := platform.ConvertPullPolicyStringToType(scannerImagePullPolicy)
 
 	err = store.CreateCronJob(r.Name, r.Trigger.Schedule.GetRecurrencePeriodDuration(), []platform.ContainerDetails{
 		{
-			Name:  "datasync",
-			Image: dataSyncImage,
+			Name:  "datasink",
+			Image: datasinkImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "GRPC_PORT", Value: dataSyncGrpcPort},
+				{Name: "GRPC_PORT", Value: datasinkGrpcPort},
 			},
-			ImagePullPolicy: dataSyncPolicy,
+			ImagePullPolicy: datasinkPolicy,
 		},
 		{
 			Name:  "scanner",
 			Image: scannerImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "GRPC_PORT", Value: dataSyncGrpcPort},
+				{Name: "GRPC_PORT", Value: datasinkGrpcPort},
 				{Name: "REDIS_HOST", Value: redisSvcHost},
 				{Name: "REDIS_SVC_PORT", Value: redisSvcPort},
 				{Name: "ANALYZER_SVC_HOST", Value: analyzerSvcHost},
