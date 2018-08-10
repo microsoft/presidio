@@ -46,7 +46,7 @@ class Matcher(object):
         # and any keyword in field.context 
         context_keywords = self.__context_to_keywords(context)
 
-        # TODO: remove after changing the keywords to be weighted
+        # TODO: remove after supporting keyphrases (instead of keywords)
         if 'card' in field.context:
             field.context.remove('card')
         if 'number' in field.context:
@@ -211,6 +211,36 @@ class Matcher(object):
             self.__check_ner(payload.doc, payload.results, current_field)
         else:
             self.__check_pattern(payload.doc, payload.results, current_field)
+    
+    def __is_checksum_result(self, result):
+        if result.probability == 1.0:
+            result_field = field_factory.FieldFactory.create(result.field.name)
+            return result_field.should_check_checksum
+        return False
+
+    def __remove_checksum_duplicates(self, results):
+        results_with_checksum = list(filter(lambda r: self.__is_checksum_result(r), results))
+
+        # Remove matches of the same text, if there's a match with checksum and probability = 1
+        filtered_results = []
+
+        for result in results:
+            valid_result = True
+            if result not in results_with_checksum: 
+                for result_with_checksum in results_with_checksum:
+                    # If result is equal to or substring of a checksum result
+                    if (result.text == result_with_checksum.text or
+                        (result.text in result_with_checksum.text and
+                        result.location.start >= result_with_checksum.location.start and
+                        result.location.end <= result_with_checksum.location.end)):
+                        valid_result = False
+                        break
+            
+            if valid_result:
+                filtered_results.append(result)
+        
+        return filtered_results
+
 
     def analyze_text(self, text, field_type_filters):
         """Analyze text.
@@ -244,6 +274,8 @@ class Matcher(object):
 
         with futures.ThreadPoolExecutor(max_workers=10) as executor:
             executor.map(self.__analyze_field_type, payloads)
+        
+        results = self.__remove_checksum_duplicates(results)
 
         results.sort(key=lambda x: x.location.start, reverse=False)
         return results
