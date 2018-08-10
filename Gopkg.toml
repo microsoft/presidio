@@ -51,6 +51,26 @@
   version = "1.9.0"
 
 [[constraint]]
+  name = "github.com/go-xorm/xorm"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/denisenkom/go-mssqldb"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/go-sql-driver/mysql"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/lib/pq"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/mattn/go-sqlite3"
+  branch = "master"
+  
+[[constraint]]
   name = "google.golang.org/grpc"
   version = "1.14.0"
 
