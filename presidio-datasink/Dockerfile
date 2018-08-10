@@ -1,6 +1,6 @@
 FROM presidio-golang AS build-env
 
-ARG NAME=presidio-databinder
+ARG NAME=presidio-datasink
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
 ARG VERSION=latest
 
@@ -15,8 +15,10 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=1 && go build -a -installsuffix cgo -ldf
 
 FROM presidio-alpine
 
-ARG NAME=presidio-databinder
+RUN apk add --no-cache --update ca-certificates
+
+ARG NAME=presidio-datasink
 
 WORKDIR  /usr/bin/
 COPY --from=build-env /usr/bin/${NAME} /usr/bin/
-CMD  /usr/bin/presidio-databinder
+CMD  /usr/bin/presidio-datasink

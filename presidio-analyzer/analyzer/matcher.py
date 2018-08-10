@@ -44,6 +44,7 @@ class Matcher(object):
     def __calculate_context_similarity(self, context, field):
         # Context similarity is 1 if there's exact match between a keyword in context
         # and any keyword in field.context 
+
         context_keywords = self.__context_to_keywords(context)
 
         # TODO: remove after supporting keyphrases (instead of keywords)
@@ -59,6 +60,7 @@ class Matcher(object):
                 break
         
         return similarity
+      
 
     def __calculate_probability(self, doc, match_strength, field, start, end):
         if field.should_check_checksum:
