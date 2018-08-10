@@ -34,7 +34,7 @@ def test_valid_credit_cards_with_lemmatized_context():
     number1 = '4012888888881881'
     number2 = '4012-8888-8888-1881'
     number3 = '4012 8888 8888 1881'
-    context = 'my cards:'
+    context = 'my credit cards are:'
     results = match.analyze_text(
         '{}{} {} {}'.format(
             context,
