@@ -32,47 +32,35 @@ class Matcher(object):
     def __context_to_keywords(self, context):
         nlp_context = self.nlp(context)
 
-        # Remove punctionation, stop words and take lemma form and remove duplicates
-        keywords = list(filter(
-            lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
-        keywords = list(set(map(lambda k: k.lemma_, keywords)))
-
-        return keywords
-
-
-    def __context_to_keywords(self, context):
-        nlp_context = self.nlp(context)
-
         # Remove punctionation, stop words and take lemma form and remove
         # duplicates
         keywords = list(filter(
             lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
-        keywords = list(set(map(lambda k: k.lemma_, keywords)))
+        keywords = list(set(map(lambda k: k.lemma_.lower(), keywords)))
 
         return keywords
 
-    def __calculate_context_similarity(self, context, field):
-        context_keywords = self.__context_to_keywords(context)
-        max_similarity = 0.0
 
-        # TODO: remove after changing the keywords to be weighted
+    def __calculate_context_similarity(self, context, field):
+        # Context similarity is 1 if there's exact match between a keyword in context
+        # and any keyword in field.context 
+
+        context_keywords = self.__context_to_keywords(context)
+
+        # TODO: remove after supporting keyphrases (instead of keywords)
         if 'card' in field.context:
             field.context.remove('card')
         if 'number' in field.context:
             field.context.remove('number')
 
-        # Context similarity = max similarity between context token and a
-        # keyword in field.context
-        for context_keyword in self.nlp.pipe(context_keywords):
-            for keyword in self.nlp.pipe(field.context):
-                if keyword == context_keyword:
-                    similarity = 1
-                else:
-                    similarity = context_keyword.similarity(keyword)
-                if similarity >= CONTEXT_SIMILARITY_THRESHOLD:
-                    max_similarity = max(max_similarity, similarity)
-
-        return min(max_similarity, 1)
+        similarity = 0.0
+        for context_keyword in context_keywords:
+            if context_keyword in field.context:
+                similarity = 1
+                break
+        
+        return similarity
+      
 
     def __calculate_probability(self, doc, match_strength, field, start, end):
         if field.should_check_checksum:
@@ -225,6 +213,36 @@ class Matcher(object):
             self.__check_ner(payload.doc, payload.results, current_field)
         else:
             self.__check_pattern(payload.doc, payload.results, current_field)
+    
+    def __is_checksum_result(self, result):
+        if result.probability == 1.0:
+            result_field = field_factory.FieldFactory.create(result.field.name)
+            return result_field.should_check_checksum
+        return False
+
+    def __remove_checksum_duplicates(self, results):
+        results_with_checksum = list(filter(lambda r: self.__is_checksum_result(r), results))
+
+        # Remove matches of the same text, if there's a match with checksum and probability = 1
+        filtered_results = []
+
+        for result in results:
+            valid_result = True
+            if result not in results_with_checksum: 
+                for result_with_checksum in results_with_checksum:
+                    # If result is equal to or substring of a checksum result
+                    if (result.text == result_with_checksum.text or
+                        (result.text in result_with_checksum.text and
+                        result.location.start >= result_with_checksum.location.start and
+                        result.location.end <= result_with_checksum.location.end)):
+                        valid_result = False
+                        break
+            
+            if valid_result:
+                filtered_results.append(result)
+        
+        return filtered_results
+
 
     def analyze_text(self, text, field_type_filters):
         """Analyze text.
@@ -258,6 +276,8 @@ class Matcher(object):
 
         with futures.ThreadPoolExecutor(max_workers=10) as executor:
             executor.map(self.__analyze_field_type, payloads)
+        
+        results = self.__remove_checksum_duplicates(results)
 
         results.sort(key=lambda x: x.location.start, reverse=False)
         return results
