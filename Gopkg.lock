@@ -35,13 +35,13 @@
   branch = "master"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
-  revision = "e69feccc706ca4a7f25d78c35b0cf29d9c44a91b"
+  revision = "dfc567c676b944adc7e41340b6dd4c6e06249c18"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/csm","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/sdkio","internal/sdkrand","internal/sdkuri","internal/shareddefaults","private/protocol","private/protocol/eventstream","private/protocol/eventstream/eventstreamapi","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restxml","private/protocol/xml/xmlutil","service/kinesis","service/kinesis/kinesisiface","service/s3","service/sts"]
-  revision = "f9728bfcd31e85d264b4ab20299bbbba241c00ca"
-  version = "v1.15.7"
+  revision = "36aaf21bb9b41f47fdc9b477577d0b604925d489"
+  version = "v1.15.8"
 
 [[projects]]
   name = "github.com/confluentinc/confluent-kafka-go"
@@ -340,7 +340,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["md4","pkcs12","pkcs12/internal/rc2","ssh/terminal"]
-  revision = "f027049dab0ad238e394a753dba2d14753473a04"
+  revision = "de0752318171da717af4ce24d0a2e8626afaeb11"
 
 [[projects]]
   branch = "master"
@@ -358,7 +358,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "acbc56fc7007d2a01796d5bde54f39e3b3e95945"
+  revision = "904bdc257025c7b3f43c19360ad3ab85783fad78"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -382,7 +382,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "daca94659cb50e9f37c1b834680f2e46358f10b0"
+  revision = "383e8b2c3b9e36c4076b235b32537292176bae20"
 
 [[projects]]
   name = "google.golang.org/grpc"
