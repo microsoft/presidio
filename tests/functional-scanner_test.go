@@ -20,7 +20,7 @@ import (
 	"github.com/Microsoft/presidio/pkg/storage"
 	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
-	s "github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
+	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
 
 var (
@@ -84,14 +84,14 @@ func TestS3Scan(t *testing.T) {
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := s.CreateScanner(scanRequest)
+	s := scanner.CreateScanner(scanRequest)
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	n, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -103,7 +103,7 @@ func TestS3Scan(t *testing.T) {
 	assert.Equal(t, n, 1)
 
 	// On the second scan the item that was already scan should'nt be scanned again
-	n, err = s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Nil(t, err)
 	assert.Equal(t, n, 0)
 }
@@ -118,14 +118,14 @@ func TestAzureScan(t *testing.T) {
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := s.CreateScanner(getScannerRequest(kind))
+	s := scanner.CreateScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	n, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -137,7 +137,7 @@ func TestAzureScan(t *testing.T) {
 	assert.Equal(t, n, 1)
 
 	// On the second scan the item that was already scan should'nt be scanned again
-	n, err = s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	n, err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Nil(t, err)
 	assert.Equal(t, n, 0)
 }
@@ -149,7 +149,7 @@ func TestFileExtension(t *testing.T) {
 	filePath := "dir/file1.jpg"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := s.CreateScanner(getScannerRequest(kind))
+	s := scanner.CreateScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
 	scanRequest := &message_types.ScanRequest{
 		Kind: "azureblob",
@@ -159,7 +159,7 @@ func TestFileExtension(t *testing.T) {
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	_, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	_, err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 	assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
 }
 
@@ -173,13 +173,13 @@ func TestSendResultToDatasinkReturnsError(t *testing.T) {
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	scanner := s.CreateScanner(getScannerRequest(kind))
+	s := scanner.CreateScanner(getScannerRequest(kind))
 	analyzeRequest := &message_types.AnalyzeRequest{}
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(errors.New("some error"))
 
 	// Act
-	_, err := s.ScanData(scanner, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
+	_, err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, analyzeRequest, nil, &datasinkServiceMock)
 
 	// Verify
 	assert.EqualValues(t, err.Error(), "some error")

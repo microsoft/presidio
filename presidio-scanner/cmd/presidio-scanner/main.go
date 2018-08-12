@@ -13,7 +13,7 @@ import (
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/rpc"
 	"github.com/Microsoft/presidio/pkg/templates"
-	s "github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
+	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
 
 var (
@@ -27,10 +27,10 @@ func main() {
 	analyzeRequest, analyzeService := setupAnalyzerObjects(scanRequest)
 	anonymizeService := setupAnoymizerService(scanRequest)
 	datasinkService := setupDatasinkService(scanRequest.DatasinkTemplate)
-	scanner := s.CreateScanner(scanRequest)
+	s := scanner.CreateScanner(scanRequest)
 
 	// Scan
-	_, err := s.ScanData(scanner, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, datasinkService)
+	_, err := scanner.ScanData(s, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, datasinkService)
 
 	if err != nil {
 		log.Fatal(err.Error())
