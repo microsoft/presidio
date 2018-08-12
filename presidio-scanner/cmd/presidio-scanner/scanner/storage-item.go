@@ -1,4 +1,4 @@
-package storageScanner
+package scanner
 
 import (
 	"fmt"
@@ -8,15 +8,14 @@ import (
 
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/item"
 )
 
 type storageItem struct {
 	item stow.Item
 }
 
-// NewItem create new storage item
-func NewItem(item interface{}) item.Item {
+// NewStorageItem create new storage item
+func NewStorageItem(item interface{}) Item {
 	stowItem := item.(stow.Item)
 	storageItem := storageItem{item: stowItem}
 	return &storageItem

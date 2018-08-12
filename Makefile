@@ -68,12 +68,8 @@ go-test-unit: vendor clean
 	-docker rm test-redis -f
 	-docker rm test-azure-emulator -f
 	docker run --rm --name test-redis -d -p 6379:6379 redis
-	docker run --rm --name test-azure-emulator -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite
-	docker run --rm --name test-s3-emulator -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock
 	go test -v ./...
 	docker rm test-redis -f
-	docker rm test-azure-emulator -f
-	docker rm test-s3-emulator -f
 	
 .PHONY: test-functional
 test-functional: vendor docker-build
@@ -83,12 +79,16 @@ test-functional: vendor docker-build
 	-docker network create testnetwork
 	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 $(DOCKER_REGISTRY)/presidio-analyzer:$(PRESIDIO_LABEL)
 	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(PRESIDIO_LABEL)
+	docker run --rm --name test-azure-emulator -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite
+	docker run --rm --name test-s3-emulator -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock
 	sleep 30
 	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_HOST=test-presidio-analyzer -e ANALYZER_SVC_PORT=3000 -e ANONYMIZER_SVC_HOST=test-presidio-anonymizer -e ANONYMIZER_SVC_PORT=3001 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
 	go test --tags functional ./tests -count=1
 	docker rm test-presidio-api -f
 	docker rm test-presidio-analyzer -f
 	docker rm test-presidio-anonymizer -f
+	docker rm test-azure-emulator -f
+	docker rm test-s3-emulator -f
 	docker network rm testnetwork
 
 
