@@ -41,6 +41,8 @@ spec:
             value:  {{ template "presidio.anonymizer.fullname" . }}
           - name: ANONYMIZER_SVC_PORT
             value: {{ .Values.anonymizer.service.externalPort | quote }}
+          - name: DATASINK_GRPC_PORT
+            value: 5000
           - name: DATASINK_IMAGE_NAME
             value: {{ .Values.registry }}/{{ .Values.datasink.name }}:{{ default .Chart.AppVersion .Values.datasink.tag }}
           - name: SCANNER_IMAGE_NAME

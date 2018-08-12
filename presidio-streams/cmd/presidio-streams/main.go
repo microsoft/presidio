@@ -9,22 +9,26 @@ import (
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/rpc"
+	services "github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/templates"
 )
 
-var (
-	streamKind       string
-	datasinkGRPCPort string
-	analyzeRequest   *message_types.AnalyzeRequest
-	analyzeService   *message_types.AnalyzeServiceClient
-	streamRequest    *message_types.StreamRequest
-)
+var analyzeService *message_types.AnalyzeServiceClient
+var anonymizeService *message_types.AnonymizeServiceClient
+var datasinkService *message_types.DatasinkServiceClient
+var streamRequest *message_types.StreamRequest
 
 func main() {
-	setupAnalyzerObjects()
 	initStream()
-	setupDatasinkService()
+
+	analyzeService = services.SetupAnalyzerService()
+
+	if streamRequest.AnonymizeTemplate != nil {
+		anonymizeService = services.SetupAnoymizerService()
+	}
+
+	setupDatasinkService(streamRequest.DatasinkTemplate)
+
 	stream := createStream()
 	err := stream.Receive(receiveEvents)
 
@@ -33,71 +37,104 @@ func main() {
 	}
 }
 
-func receiveEvents(data string) {
+func receiveEvents(partition string, sequence string, text string) error {
+	analyzerResult, err := analyzeItem(text)
+	if err != nil {
+		log.Error(fmt.Sprintf("error analyzing message: %s, error: %q", text, err.Error()))
+		return err
+	}
 
+	if len(analyzerResult) > 0 {
+		anonymizerResult, err := anonymizeItem(analyzerResult, text, streamRequest.AnonymizeTemplate)
+
+		if err != nil {
+			log.Error(fmt.Sprintf("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error()))
+			return err
+		}
+
+		err = sendResultToDatasink(analyzerResult, anonymizerResult, fmt.Sprintf("%s/%s", partition, sequence))
+		if err != nil {
+			log.Error(fmt.Sprintf("error sending message to datasink: %s/%s, error: %q", partition, sequence, err.Error()))
+			return err
+		}
+		log.Info(fmt.Sprintf("%d results were sent to the datasink successfully", len(analyzerResult)))
+
+	}
+	return nil
+}
+
+func sendResultToDatasink(analyzeResults []*message_types.AnalyzeResult,
+	anonymizeResults *message_types.AnonymizeResponse, path string) error {
+	srv := *datasinkService
+
+	for _, element := range analyzeResults {
+		// Remove PII from results
+		element.Text = ""
+	}
+
+	datasinkRequest := &message_types.DatasinkRequest{
+		AnalyzeResults:  analyzeResults,
+		AnonymizeResult: anonymizeResults,
+		Path:            path,
+	}
+
+	_, err := srv.Apply(context.Background(), datasinkRequest)
+	return err
 }
 
 func initStream() {
 	godotenv.Load()
 
 	streamObj := os.Getenv("STREAM_REQUEST")
-	template := &message_types.StreamRequest{}
-	err := templates.ConvertJSONToInterface(streamObj, template)
+	streamRequest = &message_types.StreamRequest{}
+	err := templates.ConvertJSONToInterface(streamObj, streamRequest)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Error formating scanner template %q", err.Error()))
+		log.Fatal(fmt.Sprintf("Error formating scanner request %q", err.Error()))
 	}
-	streamRequest = template
-	streamKind = streamRequest.Kind
 
-	if streamKind == "" {
+	if streamRequest.Kind == "" {
 		log.Fatal("stream kind var must me set")
 	}
 
-	// TODO: Change!!
-	datasinkGRPCPort = os.Getenv("DATASINK_GRPC_PORT")
-	if datasinkGRPCPort == "" {
-		// Set to default
-		datasinkGRPCPort = "5000"
-	}
 }
 
-func setupDatasinkService() *message_types.DatasinkServiceClient {
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("localhost:%s", datasinkGRPCPort))
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to datasink service failed %q", err))
-	}
+func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) {
+	datasinkService = services.SetupDatasinkService()
 
-	_, err = (*datasinkService).Init(context.Background(), streamRequest.DatasinkTemplate)
+	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	return datasinkService
 }
 
-func setupAnalyzerObjects() {
-	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
-	if analyzerSvcHost == "" {
-		log.Fatal("analyzer service address is empty")
-	}
+func analyzeItem(text string) ([]*message_types.AnalyzeResult, error) {
 
-	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
-
-	var err error
-	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
-	if err != nil {
-		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
-	}
-
-	analyzeRequest = &message_types.AnalyzeRequest{
+	analyzeRequest := &message_types.AnalyzeRequest{
 		AnalyzeTemplate: streamRequest.GetAnalyzeTemplate(),
 		MinProbability:  streamRequest.GetMinProbability(),
+		Text:            text,
 	}
 
+	srv := *analyzeService
+	results, err := srv.Apply(context.Background(), analyzeRequest)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
 	}
+
+	return results.AnalyzeResults, nil
+}
+
+func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, anonymizeTemplate *message_types.AnonymizeTemplate) (*message_types.AnonymizeResponse, error) {
+	if anonymizeTemplate != nil {
+		srv := *anonymizeService
+
+		anonymizeRequest := &message_types.AnonymizeRequest{
+			Template:       anonymizeTemplate,
+			Text:           text,
+			AnalyzeResults: analyzeResults,
+		}
+		res, err := srv.Apply(context.Background(), anonymizeRequest)
+		return res, err
+	}
+	return nil, nil
 }

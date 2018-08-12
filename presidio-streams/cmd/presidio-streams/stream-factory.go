@@ -15,7 +15,7 @@ func createStream() stream.Stream {
 	}
 
 	if streamRequest.GetKind() == "eventhub" && config.EhConfig != nil {
-		e := eventhubs.New()
+		e := eventhubs.NewConsumer("", "")
 		return e
 	}
 	if streamRequest.GetKind() == "kinesis" && config.EhConfig != nil {

@@ -62,7 +62,7 @@ func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
 		if err != nil {
 			return err
 		}
-		receiveFunc(string(msg.Value))
+		receiveFunc(string(msg.TopicPartition.Partition), string(msg.Key), string(msg.Value))
 	}
 }
 

@@ -10,7 +10,7 @@
   version = "v0.26.0"
 
 [[projects]]
-  digest = "1:62047c09ff01596b5d5d0200e1b35196ca4e12d162196f5867e7894d0eeb46b7"
+  digest = "1:384e21e626f46c4fe2da09670d90bc9e31f7843c78b747d08008863f7c51a163"
   name = "github.com/Azure/azure-amqp-common-go"
   packages = [
     ".",
@@ -27,43 +27,49 @@
     "uuid",
   ]
   pruneopts = "UT"
-  revision = "e05d7e9b03e1fd3a074d0f0b819bad445e3a0a69"
-  version = "v0.6.0"
+  revision = "1fa44b828b6a39462b3d0e6248c69103b02272b2"
+  version = "v0.7.0"
 
 [[projects]]
-  digest = "1:e790beb491acb24287effc0eb92dd1bbdba6370c3a924617c7203db93ce943bb"
+  branch = "master"
+  digest = "1:9b8498371a2294020aef53c75a7515284111adaec67eada7c62d7d86e85ddd91"
   name = "github.com/Azure/azure-event-hubs-go"
   packages = [
     ".",
-    "internal",
-    "mgmt",
+    "atom",
+    "eph",
   ]
   pruneopts = "UT"
-  revision = "fbff7e5d87fa647a80ea5059107c7309ac391b6c"
-  version = "v0.4.0"
+  revision = "c9c1890d5685f3c884890a0a56fb21aea24b7f9d"
 
 [[projects]]
-  digest = "1:94d4ae958b3d2ab476bef4bed53c1dcc3cb0fb2639bd45dd08b40e57139192e5"
+  digest = "1:f6022e8b07b7f72eb1564991df7530626de9bc4ffd9a29bbfbc7b3812e0c50e4"
   name = "github.com/Azure/azure-sdk-for-go"
-  packages = ["storage"]
+  packages = [
+    "services/eventhub/mgmt/2017-04-01/eventhub",
+    "storage",
+    "version",
+  ]
   pruneopts = "UT"
-  revision = "2d49bb8f2cee530cc16f1f1a9f0aae763dee257d"
-  version = "v10.2.1-beta"
+  revision = "4e8cbbfb1aeab140cd0fa97fd16b64ee18c3ca6a"
+  version = "v19.1.0"
 
 [[projects]]
-  digest = "1:56842130f867b8f9276e19c044751d4f0ec99589dd3d59367fdf5340257754a6"
+  digest = "1:6e63a47726e0a04c0dbf265fcf31c518cdf26fe78d8535346507e43fb652a8df"
   name = "github.com/Azure/go-autorest"
   packages = [
     "autorest",
     "autorest/adal",
     "autorest/azure",
     "autorest/date",
+    "autorest/to",
+    "autorest/validation",
     "logger",
     "version",
   ]
   pruneopts = "UT"
-  revision = "22deab8fa353631a78351bd7808fcb5002024b67"
-  version = "v10.15.1"
+  revision = "39013ecb48eaf6ced3f4e3e1d95515140ce6b3cf"
+  version = "v10.15.2"
 
 [[projects]]
   branch = "master"
@@ -74,7 +80,7 @@
   revision = "dfc567c676b944adc7e41340b6dd4c6e06249c18"
 
 [[projects]]
-  digest = "1:f91de53c7d34cd1ac75c19fbe94e9a9eaef3b5e11cd923917201417d0dfb9a30"
+  digest = "1:522b5b1815bc50eeeb4149411783c6001e430fbe46f053980cfa458e46019361"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -114,8 +120,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "36aaf21bb9b41f47fdc9b477577d0b604925d489"
-  version = "v1.15.8"
+  revision = "254f2f37e83d1b3585237fe166aacd14c1783e0b"
+  version = "v1.15.10"
 
 [[projects]]
   digest = "1:a878821c51a2390c0c958d179e7e19ec42cf55a9cce6d4bdbc61d7421b209014"
@@ -247,11 +253,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d162fe7f28a6fbded0aaffec5aca92d91119635f1264ae97523bdba46e393715"
+  digest = "1:928e9334d340434830cedd591069dc591ca88357a546d6e7839152a09e171762"
   name = "github.com/go-xorm/xorm"
   packages = ["."]
   pruneopts = "UT"
-  revision = "1eee8a367ea7ffa7de0cc5bd8057734c4804f9d1"
+  revision = "e88d32093409de90023f114e2fc31dbe2917a27f"
 
 [[projects]]
   digest = "1:34e709f36fd4f868fb00dbaf8a6cab4c1ae685832d392874ba9d7c5dec2429d1"
@@ -400,6 +406,14 @@
   revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
 
 [[projects]]
+  digest = "1:4e878df5f4e9fd625bf9c9aac77ef7cbfa4a74c01265505527c23470c0e40300"
+  name = "github.com/marstr/guid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8bd9a64bf37eb297b492a4101fb28e80ac0b290f"
+  version = "v1.1.0"
+
+[[projects]]
   digest = "1:d4d17353dbd05cb52a2a52b7fe1771883b682806f68db442b436294926bbfafb"
   name = "github.com/mattn/go-isatty"
   packages = ["."]
@@ -485,7 +499,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0c3b2cb29072fce3784e83663748de2b51424f91dfe6b6484161b57831a7044a"
+  digest = "1:4f3e632b1afa444964defd42cf903bf874e81bc8871de97bc61ba23953fe8110"
   name = "github.com/presid-io/stow"
   packages = [
     ".",
@@ -493,23 +507,23 @@
     "s3",
   ]
   pruneopts = "UT"
-  revision = "4a4bff6141dc5aa397f78bbc3096ffdd2be73ef3"
+  revision = "f238b4a739a060b949c2a6bc38f61d66e14fa8f8"
 
 [[projects]]
   digest = "1:274f67cb6fed9588ea2521ecdac05a6d62a8c51c074c1fccc6a49a40ba80e925"
-  name = "github.com/satori/uuid"
+  name = "github.com/satori/go.uuid"
   packages = ["."]
   pruneopts = "UT"
   revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:9424f440bba8f7508b69414634aef3b2b3a877e522d8a4624692412805407bb7"
+  digest = "1:dab83a1bbc7ad3d7a6ba1a1cc1760f25ac38cdf7d96a5cdd55cd915a4f5ceaf9"
   name = "github.com/spf13/pflag"
   packages = ["."]
   pruneopts = "UT"
-  revision = "583c0c0531f06d5278b7d917446061adc344b5cd"
-  version = "v1.0.1"
+  revision = "9a97c102cda95a86cec2345a6f09f55a939babf5"
+  version = "v1.0.2"
 
 [[projects]]
   digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
@@ -596,7 +610,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "f9ce57c11b242f0f1599cf25c89d8cb02c45295a"
+  revision = "c39426892332e1bb5ec0a434a079bf82f5d30c54"
 
 [[projects]]
   branch = "master"
@@ -608,14 +622,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4d16433c0d2c24761b8a507e8c2e9c8cf9193b497d6b38aaeffca038070bc8f5"
+  digest = "1:a60cae5be8993938498243605b120290533a5208fd5cac81c932afbad3642fb0"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "904bdc257025c7b3f43c19360ad3ab85783fad78"
+  revision = "98c5dad5d1a0e8a73845ecc8897d0bd56586511d"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -927,21 +941,22 @@
   revision = "e3762e86a74c878ffed47484592986685639c2cd"
 
 [[projects]]
-  digest = "1:dbe168d18d4c5b1e9172020275a297340579ce4b05cbaacb41ae6f3e3007a913"
+  digest = "1:efd7f4a2c3339485190142d3b83052207aaadf6e4e724fdbac79a5de0a8120c5"
   name = "pack.ag/amqp"
   packages = [
     ".",
     "internal/testconn",
   ]
   pruneopts = "UT"
-  revision = "5dba116cc9e06d56dbd69570b1c4048b06e71b6f"
-  version = "v0.6.3"
+  revision = "f04efab52fd05cbd1b25280ae54423fc7b12e267"
+  version = "v0.7.3"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/Azure/azure-event-hubs-go",
+    "github.com/Azure/azure-event-hubs-go/eph",
     "github.com/Microsoft/presidio-genproto/golang",
     "github.com/aws/aws-sdk-go/aws",
     "github.com/aws/aws-sdk-go/aws/session",

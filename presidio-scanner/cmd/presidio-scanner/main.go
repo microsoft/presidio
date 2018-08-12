@@ -11,28 +11,33 @@ import (
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/cache"
-	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/rpc"
+	services "github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
-)
-
-var (
-	grpcPort string
 )
 
 func main() {
 	// Setup objects
 	scanRequest := initScanner()
-	cache := setupCache()
-	analyzeRequest, analyzeService := setupAnalyzerObjects(scanRequest)
-	anonymizeService := setupAnoymizerService(scanRequest)
+	c := services.SetupCache()
+
+	analyzeService := services.SetupAnalyzerService()
+	analyzeRequest := &message_types.AnalyzeRequest{
+		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
+		MinProbability:  scanRequest.GetMinProbability(),
+	}
+
+	var anonymizeService *message_types.AnonymizeServiceClient
+	if scanRequest.AnonymizeTemplate != nil {
+		anonymizeService = services.SetupAnoymizerService()
+	}
+
 	datasinkService := setupDatasinkService(scanRequest.DatasinkTemplate)
 	scanner := createScanner(scanRequest)
 
 	// Scan
-	_, err := Scan(scanner, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, datasinkService)
+	_, err := Scan(scanner, scanRequest, c, analyzeService, analyzeRequest, anonymizeService, datasinkService)
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -74,14 +79,14 @@ func Scan(scanner scanner.Scanner, scanRequest *message_types.ScanRequest, cache
 			}
 
 			if len(analyzerResult) > 0 {
-				anonymizerResult, err := anonymizeItem(analyzerResult, text, itemPath, scanRequest.AnonymizeTemplate, anonymizeService)
+				anonymizerResult, err := anonymizeItem(analyzerResult, text, scanRequest.AnonymizeTemplate, anonymizeService)
 
 				if err != nil {
 					log.Error(fmt.Sprintf("error anonymizing item: %s, error: %q", itemPath, err.Error()))
 					return 0, err
 				}
 
-				err = sendResultToDatasink(itemPath, analyzerResult, anonymizerResult, cache, datasinkService)
+				err = sendResultToDatasink(itemPath, analyzerResult, anonymizerResult, datasinkService)
 				if err != nil {
 					log.Error(fmt.Sprintf("error sending file to datasink: %s, error: %q", itemPath, err.Error()))
 					return 0, err
@@ -98,7 +103,7 @@ func Scan(scanner scanner.Scanner, scanRequest *message_types.ScanRequest, cache
 	})
 }
 
-func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, path string, anonymizeTemplate *message_types.AnonymizeTemplate,
+func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, anonymizeTemplate *message_types.AnonymizeTemplate,
 	anonymizeService *message_types.AnonymizeServiceClient) (*message_types.AnonymizeResponse, error) {
 	if anonymizeTemplate != nil {
 		srv := *anonymizeService
@@ -123,7 +128,7 @@ func writeItemToCache(uniqueID string, scannedPath string, cache cache.Cache) {
 }
 
 func sendResultToDatasink(scannedPath string, analyzeResults []*message_types.AnalyzeResult,
-	anonymizeResults *message_types.AnonymizeResponse, cache cache.Cache,
+	anonymizeResults *message_types.AnonymizeResponse,
 	datasinkService *message_types.DatasinkServiceClient) error {
 	srv := *datasinkService
 
@@ -143,12 +148,9 @@ func sendResultToDatasink(scannedPath string, analyzeResults []*message_types.An
 }
 
 func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) *message_types.DatasinkServiceClient {
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("localhost:%s", grpcPort))
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to datasink service failed %q", err))
-	}
+	datasinkService := services.SetupDatasinkService()
 
-	_, err = (*datasinkService).Init(context.Background(), datasinkTemplate)
+	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -157,72 +159,6 @@ func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) *mes
 }
 
 // Init functions
-func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_types.AnalyzeRequest, *message_types.AnalyzeServiceClient) {
-	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
-	if analyzerSvcHost == "" {
-		log.Fatal("analyzer service address is empty")
-	}
-
-	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
-
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to analyzer service failed %q", err))
-	}
-
-	analyzeRequest := &message_types.AnalyzeRequest{
-		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
-		MinProbability:  scanRequest.GetMinProbability(),
-	}
-
-	return analyzeRequest, analyzeService
-}
-
-func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_types.AnonymizeServiceClient {
-	// Anonymize is not mandatory - initialize objects only if needed
-	if scanRequest.AnonymizeTemplate == nil {
-		return nil
-	}
-
-	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
-	if anonymizerSvcHost == "" {
-		log.Fatal("anonymizer service address is empty")
-	}
-
-	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
-	if anonymizerSvcPort == "" {
-		log.Fatal("anonymizer service port is empty")
-	}
-
-	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to anonymizer service failed %q", err))
-	}
-	return anonymizeService
-}
-
-func setupCache() cache.Cache {
-	redisHost := os.Getenv("REDIS_HOST")
-	if redisHost == "" {
-		log.Fatal("redis address is empty")
-	}
-
-	redisPort := os.Getenv("REDIS_SVC_PORT")
-	if redisPort == "" {
-		log.Fatal("redis port is empty")
-	}
-
-	redisAddress := redisHost + ":" + redisPort
-	cache := redis.New(
-		redisAddress,
-		"", // no password set
-		0,  // use default DB
-	)
-	return cache
-}
 
 func initScanner() *message_types.ScanRequest {
 	godotenv.Load()
@@ -237,13 +173,6 @@ func initScanner() *message_types.ScanRequest {
 	if scanRequest.Kind == "" {
 		log.Fatal("storage king var must me set")
 	}
-
-	grpcPort = os.Getenv("GRPC_PORT")
-	if grpcPort == "" {
-		// Set to default
-		grpcPort = "5000"
-	}
-
 	return scanRequest
 }
 

@@ -21,8 +21,7 @@ import (
 type server struct{}
 
 var (
-	grpcPort = os.Getenv("GRPC_PORT")
-	// Currently not supported, will be in use once we'll move to configmaps. default port is 5000
+	grpcPort                = os.Getenv("GRPC_PORT")
 	datasinkGrpcPort        = os.Getenv("DATASINK_GRPC_PORT")
 	namespace               = os.Getenv("presidio_NAMESPACE")
 	analyzerSvcHost         = os.Getenv("ANALYZER_SVC_HOST")
@@ -104,7 +103,7 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 			Name:  "datasink",
 			Image: datasinkImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "GRPC_PORT", Value: datasinkGrpcPort},
+				{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
 			},
 			ImagePullPolicy: datasinkPolicy,
 		},
@@ -112,7 +111,7 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 			Name:  "scanner",
 			Image: scannerImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "GRPC_PORT", Value: datasinkGrpcPort},
+				{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
 				{Name: "REDIS_HOST", Value: redisSvcHost},
 				{Name: "REDIS_SVC_PORT", Value: redisSvcPort},
 				{Name: "ANALYZER_SVC_HOST", Value: analyzerSvcHost},

@@ -1,6 +1,6 @@
 [[constraint]]
   name = "github.com/Azure/azure-event-hubs-go"
-  version = "0.4.0"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/harlow/kinesis-consumer"
