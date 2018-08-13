@@ -22,6 +22,10 @@ func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
 	switch kind {
 	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub):
 		stream = eventhubs.New()
+		// case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kafka):
+		// 	stream = kafka.NewConsumer(datasink.StreamConfig.KafkaConfig.GetAddress(), datasink.StreamConfig.KafkaConfig.GetTopic())
+		// case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kinesis):
+		// 	stream = kafka.NewConsumer(datasink.StreamConfig.KinesisConfig.GetStreamName, datasink.StreamConfig.KafkaConfig.GetTopic())
 	}
 	streamDatasink := streamDatasink{stream: stream}
 

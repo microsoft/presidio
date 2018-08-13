@@ -10,6 +10,7 @@ import (
 	"github.com/korovkin/limiter"
 	"github.com/presid-io/stow"
 	"github.com/presid-io/stow/azure"
+	// "github.com/presid-io/stow/google"
 	"github.com/presid-io/stow/s3"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
@@ -46,8 +47,8 @@ func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (st
 	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
 		config, containerName := InitS3(cloudStorageConfig)
 		return config, containerName, nil
-	// case "google":
-	// 	// Add support
+	case "google":
+
 	default:
 		return nil, "", fmt.Errorf("Unknown storage kind")
 	}
@@ -68,9 +69,32 @@ func CreateS3Config(accessKeyID string, secretKey string, region string, endpoin
 	return "s3", configMap
 }
 
+// //CreatGoogleConfig create google configuration
+// func CreatGoogleConfig(json string, projectID string, scopes string) (string, stow.ConfigMap) {
+// 	return "google", stow.ConfigMap{
+// 		google.ConfigJSON:      json,
+// 		google.ConfigProjectId: projectID,
+// 		google.ConfigScopes:    scopes,
+// 	}
+// }
+
+// InitGoogle inits the storage with the supplied parameters
+func InitGoogle(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+	s3AccessKeyID := cloudStorageConfig.S3Config.GetAccessId()
+	s3SecretKey := cloudStorageConfig.S3Config.GetAccessKey()
+	s3Region := cloudStorageConfig.S3Config.GetRegion()
+	s3Bucket := cloudStorageConfig.S3Config.GetBucketName()
+	s3Endpoint := cloudStorageConfig.S3Config.GetEndpoint()
+	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
+		log.Fatal("accessId, accessKey, region, bucket must me set for s3 storage kind.")
+	}
+	_, config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region, s3Endpoint)
+	return config, s3Bucket
+}
+
 // InitS3 inits the storage with the supplied credentials
 func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
-	s3AccessKeyID := cloudStorageConfig.S3Config.GetAccessId()
+	s3AccessKeyID := cloudStorageConfig.Google.GetAccessId()
 	s3SecretKey := cloudStorageConfig.S3Config.GetAccessKey()
 	s3Region := cloudStorageConfig.S3Config.GetRegion()
 	s3Bucket := cloudStorageConfig.S3Config.GetBucketName()
@@ -119,15 +143,6 @@ func (a *API) CreateContainer(name string) (stow.Container, error) {
 func (a *API) RemoveContainer(name string) error {
 	return a.location.RemoveContainer(name)
 }
-
-//CreatGoogleConfig create google configuration
-// func CreatGoogleConfig(configJson string, configProjectId string, configScopes string) (string, stow.ConfigMap) {
-// 	return "google", stow.ConfigMap{
-// 		google.ConfigJSON:      configJson,
-// 		google.ConfigProjectId: configProjectId,
-// 		google.ConfigScopes:    configScopes,
-// 	}
-// }
 
 // walkFunc contain the logic that need to be implemented on each of the items in the container
 type walkFunc func(item stow.Item)

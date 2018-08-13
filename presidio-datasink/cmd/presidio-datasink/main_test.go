@@ -25,6 +25,13 @@ func TestIsCloudStorage(t *testing.T) {
 	assert.False(t, isCloudStorage("postgres"))
 }
 
+func TestIsStream(t *testing.T) {
+	assert.True(t, isStream("eventhub"))
+	assert.True(t, isStream("kafka"))
+	assert.True(t, isStream("kinesis"))
+	assert.False(t, isStream("postgres"))
+}
+
 func TestDatasinkInit(t *testing.T) {
 	var s *server
 	datasinkTemplate := &message_types.DatasinkTemplate{}
