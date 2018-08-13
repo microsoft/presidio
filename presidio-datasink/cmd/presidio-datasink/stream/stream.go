@@ -2,7 +2,6 @@ package stream
 
 import (
 	"fmt"
-	"path/filepath"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
@@ -33,7 +32,6 @@ func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
 }
 
 func (datasink *streamDatasink) Init() {
-
 }
 
 func (datasink *streamDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
@@ -75,13 +73,4 @@ func (datasink *streamDatasink) WriteAnonymizeResults(result *message_types.Anon
 
 	log.Info("Analyzed result was written to the stream successfully")
 	return nil
-}
-
-func addActionToFilePath(path string, action string) string {
-	ext := filepath.Ext(path)
-	path = path[:len(path)-len(ext)]
-	if string(path[0]) == "/" {
-		path = path[1:]
-	}
-	return fmt.Sprintf("%s-%s%s", path, action, ext)
 }

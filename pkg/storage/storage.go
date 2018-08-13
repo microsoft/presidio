@@ -10,7 +10,6 @@ import (
 	"github.com/korovkin/limiter"
 	"github.com/presid-io/stow"
 	"github.com/presid-io/stow/azure"
-	// "github.com/presid-io/stow/google"
 	"github.com/presid-io/stow/s3"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
@@ -47,8 +46,9 @@ func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (st
 	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
 		config, containerName := InitS3(cloudStorageConfig)
 		return config, containerName, nil
-	case "google":
-
+	// case "google":
+	// 	config, containerName := InitGoogle(cloudStorageConfig)
+	// 	return config, containerName, nil
 	default:
 		return nil, "", fmt.Errorf("Unknown storage kind")
 	}
@@ -78,23 +78,21 @@ func CreateS3Config(accessKeyID string, secretKey string, region string, endpoin
 // 	}
 // }
 
-// InitGoogle inits the storage with the supplied parameters
-func InitGoogle(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
-	s3AccessKeyID := cloudStorageConfig.S3Config.GetAccessId()
-	s3SecretKey := cloudStorageConfig.S3Config.GetAccessKey()
-	s3Region := cloudStorageConfig.S3Config.GetRegion()
-	s3Bucket := cloudStorageConfig.S3Config.GetBucketName()
-	s3Endpoint := cloudStorageConfig.S3Config.GetEndpoint()
-	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
-		log.Fatal("accessId, accessKey, region, bucket must me set for s3 storage kind.")
-	}
-	_, config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region, s3Endpoint)
-	return config, s3Bucket
-}
+// // InitGoogle inits the storage with the supplied parameters
+// func InitGoogle(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+// 	googleJson := cloudStorageConfig.GoogleStorageConfig.GetJson()
+// 	googleProjectID := cloudStorageConfig.GoogleStorageConfig.GetProjectId()
+// 	googleScopes := cloudStorageConfig.GoogleStorageConfig.GetScopes()
+// 	if googleJson == "" || googleProjectId == "" || googleScopes == "" {
+// 		log.Fatal("json, projectId, scopes must me set for google storage kind.")
+// 	}
+// 	_, config := CreatGoogleConfig(googleJson, googleProjectID, googleScopes)
+// 	return config, s3Bucket
+// }
 
 // InitS3 inits the storage with the supplied credentials
 func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
-	s3AccessKeyID := cloudStorageConfig.Google.GetAccessId()
+	s3AccessKeyID := cloudStorageConfig.S3Config.GetAccessId()
 	s3SecretKey := cloudStorageConfig.S3Config.GetAccessKey()
 	s3Region := cloudStorageConfig.S3Config.GetRegion()
 	s3Bucket := cloudStorageConfig.S3Config.GetBucketName()
