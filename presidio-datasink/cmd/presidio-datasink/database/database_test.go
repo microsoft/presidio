@@ -10,7 +10,6 @@ import (
 )
 
 var (
-	// Azure emulator connection string
 	dbKind           = "sqlite3"
 	connectionString = "./test.db?cache=shared&mode=rwc"
 )
@@ -48,7 +47,7 @@ func TestResultWrittenToDb(t *testing.T) {
 	}
 
 	engine.DropTables(tableName)
-	datasink = New(sync, dbKind, "anonymize")
+	datasink = New(sink, dbKind, "anonymize")
 
 	// Act
 	datasink.WriteAnonymizeResults(anonymizeResponse, resultsPath)
