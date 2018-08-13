@@ -24,7 +24,7 @@ type mockMessage struct {
 	Partition string
 }
 
-//NewProducer Return new Mock Producer stream
+//New Return new Mock Producer stream
 func New(topic string) stream.Stream {
 
 	m := mockImpl{}
@@ -48,10 +48,15 @@ func (m *mock) Receive(receiveFunc stream.ReceiveFunc) error {
 		if err != nil {
 			return err
 		}
+		if msg == nil {
+			break
+		}
+
 		err = receiveFunc(msg.Partition, msg.Key, msg.Value)
 		if err != nil {
 			log.Error(err.Error())
 		}
+
 	}
 	return nil
 }
@@ -66,7 +71,7 @@ func (m *mock) Send(message string) error {
 // Mock impl
 func (m *mockImpl) Send(message string) error {
 
-	log.Info(fmt.Sprintf("Sending: %s", message))
+	log.Info("Sending: %s", message)
 	m.partitions["1"] = append(m.partitions["0"], message)
 	return nil
 }
@@ -74,12 +79,15 @@ func (m *mockImpl) Send(message string) error {
 func (m *mockImpl) New(topic string) error {
 	m.partitions = make(map[string][]string, 1)
 	m.partitions["1"] = make([]string, 0)
-	log.Info(fmt.Sprintf("New topic: %s", topic))
+	log.Info("New topic: %s", topic)
 	return nil
 }
 
-func (m *mockImpl) Receive() (mockMessage, error) {
+func (m *mockImpl) Receive() (*mockMessage, error) {
 	var value string
+	if len(m.partitions["1"]) == 0 {
+		return nil, nil
+	}
 	value, m.partitions["1"] = m.partitions["1"][0], m.partitions["1"][1:]
 
 	msg := mockMessage{
@@ -87,5 +95,5 @@ func (m *mockImpl) Receive() (mockMessage, error) {
 		Value:     value,
 		Key:       uuid.NewV4().String(),
 	}
-	return msg, nil
+	return &msg, nil
 }

@@ -55,7 +55,7 @@ func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_type
 
 	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to analyzer service failed %q", err))
+		log.Fatal("Connection to analyzer service failed %q", err)
 	}
 
 	analyzeRequest := &message_types.AnalyzeRequest{
@@ -84,7 +84,7 @@ func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_type
 
 	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to anonymizer service failed %q", err))
+		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
 	return anonymizeService
 }
@@ -116,7 +116,7 @@ func initScanner() *message_types.ScanRequest {
 	scanRequest := &message_types.ScanRequest{}
 	err := templates.ConvertJSONToInterface(scannerObj, scanRequest)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Error formating scanner request %q", err.Error()))
+		log.Fatal("Error formating scanner request %q", err.Error())
 	}
 
 	if scanRequest.Kind == "" {
@@ -135,7 +135,7 @@ func initScanner() *message_types.ScanRequest {
 func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) *message_types.DatasinkServiceClient {
 	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("localhost:%s", grpcPort))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to datasink service failed %q", err))
+		log.Fatal("Connection to datasink service failed %q", err)
 	}
 
 	_, err = (*datasinkService).Init(context.Background(), datasinkTemplate)

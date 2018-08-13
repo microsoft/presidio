@@ -40,7 +40,7 @@ func main() {
 func receiveEvents(partition string, sequence string, text string) error {
 	analyzerResult, err := analyzeItem(text)
 	if err != nil {
-		log.Error(fmt.Sprintf("error analyzing message: %s, error: %q", text, err.Error()))
+		log.Error("error analyzing message: %s, error: %q", text, err.Error())
 		return err
 	}
 
@@ -48,16 +48,16 @@ func receiveEvents(partition string, sequence string, text string) error {
 		anonymizerResult, err := anonymizeItem(analyzerResult, text, streamRequest.AnonymizeTemplate)
 
 		if err != nil {
-			log.Error(fmt.Sprintf("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error()))
+			log.Error("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error())
 			return err
 		}
 
 		err = sendResultToDatasink(analyzerResult, anonymizerResult, fmt.Sprintf("%s/%s", partition, sequence))
 		if err != nil {
-			log.Error(fmt.Sprintf("error sending message to datasink: %s/%s, error: %q", partition, sequence, err.Error()))
+			log.Error("error sending message to datasink: %s/%s, error: %q", partition, sequence, err.Error())
 			return err
 		}
-		log.Info(fmt.Sprintf("%d results were sent to the datasink successfully", len(analyzerResult)))
+		log.Info("%d results were sent to the datasink successfully", len(analyzerResult))
 
 	}
 	return nil
@@ -89,7 +89,7 @@ func initStream() {
 	streamRequest = &message_types.StreamRequest{}
 	err := templates.ConvertJSONToInterface(streamObj, streamRequest)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Error formating scanner request %q", err.Error()))
+		log.Fatal("Error formating scanner request %q", err.Error())
 	}
 
 	if streamRequest.Kind == "" {

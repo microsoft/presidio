@@ -90,13 +90,13 @@ func (s *server) Apply(ctx context.Context, r *message_types.DatasinkRequest) (*
 
 	if anonymizerDatasink != nil {
 		if r.AnonymizeResult != nil {
-			log.Info(fmt.Sprintf("sending anonymized result: %s", r.Path))
+			log.Info("sending anonymized result: %s", r.Path)
 			err := anonymizerDatasink.WriteAnonymizeResults(r.AnonymizeResult, r.Path)
 			if err != nil {
 				errstrings = append(errstrings, err.Error())
 			}
 		} else {
-			log.Info(fmt.Sprintf("path %s has no anonymize result", r.Path))
+			log.Info("path %s has no anonymize result", r.Path)
 		}
 	}
 

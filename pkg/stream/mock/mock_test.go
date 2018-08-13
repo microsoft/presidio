@@ -1,8 +1,9 @@
 package mock
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStream(t *testing.T) {

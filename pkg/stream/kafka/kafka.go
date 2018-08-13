@@ -1,7 +1,8 @@
 package kafka
 
 import (
-	"fmt"
+	"context"
+	"strconv"
 
 	api "github.com/confluentinc/confluent-kafka-go/kafka"
 
@@ -12,6 +13,7 @@ import (
 type kafka struct {
 	producer *api.Producer
 	consumer *api.Consumer
+	ctx      context.Context
 	topic    string
 }
 
@@ -30,12 +32,15 @@ func NewProducer(address string, topic string) stream.Stream {
 }
 
 //NewConsumer Return new Kafka Consumer stream
-func NewConsumer(address string, topic string) stream.Stream {
+func NewConsumer(address string, topic string, ctx context.Context) stream.Stream {
 
 	c, err := api.NewConsumer(&api.ConfigMap{
-		"bootstrap.servers": address,
-		"group.id":          "presidio",
-		"auto.offset.reset": "earliest",
+		"bootstrap.servers":               address,
+		"group.id":                        "presidio",
+		"session.timeout.ms":              6000,
+		"go.events.channel.enable":        true,
+		"go.application.rebalance.enable": true,
+		"default.topic.config":            api.ConfigMap{"auto.offset.reset": "earliest"},
 	})
 
 	if err != nil {
@@ -51,19 +56,53 @@ func NewConsumer(address string, topic string) stream.Stream {
 	return &kafka{
 		consumer: c,
 		topic:    topic,
+		ctx:      ctx,
 	}
 }
 
 //Receive message from kafka topic
 func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
 
-	for {
-		msg, err := k.consumer.ReadMessage(-1)
-		if err != nil {
-			return err
+	run := true
+
+	for run {
+		select {
+		case <-k.ctx.Done():
+			log.Info("Caught signal: terminating")
+			run = false
+		case ev := <-k.consumer.Events():
+			switch e := ev.(type) {
+			case api.AssignedPartitions:
+				log.Info("%% %v\n", e)
+				err := k.consumer.Assign(e.Partitions)
+				if err != nil {
+					log.Error(err.Error())
+				}
+			case api.RevokedPartitions:
+				log.Info("%% %v\n", e)
+				err := k.consumer.Unassign()
+				if err != nil {
+					log.Error(err.Error())
+				}
+			case *api.Message:
+				err := receiveFunc(strconv.Itoa(int(e.TopicPartition.Partition)), string(e.Key), string(e.Value))
+				if err != nil {
+					log.Error(err.Error())
+				}
+			case api.PartitionEOF:
+				log.Info("%% Reached %v\n", e)
+			case api.Error:
+				log.Error("%% Error: %v\n", e)
+				run = false
+				return e
+			}
 		}
-		receiveFunc(string(msg.TopicPartition.Partition), string(msg.Key), string(msg.Value))
 	}
+	err := k.consumer.Close()
+	if err != nil {
+		log.Error(err.Error())
+	}
+	return nil
 }
 
 //Send message to kafka topic
@@ -75,9 +114,9 @@ func (k *kafka) Send(message string) error {
 			switch ev := e.(type) {
 			case *api.Message:
 				if ev.TopicPartition.Error != nil {
-					log.Error(fmt.Sprintf("Delivery failed: %v\n", ev.TopicPartition))
+					log.Error("Delivery failed: %v\n", ev.TopicPartition)
 				} else {
-					log.Info(fmt.Sprintf("Delivered message to %v\n", ev.TopicPartition))
+					log.Info("Delivered message to %v\n", ev.TopicPartition)
 				}
 			}
 		}

@@ -1,8 +1,6 @@
 package platform
 
 import (
-	"fmt"
-
 	log "github.com/Microsoft/presidio/pkg/logger"
 
 	apiv1 "k8s.io/api/core/v1"
@@ -39,7 +37,7 @@ func ConvertPullPolicyStringToType(pullPolicy string) apiv1.PullPolicy {
 	case "IfNotPresent":
 		return apiv1.PullIfNotPresent
 	default:
-		log.Info(fmt.Sprintf("Unknown pull policy type %s, setting default to always", pullPolicy))
+		log.Info("Unknown pull policy type %s, setting default to always", pullPolicy)
 		return apiv1.PullAlways
 	}
 }

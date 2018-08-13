@@ -2,7 +2,6 @@ package kinesis
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"time"
@@ -46,13 +45,13 @@ func NewConsumer(address string, streamName string) stream.Stream {
 	// redis checkpoint
 	ck, err := checkpoint.New("presidio")
 	if err != nil {
-		log.Fatal(fmt.Sprintf("checkpoint error: %v", err))
+		log.Fatal("checkpoint error: %v", err)
 	}
 
 	// consumer
 	c, err := consumer.New(streamName, consumer.WithCheckpoint(ck))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("consumer error: %v", err))
+		log.Fatal("consumer error: %v", err)
 	}
 
 	// use cancel func to signal shutdown
@@ -86,7 +85,7 @@ func (k *kinesis) Receive(receiveFunc stream.ReceiveFunc) error {
 		return consumer.ScanStatus{}
 	})
 	if err != nil {
-		log.Fatal(fmt.Sprintf("scan error: %v", err))
+		log.Fatal("scan error: %v", err)
 	}
 
 	return nil
@@ -107,7 +106,7 @@ func (k *kinesis) Send(message string) error {
 		Records:    records,
 	})
 	if err != nil {
-		log.Error(fmt.Sprintf("error putting records: %v", err))
+		log.Error("error putting records: %v", err)
 	}
 	return nil
 }

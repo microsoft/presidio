@@ -60,17 +60,17 @@ func connectGRPCServices(analyzerAddress string, anonymizerAddress string, sched
 	var err error
 	analyzeService, err = rpc.SetupAnalyzerService(analyzerAddress)
 	if err != nil {
-		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
+		log.Error("Connection to analyzer service failed %q", err)
 	}
 	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerAddress)
 	if err != nil {
-		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
+		log.Error("Connection to anonymizer service failed %q", err)
 	}
 
 	if schedulerAddress != "" {
 		cronJobService, err = rpc.SetupCronJobService(schedulerAddress)
 		if err != nil {
-			log.Error(fmt.Sprintf("Connection to scheduler service failed %q", err))
+			log.Error("Connection to scheduler service failed %q", err)
 		}
 	}
 }

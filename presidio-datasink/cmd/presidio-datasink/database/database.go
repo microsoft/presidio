@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"time"
 
 	// import mssql driver
@@ -100,7 +99,7 @@ func (datasink *dbDatasink) WriteAnalyzeResults(results []*message_types.Analyze
 		return err
 	}
 
-	log.Info(fmt.Sprintf("path: %s, %d analyzed rows were written to the DB successfully", path, len(results)))
+	log.Info("path: %s, %d analyzed rows were written to the DB successfully", path, len(results))
 	return nil
 }
 
@@ -113,10 +112,10 @@ func (datasink *dbDatasink) WriteAnonymizeResults(result *message_types.Anonymiz
 	// Add row to table
 	_, err := datasink.engine.Table(datasink.tableName).Insert(&r)
 	if err != nil {
-		log.Error(fmt.Sprintf("error sending rows to anonymized table %s", path))
+		log.Error("error sending rows to anonymized table %s", path)
 		return err
 	}
 
-	log.Info(fmt.Sprintf("path: %s, anonymized result was written to the DB successfully, ", path))
+	log.Info("path: %s, anonymized result was written to the DB successfully, ", path)
 	return nil
 }

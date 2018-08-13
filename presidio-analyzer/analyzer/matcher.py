@@ -22,6 +22,7 @@ class Matcher(object):
         Load spacy model once
         """
 
+        logging.getLogger('tldextract').setLevel('WARNING')
         # Caching top level domains
         tldextract.extract("")
 

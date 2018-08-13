@@ -6,7 +6,6 @@ import (
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 
-	"fmt"
 	"os"
 
 	apiv1 "k8s.io/api/core/v1"
@@ -44,7 +43,7 @@ const (
 func main() {
 	log.Info("new version!")
 	if grpcPort == "" {
-		log.Fatal(fmt.Sprintf("GRPC_PORT (currently [%s]) env var must me set.", grpcPort))
+		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", grpcPort)
 	}
 	if analyzerSvcHost == "" {
 		log.Fatal("analyzer service address is empty")

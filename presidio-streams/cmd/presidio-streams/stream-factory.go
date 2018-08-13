@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
@@ -10,7 +11,7 @@ import (
 func createStream() stream.Stream {
 	config := streamRequest.GetStreamConfig()
 	if streamRequest.GetKind() == "kafka" && config.KafkaConfig != nil {
-		k := kafka.NewConsumer(config.KafkaConfig.GetAddress(), config.KafkaConfig.GetTopic())
+		k := kafka.NewConsumer(config.KafkaConfig.GetAddress(), config.KafkaConfig.GetTopic(), context.Background())
 		return k
 	}
 

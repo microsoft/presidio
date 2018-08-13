@@ -25,7 +25,7 @@ func SetupAnalyzerService() *message_types.AnalyzeServiceClient {
 
 	analyzeService, err := rpc.SetupAnalyzerService(fmt.Sprintf("%s:%s", analyzerSvcHost, analyzerSvcPort))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to analyzer service failed %q", err))
+		log.Fatal("Connection to analyzer service failed %q", err)
 	}
 
 	return analyzeService
@@ -46,7 +46,7 @@ func SetupAnoymizerService() *message_types.AnonymizeServiceClient {
 
 	anonymizeService, err := rpc.SetupAnonymizeService(fmt.Sprintf("%s:%s", anonymizerSvcHost, anonymizerSvcPort))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to anonymizer service failed %q", err))
+		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
 	return anonymizeService
 }
@@ -57,7 +57,7 @@ func SetupDatasinkService() *message_types.DatasinkServiceClient {
 	grpcPort := os.Getenv("DATASINK_GRPC_PORT")
 	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%s", address, grpcPort))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to datasink service failed %q", err))
+		log.Fatal("Connection to datasink service failed %q", err)
 	}
 
 	return datasinkService
