@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 
+	"os"
+
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
 	"github.com/Microsoft/presidio/pkg/stream/kinesis"
-	"os"
 )
 
 func createStream() stream.Stream {

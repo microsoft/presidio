@@ -43,6 +43,10 @@ spec:
             value: {{ .Values.registry }}/{{ .Values.scanner.name }}:{{ default .Chart.AppVersion .Values.scanner.tag }}
           - name: SCANNER_IMAGE_PULL_POLICY
             value: {{ default "IfNotPresent" .Values.scanner.imagePullPolicy }}
+          - name: STREAMS_IMAGE_NAME
+            value: {{ .Values.registry }}/{{ .Values.streams.name }}:{{ default .Chart.AppVersion .Values.streams.tag }}
+          - name: STREAMS_IMAGE_PULL_POLICY
+            value: {{ default "IfNotPresent" .Values.streams.imagePullPolicy }}
           - name: DATASINK_PULL_POLICY
             value: {{ default "IfNotPresent" .Values.datasink.imagePullPolicy }}
       {{ if .Values.privateRegistry }}imagePullSecrets:

@@ -19,7 +19,7 @@ type Store interface {
 	PutKVPair(key string, value string) error
 	GetKVPair(key string) (string, error)
 	DeleteKVPair(key string) error
-	CreateJob(name string, image string, commands []string) error
+	CreateJob(name string, containerDetailsArray []ContainerDetails) error
 	CreateCronJob(name string, schedule string, containerDetailsArray []ContainerDetails) error
 	ListJobs() ([]string, error)
 	ListCronJobs() ([]string, error)

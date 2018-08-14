@@ -55,6 +55,11 @@ scanner:
   imagePullPolicy: Always
   # tag:
 
+streams:
+  name: presidio-streams
+  imagePullPolicy: Always
+  # tag:
+
 datasink:
   name: presidio-datasink
   imagePullPolicy: Always
