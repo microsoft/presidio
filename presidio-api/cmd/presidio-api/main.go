@@ -88,8 +88,13 @@ func main() {
 			projects.POST("/anonymize", api.anonymize)
 
 			// Schedule scanning cron job
-			// /api/v1/projects/123/schedule-cronjob
-			projects.POST("/schedule-cronjob", api.scheduleCronJob)
+			// /api/v1/projects/123/schedule-scanner-cronjob
+			projects.POST("/schedule-scanner-cronjob", api.scheduleScannerCronJob)
+
+			// Schedule streams job
+			// /api/v1/projects/123/schedule-streams-job
+			projects.POST("/schedule-streams-job", api.scheduleStreamsJob)
+
 		}
 
 	}

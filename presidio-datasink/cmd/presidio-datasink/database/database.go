@@ -112,7 +112,6 @@ func (datasink *dbDatasink) WriteAnonymizeResults(result *message_types.Anonymiz
 	// Add row to table
 	_, err := datasink.engine.Table(datasink.tableName).Insert(&r)
 	if err != nil {
-		log.Error("error sending rows to anonymized table %s", path)
 		return err
 	}
 

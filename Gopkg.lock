@@ -72,11 +72,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:bd9fbe438b42a9079b9c470a4230f0026c15ae6b623ed946c424d47e0a307cac"
+  digest = "1:38d38673f85c48f27801fb96c451f0ad290baa99b03c57a2924fb0b9367d5b00"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "69e8f05e074fbeb937489e8ffd7a0bc21a2aad04"
+  revision = "345f503199068e2bba2ba08984fa4e61350fb3a2"
 
 [[projects]]
   digest = "1:b255b731a01d0531b8547ccd72b1578e41ef92edba69389f9f2ab7254f9c77f9"
@@ -621,14 +621,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a60cae5be8993938498243605b120290533a5208fd5cac81c932afbad3642fb0"
+  digest = "1:d756534cd4124a2c7f9b349b2a70a63e53d4e32befae47d6a4bd938a64b92e14"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "98c5dad5d1a0e8a73845ecc8897d0bd56586511d"
+  revision = "4e1fef5609515ec7a2cee7b5de30ba6d9b438cbf"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"

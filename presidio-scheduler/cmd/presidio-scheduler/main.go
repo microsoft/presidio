@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-
-	context "golang.org/x/net/context"
-	"google.golang.org/grpc/reflection"
-
+	"fmt"
 	"os"
 
+	"github.com/satori/go.uuid"
+	context "golang.org/x/net/context"
+	"google.golang.org/grpc/reflection"
 	apiv1 "k8s.io/api/core/v1"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
@@ -28,8 +28,10 @@ var (
 	redisUrl                = os.Getenv("REDIS_URL")
 	datasinkImage           = os.Getenv("DATASINK_IMAGE_NAME")
 	scannerImage            = os.Getenv("SCANNER_IMAGE_NAME")
+	streamsImage            = os.Getenv("STREAMS_IMAGE_NAME")
 	datasinkImagePullPolicy = os.Getenv("DATASINK_IMAGE_PULL_POLICY")
 	scannerImagePullPolicy  = os.Getenv("SCANNER_IMAGE_PULL_POLICY")
+	streamsImagePullPolicy  = os.Getenv("STREAMS_IMAGE_PULL_POLICY")
 	store                   platform.Store
 )
 
@@ -62,7 +64,7 @@ func main() {
 
 	lis, s := rpc.SetupClient(grpcPort)
 
-	message_types.RegisterCronJobServiceServer(s, &server{})
+	message_types.RegisterSchedulerServiceServer(s, &server{})
 	reflection.Register(s)
 
 	if err := s.Serve(lis); err != nil {
@@ -70,21 +72,26 @@ func main() {
 	}
 }
 
-func (s *server) Apply(ctx context.Context, r *message_types.CronJobRequest) (*message_types.CronJobResponse, error) {
-	_, err := applySchedulerRequest(r)
-	return &message_types.CronJobResponse{}, err
+func (s *server) ApplyScan(ctx context.Context, r *message_types.ScannerCronJobRequest) (*message_types.ScannerCronJobResponse, error) {
+	_, err := applyScanRequest(r)
+	return &message_types.ScannerCronJobResponse{}, err
 }
 
-func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.CronJobResponse, error) {
+func (s *server) ApplyStream(ctx context.Context, r *message_types.StreamsJobRequest) (*message_types.StreamsJobResponse, error) {
+	_, err := applyStreamRequest(r)
+	return &message_types.StreamsJobResponse{}, err
+}
+
+func applyScanRequest(r *message_types.ScannerCronJobRequest) (*message_types.ScannerCronJobResponse, error) {
 	scanRequest, err := json.Marshal(r.ScanRequest)
 	if err != nil {
-		return &message_types.CronJobResponse{}, err
+		return &message_types.ScannerCronJobResponse{}, err
 	}
 
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
 	scannerPolicy := platform.ConvertPullPolicyStringToType(scannerImagePullPolicy)
-
-	err = store.CreateCronJob(r.Name, r.Trigger.Schedule.GetRecurrencePeriodDuration(), []platform.ContainerDetails{
+	jobName := fmt.Sprintf("%s-scanner-cronjob", uuid.NewV4().String())
+	err = store.CreateCronJob(jobName, r.Trigger.Schedule.GetRecurrencePeriod(), []platform.ContainerDetails{
 		{
 			Name:  "datasink",
 			Image: datasinkImage,
@@ -106,7 +113,46 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 			ImagePullPolicy: scannerPolicy,
 		},
 	})
-	return &message_types.CronJobResponse{}, err
+	return &message_types.ScannerCronJobResponse{}, err
+}
+
+func applyStreamRequest(r *message_types.StreamsJobRequest) (*message_types.StreamsJobResponse, error) {
+	streamRequest, err := json.Marshal(r.StreamsRequest)
+	if err != nil {
+		return &message_types.StreamsJobResponse{}, err
+	}
+
+	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
+	streamsPolicy := platform.ConvertPullPolicyStringToType(streamsImagePullPolicy)
+
+	for index := 0; index < 1; index++ {
+		jobName := fmt.Sprintf("%s-streams-job-%d", uuid.NewV4().String(), index)
+		err = store.CreateJob(jobName, []platform.ContainerDetails{
+			{
+				Name:  "datasink",
+				Image: datasinkImage,
+				EnvVars: []apiv1.EnvVar{
+					{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
+				},
+				ImagePullPolicy: datasinkPolicy,
+			},
+			{
+				Name:  "streams",
+				Image: streamsImage,
+				EnvVars: []apiv1.EnvVar{
+					{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
+					{Name: "REDIS_URL", Value: redisUrl},
+					{Name: "ANALYZER_SVC_ADRESS", Value: analyzerSvcAddress},
+					{Name: "ANONYMIZER_SVC_ADDRESS", Value: anonymizerSvcAddress},
+					{Name: "STREAM_REQUEST", Value: string(streamRequest)},
+					{Name: "PARTITON_ID", Value: string(index)},
+				},
+				ImagePullPolicy: streamsPolicy,
+			},
+		})
+	}
+
+	return &message_types.StreamsJobResponse{}, err
 }
 
 // TODO: duplication from presidio api- refactor to pkg

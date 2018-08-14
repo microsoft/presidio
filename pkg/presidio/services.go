@@ -41,6 +41,22 @@ func SetupAnoymizerService() *message_types.AnonymizeServiceClient {
 	return anonymizeService
 }
 
+//SetupSchedulerService GRPC connection
+func SetupSchedulerService() *message_types.SchedulerServiceClient {
+
+	schedulerAddress := os.Getenv("SCHEDULER_SVC_ADDRESS")
+	if schedulerAddress == "" {
+		log.Warn("scheduler service address is empty")
+		return nil
+	}
+
+	schedulerService, err := rpc.SetupSchedulerService(schedulerAddress)
+	if err != nil {
+		log.Fatal("Connection to anonymizer service failed %q", err)
+	}
+	return schedulerService
+}
+
 //SetupDatasinkService GRPC connection
 func SetupDatasinkService() *message_types.DatasinkServiceClient {
 	address := "localhost"

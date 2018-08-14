@@ -28,7 +28,7 @@ func createStream() stream.Stream {
 	}
 	if streamRequest.GetKind() == "kinesis" && config.EhConfig != nil {
 		c := config.GetKinesisConfig()
-		k := kinesis.NewConsumer(ctx, "", c.AWsSecretAccessKey, c.AWsRegion, c.AWsSecretKey, c.RedisUrl, c.GetStreamName())
+		k := kinesis.NewConsumer(ctx, c.EndpointAddress, c.AwsSecretAccessKey, c.AwsRegion, c.AwsAccessKeyId, c.RedisUrl, c.GetStreamName())
 		return k
 	}
 	return nil
