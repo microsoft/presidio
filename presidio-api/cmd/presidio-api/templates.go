@@ -93,9 +93,12 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	case "datasink":
 		var datasinkTemplate message_types.DatasinkTemplate
 		return bindAndConvert(datasinkTemplate, c)
-	case "schedule-cronjob":
-		var cronjobTemplate message_types.CronJobTemplate
-		return bindAndConvert(cronjobTemplate, c)
+	case "schedule-scanner-cronjob":
+		var scannerCronjobTemplate message_types.ScannerCronJobTemplate
+		return bindAndConvert(scannerCronjobTemplate, c)
+	case "schedule-streams-job":
+		var streamsJobTemplate message_types.StreamsJobTemplate
+		return bindAndConvert(streamsJobTemplate, c)
 	}
 
 	return "", errors.New("No template found")

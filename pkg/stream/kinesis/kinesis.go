@@ -2,7 +2,6 @@ package kinesis
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"time"
@@ -30,9 +29,24 @@ type kinesis struct {
 //  AWS_SECRET_KEY=
 //  REDIS_URL=
 
+func verifyEnvVars(accessKey string, region string, secretKey string, redisUrl string) {
+	os.Setenv("AWS_ACCESS_KEY", accessKey)
+	os.Setenv("AWS_REGION", region)
+	os.Setenv("AWS_SECRET_KEY", secretKey)
+	os.Setenv("REDIS_URL", redisUrl)
+}
+
 //NewProducer for kinesis stream
-func NewProducer(address string, streamName string) stream.Stream {
-	p := kin.New(session.New(), &aws.Config{})
+func NewProducer(accessKey string, endpoint string, region string, secretKey string, redisUrl string, streamName string) stream.Stream {
+	verifyEnvVars(accessKey, region, secretKey, redisUrl)
+
+	config := aws.NewConfig()
+	config = config.WithEndpoint(endpoint)
+	s, err := session.NewSession(config)
+	if err != nil {
+		log.Fatal("session error: %v", err)
+	}
+	p := kin.New(s, config)
 
 	return &kinesis{
 		producer:   p,
@@ -41,22 +55,32 @@ func NewProducer(address string, streamName string) stream.Stream {
 }
 
 //NewConsumer for kinesis stream
-func NewConsumer(address string, streamName string) stream.Stream {
+func NewConsumer(ctx context.Context, endpoint string, accessKey string, region string, secretKey string, redisUrl string, streamName string) stream.Stream {
+
+	verifyEnvVars(accessKey, region, secretKey, redisUrl)
 
 	// redis checkpoint
-	ck, err := checkpoint.New("presidio")
+	ck, err := checkpoint.New(streamName)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("checkpoint error: %v", err))
+		log.Fatal("checkpoint error: %v", err)
 	}
 
 	// consumer
-	c, err := consumer.New(streamName, consumer.WithCheckpoint(ck))
+	config := aws.NewConfig()
+	config = config.WithEndpoint(endpoint)
+
+	s, err := session.NewSession(config)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("consumer error: %v", err))
+		log.Fatal("session error: %v", err)
+	}
+	client := kin.New(s)
+	c, err := consumer.New(streamName, consumer.WithClient(client), consumer.WithCheckpoint(ck))
+	if err != nil {
+		log.Fatal("consumer error: %v", err)
 	}
 
 	// use cancel func to signal shutdown
-	ctx, cancel := context.WithCancel(context.Background())
+	cancelCtx, cancel := context.WithCancel(ctx)
 
 	// trap SIGINT, wait to trigger shutdown
 	signals := make(chan os.Signal, 1)
@@ -69,7 +93,7 @@ func NewConsumer(address string, streamName string) stream.Stream {
 
 	return &kinesis{
 		consumer: c,
-		ctx:      ctx,
+		ctx:      cancelCtx,
 	}
 
 }
@@ -80,13 +104,13 @@ func (k *kinesis) Receive(receiveFunc stream.ReceiveFunc) error {
 	// scan stream
 	err := k.consumer.Scan(k.ctx, func(r *consumer.Record) consumer.ScanStatus {
 
-		receiveFunc(string(r.Data))
+		receiveFunc(aws.StringValue(r.PartitionKey), aws.StringValue(r.SequenceNumber), string(r.Data))
 
 		// continue scanning
 		return consumer.ScanStatus{}
 	})
 	if err != nil {
-		log.Fatal(fmt.Sprintf("scan error: %v", err))
+		log.Fatal("scan error: %v", err)
 	}
 
 	return nil
@@ -107,7 +131,7 @@ func (k *kinesis) Send(message string) error {
 		Records:    records,
 	})
 	if err != nil {
-		log.Error(fmt.Sprintf("error putting records: %v", err))
+		log.Error("error putting records: %v", err)
 	}
 	return nil
 }

@@ -4,7 +4,6 @@ import (
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 
-	"fmt"
 	"os"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
@@ -22,7 +21,7 @@ var (
 func main() {
 
 	if grpcPort == "" {
-		log.Fatal(fmt.Sprintf("GRPC_PORT (currently [%s]) env var must me set.", grpcPort))
+		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", grpcPort)
 	}
 
 	lis, s := rpc.SetupClient(grpcPort)
