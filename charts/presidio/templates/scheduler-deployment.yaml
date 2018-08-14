@@ -1,4 +1,5 @@
 {{ $fullname := include "presidio.scheduler.fullname" . }}
+
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -30,15 +31,17 @@ spec:
           - name: GRPC_PORT
             value: {{ .Values.scheduler.service.internalPort | quote }}
           - name: REDIS_URL
-            value: "{{ .Values.redis.host}}:{{ .Values.redis.port | quote }}"
+            value: {{ .Values.redis.url}}
           - name: ANALYZER_SVC_ADDRESS
-            value:  "{{ template "presidio.analyzer.fullname" . }}:{{ .Values.analyzer.service.externalPort | quote }}"
+            value:  {{ template "presidio.analyzer.address" . }}
           - name: ANONYMIZER_SVC_ADDRESS
-            value:  "{{ template "presidio.anonymizer.fullname" . }}:{{ .Values.anonymizer.service.externalPort | quote }}"
+            value:  {{ template "presidio.anonymizer.address" . }}
           - name: DATASINK_GRPC_PORT
-            value: 5000
+            value: "5000"
           - name: DATASINK_IMAGE_NAME
             value: {{ .Values.registry }}/{{ .Values.datasink.name }}:{{ default .Chart.AppVersion .Values.datasink.tag }}
+          - name: DATASINK_PULL_POLICY
+            value: {{ default "IfNotPresent" .Values.datasink.imagePullPolicy }}
           - name: SCANNER_IMAGE_NAME
             value: {{ .Values.registry }}/{{ .Values.scanner.name }}:{{ default .Chart.AppVersion .Values.scanner.tag }}
           - name: SCANNER_IMAGE_PULL_POLICY
@@ -47,7 +50,5 @@ spec:
             value: {{ .Values.registry }}/{{ .Values.streams.name }}:{{ default .Chart.AppVersion .Values.streams.tag }}
           - name: STREAMS_IMAGE_PULL_POLICY
             value: {{ default "IfNotPresent" .Values.streams.imagePullPolicy }}
-          - name: DATASINK_PULL_POLICY
-            value: {{ default "IfNotPresent" .Values.datasink.imagePullPolicy }}
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}

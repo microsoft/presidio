@@ -1,8 +1,7 @@
-registry: praesidio
+registry: Microsoft
 
 redis:
-    host: redis-master.presidio-system.svc.cluster.local
-    port: 6379
+    url: redis-master.presidio-system.svc.cluster.local:6379
 
 api:
   name: presidio-api

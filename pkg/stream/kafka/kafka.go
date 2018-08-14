@@ -92,7 +92,6 @@ func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
 			case api.PartitionEOF:
 				log.Info("%% Reached %v\n", e)
 			case api.Error:
-				log.Error("%% Error: %v\n", e)
 				run = false
 				return e
 			}
