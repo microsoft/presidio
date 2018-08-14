@@ -2,16 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
-
 	message_types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/pkg/cache"
-	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/rpc"
+	services "github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
@@ -23,7 +18,7 @@ var (
 func main() {
 	// Setup objects
 	scanRequest := initScanner()
-	cache := setupCache()
+	cache := services.SetupCache()
 	analyzeRequest, analyzeService := setupAnalyzerObjects(scanRequest)
 	anonymizeService := setupAnoymizerService(scanRequest)
 	datasinkService := setupDatasinkService(scanRequest.DatasinkTemplate)
@@ -43,12 +38,7 @@ func main() {
 
 // Init functions
 func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_types.AnalyzeRequest, *message_types.AnalyzeServiceClient) {
-	analyzerSvcAddress := os.Getenv("ANALYZER_SVC_ADDRESS")
-
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcAddress)
-	if err != nil {
-		log.Fatal("Connection to analyzer service failed %q", err)
-	}
+	analyzeService := services.SetupAnalyzerService()
 
 	analyzeRequest := &message_types.AnalyzeRequest{
 		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
@@ -64,40 +54,10 @@ func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_type
 		return nil
 	}
 
-	anonymizerSvcAddress := os.Getenv("ANONYMIZER_SVC_ADDRESS")
-	if anonymizerSvcAddress == "" {
-		log.Fatal("anonymizer service address is empty")
-	}
-
-	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
-	if anonymizerSvcPort == "" {
-		log.Fatal("anonymizer service port is empty")
-	}
-
-	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcAddress)
-	if err != nil {
-		log.Fatal("Connection to anonymizer service failed %q", err)
-	}
-	return anonymizeService
-}
-
-func setupCache() cache.Cache {
-	redisURL := os.Getenv("REDIS_URL")
-	if redisURL == "" {
-		log.Fatal("redis address is empty")
-	}
-
-	cache := redis.New(
-		redisURL,
-		"", // no password set
-		0,  // use default DB
-	)
-	return cache
+	return services.SetupAnoymizerService()
 }
 
 func initScanner() *message_types.ScanRequest {
-	godotenv.Load()
-
 	scannerObj := os.Getenv("SCANNER_REQUEST")
 	scanRequest := &message_types.ScanRequest{}
 	err := templates.ConvertJSONToInterface(scannerObj, scanRequest)
@@ -119,12 +79,9 @@ func initScanner() *message_types.ScanRequest {
 }
 
 func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) *message_types.DatasinkServiceClient {
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("localhost:%s", grpcPort))
-	if err != nil {
-		log.Fatal("Connection to datasink service failed %q", err)
-	}
+	datasinkService := services.SetupDatasinkService()
 
-	_, err = (*datasinkService).Init(context.Background(), datasinkTemplate)
+	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
