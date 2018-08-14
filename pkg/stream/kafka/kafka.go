@@ -62,9 +62,7 @@ func NewConsumer(ctx context.Context, address string, topic string) stream.Strea
 
 //Receive message from kafka topic
 func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
-
 	run := true
-
 	for run {
 		select {
 		case <-k.ctx.Done():
@@ -73,17 +71,9 @@ func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
 		case ev := <-k.consumer.Events():
 			switch e := ev.(type) {
 			case api.AssignedPartitions:
-				log.Info("%% %v\n", e)
-				err := k.consumer.Assign(e.Partitions)
-				if err != nil {
-					log.Error(err.Error())
-				}
+				k.assignPartitions(e)
 			case api.RevokedPartitions:
-				log.Info("%% %v\n", e)
-				err := k.consumer.Unassign()
-				if err != nil {
-					log.Error(err.Error())
-				}
+				k.revokePartitions(e)
 			case *api.Message:
 				err := receiveFunc(strconv.Itoa(int(e.TopicPartition.Partition)), string(e.Key), string(e.Value))
 				if err != nil {
@@ -97,11 +87,31 @@ func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
 			}
 		}
 	}
+
+	k.closeKafkaConnection()
+	return nil
+}
+
+func (k *kafka) closeKafkaConnection() {
 	err := k.consumer.Close()
 	if err != nil {
 		log.Error(err.Error())
 	}
-	return nil
+}
+func (k *kafka) assignPartitions(e api.AssignedPartitions) {
+	log.Info("%% %v\n", e)
+	err := k.consumer.Assign(e.Partitions)
+	if err != nil {
+		log.Error(err.Error())
+	}
+}
+
+func (k *kafka) revokePartitions(e api.RevokedPartitions) {
+	log.Info("%% %v\n", e)
+	err := k.consumer.Unassign()
+	if err != nil {
+		log.Error(err.Error())
+	}
 }
 
 //Send message to kafka topic

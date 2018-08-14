@@ -71,13 +71,13 @@ func SetupDatasinkService() *message_types.DatasinkServiceClient {
 
 //SetupCache  Redis cache
 func SetupCache() cache.Cache {
-	redisUrl := os.Getenv("REDIS_URL")
-	if redisUrl == "" {
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
 		log.Fatal("redis address is empty")
 	}
 
 	cache := redis.New(
-		redisUrl,
+		redisURL,
 		"", // no password set
 		0,  // use default DB
 	)

@@ -36,6 +36,7 @@ func init() {
 	})
 }
 
+// GetLogger get native not sugared logger
 func GetLogger() *zap.Logger {
 	return logger
 }

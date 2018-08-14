@@ -29,16 +29,16 @@ type kinesis struct {
 //  AWS_SECRET_KEY=
 //  REDIS_URL=
 
-func verifyEnvVars(accessKey string, region string, secretKey string, redisUrl string) {
+func verifyEnvVars(accessKey string, region string, secretKey string, redisURL string) {
 	os.Setenv("AWS_ACCESS_KEY", accessKey)
 	os.Setenv("AWS_REGION", region)
 	os.Setenv("AWS_SECRET_KEY", secretKey)
-	os.Setenv("REDIS_URL", redisUrl)
+	os.Setenv("REDIS_URL", redisURL)
 }
 
 //NewProducer for kinesis stream
-func NewProducer(accessKey string, endpoint string, region string, secretKey string, redisUrl string, streamName string) stream.Stream {
-	verifyEnvVars(accessKey, region, secretKey, redisUrl)
+func NewProducer(accessKey string, endpoint string, region string, secretKey string, redisURL string, streamName string) stream.Stream {
+	verifyEnvVars(accessKey, region, secretKey, redisURL)
 
 	config := aws.NewConfig()
 	config = config.WithEndpoint(endpoint)
@@ -55,9 +55,9 @@ func NewProducer(accessKey string, endpoint string, region string, secretKey str
 }
 
 //NewConsumer for kinesis stream
-func NewConsumer(ctx context.Context, endpoint string, accessKey string, region string, secretKey string, redisUrl string, streamName string) stream.Stream {
+func NewConsumer(ctx context.Context, endpoint string, accessKey string, region string, secretKey string, redisURL string, streamName string) stream.Stream {
 
-	verifyEnvVars(accessKey, region, secretKey, redisUrl)
+	verifyEnvVars(accessKey, region, secretKey, redisURL)
 
 	// redis checkpoint
 	ck, err := checkpoint.New(streamName)

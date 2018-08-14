@@ -25,7 +25,7 @@ var (
 	namespace               = os.Getenv("presidio_NAMESPACE")
 	analyzerSvcAddress      = os.Getenv("ANALYZER_SVC_ADDRESS")
 	anonymizerSvcAddress    = os.Getenv("ANONYMIZER_SVC_ADDRESS")
-	redisUrl                = os.Getenv("REDIS_URL")
+	redisURL                = os.Getenv("REDIS_URL")
 	datasinkImage           = os.Getenv("DATASINK_IMAGE_NAME")
 	scannerImage            = os.Getenv("SCANNER_IMAGE_NAME")
 	streamsImage            = os.Getenv("STREAMS_IMAGE_NAME")
@@ -52,7 +52,7 @@ func main() {
 		log.Fatal("anonymizer service address is empty")
 	}
 
-	if redisUrl == "" {
+	if redisURL == "" {
 		log.Fatal("redis service address is empty")
 	}
 
@@ -105,8 +105,8 @@ func applyScanRequest(r *message_types.ScannerCronJobRequest) (*message_types.Sc
 			Image: scannerImage,
 			EnvVars: []apiv1.EnvVar{
 				{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
-				{Name: "REDIS_URL", Value: redisUrl},
-				{Name: "ANALYZER_SVC_ADRESS", Value: analyzerSvcAddress},
+				{Name: "REDIS_URL", Value: redisURL},
+				{Name: "ANALYZER_SVC_ADDRESS", Value: analyzerSvcAddress},
 				{Name: "ANONYMIZER_SVC_ADDRESS", Value: anonymizerSvcAddress},
 				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
 			},
@@ -141,8 +141,8 @@ func applyStreamRequest(r *message_types.StreamsJobRequest) (*message_types.Stre
 				Image: streamsImage,
 				EnvVars: []apiv1.EnvVar{
 					{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
-					{Name: "REDIS_URL", Value: redisUrl},
-					{Name: "ANALYZER_SVC_ADRESS", Value: analyzerSvcAddress},
+					{Name: "REDIS_URL", Value: redisURL},
+					{Name: "ANALYZER_SVC_ADDRESS", Value: analyzerSvcAddress},
 					{Name: "ANONYMIZER_SVC_ADDRESS", Value: anonymizerSvcAddress},
 					{Name: "STREAM_REQUEST", Value: string(streamRequest)},
 					{Name: "PARTITON_ID", Value: string(index)},

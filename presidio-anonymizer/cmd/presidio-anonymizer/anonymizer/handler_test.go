@@ -33,8 +33,6 @@ func TestReplace1Element(t *testing.T) {
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
 
 	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:                     message_types.FieldTypesEnum_PHONE_NUMBER.String(),
-		DisplayName:              "Phone number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
@@ -80,8 +78,6 @@ func TestReplace2Elements(t *testing.T) {
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
 
 	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:                     message_types.FieldTypesEnum_PHONE_NUMBER.String(),
-		DisplayName:              "Phone number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
@@ -149,8 +145,6 @@ func TestReplace3Elements(t *testing.T) {
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation1, &fieldTypeTransformation2)
 
 	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:                     message_types.FieldTypesEnum_PHONE_NUMBER.String(),
-		DisplayName:              "Phone number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
@@ -212,8 +206,6 @@ func TestHash1Element(t *testing.T) {
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
 
 	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:                     message_types.FieldTypesEnum_PHONE_NUMBER.String(),
-		DisplayName:              "Phone number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
@@ -261,8 +253,6 @@ func TestMask1Element(t *testing.T) {
 	fieldTypeTransformationArray = append(fieldTypeTransformationArray, &fieldTypeTransformation)
 
 	anonymizerTemplate := message_types.AnonymizeTemplate{
-		Name:                     message_types.FieldTypesEnum_CREDIT_CARD.String(),
-		DisplayName:              "Credit card number",
 		FieldTypeTransformations: fieldTypeTransformationArray,
 	}
 
