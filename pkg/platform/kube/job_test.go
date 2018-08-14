@@ -4,6 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	apiv1 "k8s.io/api/core/v1"
+
+	"github.com/Microsoft/presidio/pkg/platform"
+
 	"k8s.io/client-go/kubernetes/fake"
 )
 
@@ -17,11 +21,20 @@ func TestCreateAndDeleteJob(t *testing.T) {
 	}
 
 	name := "jobName"
-	image := "imageName"
-	commands := []string{"a", "b"}
+
+	containerDetails := []platform.ContainerDetails{
+		{
+			EnvVars: []apiv1.EnvVar{
+				{Name: "envVar1", Value: "envVarval"},
+			},
+			Name:            "jobName",
+			Image:           "imageName",
+			ImagePullPolicy: apiv1.PullAlways,
+		},
+	}
 
 	// Create job
-	err := store.CreateJob(name, image, commands)
+	err := store.CreateJob(name, containerDetails)
 	if err != nil {
 		t.Fatal(err)
 	}

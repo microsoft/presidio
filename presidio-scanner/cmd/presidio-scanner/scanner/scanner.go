@@ -34,20 +34,20 @@ func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cac
 		itemPath := scanItem.GetPath()
 		uniqueID, err := scanItem.GetUniqueID()
 		if err != nil {
-			log.Error(fmt.Sprintf("error getting item id: %s, error: %q", itemPath, err.Error()))
+			log.Error("error getting item id: %s, error: %q", itemPath, err.Error())
 			return 0, err
 		}
 
 		shouldScan, err := shouldScanItem(&cache, scanItem, uniqueID)
 		if err != nil {
-			log.Error(fmt.Sprintf("error getting item from cache: %s, error: %q", itemPath, err.Error()))
+			log.Error("error getting item from cache: %s, error: %q", itemPath, err.Error())
 			return 0, err
 		}
 
 		if shouldScan {
 			text, analyzerResult, err = analyzeItem(analyzeService, analyzeRequest, scanItem)
 			if err != nil {
-				log.Error(fmt.Sprintf("error scanning file: %s, error: %q", itemPath, err.Error()))
+				log.Error("error scanning file: %s, error: %q", itemPath, err.Error())
 				return 0, err
 			}
 
@@ -55,23 +55,23 @@ func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cac
 				anonymizerResult, err := anonymizeItem(analyzerResult, text, itemPath, scanRequest.AnonymizeTemplate, anonymizeService)
 
 				if err != nil {
-					log.Error(fmt.Sprintf("error anonymizing item: %s, error: %q", itemPath, err.Error()))
+					log.Error("error anonymizing item: %s, error: %q", itemPath, err.Error())
 					return 0, err
 				}
 
 				err = sendResultToDatasink(itemPath, analyzerResult, anonymizerResult, cache, datasinkService)
 				if err != nil {
-					log.Error(fmt.Sprintf("error sending file to datasink: %s, error: %q", itemPath, err.Error()))
+					log.Error("error sending file to datasink: %s, error: %q", itemPath, err.Error())
 					return 0, err
 				}
-				log.Info(fmt.Sprintf("%d results were sent to the datasink successfully", len(analyzerResult)))
+				log.Info("%d results were sent to the datasink successfully", len(analyzerResult))
 
 			}
 			writeItemToCache(uniqueID, itemPath, cache)
 			return 1, nil
 		}
 
-		log.Info(fmt.Sprintf("item %s was already scanned", itemPath))
+		log.Info("item %s was already scanned", itemPath)
 		return 0, nil
 	})
 }

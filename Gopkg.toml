@@ -1,6 +1,6 @@
 [[constraint]]
   name = "github.com/Azure/azure-event-hubs-go"
-  version = "0.4.0"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/harlow/kinesis-consumer"
@@ -24,7 +24,7 @@
 
 [[constraint]]
   name = "github.com/go-redis/redis"
-  version = "6.12.0"
+  version = "6.13.2"
 
 [[constraint]]
   branch = "master"
@@ -50,6 +50,26 @@
   name = "go.uber.org/zap"
   version = "1.9.0"
 
+[[constraint]]
+  name = "github.com/go-xorm/xorm"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/denisenkom/go-mssqldb"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/go-sql-driver/mysql"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/lib/pq"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/mattn/go-sqlite3"
+  branch = "master"
+  
 [[constraint]]
   name = "google.golang.org/grpc"
   version = "1.14.0"

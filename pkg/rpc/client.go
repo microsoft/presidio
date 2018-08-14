@@ -68,12 +68,12 @@ func SetupDatasinkService(address string) (*message_types.DatasinkServiceClient,
 	return &client, nil
 }
 
-//SetupCronJobService ...
-func SetupCronJobService(address string) (*message_types.CronJobServiceClient, error) {
+//SetupSchedulerService ...
+func SetupSchedulerService(address string) (*message_types.SchedulerServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
-	client := message_types.NewCronJobServiceClient(conn)
+	client := message_types.NewSchedulerServiceClient(conn)
 	return &client, nil
 }

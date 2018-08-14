@@ -4,12 +4,24 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/Microsoft/presidio/pkg/platform"
 )
 
 //CreateJob create k8s job
-func (s *store) CreateJob(name string, image string, commands []string) error {
-	jobsClient := s.client.BatchV1().Jobs(s.namespace)
+func (s *store) CreateJob(name string, containerDetailsArray []platform.ContainerDetails) error {
 
+	var containers []apiv1.Container
+	for _, containerDetails := range containerDetailsArray {
+		containers = append(containers, apiv1.Container{
+			Name:            containerDetails.Name,
+			Image:           containerDetails.Image,
+			Env:             containerDetails.EnvVars,
+			ImagePullPolicy: containerDetails.ImagePullPolicy,
+		})
+	}
+
+	jobsClient := s.client.BatchV1().Jobs(s.namespace)
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
@@ -23,13 +35,7 @@ func (s *store) CreateJob(name string, image string, commands []string) error {
 					},
 				},
 				Spec: apiv1.PodSpec{
-					Containers: []apiv1.Container{
-						{
-							Name:    name,
-							Image:   image,
-							Command: commands,
-						},
-					},
+					Containers:    containers,
 					RestartPolicy: "OnFailure",
 				},
 			},

@@ -59,7 +59,7 @@ func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_typ
 		return err
 	}
 
-	log.Info(fmt.Sprintf("%d rows were written to the cloud storage successfully", len(results)))
+	log.Info("%d rows were written to the cloud storage successfully", len(results))
 	return nil
 }
 

@@ -3,76 +3,23 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/rpc"
-
 	message_types "github.com/Microsoft/presidio-genproto/golang"
+	services "github.com/Microsoft/presidio/pkg/presidio"
 	server "github.com/Microsoft/presidio/pkg/server"
 	templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
 var analyzeService *message_types.AnalyzeServiceClient
 var anonymizeService *message_types.AnonymizeServiceClient
-var cronJobService *message_types.CronJobServiceClient
+var schedulerService *message_types.SchedulerServiceClient
 
 func setupGRPCServices() {
-
-	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
-	if analyzerSvcHost == "" {
-		log.Fatal("analyzer service address is empty")
-	}
-
-	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
-
-	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
-	if anonymizerSvcHost == "" {
-		log.Fatal("anonymizer service address is empty")
-	}
-
-	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
-	if anonymizerSvcPort == "" {
-		log.Fatal("anonymizer service port is empty")
-	}
-
-	// scheduler service port and host will be configured only in case this service is needed.
-	schedulerSvcHost := os.Getenv("SCHEDULER_SVC_HOST")
-	schedulerSvcPort := os.Getenv("SCHEDULER_SVC_PORT")
-
-	analyzerAddress := analyzerSvcHost + ":" + analyzerSvcPort
-	anonymizerAddress := anonymizerSvcHost + ":" + anonymizerSvcPort
-
-	var schedulerAddress string
-	if schedulerSvcHost != "" && schedulerSvcPort != "" {
-		schedulerAddress = schedulerSvcHost + ":" + schedulerSvcPort
-	}
-	connectGRPCServices(analyzerAddress, anonymizerAddress, schedulerAddress)
-
-}
-
-func connectGRPCServices(analyzerAddress string, anonymizerAddress string, schedulerAddress string) {
-	var err error
-	analyzeService, err = rpc.SetupAnalyzerService(analyzerAddress)
-	if err != nil {
-		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
-	}
-	anonymizeService, err = rpc.SetupAnonymizeService(anonymizerAddress)
-	if err != nil {
-		log.Error(fmt.Sprintf("Connection to anonymizer service failed %q", err))
-	}
-
-	if schedulerAddress != "" {
-		cronJobService, err = rpc.SetupCronJobService(schedulerAddress)
-		if err != nil {
-			log.Error(fmt.Sprintf("Connection to scheduler service failed %q", err))
-		}
-	}
+	analyzeService = services.SetupAnalyzerService()
+	anonymizeService = services.SetupAnoymizerService()
+	schedulerService = services.SetupSchedulerService()
 }
 
 func (api *API) analyze(c *gin.Context) {
@@ -144,12 +91,12 @@ func (api *API) anonymize(c *gin.Context) {
 	}
 }
 
-func (api *API) scheduleCronJob(c *gin.Context) {
-	var cronAPIJobRequest message_types.CronJobApiRequest
+func (api *API) scheduleScannerCronJob(c *gin.Context) {
+	var cronAPIJobRequest message_types.ScannerCronJobApiRequest
 
 	if c.Bind(&cronAPIJobRequest) == nil {
 		project := c.Param("project")
-		scheulderResponse := api.invokeCronJobScheduler(cronAPIJobRequest, project, c)
+		scheulderResponse := api.invokeScannerCronJobScheduler(cronAPIJobRequest, project, c)
 		if scheulderResponse == nil {
 			return
 		}
@@ -158,9 +105,9 @@ func (api *API) scheduleCronJob(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobApiRequest, project string, c *gin.Context) *message_types.CronJobResponse {
-	cronJobTemplate := &message_types.CronJobTemplate{}
-	api.getTemplate(project, "schedule-cronjob", cronJobAPIRequest.CronJobTemplateId, cronJobTemplate, c)
+func (api *API) invokeScannerCronJobScheduler(cronJobAPIRequest message_types.ScannerCronJobApiRequest, project string, c *gin.Context) *message_types.ScannerCronJobResponse {
+	cronJobTemplate := &message_types.ScannerCronJobTemplate{}
+	api.getTemplate(project, "schedule-scanner-cronjob", cronJobAPIRequest.ScannerCronJobTemplateId, cronJobTemplate, c)
 
 	scanID := cronJobTemplate.ScanTemplateId
 	scanTemplate := &message_types.ScanTemplate{}
@@ -181,19 +128,73 @@ func (api *API) invokeCronJobScheduler(cronJobAPIRequest message_types.CronJobAp
 		AnalyzeTemplate:    analyzeTemplate,
 		AnonymizeTemplate:  anonymizeTemplate,
 		DatasinkTemplate:   datasinkTemplate,
-		CloudStorageConfig: scanTemplate.CloudStorageConfig,
-		Kind:               scanTemplate.Kind,
-		MinProbability:     scanTemplate.MinProbability,
+		CloudStorageConfig: scanTemplate.GetCloudStorageConfig(),
+		Kind:               scanTemplate.GetKind(),
+		MinProbability:     scanTemplate.GetMinProbability(),
 	}
 
-	request := &message_types.CronJobRequest{
-		Name:        cronJobTemplate.Name,
+	request := &message_types.ScannerCronJobRequest{
 		Description: cronJobTemplate.Description,
 		Trigger:     cronJobTemplate.Trigger,
 		ScanRequest: scanRequest,
 	}
-	srv := *cronJobService
-	res, err := srv.Apply(c, request)
+	srv := *schedulerService
+	res, err := srv.ApplyScan(c, request)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return nil
+	}
+	return res
+}
+
+func (api *API) scheduleStreamsJob(c *gin.Context) {
+	var streamsJobRequest message_types.StreamsJobApiRequest
+
+	if c.Bind(&streamsJobRequest) == nil {
+		project := c.Param("project")
+		scheulderResponse := api.invokeStreamsJobScheduler(streamsJobRequest, project, c)
+		if scheulderResponse == nil {
+			return
+		}
+
+		server.WriteResponse(c, http.StatusOK, scheulderResponse)
+	}
+}
+
+func (api *API) invokeStreamsJobScheduler(jobAPIRequest message_types.StreamsJobApiRequest, project string, c *gin.Context) *message_types.StreamsJobResponse {
+	jobTemplate := &message_types.StreamsJobTemplate{}
+	api.getTemplate(project, "schedule-scanner-cronjob", jobAPIRequest.StreamsJobTemplateId, jobTemplate, c)
+
+	streamID := jobTemplate.StreamsTemplateId
+	streamTemplate := &message_types.StreamTemplate{}
+	api.getTemplate(project, "stream", streamID, streamTemplate, c)
+
+	datasinkTemplate := &message_types.DatasinkTemplate{}
+	api.getTemplate(project, "datasink", jobTemplate.DatasinkTemplateId, datasinkTemplate, c)
+
+	analyzeTemplate := &message_types.AnalyzeTemplate{}
+	api.getTemplate(project, "analyze", jobTemplate.AnalyzeTemplateId, analyzeTemplate, c)
+
+	anonymizeTemplate := &message_types.AnonymizeTemplate{}
+	if jobTemplate.AnonymizeTemplateId != "" {
+		api.getTemplate(project, "anonymize", jobTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
+	}
+
+	streamsRequest := &message_types.StreamRequest{
+		AnalyzeTemplate:   analyzeTemplate,
+		AnonymizeTemplate: anonymizeTemplate,
+		DatasinkTemplate:  datasinkTemplate,
+		StreamConfig:      streamTemplate.GetStreamConfig(),
+		Kind:              streamTemplate.GetKind(),
+		MinProbability:    streamTemplate.GetMinProbability(),
+	}
+
+	request := &message_types.StreamsJobRequest{
+		Description:    jobTemplate.Description,
+		StreamsRequest: streamsRequest,
+	}
+	srv := *schedulerService
+	res, err := srv.ApplyStream(c, request)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
