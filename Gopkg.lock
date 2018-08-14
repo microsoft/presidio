@@ -44,25 +44,18 @@
 [[projects]]
   digest = "1:f6022e8b07b7f72eb1564991df7530626de9bc4ffd9a29bbfbc7b3812e0c50e4"
   name = "github.com/Azure/azure-sdk-for-go"
-<<<<<<< HEAD
-  packages = ["storage","version"]
-=======
   packages = [
     "services/eventhub/mgmt/2017-04-01/eventhub",
     "storage",
     "version",
   ]
   pruneopts = "UT"
->>>>>>> development
   revision = "4e8cbbfb1aeab140cd0fa97fd16b64ee18c3ca6a"
   version = "v19.1.0"
 
 [[projects]]
   digest = "1:6e63a47726e0a04c0dbf265fcf31c518cdf26fe78d8535346507e43fb652a8df"
   name = "github.com/Azure/go-autorest"
-<<<<<<< HEAD
-  packages = ["autorest","autorest/adal","autorest/azure","autorest/date","logger","version"]
-=======
   packages = [
     "autorest",
     "autorest/adal",
@@ -74,7 +67,6 @@
     "version",
   ]
   pruneopts = "UT"
->>>>>>> development
   revision = "39013ecb48eaf6ced3f4e3e1d95515140ce6b3cf"
   version = "v10.15.2"
 
