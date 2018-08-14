@@ -5,8 +5,9 @@ import analyze_pb2 as analyze__pb2
 
 
 class AnalyzeServiceStub(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """The Analyze Service is a service that analyze a given the text using predefined analyzers fields to identify patterns, 
+  formats, and checksums with relevant context.
+  """
 
   def __init__(self, channel):
     """Constructor.
@@ -22,12 +23,13 @@ class AnalyzeServiceStub(object):
 
 
 class AnalyzeServiceServicer(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """The Analyze Service is a service that analyze a given the text using predefined analyzers fields to identify patterns, 
+  formats, and checksums with relevant context.
+  """
 
   def Apply(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """Apply method will execute on the given request and return the analyze response with the sensitive text findings
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
