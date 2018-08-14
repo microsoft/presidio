@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
-
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	services "github.com/Microsoft/presidio/pkg/presidio"
@@ -83,7 +81,6 @@ func sendResultToDatasink(analyzeResults []*message_types.AnalyzeResult,
 }
 
 func initStream() {
-	godotenv.Load()
 
 	streamObj := os.Getenv("STREAM_REQUEST")
 	streamRequest = &message_types.StreamRequest{}

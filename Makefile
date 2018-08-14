@@ -83,7 +83,7 @@ test-functional: vendor docker-build
 	docker run --rm --name test-s3-emulator --network testnetwork -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock
 	docker run --rm --name test-kafka -d -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=127.0.0.1 --env ADVERTISED_PORT=9092 --name kafka spotify/kafka
 	sleep 30
-	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_HOST=test-presidio-analyzer -e ANALYZER_SVC_PORT=3000 -e ANONYMIZER_SVC_HOST=test-presidio-anonymizer -e ANONYMIZER_SVC_PORT=3001 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
+	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=test-presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=test-presidio-anonymizer:3001 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
 	go test --tags functional ./tests -count=1
 	docker rm test-presidio-api -f
 	docker rm test-presidio-analyzer -f

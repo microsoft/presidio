@@ -32,12 +32,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:9b8498371a2294020aef53c75a7515284111adaec67eada7c62d7d86e85ddd91"
+  digest = "1:8d7c363b667940d504e315af9d269b8127fefd600c6d3c2ab624e967afc33b4f"
   name = "github.com/Azure/azure-event-hubs-go"
   packages = [
     ".",
     "atom",
-    "eph",
   ]
   pruneopts = "UT"
   revision = "c9c1890d5685f3c884890a0a56fb21aea24b7f9d"
@@ -73,14 +72,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:adf80c7864e9c574a369a19fdca92fb23367d9a9ddfe869d60cb0e5adbee56a4"
+  digest = "1:bd9fbe438b42a9079b9c470a4230f0026c15ae6b623ed946c424d47e0a307cac"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "dfc567c676b944adc7e41340b6dd4c6e06249c18"
+  revision = "69e8f05e074fbeb937489e8ffd7a0bc21a2aad04"
 
 [[projects]]
-  digest = "1:522b5b1815bc50eeeb4149411783c6001e430fbe46f053980cfa458e46019361"
+  digest = "1:b255b731a01d0531b8547ccd72b1578e41ef92edba69389f9f2ab7254f9c77f9"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -120,8 +119,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "254f2f37e83d1b3585237fe166aacd14c1783e0b"
-  version = "v1.15.10"
+  revision = "f831d5a0822a1ad72420ab18c6269bca1ddaf490"
+  version = "v1.15.11"
 
 [[projects]]
   digest = "1:a878821c51a2390c0c958d179e7e19ec42cf55a9cce6d4bdbc61d7421b209014"
@@ -295,11 +294,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:9887333bbef17574b1db5f9893ea137ac44107235d624408a3ac9e0b98fbb2cb"
+  digest = "1:0bfbe13936953a98ae3cfe8ed6670d396ad81edf069a806d2f6515d7bb6950df"
   name = "github.com/google/btree"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e89373fe6b4a7413d7acd6da1725b83ef713e6e4"
+  revision = "4030bb1f1f0c35b30ca7009e9ebd06849dd45306"
 
 [[projects]]
   branch = "master"
@@ -956,7 +955,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/Azure/azure-event-hubs-go",
-    "github.com/Azure/azure-event-hubs-go/eph",
     "github.com/Microsoft/presidio-genproto/golang",
     "github.com/aws/aws-sdk-go/aws",
     "github.com/aws/aws-sdk-go/aws/session",
@@ -979,6 +977,7 @@
     "github.com/presid-io/stow",
     "github.com/presid-io/stow/azure",
     "github.com/presid-io/stow/s3",
+    "github.com/satori/go.uuid",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "go.uber.org/zap",

@@ -1,8 +1,6 @@
 package mock
 
 import (
-	"fmt"
-
 	"github.com/satori/go.uuid"
 
 	log "github.com/Microsoft/presidio/pkg/logger"

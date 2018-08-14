@@ -21,38 +21,20 @@ var cronJobService *message_types.CronJobServiceClient
 
 func setupGRPCServices() {
 
-	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
-	if analyzerSvcHost == "" {
+	analyzerSvcAddress := os.Getenv("ANALYZER_SVC_ADDRESS")
+	if analyzerSvcAddress == "" {
 		log.Fatal("analyzer service address is empty")
 	}
 
-	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
-
-	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
-	if anonymizerSvcHost == "" {
+	anonymizerSvcAddress := os.Getenv("ANONYMIZER_SVC_ADDRESS")
+	if anonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
 
-	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
-	if anonymizerSvcPort == "" {
-		log.Fatal("anonymizer service port is empty")
-	}
-
 	// scheduler service port and host will be configured only in case this service is needed.
-	schedulerSvcHost := os.Getenv("SCHEDULER_SVC_HOST")
-	schedulerSvcPort := os.Getenv("SCHEDULER_SVC_PORT")
+	schedulerSvcAddress := os.Getenv("SCHEDULER_SVC_ADDRESS")
 
-	analyzerAddress := analyzerSvcHost + ":" + analyzerSvcPort
-	anonymizerAddress := anonymizerSvcHost + ":" + anonymizerSvcPort
-
-	var schedulerAddress string
-	if schedulerSvcHost != "" && schedulerSvcPort != "" {
-		schedulerAddress = schedulerSvcHost + ":" + schedulerSvcPort
-	}
-	connectGRPCServices(analyzerAddress, anonymizerAddress, schedulerAddress)
+	connectGRPCServices(analyzerSvcAddress, anonymizerSvcAddress, schedulerSvcAddress)
 
 }
 

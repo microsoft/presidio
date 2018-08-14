@@ -29,9 +29,24 @@ type kinesis struct {
 //  AWS_SECRET_KEY=
 //  REDIS_URL=
 
+func verifyEnvVars(accessKey string, region string, secretKey string, redisUrl string) {
+	os.Setenv("AWS_ACCESS_KEY", accessKey)
+	os.Setenv("AWS_REGION", region)
+	os.Setenv("AWS_SECRET_KEY", secretKey)
+	os.Setenv("REDIS_URL", redisUrl)
+}
+
 //NewProducer for kinesis stream
-func NewProducer(address string, streamName string) stream.Stream {
-	p := kin.New(session.New(), &aws.Config{})
+func NewProducer(accessKey string, endpoint string, region string, secretKey string, redisUrl string, streamName string) stream.Stream {
+	verifyEnvVars(accessKey, region, secretKey, redisUrl)
+
+	config := aws.NewConfig()
+	config = config.WithEndpoint(endpoint)
+	s, err := session.NewSession(config)
+	if err != nil {
+		log.Fatal("session error: %v", err)
+	}
+	p := kin.New(s, config)
 
 	return &kinesis{
 		producer:   p,
@@ -40,22 +55,32 @@ func NewProducer(address string, streamName string) stream.Stream {
 }
 
 //NewConsumer for kinesis stream
-func NewConsumer(address string, streamName string) stream.Stream {
+func NewConsumer(ctx context.Context, endpoint string, accessKey string, region string, secretKey string, redisUrl string, streamName string) stream.Stream {
+
+	verifyEnvVars(accessKey, region, secretKey, redisUrl)
 
 	// redis checkpoint
-	ck, err := checkpoint.New("presidio")
+	ck, err := checkpoint.New(streamName)
 	if err != nil {
 		log.Fatal("checkpoint error: %v", err)
 	}
 
 	// consumer
-	c, err := consumer.New(streamName, consumer.WithCheckpoint(ck))
+	config := aws.NewConfig()
+	config = config.WithEndpoint(endpoint)
+
+	s, err := session.NewSession(config)
+	if err != nil {
+		log.Fatal("session error: %v", err)
+	}
+	client := kin.New(s)
+	c, err := consumer.New(streamName, consumer.WithClient(client), consumer.WithCheckpoint(ck))
 	if err != nil {
 		log.Fatal("consumer error: %v", err)
 	}
 
 	// use cancel func to signal shutdown
-	ctx, cancel := context.WithCancel(context.Background())
+	cancelCtx, cancel := context.WithCancel(ctx)
 
 	// trap SIGINT, wait to trigger shutdown
 	signals := make(chan os.Signal, 1)
@@ -68,7 +93,7 @@ func NewConsumer(address string, streamName string) stream.Stream {
 
 	return &kinesis{
 		consumer: c,
-		ctx:      ctx,
+		ctx:      cancelCtx,
 	}
 
 }

@@ -23,12 +23,9 @@ var (
 	grpcPort                = os.Getenv("GRPC_PORT")
 	datasinkGrpcPort        = os.Getenv("DATASINK_GRPC_PORT")
 	namespace               = os.Getenv("presidio_NAMESPACE")
-	analyzerSvcHost         = os.Getenv("ANALYZER_SVC_HOST")
-	analyzerSvcPort         = os.Getenv("ANALYZER_SVC_PORT")
-	anonymizerSvcHost       = os.Getenv("ANONYMIZER_SVC_HOST")
-	anonymizerSvcPort       = os.Getenv("ANONYMIZER_SVC_PORT")
-	redisSvcHost            = os.Getenv("REDIS_HOST")
-	redisSvcPort            = os.Getenv("REDIS_PORT")
+	analyzerSvcAddress      = os.Getenv("ANALYZER_SVC_ADDRESS")
+	anonymizerSvcAddress    = os.Getenv("ANONYMIZER_SVC_ADDRESS")
+	redisUrl                = os.Getenv("REDIS_URL")
 	datasinkImage           = os.Getenv("DATASINK_IMAGE_NAME")
 	scannerImage            = os.Getenv("SCANNER_IMAGE_NAME")
 	datasinkImagePullPolicy = os.Getenv("DATASINK_IMAGE_PULL_POLICY")
@@ -45,26 +42,16 @@ func main() {
 	if grpcPort == "" {
 		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", grpcPort)
 	}
-	if analyzerSvcHost == "" {
+	if analyzerSvcAddress == "" {
 		log.Fatal("analyzer service address is empty")
 	}
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
 
-	if anonymizerSvcHost == "" {
+	if anonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
-	if anonymizerSvcPort == "" {
-		log.Fatal("anonymizer service port is empty")
-	}
 
-	if redisSvcHost == "" {
+	if redisUrl == "" {
 		log.Fatal("redis service address is empty")
-	}
-
-	if redisSvcPort == "" {
-		log.Fatal("redis service port is empty")
 	}
 
 	var err error
@@ -111,12 +98,9 @@ func applySchedulerRequest(r *message_types.CronJobRequest) (*message_types.Cron
 			Image: scannerImage,
 			EnvVars: []apiv1.EnvVar{
 				{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
-				{Name: "REDIS_HOST", Value: redisSvcHost},
-				{Name: "REDIS_SVC_PORT", Value: redisSvcPort},
-				{Name: "ANALYZER_SVC_HOST", Value: analyzerSvcHost},
-				{Name: "ANALYZER_SVC_PORT", Value: analyzerSvcPort},
-				{Name: "ANONYMIZER_SVC_HOST", Value: anonymizerSvcHost},
-				{Name: "ANONYMIZER_SVC_PORT", Value: anonymizerSvcPort},
+				{Name: "REDIS_URL", Value: redisUrl},
+				{Name: "ANALYZER_SVC_ADRESS", Value: analyzerSvcAddress},
+				{Name: "ANONYMIZER_SVC_ADDRESS", Value: anonymizerSvcAddress},
 				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
 			},
 			ImagePullPolicy: scannerPolicy,

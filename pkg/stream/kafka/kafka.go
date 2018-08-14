@@ -32,7 +32,7 @@ func NewProducer(address string, topic string) stream.Stream {
 }
 
 //NewConsumer Return new Kafka Consumer stream
-func NewConsumer(address string, topic string, ctx context.Context) stream.Stream {
+func NewConsumer(ctx context.Context, address string, topic string) stream.Stream {
 
 	c, err := api.NewConsumer(&api.ConfigMap{
 		"bootstrap.servers":               address,

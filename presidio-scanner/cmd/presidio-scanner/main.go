@@ -43,17 +43,9 @@ func main() {
 
 // Init functions
 func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_types.AnalyzeRequest, *message_types.AnalyzeServiceClient) {
-	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
-	if analyzerSvcHost == "" {
-		log.Fatal("analyzer service address is empty")
-	}
+	analyzerSvcAddress := os.Getenv("ANALYZER_SVC_ADDRESS")
 
-	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
-
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
+	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to analyzer service failed %q", err)
 	}
@@ -72,8 +64,8 @@ func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_type
 		return nil
 	}
 
-	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
-	if anonymizerSvcHost == "" {
+	anonymizerSvcAddress := os.Getenv("ANONYMIZER_SVC_ADDRESS")
+	if anonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
 
@@ -82,7 +74,7 @@ func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_type
 		log.Fatal("anonymizer service port is empty")
 	}
 
-	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcHost + ":" + anonymizerSvcPort)
+	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
@@ -90,19 +82,13 @@ func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_type
 }
 
 func setupCache() cache.Cache {
-	redisHost := os.Getenv("REDIS_HOST")
-	if redisHost == "" {
+	redisUrl := os.Getenv("REDIS_URL")
+	if redisUrl == "" {
 		log.Fatal("redis address is empty")
 	}
 
-	redisPort := os.Getenv("REDIS_SVC_PORT")
-	if redisPort == "" {
-		log.Fatal("redis port is empty")
-	}
-
-	redisAddress := redisHost + ":" + redisPort
 	cache := redis.New(
-		redisAddress,
+		redisUrl,
 		"", // no password set
 		0,  // use default DB
 	)

@@ -39,21 +39,13 @@ spec:
                 fieldPath: metadata.namespace
           - name: WEB_PORT
             value: {{ .Values.api.service.internalPort | quote }}
-          - name: REDIS_HOST
-            value: {{ .Values.redis.host}}
-          - name: REDIS_PORT
-            value: {{ .Values.redis.port | quote }}
-          - name: ANALYZER_SVC_HOST
-            value:  {{ template "presidio.analyzer.fullname" . }}
-          - name: ANALYZER_SVC_PORT
-            value: {{ .Values.analyzer.service.externalPort | quote }}
-          - name: ANONYMIZER_SVC_HOST
-            value:  {{ template "presidio.anonymizer.fullname" . }}
-          - name: ANONYMIZER_SVC_PORT
-            value: {{ .Values.anonymizer.service.externalPort | quote }}
-          - name: SCHEDULER_SVC_HOST
-            value:  {{ template "presidio.scheduler.fullname" . }}
-          - name: SCHEDULER_SVC_PORT
-            value: {{ .Values.scheduler.service.externalPort | quote }}
+          - name: REDIS_URL
+            value: "{{ .Values.redis.host}}:{{ .Values.redis.port | quote }}"
+          - name: ANALYZER_SVC_ADDRESS
+            value:  "{{ template "presidio.analyzer.fullname" . }}:{{ .Values.analyzer.service.externalPort | quote }}"
+          - name: ANONYMIZER_SVC_ADDRESS
+            value:  "{{ template "presidio.anonymizer.fullname" . }}:{{ .Values.anonymizer.service.externalPort | quote }}"
+          - name: SCHEDULER_SVC_ADDRESS
+            value:  "{{ template "presidio.scheduler.fullname" . }}:{{ .Values.scheduler.service.externalPort | quote }}"
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}

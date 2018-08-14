@@ -13,17 +13,12 @@ import (
 
 //SetupAnalyzerService GRPC connection
 func SetupAnalyzerService() *message_types.AnalyzeServiceClient {
-	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
-	if analyzerSvcHost == "" {
+	analyzerSvcAddress := os.Getenv("ANALYZER_SVC_ADDRESS")
+	if analyzerSvcAddress == "" {
 		log.Fatal("analyzer service address is empty")
 	}
 
-	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
-
-	analyzeService, err := rpc.SetupAnalyzerService(fmt.Sprintf("%s:%s", analyzerSvcHost, analyzerSvcPort))
+	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to analyzer service failed %q", err)
 	}
@@ -34,17 +29,12 @@ func SetupAnalyzerService() *message_types.AnalyzeServiceClient {
 //SetupAnoymizerService GRPC connection
 func SetupAnoymizerService() *message_types.AnonymizeServiceClient {
 
-	anonymizerSvcHost := os.Getenv("ANONYMIZER_SVC_HOST")
-	if anonymizerSvcHost == "" {
+	anonymizerSvcAddress := os.Getenv("ANONYMIZER_SVC_ADDRESS")
+	if anonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
 
-	anonymizerSvcPort := os.Getenv("ANONYMIZER_SVC_PORT")
-	if anonymizerSvcPort == "" {
-		log.Fatal("anonymizer service port is empty")
-	}
-
-	anonymizeService, err := rpc.SetupAnonymizeService(fmt.Sprintf("%s:%s", anonymizerSvcHost, anonymizerSvcPort))
+	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
@@ -65,19 +55,13 @@ func SetupDatasinkService() *message_types.DatasinkServiceClient {
 
 //SetupCache  Redis cache
 func SetupCache() cache.Cache {
-	redisHost := os.Getenv("REDIS_HOST")
-	if redisHost == "" {
+	redisUrl := os.Getenv("REDIS_URL")
+	if redisUrl == "" {
 		log.Fatal("redis address is empty")
 	}
 
-	redisPort := os.Getenv("REDIS_SVC_PORT")
-	if redisPort == "" {
-		log.Fatal("redis port is empty")
-	}
-
-	redisAddress := fmt.Sprintf("%s:%s", redisHost, redisPort)
 	cache := redis.New(
-		redisAddress,
+		redisUrl,
 		"", // no password set
 		0,  // use default DB
 	)
