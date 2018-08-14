@@ -29,7 +29,7 @@ func TestKafka(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := kafka.NewConsumer(address, topic, ctx)
+	c := kafka.NewConsumer(ctx, address, topic)
 
 	r := func(partition string, seq string, data string) error {
 		log.Info("Received: %s,%s,%s", partition, seq, data)
