@@ -81,7 +81,7 @@ echo -n '{
 }' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymizer-template-name>
 ```
 
-### 3. Databinder Template
+### 3. Datasink Template
 
 Defines the job's output destination.  
 
@@ -91,7 +91,7 @@ Defines the job's output destination.
 echo -n '{
   "analyzerKind": "<analyzerKind>",
   "anonymizerKind": "<anonymizerKind>",
-  "databinder": {
+  "datasink": {
     "cloudStorageConfig": {
       "blobStorageConfig": {
         "accountName": "<AccountName>",
@@ -104,7 +104,7 @@ echo -n '{
       "tableName": "<tableName>"
     }
   }
-}' | http <api-service-address>/api/v1/templates/<my-project>/databinder/<my-databinder-template-name>
+}' | http <api-service-address>/api/v1/templates/<my-project>/datasink/<my-datasink-template-name>
 ```
 
 #### Analyzer and Anonymizer Kind
@@ -176,7 +176,7 @@ echo -n '{
       "containerName": "<ContainerName>"
     }
   }
-}' | http <api-service-address>/api/v1/templates/<my-project>/databinder/<my-scanner-template-name>
+}' | http <api-service-address>/api/v1/templates/<my-project>/scan/<my-scanner-template-name>
 ```
 
 #### Scanner Kind
@@ -190,7 +190,7 @@ Set \<cloudStorageConfig> as shown [here](#Storage-configuration).
 
 ### 5. Scheduler Template
 
-Defines the Cron job scheduler's configuration.
+Defines the Scanner Cron job scheduler's configuration.
 
 ```
 echo -n '{
@@ -199,23 +199,23 @@ echo -n '{
   "description": "<schedulerDescription>",
   "trigger": {
     "schedule": {
-      "recurrencePeriodDuration": "* * * * *"
+      "recurrencePeriod": "* * * * *"
     }
   },
   "scanTemplateId": "<my-scanner-template-name>",
   "analyzeTemplateId": "<my-analyzer-template-name>",
   "anonymizeTemplateId": "<my-anonymizer-template-name>",
-  "databinderTemplateId": "<my-databinder-template-name>"
-}' | http <api-service-address>/api/v1/templates/<my-project>/schedule-cronjob/<my-scheduler-template-name>
+  "datasinkTemplateId": "<my-datasink-template-name>"
+}' | http <api-service-address>/api/v1/templates/<my-project>/schedule-scanner-cronjob/<my-scheduler-template-name>
 ```
 
-#### Analyzer, Anonymizer, Scanner and Databinder IDs
+#### Analyzer, Anonymizer, Scanner and Datasink IDs
 
-Set \<AnalyzerTemplateId>, \<AnonymizerTemplateId>, \<ScanTemplateId> and \<DatabinderTemplateId> according to the values provided in the previous configurations' http requests.  
+Set \<AnalyzerTemplateId>, \<AnonymizerTemplateId>, \<ScanTemplateId> and \<DatasinkTemplateId> according to the values provided in the previous configurations' http requests.  
 
 #### Recurrence Configuration
 
-Set the '\<recurrencePeriodDuration>' according to the execution [interval](https://crontab.guru/every-1-minute) you'd like.  
+Set the '\<recurrencePeriod>' according to the execution [interval](https://crontab.guru/every-1-minute) you'd like.  
 **Parallelism is not supported!** A new job won't be triggered until the previous job is finished.
 
 ### 6. Trigger the Cron Job
@@ -223,5 +223,5 @@ Set the '\<recurrencePeriodDuration>' according to the execution [interval](http
 Activates the Cron job with the above configuration.
 
 ```
-echo -n '{"CronJobTemplateId": "<my-scheduler-template-name>" }' | http <api-service-address>/api/v1/projects/proj1/schedule-cronjob
+echo -n '{"CronJobTemplateId": "<my-scheduler-template-name>" }' | http <api-service-address>/api/v1/projects/proj1/schedule-scanner-cronjob
 ```
