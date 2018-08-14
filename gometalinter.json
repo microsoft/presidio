@@ -1,0 +1,25 @@
+{
+    "Vendor": true,
+    "Deadline": "5m",
+    "Sort": ["linter", "severity", "path", "line"],
+    "EnableGC": true,
+    "WarnUnmatchedDirective": true,
+    "DisableAll": true,
+    "Linters": {
+        "goimports": {
+            "Command": "goimports -l --local github.com/Microsoft/presidio"
+        }
+    },
+    "Enable": [
+        "deadcode",
+        "gofmt",
+        "gocyclo",
+        "goimports",
+        "golint",
+        "gosimple",
+        "ineffassign",
+        "misspell",
+        "unused",
+        "vet"
+    ]
+}
