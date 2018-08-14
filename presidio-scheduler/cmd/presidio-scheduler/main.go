@@ -22,7 +22,7 @@ type server struct{}
 var (
 	grpcPort                = os.Getenv("GRPC_PORT")
 	datasinkGrpcPort        = os.Getenv("DATASINK_GRPC_PORT")
-	namespace               = os.Getenv("presidio_NAMESPACE")
+	namespace               = os.Getenv("PRESIDIO_NAMESPACE")
 	analyzerSvcAddress      = os.Getenv("ANALYZER_SVC_ADDRESS")
 	anonymizerSvcAddress    = os.Getenv("ANONYMIZER_SVC_ADDRESS")
 	redisURL                = os.Getenv("REDIS_URL")
@@ -88,22 +88,16 @@ func applyScanRequest(r *message_types.ScannerCronJobRequest) (*message_types.Sc
 		return &message_types.ScannerCronJobResponse{}, err
 	}
 
-	dataSinkEnvVars := []apiv1.EnvVar{
-		{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
-	}
-
-	if isEventhubType(r.ScanRequest.DatasinkTemplate.AnalyzerKind) || isEventhubType(r.ScanRequest.DatasinkTemplate.AnalyzerKind) {
-		setEventHubEnvVars(r.ScanRequest.DatasinkTemplate, &dataSinkEnvVars)
-	}
-
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
 	scannerPolicy := platform.ConvertPullPolicyStringToType(scannerImagePullPolicy)
 	jobName := fmt.Sprintf("%s-scanner-cronjob", uuid.NewV4().String())
 	err = store.CreateCronJob(jobName, r.Trigger.Schedule.GetRecurrencePeriod(), []platform.ContainerDetails{
 		{
-			Name:            "datasink",
-			Image:           datasinkImage,
-			EnvVars:         dataSinkEnvVars,
+			Name:  "datasink",
+			Image: datasinkImage,
+			EnvVars: []apiv1.EnvVar{
+				{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
+			},
 			ImagePullPolicy: datasinkPolicy,
 		},
 		{
@@ -174,24 +168,4 @@ func kubeConfigPath() string {
 
 	// If we get here, we might be in-Pod.
 	return ""
-}
-
-func isEventhubType(kind string) bool {
-	return kind == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub)
-}
-
-func setEventHubEnvVars(datasinkTemplate *message_types.DatasinkTemplate, dataSinkEnvVars *[]apiv1.EnvVar) {
-	if datasinkTemplate.Datasink.StreamConfig != nil {
-		ehConfig := datasinkTemplate.Datasink.StreamConfig.EhConfig
-		*dataSinkEnvVars = append(*dataSinkEnvVars, apiv1.EnvVar{
-			Name: "EVENTHUB_CONNECTION_STRING", Value: ehConfig.EhConnectionString})
-		*dataSinkEnvVars = append(*dataSinkEnvVars, apiv1.EnvVar{
-			Name: "EVENTHUB_NAMESPACE", Value: ehConfig.EhNamespace})
-		*dataSinkEnvVars = append(*dataSinkEnvVars, apiv1.EnvVar{
-			Name: "EVENTHUB_KEY_NAME", Value: ehConfig.EhKeyName})
-		*dataSinkEnvVars = append(*dataSinkEnvVars, apiv1.EnvVar{
-			Name: "EVENTHUB_NAME", Value: ehConfig.EhName})
-		*dataSinkEnvVars = append(*dataSinkEnvVars, apiv1.EnvVar{
-			Name: "EVENTHUB_KEY_VALUE", Value: ehConfig.EhKeyValue})
-	}
 }

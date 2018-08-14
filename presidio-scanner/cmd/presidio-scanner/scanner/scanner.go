@@ -34,20 +34,17 @@ func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cac
 		itemPath := scanItem.GetPath()
 		uniqueID, err := scanItem.GetUniqueID()
 		if err != nil {
-			log.Error("error getting item id: %s, error: %q", itemPath, err.Error())
 			return 0, err
 		}
 
 		shouldScan, err := shouldScanItem(&cache, scanItem, uniqueID)
 		if err != nil {
-			log.Error("error getting item from cache: %s, error: %q", itemPath, err.Error())
 			return 0, err
 		}
 
 		if shouldScan {
 			text, analyzerResult, err = analyzeItem(analyzeService, analyzeRequest, scanItem)
 			if err != nil {
-				log.Error("error scanning file: %s, error: %q", itemPath, err.Error())
 				return 0, err
 			}
 
@@ -55,13 +52,11 @@ func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cac
 				anonymizerResult, err := anonymizeItem(analyzerResult, text, itemPath, scanRequest.AnonymizeTemplate, anonymizeService)
 
 				if err != nil {
-					log.Error("error anonymizing item: %s, error: %q", itemPath, err.Error())
 					return 0, err
 				}
 
 				err = sendResultToDatasink(itemPath, analyzerResult, anonymizerResult, cache, datasinkService)
 				if err != nil {
-					log.Error("error sending file to datasink: %s, error: %q", itemPath, err.Error())
 					return 0, err
 				}
 				log.Info("%d results were sent to the datasink successfully", len(analyzerResult))

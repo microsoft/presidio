@@ -1,12 +1,16 @@
 package stream
 
 import (
+	"context"
 	"fmt"
+	"os"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
+	"github.com/Microsoft/presidio/pkg/stream/kafka"
+	"github.com/Microsoft/presidio/pkg/stream/kinesis"
 	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
@@ -15,19 +19,24 @@ type streamDatasink struct {
 	stream stream.Stream
 }
 
-// New returns new instance of DB Data writter
+// New returns new instance of DB Data writer
 func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
 	var stream stream.Stream
+	var ctx = context.Background()
 	switch kind {
 	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub):
-		stream = eventhubs.New()
-		// case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kafka):
-		// 	stream = kafka.NewConsumer(datasink.StreamConfig.KafkaConfig.GetAddress(), datasink.StreamConfig.KafkaConfig.GetTopic())
-		// case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kinesis):
-		// 	stream = kafka.NewConsumer(datasink.StreamConfig.KinesisConfig.GetStreamName, datasink.StreamConfig.KafkaConfig.GetTopic())
+		c := datasink.StreamConfig.GetEhConfig()
+		//TODO: This will deprecated in favor of EPH
+		stream = eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), os.Getenv("PARTITION_ID"))
+	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kafka):
+		c := datasink.StreamConfig.GetKafkaConfig()
+		stream = kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic())
+	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kinesis):
+		c := datasink.StreamConfig.GetKinesisConfig()
+		stream = kinesis.NewConsumer(ctx, c.EndpointAddress, c.AwsSecretAccessKey, c.AwsRegion, c.AwsAccessKeyId, c.RedisUrl, c.GetStreamName())
 	}
-	streamDatasink := streamDatasink{stream: stream}
 
+	streamDatasink := streamDatasink{stream: stream}
 	return &streamDatasink
 }
 
