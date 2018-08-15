@@ -14,19 +14,19 @@ import (
 func createStream() stream.Stream {
 	config := streamRequest.GetStreamConfig()
 	ctx := context.Background()
-	if config.KafkaConfig != nil {
+	if config.GetKafkaConfig() != nil {
 		c := config.GetKafkaConfig()
 		k := kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic())
 		return k
 	}
 
-	if config.EhConfig != nil {
+	if config.GetEhConfig() != nil {
 		c := config.GetEhConfig()
 		//TODO: This will deprecated in favor of EPH
 		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), os.Getenv("PARTITION_ID"))
 		return e
 	}
-	if config.EhConfig != nil {
+	if config.GetKinesisConfig() != nil {
 		c := config.GetKinesisConfig()
 		k := kinesis.NewConsumer(ctx, c.EndpointAddress, c.AwsSecretAccessKey, c.AwsRegion, c.AwsAccessKeyId, c.RedisUrl, c.GetStreamName())
 		return k
