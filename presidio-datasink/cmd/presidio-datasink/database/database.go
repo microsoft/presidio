@@ -23,18 +23,19 @@ type dbDatasink struct {
 	connectionString string
 	engine           *xorm.Engine
 	tableName        string
-	resultKind       string
+	resultType       string
 }
 
-// New returns new instance of DB Data writter
-func New(datasink *message_types.Datasink, datasinkKind string, resultKind string) datasink.Datasink {
+// New returns new instance of DB Data writer
+func New(datasink *message_types.Datasink, resultType string) datasink.Datasink {
 	// default table name
 	tableName := datasink.DbConfig.GetTableName()
 	if tableName == "" {
 		tableName = "scannerresult"
 	}
 
-	db := dbDatasink{driverName: datasinkKind, connectionString: datasink.DbConfig.GetConnectionString(), tableName: tableName, resultKind: resultKind}
+	db := dbDatasink{driverName: datasink.GetDbConfig().GetType(), connectionString: datasink.GetDbConfig().GetConnectionString(),
+		tableName: tableName, resultType: resultType}
 	db.Init()
 	return &db
 }
@@ -67,12 +68,12 @@ func (datasink *dbDatasink) Init() {
 	}
 
 	// Create table if not exists
-	if datasink.resultKind == "analyze" {
+	if datasink.resultType == "analyze" {
 		err = datasink.engine.Table(datasink.tableName).CreateTable(&analyzerResult{})
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-	} else if datasink.resultKind == "anonymize" {
+	} else if datasink.resultType == "anonymize" {
 		err = datasink.engine.Table(datasink.tableName).CreateTable(&anonymizerResult{})
 		if err != nil {
 			log.Fatal(err.Error())

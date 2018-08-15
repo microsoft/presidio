@@ -30,7 +30,7 @@ func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cac
 		var analyzerResult []*message_types.AnalyzeResult
 		var text string
 
-		scanItem := CreateItem(scanRequest.Kind, item)
+		scanItem := CreateItem(scanRequest, item)
 		itemPath := scanItem.GetPath()
 		uniqueID, err := scanItem.GetUniqueID()
 		if err != nil {

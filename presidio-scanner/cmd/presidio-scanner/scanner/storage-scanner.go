@@ -9,25 +9,24 @@ import (
 )
 
 type storageScanner struct {
-	kind          string
 	containerName string
 	storageAPI    *storage.API
 }
 
-// NewStorageScanner returns new instance of DB Data writter
-func NewStorageScanner(kind string, inputConfig *message_types.CloudStorageConfig) Scanner {
-	scanner := storageScanner{kind: kind}
+// NewStorageScanner returns new instance of DB Data writer
+func NewStorageScanner(inputConfig *message_types.CloudStorageConfig) Scanner {
+	scanner := storageScanner{}
 	scanner.Init(inputConfig)
 	return &scanner
 }
 
 func (scanner *storageScanner) Init(cloudStorageConfig *message_types.CloudStorageConfig) {
-	config, containerName, err := storage.Init(scanner.kind, cloudStorageConfig)
+	config, containerName, kind, err := storage.Init(cloudStorageConfig)
 	if err != nil {
-		log.Fatal("Unknown storage kind")
+		log.Fatal(err.Error())
 	}
 
-	storageAPI, err := storage.New(scanner.kind, config, 10)
+	storageAPI, err := storage.New(kind, config, 10)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

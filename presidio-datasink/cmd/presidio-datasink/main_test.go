@@ -9,61 +9,40 @@ import (
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 )
 
-func TestIsDatabase(t *testing.T) {
-	assert.True(t, isDatabase("mssql"))
-	assert.True(t, isDatabase("mysql"))
-	assert.True(t, isDatabase("oracle"))
-	assert.True(t, isDatabase("postgres"))
-	assert.True(t, isDatabase("sqlite3"))
-	assert.False(t, isDatabase("kafka"))
-}
-
-func TestIsCloudStorage(t *testing.T) {
-	assert.True(t, isCloudStorage("s3"))
-	assert.True(t, isCloudStorage("azureblob"))
-	assert.True(t, isCloudStorage("googlestorage"))
-	assert.False(t, isCloudStorage("postgres"))
-}
-
-func TestIsStream(t *testing.T) {
-	assert.True(t, isStream("eventhub"))
-	assert.True(t, isStream("kafka"))
-	assert.True(t, isStream("kinesis"))
-	assert.False(t, isStream("postgres"))
-}
-
 func TestDatasinkInit(t *testing.T) {
 	var s *server
 	datasinkTemplate := &message_types.DatasinkTemplate{}
 
 	// validate datasink is initialized
 	_, err := s.Init(context.Background(), datasinkTemplate)
-	assert.EqualError(t, err, "datasinkTemplate must me set")
+	assert.EqualError(t, err, "AnalyzeDatasink or AnonymizeDatasink must me set")
 
-	datasink := &message_types.Datasink{
-		DbConfig: &message_types.DBConfig{
-			TableName: "name",
+	datasink := []*message_types.Datasink{
+		{
+			DbConfig: &message_types.DBConfig{
+				TableName: "name",
+				Type:      "sqlite3",
+			},
 		},
 	}
 
 	// validate connection string is set
 	datasinkTemplate = &message_types.DatasinkTemplate{
-		AnalyzerKind: "sqlite3",
-		Datasink:     datasink,
+		AnalyzeDatasink: datasink,
 	}
 	_, err = s.Init(context.Background(), datasinkTemplate)
 	assert.EqualError(t, err, "connectionString var must me set")
 
 	// datasinks are empty
-	assert.Empty(t, analyzerDatasink)
-	assert.Empty(t, anonymizerDatasink)
+	assert.Empty(t, analyzerDatasinkArray)
+	assert.Empty(t, anonymizerDatasinkArray)
 
-	datasink.DbConfig.ConnectionString = "./test.db?cache=shared&mode=rwc"
+	datasink[0].DbConfig.ConnectionString = "./test.db?cache=shared&mode=rwc"
 
-	datasinkTemplate.Datasink = datasink
+	datasinkTemplate.AnalyzeDatasink = datasink
 	s.Init(context.Background(), datasinkTemplate)
 
 	// validate datasink was created successfully
-	assert.NotEmpty(t, analyzerDatasink)
-	assert.Empty(t, anonymizerDatasink)
+	assert.Equal(t, 1, len(analyzerDatasinkArray))
+	assert.Empty(t, anonymizerDatasinkArray)
 }
