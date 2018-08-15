@@ -2,13 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/pkg/templates"
 )
 
 func TestDatasinkInit(t *testing.T) {
@@ -27,30 +25,6 @@ func TestDatasinkInit(t *testing.T) {
 			},
 		},
 	}
-
-	x := &message_types.DatasinkTemplate{
-		AnalyzeDatasink: []*message_types.Datasink{
-			&message_types.Datasink{
-				CloudStorageConfig: &message_types.CloudStorageConfig{
-					BlobStorageConfig: &message_types.BlobStorageConfig{
-						AccountKey:    "xxx",
-						AccountName:   "dddd",
-						ContainerName: "cxcxcx",
-					},
-				},
-			},
-		},
-		AnonymizeDatasink: []*message_types.Datasink{
-			&message_types.Datasink{
-				DbConfig: &message_types.DBConfig{
-					TableName: "name",
-					Type:      "sqlite3",
-				},
-			},
-		},
-	}
-	resultString, _ := templates.ConvertInterfaceToJSON(x)
-	fmt.Printf(resultString)
 
 	// validate connection string is set
 	datasinkTemplate = &message_types.DatasinkTemplate{
