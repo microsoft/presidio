@@ -42,7 +42,6 @@ func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_type
 
 	analyzeRequest := &message_types.AnalyzeRequest{
 		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
-		MinProbability:  scanRequest.GetMinProbability(),
 	}
 
 	return analyzeRequest, analyzeService
@@ -63,10 +62,6 @@ func initScanner() *message_types.ScanRequest {
 	err := templates.ConvertJSONToInterface(scannerObj, scanRequest)
 	if err != nil {
 		log.Fatal("Error formating scanner request %q", err.Error())
-	}
-
-	if scanRequest.Kind == "" {
-		log.Fatal("storage king var must me set")
 	}
 
 	grpcPort = os.Getenv("GRPC_PORT")

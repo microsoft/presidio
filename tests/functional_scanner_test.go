@@ -1,5 +1,3 @@
-// +build functional
-
 package tests
 
 import (
@@ -78,8 +76,9 @@ type testItem struct {
 // TESTS
 func TestS3Scan(t *testing.T) {
 	// Test setup
+	kind := "s3"
 	testCache = cache_mock.New()
-	kind, config := storage.CreateS3Config(s3AccessID, s3AccessKey, s3Region, s3Endpoint)
+	config := storage.CreateS3Config(s3AccessID, s3AccessKey, s3Region, s3Endpoint)
 	scanRequest := getScannerRequest(kind)
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
@@ -110,15 +109,14 @@ func TestS3Scan(t *testing.T) {
 
 func TestAzureScan(t *testing.T) {
 	// Test setup
+	kind := "azure"
 	testCache = cache_mock.New()
-	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
-	scanRequest := &message_types.ScanRequest{
-		Kind: kind,
-	}
+	config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
+	scanRequest := getScannerRequest(kind)
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	s := scanner.CreateScanner(getScannerRequest(kind))
+	s := scanner.CreateScanner(scanRequest)
 	analyzeRequest := &message_types.AnalyzeRequest{}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
@@ -144,16 +142,14 @@ func TestAzureScan(t *testing.T) {
 
 func TestFileExtension(t *testing.T) {
 	testCache = cache_mock.New()
-	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
-
+	kind := "azure"
+	config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
+	scanRequest := getScannerRequest(kind)
 	filePath := "dir/file1.jpg"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	s := scanner.CreateScanner(getScannerRequest(kind))
+	s := scanner.CreateScanner(scanRequest)
 	analyzeRequest := &message_types.AnalyzeRequest{}
-	scanRequest := &message_types.ScanRequest{
-		Kind: "azureblob",
-	}
 
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(nil)
@@ -165,15 +161,14 @@ func TestFileExtension(t *testing.T) {
 
 func TestSendResultToDatasinkReturnsError(t *testing.T) {
 	testCache = cache_mock.New()
-	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
-	scanRequest := &message_types.ScanRequest{
-		Kind: "azureblob",
-	}
+	kind := "azure"
+	config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
+	scanRequest := getScannerRequest(kind)
 
 	filePath := "dir/file1.txt"
 	container := InitContainer(kind, config)
 	putItems([]testItem{{path: filePath}}, container)
-	s := scanner.CreateScanner(getScannerRequest(kind))
+	s := scanner.CreateScanner(scanRequest)
 	analyzeRequest := &message_types.AnalyzeRequest{}
 	analyzerServiceMock := getAnalyzeServiceMock(getAnalyzerMockResult())
 	datasinkServiceMock := getDatasinkMock(errors.New("some error"))
@@ -187,8 +182,9 @@ func TestSendResultToDatasinkReturnsError(t *testing.T) {
 
 func TestResultWrittenToStorage(t *testing.T) {
 	// Setup
+	kind := "azure"
 	containerName := "cloudstoragetest"
-	kind, config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
+	config := storage.CreateAzureConfig(azureStorageName, azureStorageKey)
 	api, _ := storage.New(kind, config, 10)
 	api.RemoveContainer(containerName)
 
@@ -202,7 +198,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 		},
 	}
 
-	cloudStorage := cloudStorage.New(datasink, "azureblob")
+	cloudStorage := cloudStorage.New(datasink)
 	resultsPath := "someDir/SomeFile.txt"
 	anonymizeResponse := &message_types.AnonymizeResponse{
 		Text: "<Person> live is <Location>",
@@ -299,28 +295,31 @@ func putItems(items []testItem, container stow.Container) {
 }
 
 func getScannerRequest(kind string) *message_types.ScanRequest {
-	if kind == "azureblob" {
+	if kind == "azure" {
 		return &message_types.ScanRequest{
-			CloudStorageConfig: &message_types.CloudStorageConfig{
-				BlobStorageConfig: &message_types.BlobStorageConfig{
-					AccountName:   azureStorageName,
-					AccountKey:    azureStorageKey,
-					ContainerName: "test",
+			ScanTemplate: &message_types.ScanTemplate{
+				CloudStorageConfig: &message_types.CloudStorageConfig{
+					BlobStorageConfig: &message_types.BlobStorageConfig{
+						AccountName:   azureStorageName,
+						AccountKey:    azureStorageKey,
+						ContainerName: "test",
+					},
 				},
 			},
-			Kind: "azureblob",
 		}
 	}
+
 	return &message_types.ScanRequest{
-		CloudStorageConfig: &message_types.CloudStorageConfig{
-			S3Config: &message_types.S3Config{
-				AccessId:   s3AccessID,
-				AccessKey:  s3AccessKey,
-				Endpoint:   s3Endpoint,
-				Region:     s3Region,
-				BucketName: "test",
+		ScanTemplate: &message_types.ScanTemplate{
+			CloudStorageConfig: &message_types.CloudStorageConfig{
+				S3Config: &message_types.S3Config{
+					AccessId:   s3AccessID,
+					AccessKey:  s3AccessKey,
+					Endpoint:   s3Endpoint,
+					Region:     s3Region,
+					BucketName: "test",
+				},
 			},
 		},
-		Kind: "s3",
 	}
 }

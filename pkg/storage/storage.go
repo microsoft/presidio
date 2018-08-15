@@ -26,10 +26,6 @@ type API struct {
 // config holds the storage connection string
 // concurrencyLimit is the limit for how many item needs to be scanned at once.
 func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
-	if kind == "azureblob" {
-		// Change name kind to match stow expectations
-		kind = "azure"
-	}
 	location, err := stow.Dial(kind, config)
 	if err != nil {
 		return &API{}, err
@@ -38,24 +34,23 @@ func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
 }
 
 // Init cloud storage config
-func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string, error) {
-	switch kind {
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_azureblob):
+func Init(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string, string, error) {
+	if cloudStorageConfig.GetBlobStorageConfig() != nil {
 		config, containerName := InitBlobStorage(cloudStorageConfig)
-		return config, containerName, nil
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
+		return config, containerName, "azure", nil
+	} else if cloudStorageConfig.GetS3Config() != nil {
 		config, containerName := InitS3(cloudStorageConfig)
-		return config, containerName, nil
-	// case "google":
-	// 	config, containerName := InitGoogle(cloudStorageConfig)
-	// 	return config, containerName, nil
-	default:
-		return nil, "", fmt.Errorf("Unknown storage kind")
+		return config, containerName, "s3", nil
+		// } else if cloudStorageConfig.GetGoogleStorageConfig() != nil {
+		// 	config, containerName := InitGoogle(cloudStorageConfig)
+		// 	return config, containerName, "google", nil
+	} else {
+		return nil, "", "", fmt.Errorf("storage config is not defined")
 	}
 }
 
 //CreateS3Config create S3 configuration
-func CreateS3Config(accessKeyID string, secretKey string, region string, endpoint string) (string, stow.ConfigMap) {
+func CreateS3Config(accessKeyID string, secretKey string, region string, endpoint string) stow.ConfigMap {
 	configMap := stow.ConfigMap{
 		s3.ConfigAccessKeyID: accessKeyID,
 		s3.ConfigSecretKey:   secretKey,
@@ -66,7 +61,7 @@ func CreateS3Config(accessKeyID string, secretKey string, region string, endpoin
 		configMap.Set(s3.ConfigEndpoint, endpoint)
 	}
 
-	return "s3", configMap
+	return configMap
 }
 
 // //CreatGoogleConfig create google configuration
@@ -100,13 +95,13 @@ func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMa
 	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
 		log.Fatal("accessId, accessKey, region, bucket must me set for s3 storage kind.")
 	}
-	_, config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region, s3Endpoint)
+	config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region, s3Endpoint)
 	return config, s3Bucket
 }
 
 //CreateAzureConfig create azure configuration
-func CreateAzureConfig(account string, key string) (string, stow.ConfigMap) {
-	return "azureblob", stow.ConfigMap{
+func CreateAzureConfig(account string, key string) stow.ConfigMap {
+	return stow.ConfigMap{
 		azure.ConfigAccount: account,
 		azure.ConfigKey:     key,
 	}
@@ -120,7 +115,8 @@ func InitBlobStorage(cloudStorageConfig *message_types.CloudStorageConfig) (stow
 	if azureAccountKey == "" || azureAccountName == "" || azureContainer == "" {
 		log.Fatal("accountName, AccountKey and containerName vars must me set for azure config.")
 	}
-	_, config := CreateAzureConfig(azureAccountName, azureAccountKey)
+
+	config := CreateAzureConfig(azureAccountName, azureAccountKey)
 	return config, azureContainer
 }
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/satori/go.uuid"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 	apiv1 "k8s.io/api/core/v1"
@@ -57,6 +56,7 @@ func main() {
 	}
 
 	var err error
+	log.Info("namespace %s", namespace)
 	store, err = kube.New(namespace, "", kubeConfigPath())
 	if err != nil {
 		log.Fatal(err.Error())
@@ -90,7 +90,7 @@ func applyScanRequest(r *message_types.ScannerCronJobRequest) (*message_types.Sc
 
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
 	scannerPolicy := platform.ConvertPullPolicyStringToType(scannerImagePullPolicy)
-	jobName := fmt.Sprintf("%s-scanner-cronjob", uuid.NewV4().String())
+	jobName := fmt.Sprintf("%s-scanner-cronjob", r.GetName())
 	err = store.CreateCronJob(jobName, r.Trigger.Schedule.GetRecurrencePeriod(), []platform.ContainerDetails{
 		{
 			Name:  "datasink",
@@ -126,7 +126,7 @@ func applyStreamRequest(r *message_types.StreamsJobRequest) (*message_types.Stre
 	streamsPolicy := platform.ConvertPullPolicyStringToType(streamsImagePullPolicy)
 
 	for index := 0; index < 1; index++ {
-		jobName := fmt.Sprintf("%s-streams-job-%d", uuid.NewV4().String(), index)
+		jobName := fmt.Sprintf("%s-streams-job-%d", r.GetName(), index)
 		err = store.CreateJob(jobName, []platform.ContainerDetails{
 			{
 				Name:  "datasink",

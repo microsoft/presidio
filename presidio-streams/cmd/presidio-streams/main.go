@@ -81,18 +81,13 @@ func sendResultToDatasink(analyzeResults []*message_types.AnalyzeResult,
 }
 
 func initStream() {
-
 	streamObj := os.Getenv("STREAM_REQUEST")
 	streamRequest = &message_types.StreamRequest{}
+
 	err := templates.ConvertJSONToInterface(streamObj, streamRequest)
 	if err != nil {
 		log.Fatal("Error formating scanner request %q", err.Error())
 	}
-
-	if streamRequest.Kind == "" {
-		log.Fatal("stream kind var must me set")
-	}
-
 }
 
 func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) {
@@ -105,10 +100,8 @@ func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) {
 }
 
 func analyzeItem(text string) ([]*message_types.AnalyzeResult, error) {
-
 	analyzeRequest := &message_types.AnalyzeRequest{
 		AnalyzeTemplate: streamRequest.GetAnalyzeTemplate(),
-		MinProbability:  streamRequest.GetMinProbability(),
 		Text:            text,
 	}
 

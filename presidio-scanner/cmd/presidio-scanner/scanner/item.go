@@ -21,9 +21,8 @@ type Item interface {
 }
 
 // CreateItem creates a new instance of scanned item according to the specified kind
-func CreateItem(kind string, item interface{}) Item {
-	switch kind {
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_azureblob), message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
+func CreateItem(scanRequest *message_types.ScanRequest, item interface{}) Item {
+	if scanRequest.GetScanTemplate().GetCloudStorageConfig() != nil {
 		storageItem := NewStorageItem(item)
 		return storageItem
 	}

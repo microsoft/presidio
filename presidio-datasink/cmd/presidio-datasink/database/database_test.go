@@ -24,10 +24,11 @@ func TestResultWrittenToDb(t *testing.T) {
 		DbConfig: &message_types.DBConfig{
 			ConnectionString: connectionString,
 			TableName:        tableName,
+			Type:             dbKind,
 		},
 	}
 
-	datasink := New(sink, dbKind, "analyze")
+	datasink := New(sink, "analyze")
 	resultsPath := "someDir/SomeFile.txt"
 
 	//Act
@@ -47,7 +48,7 @@ func TestResultWrittenToDb(t *testing.T) {
 	}
 
 	engine.DropTables(tableName)
-	datasink = New(sink, dbKind, "anonymize")
+	datasink = New(sink, "anonymize")
 
 	// Act
 	datasink.WriteAnonymizeResults(anonymizeResponse, resultsPath)

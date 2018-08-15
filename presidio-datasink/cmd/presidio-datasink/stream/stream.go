@@ -19,18 +19,15 @@ type streamDatasink struct {
 }
 
 // New returns new instance of DB Data writer
-func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
+func New(datasink *message_types.Datasink) datasink.Datasink {
 	var stream stream.Stream
 
-	switch kind {
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub):
-		c := datasink.StreamConfig.GetEhConfig()
-		//TODO: This will deprecated in favor of EPH
-		stream = eventhubs.NewProducer(context.Background(), c.GetEhConnectionString())
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kafka):
+	if datasink.StreamConfig.GetEhConfig() != nil {
+		stream = eventhubs.NewProducer(context.Background(), datasink.StreamConfig.GetEhConfig().GetEhConnectionString())
+	} else if datasink.StreamConfig.GetKafkaConfig() != nil {
 		c := datasink.StreamConfig.GetKafkaConfig()
 		stream = kafka.NewProducer(c.GetAddress(), c.GetTopic())
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kinesis):
+	} else if datasink.StreamConfig.GetKinesisConfig() != nil {
 		c := datasink.StreamConfig.GetKinesisConfig()
 		stream = kinesis.NewProducer(c.AwsSecretAccessKey, c.EndpointAddress, c.AwsRegion, c.AwsSecretAccessKey, c.RedisUrl, c.GetStreamName())
 	}

@@ -14,25 +14,24 @@ import (
 )
 
 type cloudStorageDatasink struct {
-	kind               string
 	cloudStorageConfig *message_types.CloudStorageConfig
 	container          stow.Container
 }
 
 // New returns new instance of DB Data writter
-func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
-	db := cloudStorageDatasink{kind: kind, cloudStorageConfig: datasink.GetCloudStorageConfig()}
+func New(datasink *message_types.Datasink) datasink.Datasink {
+	db := cloudStorageDatasink{cloudStorageConfig: datasink.GetCloudStorageConfig()}
 	db.Init()
 	return &db
 }
 
 func (datasink *cloudStorageDatasink) Init() {
-	config, containerName, err := storage.Init(datasink.kind, datasink.cloudStorageConfig)
+	config, containerName, kind, err := storage.Init(datasink.cloudStorageConfig)
 	if err != nil {
 		log.Fatal("Unknown storage kind")
 	}
 
-	storageAPI, err := storage.New(datasink.kind, config, 10)
+	storageAPI, err := storage.New(kind, config, 10)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
