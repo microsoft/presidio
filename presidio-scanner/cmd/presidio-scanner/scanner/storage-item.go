@@ -6,7 +6,6 @@ import (
 
 	"github.com/presid-io/stow"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
 )
 
@@ -37,7 +36,6 @@ func (storageItem *storageItem) IsContentTypeSupported() error {
 func (storageItem *storageItem) GetUniqueID() (string, error) {
 	etag, err := storageItem.item.ETag()
 	if err != nil {
-		log.Error(err.Error())
 		return "", err
 	}
 	return etag, nil

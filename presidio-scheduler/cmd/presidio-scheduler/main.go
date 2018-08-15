@@ -22,7 +22,7 @@ type server struct{}
 var (
 	grpcPort                = os.Getenv("GRPC_PORT")
 	datasinkGrpcPort        = os.Getenv("DATASINK_GRPC_PORT")
-	namespace               = os.Getenv("presidio_NAMESPACE")
+	namespace               = os.Getenv("PRESIDIO_NAMESPACE")
 	analyzerSvcAddress      = os.Getenv("ANALYZER_SVC_ADDRESS")
 	anonymizerSvcAddress    = os.Getenv("ANONYMIZER_SVC_ADDRESS")
 	redisURL                = os.Getenv("REDIS_URL")

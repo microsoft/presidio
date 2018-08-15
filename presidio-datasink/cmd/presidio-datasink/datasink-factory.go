@@ -7,6 +7,7 @@ import (
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/database"
 	datasinkInterface "github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
+	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/stream"
 )
 
 func createDatasink(datasink *message_types.Datasink, datasinkKind string, resultKind string) (datasinkInterface.Datasink, error) {
@@ -17,6 +18,8 @@ func createDatasink(datasink *message_types.Datasink, datasinkKind string, resul
 		return database.New(datasink, datasinkKind, resultKind), nil
 	} else if isCloudStorage(datasinkKind) {
 		return cloudStorage.New(datasink, datasinkKind), nil
+	} else if isStream(datasinkKind) {
+		return stream.New(datasink, datasinkKind), nil
 	}
 
 	return nil, fmt.Errorf("unknown datasink kind")
@@ -34,4 +37,10 @@ func isCloudStorage(target string) bool {
 	return target == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_azureblob) ||
 		target == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3) ||
 		target == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_googlestorage)
+}
+
+func isStream(target string) bool {
+	return target == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub) ||
+		target == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kafka) ||
+		target == message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kinesis)
 }

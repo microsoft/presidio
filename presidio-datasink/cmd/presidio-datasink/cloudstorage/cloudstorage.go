@@ -49,13 +49,11 @@ func (datasink *cloudStorageDatasink) Init() {
 func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
 	resultString, err := templates.ConvertInterfaceToJSON(results)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 
 	err = storage.PutItem(addActionToFilePath(path, "analyzed"), resultString, datasink.container)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 
@@ -66,7 +64,6 @@ func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_typ
 func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
 	err := storage.PutItem(addActionToFilePath(path, "anonymized"), result.Text, datasink.container)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 

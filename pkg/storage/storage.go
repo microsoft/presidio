@@ -47,7 +47,8 @@ func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (st
 		config, containerName := InitS3(cloudStorageConfig)
 		return config, containerName, nil
 	// case "google":
-	// 	// Add support
+	// 	config, containerName := InitGoogle(cloudStorageConfig)
+	// 	return config, containerName, nil
 	default:
 		return nil, "", fmt.Errorf("Unknown storage kind")
 	}
@@ -67,6 +68,27 @@ func CreateS3Config(accessKeyID string, secretKey string, region string, endpoin
 
 	return "s3", configMap
 }
+
+// //CreatGoogleConfig create google configuration
+// func CreatGoogleConfig(json string, projectID string, scopes string) (string, stow.ConfigMap) {
+// 	return "google", stow.ConfigMap{
+// 		google.ConfigJSON:      json,
+// 		google.ConfigProjectId: projectID,
+// 		google.ConfigScopes:    scopes,
+// 	}
+// }
+
+// // InitGoogle inits the storage with the supplied parameters
+// func InitGoogle(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+// 	googleJson := cloudStorageConfig.GoogleStorageConfig.GetJson()
+// 	googleProjectID := cloudStorageConfig.GoogleStorageConfig.GetProjectId()
+// 	googleScopes := cloudStorageConfig.GoogleStorageConfig.GetScopes()
+// 	if googleJson == "" || googleProjectId == "" || googleScopes == "" {
+// 		log.Fatal("json, projectId, scopes must me set for google storage kind.")
+// 	}
+// 	_, config := CreatGoogleConfig(googleJson, googleProjectID, googleScopes)
+// 	return config, s3Bucket
+// }
 
 // InitS3 inits the storage with the supplied credentials
 func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
@@ -119,15 +141,6 @@ func (a *API) CreateContainer(name string) (stow.Container, error) {
 func (a *API) RemoveContainer(name string) error {
 	return a.location.RemoveContainer(name)
 }
-
-//CreatGoogleConfig create google configuration
-// func CreatGoogleConfig(configJson string, configProjectId string, configScopes string) (string, stow.ConfigMap) {
-// 	return "google", stow.ConfigMap{
-// 		google.ConfigJSON:      configJson,
-// 		google.ConfigProjectId: configProjectId,
-// 		google.ConfigScopes:    configScopes,
-// 	}
-// }
 
 // walkFunc contain the logic that need to be implemented on each of the items in the container
 type walkFunc func(item stow.Item)

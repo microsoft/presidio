@@ -13,7 +13,7 @@ import (
 
 var (
 	webPort   = os.Getenv("WEB_PORT")
-	namespace = os.Getenv("presidio_NAMESPACE")
+	namespace = os.Getenv("PRESIDIO_NAMESPACE")
 )
 
 const (

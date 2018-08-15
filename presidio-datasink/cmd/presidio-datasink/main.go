@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	grpcPort           = os.Getenv("GRPC_PORT")
+	grpcPort           = os.Getenv("DATASINK_GRPC_PORT")
 	analyzerDatasink   datasink.Datasink
 	anonymizerDatasink datasink.Datasink
 	grpcServer         *grpc.Server
