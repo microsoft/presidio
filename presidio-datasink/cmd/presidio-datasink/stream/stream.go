@@ -3,7 +3,6 @@ package stream
 import (
 	"context"
 	"fmt"
-	"os"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
@@ -22,18 +21,18 @@ type streamDatasink struct {
 // New returns new instance of DB Data writer
 func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
 	var stream stream.Stream
-	var ctx = context.Background()
+
 	switch kind {
 	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_eventhub):
 		c := datasink.StreamConfig.GetEhConfig()
 		//TODO: This will deprecated in favor of EPH
-		stream = eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), os.Getenv("PARTITION_ID"))
+		stream = eventhubs.NewProducer(context.Background(), c.GetEhConnectionString())
 	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kafka):
 		c := datasink.StreamConfig.GetKafkaConfig()
-		stream = kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic())
+		stream = kafka.NewProducer(c.GetAddress(), c.GetTopic())
 	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_kinesis):
 		c := datasink.StreamConfig.GetKinesisConfig()
-		stream = kinesis.NewConsumer(ctx, c.EndpointAddress, c.AwsSecretAccessKey, c.AwsRegion, c.AwsAccessKeyId, c.RedisUrl, c.GetStreamName())
+		stream = kinesis.NewProducer(c.AwsSecretAccessKey, c.EndpointAddress, c.AwsRegion, c.AwsSecretAccessKey, c.RedisUrl, c.GetStreamName())
 	}
 
 	streamDatasink := streamDatasink{stream: stream}

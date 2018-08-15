@@ -45,13 +45,5 @@ func getAnalyzerMockResult() []*message_types.AnalyzeResult {
 				Start: 153, End: 163, Length: 10,
 			},
 		},
-		&message_types.AnalyzeResult{
-			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PERSON.String()},
-			Text:        "John Smith",
-			Probability: 0.8,
-			Location: &message_types.Location{
-				Start: 180, End: 190, Length: 10,
-			},
-		},
 	}
 }
