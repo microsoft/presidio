@@ -81,7 +81,7 @@ echo -n '{
       "cloudStorageConfig": {
         "blobStorageConfig": {
           "accountName": "<ACCOUNT_NAME>",
-          "accountKey": "<ACCOUNT_KEY",
+          "accountKey": "<ACCOUNT_KEY>",
           "containerName": "<CONTAINER_NAME>"
         }
       }
@@ -92,7 +92,7 @@ echo -n '{
           "dbConfig": {
             "connectionString": "<CONNECTION_STRING>",
             "tableName": "<TABLE_NAME>",
-            "type": "DB_TYPE"
+            "type": "<DB_TYPE>"
           }
         }
       ],
