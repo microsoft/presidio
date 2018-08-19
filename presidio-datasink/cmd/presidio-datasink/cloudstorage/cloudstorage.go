@@ -28,7 +28,7 @@ func New(datasink *message_types.Datasink) datasink.Datasink {
 func (datasink *cloudStorageDatasink) Init() {
 	config, containerName, kind, err := storage.Init(datasink.cloudStorageConfig)
 	if err != nil {
-		log.Fatal("Unknown storage kind")
+		log.Fatal(err.Error())
 	}
 
 	storageAPI, err := storage.New(kind, config, 10)
@@ -51,7 +51,7 @@ func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_typ
 		return err
 	}
 
-	err = storage.PutItem(addActionToFilePath(path, "analyzed"), resultString, datasink.container)
+	err = storage.PutItem(addSuffixToPath(path, "analyzed"), resultString, datasink.container)
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_typ
 }
 
 func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
-	err := storage.PutItem(addActionToFilePath(path, "anonymized"), result.Text, datasink.container)
+	err := storage.PutItem(addSuffixToPath(path, "anonymized"), result.Text, datasink.container)
 	if err != nil {
 		return err
 	}
@@ -70,11 +70,14 @@ func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_type
 	return nil
 }
 
-func addActionToFilePath(path string, action string) string {
+func addSuffixToPath(path string, suffix string) string {
+	// Get file extention
 	ext := filepath.Ext(path)
+	// Get path without file extension
 	path = path[:len(path)-len(ext)]
 	if string(path[0]) == "/" {
 		path = path[1:]
 	}
-	return fmt.Sprintf("%s-%s%s", path, action, ext)
+	// Add suffix to path and put back the extension
+	return fmt.Sprintf("%s-%s%s", path, suffix, ext)
 }
