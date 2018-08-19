@@ -71,7 +71,7 @@ func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_type
 }
 
 func addSuffixToPath(path string, suffix string) string {
-	// Get file extention
+	// Get file extension
 	ext := filepath.Ext(path)
 	// Get path without file extension
 	path = path[:len(path)-len(ext)]

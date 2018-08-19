@@ -43,7 +43,7 @@ func GetLogger() *zap.Logger {
 	return logger
 }
 
-// ObserverLogs provides the list of logs generated during the observation proccess
+// ObserverLogs provides the list of logs generated during the observation process
 func ObserverLogs() *observer.ObservedLogs {
 	return logs
 }

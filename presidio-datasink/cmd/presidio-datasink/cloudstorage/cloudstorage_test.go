@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestaddSuffixToPath(t *testing.T) {
+func TestAddSuffixToPath(t *testing.T) {
 	path := "/dir1/dir2/dir3/filename.txt"
 	newPath := addSuffixToPath(path, "action")
 	assert.Equal(t, newPath, "dir1/dir2/dir3/filename-action.txt")

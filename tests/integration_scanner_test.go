@@ -1,4 +1,5 @@
 // +build functional
+
 package tests
 
 import (
@@ -8,7 +9,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/presid-io/stow"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 
 	message_types "github.com/Microsoft/presidio-genproto/golang"
 	c "github.com/Microsoft/presidio/pkg/cache"
@@ -18,10 +23,6 @@ import (
 	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
 	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
-	"github.com/presid-io/stow"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"google.golang.org/grpc"
 )
 
 var (
