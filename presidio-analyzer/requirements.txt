@@ -4,3 +4,6 @@ grpcio
 grpcio-tools
 tldextract
 knack
+cython
+re2
+git+https://github.com/andreasvc/pyre2.git

@@ -1,12 +1,15 @@
 import logging
 from concurrent import futures
-import regex as re
 import en_core_web_lg
 import common_pb2
 import template_pb2
 import tldextract
 from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
+try:
+    import re2 as re
+except ImportError:
+    import re
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 CONTEXT_SIMILARITY_FACTOR = 0.35
@@ -60,7 +63,7 @@ class Matcher(object):
                 break
         
         return similarity
-      
+
 
     def __calculate_probability(self, doc, match_strength, field, start, end):
         if field.should_check_checksum:
@@ -127,10 +130,7 @@ class Matcher(object):
             matches = re.finditer(
                 pattern.regex,
                 doc.text,
-                flags=re.IGNORECASE | re.DOTALL | re.MULTILINE,
-                overlapped=False,
-                partial=False,
-                concurrent=True)
+                flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
 
             for match in matches:
                 start, end = match.span()
