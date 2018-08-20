@@ -1,4 +1,4 @@
-registry: Microsoft
+registry: microsoft
 
 redis:
     url: redis-master.presidio-system.svc.cluster.local:6379

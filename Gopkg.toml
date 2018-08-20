@@ -28,10 +28,6 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/joho/godotenv"
-
-[[constraint]]
-  branch = "master"
   name = "github.com/korovkin/limiter"
 
 [[constraint]]

@@ -2,6 +2,7 @@ FROM alpine:3.8
 
 WORKDIR /root/librdkafka
 
+ARG librdkafka_ver="0.11.5"
 RUN apk add --no-cache --update g++ openssl ca-certificates
 RUN apk add --no-cache --virtual=build_deps \
     pkgconfig \
@@ -13,13 +14,8 @@ RUN apk add --no-cache --virtual=build_deps \
     zlib-dev \
     python && \
     mkdir -p /root/librdkafka && \
-    wget -O "librdkafka.tar.gz" "https://github.com/edenhill/librdkafka/archive/v0.11.5.tar.gz" && \ 
-    mkdir -p librdkafka && \ 
-    tar \
-    --extract \
-    --file "librdkafka.tar.gz" \
-    --directory "librdkafka" \
-    --strip-components 1 && \
+    wget -O "librdkafka.tar.gz" "https://github.com/edenhill/librdkafka/archive/v${librdkafka_ver}.tar.gz" && \ 
+    mkdir -p librdkafka && tar --extract --file "librdkafka.tar.gz" --directory "librdkafka" --strip-components 1 && \
     cd "librdkafka" && \
     ./configure --prefix=/usr && \
     make -j "$(getconf _NPROCESSORS_ONLN)" && \

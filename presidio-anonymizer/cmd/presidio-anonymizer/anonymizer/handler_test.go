@@ -186,7 +186,7 @@ func TestReplace3Elements(t *testing.T) {
 func TestHash1Element(t *testing.T) {
 
 	text := "My phone number is 058-5559943"
-	expected := "My phone number is 3501713873"
+	expected := "My phone number is ae4d4488c82d30c560d5c761470d554f1db6c23b51b93f078d6f247611a2b0f3"
 
 	hash := message_types.HashValue{}
 	var fieldTypes = make([]*message_types.FieldTypes, 0)

@@ -49,7 +49,7 @@ The [design document](https://microsoft.github.io/presidio/design.html) introduc
 
 ## Quickstart
 
-1. Install [Presidio](https://microsoft.github.io/presidio/installation.html)
+1. Install [Presidio](https://microsoft.github.io/presidio/install.html)
 2. Create a Presidio project
 3. Start using the Presidio analyze and anonymize services
 
