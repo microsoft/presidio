@@ -39,6 +39,7 @@ var (
 	s3Config         stow.ConfigMap
 	containerName    = "test"
 	testCache        c.Cache
+	datasinkSrv      = &DatasinkMockedObject{}
 )
 
 func init() {
@@ -80,13 +81,14 @@ func TestS3Scan(t *testing.T) {
 	assert.Equal(t, "test/"+filePath, cacheValue)
 	assert.Equal(t, 1, len(logs))
 	assert.Equal(t, logs[0].Entry.Message, "2 results were sent to the datasink successfully")
-
+	assert.Equal(t, 1, len(datasinkSrv.Calls))
 	// On the second scan the item that was already scan shouldn't be scanned again
 	err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
 	logs = log.ObserverLogs().TakeAll()
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(logs))
 	assert.Equal(t, logs[0].Entry.Message, fmt.Sprintf("item %s was already scanned", buckerPath+filePath))
+	assert.Equal(t, 1, len(datasinkSrv.Calls))
 }
 
 func TestAzureScan(t *testing.T) {
@@ -115,6 +117,7 @@ func TestAzureScan(t *testing.T) {
 	assert.Equal(t, "/devstoreaccount1/test/"+filePath, cacheValue)
 	assert.Equal(t, 1, len(logs))
 	assert.Equal(t, logs[0].Entry.Message, "2 results were sent to the datasink successfully")
+	assert.Equal(t, 1, len(datasinkSrv.Calls))
 
 	// On the second scan the item that was already scan shouldn't be scanned again
 	err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
@@ -122,6 +125,8 @@ func TestAzureScan(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(logs))
 	assert.Equal(t, logs[0].Entry.Message, fmt.Sprintf("item %s was already scanned", containerPath+filePath))
+	// on the second time the data sink server wasn't called
+	assert.Equal(t, 1, len(datasinkSrv.Calls))
 }
 
 func TestFileExtension(t *testing.T) {
@@ -217,7 +222,6 @@ func getAnalyzeServiceMock(expectedResult *message_types.AnalyzeResponse) messag
 }
 
 func getDatasinkMock(expectedError error) message_types.DatasinkServiceClient {
-	datasinkSrv := &DatasinkMockedObject{}
 	var datasinkMock message_types.DatasinkServiceClient = datasinkSrv
 	datasinkSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, expectedError)
 	return datasinkMock
