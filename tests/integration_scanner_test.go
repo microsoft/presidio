@@ -240,7 +240,7 @@ func getAnalyzerMockResult() *message_types.AnalyzeResponse {
 		},
 		&message_types.AnalyzeResult{
 			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_EMAIL_ADDRESS.String()},
-			Text:        "johnsnow@outlook.com",
+			Text:        "johnsnow@foo.com",
 			Probability: 1.0,
 			Location:    location,
 		},
@@ -272,7 +272,7 @@ func createContainer(api *storage.API) stow.Container {
 func putItems(items []testItem, container stow.Container) {
 	for _, item := range items {
 		if item.content == "" {
-			item.content = "Please call me. My phone number is (555) 253-0000, johnsnow@outlook.com"
+			item.content = "Please call me. My phone number is (555) 253-0000, johnsnow@foo.com"
 		}
 
 		_, err := container.Put(item.path, strings.NewReader(item.content), int64(len(item.content)), nil)
