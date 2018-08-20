@@ -6,16 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddActionToFilePath(t *testing.T) {
+func TestAddSuffixToPath(t *testing.T) {
 	path := "/dir1/dir2/dir3/filename.txt"
-	newp := addActionToFilePath(path, "action")
-	assert.Equal(t, newp, "dir1/dir2/dir3/filename-action.txt")
+	newPath := addSuffixToPath(path, "action")
+	assert.Equal(t, newPath, "dir1/dir2/dir3/filename-action.txt")
 
 	path = "/dir/file"
-	newp = addActionToFilePath(path, "action")
-	assert.Equal(t, newp, "dir/file-action")
+	newPath = addSuffixToPath(path, "action")
+	assert.Equal(t, newPath, "dir/file-action")
 
 	path = "file"
-	newp = addActionToFilePath(path, "action")
-	assert.Equal(t, newp, "file-action")
+	newPath = addSuffixToPath(path, "action")
+	assert.Equal(t, newPath, "file-action")
 }

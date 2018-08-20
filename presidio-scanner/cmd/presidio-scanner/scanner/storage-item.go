@@ -15,6 +15,7 @@ type storageItem struct {
 
 // NewStorageItem create new storage item
 func NewStorageItem(item interface{}) Item {
+	// cast item to storage item
 	stowItem := item.(stow.Item)
 	storageItem := storageItem{item: stowItem}
 	return &storageItem
