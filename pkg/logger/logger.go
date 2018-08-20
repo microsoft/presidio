@@ -6,11 +6,13 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"go.uber.org/zap/zaptest/observer"
 )
 
 var sugaredLogger *zap.SugaredLogger
 var logger *zap.Logger
-
+var observedLogger zapcore.Core
+var logs *observer.ObservedLogs
 var once sync.Once
 
 // Init initializes a thread-safe singleton logger
@@ -39,6 +41,18 @@ func init() {
 // GetLogger get native not sugared logger
 func GetLogger() *zap.Logger {
 	return logger
+}
+
+// ObserverLogs provides the list of logs generated during the observation process
+func ObserverLogs() *observer.ObservedLogs {
+	return logs
+}
+
+// ObserveLogging constructs a logger through the zap/zaptest/observer framework
+// so that logs will be accessible in tests.
+func ObserveLogging(level zapcore.Level) {
+	observedLogger, logs = observer.New(level)
+	sugaredLogger = zap.New(observedLogger).With().Sugar()
 }
 
 // Debug logs a debug message with the given fields

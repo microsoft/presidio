@@ -25,7 +25,7 @@ func main() {
 	s := scanner.CreateScanner(scanRequest)
 
 	// Scan
-	_, err := scanner.ScanData(s, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, datasinkService)
+	err := scanner.ScanData(s, scanRequest, cache, analyzeService, analyzeRequest, anonymizeService, datasinkService)
 
 	if err != nil {
 		log.Fatal(err.Error())

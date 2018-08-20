@@ -35,13 +35,13 @@
   branch = "master"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
-  revision = "78391deaec54e69f7e9f7e2b0f46f4f926325ca2"
+  revision = "19596462486229d3690dd2bc95e9e7e50bff3653"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/csm","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/sdkio","internal/sdkrand","internal/sdkuri","internal/shareddefaults","private/protocol","private/protocol/eventstream","private/protocol/eventstream/eventstreamapi","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restxml","private/protocol/xml/xmlutil","service/kinesis","service/kinesis/kinesisiface","service/s3","service/sts"]
-  revision = "f831d5a0822a1ad72420ab18c6269bca1ddaf490"
-  version = "v1.15.11"
+  revision = "2d51b5082ad9f540e68761c27522b0677b9a75c0"
+  version = "v1.15.13"
 
 [[projects]]
   name = "github.com/confluentinc/confluent-kafka-go"
@@ -346,7 +346,7 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","http/httpguts","http2","http2/hpack","idna","internal/timeseries","trace"]
-  revision = "c39426892332e1bb5ec0a434a079bf82f5d30c54"
+  revision = "aaf60122140d3fcf75376d319f0554393160eb50"
 
 [[projects]]
   branch = "master"
@@ -358,7 +358,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "4e1fef5609515ec7a2cee7b5de30ba6d9b438cbf"
+  revision = "1c9583448a9c3aa0f9a6a5241bf73c0bd8aafded"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -382,7 +382,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "383e8b2c3b9e36c4076b235b32537292176bae20"
+  revision = "d0a8f471bba2dbb160885b0000d814ee5d559bad"
 
 [[projects]]
   name = "google.golang.org/grpc"

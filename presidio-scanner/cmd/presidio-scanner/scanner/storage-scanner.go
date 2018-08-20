@@ -35,22 +35,20 @@ func (scanner *storageScanner) Init(cloudStorageConfig *message_types.CloudStora
 	scanner.storageAPI = storageAPI
 }
 
-func (scanner *storageScanner) Scan(walkFunction ScanFunc) (int, error) {
+func (scanner *storageScanner) Scan(walkFunction ScanFunc) error {
 	// Get container/bucker reference
 	container, err := scanner.storageAPI.CreateContainer(scanner.containerName)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	n := 0
 	var scanErr error
 	// Walks over the files in the container/bucket
 	// Wrapping the walkFunction as storage.WalkFunc
 	err = scanner.storageAPI.WalkFiles(container, func(item stow.Item) {
-		var resultNumber int
-		resultNumber, scanErr = walkFunction(item)
-		n += resultNumber
+		scanErr = walkFunction(item)
+
 	})
 
-	return n, scanErr
+	return scanErr
 }

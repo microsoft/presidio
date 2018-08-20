@@ -10,23 +10,23 @@ import (
 )
 
 // ScanFunc is the function the is executed on the scanned item
-type ScanFunc func(item interface{}) (int, error)
+type ScanFunc func(item interface{}) error
 
 // Scanner interface represent the supported scanner methods.
 type Scanner interface {
 	//Init the scanner
 	Init(inputConfig *message_types.CloudStorageConfig)
 
-	//Scan walks over the items to scan and exectes ScanFunc on each of the items
-	Scan(fn ScanFunc) (int, error)
+	//Scan walks over the items to scan and executes ScanFunc on each of the items
+	Scan(fn ScanFunc) error
 }
 
 //ScanData the data
 func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cache.Cache,
 	analyzeService *message_types.AnalyzeServiceClient, analyzeRequest *message_types.AnalyzeRequest,
-	anonymizeService *message_types.AnonymizeServiceClient, datasinkService *message_types.DatasinkServiceClient) (int, error) {
+	anonymizeService *message_types.AnonymizeServiceClient, datasinkService *message_types.DatasinkServiceClient) error {
 
-	return scanner.Scan(func(item interface{}) (int, error) {
+	return scanner.Scan(func(item interface{}) error {
 		var analyzerResult []*message_types.AnalyzeResult
 		var text string
 
@@ -34,40 +34,39 @@ func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cac
 		itemPath := scanItem.GetPath()
 		uniqueID, err := scanItem.GetUniqueID()
 		if err != nil {
-			return 0, err
+			return err
 		}
 
 		shouldScan, err := shouldScanItem(&cache, scanItem, uniqueID)
 		if err != nil {
-			return 0, err
+			return err
 		}
 
 		if shouldScan {
 			text, analyzerResult, err = analyzeItem(analyzeService, analyzeRequest, scanItem)
 			if err != nil {
-				return 0, err
+				return err
 			}
 
 			if len(analyzerResult) > 0 {
 				anonymizerResult, err := anonymizeItem(analyzerResult, text, itemPath, scanRequest.AnonymizeTemplate, anonymizeService)
-
 				if err != nil {
-					return 0, err
+					return err
 				}
 
 				err = sendResultToDatasink(itemPath, analyzerResult, anonymizerResult, cache, datasinkService)
 				if err != nil {
-					return 0, err
+					return err
 				}
 				log.Info("%d results were sent to the datasink successfully", len(analyzerResult))
 
 			}
 			writeItemToCache(uniqueID, itemPath, cache)
-			return 1, nil
+			return nil
 		}
 
 		log.Info("item %s was already scanned", itemPath)
-		return 0, nil
+		return nil
 	})
 }
 

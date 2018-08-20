@@ -28,7 +28,7 @@ var (
 type server struct{}
 
 func main() {
-	log.Info("starting!")
+
 	if grpcPort == "" {
 		// Set to default
 		grpcPort = "5000"

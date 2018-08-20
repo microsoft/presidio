@@ -39,7 +39,6 @@ const (
 )
 
 func main() {
-	log.Info("new version!")
 	if grpcPort == "" {
 		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", grpcPort)
 	}
