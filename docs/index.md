@@ -14,5 +14,6 @@ New to Presidio or to DLP systems in general? Well, you came to the right place:
 - [Supported Field Types](field_types.md)
 - [Framework Tutorial](tutorial_framework.md)
 - [Service Tutorial](tutorial_service.md)
+- [Database and Storage scanner](tutorial_scheduler_cronjob.md)
 - [Design](design.md)
 - [Develop Presidio](development.md)
