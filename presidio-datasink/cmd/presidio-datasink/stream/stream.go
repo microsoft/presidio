@@ -6,11 +6,11 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
 	"github.com/Microsoft/presidio/pkg/stream/kinesis"
-	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
@@ -40,7 +40,7 @@ func (datasink *streamDatasink) Init() {
 }
 
 func (datasink *streamDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error {
-	resultString, err := templates.ConvertInterfaceToJSON(&types.DatasinkRequest{
+	resultString, err := presidio.ConvertInterfaceToJSON(&types.DatasinkRequest{
 		AnalyzeResults: results,
 		Path:           path,
 	})
@@ -60,7 +60,7 @@ func (datasink *streamDatasink) WriteAnalyzeResults(results []*types.AnalyzeResu
 }
 
 func (datasink *streamDatasink) WriteAnonymizeResults(result *types.AnonymizeResponse, path string) error {
-	resultString, err := templates.ConvertInterfaceToJSON(&types.DatasinkRequest{
+	resultString, err := presidio.ConvertInterfaceToJSON(&types.DatasinkRequest{
 		AnonymizeResult: result,
 		Path:            path,
 	})

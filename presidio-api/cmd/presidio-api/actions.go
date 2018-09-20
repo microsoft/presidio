@@ -7,9 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
-	services "github.com/Microsoft/presidio/pkg/presidio"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	server "github.com/Microsoft/presidio/pkg/server"
-	templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
 var analyzeService *types.AnalyzeServiceClient
@@ -17,9 +16,9 @@ var anonymizeService *types.AnonymizeServiceClient
 var schedulerService *types.SchedulerServiceClient
 
 func setupGRPCServices() {
-	analyzeService = services.SetupAnalyzerService()
-	anonymizeService = services.SetupAnonymizerService()
-	schedulerService = services.SetupSchedulerService()
+	analyzeService = presidio.SetupAnalyzerService()
+	anonymizeService = presidio.SetupAnonymizerService()
+	schedulerService = presidio.SetupSchedulerService()
 }
 
 func (api *API) analyze(c *gin.Context) {
@@ -238,12 +237,12 @@ func (api *API) invokeAnalyze(analyzeTemplate *types.AnalyzeTemplate, text strin
 }
 
 func (api *API) getTemplate(project string, action string, id string, obj interface{}, c *gin.Context) {
-	key := templates.CreateKey(project, action, id)
+	key := presidio.CreateKey(project, action, id)
 	template, err := api.templates.GetTemplate(key)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
-	err = templates.ConvertJSONToInterface(template, obj)
+	err = presidio.ConvertJSONToInterface(template, obj)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}

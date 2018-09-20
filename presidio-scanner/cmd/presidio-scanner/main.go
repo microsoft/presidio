@@ -6,15 +6,14 @@ import (
 	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
-	services "github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/templates"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
 
 func main() {
 	// Setup objects
 	scanRequest := initScanner()
-	cache := services.SetupCache()
+	cache := presidio.SetupCache()
 	analyzeRequest, analyzeService := setupAnalyzerObjects(scanRequest)
 	anonymizeService := setupAnonymizerService(scanRequest)
 	datasinkService := setupDatasinkService(scanRequest.DatasinkTemplate)
@@ -34,7 +33,7 @@ func main() {
 
 // Init functions
 func setupAnalyzerObjects(scanRequest *types.ScanRequest) (*types.AnalyzeRequest, *types.AnalyzeServiceClient) {
-	analyzeService := services.SetupAnalyzerService()
+	analyzeService := presidio.SetupAnalyzerService()
 
 	analyzeRequest := &types.AnalyzeRequest{
 		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
@@ -49,7 +48,7 @@ func setupAnonymizerService(scanRequest *types.ScanRequest) *types.AnonymizeServ
 		return nil
 	}
 
-	return services.SetupAnonymizerService()
+	return presidio.SetupAnonymizerService()
 }
 
 func initScanner() *types.ScanRequest {
@@ -57,7 +56,7 @@ func initScanner() *types.ScanRequest {
 	settings := platform.GetSettings()
 
 	scanRequest := &types.ScanRequest{}
-	err := templates.ConvertJSONToInterface(settings.ScannerRequest, scanRequest)
+	err := presidio.ConvertJSONToInterface(settings.ScannerRequest, scanRequest)
 	if err != nil {
 		log.Fatal("Error formating scanner request %q", err.Error())
 	}
@@ -71,7 +70,7 @@ func initScanner() *types.ScanRequest {
 }
 
 func setupDatasinkService(datasinkTemplate *types.DatasinkTemplate) *types.DatasinkServiceClient {
-	datasinkService := services.SetupDatasinkService()
+	datasinkService := presidio.SetupDatasinkService()
 
 	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)
 	if err != nil {

@@ -8,8 +8,8 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
@@ -46,7 +46,7 @@ func (datasink *cloudStorageDatasink) Init() {
 }
 
 func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error {
-	resultString, err := templates.ConvertInterfaceToJSON(results)
+	resultString, err := presidio.ConvertInterfaceToJSON(results)
 	if err != nil {
 		return err
 	}

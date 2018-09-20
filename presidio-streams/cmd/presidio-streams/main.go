@@ -7,8 +7,7 @@ import (
 	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
-	services "github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/templates"
+	"github.com/Microsoft/presidio/pkg/presidio"
 )
 
 var analyzeService *types.AnalyzeServiceClient
@@ -19,10 +18,10 @@ var streamRequest *types.StreamRequest
 func main() {
 	initStream()
 
-	analyzeService = services.SetupAnalyzerService()
+	analyzeService = presidio.SetupAnalyzerService()
 
 	if streamRequest.AnonymizeTemplate != nil {
-		anonymizeService = services.SetupAnonymizerService()
+		anonymizeService = presidio.SetupAnonymizerService()
 	}
 
 	setupDatasinkService(streamRequest.DatasinkTemplate)
@@ -85,14 +84,14 @@ func initStream() {
 	settings := platform.GetSettings()
 	streamRequest = &types.StreamRequest{}
 
-	err := templates.ConvertJSONToInterface(settings.StreamRequest, streamRequest)
+	err := presidio.ConvertJSONToInterface(settings.StreamRequest, streamRequest)
 	if err != nil {
 		log.Fatal("Error formating scanner request %q", err.Error())
 	}
 }
 
 func setupDatasinkService(datasinkTemplate *types.DatasinkTemplate) {
-	datasinkService = services.SetupDatasinkService()
+	datasinkService = presidio.SetupDatasinkService()
 
 	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)
 	if err != nil {
