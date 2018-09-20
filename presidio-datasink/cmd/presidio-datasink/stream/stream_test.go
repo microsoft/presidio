@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/stream/mock"
-	"github.com/Microsoft/presidio/pkg/templates"
 )
 
 func TestResultsAreWrittenToStream(t *testing.T) {
@@ -15,7 +15,7 @@ func TestResultsAreWrittenToStream(t *testing.T) {
 	mock := mock.New("test")
 	mockStream := streamDatasink{stream: mock}
 	path := "partition1/sequence1"
-	resultString, _ := templates.ConvertInterfaceToJSON(&types.DatasinkRequest{
+	resultString, _ := presidio.ConvertInterfaceToJSON(&types.DatasinkRequest{
 		AnalyzeResults: getAnalyzerMockResult(),
 		Path:           path,
 	})

@@ -19,8 +19,8 @@ import (
 	c "github.com/Microsoft/presidio/pkg/cache"
 	cache_mock "github.com/Microsoft/presidio/pkg/cache/mock"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
 	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
@@ -199,7 +199,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 		count++
 		if strings.Contains(item.Name(), "analyzed") {
 			analyzedFile, _ := storage.ReadObject(item)
-			expectedContent, _ := templates.ConvertInterfaceToJSON(getAnalyzerMockResult().AnalyzeResults)
+			expectedContent, _ := presidio.ConvertInterfaceToJSON(getAnalyzerMockResult().AnalyzeResults)
 			assert.Equal(t, analyzedFile, expectedContent)
 		} else if strings.Contains(item.Name(), "anonymized") {
 			anonymizedFile, _ := storage.ReadObject(item)
