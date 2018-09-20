@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/stream/mock"
-	"github.com/Microsoft/presidio/pkg/templates"
 )
 
 func TestResultsAreWrittenToStream(t *testing.T) {
@@ -15,7 +15,7 @@ func TestResultsAreWrittenToStream(t *testing.T) {
 	mock := mock.New("test")
 	mockStream := streamDatasink{stream: mock}
 	path := "partition1/sequence1"
-	resultString, _ := templates.ConvertInterfaceToJSON(&message_types.DatasinkRequest{
+	resultString, _ := presidio.ConvertInterfaceToJSON(&types.DatasinkRequest{
 		AnalyzeResults: getAnalyzerMockResult(),
 		Path:           path,
 	})
@@ -35,13 +35,13 @@ func TestResultsAreWrittenToStream(t *testing.T) {
 	}
 }
 
-func getAnalyzerMockResult() []*message_types.AnalyzeResult {
-	return [](*message_types.AnalyzeResult){
-		&message_types.AnalyzeResult{
-			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PHONE_NUMBER.String()},
+func getAnalyzerMockResult() []*types.AnalyzeResult {
+	return [](*types.AnalyzeResult){
+		&types.AnalyzeResult{
+			Field:       &types.FieldTypes{Name: types.FieldTypesEnum_PHONE_NUMBER.String()},
 			Text:        "(555) 253-0000",
 			Probability: 1.0,
-			Location: &message_types.Location{
+			Location: &types.Location{
 				Start: 153, End: 163, Length: 10,
 			},
 		},

@@ -6,20 +6,20 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func TestDatasinkInit(t *testing.T) {
 	var s *server
-	datasinkTemplate := &message_types.DatasinkTemplate{}
+	datasinkTemplate := &types.DatasinkTemplate{}
 
 	// validate datasink is initialized
 	_, err := s.Init(context.Background(), datasinkTemplate)
 	assert.EqualError(t, err, "AnalyzeDatasink or AnonymizeDatasink must me set")
 
-	datasink := []*message_types.Datasink{
+	datasink := []*types.Datasink{
 		{
-			DbConfig: &message_types.DBConfig{
+			DbConfig: &types.DBConfig{
 				TableName: "name",
 				Type:      "sqlite3",
 			},
@@ -27,7 +27,7 @@ func TestDatasinkInit(t *testing.T) {
 	}
 
 	// validate connection string is set
-	datasinkTemplate = &message_types.DatasinkTemplate{
+	datasinkTemplate = &types.DatasinkTemplate{
 		AnalyzeDatasink: datasink,
 	}
 	_, err = s.Init(context.Background(), datasinkTemplate)

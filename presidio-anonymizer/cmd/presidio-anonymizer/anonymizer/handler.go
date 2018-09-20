@@ -4,18 +4,18 @@ import (
 	"errors"
 	"sort"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	methods "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations"
 )
 
-type sortedResults []*message_types.AnalyzeResult
+type sortedResults []*types.AnalyzeResult
 
 func (a sortedResults) Len() int           { return len(a) }
 func (a sortedResults) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a sortedResults) Less(i, j int) bool { return a[i].Location.Start < a[j].Location.Start }
 
 //ApplyAnonymizerTemplate ...
-func ApplyAnonymizerTemplate(text string, results []*message_types.AnalyzeResult, template *message_types.AnonymizeTemplate) (string, error) {
+func ApplyAnonymizerTemplate(text string, results []*types.AnalyzeResult, template *types.AnonymizeTemplate) (string, error) {
 
 	//Sort results by start location to verify order
 	sort.Sort(sortedResults(results))
@@ -54,7 +54,7 @@ func ApplyAnonymizerTemplate(text string, results []*message_types.AnalyzeResult
 	return text, nil
 }
 
-func transformField(transformation *message_types.Transformation, result *message_types.AnalyzeResult, text string) (string, error) {
+func transformField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (string, error) {
 
 	if transformation.ReplaceValue != nil {
 		result, err := methods.ReplaceValue(text, *result.Location, transformation.ReplaceValue.NewValue)

@@ -12,13 +12,13 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
 var (
-	grpcPort                = os.Getenv("DATASINK_GRPC_PORT")
 	analyzerDatasinkArray   []datasink.Datasink
 	anonymizerDatasinkArray []datasink.Datasink
 	grpcServer              *grpc.Server
@@ -28,16 +28,17 @@ var (
 type server struct{}
 
 func main() {
+	settings := platform.GetSettings()
 
-	if grpcPort == "" {
+	if settings.DatasinkGrpcPort == "" {
 		// Set to default
-		grpcPort = "5000"
+		settings.DatasinkGrpcPort = "5000"
 	}
 
 	// Setup server
-	lis, grpcServer = rpc.SetupClient(grpcPort)
+	lis, grpcServer = rpc.SetupClient(settings.DatasinkGrpcPort)
 
-	message_types.RegisterDatasinkServiceServer(grpcServer, &server{})
+	types.RegisterDatasinkServiceServer(grpcServer, &server{})
 	reflection.Register(grpcServer)
 
 	if err := grpcServer.Serve(lis); err != nil {
@@ -45,9 +46,9 @@ func main() {
 	}
 }
 
-func (s *server) Init(ctx context.Context, datasinkTemplate *message_types.DatasinkTemplate) (*message_types.DatasinkResponse, error) {
+func (s *server) Init(ctx context.Context, datasinkTemplate *types.DatasinkTemplate) (*types.DatasinkResponse, error) {
 	if datasinkTemplate == nil || (datasinkTemplate.AnalyzeDatasink == nil && datasinkTemplate.AnonymizeDatasink == nil) {
-		return &message_types.DatasinkResponse{}, fmt.Errorf("AnalyzeDatasink or AnonymizeDatasink must me set")
+		return &types.DatasinkResponse{}, fmt.Errorf("AnalyzeDatasink or AnonymizeDatasink must me set")
 	}
 
 	// initialize each of the datasinks
@@ -55,7 +56,7 @@ func (s *server) Init(ctx context.Context, datasinkTemplate *message_types.Datas
 		for _, datasink := range datasinkTemplate.GetAnalyzeDatasink() {
 			analyzerDatasink, err := createDatasink(datasink, "analyze")
 			if err != nil {
-				return &message_types.DatasinkResponse{}, err
+				return &types.DatasinkResponse{}, err
 			}
 			analyzerDatasinkArray = append(analyzerDatasinkArray, analyzerDatasink)
 		}
@@ -65,23 +66,23 @@ func (s *server) Init(ctx context.Context, datasinkTemplate *message_types.Datas
 		for _, datasink := range datasinkTemplate.GetAnonymizeDatasink() {
 			anonymizerDatasink, err := createDatasink(datasink, "anonymize")
 			if err != nil {
-				return &message_types.DatasinkResponse{}, err
+				return &types.DatasinkResponse{}, err
 			}
 			anonymizerDatasinkArray = append(anonymizerDatasinkArray, anonymizerDatasink)
 		}
 	}
 
-	return &message_types.DatasinkResponse{}, nil
+	return &types.DatasinkResponse{}, nil
 }
 
-func (s *server) Completion(ctx context.Context, completionMessage *message_types.CompletionMessage) (*message_types.DatasinkResponse, error) {
+func (s *server) Completion(ctx context.Context, completionMessage *types.CompletionMessage) (*types.DatasinkResponse, error) {
 	log.Info("connection closed!")
 	os.Exit(0)
 
-	return &message_types.DatasinkResponse{}, nil
+	return &types.DatasinkResponse{}, nil
 }
 
-func (s *server) Apply(ctx context.Context, r *message_types.DatasinkRequest) (*message_types.DatasinkResponse, error) {
+func (s *server) Apply(ctx context.Context, r *types.DatasinkRequest) (*types.DatasinkResponse, error) {
 	// create a slice for the errors
 	var errstrings []string
 
@@ -108,5 +109,5 @@ func (s *server) Apply(ctx context.Context, r *message_types.DatasinkRequest) (*
 	if len(errstrings) > 0 {
 		combinedError = fmt.Errorf(strings.Join(errstrings, "\n"))
 	}
-	return &message_types.DatasinkResponse{}, combinedError
+	return &types.DatasinkResponse{}, combinedError
 }

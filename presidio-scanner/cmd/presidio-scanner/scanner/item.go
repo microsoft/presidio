@@ -1,7 +1,7 @@
 package scanner
 
 import (
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 // Item interface represent the supported item's methods.
@@ -21,7 +21,7 @@ type Item interface {
 }
 
 // CreateItem creates a new instance of scanned item according to the specified kind
-func CreateItem(scanRequest *message_types.ScanRequest, item interface{}) Item {
+func CreateItem(scanRequest *types.ScanRequest, item interface{}) Item {
 	if scanRequest.GetScanTemplate().GetCloudStorageConfig() != nil {
 		storageItem := NewStorageItem(item)
 		return storageItem

@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 
-	"os"
-
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
@@ -14,18 +12,23 @@ import (
 func createStream() stream.Stream {
 	config := streamRequest.GetStreamConfig()
 	ctx := context.Background()
+
+	//Kafka
 	if config.GetKafkaConfig() != nil {
 		c := config.GetKafkaConfig()
 		k := kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic())
 		return k
 	}
 
+	//Azure Event Hub
 	if config.GetEhConfig() != nil {
 		c := config.GetEhConfig()
-		//TODO: This will deprecated in favor of EPH
-		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), os.Getenv("PARTITION_ID"))
+
+		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), "", "", "")
 		return e
 	}
+
+	//Kinesis
 	if config.GetKinesisConfig() != nil {
 		c := config.GetKinesisConfig()
 		k := kinesis.NewConsumer(ctx, c.EndpointAddress, c.AwsSecretAccessKey, c.AwsRegion, c.AwsAccessKeyId, c.RedisUrl, c.GetStreamName())

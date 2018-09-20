@@ -2,23 +2,24 @@ package presidio
 
 import (
 	"fmt"
-	"os"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/cache"
 	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
 )
 
+var settings *platform.Settings = platform.GetSettings()
+
 //SetupAnalyzerService GRPC connection
-func SetupAnalyzerService() *message_types.AnalyzeServiceClient {
-	analyzerSvcAddress := os.Getenv("ANALYZER_SVC_ADDRESS")
-	if analyzerSvcAddress == "" {
+func SetupAnalyzerService() *types.AnalyzeServiceClient {
+	if settings.AnalyzerSvcAddress == "" {
 		log.Fatal("analyzer service address is empty")
 	}
 
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcAddress)
+	analyzeService, err := rpc.SetupAnalyzerService(settings.AnalyzerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to analyzer service failed %q", err)
 	}
@@ -26,15 +27,14 @@ func SetupAnalyzerService() *message_types.AnalyzeServiceClient {
 	return analyzeService
 }
 
-//SetupAnoymizerService GRPC connection
-func SetupAnoymizerService() *message_types.AnonymizeServiceClient {
+//SetupAnonymizerService GRPC connection
+func SetupAnonymizerService() *types.AnonymizeServiceClient {
 
-	anonymizerSvcAddress := os.Getenv("ANONYMIZER_SVC_ADDRESS")
-	if anonymizerSvcAddress == "" {
+	if settings.AnonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
 
-	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcAddress)
+	anonymizeService, err := rpc.SetupAnonymizeService(settings.AnonymizerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
@@ -42,15 +42,14 @@ func SetupAnoymizerService() *message_types.AnonymizeServiceClient {
 }
 
 //SetupSchedulerService GRPC connection
-func SetupSchedulerService() *message_types.SchedulerServiceClient {
+func SetupSchedulerService() *types.SchedulerServiceClient {
 
-	schedulerAddress := os.Getenv("SCHEDULER_SVC_ADDRESS")
-	if schedulerAddress == "" {
+	if settings.SchedulerSvcAddress == "" {
 		log.Warn("scheduler service address is empty")
 		return nil
 	}
 
-	schedulerService, err := rpc.SetupSchedulerService(schedulerAddress)
+	schedulerService, err := rpc.SetupSchedulerService(settings.SchedulerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
@@ -58,10 +57,9 @@ func SetupSchedulerService() *message_types.SchedulerServiceClient {
 }
 
 //SetupDatasinkService GRPC connection
-func SetupDatasinkService() *message_types.DatasinkServiceClient {
+func SetupDatasinkService() *types.DatasinkServiceClient {
 	address := "localhost"
-	grpcPort := os.Getenv("DATASINK_GRPC_PORT")
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%s", address, grpcPort))
+	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%s", address, settings.DatasinkGrpcPort))
 	if err != nil {
 		log.Fatal("Connection to datasink service failed %q", err)
 	}
@@ -71,13 +69,12 @@ func SetupDatasinkService() *message_types.DatasinkServiceClient {
 
 //SetupCache  Redis cache
 func SetupCache() cache.Cache {
-	redisURL := os.Getenv("REDIS_URL")
-	if redisURL == "" {
+	if settings.RedisURL == "" {
 		log.Fatal("redis address is empty")
 	}
 
 	cache := redis.New(
-		redisURL,
+		settings.RedisURL,
 		"", // no password set
 		0,  // use default DB
 	)

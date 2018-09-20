@@ -12,7 +12,7 @@ import (
 	"github.com/presid-io/stow/azure"
 	"github.com/presid-io/stow/s3"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //API storage
@@ -34,7 +34,7 @@ func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
 }
 
 // Init cloud storage config
-func Init(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string, string, error) {
+func Init(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string, string, error) {
 	if cloudStorageConfig.GetBlobStorageConfig() != nil {
 		config, containerName := InitBlobStorage(cloudStorageConfig)
 		return config, containerName, "azure", nil
@@ -74,7 +74,7 @@ func CreateS3Config(accessKeyID string, secretKey string, region string, endpoin
 // }
 
 // // InitGoogle inits the storage with the supplied parameters
-// func InitGoogle(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+// func InitGoogle(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string) {
 // 	googleJson := cloudStorageConfig.GoogleStorageConfig.GetJson()
 // 	googleProjectID := cloudStorageConfig.GoogleStorageConfig.GetProjectId()
 // 	googleScopes := cloudStorageConfig.GoogleStorageConfig.GetScopes()
@@ -86,7 +86,7 @@ func CreateS3Config(accessKeyID string, secretKey string, region string, endpoin
 // }
 
 // InitS3 inits the storage with the supplied credentials
-func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+func InitS3(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string) {
 	s3AccessKeyID := cloudStorageConfig.S3Config.GetAccessId()
 	s3SecretKey := cloudStorageConfig.S3Config.GetAccessKey()
 	s3Region := cloudStorageConfig.S3Config.GetRegion()
@@ -108,7 +108,7 @@ func CreateAzureConfig(account string, key string) stow.ConfigMap {
 }
 
 // InitBlobStorage inits the storage with the supplied credentials
-func InitBlobStorage(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+func InitBlobStorage(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string) {
 	azureAccountName := cloudStorageConfig.BlobStorageConfig.GetAccountName()
 	azureAccountKey := cloudStorageConfig.BlobStorageConfig.GetAccountKey()
 	azureContainer := cloudStorageConfig.BlobStorageConfig.GetContainerName()

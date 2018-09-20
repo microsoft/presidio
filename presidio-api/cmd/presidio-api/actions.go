@@ -6,24 +6,23 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
-	services "github.com/Microsoft/presidio/pkg/presidio"
+	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	server "github.com/Microsoft/presidio/pkg/server"
-	templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
-var analyzeService *message_types.AnalyzeServiceClient
-var anonymizeService *message_types.AnonymizeServiceClient
-var schedulerService *message_types.SchedulerServiceClient
+var analyzeService *types.AnalyzeServiceClient
+var anonymizeService *types.AnonymizeServiceClient
+var schedulerService *types.SchedulerServiceClient
 
 func setupGRPCServices() {
-	analyzeService = services.SetupAnalyzerService()
-	anonymizeService = services.SetupAnoymizerService()
-	schedulerService = services.SetupSchedulerService()
+	analyzeService = presidio.SetupAnalyzerService()
+	anonymizeService = presidio.SetupAnonymizerService()
+	schedulerService = presidio.SetupSchedulerService()
 }
 
 func (api *API) analyze(c *gin.Context) {
-	var analyzeAPIRequest message_types.AnalyzeApiRequest
+	var analyzeAPIRequest types.AnalyzeApiRequest
 
 	if c.Bind(&analyzeAPIRequest) == nil {
 		analyzeTemplate := api.getAnalyzeTemplate(analyzeAPIRequest.AnalyzeTemplateId, analyzeAPIRequest.AnalyzeTemplate, c.Param("project"), c)
@@ -40,7 +39,7 @@ func (api *API) analyze(c *gin.Context) {
 }
 
 func (api *API) anonymize(c *gin.Context) {
-	var anonymizeAPIRequest message_types.AnonymizeApiRequest
+	var anonymizeAPIRequest types.AnonymizeApiRequest
 
 	if c.Bind(&anonymizeAPIRequest) == nil {
 		project := c.Param("project")
@@ -69,7 +68,7 @@ func (api *API) anonymize(c *gin.Context) {
 }
 
 func (api *API) scheduleScannerCronJob(c *gin.Context) {
-	var cronAPIJobRequest message_types.ScannerCronJobApiRequest
+	var cronAPIJobRequest types.ScannerCronJobApiRequest
 
 	if c.Bind(&cronAPIJobRequest) == nil {
 		project := c.Param("project")
@@ -83,7 +82,7 @@ func (api *API) scheduleScannerCronJob(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeScannerCronJobScheduler(scannerCronJobRequest *message_types.ScannerCronJobRequest, c *gin.Context) *message_types.ScannerCronJobResponse {
+func (api *API) invokeScannerCronJobScheduler(scannerCronJobRequest *types.ScannerCronJobRequest, c *gin.Context) *types.ScannerCronJobResponse {
 	srv := *schedulerService
 	res, err := srv.ApplyScan(c, scannerCronJobRequest)
 	if err != nil {
@@ -93,32 +92,32 @@ func (api *API) invokeScannerCronJobScheduler(scannerCronJobRequest *message_typ
 	return res
 }
 
-func (api *API) getScannerCronJobRequest(cronJobAPIRequest *message_types.ScannerCronJobApiRequest, project string, c *gin.Context) *message_types.ScannerCronJobRequest {
-	scanRequest := &message_types.ScanRequest{}
-	trigger := &message_types.Trigger{}
+func (api *API) getScannerCronJobRequest(cronJobAPIRequest *types.ScannerCronJobApiRequest, project string, c *gin.Context) *types.ScannerCronJobRequest {
+	scanRequest := &types.ScanRequest{}
+	trigger := &types.Trigger{}
 	var name string
 
 	if cronJobAPIRequest.ScannerCronJobTemplateId != "" {
-		cronJobTemplate := &message_types.ScannerCronJobTemplate{}
-		api.getTemplate(project, "schedule-scanner-cronjob", cronJobAPIRequest.ScannerCronJobTemplateId, cronJobTemplate, c)
+		cronJobTemplate := &types.ScannerCronJobTemplate{}
+		api.getTemplate(project, scheduleScannerCronJob, cronJobAPIRequest.ScannerCronJobTemplateId, cronJobTemplate, c)
 
 		scanID := cronJobTemplate.ScanTemplateId
-		scanTemplate := &message_types.ScanTemplate{}
-		api.getTemplate(project, "scan", scanID, scanTemplate, c)
+		scanTemplate := &types.ScanTemplate{}
+		api.getTemplate(project, scan, scanID, scanTemplate, c)
 
-		datasinkTemplate := &message_types.DatasinkTemplate{}
-		api.getTemplate(project, "datasink", cronJobTemplate.DatasinkTemplateId, datasinkTemplate, c)
+		datasinkTemplate := &types.DatasinkTemplate{}
+		api.getTemplate(project, datasink, cronJobTemplate.DatasinkTemplateId, datasinkTemplate, c)
 
-		analyzeTemplate := &message_types.AnalyzeTemplate{}
-		api.getTemplate(project, "analyze", cronJobTemplate.AnalyzeTemplateId, analyzeTemplate, c)
+		analyzeTemplate := &types.AnalyzeTemplate{}
+		api.getTemplate(project, analyze, cronJobTemplate.AnalyzeTemplateId, analyzeTemplate, c)
 
-		anonymizeTemplate := &message_types.AnonymizeTemplate{}
+		anonymizeTemplate := &types.AnonymizeTemplate{}
 		if cronJobTemplate.AnonymizeTemplateId != "" {
-			api.getTemplate(project, "anonymize", cronJobTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
+			api.getTemplate(project, anonymize, cronJobTemplate.AnonymizeTemplateId, anonymizeTemplate, c)
 		}
 		trigger = cronJobTemplate.GetTrigger()
 		name = cronJobTemplate.GetName()
-		scanRequest = &message_types.ScanRequest{
+		scanRequest = &types.ScanRequest{
 			AnalyzeTemplate:   analyzeTemplate,
 			AnonymizeTemplate: anonymizeTemplate,
 			DatasinkTemplate:  datasinkTemplate,
@@ -133,7 +132,7 @@ func (api *API) getScannerCronJobRequest(cronJobAPIRequest *message_types.Scanne
 		return nil
 	}
 
-	return &message_types.ScannerCronJobRequest{
+	return &types.ScannerCronJobRequest{
 		Trigger:     trigger,
 		ScanRequest: scanRequest,
 		Name:        name,
@@ -141,7 +140,7 @@ func (api *API) getScannerCronJobRequest(cronJobAPIRequest *message_types.Scanne
 }
 
 func (api *API) scheduleStreamsJob(c *gin.Context) {
-	var streamsJobRequest message_types.StreamsJobApiRequest
+	var streamsJobRequest types.StreamsJobApiRequest
 
 	if c.Bind(&streamsJobRequest) == nil {
 		project := c.Param("project")
@@ -155,7 +154,7 @@ func (api *API) scheduleStreamsJob(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeStreamsJobScheduler(streamsJobRequest *message_types.StreamsJobRequest, project string, c *gin.Context) *message_types.StreamsJobResponse {
+func (api *API) invokeStreamsJobScheduler(streamsJobRequest *types.StreamsJobRequest, project string, c *gin.Context) *types.StreamsJobResponse {
 	srv := *schedulerService
 	res, err := srv.ApplyStream(c, streamsJobRequest)
 	if err != nil {
@@ -165,30 +164,30 @@ func (api *API) invokeStreamsJobScheduler(streamsJobRequest *message_types.Strea
 	return res
 }
 
-func (api *API) getStreamsJobRequest(jobAPIRequest *message_types.StreamsJobApiRequest, project string, c *gin.Context) *message_types.StreamsJobRequest {
-	streamsJobRequest := &message_types.StreamsJobRequest{}
+func (api *API) getStreamsJobRequest(jobAPIRequest *types.StreamsJobApiRequest, project string, c *gin.Context) *types.StreamsJobRequest {
+	streamsJobRequest := &types.StreamsJobRequest{}
 
 	if jobAPIRequest.GetStreamsJobTemplateId() != "" {
-		jobTemplate := &message_types.StreamsJobTemplate{}
-		api.getTemplate(project, "schedule-scanner-cronjob", jobAPIRequest.StreamsJobTemplateId, jobTemplate, c)
+		jobTemplate := &types.StreamsJobTemplate{}
+		api.getTemplate(project, scheduleStreamsJob, jobAPIRequest.StreamsJobTemplateId, jobTemplate, c)
 
 		streamID := jobTemplate.GetStreamsTemplateId()
-		streamTemplate := &message_types.StreamTemplate{}
-		api.getTemplate(project, "stream", streamID, streamTemplate, c)
+		streamTemplate := &types.StreamTemplate{}
+		api.getTemplate(project, stream, streamID, streamTemplate, c)
 
-		datasinkTemplate := &message_types.DatasinkTemplate{}
-		api.getTemplate(project, "datasink", jobTemplate.GetDatasinkTemplateId(), datasinkTemplate, c)
+		datasinkTemplate := &types.DatasinkTemplate{}
+		api.getTemplate(project, datasink, jobTemplate.GetDatasinkTemplateId(), datasinkTemplate, c)
 
-		analyzeTemplate := &message_types.AnalyzeTemplate{}
-		api.getTemplate(project, "analyze", jobTemplate.GetAnalyzeTemplateId(), analyzeTemplate, c)
+		analyzeTemplate := &types.AnalyzeTemplate{}
+		api.getTemplate(project, analyze, jobTemplate.GetAnalyzeTemplateId(), analyzeTemplate, c)
 
-		anonymizeTemplate := &message_types.AnonymizeTemplate{}
+		anonymizeTemplate := &types.AnonymizeTemplate{}
 		if jobTemplate.AnonymizeTemplateId != "" {
-			api.getTemplate(project, "anonymize", jobTemplate.GetAnonymizeTemplateId(), anonymizeTemplate, c)
+			api.getTemplate(project, anonymize, jobTemplate.GetAnonymizeTemplateId(), anonymizeTemplate, c)
 		}
-		streamsJobRequest = &message_types.StreamsJobRequest{
+		streamsJobRequest = &types.StreamsJobRequest{
 			Name: streamTemplate.GetName(),
-			StreamsRequest: &message_types.StreamRequest{
+			StreamsRequest: &types.StreamRequest{
 				AnalyzeTemplate:   analyzeTemplate,
 				AnonymizeTemplate: anonymizeTemplate,
 				DatasinkTemplate:  datasinkTemplate,
@@ -205,10 +204,10 @@ func (api *API) getStreamsJobRequest(jobAPIRequest *message_types.StreamsJobApiR
 	return streamsJobRequest
 }
 
-func (api *API) invokeAnonymize(anonymizeTemplate *message_types.AnonymizeTemplate, text string, results []*message_types.AnalyzeResult, c *gin.Context) *message_types.AnonymizeResponse {
+func (api *API) invokeAnonymize(anonymizeTemplate *types.AnonymizeTemplate, text string, results []*types.AnalyzeResult, c *gin.Context) *types.AnonymizeResponse {
 	srv := *anonymizeService
 
-	request := &message_types.AnonymizeRequest{
+	request := &types.AnonymizeRequest{
 		Template:       anonymizeTemplate,
 		Text:           text,
 		AnalyzeResults: results,
@@ -221,8 +220,8 @@ func (api *API) invokeAnonymize(anonymizeTemplate *message_types.AnonymizeTempla
 	return res
 }
 
-func (api *API) invokeAnalyze(analyzeTemplate *message_types.AnalyzeTemplate, text string, c *gin.Context) *message_types.AnalyzeResponse {
-	analyzeRequest := &message_types.AnalyzeRequest{
+func (api *API) invokeAnalyze(analyzeTemplate *types.AnalyzeTemplate, text string, c *gin.Context) *types.AnalyzeResponse {
+	analyzeRequest := &types.AnalyzeRequest{
 		AnalyzeTemplate: analyzeTemplate,
 		Text:            text,
 	}
@@ -238,23 +237,23 @@ func (api *API) invokeAnalyze(analyzeTemplate *message_types.AnalyzeTemplate, te
 }
 
 func (api *API) getTemplate(project string, action string, id string, obj interface{}, c *gin.Context) {
-	key := templates.CreateKey(project, action, id)
+	key := presidio.CreateKey(project, action, id)
 	template, err := api.templates.GetTemplate(key)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
-	err = templates.ConvertJSONToInterface(template, obj)
+	err = presidio.ConvertJSONToInterface(template, obj)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 }
 
-func (api *API) getAnalyzeTemplate(analyzeTemplateID string, analyzeTemplate *message_types.AnalyzeTemplate,
-	project string, c *gin.Context) *message_types.AnalyzeTemplate {
+func (api *API) getAnalyzeTemplate(analyzeTemplateID string, analyzeTemplate *types.AnalyzeTemplate,
+	project string, c *gin.Context) *types.AnalyzeTemplate {
 
 	if analyzeTemplate == nil && analyzeTemplateID != "" {
-		analyzeTemplate = &message_types.AnalyzeTemplate{}
-		api.getTemplate(project, "analyze", analyzeTemplateID, analyzeTemplate, c)
+		analyzeTemplate = &types.AnalyzeTemplate{}
+		api.getTemplate(project, analyze, analyzeTemplateID, analyzeTemplate, c)
 	} else if analyzeTemplate == nil {
 		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
 		return nil
@@ -263,12 +262,12 @@ func (api *API) getAnalyzeTemplate(analyzeTemplateID string, analyzeTemplate *me
 	return analyzeTemplate
 }
 
-func (api *API) getAnonymizeTemplate(anonymizeTemplateID string, anonymizeTemplate *message_types.AnonymizeTemplate,
-	project string, c *gin.Context) *message_types.AnonymizeTemplate {
+func (api *API) getAnonymizeTemplate(anonymizeTemplateID string, anonymizeTemplate *types.AnonymizeTemplate,
+	project string, c *gin.Context) *types.AnonymizeTemplate {
 
 	if anonymizeTemplate == nil && anonymizeTemplateID != "" {
-		anonymizeTemplate = &message_types.AnonymizeTemplate{}
-		api.getTemplate(project, "anonymize", anonymizeTemplateID, anonymizeTemplate, c)
+		anonymizeTemplate = &types.AnonymizeTemplate{}
+		api.getTemplate(project, anonymize, anonymizeTemplateID, anonymizeTemplate, c)
 	} else if anonymizeTemplate == nil {
 		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
 		return nil

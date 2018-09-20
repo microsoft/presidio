@@ -6,20 +6,20 @@ import (
 
 	"github.com/presid-io/stow"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
 type cloudStorageDatasink struct {
-	cloudStorageConfig *message_types.CloudStorageConfig
+	cloudStorageConfig *types.CloudStorageConfig
 	container          stow.Container
 }
 
-// New returns new instance of DB Data writter
-func New(datasink *message_types.Datasink) datasink.Datasink {
+// New returns new instance of DB Data writer
+func New(datasink *types.Datasink) datasink.Datasink {
 	db := cloudStorageDatasink{cloudStorageConfig: datasink.GetCloudStorageConfig()}
 	db.Init()
 	return &db
@@ -45,8 +45,8 @@ func (datasink *cloudStorageDatasink) Init() {
 	datasink.container = container
 }
 
-func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
-	resultString, err := templates.ConvertInterfaceToJSON(results)
+func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error {
+	resultString, err := presidio.ConvertInterfaceToJSON(results)
 	if err != nil {
 		return err
 	}
@@ -60,7 +60,7 @@ func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_typ
 	return nil
 }
 
-func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
+func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *types.AnonymizeResponse, path string) error {
 	err := storage.PutItem(addSuffixToPath(path, "anonymized"), result.Text, datasink.container)
 	if err != nil {
 		return err

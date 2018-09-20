@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
 	"github.com/Microsoft/presidio/pkg/stream/kinesis"
-	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
@@ -19,7 +19,7 @@ type streamDatasink struct {
 }
 
 // New returns new instance of DB Data writer
-func New(datasink *message_types.Datasink) datasink.Datasink {
+func New(datasink *types.Datasink) datasink.Datasink {
 	var stream stream.Stream
 
 	if datasink.StreamConfig.GetEhConfig() != nil {
@@ -39,8 +39,8 @@ func New(datasink *message_types.Datasink) datasink.Datasink {
 func (datasink *streamDatasink) Init() {
 }
 
-func (datasink *streamDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
-	resultString, err := templates.ConvertInterfaceToJSON(&message_types.DatasinkRequest{
+func (datasink *streamDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error {
+	resultString, err := presidio.ConvertInterfaceToJSON(&types.DatasinkRequest{
 		AnalyzeResults: results,
 		Path:           path,
 	})
@@ -59,8 +59,8 @@ func (datasink *streamDatasink) WriteAnalyzeResults(results []*message_types.Ana
 	return nil
 }
 
-func (datasink *streamDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
-	resultString, err := templates.ConvertInterfaceToJSON(&message_types.DatasinkRequest{
+func (datasink *streamDatasink) WriteAnonymizeResults(result *types.AnonymizeResponse, path string) error {
+	resultString, err := presidio.ConvertInterfaceToJSON(&types.DatasinkRequest{
 		AnonymizeResult: result,
 		Path:            path,
 	})

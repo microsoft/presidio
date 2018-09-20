@@ -15,12 +15,12 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	c "github.com/Microsoft/presidio/pkg/cache"
 	cache_mock "github.com/Microsoft/presidio/pkg/cache/mock"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
 	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
 )
@@ -69,7 +69,7 @@ func TestS3Scan(t *testing.T) {
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
+	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &types.AnalyzeRequest{}, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -83,7 +83,7 @@ func TestS3Scan(t *testing.T) {
 	assert.Equal(t, logs[0].Entry.Message, "2 results were sent to the datasink successfully")
 	assert.Equal(t, 1, len(datasinkSrv.Calls))
 	// On the second scan the item that was already scan shouldn't be scanned again
-	err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
+	err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &types.AnalyzeRequest{}, nil, &datasinkServiceMock)
 	logs = log.ObserverLogs().TakeAll()
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(logs))
@@ -106,7 +106,7 @@ func TestAzureScan(t *testing.T) {
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
+	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &types.AnalyzeRequest{}, nil, &datasinkServiceMock)
 
 	// Verify
 	item := getItem(filePath, container)
@@ -120,7 +120,7 @@ func TestAzureScan(t *testing.T) {
 	assert.Equal(t, 1, len(datasinkSrv.Calls))
 
 	// On the second scan the item that was already scan shouldn't be scanned again
-	err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
+	err = scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &types.AnalyzeRequest{}, nil, &datasinkServiceMock)
 	logs = log.ObserverLogs().TakeAll()
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(logs))
@@ -142,7 +142,7 @@ func TestFileExtension(t *testing.T) {
 	datasinkServiceMock := getDatasinkMock(nil)
 
 	// Act
-	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
+	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &types.AnalyzeRequest{}, nil, &datasinkServiceMock)
 	assert.Equal(t, err.Error(), "Expected: file extension txt, csv, json, tsv, received: .jpg")
 }
 
@@ -160,7 +160,7 @@ func TestSendResultToDatasinkReturnsError(t *testing.T) {
 	datasinkServiceMock := getDatasinkMock(errors.New("some error"))
 
 	// Act
-	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &message_types.AnalyzeRequest{}, nil, &datasinkServiceMock)
+	err := scanner.ScanData(s, scanRequest, testCache, &analyzerServiceMock, &types.AnalyzeRequest{}, nil, &datasinkServiceMock)
 
 	// Verify
 	assert.EqualValues(t, err.Error(), "some error")
@@ -172,9 +172,9 @@ func TestResultWrittenToStorage(t *testing.T) {
 	api, _ := storage.New(azureKind, azureConfig, 10)
 	api.RemoveContainer(containerName)
 
-	datasink := &message_types.Datasink{
-		CloudStorageConfig: &message_types.CloudStorageConfig{
-			BlobStorageConfig: &message_types.BlobStorageConfig{
+	datasink := &types.Datasink{
+		CloudStorageConfig: &types.CloudStorageConfig{
+			BlobStorageConfig: &types.BlobStorageConfig{
 				AccountKey:    azureStorageKey,
 				AccountName:   azureStorageName,
 				ContainerName: containerName,
@@ -184,7 +184,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 
 	cloudStorage := cloudStorage.New(datasink)
 	resultsPath := "someDir/SomeFile.txt"
-	anonymizeResponse := &message_types.AnonymizeResponse{
+	anonymizeResponse := &types.AnonymizeResponse{
 		Text: "<Person> live is <Location>",
 	}
 	//Act
@@ -199,7 +199,7 @@ func TestResultWrittenToStorage(t *testing.T) {
 		count++
 		if strings.Contains(item.Name(), "analyzed") {
 			analyzedFile, _ := storage.ReadObject(item)
-			expectedContent, _ := templates.ConvertInterfaceToJSON(getAnalyzerMockResult().AnalyzeResults)
+			expectedContent, _ := presidio.ConvertInterfaceToJSON(getAnalyzerMockResult().AnalyzeResults)
 			assert.Equal(t, analyzedFile, expectedContent)
 		} else if strings.Contains(item.Name(), "anonymized") {
 			anonymizedFile, _ := storage.ReadObject(item)
@@ -214,38 +214,38 @@ func TestResultWrittenToStorage(t *testing.T) {
 }
 
 // TEST HELPERS
-func getAnalyzeServiceMock(expectedResult *message_types.AnalyzeResponse) message_types.AnalyzeServiceClient {
+func getAnalyzeServiceMock(expectedResult *types.AnalyzeResponse) types.AnalyzeServiceClient {
 	analyzeService := &ScannerMockedObject{}
 	anlyzeServiceMock := analyzeService
 	analyzeService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(expectedResult, nil)
 	return anlyzeServiceMock
 }
 
-func getDatasinkMock(expectedError error) message_types.DatasinkServiceClient {
-	var datasinkMock message_types.DatasinkServiceClient = datasinkSrv
+func getDatasinkMock(expectedError error) types.DatasinkServiceClient {
+	var datasinkMock types.DatasinkServiceClient = datasinkSrv
 	datasinkSrv.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(nil, expectedError)
 	return datasinkMock
 }
 
-func getAnalyzerMockResult() *message_types.AnalyzeResponse {
-	location := &message_types.Location{
+func getAnalyzerMockResult() *types.AnalyzeResponse {
+	location := &types.Location{
 		Start: 153, End: 163, Length: 10,
 	}
-	results := [](*message_types.AnalyzeResult){
-		&message_types.AnalyzeResult{
-			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PHONE_NUMBER.String()},
+	results := [](*types.AnalyzeResult){
+		&types.AnalyzeResult{
+			Field:       &types.FieldTypes{Name: types.FieldTypesEnum_PHONE_NUMBER.String()},
 			Text:        "(555) 253-0000",
 			Probability: 1.0,
 			Location:    location,
 		},
-		&message_types.AnalyzeResult{
-			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_EMAIL_ADDRESS.String()},
+		&types.AnalyzeResult{
+			Field:       &types.FieldTypes{Name: types.FieldTypesEnum_EMAIL_ADDRESS.String()},
 			Text:        "johnsnow@foo.com",
 			Probability: 1.0,
 			Location:    location,
 		},
 	}
-	return &message_types.AnalyzeResponse{
+	return &types.AnalyzeResponse{
 		AnalyzeResults: results,
 	}
 }
@@ -282,12 +282,12 @@ func putItems(items []testItem, container stow.Container) {
 	}
 }
 
-func getScannerRequest(kind string) *message_types.ScanRequest {
+func getScannerRequest(kind string) *types.ScanRequest {
 	if kind == azureKind {
-		return &message_types.ScanRequest{
-			ScanTemplate: &message_types.ScanTemplate{
-				CloudStorageConfig: &message_types.CloudStorageConfig{
-					BlobStorageConfig: &message_types.BlobStorageConfig{
+		return &types.ScanRequest{
+			ScanTemplate: &types.ScanTemplate{
+				CloudStorageConfig: &types.CloudStorageConfig{
+					BlobStorageConfig: &types.BlobStorageConfig{
 						AccountName:   azureStorageName,
 						AccountKey:    azureStorageKey,
 						ContainerName: containerName,
@@ -297,10 +297,10 @@ func getScannerRequest(kind string) *message_types.ScanRequest {
 		}
 	}
 
-	return &message_types.ScanRequest{
-		ScanTemplate: &message_types.ScanTemplate{
-			CloudStorageConfig: &message_types.CloudStorageConfig{
-				S3Config: &message_types.S3Config{
+	return &types.ScanRequest{
+		ScanTemplate: &types.ScanTemplate{
+			CloudStorageConfig: &types.CloudStorageConfig{
+				S3Config: &types.S3Config{
 					AccessId:   s3AccessID,
 					AccessKey:  s3AccessKey,
 					Endpoint:   s3Endpoint,
@@ -321,29 +321,29 @@ type DatasinkMockedObject struct {
 	mock.Mock
 }
 
-func (m *ScannerMockedObject) Apply(c context.Context, analyzeRequest *message_types.AnalyzeRequest, opts ...grpc.CallOption) (*message_types.AnalyzeResponse, error) {
+func (m *ScannerMockedObject) Apply(c context.Context, analyzeRequest *types.AnalyzeRequest, opts ...grpc.CallOption) (*types.AnalyzeResponse, error) {
 	args := m.Mock.Called()
-	var result *message_types.AnalyzeResponse
+	var result *types.AnalyzeResponse
 	if args.Get(0) != nil {
-		result = args.Get(0).(*message_types.AnalyzeResponse)
+		result = args.Get(0).(*types.AnalyzeResponse)
 	}
 	return result, args.Error(1)
 }
 
-func (m *DatasinkMockedObject) Init(ctx context.Context, datasinkTemplate *message_types.DatasinkTemplate, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
+func (m *DatasinkMockedObject) Init(ctx context.Context, datasinkTemplate *types.DatasinkTemplate, opts ...grpc.CallOption) (*types.DatasinkResponse, error) {
 	// Currently not in use.
 	return nil, nil
 }
-func (m *DatasinkMockedObject) Completion(ctx context.Context, datasinkTemplate *message_types.CompletionMessage, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
+func (m *DatasinkMockedObject) Completion(ctx context.Context, datasinkTemplate *types.CompletionMessage, opts ...grpc.CallOption) (*types.DatasinkResponse, error) {
 	// Currently not in use.
 	return nil, nil
 }
 
-func (m *DatasinkMockedObject) Apply(ctx context.Context, in *message_types.DatasinkRequest, opts ...grpc.CallOption) (*message_types.DatasinkResponse, error) {
+func (m *DatasinkMockedObject) Apply(ctx context.Context, in *types.DatasinkRequest, opts ...grpc.CallOption) (*types.DatasinkResponse, error) {
 	args := m.Mock.Called()
-	var result *message_types.DatasinkResponse
+	var result *types.DatasinkResponse
 	if args.Get(0) != nil {
-		result = args.Get(0).(*message_types.DatasinkResponse)
+		result = args.Get(0).(*types.DatasinkResponse)
 	}
 	return result, args.Error(1)
 }

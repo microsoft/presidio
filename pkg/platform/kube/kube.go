@@ -13,8 +13,8 @@ type store struct {
 }
 
 // New initializes a new storage backend.
-func New(namespace string, master string, kubeConfigPath string) (platform.Store, error) {
-	c, err := GetClient(master, kubeConfigPath)
+func New(namespace string, master string) (platform.Store, error) {
+	c, err := GetClient(master)
 	if err != nil {
 		return nil, err
 	}
