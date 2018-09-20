@@ -13,7 +13,7 @@ import (
 	// import sqlite driver
 	_ "github.com/mattn/go-sqlite3"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
@@ -27,7 +27,7 @@ type dbDatasink struct {
 }
 
 // New returns new instance of DB Data writer
-func New(datasink *message_types.Datasink, resultType string) datasink.Datasink {
+func New(datasink *types.Datasink, resultType string) datasink.Datasink {
 	// default table name
 	tableName := datasink.DbConfig.GetTableName()
 	if tableName == "" {
@@ -81,7 +81,7 @@ func (datasink *dbDatasink) Init() {
 	}
 }
 
-func (datasink *dbDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
+func (datasink *dbDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}
 
 	for _, element := range results {
@@ -104,7 +104,7 @@ func (datasink *dbDatasink) WriteAnalyzeResults(results []*message_types.Analyze
 	return nil
 }
 
-func (datasink *dbDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
+func (datasink *dbDatasink) WriteAnonymizeResults(result *types.AnonymizeResponse, path string) error {
 	r := anonymizerResult{
 		AnonymizedText: result.Text,
 		Path:           path,

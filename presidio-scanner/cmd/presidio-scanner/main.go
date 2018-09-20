@@ -2,17 +2,13 @@ package main
 
 import (
 	"context"
-	"os"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform"
 	services "github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/scanner"
-)
-
-var (
-	grpcPort string
 )
 
 func main() {
@@ -20,7 +16,7 @@ func main() {
 	scanRequest := initScanner()
 	cache := services.SetupCache()
 	analyzeRequest, analyzeService := setupAnalyzerObjects(scanRequest)
-	anonymizeService := setupAnoymizerService(scanRequest)
+	anonymizeService := setupAnonymizerService(scanRequest)
 	datasinkService := setupDatasinkService(scanRequest.DatasinkTemplate)
 	s := scanner.CreateScanner(scanRequest)
 
@@ -32,48 +28,49 @@ func main() {
 	}
 
 	// notify datasink that scanner is done
-	(*datasinkService).Completion(context.Background(), &message_types.CompletionMessage{})
+	(*datasinkService).Completion(context.Background(), &types.CompletionMessage{})
 	log.Info("Done!")
 }
 
 // Init functions
-func setupAnalyzerObjects(scanRequest *message_types.ScanRequest) (*message_types.AnalyzeRequest, *message_types.AnalyzeServiceClient) {
+func setupAnalyzerObjects(scanRequest *types.ScanRequest) (*types.AnalyzeRequest, *types.AnalyzeServiceClient) {
 	analyzeService := services.SetupAnalyzerService()
 
-	analyzeRequest := &message_types.AnalyzeRequest{
+	analyzeRequest := &types.AnalyzeRequest{
 		AnalyzeTemplate: scanRequest.GetAnalyzeTemplate(),
 	}
 
 	return analyzeRequest, analyzeService
 }
 
-func setupAnoymizerService(scanRequest *message_types.ScanRequest) *message_types.AnonymizeServiceClient {
+func setupAnonymizerService(scanRequest *types.ScanRequest) *types.AnonymizeServiceClient {
 	// Anonymize is not mandatory - initialize objects only if needed
 	if scanRequest.AnonymizeTemplate == nil {
 		return nil
 	}
 
-	return services.SetupAnoymizerService()
+	return services.SetupAnonymizerService()
 }
 
-func initScanner() *message_types.ScanRequest {
-	scannerObj := os.Getenv("SCANNER_REQUEST")
-	scanRequest := &message_types.ScanRequest{}
-	err := templates.ConvertJSONToInterface(scannerObj, scanRequest)
+func initScanner() *types.ScanRequest {
+
+	settings := platform.GetSettings()
+
+	scanRequest := &types.ScanRequest{}
+	err := templates.ConvertJSONToInterface(settings.ScannerRequest, scanRequest)
 	if err != nil {
 		log.Fatal("Error formating scanner request %q", err.Error())
 	}
 
-	grpcPort = os.Getenv("GRPC_PORT")
-	if grpcPort == "" {
+	if settings.GrpcPort == "" {
 		// Set to default
-		grpcPort = "5000"
+		settings.GrpcPort = "5000"
 	}
 
 	return scanRequest
 }
 
-func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) *message_types.DatasinkServiceClient {
+func setupDatasinkService(datasinkTemplate *types.DatasinkTemplate) *types.DatasinkServiceClient {
 	datasinkService := services.SetupDatasinkService()
 
 	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)

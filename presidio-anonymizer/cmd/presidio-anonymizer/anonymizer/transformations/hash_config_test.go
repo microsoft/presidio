@@ -5,20 +5,20 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func TestHashValue1(t *testing.T) {
 
 	var str = "this is a 123456 and 54321"
 
-	var locations = make([]message_types.Location, 2)
-	index0 := message_types.Location{
+	var locations = make([]types.Location, 2)
+	index0 := types.Location{
 		Start:  10,
 		End:    14,
 		Length: 6,
 	}
-	index1 := message_types.Location{
+	index1 := types.Location{
 		Start:  21,
 		End:    26,
 		Length: 5,

@@ -3,13 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 	apiv1 "k8s.io/api/core/v1"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
@@ -19,51 +18,37 @@ import (
 type server struct{}
 
 var (
-	grpcPort                = os.Getenv("GRPC_PORT")
-	datasinkGrpcPort        = os.Getenv("DATASINK_GRPC_PORT")
-	namespace               = os.Getenv("PRESIDIO_NAMESPACE")
-	analyzerSvcAddress      = os.Getenv("ANALYZER_SVC_ADDRESS")
-	anonymizerSvcAddress    = os.Getenv("ANONYMIZER_SVC_ADDRESS")
-	redisURL                = os.Getenv("REDIS_URL")
-	datasinkImage           = os.Getenv("DATASINK_IMAGE_NAME")
-	scannerImage            = os.Getenv("SCANNER_IMAGE_NAME")
-	streamsImage            = os.Getenv("STREAMS_IMAGE_NAME")
-	datasinkImagePullPolicy = os.Getenv("DATASINK_IMAGE_PULL_POLICY")
-	scannerImagePullPolicy  = os.Getenv("SCANNER_IMAGE_PULL_POLICY")
-	streamsImagePullPolicy  = os.Getenv("STREAMS_IMAGE_PULL_POLICY")
-	store                   platform.Store
-)
-
-const (
-	envKubeConfig = "KUBECONFIG"
+	store    platform.Store
+	settings *platform.Settings
 )
 
 func main() {
-	if grpcPort == "" {
-		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", grpcPort)
+	settings = platform.GetSettings()
+	if settings.GrpcPort == "" {
+		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", settings.GrpcPort)
 	}
-	if analyzerSvcAddress == "" {
+	if settings.AnalyzerSvcAddress == "" {
 		log.Fatal("analyzer service address is empty")
 	}
 
-	if anonymizerSvcAddress == "" {
+	if settings.AnonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
 
-	if redisURL == "" {
+	if settings.RedisURL == "" {
 		log.Fatal("redis service address is empty")
 	}
 
 	var err error
-	log.Info("namespace %s", namespace)
-	store, err = kube.New(namespace, "", kubeConfigPath())
+	log.Info("namespace %s", settings.Namespace)
+	store, err = kube.New(settings.Namespace, "")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	lis, s := rpc.SetupClient(grpcPort)
+	lis, s := rpc.SetupClient(settings.GrpcPort)
 
-	message_types.RegisterSchedulerServiceServer(s, &server{})
+	types.RegisterSchedulerServiceServer(s, &server{})
 	reflection.Register(s)
 
 	if err := s.Serve(lis); err != nil {
@@ -71,78 +56,78 @@ func main() {
 	}
 }
 
-func (s *server) ApplyScan(ctx context.Context, r *message_types.ScannerCronJobRequest) (*message_types.ScannerCronJobResponse, error) {
+func (s *server) ApplyScan(ctx context.Context, r *types.ScannerCronJobRequest) (*types.ScannerCronJobResponse, error) {
 	_, err := applyScanRequest(r)
-	return &message_types.ScannerCronJobResponse{}, err
+	return &types.ScannerCronJobResponse{}, err
 }
 
-func (s *server) ApplyStream(ctx context.Context, r *message_types.StreamsJobRequest) (*message_types.StreamsJobResponse, error) {
+func (s *server) ApplyStream(ctx context.Context, r *types.StreamsJobRequest) (*types.StreamsJobResponse, error) {
 	_, err := applyStreamRequest(r)
-	return &message_types.StreamsJobResponse{}, err
+	return &types.StreamsJobResponse{}, err
 }
 
-func applyScanRequest(r *message_types.ScannerCronJobRequest) (*message_types.ScannerCronJobResponse, error) {
+func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResponse, error) {
 	scanRequest, err := json.Marshal(r.ScanRequest)
 	if err != nil {
-		return &message_types.ScannerCronJobResponse{}, err
+		return &types.ScannerCronJobResponse{}, err
 	}
 
-	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
-	scannerPolicy := platform.ConvertPullPolicyStringToType(scannerImagePullPolicy)
+	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
+	scannerPolicy := platform.ConvertPullPolicyStringToType(settings.ScannerImagePullPolicy)
 	jobName := fmt.Sprintf("%s-scanner-cronjob", r.GetName())
 	err = store.CreateCronJob(jobName, r.Trigger.Schedule.GetRecurrencePeriod(), []platform.ContainerDetails{
 		{
 			Name:  "datasink",
-			Image: datasinkImage,
+			Image: settings.DatasinkImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
+				{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
 			},
 			ImagePullPolicy: datasinkPolicy,
 		},
 		{
 			Name:  "scanner",
-			Image: scannerImage,
+			Image: settings.ScannerImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
-				{Name: "REDIS_URL", Value: redisURL},
-				{Name: "ANALYZER_SVC_ADDRESS", Value: analyzerSvcAddress},
-				{Name: "ANONYMIZER_SVC_ADDRESS", Value: anonymizerSvcAddress},
+				{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
+				{Name: "REDIS_URL", Value: settings.RedisURL},
+				{Name: "ANALYZER_SVC_ADDRESS", Value: settings.AnalyzerSvcAddress},
+				{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
 				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
 			},
 			ImagePullPolicy: scannerPolicy,
 		},
 	})
-	return &message_types.ScannerCronJobResponse{}, err
+	return &types.ScannerCronJobResponse{}, err
 }
 
-func applyStreamRequest(r *message_types.StreamsJobRequest) (*message_types.StreamsJobResponse, error) {
+func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, error) {
 	streamRequest, err := json.Marshal(r.StreamsRequest)
 	if err != nil {
-		return &message_types.StreamsJobResponse{}, err
+		return &types.StreamsJobResponse{}, err
 	}
 
-	datasinkPolicy := platform.ConvertPullPolicyStringToType(datasinkImagePullPolicy)
-	streamsPolicy := platform.ConvertPullPolicyStringToType(streamsImagePullPolicy)
+	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
+	streamsPolicy := platform.ConvertPullPolicyStringToType(settings.StreamsImagePullPolicy)
 
 	for index := 0; index < 1; index++ {
 		jobName := fmt.Sprintf("%s-streams-job-%d", r.GetName(), index)
 		err = store.CreateJob(jobName, []platform.ContainerDetails{
 			{
 				Name:  "datasink",
-				Image: datasinkImage,
+				Image: settings.DatasinkImage,
 				EnvVars: []apiv1.EnvVar{
-					{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
+					{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
 				},
 				ImagePullPolicy: datasinkPolicy,
 			},
 			{
 				Name:  "streams",
-				Image: streamsImage,
+				Image: settings.StreamsImage,
 				EnvVars: []apiv1.EnvVar{
-					{Name: "DATASINK_GRPC_PORT", Value: datasinkGrpcPort},
-					{Name: "REDIS_URL", Value: redisURL},
-					{Name: "ANALYZER_SVC_ADDRESS", Value: analyzerSvcAddress},
-					{Name: "ANONYMIZER_SVC_ADDRESS", Value: anonymizerSvcAddress},
+					{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
+					{Name: "REDIS_URL", Value: settings.RedisURL},
+					{Name: "ANALYZER_SVC_ADDRESS", Value: settings.AnalyzerSvcAddress},
+					{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
 					{Name: "STREAM_REQUEST", Value: string(streamRequest)},
 					{Name: "PARTITON_ID", Value: string(index)},
 				},
@@ -151,20 +136,5 @@ func applyStreamRequest(r *message_types.StreamsJobRequest) (*message_types.Stre
 		})
 	}
 
-	return &message_types.StreamsJobResponse{}, err
-}
-
-// TODO: duplication from presidio api- refactor to pkg
-func kubeConfigPath() string {
-	if v, ok := os.LookupEnv(envKubeConfig); ok {
-		return v
-	}
-	defConfig := os.ExpandEnv("$HOME/.kube/config")
-	if _, err := os.Stat(defConfig); err == nil {
-		log.Info("Using config from " + defConfig)
-		return defConfig
-	}
-
-	// If we get here, we might be in-Pod.
-	return ""
+	return &types.StreamsJobResponse{}, err
 }

@@ -5,20 +5,20 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func TestReplaceValueSize1(t *testing.T) {
 
 	var str = "this is a 123456 and 54321"
 
-	var locations = make([]message_types.Location, 2)
-	index0 := message_types.Location{
+	var locations = make([]types.Location, 2)
+	index0 := types.Location{
 		Start:  10,
 		End:    16,
 		Length: 6,
 	}
-	index1 := message_types.Location{
+	index1 := types.Location{
 		Start:  21,
 		End:    26,
 		Length: 5,
@@ -44,13 +44,13 @@ func TestReplaceValueSize2(t *testing.T) {
 
 	var str = "this is a 126 and 5431"
 
-	var locations = make([]message_types.Location, 2)
-	index0 := message_types.Location{
+	var locations = make([]types.Location, 2)
+	index0 := types.Location{
 		Start:  10,
 		End:    13,
 		Length: 3,
 	}
-	index1 := message_types.Location{
+	index1 := types.Location{
 		Start:  18,
 		End:    21,
 		Length: 4,
@@ -76,13 +76,13 @@ func TestReplaceValueSize3(t *testing.T) {
 
 	var str = "this is a 1263 and 54319"
 
-	var locations = make([]message_types.Location, 2)
-	index0 := message_types.Location{
+	var locations = make([]types.Location, 2)
+	index0 := types.Location{
 		Start:  10,
 		End:    14,
 		Length: 4,
 	}
-	index1 := message_types.Location{
+	index1 := types.Location{
 		Start:  19,
 		End:    24,
 		Length: 5,
@@ -107,13 +107,13 @@ func TestReplaceValueSize4(t *testing.T) {
 
 	var str = "this is a 1263 and 5439"
 
-	var locations = make([]message_types.Location, 2)
-	index0 := message_types.Location{
+	var locations = make([]types.Location, 2)
+	index0 := types.Location{
 		Start:  10,
 		End:    14,
 		Length: 4,
 	}
-	index1 := message_types.Location{
+	index1 := types.Location{
 		Start:  19,
 		End:    23,
 		Length: 4,

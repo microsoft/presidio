@@ -3,18 +3,18 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform"
 	services "github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/templates"
 )
 
-var analyzeService *message_types.AnalyzeServiceClient
-var anonymizeService *message_types.AnonymizeServiceClient
-var datasinkService *message_types.DatasinkServiceClient
-var streamRequest *message_types.StreamRequest
+var analyzeService *types.AnalyzeServiceClient
+var anonymizeService *types.AnonymizeServiceClient
+var datasinkService *types.DatasinkServiceClient
+var streamRequest *types.StreamRequest
 
 func main() {
 	initStream()
@@ -22,7 +22,7 @@ func main() {
 	analyzeService = services.SetupAnalyzerService()
 
 	if streamRequest.AnonymizeTemplate != nil {
-		anonymizeService = services.SetupAnoymizerService()
+		anonymizeService = services.SetupAnonymizerService()
 	}
 
 	setupDatasinkService(streamRequest.DatasinkTemplate)
@@ -61,8 +61,8 @@ func receiveEvents(partition string, sequence string, text string) error {
 	return nil
 }
 
-func sendResultToDatasink(analyzeResults []*message_types.AnalyzeResult,
-	anonymizeResults *message_types.AnonymizeResponse, path string) error {
+func sendResultToDatasink(analyzeResults []*types.AnalyzeResult,
+	anonymizeResults *types.AnonymizeResponse, path string) error {
 	srv := *datasinkService
 
 	for _, element := range analyzeResults {
@@ -70,7 +70,7 @@ func sendResultToDatasink(analyzeResults []*message_types.AnalyzeResult,
 		element.Text = ""
 	}
 
-	datasinkRequest := &message_types.DatasinkRequest{
+	datasinkRequest := &types.DatasinkRequest{
 		AnalyzeResults:  analyzeResults,
 		AnonymizeResult: anonymizeResults,
 		Path:            path,
@@ -81,16 +81,17 @@ func sendResultToDatasink(analyzeResults []*message_types.AnalyzeResult,
 }
 
 func initStream() {
-	streamObj := os.Getenv("STREAM_REQUEST")
-	streamRequest = &message_types.StreamRequest{}
 
-	err := templates.ConvertJSONToInterface(streamObj, streamRequest)
+	settings := platform.GetSettings()
+	streamRequest = &types.StreamRequest{}
+
+	err := templates.ConvertJSONToInterface(settings.StreamRequest, streamRequest)
 	if err != nil {
 		log.Fatal("Error formating scanner request %q", err.Error())
 	}
 }
 
-func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) {
+func setupDatasinkService(datasinkTemplate *types.DatasinkTemplate) {
 	datasinkService = services.SetupDatasinkService()
 
 	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)
@@ -99,8 +100,8 @@ func setupDatasinkService(datasinkTemplate *message_types.DatasinkTemplate) {
 	}
 }
 
-func analyzeItem(text string) ([]*message_types.AnalyzeResult, error) {
-	analyzeRequest := &message_types.AnalyzeRequest{
+func analyzeItem(text string) ([]*types.AnalyzeResult, error) {
+	analyzeRequest := &types.AnalyzeRequest{
 		AnalyzeTemplate: streamRequest.GetAnalyzeTemplate(),
 		Text:            text,
 	}
@@ -114,11 +115,11 @@ func analyzeItem(text string) ([]*message_types.AnalyzeResult, error) {
 	return results.AnalyzeResults, nil
 }
 
-func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, anonymizeTemplate *message_types.AnonymizeTemplate) (*message_types.AnonymizeResponse, error) {
+func anonymizeItem(analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
 	if anonymizeTemplate != nil {
 		srv := *anonymizeService
 
-		anonymizeRequest := &message_types.AnonymizeRequest{
+		anonymizeRequest := &types.AnonymizeRequest{
 			Template:       anonymizeTemplate,
 			Text:           text,
 			AnalyzeResults: analyzeResults,

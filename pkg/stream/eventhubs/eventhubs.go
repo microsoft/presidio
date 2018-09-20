@@ -4,7 +4,13 @@ import (
 	"context"
 	"time"
 
+	"github.com/Azure/azure-amqp-common-go/conn"
+	"github.com/Azure/azure-amqp-common-go/sas"
 	eh "github.com/Azure/azure-event-hubs-go"
+	"github.com/Azure/azure-event-hubs-go/eph"
+	"github.com/Azure/azure-event-hubs-go/storage"
+	"github.com/Azure/azure-storage-blob-go/2016-05-31/azblob"
+	"github.com/Azure/go-autorest/autorest/azure"
 
 	"github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/stream"
@@ -12,7 +18,7 @@ import (
 
 type eventhubs struct {
 	hub         *eh.Hub
-	partitionID string
+	eph         *eph.EventProcessorHost
 	receiveFunc stream.ReceiveFunc
 	ctx         context.Context
 }
@@ -31,29 +37,44 @@ func NewProducer(ctx context.Context, connStr string) stream.Stream {
 	}
 }
 
-//TODO: Switch to EPH pattern
-
 //NewConsumer Return new Eventhub for consuming messages
-func NewConsumer(ctx context.Context, connStr string, partitionID string) stream.Stream {
+func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName string, storageAccountKey string, storageContainerName string) stream.Stream {
 
-	hub, err := eh.NewHubFromConnectionString(connStr)
+	// Azure Event Hub connection string
+	parsed, err := conn.ParsedConnectionFromStr(eventHubConnStr)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+	// SAS token provider for Azure Event Hubs
+	provider, err := sas.NewTokenProvider(sas.TokenProviderWithKey(parsed.KeyName, parsed.Key))
+	if err != nil {
+		// handle error
+	}
+	// create a new Azure Storage Leaser / Checkpointer
+	cred := azblob.NewSharedKeyCredential(storageAccountName, storageAccountKey)
+	leaserCheckpointer, err := storage.NewStorageLeaserCheckpointer(cred, storageAccountName, storageContainerName, azure.PublicCloud)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	// create a new EPH processor
+	hub, err := eph.New(ctx, parsed.Namespace, parsed.HubName, provider, leaserCheckpointer, leaserCheckpointer)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 
 	return &eventhubs{
-		hub:         hub,
-		partitionID: partitionID,
-		ctx:         ctx,
+		eph: hub,
+		ctx: ctx,
 	}
 }
 
-//TODO: Switch to EPH pattern
-
 //Receive message from eventhub partition.
 func (e *eventhubs) Receive(receiveFunc stream.ReceiveFunc) error {
+
+	e.eph.StartNonBlocking(e.ctx)
 	e.receiveFunc = receiveFunc
-	_, err := e.hub.Receive(e.ctx, e.partitionID, e.handleEvent, eh.ReceiveWithLatestOffset())
+	_, err := e.eph.RegisterHandler(e.ctx, e.handleEvent)
 	return err
 }
 

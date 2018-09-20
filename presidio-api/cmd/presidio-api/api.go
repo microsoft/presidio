@@ -5,6 +5,16 @@ import (
 	t "github.com/Microsoft/presidio/pkg/templates"
 )
 
+const (
+	analyze                = "analyze"
+	anonymize              = "anonymize"
+	scan                   = "scan"
+	stream                 = "stream"
+	datasink               = "datasink"
+	scheduleScannerCronJob = "schedule-scanner-cronjob"
+	scheduleStreamsJob     = "schedule-streams-job"
+)
+
 //API kv store
 type API struct {
 	templates *t.Templates

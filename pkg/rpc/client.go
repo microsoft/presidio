@@ -9,7 +9,7 @@ import (
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func connect(addr string) (*grpc.ClientConn, error) {
@@ -37,43 +37,43 @@ func connect(addr string) (*grpc.ClientConn, error) {
 }
 
 //SetupAnonymizeService ...
-func SetupAnonymizeService(address string) (*message_types.AnonymizeServiceClient, error) {
+func SetupAnonymizeService(address string) (*types.AnonymizeServiceClient, error) {
 
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
 
-	client := message_types.NewAnonymizeServiceClient(conn)
+	client := types.NewAnonymizeServiceClient(conn)
 	return &client, nil
 }
 
 //SetupAnalyzerService ...
-func SetupAnalyzerService(address string) (*message_types.AnalyzeServiceClient, error) {
+func SetupAnalyzerService(address string) (*types.AnalyzeServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
-	client := message_types.NewAnalyzeServiceClient(conn)
+	client := types.NewAnalyzeServiceClient(conn)
 	return &client, nil
 }
 
 //SetupDatasinkService ...
-func SetupDatasinkService(address string) (*message_types.DatasinkServiceClient, error) {
+func SetupDatasinkService(address string) (*types.DatasinkServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
-	client := message_types.NewDatasinkServiceClient(conn)
+	client := types.NewDatasinkServiceClient(conn)
 	return &client, nil
 }
 
 //SetupSchedulerService ...
-func SetupSchedulerService(address string) (*message_types.SchedulerServiceClient, error) {
+func SetupSchedulerService(address string) (*types.SchedulerServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
-	client := message_types.NewSchedulerServiceClient(conn)
+	client := types.NewSchedulerServiceClient(conn)
 	return &client, nil
 }

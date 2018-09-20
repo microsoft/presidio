@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/cache"
 	log "github.com/Microsoft/presidio/pkg/logger"
 )
@@ -15,19 +15,19 @@ type ScanFunc func(item interface{}) error
 // Scanner interface represent the supported scanner methods.
 type Scanner interface {
 	//Init the scanner
-	Init(inputConfig *message_types.CloudStorageConfig)
+	Init(inputConfig *types.CloudStorageConfig)
 
 	//Scan walks over the items to scan and executes ScanFunc on each of the items
 	Scan(fn ScanFunc) error
 }
 
 //ScanData the data
-func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cache.Cache,
-	analyzeService *message_types.AnalyzeServiceClient, analyzeRequest *message_types.AnalyzeRequest,
-	anonymizeService *message_types.AnonymizeServiceClient, datasinkService *message_types.DatasinkServiceClient) error {
+func ScanData(scanner Scanner, scanRequest *types.ScanRequest, cache cache.Cache,
+	analyzeService *types.AnalyzeServiceClient, analyzeRequest *types.AnalyzeRequest,
+	anonymizeService *types.AnonymizeServiceClient, datasinkService *types.DatasinkServiceClient) error {
 
 	return scanner.Scan(func(item interface{}) error {
-		var analyzerResult []*message_types.AnalyzeResult
+		var analyzerResult []*types.AnalyzeResult
 		var text string
 
 		scanItem := CreateItem(scanRequest, item)
@@ -70,12 +70,12 @@ func ScanData(scanner Scanner, scanRequest *message_types.ScanRequest, cache cac
 	})
 }
 
-func anonymizeItem(analyzeResults []*message_types.AnalyzeResult, text string, path string, anonymizeTemplate *message_types.AnonymizeTemplate,
-	anonymizeService *message_types.AnonymizeServiceClient) (*message_types.AnonymizeResponse, error) {
+func anonymizeItem(analyzeResults []*types.AnalyzeResult, text string, path string, anonymizeTemplate *types.AnonymizeTemplate,
+	anonymizeService *types.AnonymizeServiceClient) (*types.AnonymizeResponse, error) {
 	if anonymizeTemplate != nil {
 		srv := *anonymizeService
 
-		anonymizeRequest := &message_types.AnonymizeRequest{
+		anonymizeRequest := &types.AnonymizeRequest{
 			Template:       anonymizeTemplate,
 			Text:           text,
 			AnalyzeResults: analyzeResults,
@@ -94,9 +94,9 @@ func writeItemToCache(uniqueID string, scannedPath string, cache cache.Cache) {
 	}
 }
 
-func sendResultToDatasink(scannedPath string, analyzeResults []*message_types.AnalyzeResult,
-	anonymizeResults *message_types.AnonymizeResponse, cache cache.Cache,
-	datasinkService *message_types.DatasinkServiceClient) error {
+func sendResultToDatasink(scannedPath string, analyzeResults []*types.AnalyzeResult,
+	anonymizeResults *types.AnonymizeResponse, cache cache.Cache,
+	datasinkService *types.DatasinkServiceClient) error {
 	srv := *datasinkService
 
 	for _, element := range analyzeResults {
@@ -104,7 +104,7 @@ func sendResultToDatasink(scannedPath string, analyzeResults []*message_types.An
 		element.Text = ""
 	}
 
-	datasinkRequest := &message_types.DatasinkRequest{
+	datasinkRequest := &types.DatasinkRequest{
 		AnalyzeResults:  analyzeResults,
 		AnonymizeResult: anonymizeResults,
 		Path:            scannedPath,
@@ -116,9 +116,9 @@ func sendResultToDatasink(scannedPath string, analyzeResults []*message_types.An
 
 // Sends analyzer scan request to the analyzer service and returns analyzer result
 func analyzeItem(
-	analyzeService *message_types.AnalyzeServiceClient,
-	analyzeRequest *message_types.AnalyzeRequest,
-	item Item) (string, []*message_types.AnalyzeResult, error) {
+	analyzeService *types.AnalyzeServiceClient,
+	analyzeRequest *types.AnalyzeRequest,
+	item Item) (string, []*types.AnalyzeResult, error) {
 
 	// Value not found in the cache. Need to scan the file and update the cache
 	itemContent, err := item.GetContent()

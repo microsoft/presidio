@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //HashValue ...
-func HashValue(text string, location message_types.Location) (string, error) {
+func HashValue(text string, location types.Location) (string, error) {
 	if location.Length == 0 {
 		location.Length = location.End - location.Start
 	}
