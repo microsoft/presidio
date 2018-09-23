@@ -1,3 +1,4 @@
+import datetime
 import logging
 from concurrent import futures
 import en_core_web_lg
@@ -93,11 +94,16 @@ class Matcher(object):
         res.text = field.text
 
         # check score
+        calc_probability_start_time = datetime.datetime.now()
         if isinstance(field, type(ner.Ner())):
             res.probability = NER_STRENGTH
         else:
             res.probability = self.__calculate_probability(doc, match_strength,
                                                            field, start, end)
+        calc_probability_time = datetime.datetime.now() - calc_probability_start_time
+
+        logging.debug('--- calc_prob_time[{}]: {}.{} seconds'.format(
+                field.name, calc_probability_time.seconds, calc_probability_time.microseconds))
 
         res.location.start = start
         res.location.end = end
@@ -127,10 +133,14 @@ class Matcher(object):
                 break
             result_found = False
 
+            match_start_time = datetime.datetime.now()
             matches = re.finditer(
                 pattern.regex,
                 doc.text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
+            match_time = datetime.datetime.now() - match_start_time
+            logging.debug('--- match_time[{}]: {}.{} seconds'.format(
+                field.name, match_time.seconds, match_time.microseconds))
 
             for match in matches:
                 start, end = match.span()
@@ -207,12 +217,18 @@ class Matcher(object):
         if current_field is None:
             return
 
-            # Check for ner field
+        # Check for ner field
+        analyze_start_time = datetime.datetime.now()        
         if isinstance(current_field, type(ner.Ner())):
             current_field.name = payload.field_type_string_filter
             self.__check_ner(payload.doc, payload.results, current_field)
         else:
             self.__check_pattern(payload.doc, payload.results, current_field)
+        
+        analyze_time = datetime.datetime.now() - analyze_start_time
+        logging.debug('--- analyze_time[{}]: {}.{} seconds'.format(
+            payload.field_type_string_filter, analyze_time.seconds, analyze_time.microseconds))
+
     
     def __is_checksum_result(self, result):
         if result.probability == 1.0:
@@ -274,7 +290,7 @@ class Matcher(object):
                                          })
             payloads.append(payload)
 
-        with futures.ThreadPoolExecutor(max_workers=10) as executor:
+        with futures.ThreadPoolExecutor(max_workers=1) as executor:
             executor.map(self.__analyze_field_type, payloads)
         
         results = self.__remove_checksum_duplicates(results)
