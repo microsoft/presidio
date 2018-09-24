@@ -34,7 +34,7 @@ func Setup(_port int) *gin.Engine {
 	//   - Logs all requests, like a combined access and error log.
 	//   - Logs to stdout.
 	//   - RFC3339 with UTC time format.
-	r.Use(ginzap.Ginzap(log.GetInstance(), time.RFC3339, true))
+	r.Use(ginzap.Ginzap(log.GetLogger(), time.RFC3339, true))
 	r.Use(cors.Default())
 	r.GET("/healthz", healthCheck)
 	port = _port

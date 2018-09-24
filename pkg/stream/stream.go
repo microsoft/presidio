@@ -8,5 +8,5 @@ type Stream interface {
 	Receive(receiveFunc ReceiveFunc) error
 }
 
-//ReceiveFunc  function reference
-type ReceiveFunc func(string)
+//ReceiveFunc function reference with partition_id sequence number and message data
+type ReceiveFunc func(string, string, string) error

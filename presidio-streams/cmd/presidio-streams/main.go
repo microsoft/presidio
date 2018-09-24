@@ -3,110 +3,128 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 
-	"github.com/joho/godotenv"
-
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/rpc"
-	"github.com/Microsoft/presidio/pkg/stream"
-	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
-	"github.com/Microsoft/presidio/pkg/stream/kafka"
-	"github.com/Microsoft/presidio/pkg/templates"
+	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/Microsoft/presidio/pkg/presidio"
 )
 
-var (
-	streamKind       string
-	datasinkGRPCPort string
-	analyzeRequest   *message_types.AnalyzeRequest
-	analyzeService   *message_types.AnalyzeServiceClient
-	streamRequest    *message_types.StreamRequest
-)
+var analyzeService *types.AnalyzeServiceClient
+var anonymizeService *types.AnonymizeServiceClient
+var datasinkService *types.DatasinkServiceClient
+var streamRequest *types.StreamRequest
 
 func main() {
-	setupAnalyzerObjects()
 	initStream()
-	setupDatasinkService()
-	_ = createStream()
 
+	analyzeService = presidio.SetupAnalyzerService()
+
+	if streamRequest.AnonymizeTemplate != nil {
+		anonymizeService = presidio.SetupAnonymizerService()
+	}
+
+	setupDatasinkService(streamRequest.DatasinkTemplate)
+
+	stream := createStream()
+	err := stream.Receive(receiveEvents)
+
+	if err != nil {
+		log.Error(err.Error())
+	}
+}
+
+func receiveEvents(partition string, sequence string, text string) error {
+	analyzerResult, err := analyzeItem(text)
+	if err != nil {
+		log.Error("error analyzing message: %s, error: %q", text, err.Error())
+		return err
+	}
+
+	if len(analyzerResult) > 0 {
+		anonymizerResult, err := anonymizeItem(analyzerResult, text, streamRequest.AnonymizeTemplate)
+
+		if err != nil {
+			log.Error("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error())
+			return err
+		}
+
+		err = sendResultToDatasink(analyzerResult, anonymizerResult, fmt.Sprintf("%s/%s", partition, sequence))
+		if err != nil {
+			log.Error("error sending message to datasink: %s/%s, error: %q", partition, sequence, err.Error())
+			return err
+		}
+		log.Info("%d results were sent to the datasink successfully", len(analyzerResult))
+
+	}
+	return nil
+}
+
+func sendResultToDatasink(analyzeResults []*types.AnalyzeResult,
+	anonymizeResults *types.AnonymizeResponse, path string) error {
+	srv := *datasinkService
+
+	for _, element := range analyzeResults {
+		// Remove PII from results
+		element.Text = ""
+	}
+
+	datasinkRequest := &types.DatasinkRequest{
+		AnalyzeResults:  analyzeResults,
+		AnonymizeResult: anonymizeResults,
+		Path:            path,
+	}
+
+	_, err := srv.Apply(context.Background(), datasinkRequest)
+	return err
 }
 
 func initStream() {
-	godotenv.Load()
 
-	streamObj := os.Getenv("STREAM_REQUEST")
-	template := &message_types.StreamRequest{}
-	err := templates.ConvertJSONToInterface(streamObj, template)
+	settings := platform.GetSettings()
+	streamRequest = &types.StreamRequest{}
+
+	err := presidio.ConvertJSONToInterface(settings.StreamRequest, streamRequest)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Error formating scanner template %q", err.Error()))
-	}
-	streamRequest = template
-	streamKind = streamRequest.Kind
-
-	if streamKind == "" {
-		log.Fatal("stream kind var must me set")
-	}
-
-	// TODO: Change!!
-	datasinkGRPCPort = os.Getenv("DATASINK_GRPC_PORT")
-	if datasinkGRPCPort == "" {
-		// Set to default
-		datasinkGRPCPort = "5000"
+		log.Fatal("Error formating scanner request %q", err.Error())
 	}
 }
 
-func setupDatasinkService() *message_types.DatasinkServiceClient {
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("localhost:%s", datasinkGRPCPort))
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Connection to datasink service failed %q", err))
-	}
+func setupDatasinkService(datasinkTemplate *types.DatasinkTemplate) {
+	datasinkService = presidio.SetupDatasinkService()
 
-	_, err = (*datasinkService).Init(context.Background(), streamRequest.DatasinkTemplate)
+	_, err := (*datasinkService).Init(context.Background(), datasinkTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	return datasinkService
 }
 
-func setupAnalyzerObjects() {
-	analyzerSvcHost := os.Getenv("ANALYZER_SVC_HOST")
-	if analyzerSvcHost == "" {
-		log.Fatal("analyzer service address is empty")
-	}
-
-	analyzerSvcPort := os.Getenv("ANALYZER_SVC_PORT")
-	if analyzerSvcPort == "" {
-		log.Fatal("analyzer service port is empty")
-	}
-
-	var err error
-	analyzeService, err = rpc.SetupAnalyzerService(analyzerSvcHost + ":" + analyzerSvcPort)
-	if err != nil {
-		log.Error(fmt.Sprintf("Connection to analyzer service failed %q", err))
-	}
-
-	analyzeRequest = &message_types.AnalyzeRequest{
+func analyzeItem(text string) ([]*types.AnalyzeResult, error) {
+	analyzeRequest := &types.AnalyzeRequest{
 		AnalyzeTemplate: streamRequest.GetAnalyzeTemplate(),
-		MinProbability:  streamRequest.GetMinProbability(),
+		Text:            text,
 	}
 
+	srv := *analyzeService
+	results, err := srv.Apply(context.Background(), analyzeRequest)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
 	}
+
+	return results.AnalyzeResults, nil
 }
 
-func createStream() stream.Stream {
-	config := streamRequest.GetStreamConfig()
-	if streamRequest.GetKind() == "kafka" && config.KafkaConfig != nil {
-		k := kafka.NewConsumer(config.KafkaConfig.GetAddress(), config.KafkaConfig.GetTopic())
-		return k
-	}
+func anonymizeItem(analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
+	if anonymizeTemplate != nil {
+		srv := *anonymizeService
 
-	if streamRequest.GetKind() == "eventhub" && config.EhConfig != nil {
-		e := eventhubs.New()
-		return e
+		anonymizeRequest := &types.AnonymizeRequest{
+			Template:       anonymizeTemplate,
+			Text:           text,
+			AnalyzeResults: analyzeResults,
+		}
+		res, err := srv.Apply(context.Background(), anonymizeRequest)
+		return res, err
 	}
-	return nil
+	return nil, nil
 }

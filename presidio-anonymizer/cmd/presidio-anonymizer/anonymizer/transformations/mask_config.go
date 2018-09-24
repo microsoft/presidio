@@ -3,11 +3,11 @@ package transformations
 import (
 	"errors"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //MaskValue ...
-func MaskValue(text string, location message_types.Location, replaceWith string, charsToReplace int32, fromEnd bool) (string, error) {
+func MaskValue(text string, location types.Location, replaceWith string, charsToReplace int32, fromEnd bool) (string, error) {
 	charsToReplaceInt := int(charsToReplace)
 	if location.Length == 0 {
 		location.Length = location.End - location.Start

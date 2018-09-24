@@ -6,15 +6,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
+	pkg_templates "github.com/Microsoft/presidio/pkg/presidio"
 	server "github.com/Microsoft/presidio/pkg/server"
-	pkg_templates "github.com/Microsoft/presidio/pkg/templates"
 )
 
 func getFieldTypes(c *gin.Context) {
-	var fieldTypeArray []message_types.FieldTypes
-	for key := range message_types.FieldTypesEnum_value {
-		fieldTypeArray = append(fieldTypeArray, message_types.FieldTypes{Name: key})
+	var fieldTypeArray []types.FieldTypes
+	for key := range types.FieldTypesEnum_value {
+		fieldTypeArray = append(fieldTypeArray, types.FieldTypes{Name: key})
 	}
 	server.WriteResponse(c, http.StatusOK, fieldTypeArray)
 }
@@ -81,21 +81,24 @@ func (api *API) deleteActionTemplate(c *gin.Context) {
 //TODO: Need to better validate templates
 func validateTemplate(action string, c *gin.Context) (string, error) {
 	switch action {
-	case "analyze":
-		var analyzerTemplate message_types.AnalyzeTemplate
+	case analyze:
+		var analyzerTemplate types.AnalyzeTemplate
 		return bindAndConvert(analyzerTemplate, c)
-	case "anonymize":
-		var anonymizeTemplate message_types.AnonymizeTemplate
+	case anonymize:
+		var anonymizeTemplate types.AnonymizeTemplate
 		return bindAndConvert(anonymizeTemplate, c)
-	case "scan":
-		var scanTemplate message_types.ScanTemplate
+	case scan:
+		var scanTemplate types.ScanTemplate
 		return bindAndConvert(scanTemplate, c)
-	case "datasink":
-		var datasinkTemplate message_types.DatasinkTemplate
+	case datasink:
+		var datasinkTemplate types.DatasinkTemplate
 		return bindAndConvert(datasinkTemplate, c)
-	case "schedule-cronjob":
-		var cronjobTemplate message_types.CronJobTemplate
-		return bindAndConvert(cronjobTemplate, c)
+	case scheduleScannerCronJob:
+		var scannerCronjobTemplate types.ScannerCronJobTemplate
+		return bindAndConvert(scannerCronjobTemplate, c)
+	case scheduleStreamsJob:
+		var streamsJobTemplate types.StreamsJobTemplate
+		return bindAndConvert(streamsJobTemplate, c)
 	}
 
 	return "", errors.New("No template found")

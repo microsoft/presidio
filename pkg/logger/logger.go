@@ -6,9 +6,13 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"go.uber.org/zap/zaptest/observer"
 )
 
-var singleton *zap.Logger
+var sugaredLogger *zap.SugaredLogger
+var logger *zap.Logger
+var observedLogger zapcore.Core
+var logs *observer.ObservedLogs
 var once sync.Once
 
 // Init initializes a thread-safe singleton logger
@@ -18,43 +22,61 @@ var once sync.Once
 func init() {
 	// once ensures the singleton is initialized only once
 	once.Do(func() {
-		var err error
+		level := zap.NewAtomicLevelAt(zap.DebugLevel)
 		config := zap.NewDevelopmentConfig()
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-		singleton, err = config.Build()
+		config.DisableStacktrace = true
+		config.Level = level
+		config.DisableCaller = true
+
+		build, err := config.Build()
+		logger = build
+		sugaredLogger = build.Sugar()
 		if err != nil {
 			panic(err.Error())
 		}
 	})
 }
 
-//GetInstance export zap instance
-func GetInstance() *zap.Logger {
-	return singleton
+// GetLogger get native not sugared logger
+func GetLogger() *zap.Logger {
+	return logger
+}
+
+// ObserverLogs provides the list of logs generated during the observation process
+func ObserverLogs() *observer.ObservedLogs {
+	return logs
+}
+
+// ObserveLogging constructs a logger through the zap/zaptest/observer framework
+// so that logs will be accessible in tests.
+func ObserveLogging(level zapcore.Level) {
+	observedLogger, logs = observer.New(level)
+	sugaredLogger = zap.New(observedLogger).With().Sugar()
 }
 
 // Debug logs a debug message with the given fields
-func Debug(message string, fields ...zap.Field) {
-	singleton.Debug(message, fields...)
+func Debug(message string, fields ...interface{}) {
+	sugaredLogger.Debugf(message, fields...)
 }
 
 // Info logs a debug message with the given fields
-func Info(message string, fields ...zap.Field) {
-	singleton.Info(message, fields...)
+func Info(message string, fields ...interface{}) {
+	sugaredLogger.Infof(message, fields...)
 }
 
 // Warn logs a debug message with the given fields
-func Warn(message string, fields ...zap.Field) {
-	singleton.Warn(message, fields...)
+func Warn(message string, fields ...interface{}) {
+	sugaredLogger.Warnf(message, fields...)
 }
 
 // Error logs a debug message with the given fields
-func Error(message string, fields ...zap.Field) {
-	singleton.Error(message, fields...)
+func Error(message string, fields ...interface{}) {
+	sugaredLogger.Errorf(message, fields...)
 }
 
 // Fatal logs a message than calls os.Exit(1)
-func Fatal(message string, fields ...zap.Field) {
-	singleton.Fatal(message, fields...)
+func Fatal(message string, fields ...interface{}) {
+	sugaredLogger.Fatalf(message, fields...)
 	os.Exit(1)
 }

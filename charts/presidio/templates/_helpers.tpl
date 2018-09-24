@@ -28,4 +28,16 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ include "presidio.fullname" . | printf "%s-scheduler" }}
 {{- end -}}
 
+{{- define "presidio.analyzer.address" -}}
+{{template "presidio.analyzer.fullname" .}}:{{.Values.analyzer.service.externalPort}}
+{{- end -}}
+
+{{- define "presidio.anonymizer.address" -}}
+{{template "presidio.anonymizer.fullname" .}}:{{.Values.anonymizer.service.externalPort}}
+{{- end -}}
+
+{{- define "presidio.scheduler.address" -}}
+{{template "presidio.scheduler.fullname" .}}:{{.Values.scheduler.service.externalPort}}
+{{- end -}}
+
 {{- define "presidio.rbac.version" }}rbac.authorization.k8s.io/v1beta1{{ end -}}

@@ -1,4 +1,4 @@
-package storageScanner
+package scanner
 
 import (
 	"fmt"
@@ -6,17 +6,16 @@ import (
 
 	"github.com/presid-io/stow"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/presidio-scanner/cmd/presidio-scanner/item"
 )
 
 type storageItem struct {
 	item stow.Item
 }
 
-// NewItem create new storage item
-func NewItem(item interface{}) item.Item {
+// NewStorageItem create new storage item
+func NewStorageItem(item interface{}) Item {
+	// cast item to storage item
 	stowItem := item.(stow.Item)
 	storageItem := storageItem{item: stowItem}
 	return &storageItem
@@ -38,7 +37,6 @@ func (storageItem *storageItem) IsContentTypeSupported() error {
 func (storageItem *storageItem) GetUniqueID() (string, error) {
 	etag, err := storageItem.item.ETag()
 	if err != nil {
-		log.Error(err.Error())
 		return "", err
 	}
 	return etag, nil

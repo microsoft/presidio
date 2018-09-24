@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='analyze.proto',
   package='types',
   syntax='proto3',
-  serialized_pb=_b('\n\ranalyze.proto\x12\x05types\x1a\x0c\x63ommon.proto\x1a\x0etemplate.proto\"<\n\x11\x41nalyzeApiRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x02 \x01(\t\"g\n\x0e\x41nalyzeRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12/\n\x0f\x61nalyzeTemplate\x18\x02 \x01(\x0b\x32\x16.types.AnalyzeTemplate\x12\x16\n\x0eminProbability\x18\x03 \x01(\t\"?\n\x0f\x41nalyzeResponse\x12,\n\x0e\x61nalyzeResults\x18\x01 \x03(\x0b\x32\x14.types.AnalyzeResult2J\n\x0e\x41nalyzeService\x12\x38\n\x05\x41pply\x12\x15.types.AnalyzeRequest\x1a\x16.types.AnalyzeResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\ranalyze.proto\x12\x05types\x1a\x0c\x63ommon.proto\x1a\x0etemplate.proto\"m\n\x11\x41nalyzeApiRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x02 \x01(\t\x12/\n\x0f\x61nalyzeTemplate\x18\x03 \x01(\x0b\x32\x16.types.AnalyzeTemplate\"g\n\x0e\x41nalyzeRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12/\n\x0f\x61nalyzeTemplate\x18\x02 \x01(\x0b\x32\x16.types.AnalyzeTemplate\x12\x16\n\x0eminProbability\x18\x03 \x01(\t\"?\n\x0f\x41nalyzeResponse\x12,\n\x0e\x61nalyzeResults\x18\x01 \x03(\x0b\x32\x14.types.AnalyzeResult2J\n\x0e\x41nalyzeService\x12\x38\n\x05\x41pply\x12\x15.types.AnalyzeRequest\x1a\x16.types.AnalyzeResponse\"\x00\x62\x06proto3')
   ,
   dependencies=[common__pb2.DESCRIPTOR,template__pb2.DESCRIPTOR,])
 
@@ -49,6 +49,13 @@ _ANALYZEAPIREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='analyzeTemplate', full_name='types.AnalyzeApiRequest.analyzeTemplate', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -62,7 +69,7 @@ _ANALYZEAPIREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=54,
-  serialized_end=114,
+  serialized_end=163,
 )
 
 
@@ -106,8 +113,8 @@ _ANALYZEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=116,
-  serialized_end=219,
+  serialized_start=165,
+  serialized_end=268,
 )
 
 
@@ -137,10 +144,11 @@ _ANALYZERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=221,
-  serialized_end=284,
+  serialized_start=270,
+  serialized_end=333,
 )
 
+_ANALYZEAPIREQUEST.fields_by_name['analyzeTemplate'].message_type = template__pb2._ANALYZETEMPLATE
 _ANALYZEREQUEST.fields_by_name['analyzeTemplate'].message_type = template__pb2._ANALYZETEMPLATE
 _ANALYZERESPONSE.fields_by_name['analyzeResults'].message_type = common__pb2._ANALYZERESULT
 DESCRIPTOR.message_types_by_name['AnalyzeApiRequest'] = _ANALYZEAPIREQUEST
@@ -177,8 +185,8 @@ _ANALYZESERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=286,
-  serialized_end=360,
+  serialized_start=335,
+  serialized_end=409,
   methods=[
   _descriptor.MethodDescriptor(
     name='Apply',

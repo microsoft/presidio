@@ -22,7 +22,7 @@ spec:
         ports:
         - containerPort: {{ .Values.anonymizer.service.internalPort }}
         env:
-          - name: presidio_NAMESPACE
+          - name: PRESIDIO_NAMESPACE
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace

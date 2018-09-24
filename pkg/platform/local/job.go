@@ -6,7 +6,7 @@ import (
 	"github.com/Microsoft/presidio/pkg/platform"
 )
 
-func (s *store) CreateJob(name string, image string, commands []string) error {
+func (s *store) CreateJob(name string, containerDetailsArray []platform.ContainerDetails) error {
 	return errors.New("Not implemented")
 }
 

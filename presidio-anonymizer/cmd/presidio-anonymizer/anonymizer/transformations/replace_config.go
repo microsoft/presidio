@@ -3,11 +3,11 @@ package transformations
 import (
 	"errors"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //ReplaceValue ...
-func ReplaceValue(text string, location message_types.Location, newValue string) (string, error) {
+func ReplaceValue(text string, location types.Location, newValue string) (string, error) {
 	if location.Length == 0 {
 		location.Length = location.End - location.Start
 	}

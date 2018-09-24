@@ -20,7 +20,8 @@ setuptools.setup(
         'analyzer.field_types.globally'],
     install_requires=[
         'grpcio>=1.13.0',
-        'grpcio-tools>=1.13.0',
+        'cython>=0.28.5',
+        'protobuf>=3.6.0',
         'tldextract>=2.2.0',
         'knack>=0.4.2'],
     include_package_data=True,

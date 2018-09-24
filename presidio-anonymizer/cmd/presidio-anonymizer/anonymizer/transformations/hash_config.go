@@ -1,15 +1,15 @@
 package transformations
 
 import (
+	"crypto/sha256"
 	"errors"
 	"fmt"
-	"hash/fnv"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //HashValue ...
-func HashValue(text string, location message_types.Location) (string, error) {
+func HashValue(text string, location types.Location) (string, error) {
 	if location.Length == 0 {
 		location.Length = location.End - location.Start
 	}
@@ -32,11 +32,10 @@ func HashValue(text string, location message_types.Location) (string, error) {
 }
 
 func hash(s string) (string, error) {
-	h := fnv.New32a()
+	h := sha256.New()
 	_, err := h.Write([]byte(s))
 	if err != nil {
 		return "", err
 	}
-	result := h.Sum32()
-	return fmt.Sprint(result), nil
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
