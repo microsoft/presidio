@@ -79,7 +79,7 @@ func (e *eventhubs) Receive(receiveFunc stream.ReceiveFunc) error {
 }
 
 func (e *eventhubs) handleEvent(ctx context.Context, event *eh.Event) error {
-	err := e.receiveFunc(*event.PartitionKey, event.ID, string(event.Data))
+	err := e.receiveFunc(ctx, *event.PartitionKey, event.ID, string(event.Data))
 	return err
 }
 

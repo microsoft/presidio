@@ -11,14 +11,12 @@ import (
 	server "github.com/Microsoft/presidio/pkg/server"
 )
 
-var analyzeService *types.AnalyzeServiceClient
-var anonymizeService *types.AnonymizeServiceClient
-var schedulerService *types.SchedulerServiceClient
-
-func setupGRPCServices() {
-	analyzeService = presidio.SetupAnalyzerService()
-	anonymizeService = presidio.SetupAnonymizerService()
-	schedulerService = presidio.SetupSchedulerService()
+func (api *API) setupGRPCServices() {
+	svc := presidio.Services{}
+	svc.SetupAnalyzerService()
+	svc.SetupAnonymizerService()
+	svc.SetupSchedulerService()
+	api.Services = &svc
 }
 
 func (api *API) analyze(c *gin.Context) {
@@ -30,7 +28,11 @@ func (api *API) analyze(c *gin.Context) {
 			return
 		}
 
-		res := api.invokeAnalyze(analyzeTemplate, analyzeAPIRequest.Text, c)
+		res, err := api.Services.AnalyzeItem(c, analyzeAPIRequest.Text, analyzeTemplate)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 		if res == nil {
 			return
 		}
@@ -54,12 +56,20 @@ func (api *API) anonymize(c *gin.Context) {
 			return
 		}
 
-		analyzeRes := api.invokeAnalyze(analyzeTemplate, anonymizeAPIRequest.Text, c)
+		analyzeRes, err := api.Services.AnalyzeItem(c, anonymizeAPIRequest.Text, analyzeTemplate)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 		if analyzeRes == nil {
 			return
 		}
 
-		anonymizeRes := api.invokeAnonymize(anonymizeTemplate, anonymizeAPIRequest.Text, analyzeRes.AnalyzeResults, c)
+		anonymizeRes, err := api.Services.AnonymizeItem(c, analyzeRes, anonymizeAPIRequest.Text, anonymizeTemplate)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 		if anonymizeRes == nil {
 			return
 		}
@@ -83,8 +93,8 @@ func (api *API) scheduleScannerCronJob(c *gin.Context) {
 }
 
 func (api *API) invokeScannerCronJobScheduler(scannerCronJobRequest *types.ScannerCronJobRequest, c *gin.Context) *types.ScannerCronJobResponse {
-	srv := *schedulerService
-	res, err := srv.ApplyScan(c, scannerCronJobRequest)
+
+	res, err := api.Services.SchedulerService.ApplyScan(c, scannerCronJobRequest)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
@@ -155,8 +165,7 @@ func (api *API) scheduleStreamsJob(c *gin.Context) {
 }
 
 func (api *API) invokeStreamsJobScheduler(streamsJobRequest *types.StreamsJobRequest, project string, c *gin.Context) *types.StreamsJobResponse {
-	srv := *schedulerService
-	res, err := srv.ApplyStream(c, streamsJobRequest)
+	res, err := api.Services.SchedulerService.ApplyStream(c, streamsJobRequest)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
@@ -204,41 +213,9 @@ func (api *API) getStreamsJobRequest(jobAPIRequest *types.StreamsJobApiRequest, 
 	return streamsJobRequest
 }
 
-func (api *API) invokeAnonymize(anonymizeTemplate *types.AnonymizeTemplate, text string, results []*types.AnalyzeResult, c *gin.Context) *types.AnonymizeResponse {
-	srv := *anonymizeService
-
-	request := &types.AnonymizeRequest{
-		Template:       anonymizeTemplate,
-		Text:           text,
-		AnalyzeResults: results,
-	}
-	res, err := srv.Apply(c, request)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return nil
-	}
-	return res
-}
-
-func (api *API) invokeAnalyze(analyzeTemplate *types.AnalyzeTemplate, text string, c *gin.Context) *types.AnalyzeResponse {
-	analyzeRequest := &types.AnalyzeRequest{
-		AnalyzeTemplate: analyzeTemplate,
-		Text:            text,
-	}
-
-	srv := *analyzeService
-	analyzeResponse, err := srv.Apply(c, analyzeRequest)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return nil
-	}
-
-	return analyzeResponse
-}
-
 func (api *API) getTemplate(project string, action string, id string, obj interface{}, c *gin.Context) {
 	key := presidio.CreateKey(project, action, id)
-	template, err := api.templates.GetTemplate(key)
+	template, err := api.Templates.GetTemplate(key)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}

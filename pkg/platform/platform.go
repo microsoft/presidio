@@ -62,6 +62,7 @@ type Settings struct {
 	StreamsImagePullPolicy  string
 	ScannerRequest          string
 	StreamRequest           string
+	QueueURL                string
 }
 
 //GetSettings from env vars
@@ -84,6 +85,7 @@ func GetSettings() *Settings {
 		StreamsImagePullPolicy:  os.Getenv("STREAMS_IMAGE_PULL_POLICY"),
 		ScannerRequest:          os.Getenv("SCANNER_REQUEST"),
 		StreamRequest:           os.Getenv("STREAM_REQUEST"),
+		QueueURL:                os.Getenv("QUEUE_URL"),
 	}
 
 	return &settings

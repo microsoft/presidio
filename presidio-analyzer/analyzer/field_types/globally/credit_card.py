@@ -22,7 +22,7 @@ class CreditCard(field_type.FieldType):
 
     # All credit cards - weak pattern is used, since credit cards has checksum
     pattern = field_pattern.FieldPattern()
-    pattern.regex = u'((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))(?![\\d])'
+    pattern.regex = u'((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))'
     pattern.name = 'All Credit Cards (weak)'
     pattern.strength = 0.3
     patterns.append(pattern)

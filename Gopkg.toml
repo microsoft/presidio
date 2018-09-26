@@ -11,6 +11,10 @@
   version = "0.11.4"
 
 [[constraint]]
+  name = "github.com/streadway/amqp"
+  branch = "master"
+  
+[[constraint]]
   branch = "master"
   name = "github.com/gin-contrib/cors"
 

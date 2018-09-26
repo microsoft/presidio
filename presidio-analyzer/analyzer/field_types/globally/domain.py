@@ -5,16 +5,15 @@ from field_types import field_type, field_pattern
 class Domain(field_type.FieldType):
     name = "DOMAIN_NAME"
     should_check_checksum = True
-    context = [
-        "domain",
-        "ip"
-    ]
+    context = ["domain", "ip"]
 
     patterns = []
 
     # Basic pattern, since domain has a checksum function
     pattern = field_pattern.FieldPattern()
-    pattern.regex = r"(([\da-zA-Z])([_\w-]{,62})\.){,127}(([\da-zA-Z])[_\w-]{,61})?([\da-zA-Z]\.((xn\-\-[a-zA-Z\d]+)|([a-zA-Z\d]{2,})))"
+    # pattern.regex = r"(([\da-zA-Z])([_\w-]{,62})\.){,127}(([\da-zA-Z])[_\w-]{,61})?([\da-zA-Z]\.((xn\-\-[a-zA-Z\d]+)|([a-zA-Z\d]{2,})))"
+    pattern.regex = r"\b(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))\b"
+
     pattern.name = 'Domain ()'
     pattern.strength = 0.5
 

@@ -104,7 +104,7 @@ func (k *kinesis) Receive(receiveFunc stream.ReceiveFunc) error {
 	// scan stream
 	err := k.consumer.Scan(k.ctx, func(r *consumer.Record) consumer.ScanStatus {
 
-		receiveFunc(aws.StringValue(r.PartitionKey), aws.StringValue(r.SequenceNumber), string(r.Data))
+		receiveFunc(k.ctx, aws.StringValue(r.PartitionKey), aws.StringValue(r.SequenceNumber), string(r.Data))
 
 		// continue scanning
 		return consumer.ScanStatus{}

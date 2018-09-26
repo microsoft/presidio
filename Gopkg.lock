@@ -533,6 +533,14 @@
   version = "v1.0.2"
 
 [[projects]]
+  branch = "master"
+  digest = "1:0c088044c1c1ee83e723692442df4fec9b3f2e57f7a99773485c97adfbc31695"
+  name = "github.com/streadway/amqp"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "70e15c650864f4fc47f5d3c82ea117285480895d"
+
+[[projects]]
   digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
   name = "github.com/stretchr/objx"
   packages = ["."]
@@ -1006,6 +1014,7 @@
     "github.com/presid-io/stow/azure",
     "github.com/presid-io/stow/s3",
     "github.com/satori/go.uuid",
+    "github.com/streadway/amqp",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "go.uber.org/zap",
@@ -1023,6 +1032,7 @@
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/kubernetes/fake",
     "k8s.io/client-go/tools/clientcmd",
+    "pack.ag/amqp",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

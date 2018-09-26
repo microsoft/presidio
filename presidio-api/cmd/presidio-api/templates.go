@@ -24,7 +24,7 @@ func (api *API) getActionTemplate(c *gin.Context) {
 	project := c.Param("project")
 	id := c.Param("id")
 	key := pkg_templates.CreateKey(project, action, id)
-	result, err := api.templates.GetTemplate(key)
+	result, err := api.Templates.GetTemplate(key)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -41,7 +41,7 @@ func (api *API) postActionTemplate(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	err = api.templates.InsertTemplate(project, action, id, value)
+	err = api.Templates.InsertTemplate(project, action, id, value)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -58,7 +58,7 @@ func (api *API) putActionTemplate(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	err = api.templates.UpdateTemplate(project, action, id, value)
+	err = api.Templates.UpdateTemplate(project, action, id, value)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
@@ -70,7 +70,7 @@ func (api *API) deleteActionTemplate(c *gin.Context) {
 	action := c.Param("action")
 	project := c.Param("project")
 	id := c.Param("id")
-	err := api.templates.DeleteTemplate(project, action, id)
+	err := api.Templates.DeleteTemplate(project, action, id)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return

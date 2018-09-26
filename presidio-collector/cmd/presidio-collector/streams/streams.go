@@ -1,7 +1,9 @@
-package main
+package streams
 
 import (
 	"context"
+
+	types "github.com/Microsoft/presidio-genproto/golang"
 
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
@@ -9,7 +11,9 @@ import (
 	"github.com/Microsoft/presidio/pkg/stream/kinesis"
 )
 
-func createStream() stream.Stream {
+//CreateStream create stream from configuration
+func CreateStream(streamRequest *types.StreamRequest) stream.Stream {
+
 	config := streamRequest.GetStreamConfig()
 	ctx := context.Background()
 
@@ -23,7 +27,6 @@ func createStream() stream.Stream {
 	//Azure Event Hub
 	if config.GetEhConfig() != nil {
 		c := config.GetEhConfig()
-
 		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), "", "", "")
 		return e
 	}

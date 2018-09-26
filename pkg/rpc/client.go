@@ -37,7 +37,7 @@ func connect(addr string) (*grpc.ClientConn, error) {
 }
 
 //SetupAnonymizeService ...
-func SetupAnonymizeService(address string) (*types.AnonymizeServiceClient, error) {
+func SetupAnonymizeService(address string) (types.AnonymizeServiceClient, error) {
 
 	conn, err := connect(address)
 	if err != nil {
@@ -45,35 +45,35 @@ func SetupAnonymizeService(address string) (*types.AnonymizeServiceClient, error
 	}
 
 	client := types.NewAnonymizeServiceClient(conn)
-	return &client, nil
+	return client, nil
 }
 
 //SetupAnalyzerService ...
-func SetupAnalyzerService(address string) (*types.AnalyzeServiceClient, error) {
+func SetupAnalyzerService(address string) (types.AnalyzeServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
 	client := types.NewAnalyzeServiceClient(conn)
-	return &client, nil
+	return client, nil
 }
 
 //SetupDatasinkService ...
-func SetupDatasinkService(address string) (*types.DatasinkServiceClient, error) {
+func SetupDatasinkService(address string) (types.DatasinkServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
 	client := types.NewDatasinkServiceClient(conn)
-	return &client, nil
+	return client, nil
 }
 
 //SetupSchedulerService ...
-func SetupSchedulerService(address string) (*types.SchedulerServiceClient, error) {
+func SetupSchedulerService(address string) (types.SchedulerServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
 		return nil, err
 	}
 	client := types.NewSchedulerServiceClient(conn)
-	return &client, nil
+	return client, nil
 }

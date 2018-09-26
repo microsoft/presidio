@@ -62,12 +62,12 @@ func NewConsumer(ctx context.Context, address string, topic string) stream.Strea
 
 //Receive message from kafka topic
 func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
-	run := true
-	for run {
+	for {
 		select {
 		case <-k.ctx.Done():
 			log.Info("Caught signal: terminating")
-			run = false
+			k.closeKafkaConnection()
+			return nil
 		case ev := <-k.consumer.Events():
 			switch e := ev.(type) {
 			case api.AssignedPartitions:
@@ -75,20 +75,18 @@ func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
 			case api.RevokedPartitions:
 				k.revokePartitions(e)
 			case *api.Message:
-				err := receiveFunc(strconv.Itoa(int(e.TopicPartition.Partition)), string(e.Key), string(e.Value))
+				err := receiveFunc(k.ctx, strconv.Itoa(int(e.TopicPartition.Partition)), string(e.Key), string(e.Value))
 				if err != nil {
 					log.Error(err.Error())
 				}
 			case api.PartitionEOF:
 				log.Info("%% Reached %v\n", e)
 			case api.Error:
-				run = false
 				return e
 			}
 		}
 	}
 
-	k.closeKafkaConnection()
 	return nil
 }
 
