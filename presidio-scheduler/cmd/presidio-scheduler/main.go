@@ -73,7 +73,7 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 	}
 
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
-	scannerPolicy := platform.ConvertPullPolicyStringToType(settings.ScannerImagePullPolicy)
+	collectorPolicy := platform.ConvertPullPolicyStringToType(settings.CollectorImagePullPolicy)
 	jobName := fmt.Sprintf("%s-scanner-cronjob", r.GetName())
 	err = store.CreateCronJob(jobName, r.Trigger.Schedule.GetRecurrencePeriod(), []platform.ContainerDetails{
 		{
@@ -86,7 +86,7 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 		},
 		{
 			Name:  "scanner",
-			Image: settings.ScannerImage,
+			Image: settings.CollectorImage,
 			EnvVars: []apiv1.EnvVar{
 				{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
 				{Name: "REDIS_URL", Value: settings.RedisURL},
@@ -94,7 +94,7 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 				{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
 				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
 			},
-			ImagePullPolicy: scannerPolicy,
+			ImagePullPolicy: collectorPolicy,
 		},
 	})
 	return &types.ScannerCronJobResponse{}, err
@@ -107,9 +107,10 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 	}
 
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
-	streamsPolicy := platform.ConvertPullPolicyStringToType(settings.StreamsImagePullPolicy)
+	collectorPolicy := platform.ConvertPullPolicyStringToType(settings.CollectorImagePullPolicy)
 
-	for index := 0; index < 1; index++ {
+	partitionCount := int(r.StreamsRequest.GetStreamConfig().PartitionCount)
+	for index := 0; index < partitionCount; index++ {
 		jobName := fmt.Sprintf("%s-streams-job-%d", r.GetName(), index)
 		err = store.CreateJob(jobName, []platform.ContainerDetails{
 			{
@@ -122,16 +123,15 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 			},
 			{
 				Name:  "streams",
-				Image: settings.StreamsImage,
+				Image: settings.CollectorImage,
 				EnvVars: []apiv1.EnvVar{
 					{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
 					{Name: "REDIS_URL", Value: settings.RedisURL},
 					{Name: "ANALYZER_SVC_ADDRESS", Value: settings.AnalyzerSvcAddress},
 					{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
 					{Name: "STREAM_REQUEST", Value: string(streamRequest)},
-					{Name: "PARTITON_ID", Value: string(index)},
 				},
-				ImagePullPolicy: streamsPolicy,
+				ImagePullPolicy: collectorPolicy,
 			},
 		})
 	}

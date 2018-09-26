@@ -16,6 +16,7 @@ type rabbitmq struct {
 	ctx     context.Context
 }
 
+//New rabbitmq
 func New(ctx context.Context, connStr string, queue string) queue.Queue {
 
 	conn, err := amqp.Dial(connStr)

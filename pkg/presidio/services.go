@@ -15,6 +15,7 @@ import (
 
 var settings *platform.Settings = platform.GetSettings()
 
+//Services exposes GRPC services
 type Services struct {
 	AnalyzerService  types.AnalyzeServiceClient
 	AnonymizeService types.AnonymizeServiceClient
@@ -93,6 +94,7 @@ func SetupCache() cache.Cache {
 	return cache
 }
 
+//AnalyzeItem - search for PII
 func (services *Services) AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error) {
 	analyzeRequest := &types.AnalyzeRequest{
 		AnalyzeTemplate: template,
@@ -107,6 +109,7 @@ func (services *Services) AnalyzeItem(ctx context.Context, text string, template
 	return results.AnalyzeResults, nil
 }
 
+//AnonymizeItem - anonymize text
 func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
 	if anonymizeTemplate != nil {
 
@@ -121,6 +124,7 @@ func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*t
 	return nil, nil
 }
 
+//SendResultToDatasink - export results
 func (services *Services) SendResultToDatasink(ctx context.Context, analyzeResults []*types.AnalyzeResult,
 	anonymizeResults *types.AnonymizeResponse, path string) error {
 
