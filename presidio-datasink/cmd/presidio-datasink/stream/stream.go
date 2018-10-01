@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/stream"
@@ -49,9 +50,8 @@ func (datasink *streamDatasink) WriteAnalyzeResults(results []*types.AnalyzeResu
 		return err
 	}
 
-	err = datasink.stream.Send(resultString)
+	datasink.stream.Send(resultString)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 

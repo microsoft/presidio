@@ -5,7 +5,6 @@ LDFLAGS            :=
 BINS        = presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
 IMAGES      = presidio-analyzer presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
 
-
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
 PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
@@ -22,16 +21,9 @@ build: $(BINS)
 $(BINS): vendor
 	go build -ldflags '$(LDFLAGS)' -o bin/$@ ./$@/cmd/$@
 
-build-docker-base: 
-	docker build -t presidio-golang -f pkg/presidio/golang.Dockerfile .
-	docker build -t presidio-alpine -f pkg/presidio/alpine.Dockerfile .
-
-
 # To use docker-build, you need to have Docker installed and configured. You should also set
 # DOCKER_REGISTRY to your own personal registry if you are not pushing to the official upstream.
 .PHONY: docker-build
-docker-build: build-docker-base
-#docker-build: build-docker-bins
 docker-build: $(addsuffix -image,$(IMAGES))
 
 %-image:

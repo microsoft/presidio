@@ -7,6 +7,7 @@ import (
 	"github.com/presid-io/stow"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/storage"
 )

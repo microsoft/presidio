@@ -6,6 +6,7 @@ import (
 	"context"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	"github.com/Microsoft/presidio/pkg/cache"
 	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"

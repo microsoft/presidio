@@ -3,18 +3,11 @@ package kube
 import (
 	"testing"
 	"time"
-
-	"k8s.io/client-go/kubernetes/fake"
 )
 
 func TestPutKVPair(t *testing.T) {
 
-	client := fake.NewSimpleClientset()
-
-	store := &store{
-		client:    client,
-		namespace: "default",
-	}
+	store, _ := NewFake()
 
 	value := "value1"
 	key := "key@key@key"
@@ -32,12 +25,7 @@ func TestPutKVPair(t *testing.T) {
 }
 
 func TestDeleteKVPair(t *testing.T) {
-	client := fake.NewSimpleClientset()
-
-	store := &store{
-		client:    client,
-		namespace: "default",
-	}
+	store, _ := NewFake()
 
 	key := "key@key@key"
 

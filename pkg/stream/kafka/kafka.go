@@ -3,16 +3,18 @@ package kafka
 import (
 	"context"
 	"strconv"
+	"time"
 
-	api "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/Shopify/sarama"
+	cluster "github.com/bsm/sarama-cluster"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/stream"
 )
 
 type kafka struct {
-	producer *api.Producer
-	consumer *api.Consumer
+	producer sarama.AsyncProducer
+	consumer *cluster.Consumer
 	ctx      context.Context
 	topic    string
 }
@@ -20,7 +22,12 @@ type kafka struct {
 //NewProducer Return new Kafka Producer stream
 func NewProducer(address string, topic string) stream.Stream {
 
-	p, err := api.NewProducer(&api.ConfigMap{"bootstrap.servers": address})
+	config := sarama.NewConfig()
+	config.Producer.Retry.Max = 5
+	// The level of acknowledgement reliability needed from the broker.
+	config.Producer.RequiredAcks = sarama.WaitForAll
+	brokers := []string{address}
+	p, err := sarama.NewAsyncProducer(brokers, config)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -32,29 +39,37 @@ func NewProducer(address string, topic string) stream.Stream {
 }
 
 //NewConsumer Return new Kafka Consumer stream
-func NewConsumer(ctx context.Context, address string, topic string) stream.Stream {
+func NewConsumer(ctx context.Context, address string, topic string, consumerGroup string) stream.Stream {
 
-	c, err := api.NewConsumer(&api.ConfigMap{
-		"bootstrap.servers":               address,
-		"group.id":                        "presidio",
-		"session.timeout.ms":              6000,
-		"go.events.channel.enable":        true,
-		"go.application.rebalance.enable": true,
-		"default.topic.config":            api.ConfigMap{"auto.offset.reset": "earliest"},
-	})
+	config := cluster.NewConfig()
+	config.Consumer.Return.Errors = true
+	config.Group.Return.Notifications = true
+	config.Consumer.Offsets.Initial = sarama.OffsetOldest
 
+	// init consumer
+	brokers := []string{address}
+	topics := []string{topic}
+	consumer, err := cluster.NewConsumer(brokers, consumerGroup, topics, config)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	err = c.SubscribeTopics([]string{topic}, nil)
+	// consume errors
+	go func() {
+		for err := range consumer.Errors() {
+			log.Error("Error: %s\n", err.Error())
+		}
+	}()
 
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	// consume notifications
+	go func() {
+		for ntf := range consumer.Notifications() {
+			log.Info("Rebalanced: %+v\n", ntf)
+		}
+	}()
 
 	return &kafka{
-		consumer: c,
+		consumer: consumer,
 		topic:    topic,
 		ctx:      ctx,
 	}
@@ -62,78 +77,46 @@ func NewConsumer(ctx context.Context, address string, topic string) stream.Strea
 
 //Receive message from kafka topic
 func (k *kafka) Receive(receiveFunc stream.ReceiveFunc) error {
+
 	for {
 		select {
 		case <-k.ctx.Done():
 			log.Info("Caught signal: terminating")
-			k.closeKafkaConnection()
-			return nil
-		case ev := <-k.consumer.Events():
-			switch e := ev.(type) {
-			case api.AssignedPartitions:
-				k.assignPartitions(e)
-			case api.RevokedPartitions:
-				k.revokePartitions(e)
-			case *api.Message:
-				err := receiveFunc(k.ctx, strconv.Itoa(int(e.TopicPartition.Partition)), string(e.Key), string(e.Value))
+			return k.consumer.Close()
+
+		case msg, ok := <-k.consumer.Messages():
+			if ok {
+
+				err := receiveFunc(k.ctx, strconv.Itoa(int(msg.Partition)), string(msg.Offset), string(msg.Value))
 				if err != nil {
 					log.Error(err.Error())
 				}
-			case api.PartitionEOF:
-				log.Info("%% Reached %v\n", e)
-			case api.Error:
-				return e
+				k.consumer.MarkOffset(msg, "") // mark message as processed
 			}
 		}
-	}
 
-	return nil
-}
-
-func (k *kafka) closeKafkaConnection() {
-	err := k.consumer.Close()
-	if err != nil {
-		log.Error(err.Error())
-	}
-}
-func (k *kafka) assignPartitions(e api.AssignedPartitions) {
-	log.Info("%% %v\n", e)
-	err := k.consumer.Assign(e.Partitions)
-	if err != nil {
-		log.Error(err.Error())
-	}
-}
-
-func (k *kafka) revokePartitions(e api.RevokedPartitions) {
-	log.Info("%% %v\n", e)
-	err := k.consumer.Unassign()
-	if err != nil {
-		log.Error(err.Error())
+		return nil
 	}
 }
 
 //Send message to kafka topic
 func (k *kafka) Send(message string) error {
+	var err error
 
-	// Delivery report handler for produced messages
 	go func() {
-		for e := range k.producer.Events() {
-			switch ev := e.(type) {
-			case *api.Message:
-				if ev.TopicPartition.Error != nil {
-					log.Error("Delivery failed: %v\n", ev.TopicPartition)
-				} else {
-					log.Info("Delivered message to %v\n", ev.TopicPartition)
-				}
-			}
+
+		strTime := strconv.Itoa(int(time.Now().Unix()))
+		msg := &sarama.ProducerMessage{
+			Topic: k.topic,
+			Key:   sarama.StringEncoder(strTime),
+			Value: sarama.StringEncoder(message),
+		}
+		select {
+		case k.producer.Input() <- msg:
+			log.Info("Delivered message to %v:%v\n", msg.Topic, msg.Partition)
+		case err1 := <-k.producer.Errors():
+			err = err1.Err
 		}
 	}()
-
-	err := k.producer.Produce(&api.Message{
-		TopicPartition: api.TopicPartition{Topic: &k.topic, Partition: api.PartitionAny},
-		Value:          []byte(message),
-	}, nil)
-
 	return err
-
 }

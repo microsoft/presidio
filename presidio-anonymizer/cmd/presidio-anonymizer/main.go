@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"

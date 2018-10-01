@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	pkg_templates "github.com/Microsoft/presidio/pkg/presidio"
 	server "github.com/Microsoft/presidio/pkg/server"
 )

@@ -12,7 +12,7 @@ import (
 	"github.com/Azure/azure-storage-blob-go/2016-05-31/azblob"
 	"github.com/Azure/go-autorest/autorest/azure"
 
-	"github.com/Microsoft/presidio/pkg/logger"
+	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/stream"
 )
 
@@ -28,7 +28,7 @@ func NewProducer(ctx context.Context, connStr string) stream.Stream {
 
 	hub, err := eh.NewHubFromConnectionString(connStr)
 	if err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	return &eventhubs{
@@ -43,7 +43,7 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 	// Azure Event Hub connection string
 	parsed, err := conn.ParsedConnectionFromStr(eventHubConnStr)
 	if err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 	// SAS token provider for Azure Event Hubs
 	provider, err := sas.NewTokenProvider(sas.TokenProviderWithKey(parsed.KeyName, parsed.Key))
@@ -54,13 +54,13 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 	cred := azblob.NewSharedKeyCredential(storageAccountName, storageAccountKey)
 	leaserCheckpointer, err := storage.NewStorageLeaserCheckpointer(cred, storageAccountName, storageContainerName, azure.PublicCloud)
 	if err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	// create a new EPH processor
 	hub, err := eph.New(ctx, parsed.Namespace, parsed.HubName, provider, leaserCheckpointer, leaserCheckpointer)
 	if err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	return &eventhubs{

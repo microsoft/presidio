@@ -2,6 +2,7 @@ package streams
 
 import (
 	"context"
+	"fmt"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
@@ -20,7 +21,7 @@ func CreateStream(streamRequest *types.StreamRequest) stream.Stream {
 	//Kafka
 	if config.GetKafkaConfig() != nil {
 		c := config.GetKafkaConfig()
-		k := kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic())
+		k := kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic(), fmt.Sprintf("presidio-cg-%s", c.GetTopic()))
 		return k
 	}
 

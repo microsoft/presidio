@@ -4,6 +4,7 @@ import (
 	"github.com/presid-io/stow"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/storage"
 )

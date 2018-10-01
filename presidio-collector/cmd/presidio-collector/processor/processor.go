@@ -1,10 +1,11 @@
-package main
+package processor
 
 import (
 	"context"
 	"fmt"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	"github.com/Microsoft/presidio/pkg/cache"
 	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/stream"
@@ -13,7 +14,8 @@ import (
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
 )
 
-func receiveEventsFromStream(st stream.Stream, services *presidio.Services) error {
+//ReceiveEventsFromStream ..
+func ReceiveEventsFromStream(st stream.Stream, services *presidio.Services, streamRequest *types.StreamRequest) error {
 	return st.Receive(func(ctx context.Context, partition string, sequence string, text string) error {
 
 		analyzerResult, err := services.AnalyzeItem(ctx, text, streamRequest.AnalyzeTemplate)
@@ -42,7 +44,8 @@ func receiveEventsFromStream(st stream.Stream, services *presidio.Services) erro
 	})
 }
 
-func scanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, services *presidio.Services) error {
+//ScanStorage ..
+func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, services *presidio.Services, scanRequest *types.ScanRequest) error {
 	return scan.Scan(func(item interface{}) error {
 		var analyzerResult []*types.AnalyzeResult
 		var text string

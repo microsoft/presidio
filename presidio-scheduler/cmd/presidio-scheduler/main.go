@@ -9,6 +9,7 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
@@ -72,9 +73,17 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 		return &types.ScannerCronJobResponse{}, err
 	}
 
+	if settings == nil {
+		return &types.ScannerCronJobResponse{}, fmt.Errorf("Settings is null")
+	}
+	if r.Trigger.Schedule == nil {
+		return &types.ScannerCronJobResponse{}, fmt.Errorf("Trigger schedule is null")
+	}
+
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
 	collectorPolicy := platform.ConvertPullPolicyStringToType(settings.CollectorImagePullPolicy)
 	jobName := fmt.Sprintf("%s-scanner-cronjob", r.GetName())
+
 	err = store.CreateCronJob(jobName, r.Trigger.Schedule.GetRecurrencePeriod(), []platform.ContainerDetails{
 		{
 			Name:  "datasink",
@@ -104,6 +113,14 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 	streamRequest, err := json.Marshal(r.StreamsRequest)
 	if err != nil {
 		return &types.StreamsJobResponse{}, err
+	}
+
+	if settings == nil {
+		return &types.StreamsJobResponse{}, fmt.Errorf("Settings is null")
+	}
+
+	if r.StreamsRequest.StreamConfig == nil {
+		return &types.StreamsJobResponse{}, fmt.Errorf("Stream config is null")
 	}
 
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)

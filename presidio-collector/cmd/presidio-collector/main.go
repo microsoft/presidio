@@ -4,10 +4,11 @@ import (
 	"context"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/presidio"
-
+	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/processor"
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/streams"
 )
@@ -33,10 +34,11 @@ func main() {
 			svc.SetupAnonymizerService()
 		}
 
-		err := receiveEventsFromStream(st, &svc)
+		err := processor.ReceiveEventsFromStream(st, &svc, streamRequest)
 		if err != nil {
 			log.Error(err.Error())
 		}
+		return
 	}
 
 	if scanRequest != nil {
@@ -49,7 +51,7 @@ func main() {
 
 		// Scan
 		ctx := context.Background()
-		err := scanStorage(ctx, scan, cache, &svc)
+		err := processor.ScanStorage(ctx, scan, cache, &svc, scanRequest)
 
 		if err != nil {
 			log.Fatal(err.Error())

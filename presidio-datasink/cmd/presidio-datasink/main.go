@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"

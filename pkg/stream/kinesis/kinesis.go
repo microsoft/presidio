@@ -130,8 +130,5 @@ func (k *kinesis) Send(message string) error {
 		StreamName: aws.String(k.streamName),
 		Records:    records,
 	})
-	if err != nil {
-		log.Error("error putting records: %v", err)
-	}
-	return nil
+	return err
 }

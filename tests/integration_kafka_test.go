@@ -3,7 +3,6 @@
 package tests
 
 import (
-	//"github.com/Microsoft/presidio/pkg/stream"
 	"context"
 	"testing"
 	"time"
@@ -15,8 +14,9 @@ import (
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
 )
 
-const address = "localhost"
+const address = "localhost:9092"
 const topic = "presidio-topic"
+const cg = "presidio-cg"
 
 func TestKafka(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*10))
@@ -24,20 +24,17 @@ func TestKafka(t *testing.T) {
 
 	p := kafka.NewProducer(address, topic)
 	msg := uuid.NewV4().String()
-	err := p.Send(msg)
-	if err != nil {
-		t.Fatal(err)
-	}
+	p.Send(msg)
 
-	c := kafka.NewConsumer(ctx, address, topic)
+	c := kafka.NewConsumer(ctx, address, topic, cg)
 
-	r := func(partition string, seq string, data string) error {
+	r := func(ctx context.Context, partition string, seq string, data string) error {
 		log.Info("Received: %s,%s,%s", partition, seq, data)
 		assert.Equal(t, msg, data)
 		return nil
 	}
 
-	err = c.Receive(r)
+	err := c.Receive(r)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/database"
 	datasinkInterface "github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
