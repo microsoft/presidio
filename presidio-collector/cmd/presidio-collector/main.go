@@ -26,7 +26,7 @@ func main() {
 
 	svc.SetupAnalyzerService()
 
-	if streamRequest != nil {
+	if streamRequest.StreamConfig != nil {
 		st := streams.CreateStream(streamRequest)
 
 		setupDatasinkService(&svc, streamRequest.DatasinkTemplate)
@@ -41,7 +41,7 @@ func main() {
 		return
 	}
 
-	if scanRequest != nil {
+	if scanRequest.ScanTemplate != nil {
 		cache := presidio.SetupCache()
 		setupDatasinkService(&svc, scanRequest.DatasinkTemplate)
 		if scanRequest.AnonymizeTemplate != nil {
@@ -79,12 +79,12 @@ func parseRequest(settings *platform.Settings) {
 		settings.GrpcPort = "5000"
 	}
 
-	streamRequest := &types.StreamRequest{}
+	streamRequest = &types.StreamRequest{}
 	presidio.ConvertJSONToInterface(settings.StreamRequest, streamRequest)
-	if streamRequest != nil {
+	if streamRequest.StreamConfig != nil {
 		return
 	}
-	scanRequest := &types.ScanRequest{}
+	scanRequest = &types.ScanRequest{}
 	presidio.ConvertJSONToInterface(settings.ScannerRequest, scanRequest)
 
 }

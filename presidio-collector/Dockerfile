@@ -17,6 +17,7 @@ FROM alpine:3.8
 
 ARG NAME=presidio-collector
 
+RUN apk add ca-certificates
 WORKDIR  /usr/bin/
 COPY --from=build-env /usr/bin/${NAME} /usr/bin/
 CMD  /usr/bin/presidio-collector
