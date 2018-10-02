@@ -156,7 +156,7 @@ func (api *API) scheduleStreamsJob(c *gin.Context) {
 	if c.Bind(&streamsJobRequest) == nil {
 		project := c.Param("project")
 		streamsJobRequest := api.getStreamsJobRequest(&streamsJobRequest, project, c)
-		scheulderResponse := api.invokeStreamsJobScheduler(streamsJobRequest, project, c)
+		scheulderResponse := api.invokeStreamsJobScheduler(streamsJobRequest, c)
 		if scheulderResponse == nil {
 			return
 		}
@@ -165,7 +165,7 @@ func (api *API) scheduleStreamsJob(c *gin.Context) {
 	}
 }
 
-func (api *API) invokeStreamsJobScheduler(streamsJobRequest *types.StreamsJobRequest, project string, c *gin.Context) *types.StreamsJobResponse {
+func (api *API) invokeStreamsJobScheduler(streamsJobRequest *types.StreamsJobRequest, c *gin.Context) *types.StreamsJobResponse {
 	res, err := api.Services.SchedulerService.ApplyStream(c, streamsJobRequest)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

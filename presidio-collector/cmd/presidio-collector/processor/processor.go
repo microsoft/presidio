@@ -62,7 +62,7 @@ func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, s
 			return err
 		}
 
-		shouldScan, err := checkIfItemExistInCache(cache, uniqueID)
+		shouldScan, err := isItemInCache(cache, uniqueID)
 		if err != nil {
 			return err
 		}
@@ -79,11 +79,15 @@ func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, s
 			if err != nil {
 				return err
 			}
+			log.Debug("analyzed %d results", len(analyzerResult))
 
 			if len(analyzerResult) > 0 {
 				anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult, text, scanRequest.AnonymizeTemplate)
 				if err != nil {
 					return err
+				}
+				if anonymizerResult != nil {
+					log.Debug("anonymized %d results", len(analyzerResult))
 				}
 
 				err = services.SendResultToDatasink(ctx, analyzerResult, anonymizerResult, itemPath)
@@ -102,7 +106,7 @@ func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, s
 	})
 }
 
-func checkIfItemExistInCache(cache cache.Cache, key string) (bool, error) {
+func isItemInCache(cache cache.Cache, key string) (bool, error) {
 
 	val, err := cache.Get(key)
 	if err != nil {
