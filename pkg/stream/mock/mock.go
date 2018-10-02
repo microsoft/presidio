@@ -1,6 +1,8 @@
 package mock
 
 import (
+	"context"
+
 	"github.com/satori/go.uuid"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
@@ -50,7 +52,7 @@ func (m *mock) Receive(receiveFunc stream.ReceiveFunc) error {
 			break
 		}
 
-		err = receiveFunc(msg.Partition, msg.Key, msg.Value)
+		err = receiveFunc(context.Background(), msg.Partition, msg.Key, msg.Value)
 		if err != nil {
 			log.Error(err.Error())
 		}

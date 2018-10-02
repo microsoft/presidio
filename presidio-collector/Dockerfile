@@ -1,6 +1,6 @@
 FROM golang:1.10-alpine AS build-env
 
-ARG NAME=presidio-scanner
+ARG NAME=presidio-collector
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
 ARG VERSION=latest
 
@@ -15,9 +15,8 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Mi
 
 FROM alpine:3.8
 
-RUN apk add --no-cache --update ca-certificates
+ARG NAME=presidio-collector
 
-ARG NAME=presidio-scanner
 WORKDIR  /usr/bin/
 COPY --from=build-env /usr/bin/${NAME} /usr/bin/
-CMD  /usr/bin/presidio-scanner
+CMD  /usr/bin/presidio-collector

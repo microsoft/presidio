@@ -10,10 +10,9 @@ import (
 	"github.com/go-xorm/xorm"
 	// import postegrsql driver
 	_ "github.com/lib/pq"
-	// import sqlite driver
-	_ "github.com/mattn/go-sqlite3"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )

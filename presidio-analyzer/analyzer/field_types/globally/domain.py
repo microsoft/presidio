@@ -5,10 +5,7 @@ from field_types import field_type, field_pattern
 class Domain(field_type.FieldType):
     name = "DOMAIN_NAME"
     should_check_checksum = True
-    context = [
-        "domain",
-        "ip"
-    ]
+    context = ["domain", "ip"]
 
     patterns = []
 

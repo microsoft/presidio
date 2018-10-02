@@ -1,5 +1,9 @@
 package stream
 
+import (
+	"context"
+)
+
 //Stream interface
 type Stream interface {
 	// Send Message
@@ -9,4 +13,4 @@ type Stream interface {
 }
 
 //ReceiveFunc function reference with partition_id sequence number and message data
-type ReceiveFunc func(string, string, string) error
+type ReceiveFunc func(context.Context, string, string, string) error

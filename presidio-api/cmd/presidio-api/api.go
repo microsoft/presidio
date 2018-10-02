@@ -17,11 +17,15 @@ const (
 
 //API kv store
 type API struct {
-	templates *presidio.Templates
+	Templates *presidio.Templates
+	Services  *presidio.Services
 }
 
 //New KV store
 func New(s platform.Store) *API {
 	template := presidio.New(s)
-	return &API{templates: template}
+	return &API{
+		Templates: template,
+		Services:  &presidio.Services{},
+	}
 }

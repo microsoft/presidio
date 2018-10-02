@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"

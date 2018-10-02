@@ -3,9 +3,12 @@ package stream
 import (
 	"testing"
 
+	"context"
+
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/stream/mock"
 )
@@ -22,7 +25,7 @@ func TestResultsAreWrittenToStream(t *testing.T) {
 
 	// Act
 	mockStream.WriteAnalyzeResults(getAnalyzerMockResult(), path)
-	receive := func(partition string, seq string, message string) error {
+	receive := func(ctx context.Context, partition string, seq string, message string) error {
 		// verify
 		assert.Equal(t, resultString, message)
 		assert.Equal(t, "1", partition)

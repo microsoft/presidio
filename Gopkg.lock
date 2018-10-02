@@ -98,6 +98,14 @@
   revision = "19596462486229d3690dd2bc95e9e7e50bff3653"
 
 [[projects]]
+  digest = "1:6981402aef27693f4b2ec619117abd263fde29f8c1dfac46eef0f35038d37513"
+  name = "github.com/Shopify/sarama"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ec843464b50d4c8b56403ec9d589cf41ea30e722"
+  version = "v1.19.0"
+
+[[projects]]
   digest = "1:4f663e942e1a0af5a01b353b8610b74e6cd27f5804248c57af109987c1394727"
   name = "github.com/aws/aws-sdk-go"
   packages = [
@@ -142,12 +150,12 @@
   version = "v1.15.38"
 
 [[projects]]
-  digest = "1:a878821c51a2390c0c958d179e7e19ec42cf55a9cce6d4bdbc61d7421b209014"
-  name = "github.com/confluentinc/confluent-kafka-go"
-  packages = ["kafka"]
+  digest = "1:526d64d0a3ac6c24875724a9355895be56a21f89a5d3ab5ba88d91244269a7d8"
+  name = "github.com/bsm/sarama-cluster"
+  packages = ["."]
   pruneopts = "UT"
-  revision = "5e4d04e05fc319ce5996a867aafef29059f26862"
-  version = "v0.11.4"
+  revision = "c618e605e15c0d7535f6c96ff8efbb0dba4fd66c"
+  version = "v2.1.15"
 
 [[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
@@ -175,6 +183,30 @@
   pruneopts = "UT"
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
+
+[[projects]]
+  digest = "1:1f0c7ab489b407a7f8f9ad16c25a504d28ab461517a971d341388a56156c1bd7"
+  name = "github.com/eapache/go-resiliency"
+  packages = ["breaker"]
+  pruneopts = "UT"
+  revision = "ea41b0fad31007accc7f806884dcdf3da98b79ce"
+  version = "v1.1.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:79f16588b5576b1b3cd90e48d2374cc9a1a8776862d28d8fd0f23b0e15534967"
+  name = "github.com/eapache/go-xerial-snappy"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "776d5712da21bc4762676d614db1d8a64f4238b0"
+
+[[projects]]
+  digest = "1:444b82bfe35c83bbcaf84e310fb81a1f9ece03edfed586483c869e2c046aef69"
+  name = "github.com/eapache/queue"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "44cc805cf13205b55f69e14bcb69867d1ae92f98"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:2cd7915ab26ede7d95b8749e6b1f933f1c6d5398030684e6505940a10f31cfda"
@@ -314,6 +346,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:4a0c6bb4805508a6287675fac876be2ac1182539ca8a32468d8128882e9d5009"
+  name = "github.com/golang/snappy"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
+
+[[projects]]
+  branch = "master"
   digest = "1:0bfbe13936953a98ae3cfe8ed6670d396ad81edf069a806d2f6515d7bb6950df"
   name = "github.com/google/btree"
   packages = ["."]
@@ -441,12 +481,12 @@
   version = "v0.0.4"
 
 [[projects]]
-  branch = "master"
-  digest = "1:2fdd396c9a872d9d21dc8358274ed36065b75dc4b36c4483f153725091a8e8eb"
+  digest = "1:3cafc6a5a1b8269605d9df4c6956d43d8011fc57f266ca6b9d04da6c09dee548"
   name = "github.com/mattn/go-sqlite3"
   packages = ["."]
   pruneopts = "UT"
-  revision = "6de94b0b99071c779a0a8d4072b65d95c42c12d6"
+  revision = "25ecb14adfc7543176f7d85291ec7dba82c6f7e4"
+  version = "v1.9.0"
 
 [[projects]]
   digest = "1:645110e089152bd0f4a011a2648fbb0e4df5977be73ca605781157ac297f50c4"
@@ -489,6 +529,17 @@
   version = "v2.0.1"
 
 [[projects]]
+  digest = "1:4f0885b3f0dba96128a09a6f4b4231c42688fbd05f323224c6aa5adc9f4e87bf"
+  name = "github.com/pierrec/lz4"
+  packages = [
+    ".",
+    "internal/xxh32",
+  ]
+  pruneopts = "UT"
+  revision = "bb6bfd13c6a262f1943c0446eb25b7f54c1fb9a2"
+  version = "v2.0.6"
+
+[[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -517,6 +568,14 @@
   revision = "f238b4a739a060b949c2a6bc38f61d66e14fa8f8"
 
 [[projects]]
+  branch = "master"
+  digest = "1:c4556a44e350b50a490544d9b06e9fba9c286c21d6c0e47f54f3a9214597298c"
+  name = "github.com/rcrowley/go-metrics"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e2704e165165ec55d062f5919b4b29494e9fa790"
+
+[[projects]]
   digest = "1:274f67cb6fed9588ea2521ecdac05a6d62a8c51c074c1fccc6a49a40ba80e925"
   name = "github.com/satori/go.uuid"
   packages = ["."]
@@ -531,6 +590,14 @@
   pruneopts = "UT"
   revision = "9a97c102cda95a86cec2345a6f09f55a939babf5"
   version = "v1.0.2"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0c088044c1c1ee83e723692442df4fec9b3f2e57f7a99773485c97adfbc31695"
+  name = "github.com/streadway/amqp"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "70e15c650864f4fc47f5d3c82ea117285480895d"
 
 [[projects]]
   digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
@@ -985,10 +1052,11 @@
     "github.com/Azure/azure-storage-blob-go/2016-05-31/azblob",
     "github.com/Azure/go-autorest/autorest/azure",
     "github.com/Microsoft/presidio-genproto/golang",
+    "github.com/Shopify/sarama",
     "github.com/aws/aws-sdk-go/aws",
     "github.com/aws/aws-sdk-go/aws/session",
     "github.com/aws/aws-sdk-go/service/kinesis",
-    "github.com/confluentinc/confluent-kafka-go/kafka",
+    "github.com/bsm/sarama-cluster",
     "github.com/denisenkom/go-mssqldb",
     "github.com/gin-contrib/cors",
     "github.com/gin-contrib/zap",
@@ -1006,6 +1074,7 @@
     "github.com/presid-io/stow/azure",
     "github.com/presid-io/stow/s3",
     "github.com/satori/go.uuid",
+    "github.com/streadway/amqp",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "go.uber.org/zap",

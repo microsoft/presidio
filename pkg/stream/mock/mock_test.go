@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ func TestStream(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	receive := func(partition string, seq string, message string) error {
+	receive := func(ctx context.Context, partition string, seq string, message string) error {
 		assert.Equal(t, msg, message)
 		assert.Equal(t, "1", partition)
 		return nil

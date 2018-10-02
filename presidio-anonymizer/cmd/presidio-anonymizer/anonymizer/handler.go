@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	methods "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations"
 )
 

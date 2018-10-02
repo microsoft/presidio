@@ -38,8 +38,10 @@ class Matcher(object):
 
         # Remove punctionation, stop words and take lemma form and remove
         # duplicates
-        keywords = list(filter(
-            lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be', nlp_context))
+        keywords = list(
+            filter(
+                lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be',
+                nlp_context))
         keywords = list(set(map(lambda k: k.lemma_.lower(), keywords)))
 
         return keywords
@@ -102,6 +104,7 @@ class Matcher(object):
 
         logging.debug('--- calc_prob_time[{}]: {}.{} seconds'.format(
                 field.name, calc_probability_time.seconds, calc_probability_time.microseconds))
+
 
         res.location.start = start
         res.location.end = end
@@ -192,8 +195,8 @@ class Matcher(object):
                 continue
             field.text = ent.text
 
-            res = self.__create_result(doc, NER_STRENGTH, field, ent.start_char,
-                                       ent.end_char)
+            res = self.__create_result(doc, NER_STRENGTH, field,
+                                       ent.start_char, ent.end_char)
 
             if res is not None:
                 results.append(res)
@@ -206,7 +209,7 @@ class Matcher(object):
         return text
 
     def __new_payload(self, name, data):
-        return type(name, (object,), data)
+        return type(name, (object, ), data)
 
     def __analyze_field_type(self, payload):
         current_field = field_factory.FieldFactory.create(
@@ -266,9 +269,7 @@ class Matcher(object):
 
     def __remove_checksum_duplicates(self, results):
         results_with_checksum = list(
-            filter(
-                lambda r: self.__is_checksum_result(r),
-                results))
+            filter(lambda r: self.__is_checksum_result(r), results))
 
         # Remove matches of the same text, if there's a match with checksum and
         # probability = 1
@@ -279,10 +280,12 @@ class Matcher(object):
             if result not in results_with_checksum:
                 for result_with_checksum in results_with_checksum:
                     # If result is equal to or substring of a checksum result
-                    if (result.text == result_with_checksum.text or
-                        (result.text in result_with_checksum.text and
-                         result.location.start >= result_with_checksum.location.start and
-                         result.location.end <= result_with_checksum.location.end)):
+                    if (result.text == result_with_checksum.text
+                            or (result.text in result_with_checksum.text
+                                and result.location.start >=
+                                result_with_checksum.location.start
+                                and result.location.end <=
+                                result_with_checksum.location.end)):
                         valid_result = False
                         break
 
@@ -313,12 +316,12 @@ class Matcher(object):
 
         payloads = []
         for field_type_string_filter in field_type_string_filters:
-            payload = self.__new_payload('Payload',
-                                         {
-                                             'doc': doc,
-                                             'field_type_string_filter': field_type_string_filter,
-                                             'results': results
-                                         })
+            payload = self.__new_payload(
+                'Payload', {
+                    'doc': doc,
+                    'field_type_string_filter': field_type_string_filter,
+                    'results': results
+                })
             payloads.append(payload)
 
         with futures.ThreadPoolExecutor(max_workers=1) as executor:

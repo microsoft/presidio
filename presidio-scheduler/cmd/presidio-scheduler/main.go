@@ -9,6 +9,7 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
@@ -72,9 +73,17 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 		return &types.ScannerCronJobResponse{}, err
 	}
 
+	if settings == nil {
+		return &types.ScannerCronJobResponse{}, fmt.Errorf("Settings is null")
+	}
+	if r.Trigger.Schedule == nil {
+		return &types.ScannerCronJobResponse{}, fmt.Errorf("Trigger schedule is null")
+	}
+
 	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
-	scannerPolicy := platform.ConvertPullPolicyStringToType(settings.ScannerImagePullPolicy)
+	collectorPolicy := platform.ConvertPullPolicyStringToType(settings.CollectorImagePullPolicy)
 	jobName := fmt.Sprintf("%s-scanner-cronjob", r.GetName())
+
 	err = store.CreateCronJob(jobName, r.Trigger.Schedule.GetRecurrencePeriod(), []platform.ContainerDetails{
 		{
 			Name:  "datasink",
@@ -86,7 +95,7 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 		},
 		{
 			Name:  "scanner",
-			Image: settings.ScannerImage,
+			Image: settings.CollectorImage,
 			EnvVars: []apiv1.EnvVar{
 				{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
 				{Name: "REDIS_URL", Value: settings.RedisURL},
@@ -94,7 +103,7 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 				{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
 				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
 			},
-			ImagePullPolicy: scannerPolicy,
+			ImagePullPolicy: collectorPolicy,
 		},
 	})
 	return &types.ScannerCronJobResponse{}, err
@@ -106,10 +115,19 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 		return &types.StreamsJobResponse{}, err
 	}
 
-	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
-	streamsPolicy := platform.ConvertPullPolicyStringToType(settings.StreamsImagePullPolicy)
+	if settings == nil {
+		return &types.StreamsJobResponse{}, fmt.Errorf("Settings is null")
+	}
 
-	for index := 0; index < 1; index++ {
+	if r.StreamsRequest.StreamConfig == nil {
+		return &types.StreamsJobResponse{}, fmt.Errorf("Stream config is null")
+	}
+
+	datasinkPolicy := platform.ConvertPullPolicyStringToType(settings.DatasinkImagePullPolicy)
+	collectorPolicy := platform.ConvertPullPolicyStringToType(settings.CollectorImagePullPolicy)
+
+	partitionCount := int(r.StreamsRequest.GetStreamConfig().PartitionCount)
+	for index := 0; index < partitionCount; index++ {
 		jobName := fmt.Sprintf("%s-streams-job-%d", r.GetName(), index)
 		err = store.CreateJob(jobName, []platform.ContainerDetails{
 			{
@@ -122,16 +140,15 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 			},
 			{
 				Name:  "streams",
-				Image: settings.StreamsImage,
+				Image: settings.CollectorImage,
 				EnvVars: []apiv1.EnvVar{
 					{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
 					{Name: "REDIS_URL", Value: settings.RedisURL},
 					{Name: "ANALYZER_SVC_ADDRESS", Value: settings.AnalyzerSvcAddress},
 					{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
 					{Name: "STREAM_REQUEST", Value: string(streamRequest)},
-					{Name: "PARTITON_ID", Value: string(index)},
 				},
-				ImagePullPolicy: streamsPolicy,
+				ImagePullPolicy: collectorPolicy,
 			},
 		})
 	}
