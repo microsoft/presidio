@@ -24,7 +24,6 @@ func main() {
 	}
 
 	r := server.Setup(port)
-	setupGRPCServices()
 
 	var api *API
 
@@ -43,6 +42,8 @@ func main() {
 		}
 		api = New(store)
 	}
+
+	api.setupGRPCServices()
 
 	// api/v1 group
 	v1 := r.Group("/api/v1")

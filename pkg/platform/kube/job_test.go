@@ -7,18 +7,11 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 
 	"github.com/Microsoft/presidio/pkg/platform"
-
-	"k8s.io/client-go/kubernetes/fake"
 )
 
 func TestCreateAndDeleteJob(t *testing.T) {
 
-	client := fake.NewSimpleClientset()
-
-	store := &store{
-		client:    client,
-		namespace: "default",
-	}
+	store, _ := NewFake()
 
 	name := "jobName"
 

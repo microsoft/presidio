@@ -1,4 +1,4 @@
-FROM presidio-golang AS build-env
+FROM golang:1.10-alpine AS build-env
 
 ARG NAME=presidio-datasink
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
@@ -9,11 +9,11 @@ ADD ./vendor ${PRESIDIOPATH}/vendor
 ADD ./pkg ${PRESIDIOPATH}/pkg
 
 WORKDIR ${PRESIDIOPATH}/${NAME}/cmd/${NAME}
-RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=1 && go build -a -installsuffix cgo -ldflags '-X github.com/Microsoft/presidio/pkg/version.Version=${VERSION}' -o /usr/bin/${NAME}
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Microsoft/presidio/pkg/version.Version=${VERSION}' -o /usr/bin/${NAME}
 
 #----------------------------
 
-FROM presidio-alpine
+FROM alpine:3.8
 
 RUN apk add --no-cache --update ca-certificates
 

@@ -49,13 +49,8 @@ scheduler:
     externalPort: 3001
     internalPort: 3001
 
-scanner:
-  name: presidio-scanner
-  imagePullPolicy: Always
-  # tag:
-
-streams:
-  name: presidio-streams
+collector:
+  name: presidio-collector
   imagePullPolicy: Always
   # tag:
 

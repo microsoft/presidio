@@ -1,7 +1,10 @@
-package main
+package streams
 
 import (
 	"context"
+	"fmt"
+
+	types "github.com/Microsoft/presidio-genproto/golang"
 
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
@@ -9,21 +12,22 @@ import (
 	"github.com/Microsoft/presidio/pkg/stream/kinesis"
 )
 
-func createStream() stream.Stream {
+//CreateStream create stream from configuration
+func CreateStream(streamRequest *types.StreamRequest) stream.Stream {
+
 	config := streamRequest.GetStreamConfig()
 	ctx := context.Background()
 
 	//Kafka
 	if config.GetKafkaConfig() != nil {
 		c := config.GetKafkaConfig()
-		k := kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic())
+		k := kafka.NewConsumer(ctx, c.GetAddress(), c.GetTopic(), fmt.Sprintf("presidio-cg-%s", c.GetTopic()))
 		return k
 	}
 
 	//Azure Event Hub
 	if config.GetEhConfig() != nil {
 		c := config.GetEhConfig()
-
 		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), "", "", "")
 		return e
 	}
