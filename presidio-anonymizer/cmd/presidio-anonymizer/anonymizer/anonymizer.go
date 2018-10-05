@@ -73,5 +73,10 @@ func transformField(transformation *types.Transformation, result *types.AnalyzeR
 		result, err := methods.MaskValue(text, *result.Location, transformation.MaskValue.MaskingCharacter, transformation.MaskValue.CharsToMask, transformation.MaskValue.FromEnd)
 		return result, err
 	}
+
+	if transformation.FfiEncryptionValue != nil {
+		result, err := methods.FFIValue(text, *result.Location, transformation.FfiEncryptionValue.Key, transformation.FfiEncryptionValue.Tweak, transformation.FfiEncryptionValue.Decrypt)
+		return result, err
+	}
 	return "", errors.New("Transformation not found")
 }

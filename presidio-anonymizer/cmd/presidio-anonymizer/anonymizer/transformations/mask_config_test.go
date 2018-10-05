@@ -27,12 +27,12 @@ func TestMaskValue1(t *testing.T) {
 	locations[1] = index1
 	result, err := MaskValue(str, locations[1], "*", 3, true)
 	if err != nil {
-		assert.Error(t, err)
+		t.Error(t, err)
 	}
 
 	result, err = MaskValue(result, locations[0], "#", 3, false)
 	if err != nil {
-		assert.Error(t, err)
+		t.Error(t, err)
 	}
 
 	expected := "this is a ###456 and 54***"

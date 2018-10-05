@@ -31,6 +31,11 @@
   version = "1.2.0"
 
 [[constraint]]
+  name = "github.com/capitalone/fpe"
+  version = "1.2.1"
+
+
+[[constraint]]
   name = "github.com/go-redis/redis"
   version = "6.13.2"
 

@@ -28,7 +28,7 @@ func CreateStream(streamRequest *types.StreamRequest) stream.Stream {
 	//Azure Event Hub
 	if config.GetEhConfig() != nil {
 		c := config.GetEhConfig()
-		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), "", "", "")
+		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), c.GetStorageAccountNameValue(), c.GetStorageAccountKeyValue(), c.GetContainerValue())
 		return e
 	}
 
