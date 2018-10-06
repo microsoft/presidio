@@ -32,7 +32,8 @@ func (s *store) CreateCronJob(name string, schedule string, containerDetailsArra
 		},
 		Spec: v1beta1.CronJobSpec{
 			Schedule:                   schedule,
-			SuccessfulJobsHistoryLimit: int32Ptr(0),
+			SuccessfulJobsHistoryLimit: int32Ptr(5),
+			FailedJobsHistoryLimit:     int32Ptr(5),
 			JobTemplate: v1beta1.JobTemplateSpec{
 				Spec: batchv1.JobSpec{
 					BackoffLimit: int32Ptr(5),

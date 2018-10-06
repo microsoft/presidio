@@ -16,7 +16,6 @@ from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
 
-
 WELCOME_MESSAGE = r"""
 
  _______  _______  _______  _______ _________ ______  _________ _______
@@ -44,15 +43,15 @@ helps['analyze'] = """
 """
 
 logging.basicConfig(
-    format='%(asctime)s:%(levelname)s:%(message)s',
-    level=logging.INFO)
+    format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
 
 
 class PresidioCLIHelp(CLIHelp):
     def __init__(self, cli_ctx=None):
-        super(PresidioCLIHelp, self).__init__(cli_ctx=cli_ctx,
-                                              privacy_statement='',
-                                              welcome_message=WELCOME_MESSAGE)
+        super(PresidioCLIHelp, self).__init__(
+            cli_ctx=cli_ctx,
+            privacy_statement='',
+            welcome_message=WELCOME_MESSAGE)
 
 
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
@@ -107,37 +106,29 @@ def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
 
 
 class CommandsLoader(CLICommandsLoader):
-
     def load_command_table(self, args):
         with CommandGroup(self, '', '__main__#{}') as g:
-            g.command('serve', 'serve_command_handler',
-                      confirmation=False),
-            g.command('analyze', 'analyze_command_handler',
-                      confirmation=False)
+            g.command('serve', 'serve_command_handler', confirmation=False),
+            g.command('analyze', 'analyze_command_handler', confirmation=False)
         return super(CommandsLoader, self).load_command_table(args)
 
     def load_arguments(self, command):
         with ArgumentsContext(self, 'serve') as ac:
-            ac.argument(
-                'env_grpc_port',
-                default=False,
-                required=False)
+            ac.argument('env_grpc_port', default=False, required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
         with ArgumentsContext(self, 'analyze') as ac:
-            ac.argument(
-                'env_grpc_port',
-                default=False,
-                required=False)
+            ac.argument('env_grpc_port', default=False, required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
             ac.argument('text', required=True)
             ac.argument('fields', nargs='*', required=True)
         super(CommandsLoader, self).load_arguments(command)
 
 
-presidio_cli = CLI(cli_name=cli_name,
-                   config_dir=os.path.join('~', '.{}'.format(cli_name)),
-                   config_env_var_prefix=cli_name,
-                   commands_loader_cls=CommandsLoader,
-                   help_cls=PresidioCLIHelp)
+presidio_cli = CLI(
+    cli_name=cli_name,
+    config_dir=os.path.join('~', '.{}'.format(cli_name)),
+    config_env_var_prefix=cli_name,
+    commands_loader_cls=CommandsLoader,
+    help_cls=PresidioCLIHelp)
 exit_code = presidio_cli.invoke(sys.argv[1:])
 sys.exit(exit_code)

@@ -12,7 +12,7 @@ import (
 	"github.com/presid-io/stow/azure"
 	"github.com/presid-io/stow/s3"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 //API storage
@@ -26,10 +26,6 @@ type API struct {
 // config holds the storage connection string
 // concurrencyLimit is the limit for how many item needs to be scanned at once.
 func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
-	if kind == "azureblob" {
-		// Change name kind to match stow expectations
-		kind = "azure"
-	}
 	location, err := stow.Dial(kind, config)
 	if err != nil {
 		return &API{}, err
@@ -38,23 +34,23 @@ func New(kind string, config stow.Config, concurrencyLimit int) (*API, error) {
 }
 
 // Init cloud storage config
-func Init(kind string, cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string, error) {
-	switch kind {
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_azureblob):
+func Init(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string, string, error) {
+	if cloudStorageConfig.GetBlobStorageConfig() != nil {
 		config, containerName := InitBlobStorage(cloudStorageConfig)
-		return config, containerName, nil
-	case message_types.DatasinkTypesEnum.String(message_types.DatasinkTypesEnum_s3):
+		return config, containerName, "azure", nil
+	} else if cloudStorageConfig.GetS3Config() != nil {
 		config, containerName := InitS3(cloudStorageConfig)
-		return config, containerName, nil
-	// case "google":
-	// 	// Add support
-	default:
-		return nil, "", fmt.Errorf("Unknown storage kind")
+		return config, containerName, "s3", nil
+		// } else if cloudStorageConfig.GetGoogleStorageConfig() != nil {
+		// 	config, containerName := InitGoogle(cloudStorageConfig)
+		// 	return config, containerName, "google", nil
+	} else {
+		return nil, "", "", fmt.Errorf("storage config is not defined")
 	}
 }
 
 //CreateS3Config create S3 configuration
-func CreateS3Config(accessKeyID string, secretKey string, region string, endpoint string) (string, stow.ConfigMap) {
+func CreateS3Config(accessKeyID string, secretKey string, region string, endpoint string) stow.ConfigMap {
 	configMap := stow.ConfigMap{
 		s3.ConfigAccessKeyID: accessKeyID,
 		s3.ConfigSecretKey:   secretKey,
@@ -65,11 +61,32 @@ func CreateS3Config(accessKeyID string, secretKey string, region string, endpoin
 		configMap.Set(s3.ConfigEndpoint, endpoint)
 	}
 
-	return "s3", configMap
+	return configMap
 }
 
+// //CreatGoogleConfig create google configuration
+// func CreatGoogleConfig(json string, projectID string, scopes string) (string, stow.ConfigMap) {
+// 	return "google", stow.ConfigMap{
+// 		google.ConfigJSON:      json,
+// 		google.ConfigProjectId: projectID,
+// 		google.ConfigScopes:    scopes,
+// 	}
+// }
+
+// // InitGoogle inits the storage with the supplied parameters
+// func InitGoogle(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string) {
+// 	googleJson := cloudStorageConfig.GoogleStorageConfig.GetJson()
+// 	googleProjectID := cloudStorageConfig.GoogleStorageConfig.GetProjectId()
+// 	googleScopes := cloudStorageConfig.GoogleStorageConfig.GetScopes()
+// 	if googleJson == "" || googleProjectId == "" || googleScopes == "" {
+// 		log.Fatal("json, projectId, scopes must me set for google storage kind.")
+// 	}
+// 	_, config := CreatGoogleConfig(googleJson, googleProjectID, googleScopes)
+// 	return config, s3Bucket
+// }
+
 // InitS3 inits the storage with the supplied credentials
-func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+func InitS3(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string) {
 	s3AccessKeyID := cloudStorageConfig.S3Config.GetAccessId()
 	s3SecretKey := cloudStorageConfig.S3Config.GetAccessKey()
 	s3Region := cloudStorageConfig.S3Config.GetRegion()
@@ -78,27 +95,28 @@ func InitS3(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMa
 	if s3AccessKeyID == "" || s3SecretKey == "" || s3Region == "" || s3Bucket == "" {
 		log.Fatal("accessId, accessKey, region, bucket must me set for s3 storage kind.")
 	}
-	_, config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region, s3Endpoint)
+	config := CreateS3Config(s3AccessKeyID, s3SecretKey, s3Region, s3Endpoint)
 	return config, s3Bucket
 }
 
 //CreateAzureConfig create azure configuration
-func CreateAzureConfig(account string, key string) (string, stow.ConfigMap) {
-	return "azureblob", stow.ConfigMap{
+func CreateAzureConfig(account string, key string) stow.ConfigMap {
+	return stow.ConfigMap{
 		azure.ConfigAccount: account,
 		azure.ConfigKey:     key,
 	}
 }
 
 // InitBlobStorage inits the storage with the supplied credentials
-func InitBlobStorage(cloudStorageConfig *message_types.CloudStorageConfig) (stow.ConfigMap, string) {
+func InitBlobStorage(cloudStorageConfig *types.CloudStorageConfig) (stow.ConfigMap, string) {
 	azureAccountName := cloudStorageConfig.BlobStorageConfig.GetAccountName()
 	azureAccountKey := cloudStorageConfig.BlobStorageConfig.GetAccountKey()
 	azureContainer := cloudStorageConfig.BlobStorageConfig.GetContainerName()
 	if azureAccountKey == "" || azureAccountName == "" || azureContainer == "" {
 		log.Fatal("accountName, AccountKey and containerName vars must me set for azure config.")
 	}
-	_, config := CreateAzureConfig(azureAccountName, azureAccountKey)
+
+	config := CreateAzureConfig(azureAccountName, azureAccountKey)
 	return config, azureContainer
 }
 
@@ -119,15 +137,6 @@ func (a *API) CreateContainer(name string) (stow.Container, error) {
 func (a *API) RemoveContainer(name string) error {
 	return a.location.RemoveContainer(name)
 }
-
-//CreatGoogleConfig create google configuration
-// func CreatGoogleConfig(configJson string, configProjectId string, configScopes string) (string, stow.ConfigMap) {
-// 	return "google", stow.ConfigMap{
-// 		google.ConfigJSON:      configJson,
-// 		google.ConfigProjectId: configProjectId,
-// 		google.ConfigScopes:    configScopes,
-// 	}
-// }
 
 // walkFunc contain the logic that need to be implemented on each of the items in the container
 type walkFunc func(item stow.Item)

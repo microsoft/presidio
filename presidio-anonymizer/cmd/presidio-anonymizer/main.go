@@ -4,29 +4,28 @@ import (
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 
-	"os"
+	types "github.com/Microsoft/presidio-genproto/golang"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
-	handler "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer"
+
+	"github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer"
 )
 
 type server struct{}
 
-var (
-	grpcPort = os.Getenv("GRPC_PORT")
-)
-
 func main() {
 
-	if grpcPort == "" {
-		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", grpcPort)
+	settings := platform.GetSettings()
+
+	if settings.GrpcPort == "" {
+		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", settings.GrpcPort)
 	}
 
-	lis, s := rpc.SetupClient(grpcPort)
+	lis, s := rpc.SetupClient(settings.GrpcPort)
 
-	message_types.RegisterAnonymizeServiceServer(s, &server{})
+	types.RegisterAnonymizeServiceServer(s, &server{})
 	reflection.Register(s)
 
 	if err := s.Serve(lis); err != nil {
@@ -35,7 +34,7 @@ func main() {
 
 }
 
-func (s *server) Apply(ctx context.Context, r *message_types.AnonymizeRequest) (*message_types.AnonymizeResponse, error) {
-	res, err := handler.ApplyAnonymizerTemplate(r.Text, r.AnalyzeResults, r.Template)
-	return &message_types.AnonymizeResponse{Text: res}, err
+func (s *server) Apply(ctx context.Context, r *types.AnonymizeRequest) (*types.AnonymizeResponse, error) {
+	res, err := anonymizer.ApplyAnonymizerTemplate(r.Text, r.AnalyzeResults, r.Template)
+	return &types.AnonymizeResponse{Text: res}, err
 }

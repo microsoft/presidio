@@ -5,40 +5,31 @@ import (
 	"strconv"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
 	"github.com/Microsoft/presidio/pkg/platform/local"
-
 	server "github.com/Microsoft/presidio/pkg/server"
-)
-
-var (
-	webPort   = os.Getenv("WEB_PORT")
-	namespace = os.Getenv("presidio_NAMESPACE")
-)
-
-const (
-	envKubeConfig = "KUBECONFIG"
 )
 
 func main() {
 
-	if webPort == "" {
+	settings := platform.GetSettings()
+	if settings.WebPort == "" {
 		log.Fatal("WEB_PORT env var must me set.")
 	}
 
-	port, err := strconv.Atoi(webPort)
+	port, err := strconv.Atoi(settings.WebPort)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	r := server.Setup(port)
-	setupGRPCServices()
 
 	var api *API
 
 	// Kubernetes platform
-	if namespace != "" {
-		store, err := kube.New(namespace, "", kubeConfigPath())
+	if settings.Namespace != "" {
+		store, err := kube.New(settings.Namespace, "")
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -51,6 +42,8 @@ func main() {
 		}
 		api = New(store)
 	}
+
+	api.setupGRPCServices()
 
 	// api/v1 group
 	v1 := r.Group("/api/v1")
@@ -99,18 +92,4 @@ func main() {
 
 	}
 	server.Start(r)
-}
-
-func kubeConfigPath() string {
-	if v, ok := os.LookupEnv(envKubeConfig); ok {
-		return v
-	}
-	defConfig := os.ExpandEnv("$HOME/.kube/config")
-	if _, err := os.Stat(defConfig); err == nil {
-		log.Info("Using config from " + defConfig)
-		return defConfig
-	}
-
-	// If we get here, we might be in-Pod.
-	return ""
 }

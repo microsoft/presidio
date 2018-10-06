@@ -1,4 +1,4 @@
-FROM golang:1.10-alpine AS build-env
+FROM golang:1.11-alpine AS build-env
 
 ARG NAME=presidio-api
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio

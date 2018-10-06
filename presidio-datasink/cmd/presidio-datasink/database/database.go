@@ -10,10 +10,9 @@ import (
 	"github.com/go-xorm/xorm"
 	// import postegrsql driver
 	_ "github.com/lib/pq"
-	// import sqlite driver
-	_ "github.com/mattn/go-sqlite3"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
@@ -23,18 +22,19 @@ type dbDatasink struct {
 	connectionString string
 	engine           *xorm.Engine
 	tableName        string
-	resultKind       string
+	resultType       string
 }
 
-// New returns new instance of DB Data writter
-func New(datasink *message_types.Datasink, datasinkKind string, resultKind string) datasink.Datasink {
+// New returns new instance of DB Data writer
+func New(datasink *types.Datasink, resultType string) datasink.Datasink {
 	// default table name
 	tableName := datasink.DbConfig.GetTableName()
 	if tableName == "" {
 		tableName = "scannerresult"
 	}
 
-	db := dbDatasink{driverName: datasinkKind, connectionString: datasink.DbConfig.GetConnectionString(), tableName: tableName, resultKind: resultKind}
+	db := dbDatasink{driverName: datasink.GetDbConfig().GetType(), connectionString: datasink.GetDbConfig().GetConnectionString(),
+		tableName: tableName, resultType: resultType}
 	db.Init()
 	return &db
 }
@@ -67,12 +67,12 @@ func (datasink *dbDatasink) Init() {
 	}
 
 	// Create table if not exists
-	if datasink.resultKind == "analyze" {
+	if datasink.resultType == "analyze" {
 		err = datasink.engine.Table(datasink.tableName).CreateTable(&analyzerResult{})
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-	} else if datasink.resultKind == "anonymize" {
+	} else if datasink.resultType == "anonymize" {
 		err = datasink.engine.Table(datasink.tableName).CreateTable(&anonymizerResult{})
 		if err != nil {
 			log.Fatal(err.Error())
@@ -80,7 +80,7 @@ func (datasink *dbDatasink) Init() {
 	}
 }
 
-func (datasink *dbDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
+func (datasink *dbDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error {
 	analyzerResultArray := []analyzerResult{}
 
 	for _, element := range results {
@@ -103,7 +103,7 @@ func (datasink *dbDatasink) WriteAnalyzeResults(results []*message_types.Analyze
 	return nil
 }
 
-func (datasink *dbDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
+func (datasink *dbDatasink) WriteAnonymizeResults(result *types.AnonymizeResponse, path string) error {
 	r := anonymizerResult{
 		AnonymizedText: result.Text,
 		Path:           path,

@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	"github.com/go-xorm/xorm"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 var (
@@ -20,14 +21,15 @@ func TestResultWrittenToDb(t *testing.T) {
 	tableName := "testTable"
 	engine.DropTables(tableName)
 
-	sink := &message_types.Datasink{
-		DbConfig: &message_types.DBConfig{
+	sink := &types.Datasink{
+		DbConfig: &types.DBConfig{
 			ConnectionString: connectionString,
 			TableName:        tableName,
+			Type:             dbKind,
 		},
 	}
 
-	datasink := New(sink, dbKind, "analyze")
+	datasink := New(sink, "analyze")
 	resultsPath := "someDir/SomeFile.txt"
 
 	//Act
@@ -42,12 +44,12 @@ func TestResultWrittenToDb(t *testing.T) {
 	assert.Equal(t, sliceOfAnalyzeResult[0].Field, sliceOfAnalyzeResult[0].Field)
 
 	// Test Anonymizer
-	anonymizeResponse := &message_types.AnonymizeResponse{
+	anonymizeResponse := &types.AnonymizeResponse{
 		Text: "<Person> live is <Location>",
 	}
 
 	engine.DropTables(tableName)
-	datasink = New(sink, dbKind, "anonymize")
+	datasink = New(sink, "anonymize")
 
 	// Act
 	datasink.WriteAnonymizeResults(anonymizeResponse, resultsPath)
@@ -60,21 +62,21 @@ func TestResultWrittenToDb(t *testing.T) {
 	assert.Equal(t, anonymizeResponse.Text, sliceOfAnonymizeResult[0].AnonymizedText)
 }
 
-func getAnalyzerMockResult() []*message_types.AnalyzeResult {
-	return [](*message_types.AnalyzeResult){
-		&message_types.AnalyzeResult{
-			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PHONE_NUMBER.String()},
+func getAnalyzerMockResult() []*types.AnalyzeResult {
+	return [](*types.AnalyzeResult){
+		&types.AnalyzeResult{
+			Field:       &types.FieldTypes{Name: types.FieldTypesEnum_PHONE_NUMBER.String()},
 			Text:        "(555) 253-0000",
 			Probability: 1.0,
-			Location: &message_types.Location{
+			Location: &types.Location{
 				Start: 153, End: 163, Length: 10,
 			},
 		},
-		&message_types.AnalyzeResult{
-			Field:       &message_types.FieldTypes{Name: message_types.FieldTypesEnum_PERSON.String()},
+		&types.AnalyzeResult{
+			Field:       &types.FieldTypes{Name: types.FieldTypesEnum_PERSON.String()},
 			Text:        "John Smith",
 			Probability: 0.8,
-			Location: &message_types.Location{
+			Location: &types.Location{
 				Start: 180, End: 190, Length: 10,
 			},
 		},

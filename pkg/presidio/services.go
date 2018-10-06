@@ -2,84 +2,144 @@ package presidio
 
 import (
 	"fmt"
-	"os"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	"context"
+
+	types "github.com/Microsoft/presidio-genproto/golang"
+
 	"github.com/Microsoft/presidio/pkg/cache"
 	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
 )
 
+var settings *platform.Settings = platform.GetSettings()
+
+//Services exposes GRPC services
+type Services struct {
+	AnalyzerService  types.AnalyzeServiceClient
+	AnonymizeService types.AnonymizeServiceClient
+	DatasinkService  types.DatasinkServiceClient
+	SchedulerService types.SchedulerServiceClient
+}
+
 //SetupAnalyzerService GRPC connection
-func SetupAnalyzerService() *message_types.AnalyzeServiceClient {
-	analyzerSvcAddress := os.Getenv("ANALYZER_SVC_ADDRESS")
-	if analyzerSvcAddress == "" {
+func (services *Services) SetupAnalyzerService() {
+	if settings.AnalyzerSvcAddress == "" {
 		log.Fatal("analyzer service address is empty")
 	}
 
-	analyzeService, err := rpc.SetupAnalyzerService(analyzerSvcAddress)
+	analyzeService, err := rpc.SetupAnalyzerService(settings.AnalyzerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to analyzer service failed %q", err)
 	}
 
-	return analyzeService
+	services.AnalyzerService = analyzeService
 }
 
-//SetupAnoymizerService GRPC connection
-func SetupAnoymizerService() *message_types.AnonymizeServiceClient {
+//SetupAnonymizerService GRPC connection
+func (services *Services) SetupAnonymizerService() {
 
-	anonymizerSvcAddress := os.Getenv("ANONYMIZER_SVC_ADDRESS")
-	if anonymizerSvcAddress == "" {
+	if settings.AnonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
 
-	anonymizeService, err := rpc.SetupAnonymizeService(anonymizerSvcAddress)
+	anonymizeService, err := rpc.SetupAnonymizeService(settings.AnonymizerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
-	return anonymizeService
+
+	services.AnonymizeService = anonymizeService
+
 }
 
 //SetupSchedulerService GRPC connection
-func SetupSchedulerService() *message_types.SchedulerServiceClient {
+func (services *Services) SetupSchedulerService() {
 
-	schedulerAddress := os.Getenv("SCHEDULER_SVC_ADDRESS")
-	if schedulerAddress == "" {
+	if settings.SchedulerSvcAddress == "" {
 		log.Warn("scheduler service address is empty")
-		return nil
+		return
 	}
 
-	schedulerService, err := rpc.SetupSchedulerService(schedulerAddress)
+	schedulerService, err := rpc.SetupSchedulerService(settings.SchedulerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
-	return schedulerService
+	services.SchedulerService = schedulerService
+
 }
 
 //SetupDatasinkService GRPC connection
-func SetupDatasinkService() *message_types.DatasinkServiceClient {
+func (services *Services) SetupDatasinkService() {
 	address := "localhost"
-	grpcPort := os.Getenv("DATASINK_GRPC_PORT")
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%s", address, grpcPort))
+	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%s", address, settings.DatasinkGrpcPort))
 	if err != nil {
 		log.Fatal("Connection to datasink service failed %q", err)
 	}
 
-	return datasinkService
+	services.DatasinkService = datasinkService
 }
 
 //SetupCache  Redis cache
 func SetupCache() cache.Cache {
-	redisURL := os.Getenv("REDIS_URL")
-	if redisURL == "" {
+	if settings.RedisURL == "" {
 		log.Fatal("redis address is empty")
 	}
 
 	cache := redis.New(
-		redisURL,
+		settings.RedisURL,
 		"", // no password set
 		0,  // use default DB
 	)
 	return cache
+}
+
+//AnalyzeItem - search for PII
+func (services *Services) AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error) {
+	analyzeRequest := &types.AnalyzeRequest{
+		AnalyzeTemplate: template,
+		Text:            text,
+	}
+
+	results, err := services.AnalyzerService.Apply(ctx, analyzeRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	return results.AnalyzeResults, nil
+}
+
+//AnonymizeItem - anonymize text
+func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
+	if anonymizeTemplate != nil {
+
+		anonymizeRequest := &types.AnonymizeRequest{
+			Template:       anonymizeTemplate,
+			Text:           text,
+			AnalyzeResults: analyzeResults,
+		}
+		res, err := services.AnonymizeService.Apply(ctx, anonymizeRequest)
+		return res, err
+	}
+	return nil, nil
+}
+
+//SendResultToDatasink - export results
+func (services *Services) SendResultToDatasink(ctx context.Context, analyzeResults []*types.AnalyzeResult,
+	anonymizeResults *types.AnonymizeResponse, path string) error {
+
+	for _, element := range analyzeResults {
+		// Remove PII from results
+		element.Text = ""
+	}
+
+	datasinkRequest := &types.DatasinkRequest{
+		AnalyzeResults:  analyzeResults,
+		AnonymizeResult: anonymizeResults,
+		Path:            path,
+	}
+
+	_, err := services.DatasinkService.Apply(ctx, datasinkRequest)
+	return err
 }

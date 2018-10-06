@@ -7,9 +7,17 @@
   branch = "master"
   
 [[constraint]]
-  name = "github.com/confluentinc/confluent-kafka-go"
-  version = "0.11.4"
+  name = "github.com/Shopify/sarama"
+  version = "1.19.0"
 
+[[constraint]]
+  name = "github.com/bsm/sarama-cluster"
+  version = "2.1.15"
+
+[[constraint]]
+  name = "github.com/streadway/amqp"
+  branch = "master"
+  
 [[constraint]]
   branch = "master"
   name = "github.com/gin-contrib/cors"
@@ -23,12 +31,12 @@
   version = "1.2.0"
 
 [[constraint]]
-  name = "github.com/go-redis/redis"
-  version = "6.13.2"
+  name = "github.com/capitalone/fpe"
+  version = "1.2.1"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/joho/godotenv"
+  name = "github.com/go-redis/redis"
+  version = "6.13.2"
 
 [[constraint]]
   branch = "master"
@@ -64,10 +72,6 @@
 
 [[constraint]]
   name = "github.com/lib/pq"
-  branch = "master"
-
-[[constraint]]
-  name = "github.com/mattn/go-sqlite3"
   branch = "master"
   
 [[constraint]]

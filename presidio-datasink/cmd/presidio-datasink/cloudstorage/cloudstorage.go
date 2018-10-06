@@ -6,33 +6,33 @@ import (
 
 	"github.com/presid-io/stow"
 
-	message_types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/Microsoft/presidio-genproto/golang"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/pkg/templates"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
 type cloudStorageDatasink struct {
-	kind               string
-	cloudStorageConfig *message_types.CloudStorageConfig
+	cloudStorageConfig *types.CloudStorageConfig
 	container          stow.Container
 }
 
-// New returns new instance of DB Data writter
-func New(datasink *message_types.Datasink, kind string) datasink.Datasink {
-	db := cloudStorageDatasink{kind: kind, cloudStorageConfig: datasink.GetCloudStorageConfig()}
+// New returns new instance of DB Data writer
+func New(datasink *types.Datasink) datasink.Datasink {
+	db := cloudStorageDatasink{cloudStorageConfig: datasink.GetCloudStorageConfig()}
 	db.Init()
 	return &db
 }
 
 func (datasink *cloudStorageDatasink) Init() {
-	config, containerName, err := storage.Init(datasink.kind, datasink.cloudStorageConfig)
+	config, containerName, kind, err := storage.Init(datasink.cloudStorageConfig)
 	if err != nil {
-		log.Fatal("Unknown storage kind")
+		log.Fatal(err.Error())
 	}
 
-	storageAPI, err := storage.New(datasink.kind, config, 10)
+	storageAPI, err := storage.New(kind, config, 10)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -46,16 +46,14 @@ func (datasink *cloudStorageDatasink) Init() {
 	datasink.container = container
 }
 
-func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_types.AnalyzeResult, path string) error {
-	resultString, err := templates.ConvertInterfaceToJSON(results)
+func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error {
+	resultString, err := presidio.ConvertInterfaceToJSON(results)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 
-	err = storage.PutItem(addActionToFilePath(path, "analyzed"), resultString, datasink.container)
+	err = storage.PutItem(addSuffixToPath(path, "analyzed"), resultString, datasink.container)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 
@@ -63,10 +61,9 @@ func (datasink *cloudStorageDatasink) WriteAnalyzeResults(results []*message_typ
 	return nil
 }
 
-func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_types.AnonymizeResponse, path string) error {
-	err := storage.PutItem(addActionToFilePath(path, "anonymized"), result.Text, datasink.container)
+func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *types.AnonymizeResponse, path string) error {
+	err := storage.PutItem(addSuffixToPath(path, "anonymized"), result.Text, datasink.container)
 	if err != nil {
-		log.Error(err.Error())
 		return err
 	}
 
@@ -74,11 +71,14 @@ func (datasink *cloudStorageDatasink) WriteAnonymizeResults(result *message_type
 	return nil
 }
 
-func addActionToFilePath(path string, action string) string {
+func addSuffixToPath(path string, suffix string) string {
+	// Get file extension
 	ext := filepath.Ext(path)
+	// Get path without file extension
 	path = path[:len(path)-len(ext)]
 	if string(path[0]) == "/" {
 		path = path[1:]
 	}
-	return fmt.Sprintf("%s-%s%s", path, action, ext)
+	// Add suffix to path and put back the extension
+	return fmt.Sprintf("%s-%s%s", path, suffix, ext)
 }

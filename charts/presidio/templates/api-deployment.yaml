@@ -33,7 +33,7 @@ spec:
             port: {{ .Values.api.service.internalPort }}
 {{ if .Values.api.readinessProbe }}{{ toYaml .Values.api.readinessProbe | indent 10 }}{{ end }}
         env:
-          - name: presidio_NAMESPACE
+          - name: PRESIDIO_NAMESPACE
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
