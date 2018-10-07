@@ -30,7 +30,7 @@ def test_all_fields_enron_file():
     
     assert len(results) > 30
     assert test_time.seconds < 1
-    assert test_time.microseconds < 470000
+    assert test_time.microseconds < 500000
     print('test_all_fields_enron runtime: {}.{} seconds'.format(
         test_time.seconds, test_time.microseconds))
 
