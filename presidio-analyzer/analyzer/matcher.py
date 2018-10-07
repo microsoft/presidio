@@ -324,12 +324,10 @@ class Matcher(object):
                 })
             payloads.append(payload)
 
-        with futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.map(self.__analyze_field_type, payloads)
-        
+        list(map(self.__analyze_field_type, payloads))
         results = self.__remove_checksum_duplicates(results)
-
         results = self.__remove_checksum_duplicates(results)
-
         results.sort(key=lambda x: x.location.start, reverse=False)
+        
         return results
+        

@@ -5,7 +5,7 @@ import os
 
 context = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo dictum est, fringilla congue ex malesuada quis. Phasellus at posuere erat. Quisque blandit tristique lacus ut aliquam. Donec at maximus nisi. Quisque dapibus eros enim, quis tincidunt leo vehicula at. Maecenas suscipit nec ante pretium ornare. Nulla at dui vel mi blandit scelerisque. Phasellus vehicula vel nunc et convallis. Pellentesque nibh elit, molestie a lectus vitae, luctus fringilla quam. '
 
-PERF_MICROSECS_THRESHOLD_ENTITY = 250000
+PERF_MICROSECS_THRESHOLD_ENTITY = 300000
 PERF_MICROSECS_THRESHOLD_CHECKSUM_ENTITY = 350000
 PERF_MICROSECS_THRESHOLD_NER = 200000
 
