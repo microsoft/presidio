@@ -1,7 +1,7 @@
 package kube
 
 import (
-	"errors"
+	"fmt"
 
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -28,7 +28,7 @@ func (s *store) GetKVPair(key string) (string, error) {
 			return v, nil
 		}
 	}
-	return "", errors.New("Key in secret not found")
+	return "", fmt.Errorf("Key in secret not found")
 
 }
 

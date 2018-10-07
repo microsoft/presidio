@@ -1,4 +1,4 @@
-FROM golang:1.10-alpine AS build-env
+FROM golang:1.11-alpine AS build-env
 
 ARG NAME=presidio-collector
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
@@ -17,6 +17,7 @@ FROM alpine:3.8
 
 ARG NAME=presidio-collector
 
+RUN apk add ca-certificates
 WORKDIR  /usr/bin/
 COPY --from=build-env /usr/bin/${NAME} /usr/bin/
 CMD  /usr/bin/presidio-collector

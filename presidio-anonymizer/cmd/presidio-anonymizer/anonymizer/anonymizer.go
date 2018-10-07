@@ -1,7 +1,7 @@
 package anonymizer
 
 import (
-	"errors"
+	"fmt"
 	"sort"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
@@ -73,5 +73,10 @@ func transformField(transformation *types.Transformation, result *types.AnalyzeR
 		result, err := methods.MaskValue(text, *result.Location, transformation.MaskValue.MaskingCharacter, transformation.MaskValue.CharsToMask, transformation.MaskValue.FromEnd)
 		return result, err
 	}
-	return "", errors.New("Transformation not found")
+
+	if transformation.FPEValue != nil {
+		result, err := methods.FPEValue(text, *result.Location, transformation.FPEValue.Key, transformation.FPEValue.Tweak, transformation.FPEValue.Decrypt)
+		return result, err
+	}
+	return "", fmt.Errorf("Transformation not found")
 }

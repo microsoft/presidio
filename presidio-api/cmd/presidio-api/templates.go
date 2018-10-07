@@ -1,7 +1,7 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -102,12 +102,12 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 		return bindAndConvert(streamsJobTemplate, c)
 	}
 
-	return "", errors.New("No template found")
+	return "", fmt.Errorf("No template found")
 }
 
 func bindAndConvert(template interface{}, c *gin.Context) (string, error) {
 	if c.BindJSON(&template) == nil {
 		return pkg_templates.ConvertInterfaceToJSON(template)
 	}
-	return "", errors.New("No template found")
+	return "", fmt.Errorf("No template found")
 }

@@ -48,7 +48,6 @@ func ReceiveEventsFromStream(st stream.Stream, services *presidio.Services, stre
 func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, services *presidio.Services, scanRequest *types.ScanRequest) error {
 	return scan.Scan(func(item interface{}) error {
 		var analyzerResult []*types.AnalyzeResult
-		var text string
 
 		scanItem := scanner.CreateItem(scanRequest, item)
 		itemPath := scanItem.GetPath()
@@ -82,7 +81,7 @@ func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, s
 			log.Debug("analyzed %d results", len(analyzerResult))
 
 			if len(analyzerResult) > 0 {
-				anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult, text, scanRequest.AnonymizeTemplate)
+				anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult, content, scanRequest.AnonymizeTemplate)
 				if err != nil {
 					return err
 				}

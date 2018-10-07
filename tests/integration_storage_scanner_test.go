@@ -4,7 +4,6 @@ package tests
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -155,7 +154,7 @@ func TestSendResultToDatasinkReturnsError(t *testing.T) {
 	testCache = cache_mock.New()
 	filePath := "dir/file1.txt"
 	datasinkSrv := &DatasinkMockedObject{}
-	grpcSvc.DatasinkService = getDatasinkMock(errors.New("some error"), datasinkSrv)
+	grpcSvc.DatasinkService = getDatasinkMock(fmt.Errorf("some error"), datasinkSrv)
 
 	scanRequest := getScannerRequest(azureKind)
 	container := InitContainer(azureKind, azureConfig)
