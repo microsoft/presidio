@@ -81,7 +81,7 @@ def serve_command_handler(env_grpc_port=False, grpc_port=3001):
     server.start()
     try:
         while True:
-            time.sleep(0)
+            time.sleep(1)
     except KeyboardInterrupt:
         server.stop(0)
 
