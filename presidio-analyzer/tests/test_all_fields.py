@@ -15,8 +15,8 @@ def test_all_fields_demo_file():
 
     assert len(results) == 20
     assert test_time.seconds < 1
-    assert test_time.microseconds < 800000
-    print('test_all_fields_demo runtime: {} seconds, {} microseconds'.format(
+    assert test_time.microseconds < 400000
+    print('test_all_fields_demo runtime: {}.{} seconds'.format(
         test_time.seconds, test_time.microseconds))
 
 
@@ -30,8 +30,8 @@ def test_all_fields_enron_file():
     
     assert len(results) > 30
     assert test_time.seconds < 1
-    assert test_time.microseconds < 800000
-    print('test_all_fields_enron runtime: {} seconds, {} microseconds'.format(
+    assert test_time.microseconds < 500000
+    print('test_all_fields_enron runtime: {}.{} seconds'.format(
         test_time.seconds, test_time.microseconds))
 
 

@@ -1,12 +1,16 @@
+import datetime
 import logging
 from concurrent import futures
-import regex as re
 import en_core_web_lg
 import common_pb2
 import template_pb2
 import tldextract
 from field_types import field_type, field_factory, field_pattern
 from field_types.globally import ner
+try:
+    import re2 as re
+except ImportError:
+    import re
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 CONTEXT_SIMILARITY_FACTOR = 0.35
@@ -90,11 +94,18 @@ class Matcher(object):
         res.text = field.text
 
         # check score
+        calc_probability_start_time = datetime.datetime.now()
         if isinstance(field, type(ner.Ner())):
             res.probability = NER_STRENGTH
         else:
             res.probability = self.__calculate_probability(
                 doc, match_strength, field, start, end)
+        calc_probability_time = datetime.datetime.now(
+        ) - calc_probability_start_time
+
+        logging.debug('--- calc_prob_time[{}]: {}.{} seconds'.format(
+            field.name, calc_probability_time.seconds,
+            calc_probability_time.microseconds))
 
         res.location.start = start
         res.location.end = end
@@ -124,13 +135,14 @@ class Matcher(object):
                 break
             result_found = False
 
+            match_start_time = datetime.datetime.now()
             matches = re.finditer(
                 pattern.regex,
                 doc.text,
-                flags=re.IGNORECASE | re.DOTALL | re.MULTILINE,
-                overlapped=False,
-                partial=False,
-                concurrent=True)
+                flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
+            match_time = datetime.datetime.now() - match_start_time
+            logging.debug('--- match_time[{}]: {}.{} seconds'.format(
+                field.name, match_time.seconds, match_time.microseconds))
 
             for match in matches:
                 start, end = match.span()
@@ -207,12 +219,50 @@ class Matcher(object):
         if current_field is None:
             return
 
-            # Check for ner field
+        # Check for ner field
+        analyze_start_time = datetime.datetime.now()
         if isinstance(current_field, type(ner.Ner())):
             current_field.name = payload.field_type_string_filter
             self.__check_ner(payload.doc, payload.results, current_field)
         else:
             self.__check_pattern(payload.doc, payload.results, current_field)
+
+        analyze_time = datetime.datetime.now() - analyze_start_time
+        logging.debug('--- analyze_time[{}]: {}.{} seconds'.format(
+            payload.field_type_string_filter, analyze_time.seconds,
+            analyze_time.microseconds))
+
+    def __is_checksum_result(self, result):
+        if result.probability == 1.0:
+            result_field = field_factory.FieldFactory.create(result.field.name)
+            return result_field.should_check_checksum
+        return False
+
+    def __remove_checksum_duplicates(self, results):
+        results_with_checksum = list(
+            filter(lambda r: self.__is_checksum_result(r), results))
+
+        # Remove matches of the same text, if there's a match with checksum and probability = 1
+        filtered_results = []
+
+        for result in results:
+            valid_result = True
+            if result not in results_with_checksum:
+                for result_with_checksum in results_with_checksum:
+                    # If result is equal to or substring of a checksum result
+                    if (result.text == result_with_checksum.text
+                            or (result.text in result_with_checksum.text
+                                and result.location.start >=
+                                result_with_checksum.location.start
+                                and result.location.end <=
+                                result_with_checksum.location.end)):
+                        valid_result = False
+                        break
+
+            if valid_result:
+                filtered_results.append(result)
+
+        return filtered_results
 
     def __is_checksum_result(self, result):
         if result.probability == 1.0:
@@ -267,7 +317,6 @@ class Matcher(object):
         sanitized_text = self.__sanitize_text(text)
         doc = self.nlp(sanitized_text)
 
-        payloads = []
         for field_type_string_filter in field_type_string_filters:
             payload = self.__new_payload(
                 'Payload', {
@@ -275,12 +324,9 @@ class Matcher(object):
                     'field_type_string_filter': field_type_string_filter,
                     'results': results
                 })
-            payloads.append(payload)
-
-        with futures.ThreadPoolExecutor(max_workers=10) as executor:
-            executor.map(self.__analyze_field_type, payloads)
-
+            self.__analyze_field_type(payload)
+            
         results = self.__remove_checksum_duplicates(results)
-
         results.sort(key=lambda x: x.location.start, reverse=False)
+
         return results

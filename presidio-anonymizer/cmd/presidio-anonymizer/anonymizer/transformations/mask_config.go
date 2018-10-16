@@ -1,7 +1,7 @@
 package transformations
 
 import (
-	"errors"
+	"fmt"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 )
@@ -14,10 +14,10 @@ func MaskValue(text string, location types.Location, replaceWith string, charsTo
 	}
 	pos := location.Start + location.Length
 	if int32(len(text)) < pos {
-		return "", errors.New("Indexes for values: are out of bounds")
+		return "", fmt.Errorf("Indexes for values: are out of bounds")
 	}
 	if int32(len(replaceWith)) != 1 {
-		return "", errors.New("Replace Char should be single")
+		return "", fmt.Errorf("Replace Char should be single")
 	}
 	runeReplaceWith := []rune(replaceWith)[0]
 	runeText := []rune(text)

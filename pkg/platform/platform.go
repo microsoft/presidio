@@ -2,7 +2,6 @@ package platform
 
 import (
 	"os"
-	"strings"
 
 	apiv1 "k8s.io/api/core/v1"
 
@@ -64,30 +63,25 @@ type Settings struct {
 	QueueURL                 string
 }
 
-//getTrimmedEnv returns the spaces trimmed environment variable
-func getTrimmedEnv(key string) string {
-	return strings.Trim(os.Getenv(key), " ")
-}
-
 //GetSettings from env vars
 func GetSettings() *Settings {
 
 	settings := Settings{
-		WebPort:                  getTrimmedEnv("WEB_PORT"),
-		GrpcPort:                 getTrimmedEnv("GRPC_PORT"),
-		DatasinkGrpcPort:         getTrimmedEnv("DATASINK_GRPC_PORT"),
-		Namespace:                getTrimmedEnv("PRESIDIO_NAMESPACE"),
-		AnalyzerSvcAddress:       getTrimmedEnv("ANALYZER_SVC_ADDRESS"),
-		AnonymizerSvcAddress:     getTrimmedEnv("ANONYMIZER_SVC_ADDRESS"),
-		SchedulerSvcAddress:      getTrimmedEnv("SCHEDULER_SVC_ADDRESS"),
-		RedisURL:                 getTrimmedEnv("REDIS_URL"),
-		DatasinkImage:            getTrimmedEnv("DATASINK_IMAGE_NAME"),
-		CollectorImage:           getTrimmedEnv("COLLECTOR_IMAGE_NAME"),
-		DatasinkImagePullPolicy:  getTrimmedEnv("DATASINK_IMAGE_PULL_POLICY"),
-		CollectorImagePullPolicy: getTrimmedEnv("COLLECTOR_IMAGE_PULL_POLICY"),
-		ScannerRequest:           getTrimmedEnv("SCANNER_REQUEST"),
-		StreamRequest:            getTrimmedEnv("STREAM_REQUEST"),
-		QueueURL:                 getTrimmedEnv("QUEUE_URL"),
+		WebPort:                  os.Getenv("WEB_PORT"),
+		GrpcPort:                 os.Getenv("GRPC_PORT"),
+		DatasinkGrpcPort:         os.Getenv("DATASINK_GRPC_PORT"),
+		Namespace:                os.Getenv("PRESIDIO_NAMESPACE"),
+		AnalyzerSvcAddress:       os.Getenv("ANALYZER_SVC_ADDRESS"),
+		AnonymizerSvcAddress:     os.Getenv("ANONYMIZER_SVC_ADDRESS"),
+		SchedulerSvcAddress:      os.Getenv("SCHEDULER_SVC_ADDRESS"),
+		RedisURL:                 os.Getenv("REDIS_URL"),
+		DatasinkImage:            os.Getenv("DATASINK_IMAGE_NAME"),
+		CollectorImage:           os.Getenv("COLLECTOR_IMAGE_NAME"),
+		DatasinkImagePullPolicy:  os.Getenv("DATASINK_IMAGE_PULL_POLICY"),
+		CollectorImagePullPolicy: os.Getenv("COLLECTOR_IMAGE_PULL_POLICY"),
+		ScannerRequest:           os.Getenv("SCANNER_REQUEST"),
+		StreamRequest:            os.Getenv("STREAM_REQUEST"),
+		QueueURL:                 os.Getenv("QUEUE_URL"),
 	}
 
 	return &settings

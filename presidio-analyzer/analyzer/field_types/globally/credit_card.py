@@ -22,20 +22,10 @@ class CreditCard(field_type.FieldType):
 
     # All credit cards - weak pattern is used, since credit cards has checksum
     pattern = field_pattern.FieldPattern()
-    pattern.regex = u'((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))(?![\\d])'
+    pattern.regex = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'
     pattern.name = 'All Credit Cards (weak)'
     pattern.strength = 0.3
     patterns.append(pattern)
-
-    # Dinesr credit card - weak pattern is used, since credit cards has
-    # checksum
-    pattern = field_pattern.FieldPattern()
-    pattern.regex = r'\b3(?:0[0-5]|[68][0-9])[0-9]{11}\b'
-    pattern.name = 'Diners (weak)'
-    pattern.strength = 0.3
-    patterns.append(pattern)
-
-    patterns.sort(key=lambda p: p.strength, reverse=True)
 
     def __luhn_checksum(self):
         def digits_of(n):
@@ -50,9 +40,9 @@ class CreditCard(field_type.FieldType):
             checksum += sum(digits_of(d * 2))
         return checksum % 10
 
-    def __santize_value(self):
+    def __sanitize_value(self):
         self.sanitized_value = self.text.replace('-', '').replace(' ', '')
 
     def check_checksum(self):
-        self.__santize_value()
+        self.__sanitize_value()
         return self.__luhn_checksum() == 0

@@ -27,8 +27,7 @@ func main() {
 	svc.SetupAnalyzerService()
 
 	if streamRequest.StreamConfig != nil {
-		st := streams.CreateStream(streamRequest)
-
+		st := streams.CreateStream(context.Background(), streamRequest)
 		setupDatasinkService(&svc, streamRequest.DatasinkTemplate)
 		if streamRequest.AnonymizeTemplate != nil {
 			svc.SetupAnonymizerService()

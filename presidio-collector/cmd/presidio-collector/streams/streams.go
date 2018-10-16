@@ -13,10 +13,9 @@ import (
 )
 
 //CreateStream create stream from configuration
-func CreateStream(streamRequest *types.StreamRequest) stream.Stream {
+func CreateStream(ctx context.Context, streamRequest *types.StreamRequest) stream.Stream {
 
 	config := streamRequest.GetStreamConfig()
-	ctx := context.Background()
 
 	//Kafka
 	if config.GetKafkaConfig() != nil {
@@ -28,7 +27,7 @@ func CreateStream(streamRequest *types.StreamRequest) stream.Stream {
 	//Azure Event Hub
 	if config.GetEhConfig() != nil {
 		c := config.GetEhConfig()
-		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), "", "", "")
+		e := eventhubs.NewConsumer(ctx, c.GetEhConnectionString(), c.GetStorageAccountNameValue(), c.GetStorageAccountKeyValue(), c.GetContainerValue())
 		return e
 	}
 

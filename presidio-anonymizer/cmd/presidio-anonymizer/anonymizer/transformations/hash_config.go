@@ -2,8 +2,8 @@ package transformations
 
 import (
 	"crypto/sha256"
-	"errors"
 	"fmt"
+	"strings"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 )
@@ -15,20 +15,18 @@ func HashValue(text string, location types.Location) (string, error) {
 	}
 	pos := location.Start + location.Length
 	if int32(len(text)) < pos {
-		return "", errors.New("Indexes for values: are out of bounds")
+		return "", fmt.Errorf("Indexes for values: are out of bounds")
 	}
-	runeText := []rune(text)
 
-	before := runeText[:location.Start]
-	after := runeText[pos:]
-	curValue := string(runeText[location.Start:pos])
+	curValue := strings.ToLower(text[location.Start:pos])
+
 	value, err := hash(curValue)
 	if err != nil {
 		return "", err
 	}
-	concat := string(before) + value + string(after)
-	runeText = []rune(concat)
-	return string(runeText), nil
+
+	new := replaceValueInString(text, value, int(location.Start), int(pos))
+	return new, nil
 }
 
 func hash(s string) (string, error) {

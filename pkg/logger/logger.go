@@ -51,7 +51,7 @@ func initLogger() {
 }
 func getLogLevel() zapcore.Level {
 
-	logLevel := strings.Trim(os.Getenv("LOG_LEVEL"), " ")
+	logLevel := os.Getenv("LOG_LEVEL")
 	switch strings.ToLower(logLevel) {
 	case "info":
 		return zapcore.InfoLevel

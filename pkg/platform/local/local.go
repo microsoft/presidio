@@ -1,7 +1,7 @@
 package local
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/Microsoft/presidio/pkg/platform"
 )
@@ -15,7 +15,7 @@ type store struct {
 func New(path string) (platform.Store, error) {
 
 	if path == "" {
-		return nil, errors.New("local path cannot be empty")
+		return nil, fmt.Errorf("local path cannot be empty")
 	}
 	return &store{
 		path: path,

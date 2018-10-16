@@ -85,9 +85,6 @@ func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, s
 				if err != nil {
 					return err
 				}
-				if anonymizerResult != nil {
-					log.Debug("anonymized %d results", len(analyzerResult))
-				}
 
 				err = services.SendResultToDatasink(ctx, analyzerResult, anonymizerResult, itemPath)
 				if err != nil {

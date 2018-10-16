@@ -4,22 +4,17 @@ from field_types import field_type, field_pattern
 
 class Crypto(field_type.FieldType):
     name = "CRYPTO"
-    context = [
-        "wallet",
-        "btc", 
-        "bitcoin", 
-        "crypto"]
+    context = ["wallet", "btc", "bitcoin", "crypto"]
 
     should_check_checksum = True
 
     patterns = []
 
     pattern = field_pattern.FieldPattern()
-    pattern.regex = u'(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])'
+    pattern.regex = r'\b[13][a-km-zA-HJ-NP-Z0-9]{26,33}\b'
     pattern.name = 'Crypto (Medium)'
     pattern.strength = 0.5
     patterns.append(pattern)
-
     """Copied from:
     http://rosettacode.org/wiki/Bitcoin/address_validation#Python
     """
