@@ -64,8 +64,8 @@ type Settings struct {
 	QueueURL                 string
 }
 
-//GetTrimmedEnv returns the spaces trimmed environment variable
-func GetTrimmedEnv(key string) string {
+//getTrimmedEnv returns the spaces trimmed environment variable
+func getTrimmedEnv(key string) string {
 	return strings.Trim(os.Getenv(key), " ")
 }
 
@@ -73,21 +73,21 @@ func GetTrimmedEnv(key string) string {
 func GetSettings() *Settings {
 
 	settings := Settings{
-		WebPort:                  GetTrimmedEnv("WEB_PORT"),
-		GrpcPort:                 GetTrimmedEnv("GRPC_PORT"),
-		DatasinkGrpcPort:         GetTrimmedEnv("DATASINK_GRPC_PORT"),
-		Namespace:                GetTrimmedEnv("PRESIDIO_NAMESPACE"),
-		AnalyzerSvcAddress:       GetTrimmedEnv("ANALYZER_SVC_ADDRESS"),
-		AnonymizerSvcAddress:     GetTrimmedEnv("ANONYMIZER_SVC_ADDRESS"),
-		SchedulerSvcAddress:      GetTrimmedEnv("SCHEDULER_SVC_ADDRESS"),
-		RedisURL:                 GetTrimmedEnv("REDIS_URL"),
-		DatasinkImage:            GetTrimmedEnv("DATASINK_IMAGE_NAME"),
-		CollectorImage:           GetTrimmedEnv("COLLECTOR_IMAGE_NAME"),
-		DatasinkImagePullPolicy:  GetTrimmedEnv("DATASINK_IMAGE_PULL_POLICY"),
-		CollectorImagePullPolicy: GetTrimmedEnv("COLLECTOR_IMAGE_PULL_POLICY"),
-		ScannerRequest:           GetTrimmedEnv("SCANNER_REQUEST"),
-		StreamRequest:            GetTrimmedEnv("STREAM_REQUEST"),
-		QueueURL:                 GetTrimmedEnv("QUEUE_URL"),
+		WebPort:                  getTrimmedEnv("WEB_PORT"),
+		GrpcPort:                 getTrimmedEnv("GRPC_PORT"),
+		DatasinkGrpcPort:         getTrimmedEnv("DATASINK_GRPC_PORT"),
+		Namespace:                getTrimmedEnv("PRESIDIO_NAMESPACE"),
+		AnalyzerSvcAddress:       getTrimmedEnv("ANALYZER_SVC_ADDRESS"),
+		AnonymizerSvcAddress:     getTrimmedEnv("ANONYMIZER_SVC_ADDRESS"),
+		SchedulerSvcAddress:      getTrimmedEnv("SCHEDULER_SVC_ADDRESS"),
+		RedisURL:                 getTrimmedEnv("REDIS_URL"),
+		DatasinkImage:            getTrimmedEnv("DATASINK_IMAGE_NAME"),
+		CollectorImage:           getTrimmedEnv("COLLECTOR_IMAGE_NAME"),
+		DatasinkImagePullPolicy:  getTrimmedEnv("DATASINK_IMAGE_PULL_POLICY"),
+		CollectorImagePullPolicy: getTrimmedEnv("COLLECTOR_IMAGE_PULL_POLICY"),
+		ScannerRequest:           getTrimmedEnv("SCANNER_REQUEST"),
+		StreamRequest:            getTrimmedEnv("STREAM_REQUEST"),
+		QueueURL:                 getTrimmedEnv("QUEUE_URL"),
 	}
 
 	return &settings
