@@ -1,9 +1,9 @@
 package redis
 
 import (
-	r "github.com/go-redis/redis"
-
 	"github.com/Microsoft/presidio/pkg/cache"
+
+	r "github.com/go-redis/redis"
 )
 
 type redis struct {
@@ -36,4 +36,10 @@ func (c *redis) Get(key string) (string, error) {
 	} else {
 		return val, nil
 	}
+}
+
+//Get key value
+func (c *redis) Expire(key string) {
+	// Expire the provided key now.
+	c.client.Expire(key, 0)
 }

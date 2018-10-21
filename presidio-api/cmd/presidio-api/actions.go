@@ -219,10 +219,12 @@ func (api *API) getTemplate(project string, action string, id string, obj interf
 	template, err := api.Templates.GetTemplate(key)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 	err = presidio.ConvertJSONToInterface(template, obj)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 }
 

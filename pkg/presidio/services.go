@@ -7,8 +7,6 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/pkg/cache"
-	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
@@ -79,20 +77,6 @@ func (services *Services) SetupDatasinkService() {
 	}
 
 	services.DatasinkService = datasinkService
-}
-
-//SetupCache  Redis cache
-func SetupCache() cache.Cache {
-	if settings.RedisURL == "" {
-		log.Fatal("redis address is empty")
-	}
-
-	cache := redis.New(
-		settings.RedisURL,
-		"", // no password set
-		0,  // use default DB
-	)
-	return cache
 }
 
 //AnalyzeItem - search for PII

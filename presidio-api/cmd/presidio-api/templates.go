@@ -62,6 +62,7 @@ func (api *API) putActionTemplate(c *gin.Context) {
 	err = api.Templates.UpdateTemplate(project, action, id, value)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 
 	server.WriteResponse(c, http.StatusOK, "Template updated successfully")

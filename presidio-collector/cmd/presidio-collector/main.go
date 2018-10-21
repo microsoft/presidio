@@ -4,6 +4,7 @@ import (
 	"context"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/eladiw/presidio/pkg/cache"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
@@ -27,7 +28,7 @@ func main() {
 	svc.SetupAnalyzerService()
 
 	if streamRequest.StreamConfig != nil {
-		st := streams.CreateStream(context.Background(), streamRequest)
+		st := streams.CreateStream(streamRequest)
 		setupDatasinkService(&svc, streamRequest.DatasinkTemplate)
 		if streamRequest.AnonymizeTemplate != nil {
 			svc.SetupAnonymizerService()
@@ -41,7 +42,7 @@ func main() {
 	}
 
 	if scanRequest.ScanTemplate != nil {
-		cache := presidio.SetupCache()
+		cache := cache.InitializeClient(settings.RedisURL, cache.Scanner)
 		setupDatasinkService(&svc, scanRequest.DatasinkTemplate)
 		if scanRequest.AnonymizeTemplate != nil {
 			svc.SetupAnonymizerService()
