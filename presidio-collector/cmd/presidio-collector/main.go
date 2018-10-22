@@ -4,7 +4,7 @@ import (
 	"context"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/eladiw/presidio/pkg/cache"
+	"github.com/Microsoft/presidio/pkg/cache"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"

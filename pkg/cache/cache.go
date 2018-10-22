@@ -3,7 +3,7 @@ package cache
 import (
 	"log"
 
-	"github.com/eladiw/presidio/pkg/cache/redis"
+	"github.com/Microsoft/presidio/pkg/cache/redis"
 )
 
 //Cache interface

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/Microsoft/presidio/pkg/cache"
 	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/eladiw/presidio/pkg/cache"
 )
 
 const separator = "."
