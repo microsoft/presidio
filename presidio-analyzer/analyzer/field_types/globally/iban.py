@@ -1,5 +1,5 @@
 import string
-from field_types import field_type, field_pattern
+from field_types import field_type, field_regex_pattern
 
 
 class Iban(field_type.FieldType):
@@ -9,7 +9,7 @@ class Iban(field_type.FieldType):
 
     patterns = []
 
-    pattern = field_pattern.FieldPattern()
+    pattern = field_regex_pattern.RegexFieldPattern()
     pattern.regex = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
     pattern.name = 'Iban (Medium)'
     pattern.strength = 0.5

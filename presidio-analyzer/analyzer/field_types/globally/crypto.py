@@ -1,5 +1,5 @@
 from hashlib import sha256
-from field_types import field_type, field_pattern
+from field_types import field_type, field_regex_pattern
 
 
 class Crypto(field_type.FieldType):
@@ -10,7 +10,7 @@ class Crypto(field_type.FieldType):
 
     patterns = []
 
-    pattern = field_pattern.FieldPattern()
+    pattern = field_regex_pattern.RegexFieldPattern()
     pattern.regex = r'\b[13][a-km-zA-HJ-NP-Z0-9]{26,33}\b'
     pattern.name = 'Crypto (Medium)'
     pattern.strength = 0.5

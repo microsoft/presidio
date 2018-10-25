@@ -24,6 +24,7 @@ def test_phone_number_strong_match_with_phone_context():
     assert results[0].text == number
     assert results[0].probability == 1
 
+
 def test_phone_number_strong_match_with_phone_context_no_space():
     number = '(425) 882-9090'
     context = 'my phone number is:'
@@ -32,6 +33,14 @@ def test_phone_number_strong_match_with_phone_context_no_space():
     assert len(results) == 1
     assert results[0].text == number
     assert results[0].probability == 1
+
+
+def test_phone_in_guid():
+    number = '110bcd25-a55d-453a-8046-1297901ea002'
+    context = 'my phone number is:'
+    results = match.analyze_text(context + number, types)
+
+    assert len(results) == 0
 
 
 def test_phone_number_strong_match_with_similar_context():
@@ -120,15 +129,10 @@ def test_phone_numbers_lemmatized_context_phones():
     number1 = '052 5552606'
     number2 = '074-7111234'
     results = match.analyze_text(
-        'try one of these phones ' +
-        number1 +
-        ' ' +
-        number2,
-        types)
+        'try one of these phones ' + number1 + ' ' + number2, types)
 
     assert len(results) == 2
     assert results[0].text == number1
     assert results[0].probability > 0.75 and results[0].probability < 0.9
     assert results[1].text == number2
     assert results[0].probability > 0.75 and results[0].probability < 0.9
-

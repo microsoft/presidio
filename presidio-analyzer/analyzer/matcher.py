@@ -1,16 +1,13 @@
 import datetime
 import logging
-from concurrent import futures
+import os
 import en_core_web_lg
 import common_pb2
 import template_pb2
 import tldextract
-from field_types import field_type, field_factory, field_pattern
+from field_types import field_type, field_factory
 from field_types.globally import ner
-try:
-    import re2 as re
-except ImportError:
-    import re
+import re2 as re
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 CONTEXT_SIMILARITY_FACTOR = 0.35
@@ -26,17 +23,23 @@ class Matcher(object):
         Load spacy model once
         """
 
-        logging.getLogger('tldextract').setLevel('WARNING')
+        # Set log level
+        loglevel = os.environ.get("LOG_LEVEL", "INFO")
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(loglevel)
+        logging.getLogger('tldextract').setLevel(loglevel)
+
         # Caching top level domains
         tldextract.extract("")
 
         # Load spaCy lg model
+        self.logger.info("Loading NLP model...")
         self.nlp = en_core_web_lg.load(disable=['parser', 'tagger'])
 
     def __context_to_keywords(self, context):
         nlp_context = self.nlp(context)
 
-        # Remove punctionation, stop words and take lemma form and remove
+        # Remove punctuation, stop words and take lemma form and remove
         # duplicates
         keywords = list(
             filter(
@@ -47,8 +50,8 @@ class Matcher(object):
         return keywords
 
     def __calculate_context_similarity(self, context, field):
-        # Context similarity is 1 if there's exact match between a keyword in context
-        # and any keyword in field.context
+        # Context similarity is 1 if there's exact match between a keyword in
+        # context and any keyword in field.context
 
         context_keywords = self.__context_to_keywords(context)
 
@@ -69,7 +72,7 @@ class Matcher(object):
     def __calculate_probability(self, doc, match_strength, field, start, end):
         if field.should_check_checksum:
             if field.check_checksum() is not True:
-                logging.info('Checksum failed for %s', field.text)
+                self.logger.debug('Checksum failed for %s', field.text)
                 return 0
             else:
                 return 1.0
@@ -103,7 +106,7 @@ class Matcher(object):
         calc_probability_time = datetime.datetime.now(
         ) - calc_probability_start_time
 
-        logging.debug('--- calc_prob_time[{}]: {}.{} seconds'.format(
+        self.logger.debug('--- calc_prob_time[{}]: {}.{} seconds'.format(
             field.name, calc_probability_time.seconds,
             calc_probability_time.microseconds))
 
@@ -111,8 +114,8 @@ class Matcher(object):
         res.location.end = end
         res.location.length = end - start
 
-        logging.info("field: %s Value: %s Span: '%s:%s' Score: %.2f",
-                     res.field, res.text, start, end, res.probability)
+        self.logger.debug("field: %s Value: %s Span: '%s:%s' Score: %.2f",
+                          res.field, res.text, start, end, res.probability)
         return res
 
     def __extract_context(self, doc, start, end):
@@ -141,7 +144,7 @@ class Matcher(object):
                 doc.text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
             match_time = datetime.datetime.now() - match_start_time
-            logging.debug('--- match_time[{}]: {}.{} seconds'.format(
+            self.logger.debug('--- match_time[{}]: {}.{} seconds'.format(
                 field.name, match_time.seconds, match_time.microseconds))
 
             for match in matches:
@@ -175,32 +178,18 @@ class Matcher(object):
             if result_found:
                 max_matched_strength = pattern.strength
 
-    def __match_ner(self, label, field_type):
-        if field_type == "LOCATION" and (label == 'GPE' or label == 'LOC'):
-            return True
-
-        if field_type == "PERSON" and label == 'PERSON':
-            return True
-
-        if field_type == "DATE_TIME" and (label == 'DATE' or label == 'TIME'):
-            return True
-
-        if field_type == "NRP" and label == 'NORP':
-            return True
-
-        return False
-
     def __check_ner(self, doc, results, field):
         for ent in doc.ents:
-            if self.__match_ner(ent.label_, field.name) is False:
+            if field.check_label(ent.label_) is False:
                 continue
             field.text = ent.text
 
-            res = self.__create_result(doc, NER_STRENGTH, field,
-                                       ent.start_char, ent.end_char)
+            if field.validate_result():
+                res = self.__create_result(doc, NER_STRENGTH, field,
+                                           ent.start_char, ent.end_char)
 
-            if res is not None:
-                results.append(res)
+                if res is not None:
+                    results.append(res)
 
         return results
 
@@ -209,12 +198,9 @@ class Matcher(object):
         text = text.replace('\r', ' ')
         return text
 
-    def __new_payload(self, name, data):
-        return type(name, (object, ), data)
-
-    def __analyze_field_type(self, payload):
+    def __analyze_field_type(self, doc, field_type_string_filter, results):
         current_field = field_factory.FieldFactory.create(
-            payload.field_type_string_filter)
+            field_type_string_filter)
 
         if current_field is None:
             return
@@ -222,47 +208,15 @@ class Matcher(object):
         # Check for ner field
         analyze_start_time = datetime.datetime.now()
         if isinstance(current_field, type(ner.Ner())):
-            current_field.name = payload.field_type_string_filter
-            self.__check_ner(payload.doc, payload.results, current_field)
+            current_field.name = field_type_string_filter
+            self.__check_ner(doc, results, current_field)
         else:
-            self.__check_pattern(payload.doc, payload.results, current_field)
+            self.__check_pattern(doc, results, current_field)
 
         analyze_time = datetime.datetime.now() - analyze_start_time
-        logging.debug('--- analyze_time[{}]: {}.{} seconds'.format(
-            payload.field_type_string_filter, analyze_time.seconds,
+        self.logger.debug('--- analyze_time[{}]: {}.{} seconds'.format(
+            field_type_string_filter, analyze_time.seconds,
             analyze_time.microseconds))
-
-    def __is_checksum_result(self, result):
-        if result.probability == 1.0:
-            result_field = field_factory.FieldFactory.create(result.field.name)
-            return result_field.should_check_checksum
-        return False
-
-    def __remove_checksum_duplicates(self, results):
-        results_with_checksum = list(
-            filter(lambda r: self.__is_checksum_result(r), results))
-
-        # Remove matches of the same text, if there's a match with checksum and probability = 1
-        filtered_results = []
-
-        for result in results:
-            valid_result = True
-            if result not in results_with_checksum:
-                for result_with_checksum in results_with_checksum:
-                    # If result is equal to or substring of a checksum result
-                    if (result.text == result_with_checksum.text
-                            or (result.text in result_with_checksum.text
-                                and result.location.start >=
-                                result_with_checksum.location.start
-                                and result.location.end <=
-                                result_with_checksum.location.end)):
-                        valid_result = False
-                        break
-
-            if valid_result:
-                filtered_results.append(result)
-
-        return filtered_results
 
     def __is_checksum_result(self, result):
         if result.probability == 1.0:
@@ -300,7 +254,7 @@ class Matcher(object):
     def analyze_text(self, text, field_type_filters):
         """Analyze text.
 
-        Args:
+        Args: 
             text: text to analyzer.
             field_type_filters: filters array such as [{"name":PERSON"},{"name": "LOCATION"}]
         """
@@ -318,14 +272,8 @@ class Matcher(object):
         doc = self.nlp(sanitized_text)
 
         for field_type_string_filter in field_type_string_filters:
-            payload = self.__new_payload(
-                'Payload', {
-                    'doc': doc,
-                    'field_type_string_filter': field_type_string_filter,
-                    'results': results
-                })
-            self.__analyze_field_type(payload)
-            
+            self.__analyze_field_type(doc, field_type_string_filter, results)
+
         results = self.__remove_checksum_duplicates(results)
         results.sort(key=lambda x: x.location.start, reverse=False)
 
