@@ -5,6 +5,8 @@ from field_types.us import itin as usitin
 from field_types.us import passport as uspassport
 from field_types.us import phone as usphone
 from field_types.us import ssn as usssn
+from field_types.uk import nhs as uknhs
+
 import os
 import sys
 
@@ -16,7 +18,6 @@ from analyzer import common_pb2
 
 
 class FieldFactory(object):
-
     def create(type):
         if type == common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD):
             return credit_card.CreditCard()
@@ -43,6 +44,8 @@ class FieldFactory(object):
             return usphone.Phone()
         if type == common_pb2.FieldTypesEnum.Name(common_pb2.US_SSN):
             return usssn.UsSsn()
+        if type == common_pb2.FieldTypesEnum.Name(common_pb2.UK_NHS):
+            return uknhs.UkNhs()
         if type == common_pb2.FieldTypesEnum.Name(common_pb2.DATE_TIME):
             return ner.Ner()
         if type == common_pb2.FieldTypesEnum.Name(common_pb2.NRP):
@@ -72,4 +75,5 @@ types_refs = {
     common_pb2.FieldTypesEnum.Name(common_pb2.US_PASSPORT),
     common_pb2.FieldTypesEnum.Name(common_pb2.PHONE_NUMBER),
     common_pb2.FieldTypesEnum.Name(common_pb2.US_SSN),
+    common_pb2.FieldTypesEnum.Name(common_pb2.UK_NHS),
 }

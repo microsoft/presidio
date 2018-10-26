@@ -14,20 +14,16 @@ def test_valid_credit_cards():
     number1 = '4012888888881881'
     number2 = '4012-8888-8888-1881'
     number3 = '4012 8888 8888 1881'
-    results = match.analyze_text(
-        '{} {} {}'.format(
-            number1,
-            number2,
-            number3),
-        types)
+    results = match.analyze_text('{} {} {}'.format(number1, number2, number3),
+                                 types)
 
     assert len(results) == 3
     assert results[0].text == number1
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
     assert results[1].text == number2
-    assert results[1].probability == 1.0
+    assert results[1].score == 1.0
     assert results[2].text == number3
-    assert results[2].probability == 1.0
+    assert results[2].score == 1.0
 
 
 def test_valid_credit_cards_with_lemmatized_context():
@@ -36,20 +32,15 @@ def test_valid_credit_cards_with_lemmatized_context():
     number3 = '4012 8888 8888 1881'
     context = 'my credit cards are:'
     results = match.analyze_text(
-        '{}{} {} {}'.format(
-            context,
-            number1,
-            number2,
-            number3),
-        types)
+        '{}{} {} {}'.format(context, number1, number2, number3), types)
 
     assert len(results) == 3
     assert results[0].text == number1
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
     assert results[1].text == number2
-    assert results[1].probability == 1.0
+    assert results[1].score == 1.0
     assert results[2].text == number3
-    assert results[2].probability == 1.0
+    assert results[2].score == 1.0
 
 
 def test_valid_airplus_credit_card():
@@ -58,7 +49,7 @@ def test_valid_airplus_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_airplus_credit_card_with_extact_context():
@@ -68,7 +59,7 @@ def test_valid_airplus_credit_card_with_extact_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_amex_credit_card():
@@ -77,7 +68,7 @@ def test_valid_amex_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_cartebleue_credit_card():
@@ -86,7 +77,7 @@ def test_valid_cartebleue_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_dankort_credit_card():
@@ -95,7 +86,7 @@ def test_valid_dankort_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_diners_credit_card():
@@ -104,7 +95,7 @@ def test_valid_diners_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_discover_credit_card():
@@ -113,7 +104,7 @@ def test_valid_discover_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_jcb_credit_card():
@@ -122,7 +113,7 @@ def test_valid_jcb_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_maestro_credit_card():
@@ -131,7 +122,7 @@ def test_valid_maestro_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_mastercard_credit_card():
@@ -140,7 +131,7 @@ def test_valid_mastercard_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_visa_credit_card():
@@ -149,7 +140,7 @@ def test_valid_visa_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_visa_debit_credit_card():
@@ -158,8 +149,8 @@ def test_valid_visa_debit_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
-    
+    assert results[0].score == 1.0
+
 
 def test_valid_visa_electron_credit_card():
     number = '4917300800000000'
@@ -167,7 +158,7 @@ def test_valid_visa_electron_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_valid_visa_purchasing_credit_card():
@@ -176,7 +167,7 @@ def test_valid_visa_purchasing_credit_card():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_invalid_credit_card():

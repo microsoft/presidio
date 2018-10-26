@@ -69,7 +69,7 @@ class Matcher(object):
 
         return similarity
 
-    def __calculate_probability(self, doc, match_strength, field, start, end):
+    def __calculate_score(self, doc, match_strength, field, start, end):
         if field.should_check_checksum:
             if field.check_checksum() is not True:
                 self.logger.debug('Checksum failed for %s', field.text)
@@ -77,18 +77,18 @@ class Matcher(object):
             else:
                 return 1.0
 
-        # Base probability according to the pattern strength
-        probability = match_strength
+        # Base score according to the pattern strength
+        score = match_strength
 
         # Add context similarity
         context = self.__extract_context(doc, start, end)
         context_similarity = self.__calculate_context_similarity(
             context, field)
         if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
-            probability += context_similarity * CONTEXT_SIMILARITY_FACTOR
-            probability = max(probability, MIN_SCORE_WITH_CONTEXT_SIMILARITY)
+            score += context_similarity * CONTEXT_SIMILARITY_FACTOR
+            score = max(score, MIN_SCORE_WITH_CONTEXT_SIMILARITY)
 
-        return min(probability, 1)
+        return min(score, 1)
 
     def __create_result(self, doc, match_strength, field, start, end):
 
@@ -97,25 +97,23 @@ class Matcher(object):
         res.text = field.text
 
         # check score
-        calc_probability_start_time = datetime.datetime.now()
+        calc_score_start_time = datetime.datetime.now()
         if isinstance(field, type(ner.Ner())):
-            res.probability = NER_STRENGTH
+            res.score = NER_STRENGTH
         else:
-            res.probability = self.__calculate_probability(
-                doc, match_strength, field, start, end)
-        calc_probability_time = datetime.datetime.now(
-        ) - calc_probability_start_time
+            res.score = self.__calculate_score(doc, match_strength, field,
+                                               start, end)
+        calc_score_time = datetime.datetime.now() - calc_score_start_time
 
         self.logger.debug('--- calc_prob_time[{}]: {}.{} seconds'.format(
-            field.name, calc_probability_time.seconds,
-            calc_probability_time.microseconds))
+            field.name, calc_score_time.seconds, calc_score_time.microseconds))
 
         res.location.start = start
         res.location.end = end
         res.location.length = end - start
 
         self.logger.debug("field: %s Value: %s Span: '%s:%s' Score: %.2f",
-                          res.field, res.text, start, end, res.probability)
+                          res.field, res.text, start, end, res.score)
         return res
 
     def __extract_context(self, doc, start, end):
@@ -164,11 +162,11 @@ class Matcher(object):
                 res = self.__create_result(doc, pattern.strength, field, start,
                                            end)
 
-                if res is None or res.probability == 0:
+                if res is None or res.score == 0:
                     continue
 
                 # Don't add overlap
-                # if any(x.location.end >= start and x.probability == 1.0
+                # if any(x.location.end >= start and x.score == 1.0
                 #        for x in results):
                 #     continue
 
@@ -219,7 +217,7 @@ class Matcher(object):
             analyze_time.microseconds))
 
     def __is_checksum_result(self, result):
-        if result.probability == 1.0:
+        if result.score == 1.0:
             result_field = field_factory.FieldFactory.create(result.field.name)
             return result_field.should_check_checksum
         return False
@@ -229,7 +227,7 @@ class Matcher(object):
             filter(lambda r: self.__is_checksum_result(r), results))
 
         # Remove matches of the same text, if there's a match with checksum and
-        # probability = 1
+        # score = 1
         filtered_results = []
 
         for result in results:

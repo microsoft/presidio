@@ -79,7 +79,7 @@ def test_no_duplicates_of_checksum_credit_card_no_dashes():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_no_duplicates_of_checksum_credit_card_with_dashes():
@@ -88,7 +88,7 @@ def test_no_duplicates_of_checksum_credit_card_with_dashes():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_no_duplicates_of_checksum_crypto():
@@ -97,7 +97,7 @@ def test_no_duplicates_of_checksum_crypto():
 
     assert len(results) == 1
     assert results[0].text == wallet
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0
 
 
 def test_no_duplicates_of_checksum_domain():
@@ -106,7 +106,7 @@ def test_no_duplicates_of_checksum_domain():
 
     assert len(results) == 1
     assert results[0].text == domain
-    assert results[0].probability == 1
+    assert results[0].score == 1
 
 
 def test_no_duplicates_of_checksum_email():
@@ -115,13 +115,13 @@ def test_no_duplicates_of_checksum_email():
     results = match.analyze_text('the email is ' + email, types)
     results_text = map(lambda r: r.text, results)
 
-    # In email, the domain is also detected with checksum and probability = 1
+    # In email, the domain is also detected with checksum and score = 1
     assert len(results) == 2
 
     assert results[0].text in results_text
-    assert results[0].probability == 1
+    assert results[0].score == 1
     assert results[1].text in results_text
-    assert results[0].probability == 1
+    assert results[0].score == 1
     assert results[0].text != results[1].text
 
 
@@ -131,4 +131,4 @@ def test_no_duplicates_of_checksum_iban():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1.0
+    assert results[0].score == 1.0

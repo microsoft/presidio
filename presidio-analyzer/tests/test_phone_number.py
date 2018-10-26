@@ -12,7 +12,7 @@ def test_phone_number_strong_match_no_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.69 and results[0].probability < 1
+    assert results[0].score > 0.69 and results[0].score < 1
 
 
 def test_phone_number_strong_match_with_phone_context():
@@ -22,7 +22,7 @@ def test_phone_number_strong_match_with_phone_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1
+    assert results[0].score == 1
 
 
 def test_phone_number_strong_match_with_phone_context_no_space():
@@ -32,7 +32,7 @@ def test_phone_number_strong_match_with_phone_context_no_space():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability == 1
+    assert results[0].score == 1
 
 
 def test_phone_in_guid():
@@ -50,7 +50,7 @@ def test_phone_number_strong_match_with_similar_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.69
+    assert results[0].score > 0.69
 
 
 def test_phone_number_strong_match_with_irrelevant_context():
@@ -60,7 +60,7 @@ def test_phone_number_strong_match_with_irrelevant_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.69 and results[0].probability < 1
+    assert results[0].score > 0.69 and results[0].score < 1
 
 
 def test_phone_number_medium_match_no_context():
@@ -69,7 +69,7 @@ def test_phone_number_medium_match_no_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.45 and results[0].probability < 0.6
+    assert results[0].score > 0.45 and results[0].score < 0.6
 
 
 def test_phone_number_medium_match_with_phone_context():
@@ -79,7 +79,7 @@ def test_phone_number_medium_match_with_phone_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.75 and results[0].probability < 0.9
+    assert results[0].score > 0.75 and results[0].score < 0.9
 
 
 ''' This test fails since available is not close enough to phone --> requires experimentation with language model
@@ -91,7 +91,7 @@ def test_phone_number_medium_match_with_similar_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.59 and results[0].probability < 0.8
+    assert results[0].score > 0.59 and results[0].score < 0.8
 '''
 
 
@@ -102,7 +102,7 @@ def test_phone_number_medium_match_with_irrelevant_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.29 and results[0].probability < 0.51
+    assert results[0].score > 0.29 and results[0].score < 0.51
 
 
 def test_phone_number_weak_match_no_context():
@@ -112,7 +112,7 @@ def test_phone_number_weak_match_no_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0 and results[0].probability < 0.3
+    assert results[0].score > 0 and results[0].score < 0.3
 
 
 def test_phone_number_weak_match_with_phone_context():
@@ -122,7 +122,7 @@ def test_phone_number_weak_match_with_phone_context():
 
     assert len(results) == 1
     assert results[0].text == number
-    assert results[0].probability > 0.59 and results[0].probability < 0.81
+    assert results[0].score > 0.59 and results[0].score < 0.81
 
 
 def test_phone_numbers_lemmatized_context_phones():
@@ -133,6 +133,6 @@ def test_phone_numbers_lemmatized_context_phones():
 
     assert len(results) == 2
     assert results[0].text == number1
-    assert results[0].probability > 0.75 and results[0].probability < 0.9
+    assert results[0].score > 0.75 and results[0].score < 0.9
     assert results[1].text == number2
-    assert results[0].probability > 0.75 and results[0].probability < 0.9
+    assert results[0].score > 0.75 and results[0].score < 0.9

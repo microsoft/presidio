@@ -29,7 +29,7 @@ The expected result is:
       "field": {
         "name": "PERSON"
       },
-      "probability": 0.8500000238418579,
+      "score": 0.8500000238418579,
       "location": {
         "end": 10,
         "length": 10,
@@ -41,7 +41,7 @@ The expected result is:
       "field": {
         "name": "US_DRIVER_LICENSE"
       },
-      "probability": 0.6499999761581421,
+      "score": 0.6499999761581421,
       "location": {
         "start": 30,
         "end": 38,
