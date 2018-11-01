@@ -2,12 +2,16 @@ from analyzer import matcher, common_pb2
 from tests import *
 import datetime
 import os
+import logging
+import cProfile, pstats, io
+from pstats import SortKey
 
 context = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo dictum est, fringilla congue ex malesuada quis. Phasellus at posuere erat. Quisque blandit tristique lacus ut aliquam. Donec at maximus nisi. Quisque dapibus eros enim, quis tincidunt leo vehicula at. Maecenas suscipit nec ante pretium ornare. Nulla at dui vel mi blandit scelerisque. Phasellus vehicula vel nunc et convallis. Pellentesque nibh elit, molestie a lectus vitae, luctus fringilla quam. '
 
 PERF_MICROSECS_THRESHOLD_ENTITY = 300000
 PERF_MICROSECS_THRESHOLD_CHECKSUM_ENTITY = 350000
 PERF_MICROSECS_THRESHOLD_NER = 200000
+
 
 def analyze_perf(field_name, entity, runtime_threshold_micros):
     fieldType = common_pb2.FieldTypes()
@@ -19,17 +23,18 @@ def analyze_perf(field_name, entity, runtime_threshold_micros):
     analyze_time = datetime.datetime.now() - start_time
 
     print('--- analyze_time[{}]: {}.{} seconds'.format(
-            types[0].name, analyze_time.seconds, analyze_time.microseconds))
-    
+        types[0].name, analyze_time.seconds, analyze_time.microseconds))
+
     assert analyze_time.seconds < 1
     assert analyze_time.microseconds < runtime_threshold_micros
+
 
 # Credit Card
 def test_analyze_perf_credit_card_no_dashes():
     field_name = common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD)
     entity = '4012888888881881'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_CHECKSUM_ENTITY)
-    
+
 
 def test_analyze_perf_credit_card_with_dashes():
     field_name = common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD)
@@ -49,11 +54,13 @@ def test_analyze_perf_btc():
     entity = '16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_CHECKSUM_ENTITY)
 
+
 # Domain
 def test_analyze_perf_domain():
     field_name = common_pb2.FieldTypesEnum.Name(common_pb2.DOMAIN_NAME)
     entity = 'microsoft.com'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_CHECKSUM_ENTITY)
+
 
 # Email
 def test_analyze_perf_email():
@@ -61,17 +68,20 @@ def test_analyze_perf_email():
     entity = 'info@presidio.site'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_CHECKSUM_ENTITY)
 
+
 # IBAN
 def test_analyze_perf_iban():
     field_name = common_pb2.FieldTypesEnum.Name(common_pb2.IBAN_CODE)
     entity = 'IL150120690000003111111'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_CHECKSUM_ENTITY)
 
+
 # IP
 def test_analyze_perf_ipv4():
     field_name = common_pb2.FieldTypesEnum.Name(common_pb2.IP_ADDRESS)
     entity = '192.168.0.1'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_ENTITY)
+
 
 # NER
 def test_analyze_perf_person():
@@ -85,11 +95,13 @@ def test_analyze_perf_person():
     entity = 'May 1st'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_NER)
 
+
 # US - Bank Account
 def test_analyze_perf_us_bank():
     field_name = common_pb2.FieldTypesEnum.Name(common_pb2.US_BANK_NUMBER)
     entity = '945456787654'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_ENTITY)
+
 
 # US - Driver License
 def test_analyze_perf_us_driver_license_very_weak_digits():
@@ -130,3 +142,21 @@ def test_analyze_perf_us_ssn():
     field_name = common_pb2.FieldTypesEnum.Name(common_pb2.US_SSN)
     entity = '078-05-1120'
     analyze_perf(field_name, entity, PERF_MICROSECS_THRESHOLD_ENTITY)
+
+
+def test_profile_synthetic_json():
+    path = os.path.dirname(__file__) + '/data/synthetic.json'
+    text_file = open(path, 'r')
+    text = text_file.read()
+    pr = cProfile.Profile()
+    pr.enable()
+    results = match.analyze_text(text, [])
+    pr.disable()
+
+    s = io.StringIO()
+    sortby = SortKey.CUMULATIVE
+    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    ps.print_stats()
+    val = s.getvalue()
+    logging.info(val)
+    assert len(results) > 30

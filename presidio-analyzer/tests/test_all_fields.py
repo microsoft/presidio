@@ -3,8 +3,6 @@ from tests import *
 import datetime
 import os
 import logging
-import cProfile, pstats, io
-from pstats import SortKey
 
 types = []
 
@@ -52,24 +50,6 @@ def test_synthetic_json():
     assert test_time.microseconds < 500000
     logging.info('test_all_fields_json runtime: {}.{} seconds'.format(
         test_time.seconds, test_time.microseconds))
-
-
-def test_profile_synthetic_json():
-    path = os.path.dirname(__file__) + '/data/synthetic.json'
-    text_file = open(path, 'r')
-    text = text_file.read()
-    pr = cProfile.Profile()
-    pr.enable()
-    results = match.analyze_text(text, types)
-    pr.disable()
-
-    s = io.StringIO()
-    sortby = SortKey.CUMULATIVE
-    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-    ps.print_stats()
-    val = s.getvalue()
-    logging.info(val)
-    assert len(results) > 30
 
 
 # Test no duplicates of matches with checksum matches
