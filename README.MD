@@ -113,7 +113,7 @@ echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-276
 | Scanner             | S3                   | :white_check_mark:     |
 | Scanner             | Google Cloud Storage | :x:                    |
 | Streams             | Kafka                | :large_orange_diamond: |
-| Streams             | Azure Event Hub      | :x:                    |
+| Streams             | Azure Event Hub      | :large_orange_diamond:                    |
 | Datasink (output)   | MySQL                | :white_check_mark:     |
 | Datasink (output)   | MSSQL                | :white_check_mark:     |
 | Datasink (output)   | Oracle               | :x:                    |
