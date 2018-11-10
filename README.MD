@@ -34,7 +34,6 @@ You can find a more detailed list [here](https://microsoft.github.io/presidio/fi
   2. Streaming platform
       - Kafka
       - Azure Events Hubs
-      - Kinesis
 
 ## The Technology Stack
 Presidio leverages 
@@ -115,14 +114,12 @@ echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-276
 | Scanner             | Google Cloud Storage | :x:                    |
 | Streams             | Kafka                | :large_orange_diamond: |
 | Streams             | Azure Event Hub      | :x:                    |
-| Streams             | Kinesis              | :large_orange_diamond: |
 | Datasink (output)   | MySQL                | :white_check_mark:     |
 | Datasink (output)   | MSSQL                | :white_check_mark:     |
 | Datasink (output)   | Oracle               | :x:                    |
 | Datasink (output)   | PostgreSQL           | :white_check_mark:     |
 | Datasink (output)   | Kafka                | :white_check_mark:     |
 | Datasink (output)   | Azure Event Hub      | :white_check_mark:     |
-| Datasink (output)   | Kinesis              | :large_orange_diamond: |
 | Datasink (output)   | Azure Blob Storage   | :white_check_mark:     |
 | Datasink (output)   | S3                   | :white_check_mark:     |
 | Datasink (output)   | Google Cloud Storage | :x:                    |

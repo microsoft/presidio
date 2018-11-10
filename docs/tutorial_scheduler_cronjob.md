@@ -157,7 +157,6 @@ Use the following [configuration](#Input-&-Output-Configuration) defending on th
   * Oracle
 * Supported streams solutions:
   * Azure EventHub
-  * Kinesis
   * Kafka
 
 ## Input and Output Configurations
@@ -233,20 +232,6 @@ For Kafka use the following configuration:
       "address": "<address>",
       "saslUsername": "<saslUsername>",
       "saslPassword": "<saslPassword>"
-    }
-  }
-```
-
-For Kinesis use the following configuration:
-```json
-  "streamConfig": {
-    "kinesisConfig": {
-      "awsAccessKeyId": "<awsAccessKeyId>",
-      "awsRegion": "<awsRegion>",
-      "awsSecretAccessKey": "<awsSecretAccessKey>",
-      "redisUrl": "<redisUrl>",
-      "streamName": "<streamName>",
-      "endpointAddress": "<endpointAddress>"
     }
   }
 ```

@@ -1,10 +1,6 @@
 [[constraint]]
   name = "github.com/Azure/azure-event-hubs-go"
   branch = "master"
-
-[[constraint]]
-  name = "github.com/harlow/kinesis-consumer"
-  branch = "master"
   
 [[constraint]]
   name = "github.com/Shopify/sarama"

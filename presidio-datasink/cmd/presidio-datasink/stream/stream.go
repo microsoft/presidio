@@ -11,7 +11,6 @@ import (
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
-	"github.com/Microsoft/presidio/pkg/stream/kinesis"
 	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
@@ -28,9 +27,6 @@ func New(datasink *types.Datasink) datasink.Datasink {
 	} else if datasink.StreamConfig.GetKafkaConfig() != nil {
 		c := datasink.StreamConfig.GetKafkaConfig()
 		stream = kafka.NewProducer(c.GetAddress(), c.GetTopic())
-	} else if datasink.StreamConfig.GetKinesisConfig() != nil {
-		c := datasink.StreamConfig.GetKinesisConfig()
-		stream = kinesis.NewProducer(c.AwsSecretAccessKey, c.EndpointAddress, c.AwsRegion, c.AwsSecretAccessKey, c.RedisUrl, c.GetStreamName())
 	}
 
 	streamDatasink := streamDatasink{stream: stream}

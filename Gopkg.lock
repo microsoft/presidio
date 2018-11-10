@@ -6,11 +6,11 @@
   name = "cloud.google.com/go"
   packages = ["civil"]
   pruneopts = "UT"
-  revision = "97efc2c9ffd9fe8ef47f7f3203dc60bbca547374"
-  version = "v0.28.0"
+  revision = "dfffe386c33fb24c34ee501e5723df5b97b98514"
+  version = "v0.30.0"
 
 [[projects]]
-  digest = "1:640a77a7a1f61add469a366cbf6469d74df0a5d2355fd0b03cb4bacbf9eaf704"
+  digest = "1:f392559a75b654cd3393a32985393891853b179f4e634ad2251f2840dda5396f"
   name = "github.com/Azure/azure-amqp-common-go"
   packages = [
     ".",
@@ -27,12 +27,12 @@
     "uuid",
   ]
   pruneopts = "UT"
-  revision = "1f0fa230acfce331c18a804d061260622dcd0906"
-  version = "v1.0.1"
+  revision = "dead23a10516c64bf754a2aabc7063304adcf736"
+  version = "v1.0.2"
 
 [[projects]]
   branch = "master"
-  digest = "1:755febf6aa1717afece03745c2a3381916845e49108af8f5795864a1ee209a42"
+  digest = "1:c0e593724c61eeadcd33f14c8036ddd86579d8b3261cb0e608929e7743d6fd9b"
   name = "github.com/Azure/azure-event-hubs-go"
   packages = [
     ".",
@@ -41,7 +41,7 @@
     "storage",
   ]
   pruneopts = "UT"
-  revision = "ed70919012a66645f619384dced1f8cb3d2d7a44"
+  revision = "b5432bf7c42f1650c9a4bee5691da692b56f7a60"
 
 [[projects]]
   digest = "1:d2ccb697dc13c8fbffafa37baae97594d5592ae8f7e113471084137315536e2b"
@@ -106,7 +106,7 @@
   version = "v1.19.0"
 
 [[projects]]
-  digest = "1:bd4210144e9401c313583440e43eb0dabb45428685b482446aad942d2af48a6c"
+  digest = "1:999e9c7ec2c2f64b39389000edf98973600e84bb2e33d4edc998d98d5cd26bac"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -134,21 +134,17 @@
     "private/protocol",
     "private/protocol/eventstream",
     "private/protocol/eventstream/eventstreamapi",
-    "private/protocol/json/jsonutil",
-    "private/protocol/jsonrpc",
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
     "private/protocol/restxml",
     "private/protocol/xml/xmlutil",
-    "service/kinesis",
-    "service/kinesis/kinesisiface",
     "service/s3",
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "3c7ce80a3b6d9b952022a6c5e5dd758486ff4de1"
-  version = "v1.15.48"
+  revision = "4b4fb865e4e4a972645dba0b9677e623dd83a8a8"
+  version = "v1.15.53"
 
 [[projects]]
   digest = "1:526d64d0a3ac6c24875724a9355895be56a21f89a5d3ab5ba88d91244269a7d8"
@@ -227,11 +223,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:523a69589cd5f7d397a317672ba57e61421f94aa440803fd3f2466a6703656ac"
+  digest = "1:47ec9ecedf860f6938d45a4faaca37c5486f151802d8df095fbec205600a8319"
   name = "github.com/gin-contrib/cors"
   packages = ["."]
   pruneopts = "UT"
-  revision = "4f98e8b8e930504f22776fd13174a5f9d115baae"
+  revision = "488de3ec974f4e37bb0eb426cdee1aa897726300"
 
 [[projects]]
   branch = "master"
@@ -313,11 +309,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ac96eb641bc8b5318b298e10819078a7842cf8f616d81beae9ebb845293e32cb"
+  digest = "1:c12ea7f3a482b80a4bc36029d4b173ce62a5df7dd6b1890e2101a2fa2476107f"
   name = "github.com/go-xorm/xorm"
   packages = ["."]
   pruneopts = "UT"
-  revision = "7a9249de33244c72b3f437f31189b3cefc0a6ad4"
+  revision = "3e8290cc9448afc643430032d68d310965630df8"
 
 [[projects]]
   digest = "1:34e709f36fd4f868fb00dbaf8a6cab4c1ae685832d392874ba9d7c5dec2429d1"
@@ -411,17 +407,6 @@
   ]
   pruneopts = "UT"
   revision = "498ae206fc3cfe81cd82e48c1d4354026fa5f9ec"
-
-[[projects]]
-  branch = "master"
-  digest = "1:cdda36ac9ffef3135d8f5ff45d1fe7e6b3bf579287e14feaa0b75fe31e5bd45c"
-  name = "github.com/harlow/kinesis-consumer"
-  packages = [
-    ".",
-    "checkpoint/redis",
-  ]
-  pruneopts = "UT"
-  revision = "d3b76346f5967091f5d8fad678debf86aba73300"
 
 [[projects]]
   digest = "1:8eb1de8112c9924d59bf1d3e5c26f5eaa2bfc2a5fcbb92dc1c2e4546d695f277"
@@ -538,15 +523,15 @@
   version = "v2.0.1"
 
 [[projects]]
-  digest = "1:4f0885b3f0dba96128a09a6f4b4231c42688fbd05f323224c6aa5adc9f4e87bf"
+  digest = "1:e39a5ee8fcbec487f8fc68863ef95f2b025e0739b0e4aa55558a2b4cf8f0ecf0"
   name = "github.com/pierrec/lz4"
   packages = [
     ".",
     "internal/xxh32",
   ]
   pruneopts = "UT"
-  revision = "bb6bfd13c6a262f1943c0446eb25b7f54c1fb9a2"
-  version = "v2.0.6"
+  revision = "635575b42742856941dbc767b44905bb9ba083f6"
+  version = "v2.0.7"
 
 [[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
@@ -599,14 +584,6 @@
   pruneopts = "UT"
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
-
-[[projects]]
-  branch = "master"
-  digest = "1:0c088044c1c1ee83e723692442df4fec9b3f2e57f7a99773485c97adfbc31695"
-  name = "github.com/streadway/amqp"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "70e15c650864f4fc47f5d3c82ea117285480895d"
 
 [[projects]]
   branch = "master"
@@ -700,7 +677,7 @@
     "ssh/terminal",
   ]
   pruneopts = "UT"
-  revision = "e3636079e1a4c1f337f212cc5cd2aca108f6c900"
+  revision = "7c1a557ab941a71c619514f229f0b27ccb0c27cf"
 
 [[projects]]
   branch = "master"
@@ -716,7 +693,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "146acd28ed5894421fb5aac80ca93bc1b1f46f87"
+  revision = "49bb7cea24b1df9410e1712aa6433dae904ff66a"
 
 [[projects]]
   branch = "master"
@@ -728,14 +705,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:850d28ab022512e2cd3cf511a77f363c29e22689b4031f2050871f5de47ae4a0"
+  digest = "1:f5aa274a0377f85735edc7fedfb0811d3cbc20af91633797cb359e29c3272271"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "4497e2df6f9e69048a54498c7affbbec3294ad47"
+  revision = "fa43e7bc11baaae89f3f902b2b4d832b68234844"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -836,21 +813,6 @@
   pruneopts = "UT"
   revision = "d2d2541c53f18d2a059457998ce2876cc8e67cbf"
   version = "v0.9.1"
-
-[[projects]]
-  digest = "1:e5a1379b4f0cad2aabd75580598c3b8e19a027e8eed806e7b76b0ec949df4599"
-  name = "gopkg.in/redis.v5"
-  packages = [
-    ".",
-    "internal",
-    "internal/consistenthash",
-    "internal/hashtag",
-    "internal/pool",
-    "internal/proto",
-  ]
-  pruneopts = "UT"
-  revision = "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
-  version = "v5.2.9"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -1070,9 +1032,6 @@
     "github.com/Azure/go-autorest/autorest/azure",
     "github.com/Microsoft/presidio-genproto/golang",
     "github.com/Shopify/sarama",
-    "github.com/aws/aws-sdk-go/aws",
-    "github.com/aws/aws-sdk-go/aws/session",
-    "github.com/aws/aws-sdk-go/service/kinesis",
     "github.com/bsm/sarama-cluster",
     "github.com/capitalone/fpe/ff1",
     "github.com/denisenkom/go-mssqldb",
@@ -1083,8 +1042,6 @@
     "github.com/go-sql-driver/mysql",
     "github.com/go-xorm/xorm",
     "github.com/grpc-ecosystem/go-grpc-middleware/retry",
-    "github.com/harlow/kinesis-consumer",
-    "github.com/harlow/kinesis-consumer/checkpoint/redis",
     "github.com/korovkin/limiter",
     "github.com/lib/pq",
     "github.com/mattn/go-sqlite3",

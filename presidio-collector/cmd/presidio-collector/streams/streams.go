@@ -9,7 +9,6 @@ import (
 	"github.com/Microsoft/presidio/pkg/stream"
 	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
-	"github.com/Microsoft/presidio/pkg/stream/kinesis"
 )
 
 //CreateStream create stream from configuration
@@ -31,11 +30,5 @@ func CreateStream(ctx context.Context, streamRequest *types.StreamRequest) strea
 		return e
 	}
 
-	//Kinesis
-	if config.GetKinesisConfig() != nil {
-		c := config.GetKinesisConfig()
-		k := kinesis.NewConsumer(ctx, c.EndpointAddress, c.AwsSecretAccessKey, c.AwsRegion, c.AwsAccessKeyId, c.RedisUrl, c.GetStreamName())
-		return k
-	}
 	return nil
 }
