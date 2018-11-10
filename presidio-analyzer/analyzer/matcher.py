@@ -18,6 +18,8 @@ CONTEXT_SUFFIX_COUNT = 0
 
 
 class Matcher(object):
+    """Search for patterns and NER in text"""
+
     def __init__(self):
         """Constructor
         Load spacy model once
@@ -37,6 +39,12 @@ class Matcher(object):
         self.nlp = en_core_web_lg.load(disable=['parser', 'tagger'])
 
     def __context_to_keywords(self, context):
+        """Convert context text to relevant keywords
+        
+        Args:
+           context: words prefix of specified pattern
+        """
+
         nlp_context = self.nlp(context)
 
         # Remove punctuation, stop words and take lemma form and remove
@@ -50,8 +58,13 @@ class Matcher(object):
         return keywords
 
     def __calculate_context_similarity(self, context, field):
-        # Context similarity is 1 if there's exact match between a keyword in
-        # context and any keyword in field.context
+        """Context similarity is 1 if there's exact match between a keyword in
+           context and any keyword in field.context
+
+        Args:
+          context: words prefix of specified pattern
+          field: current field type (pattern)
+        """
 
         context_keywords = self.__context_to_keywords(context)
 
@@ -70,6 +83,16 @@ class Matcher(object):
         return similarity
 
     def __calculate_score(self, doc, match_strength, field, start, end):
+        """Calculate score of match by context
+
+        Args:
+          doc: spacy document to analyze
+          match_strength: Base score according to the pattern strength
+          field: current field type (pattern)
+          start: match start offset
+          end: match end offset
+        """
+
         if field.should_check_checksum:
             if field.check_checksum() is not True:
                 self.logger.debug('Checksum failed for %s', field.text)
@@ -77,7 +100,6 @@ class Matcher(object):
             else:
                 return 1.0
 
-        # Base score according to the pattern strength
         score = match_strength
 
         # Add context similarity
@@ -91,6 +113,15 @@ class Matcher(object):
         return min(score, 1)
 
     def __create_result(self, doc, match_strength, field, start, end):
+        """Create analyze result
+
+        Args:
+          doc: spacy document to analyze
+          match_strength: Base score according to the pattern strength
+          field: current field type (pattern)
+          start: match start offset
+          end: match end offset
+        """
 
         res = common_pb2.AnalyzeResult()
         res.field.name = field.name
@@ -117,6 +148,14 @@ class Matcher(object):
         return res
 
     def __extract_context(self, doc, start, end):
+        """Extract context for a specified match
+
+        Args:
+          doc: spacy document to analyze
+          start: match start offset
+          end: match end offset
+        """
+
         prefix = doc.text[0:start].split()
         suffix = doc.text[end + 1:].split()
         context = ''
@@ -130,6 +169,14 @@ class Matcher(object):
         return context
 
     def __check_pattern(self, doc, results, field):
+        """Check for specific pattern in text
+
+        Args:
+          doc: spacy document to analyze
+          results: array containing the created results
+          field: current field type (pattern)
+        """
+
         max_matched_strength = -1.0
         for pattern in field.patterns:
             if pattern.strength <= max_matched_strength:
@@ -177,6 +224,14 @@ class Matcher(object):
                 max_matched_strength = pattern.strength
 
     def __check_ner(self, doc, results, field):
+        """Check for specific NER in text
+
+        Args:
+          doc: spacy document to analyze
+          results: array containing the created results
+          field: current field type (NER)
+        """
+
         for ent in doc.ents:
             if field.check_label(ent.label_) is False:
                 continue
@@ -192,11 +247,25 @@ class Matcher(object):
         return results
 
     def __sanitize_text(self, text):
+        """Replace newline with whitespace to ease spacy analyze process
+
+        Args:
+          text: document text
+        """
+
         text = text.replace('\n', ' ')
         text = text.replace('\r', ' ')
         return text
 
     def __analyze_field_type(self, doc, field_type_string_filter, results):
+        """Analyze specific field type (NER/Pattern)
+
+        Args:
+          doc: spacy document to analyze
+          field_type_string_filter: field type descriptor
+          results: array containing the created results
+        """
+
         current_field = field_factory.FieldFactory.create(
             field_type_string_filter)
 
@@ -252,9 +321,10 @@ class Matcher(object):
     def analyze_text(self, text, field_type_filters):
         """Analyze text.
 
-        Args: 
-            text: text to analyzer.
-            field_type_filters: filters array such as [{"name":PERSON"},{"name": "LOCATION"}]
+        Args:
+          text: text to analyze
+          field_type_filters: filters array such as [{"name":PERSON"},
+                                                     {"name": "LOCATION"}]
         """
 
         results = []
