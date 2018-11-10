@@ -42,8 +42,9 @@ helps['analyze'] = """
                    license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE"
 """
 
+loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
-    format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
+    format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
 
 
 class PresidioCLIHelp(CLIHelp):

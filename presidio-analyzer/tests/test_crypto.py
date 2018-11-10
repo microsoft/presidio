@@ -14,7 +14,7 @@ def test_valid_btc():
 
     assert len(results) == 1
     assert results[0].text == wallet
-    assert results[0].probability == 1
+    assert results[0].score == 1
 
 
 def test_valid_btc_with_exact_context():
@@ -24,7 +24,7 @@ def test_valid_btc_with_exact_context():
 
     assert len(results) == 1
     assert results[0].text == wallet
-    assert results[0].probability == 1
+    assert results[0].score == 1
 
 
 def test_invalid_btc():

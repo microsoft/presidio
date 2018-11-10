@@ -210,5 +210,26 @@
     </tr>
   </tbody>
 </table>
-
+<h2>UK</h2>
+<table>
+  <tbody>
+    <tr>
+      <th>FieldType</th>
+      <th>Description</th>
+      <th>Detection Method</th>
+    </tr>
+    <tr>
+      <td>
+        <code>
+          <span>UK_NHS</span>
+        </code>
+      </td>
+      <td>
+        <p>A
+          <em>UK NHS number</em> is 10 digits.</p>
+      </td>
+      <td>Pattern match and checksum</td>
+    </tr>
+  </tbody>
+</table>
 <hr/>

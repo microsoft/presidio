@@ -1,4 +1,4 @@
-from field_types import field_pattern
+from field_types import field_regex_pattern
 
 
 class FieldType(object):
@@ -10,4 +10,10 @@ class FieldType(object):
     should_check_checksum = False
 
     def check_checksum(self):
+        return False
+
+    def validate_result(self):
+        return False
+
+    def check_label(self):
         return False

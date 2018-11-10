@@ -235,16 +235,16 @@ func getAnalyzerMockResult() *types.AnalyzeResponse {
 	}
 	results := [](*types.AnalyzeResult){
 		&types.AnalyzeResult{
-			Field:       &types.FieldTypes{Name: types.FieldTypesEnum_PHONE_NUMBER.String()},
-			Text:        "(555) 253-0000",
-			Probability: 1.0,
-			Location:    location,
+			Field:    &types.FieldTypes{Name: types.FieldTypesEnum_PHONE_NUMBER.String()},
+			Text:     "(555) 253-0000",
+			Score:    1.0,
+			Location: location,
 		},
 		&types.AnalyzeResult{
-			Field:       &types.FieldTypes{Name: types.FieldTypesEnum_EMAIL_ADDRESS.String()},
-			Text:        "johnsnow@foo.com",
-			Probability: 1.0,
-			Location:    location,
+			Field:    &types.FieldTypes{Name: types.FieldTypesEnum_EMAIL_ADDRESS.String()},
+			Text:     "johnsnow@foo.com",
+			Score:    1.0,
+			Location: location,
 		},
 	}
 	return &types.AnalyzeResponse{

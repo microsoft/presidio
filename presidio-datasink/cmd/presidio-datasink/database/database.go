@@ -43,7 +43,7 @@ func New(datasink *types.Datasink, resultType string) datasink.Datasink {
 type analyzerResult struct {
 	ID            int64 `xorm:"id pk not null autoincr"`
 	Field         string
-	Propability   float32
+	Score         float32
 	Path          string
 	LocationStart int32
 	Length        int32
@@ -86,7 +86,7 @@ func (datasink *dbDatasink) WriteAnalyzeResults(results []*types.AnalyzeResult, 
 	for _, element := range results {
 		analyzerResultArray = append(analyzerResultArray, analyzerResult{
 			Field:         element.Field.Name,
-			Propability:   element.Probability,
+			Score:         element.Score,
 			Path:          path,
 			LocationStart: element.Location.Start,
 			Length:        element.Location.Length,
