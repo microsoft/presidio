@@ -25,12 +25,15 @@ $(BINS): vendor
 	go build -ldflags '$(LDFLAGS)' -o bin/$@ ./$@/cmd/$@
 
 
-.PHONY: docker-build-base
-docker-build-base:
+.PHONY: docker-build-deps
+docker-build-deps:
 	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS)
 	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS)
 	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_DEPS) -f Dockerfile.golang.deps .
 	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_DEPS) -f Dockerfile.python.deps .
+
+.PHONY: docker-build-base
+docker-build-base:
 	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
 
 
@@ -44,10 +47,13 @@ docker-build: $(addsuffix -image,$(IMAGES))
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 # You must be logged into DOCKER_REGISTRY before you can push.
-.PHONY: docker-push
-docker-push: 
+.PHONY: docker-push-deps
+docker-push-deps: 
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
+docker-push-deps: $(addsuffix -push,$(IMAGES))
+
+.PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:
