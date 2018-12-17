@@ -3,8 +3,6 @@ import matcher
 import grpc
 import analyze_pb2
 import analyze_pb2_grpc
-import common_pb2
-import template_pb2
 from concurrent import futures
 import time
 import sys

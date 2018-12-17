@@ -1,4 +1,7 @@
-registry: microsoft
+registry: presidio.azurecr.io
+
+# Image pull secret
+#privateRegistry: acr-auth
 
 redis:
     url: redis-master.presidio-system.svc.cluster.local:6379

@@ -1,6 +1,6 @@
 [[constraint]]
   name = "github.com/Azure/azure-event-hubs-go"
-  branch = "master"
+  version = "1.1.0"
   
 [[constraint]]
   name = "github.com/Shopify/sarama"
@@ -77,7 +77,6 @@
 [[constraint]]
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
   branch = "master"
-
 
 [[constraint]]
   name = "k8s.io/api"

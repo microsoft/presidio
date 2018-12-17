@@ -1,4 +1,4 @@
-from field_types.globally import credit_card, crypto, email, ip, iban, domain, ner
+from field_types.globally import credit_card, crypto, email, ip, iban, domain, ner  # noqa: E501
 from field_types.us import bank as usbank
 from field_types.us import driver_license as usdriver
 from field_types.us import itin as usitin
@@ -14,7 +14,7 @@ parentPath = os.path.abspath("..")
 if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
 
-from analyzer import common_pb2
+from analyzer import common_pb2  # noqa: E402
 
 
 class FieldFactory(object):

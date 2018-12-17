@@ -126,16 +126,6 @@ def test_valid_us_driver_license_very_weak_letters_exact_context():
 '''
 
 
-def test_valid_us_driver_license_very_weak_letters_exact_context():
-    num = 'ABCDEFG'
-    context = 'my driver id: '
-    results = match.analyze_text(context + num, types)
-
-    assert len(results) == 1
-    assert results[0].text == num
-    assert results[0].score > 0.55 and results[0].score < 0.91
-
-
 def test_invalid_us_driver_license_very_weak_letters():
     num = 'ABCD ABCDEFGHIJ'
     results = match.analyze_text(num, types)

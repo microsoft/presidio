@@ -16,8 +16,8 @@ def test_all_fields_demo_file():
     test_time = datetime.datetime.now() - start_time
 
     assert len(results) == 20
-    assert test_time.seconds < 1
-    assert test_time.microseconds < 400000
+    # assert test_time.seconds < 1
+    # assert test_time.microseconds < 400000
     logging.info('test_all_fields_demo runtime: {}.{} seconds'.format(
         test_time.seconds, test_time.microseconds))
 
@@ -31,8 +31,8 @@ def test_all_fields_enron_file():
     test_time = datetime.datetime.now() - start_time
 
     assert len(results) > 30
-    assert test_time.seconds < 1
-    assert test_time.microseconds < 500000
+    # assert test_time.seconds < 1
+    # assert test_time.microseconds < 500000
     logging.info('test_all_fields_enron runtime: {}.{} seconds'.format(
         test_time.seconds, test_time.microseconds))
 
@@ -46,8 +46,8 @@ def test_synthetic_json():
     test_time = datetime.datetime.now() - start_time
 
     assert len(results) > 30
-    assert test_time.seconds < 1
-    assert test_time.microseconds < 500000
+    # assert test_time.seconds < 1
+    # assert test_time.microseconds < 500000
     logging.info('test_all_fields_json runtime: {}.{} seconds'.format(
         test_time.seconds, test_time.microseconds))
 

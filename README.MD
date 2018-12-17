@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Microsoft/presidio.svg?branch=development)](https://travis-ci.org/Microsoft/presidio)
+[![Build status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=48)
 
 
 # Presidio - Data Loss Prevention API

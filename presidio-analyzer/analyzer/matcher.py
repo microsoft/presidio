@@ -3,9 +3,8 @@ import logging
 import os
 import en_core_web_lg
 import common_pb2
-import template_pb2
 import tldextract
-from field_types import field_type, field_factory
+from field_types import field_factory
 from field_types.globally import ner
 import re2 as re
 
@@ -40,7 +39,6 @@ class Matcher(object):
 
     def __context_to_keywords(self, context):
         """Convert context text to relevant keywords
-        
         Args:
            context: words prefix of specified pattern
         """
@@ -51,7 +49,7 @@ class Matcher(object):
         # duplicates
         keywords = list(
             filter(
-                lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be',
+                lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be',  # noqa: E501
                 nlp_context))
         keywords = list(set(map(lambda k: k.lemma_.lower(), keywords)))
 

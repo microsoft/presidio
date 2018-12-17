@@ -9,7 +9,7 @@ import (
 	eh "github.com/Azure/azure-event-hubs-go"
 	"github.com/Azure/azure-event-hubs-go/eph"
 	"github.com/Azure/azure-event-hubs-go/storage"
-	"github.com/Azure/azure-storage-blob-go/2016-05-31/azblob"
+	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/Azure/go-autorest/autorest/azure"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
@@ -51,7 +51,11 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 		// handle error
 	}
 	// create a new Azure Storage Leaser / Checkpointer
-	cred := azblob.NewSharedKeyCredential(storageAccountName, storageAccountKey)
+	cred, err := azblob.NewSharedKeyCredential(storageAccountName, storageAccountKey)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 	leaserCheckpointer, err := storage.NewStorageLeaserCheckpointer(cred, storageAccountName, storageContainerName, azure.PublicCloud)
 	if err != nil {
 		log.Fatal(err.Error())

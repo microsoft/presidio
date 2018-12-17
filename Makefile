@@ -1,9 +1,11 @@
-DOCKER_REGISTRY    ?= microsoft
+DOCKER_REGISTRY    ?= presidio.azurecr.io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
 BINS        = presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
 IMAGES      = presidio-analyzer presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
+GOLANG_BASE	= presidio-golang-base
+PYTHON_BASE	= presidio-python-base
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
@@ -21,13 +23,22 @@ build: $(BINS)
 $(BINS): vendor
 	go build -ldflags '$(LDFLAGS)' -o bin/$@ ./$@/cmd/$@
 
+
+.PHONY: docker-build-base
+docker-build-base:
+	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_BASE)
+	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_BASE)
+	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
+	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_BASE) -f Dockerfile.python.base .
+
 # To use docker-build, you need to have Docker installed and configured. You should also set
 # DOCKER_REGISTRY to your own personal registry if you are not pushing to the official upstream.
 .PHONY: docker-build
+docker-build:
 docker-build: $(addsuffix -image,$(IMAGES))
 
 %-image:
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg VERSION=$(VERSION) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push
@@ -109,8 +120,7 @@ ifndef HAS_DOCKER
 	$(error You must install Docker)
 endif
 ifndef HAS_GOMETALINTER
-	go get -u github.com/alecthomas/gometalinter
-	gometalinter --install
+	curl -L https://git.io/vp6lP | sh
 endif
 	
 .PHONY: bootstrap
