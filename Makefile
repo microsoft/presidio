@@ -51,7 +51,6 @@ docker-build: $(addsuffix -image,$(IMAGES))
 docker-push-deps: 
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
-docker-push-deps: $(addsuffix -push,$(IMAGES))
 
 .PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
