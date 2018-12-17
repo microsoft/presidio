@@ -42,6 +42,9 @@ docker-build: $(addsuffix -image,$(IMAGES))
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push
+docker-push: 
+	docker push $(DOCKER_REGISTRY)/$(PYTHON_BASE):latest
+	docker push $(DOCKER_REGISTRY)/$(GOLANG_BASE):latest
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:

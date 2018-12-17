@@ -76,3 +76,5 @@ venv/
 # IDE
 .idea
 .vscode
+docs/
+charts/

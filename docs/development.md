@@ -9,40 +9,40 @@
 
 2. Redis
 
-```sh
-$ docker run --name dev-redis -d -p 6379:6379 redis
-```
+    ```sh
+    $ docker run --name dev-redis -d -p 6379:6379 redis
+    ```
 
 3. Install go 1.11 and Python 3.7
 
 4. Install the golang packages via [dep](https://github.com/golang/dep/releases)
-```sh
-$ dep ensure
-```
+
+    ```sh
+    $ dep ensure
+    ```
 
 5. Build and install [re2](https://github.com/google/re2)
 
-```sh
-$ re2_version="2018-12-01"
-$ wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
-$ mkdir re2 
-$ tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
-$ cd re2 && make install
-```
+    ```sh
+    $ re2_version="2018-12-01"
+    $ wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
+    $ mkdir re2 
+    $ tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
+    $ cd re2 && make install
+    ```
 
 6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
 
-```sh
-$ pip3 install -r requirements.txt
-$ pip3 install -r requirements-dev.txt
-```
+    ```sh
+    $ pip3 install -r requirements.txt
+    $ pip3 install -r requirements-dev.txt
+    ```
 
-**Note** 
-If you encounter errors with `pyre2` than install `cython` first
+    **Note:** If you encounter errors with `pyre2` than install `cython` first
 
-```sh
-$ pip3 install cython
-```
+    ```sh
+    $ pip3 install cython
+    ```
 
 7. Protobuf generator tools
 
@@ -71,10 +71,9 @@ $ pip3 install cython
 
 ## Load test
 
-1. Create a project.
-2. Edit  `post.lua`. Change the template name
-3. Run [wrk](https://github.com/wg/wrk)
+1. Edit  `post.lua`. Change the template name
+2. Run [wrk](https://github.com/wg/wrk)
 
-```
-wrk -t2 -c2 -d30s -s post.lua http://<api-service-address>/api/v1/projects/<my-project>/analyze
-```
+    ```sh
+    wrk -t2 -c2 -d30s -s post.lua http://<api-service-address>/api/v1/projects/<my-project>/analyze
+    ```
