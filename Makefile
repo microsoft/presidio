@@ -4,8 +4,9 @@ LDFLAGS            :=
 
 BINS        = presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
 IMAGES      = presidio-analyzer presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
+GOLANG_DEPS	= presidio-golang-deps
+PYTHON_DEPS	= presidio-python-deps
 GOLANG_BASE	= presidio-golang-base
-PYTHON_BASE	= presidio-python-base
 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
@@ -26,10 +27,12 @@ $(BINS): vendor
 
 .PHONY: docker-build-base
 docker-build-base:
-	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_BASE)
-	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_BASE)
-	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
-	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_BASE) -f Dockerfile.python.base .
+	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS)
+	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS)
+	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_DEPS) -f Dockerfile.golang.deps .
+	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_DEPS) -f Dockerfile.python.deps .
+	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
+
 
 # To use docker-build, you need to have Docker installed and configured. You should also set
 # DOCKER_REGISTRY to your own personal registry if you are not pushing to the official upstream.
@@ -43,8 +46,8 @@ docker-build: $(addsuffix -image,$(IMAGES))
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push
 docker-push: 
-	docker push $(DOCKER_REGISTRY)/$(PYTHON_BASE):latest
-	docker push $(DOCKER_REGISTRY)/$(GOLANG_BASE):latest
+	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
+	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:
