@@ -34,7 +34,7 @@ docker-build-base:
 # To use docker-build, you need to have Docker installed and configured. You should also set
 # DOCKER_REGISTRY to your own personal registry if you are not pushing to the official upstream.
 .PHONY: docker-build
-docker-build:
+docker-build: docker-build-base
 docker-build: $(addsuffix -image,$(IMAGES))
 
 %-image:
