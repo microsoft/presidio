@@ -1,4 +1,4 @@
-FROM golang:1.11-alpine
+FROM golang:1.11.3-alpine3.8
 
 ARG DEP_VERSION="0.5.0"
 
