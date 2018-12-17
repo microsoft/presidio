@@ -3,6 +3,11 @@ resources:
 queue:
   name: Hosted Ubuntu 1604
 steps:
+- task: Docker@1
+  displayName: 'ACR Login'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryEndpoint: presidio
+    command: login
 - bash: 'make test-functional'
-  displayName: 'Build & Test'
-  
+  displayName: 'Build & Test '
