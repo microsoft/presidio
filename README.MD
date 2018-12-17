@@ -4,7 +4,6 @@
 # Presidio - Data Loss Prevention API
 **Context aware, born to the cloud, customizable data loss prevention service**
 
-:warning: ***This project is experimental and should not be used for production***
 
 ## Description
 
@@ -12,6 +11,8 @@ Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to en
 Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
 
 You can find a more detailed list [here](https://microsoft.github.io/presidio/field_types.html)
+
+:warning: ***Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.***
 
 ## Features
 

@@ -5,8 +5,4 @@ queue:
 steps:
 - bash: 'make test-functional'
   displayName: 'Build & Test'
-
-
-
-
-
+  

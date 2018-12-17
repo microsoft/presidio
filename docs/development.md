@@ -3,37 +3,48 @@
 
 ## Setting up the environment
 
-
 1. Docker
 
 ***Note that the port mapping will conflict with running `make test`***
 
 2. Redis
-```
-docker run --name dev-redis -d -p 6379:6379 redis
+
+```sh
+$ docker run --name dev-redis -d -p 6379:6379 redis
 ```
 
-3. Install go 1.10 and Python 3.6
+3. Install go 1.11 and Python 3.7
 
 4. Install the golang packages via [dep](https://github.com/golang/dep/releases)
-```
-dep ensure
-```
-
-4. Install the Python packages for the analyzer in the `presidio-analyzer` folder
-```
-pip3 install -r requirements.txt
+```sh
+$ dep ensure
 ```
 
-Install pytest package for testing:
+5. Build and install [re2](https://github.com/google/re2)
+
+```sh
+$ re2_version="2018-12-01"
+$ wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
+$ mkdir re2 
+$ tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
+$ cd re2 && make install
 ```
-pip3 install -U pytest
+
+6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
+
+```sh
+$ pip3 install -r requirements.txt
+$ pip3 install -r requirements-dev.txt
 ```
 
-4. Install [librdkafka](https://github.com/confluentinc/confluent-kafka-go#installing-librdkafka)
+**Note** 
+If you encounter errors with `pyre2` than install `cython` first
 
+```sh
+$ pip3 install cython
+```
 
-6. Protobuf generator tools
+7. Protobuf generator tools
 
     - `https://github.com/golang/protobuf`
 
@@ -56,6 +67,7 @@ pip3 install -U pytest
 - Push the Docker images with `make docker-push`
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
+- Run functional tests with `make test-functional`
 
 ## Load test
 

@@ -87,6 +87,7 @@ func SetupCache() cache.Cache {
 		log.Fatal("redis address is empty")
 	}
 
+	// TODO: change the password and DB defaults
 	cache := redis.New(
 		settings.RedisURL,
 		"", // no password set
