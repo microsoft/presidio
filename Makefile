@@ -77,7 +77,7 @@ go-test-unit: vendor
 	go test -v ./...
 	
 .PHONY: test-functional
-test-functional: vendor docker-build
+test-functional: docker-build
 
 	-docker rm test-azure-emulator -f
 	-docker rm test-kafka -f
