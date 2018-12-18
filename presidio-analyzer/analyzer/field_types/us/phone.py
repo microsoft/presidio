@@ -4,7 +4,6 @@ from field_types import field_type, field_regex_pattern
 class Phone(field_type.FieldType):
     name = "PHONE_NUMBER"
     context = ["phone", "number", "telephone", "cell", "mobile", "call"]
-
     patterns = []
 
     # Strong pattern: e.g., (425) 882 8080, 425 882-8080, 425.882.8080

@@ -39,6 +39,7 @@ class Matcher(object):
 
     def __context_to_keywords(self, context):
         """Convert context text to relevant keywords
+
         Args:
            context: words prefix of specified pattern
         """
