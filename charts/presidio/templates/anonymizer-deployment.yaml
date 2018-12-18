@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.registry }}/{{ .Values.anonymizer.name }}:{{ default .Chart.AppVersion .Values.anonymizer.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.anonymizer.name }}:{{ default .Chart.Version .Values.anonymizer.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.anonymizer.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.anonymizer.service.internalPort }}

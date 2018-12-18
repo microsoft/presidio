@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.registry }}/{{ .Values.analyzer.name }}:{{ default .Chart.AppVersion .Values.analyzer.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.analyzer.name }}:{{ default .Chart.Version .Values.analyzer.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.analyzer.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.analyzer.service.internalPort }}
