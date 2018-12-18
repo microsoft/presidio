@@ -51,8 +51,8 @@ $ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB
 5. Deploy from `/charts/presidio`
 
     ```sh
-    # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps 
-    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY}  . --namespace presidio --version ${PRESIDIO_LABEL}
+    # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
+    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY} . --namespace presidio --version ${PRESIDIO_LABEL}
     ```
 
 ---
