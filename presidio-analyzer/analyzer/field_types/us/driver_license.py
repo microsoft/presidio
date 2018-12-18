@@ -43,7 +43,6 @@ class UsDriverLicense(field_type.FieldType):
     pattern.name = 'Driver License - Digits (very weak)'
     pattern.strength = 0.05
     patterns.append(pattern)
-    
     patterns.sort(key=lambda p: p.strength, reverse=True)
     '''
     # Regex per state
