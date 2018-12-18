@@ -1,8 +1,7 @@
 package platform
 
 import (
-	"os"
-
+	"github.com/spf13/viper"
 	apiv1 "k8s.io/api/core/v1"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
@@ -66,22 +65,24 @@ type Settings struct {
 //GetSettings from env vars
 func GetSettings() *Settings {
 
+	viper.AutomaticEnv()
+
 	settings := Settings{
-		WebPort:                  os.Getenv("WEB_PORT"),
-		GrpcPort:                 os.Getenv("GRPC_PORT"),
-		DatasinkGrpcPort:         os.Getenv("DATASINK_GRPC_PORT"),
-		Namespace:                os.Getenv("PRESIDIO_NAMESPACE"),
-		AnalyzerSvcAddress:       os.Getenv("ANALYZER_SVC_ADDRESS"),
-		AnonymizerSvcAddress:     os.Getenv("ANONYMIZER_SVC_ADDRESS"),
-		SchedulerSvcAddress:      os.Getenv("SCHEDULER_SVC_ADDRESS"),
-		RedisURL:                 os.Getenv("REDIS_URL"),
-		DatasinkImage:            os.Getenv("DATASINK_IMAGE_NAME"),
-		CollectorImage:           os.Getenv("COLLECTOR_IMAGE_NAME"),
-		DatasinkImagePullPolicy:  os.Getenv("DATASINK_IMAGE_PULL_POLICY"),
-		CollectorImagePullPolicy: os.Getenv("COLLECTOR_IMAGE_PULL_POLICY"),
-		ScannerRequest:           os.Getenv("SCANNER_REQUEST"),
-		StreamRequest:            os.Getenv("STREAM_REQUEST"),
-		QueueURL:                 os.Getenv("QUEUE_URL"),
+		WebPort:                  viper.GetString("WEB_PORT"),
+		GrpcPort:                 viper.GetString("GRPC_PORT"),
+		DatasinkGrpcPort:         viper.GetString("DATASINK_GRPC_PORT"),
+		Namespace:                viper.GetString("PRESIDIO_NAMESPACE"),
+		AnalyzerSvcAddress:       viper.GetString("ANALYZER_SVC_ADDRESS"),
+		AnonymizerSvcAddress:     viper.GetString("ANONYMIZER_SVC_ADDRESS"),
+		SchedulerSvcAddress:      viper.GetString("SCHEDULER_SVC_ADDRESS"),
+		RedisURL:                 viper.GetString("REDIS_URL"),
+		DatasinkImage:            viper.GetString("DATASINK_IMAGE_NAME"),
+		CollectorImage:           viper.GetString("COLLECTOR_IMAGE_NAME"),
+		DatasinkImagePullPolicy:  viper.GetString("DATASINK_IMAGE_PULL_POLICY"),
+		CollectorImagePullPolicy: viper.GetString("COLLECTOR_IMAGE_PULL_POLICY"),
+		ScannerRequest:           viper.GetString("SCANNER_REQUEST"),
+		StreamRequest:            viper.GetString("STREAM_REQUEST"),
+		QueueURL:                 viper.GetString("QUEUE_URL"),
 	}
 
 	return &settings

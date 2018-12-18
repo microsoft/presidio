@@ -8,22 +8,19 @@ setuptools.setup(
     name="presidio_analyzer",
     version="0.1.0",
     author="Presidio team",
-    author_email="presidioteam@microsoft.com",
+    author_email="torosent@microsoft.com",
     description="Presidio analyzer package",
     # long_description=long_description,
     # long_description_content_type="text/markdown",
     url="https://github.com/Microsoft/presidio",
     packages=[
-        'analyzer',
-        'analyzer.field_types',
-        'analyzer.field_types.us',
-        'analyzer.field_types.globally'],
+        'analyzer', 'analyzer.field_types', 'analyzer.field_types.us',
+        'analyzer.field_types.globally'
+    ],
     install_requires=[
-        'grpcio>=1.13.0',
-        'cython>=0.28.5',
-        'protobuf>=3.6.0',
-        'tldextract>=2.2.0',
-        'knack>=0.4.2'],
+        'grpcio>=1.13.0', 'cython>=0.28.5', 'protobuf>=3.6.0',
+        'tldextract>=2.2.0', 'knack>=0.4.2', 'spacy>=2.0.18'
+    ],
     include_package_data=True,
     license='MIT',
     scripts=[

@@ -1,12 +1,10 @@
-FROM golang:1.11-alpine AS build-env
+ARG REGISTRY=presidio.azurecr.io
+
+FROM ${REGISTRY}/presidio-golang-base AS build-env
 
 ARG NAME=presidio-api
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
 ARG VERSION=latest
-
-ADD ./${NAME} ${PRESIDIOPATH}/${NAME}
-ADD ./vendor ${PRESIDIOPATH}/vendor
-ADD ./pkg ${PRESIDIOPATH}/pkg
 
 WORKDIR ${PRESIDIOPATH}/${NAME}/cmd/${NAME}
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Microsoft/presidio/pkg/version.Version=${VERSION}' -o /usr/bin/${NAME}

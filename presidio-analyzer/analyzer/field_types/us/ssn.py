@@ -6,7 +6,7 @@ class UsSsn(field_type.FieldType):
     context = [
         "social",
         "security",
-        #"sec", TODO: add keyphrase support in "social sec"
+        # "sec", TODO: add keyphrase support in "social sec"
         "ssn",
         "ssns",
         "ssn#",

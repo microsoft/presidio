@@ -1,6 +1,3 @@
-from field_types import field_regex_pattern
-
-
 class FieldType(object):
 
     name = "Field Type Name"

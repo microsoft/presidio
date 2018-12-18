@@ -10,7 +10,7 @@ class Iban(field_type.FieldType):
     patterns = []
 
     pattern = field_regex_pattern.RegexFieldPattern()
-    pattern.regex = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
+    pattern.regex = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'  # noqa: E501
     pattern.name = 'Iban (Medium)'
     pattern.strength = 0.5
     patterns.append(pattern)

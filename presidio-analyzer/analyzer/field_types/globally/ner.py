@@ -8,7 +8,7 @@ class Ner(field_type.FieldType):
 
     def validate_result(self):
         pattern = r"^[a-zA-Z0-9-_'.() ]+$"
-        guid_pattern = r"(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}"
+        guid_pattern = r"(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}"  # noqa: E501
         result = re.match(pattern, self.text, re.IGNORECASE | re.UNICODE)
         if result is not None:
             if len(self.text) > 16:
