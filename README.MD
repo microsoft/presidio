@@ -1,10 +1,9 @@
-[![Build Status](https://travis-ci.org/Microsoft/presidio.svg?branch=development)](https://travis-ci.org/Microsoft/presidio)
+[![Build status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=48)
 
 
 # Presidio - Data Loss Prevention API
 **Context aware, born to the cloud, customizable data loss prevention service**
 
-:warning: ***This project is experimental and should not be used for production***
 
 ## Description
 
@@ -12,6 +11,8 @@ Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to en
 Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context. 
 
 You can find a more detailed list [here](https://microsoft.github.io/presidio/field_types.html)
+
+:warning: ***Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.***
 
 ## Features
 
@@ -34,7 +35,6 @@ You can find a more detailed list [here](https://microsoft.github.io/presidio/fi
   2. Streaming platform
       - Kafka
       - Azure Events Hubs
-      - Kinesis
 
 ## The Technology Stack
 Presidio leverages 
@@ -114,15 +114,13 @@ echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-276
 | Scanner             | S3                   | :white_check_mark:     |
 | Scanner             | Google Cloud Storage | :x:                    |
 | Streams             | Kafka                | :large_orange_diamond: |
-| Streams             | Azure Event Hub      | :x:                    |
-| Streams             | Kinesis              | :large_orange_diamond: |
+| Streams             | Azure Event Hub      | :large_orange_diamond:                    |
 | Datasink (output)   | MySQL                | :white_check_mark:     |
 | Datasink (output)   | MSSQL                | :white_check_mark:     |
 | Datasink (output)   | Oracle               | :x:                    |
 | Datasink (output)   | PostgreSQL           | :white_check_mark:     |
 | Datasink (output)   | Kafka                | :white_check_mark:     |
 | Datasink (output)   | Azure Event Hub      | :white_check_mark:     |
-| Datasink (output)   | Kinesis              | :large_orange_diamond: |
 | Datasink (output)   | Azure Blob Storage   | :white_check_mark:     |
 | Datasink (output)   | S3                   | :white_check_mark:     |
 | Datasink (output)   | Google Cloud Storage | :x:                    |

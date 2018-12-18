@@ -25,8 +25,7 @@ Presidio helps to ensure sensitive text is properly managed and governed. It pro
   3. Streaming platform
       - Kafka
       - Azure Events Hubs
-      - Kinesis
-
+      
 ---
 
 Prev: [Docs Index](index.md) `|` Next: [Install Guide](install.md)

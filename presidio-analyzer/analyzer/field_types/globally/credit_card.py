@@ -1,4 +1,4 @@
-from field_types import field_type, field_pattern
+from field_types import field_type, field_regex_pattern
 
 
 class CreditCard(field_type.FieldType):
@@ -21,8 +21,8 @@ class CreditCard(field_type.FieldType):
     patterns = []
 
     # All credit cards - weak pattern is used, since credit cards has checksum
-    pattern = field_pattern.FieldPattern()
-    pattern.regex = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'
+    pattern = field_regex_pattern.RegexFieldPattern()
+    pattern.regex = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'  # noqa: E501
     pattern.name = 'All Credit Cards (weak)'
     pattern.strength = 0.3
     patterns.append(pattern)

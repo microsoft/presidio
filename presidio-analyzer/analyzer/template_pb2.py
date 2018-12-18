@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='template.proto',
   package='types',
   syntax='proto3',
-  serialized_pb=_b('\n\x0etemplate.proto\x12\x05types\x1a\x0c\x63ommon.proto\"s\n\x0f\x41nalyzeTemplate\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x12\n\ncreateTime\x18\x03 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x04 \x01(\t\"\x94\x01\n\x11\x41nonymizeTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12@\n\x18\x66ieldTypeTransformations\x18\x04 \x03(\x0b\x32\x1e.types.FieldTypeTransformation\"k\n\x17\x46ieldTypeTransformation\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12-\n\x0etransformation\x18\x02 \x01(\x0b\x32\x15.types.Transformation\"\xae\x01\n\x0eTransformation\x12)\n\x0creplaceValue\x18\x02 \x01(\x0b\x32\x13.types.ReplaceValue\x12\'\n\x0bredactValue\x18\x03 \x01(\x0b\x32\x12.types.RedactValue\x12#\n\thashValue\x18\x04 \x01(\x0b\x32\x10.types.HashValue\x12#\n\tmaskValue\x18\x05 \x01(\x0b\x32\x10.types.MaskValue\" \n\x0cReplaceValue\x12\x10\n\x08newValue\x18\x01 \x01(\t\"\r\n\x0bRedactValue\"\x0b\n\tHashValue\"K\n\tMaskValue\x12\x18\n\x10maskingCharacter\x18\x01 \x01(\t\x12\x13\n\x0b\x63harsToMask\x18\x02 \x01(\x05\x12\x0f\n\x07\x66romEnd\x18\x03 \x01(\x08\"7\n\x08\x44\x42\x43onfig\x12\x18\n\x10\x63onnectionString\x18\x02 \x01(\t\x12\x11\n\ttableName\x18\x03 \x01(\t\"\x8f\x01\n\x08\x44\x61tasink\x12!\n\x08\x64\x62\x43onfig\x18\x01 \x01(\x0b\x32\x0f.types.DBConfig\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\x12)\n\x0cstreamConfig\x18\x03 \x01(\x0b\x32\x13.types.StreamConfig\"c\n\x10\x44\x61tasinkTemplate\x12\x14\n\x0c\x61nalyzerKind\x18\x01 \x01(\t\x12\x16\n\x0e\x61nonymizerKind\x18\x02 \x01(\t\x12!\n\x08\x64\x61tasink\x18\x03 \x01(\x0b\x32\x0f.types.Datasink\"S\n\x11\x42lobStorageConfig\x12\x13\n\x0b\x61\x63\x63ountName\x18\x01 \x01(\t\x12\x12\n\naccountKey\x18\x02 \x01(\t\x12\x15\n\rcontainerName\x18\x03 \x01(\t\"e\n\x08S3Config\x12\x10\n\x08\x61\x63\x63\x65ssId\x18\x01 \x01(\t\x12\x11\n\taccessKey\x18\x02 \x01(\t\x12\x0e\n\x06region\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\x12\x10\n\x08\x65ndpoint\x18\x05 \x01(\t\"Z\n\x13GoogleStorageConfig\x12\x0c\n\x04json\x18\x01 \x01(\t\x12\x11\n\tprojectId\x18\x02 \x01(\t\x12\x0e\n\x06scopes\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\"\xa5\x01\n\x12\x43loudStorageConfig\x12\x33\n\x11\x62lobStorageConfig\x18\x01 \x01(\x0b\x32\x18.types.BlobStorageConfig\x12!\n\x08s3Config\x18\x02 \x01(\x0b\x32\x0f.types.S3Config\x12\x37\n\x13GoogleStorageConfig\x18\x03 \x01(\x0b\x32\x1a.types.GoogleStorageConfig\"\x87\x01\n\x0cStreamConfig\x12\'\n\x0bkafkaConfig\x18\x01 \x01(\x0b\x32\x12.types.KafkaConfig\x12!\n\x08\x65hConfig\x18\x02 \x01(\x0b\x32\x0f.types.EHConfig\x12+\n\rkinesisConfig\x18\x03 \x01(\x0b\x32\x14.types.KinesisConfig\"Y\n\x0bKafkaConfig\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\x12\r\n\x05topic\x18\x02 \x01(\t\x12\x14\n\x0csaslUsername\x18\x03 \x01(\t\x12\x14\n\x0csaslPassword\x18\x04 \x01(\t\"r\n\x08\x45HConfig\x12\x13\n\x0b\x65hNamespace\x18\x01 \x01(\t\x12\x0e\n\x06\x65hName\x18\x02 \x01(\t\x12\x1a\n\x12\x65hConnectionString\x18\x03 \x01(\t\x12\x11\n\tehKeyName\x18\x04 \x01(\t\x12\x12\n\nehKeyValue\x18\x05 \x01(\t\"\x95\x01\n\rKinesisConfig\x12\x16\n\x0e\x61wsAccessKeyId\x18\x01 \x01(\t\x12\x11\n\tawsRegion\x18\x02 \x01(\t\x12\x1a\n\x12\x61wsSecretAccessKey\x18\x03 \x01(\t\x12\x10\n\x08redisUrl\x18\x04 \x01(\t\x12\x12\n\nstreamName\x18\x05 \x01(\t\x12\x17\n\x0f\x65ndpointAddress\x18\x06 \x01(\t\"\xcd\x01\n\x0eStreamTemplate\x12\x0c\n\x04kind\x18\x01 \x01(\t\x12)\n\x0cstreamConfig\x18\x02 \x01(\x0b\x32\x13.types.StreamConfig\x12\x16\n\x0eminProbability\x18\x03 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\x12\x16\n\x0epartitionCount\x18\x07 \x01(\x05\"k\n\x0cScanTemplate\x12\x0c\n\x04kind\x18\x01 \x01(\t\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\x12\x16\n\x0eminProbability\x18\x03 \x01(\t\"\xba\x01\n\x16ScannerCronJobTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x1f\n\x07trigger\x18\x02 \x01(\x0b\x32\x0e.types.Trigger\x12\x16\n\x0escanTemplateId\x18\x03 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\"\x98\x01\n\x12StreamsJobTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x19\n\x11streamsTemplateId\x18\x02 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x03 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x04 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x05 \x01(\t\",\n\x07Trigger\x12!\n\x08schedule\x18\x01 \x01(\x0b\x32\x0f.types.Schedule\"$\n\x08Schedule\x12\x18\n\x10recurrencePeriod\x18\x01 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x0etemplate.proto\x12\x05types\x1a\x0c\x63ommon.proto\"s\n\x0f\x41nalyzeTemplate\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x12\n\ncreateTime\x18\x03 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x04 \x01(\t\"\x94\x01\n\x11\x41nonymizeTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12@\n\x18\x66ieldTypeTransformations\x18\x04 \x03(\x0b\x32\x1e.types.FieldTypeTransformation\"k\n\x17\x46ieldTypeTransformation\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12-\n\x0etransformation\x18\x02 \x01(\x0b\x32\x15.types.Transformation\"\xd1\x01\n\x0eTransformation\x12)\n\x0creplaceValue\x18\x02 \x01(\x0b\x32\x13.types.ReplaceValue\x12\'\n\x0bredactValue\x18\x03 \x01(\x0b\x32\x12.types.RedactValue\x12#\n\thashValue\x18\x04 \x01(\x0b\x32\x10.types.HashValue\x12#\n\tmaskValue\x18\x05 \x01(\x0b\x32\x10.types.MaskValue\x12!\n\x08\x66PEValue\x18\x06 \x01(\x0b\x32\x0f.types.FPEValue\" \n\x0cReplaceValue\x12\x10\n\x08newValue\x18\x01 \x01(\t\"\r\n\x0bRedactValue\"\x0b\n\tHashValue\"K\n\tMaskValue\x12\x18\n\x10maskingCharacter\x18\x01 \x01(\t\x12\x13\n\x0b\x63harsToMask\x18\x02 \x01(\x05\x12\x0f\n\x07\x66romEnd\x18\x03 \x01(\x08\"7\n\x08\x46PEValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05tweak\x18\x02 \x01(\t\x12\x0f\n\x07\x64\x65\x63rypt\x18\x03 \x01(\x08\"E\n\x08\x44\x42\x43onfig\x12\x18\n\x10\x63onnectionString\x18\x01 \x01(\t\x12\x11\n\ttableName\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\"\x8f\x01\n\x08\x44\x61tasink\x12!\n\x08\x64\x62\x43onfig\x18\x01 \x01(\x0b\x32\x0f.types.DBConfig\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\x12)\n\x0cstreamConfig\x18\x03 \x01(\x0b\x32\x13.types.StreamConfig\"}\n\x10\x44\x61tasinkTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12(\n\x0f\x61nalyzeDatasink\x18\x02 \x03(\x0b\x32\x0f.types.Datasink\x12*\n\x11\x61nonymizeDatasink\x18\x03 \x03(\x0b\x32\x0f.types.Datasink\"S\n\x11\x42lobStorageConfig\x12\x13\n\x0b\x61\x63\x63ountName\x18\x01 \x01(\t\x12\x12\n\naccountKey\x18\x02 \x01(\t\x12\x15\n\rcontainerName\x18\x03 \x01(\t\"e\n\x08S3Config\x12\x10\n\x08\x61\x63\x63\x65ssId\x18\x01 \x01(\t\x12\x11\n\taccessKey\x18\x02 \x01(\t\x12\x0e\n\x06region\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\x12\x10\n\x08\x65ndpoint\x18\x05 \x01(\t\"Z\n\x13GoogleStorageConfig\x12\x0c\n\x04json\x18\x01 \x01(\t\x12\x11\n\tprojectId\x18\x02 \x01(\t\x12\x0e\n\x06scopes\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\"\xa5\x01\n\x12\x43loudStorageConfig\x12\x33\n\x11\x62lobStorageConfig\x18\x01 \x01(\x0b\x32\x18.types.BlobStorageConfig\x12!\n\x08s3Config\x18\x02 \x01(\x0b\x32\x0f.types.S3Config\x12\x37\n\x13GoogleStorageConfig\x18\x03 \x01(\x0b\x32\x1a.types.GoogleStorageConfig\"r\n\x0cStreamConfig\x12\'\n\x0bkafkaConfig\x18\x01 \x01(\x0b\x32\x12.types.KafkaConfig\x12!\n\x08\x65hConfig\x18\x02 \x01(\x0b\x32\x0f.types.EHConfig\x12\x16\n\x0epartitionCount\x18\x03 \x01(\x05\"Y\n\x0bKafkaConfig\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\x12\r\n\x05topic\x18\x02 \x01(\t\x12\x14\n\x0csaslUsername\x18\x03 \x01(\t\x12\x14\n\x0csaslPassword\x18\x04 \x01(\t\"\xcb\x01\n\x08\x45HConfig\x12\x13\n\x0b\x65hNamespace\x18\x01 \x01(\t\x12\x0e\n\x06\x65hName\x18\x02 \x01(\t\x12\x1a\n\x12\x65hConnectionString\x18\x03 \x01(\t\x12\x11\n\tehKeyName\x18\x04 \x01(\t\x12\x12\n\nehKeyValue\x18\x05 \x01(\t\x12\x1f\n\x17storageAccountNameValue\x18\x06 \x01(\t\x12\x1e\n\x16storageAccountKeyValue\x18\x07 \x01(\t\x12\x16\n\x0e\x63ontainerValue\x18\x08 \x01(\t\"\xb2\x01\n\x0eStreamTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12)\n\x0cstreamConfig\x18\x03 \x01(\x0b\x32\x13.types.StreamConfig\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\"Z\n\x0cScanTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\"\xc8\x01\n\x16ScannerCronJobTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x1f\n\x07trigger\x18\x03 \x01(\x0b\x32\x0e.types.Trigger\x12\x16\n\x0escanTemplateId\x18\x04 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x05 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x06 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x07 \x01(\t\"\xa6\x01\n\x12StreamsJobTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x19\n\x11streamsTemplateId\x18\x03 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\",\n\x07Trigger\x12!\n\x08schedule\x18\x01 \x01(\x0b\x32\x0f.types.Schedule\"$\n\x08Schedule\x12\x18\n\x10recurrencePeriod\x18\x01 \x01(\tb\x06proto3')
   ,
   dependencies=[common__pb2.DESCRIPTOR,])
 
@@ -204,6 +204,13 @@ _TRANSFORMATION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='fPEValue', full_name='types.Transformation.fPEValue', index=4,
+      number=6, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -217,7 +224,7 @@ _TRANSFORMATION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=417,
-  serialized_end=591,
+  serialized_end=626,
 )
 
 
@@ -247,8 +254,8 @@ _REPLACEVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=593,
-  serialized_end=625,
+  serialized_start=628,
+  serialized_end=660,
 )
 
 
@@ -271,8 +278,8 @@ _REDACTVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=627,
-  serialized_end=640,
+  serialized_start=662,
+  serialized_end=675,
 )
 
 
@@ -295,8 +302,8 @@ _HASHVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=642,
-  serialized_end=653,
+  serialized_start=677,
+  serialized_end=688,
 )
 
 
@@ -340,8 +347,53 @@ _MASKVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=655,
-  serialized_end=730,
+  serialized_start=690,
+  serialized_end=765,
+)
+
+
+_FPEVALUE = _descriptor.Descriptor(
+  name='FPEValue',
+  full_name='types.FPEValue',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='types.FPEValue.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='tweak', full_name='types.FPEValue.tweak', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='decrypt', full_name='types.FPEValue.decrypt', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=767,
+  serialized_end=822,
 )
 
 
@@ -354,13 +406,20 @@ _DBCONFIG = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='connectionString', full_name='types.DBConfig.connectionString', index=0,
-      number=2, type=9, cpp_type=9, label=1,
+      number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='tableName', full_name='types.DBConfig.tableName', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='types.DBConfig.type', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -378,8 +437,8 @@ _DBCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=732,
-  serialized_end=787,
+  serialized_start=824,
+  serialized_end=893,
 )
 
 
@@ -423,8 +482,8 @@ _DATASINK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=790,
-  serialized_end=933,
+  serialized_start=896,
+  serialized_end=1039,
 )
 
 
@@ -436,23 +495,23 @@ _DATASINKTEMPLATE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='analyzerKind', full_name='types.DatasinkTemplate.analyzerKind', index=0,
+      name='description', full_name='types.DatasinkTemplate.description', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='anonymizerKind', full_name='types.DatasinkTemplate.anonymizerKind', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='analyzeDatasink', full_name='types.DatasinkTemplate.analyzeDatasink', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='datasink', full_name='types.DatasinkTemplate.datasink', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='anonymizeDatasink', full_name='types.DatasinkTemplate.anonymizeDatasink', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -468,8 +527,8 @@ _DATASINKTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=935,
-  serialized_end=1034,
+  serialized_start=1041,
+  serialized_end=1166,
 )
 
 
@@ -513,8 +572,8 @@ _BLOBSTORAGECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1036,
-  serialized_end=1119,
+  serialized_start=1168,
+  serialized_end=1251,
 )
 
 
@@ -572,8 +631,8 @@ _S3CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1121,
-  serialized_end=1222,
+  serialized_start=1253,
+  serialized_end=1354,
 )
 
 
@@ -624,8 +683,8 @@ _GOOGLESTORAGECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1224,
-  serialized_end=1314,
+  serialized_start=1356,
+  serialized_end=1446,
 )
 
 
@@ -669,8 +728,8 @@ _CLOUDSTORAGECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1317,
-  serialized_end=1482,
+  serialized_start=1449,
+  serialized_end=1614,
 )
 
 
@@ -696,9 +755,9 @@ _STREAMCONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='kinesisConfig', full_name='types.StreamConfig.kinesisConfig', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='partitionCount', full_name='types.StreamConfig.partitionCount', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -714,8 +773,8 @@ _STREAMCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1485,
-  serialized_end=1620,
+  serialized_start=1616,
+  serialized_end=1730,
 )
 
 
@@ -766,8 +825,8 @@ _KAFKACONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1622,
-  serialized_end=1711,
+  serialized_start=1732,
+  serialized_end=1821,
 )
 
 
@@ -813,72 +872,27 @@ _EHCONFIG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1713,
-  serialized_end=1827,
-)
-
-
-_KINESISCONFIG = _descriptor.Descriptor(
-  name='KinesisConfig',
-  full_name='types.KinesisConfig',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
     _descriptor.FieldDescriptor(
-      name='awsAccessKeyId', full_name='types.KinesisConfig.awsAccessKeyId', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='awsRegion', full_name='types.KinesisConfig.awsRegion', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='awsSecretAccessKey', full_name='types.KinesisConfig.awsSecretAccessKey', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='redisUrl', full_name='types.KinesisConfig.redisUrl', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='streamName', full_name='types.KinesisConfig.streamName', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='endpointAddress', full_name='types.KinesisConfig.endpointAddress', index=5,
+      name='storageAccountNameValue', full_name='types.EHConfig.storageAccountNameValue', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='storageAccountKeyValue', full_name='types.EHConfig.storageAccountKeyValue', index=6,
+      number=7, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='containerValue', full_name='types.EHConfig.containerValue', index=7,
+      number=8, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -891,8 +905,8 @@ _KINESISCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1830,
-  serialized_end=1979,
+  serialized_start=1824,
+  serialized_end=2027,
 )
 
 
@@ -904,23 +918,23 @@ _STREAMTEMPLATE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='kind', full_name='types.StreamTemplate.kind', index=0,
+      name='name', full_name='types.StreamTemplate.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='streamConfig', full_name='types.StreamTemplate.streamConfig', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='description', full_name='types.StreamTemplate.description', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='minProbability', full_name='types.StreamTemplate.minProbability', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='streamConfig', full_name='types.StreamTemplate.streamConfig', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -945,13 +959,6 @@ _STREAMTEMPLATE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='partitionCount', full_name='types.StreamTemplate.partitionCount', index=6,
-      number=7, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -964,8 +971,8 @@ _STREAMTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1982,
-  serialized_end=2187,
+  serialized_start=2030,
+  serialized_end=2208,
 )
 
 
@@ -977,7 +984,7 @@ _SCANTEMPLATE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='kind', full_name='types.ScanTemplate.kind', index=0,
+      name='description', full_name='types.ScanTemplate.description', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -990,9 +997,75 @@ _SCANTEMPLATE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2210,
+  serialized_end=2300,
+)
+
+
+_SCANNERCRONJOBTEMPLATE = _descriptor.Descriptor(
+  name='ScannerCronJobTemplate',
+  full_name='types.ScannerCronJobTemplate',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='minProbability', full_name='types.ScanTemplate.minProbability', index=2,
-      number=3, type=9, cpp_type=9, label=1,
+      name='name', full_name='types.ScannerCronJobTemplate.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='description', full_name='types.ScannerCronJobTemplate.description', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='trigger', full_name='types.ScannerCronJobTemplate.trigger', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='scanTemplateId', full_name='types.ScannerCronJobTemplate.scanTemplateId', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='analyzeTemplateId', full_name='types.ScannerCronJobTemplate.analyzeTemplateId', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='anonymizeTemplateId', full_name='types.ScannerCronJobTemplate.anonymizeTemplateId', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='datasinkTemplateId', full_name='types.ScannerCronJobTemplate.datasinkTemplateId', index=6,
+      number=7, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -1009,55 +1082,55 @@ _SCANTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2189,
-  serialized_end=2296,
+  serialized_start=2303,
+  serialized_end=2503,
 )
 
 
-_SCANNERCRONJOBTEMPLATE = _descriptor.Descriptor(
-  name='ScannerCronJobTemplate',
-  full_name='types.ScannerCronJobTemplate',
+_STREAMSJOBTEMPLATE = _descriptor.Descriptor(
+  name='StreamsJobTemplate',
+  full_name='types.StreamsJobTemplate',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='description', full_name='types.ScannerCronJobTemplate.description', index=0,
+      name='name', full_name='types.StreamsJobTemplate.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='trigger', full_name='types.ScannerCronJobTemplate.trigger', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='description', full_name='types.StreamsJobTemplate.description', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='scanTemplateId', full_name='types.ScannerCronJobTemplate.scanTemplateId', index=2,
+      name='streamsTemplateId', full_name='types.StreamsJobTemplate.streamsTemplateId', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='analyzeTemplateId', full_name='types.ScannerCronJobTemplate.analyzeTemplateId', index=3,
+      name='analyzeTemplateId', full_name='types.StreamsJobTemplate.analyzeTemplateId', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='anonymizeTemplateId', full_name='types.ScannerCronJobTemplate.anonymizeTemplateId', index=4,
+      name='anonymizeTemplateId', full_name='types.StreamsJobTemplate.anonymizeTemplateId', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='datasinkTemplateId', full_name='types.ScannerCronJobTemplate.datasinkTemplateId', index=5,
+      name='datasinkTemplateId', full_name='types.StreamsJobTemplate.datasinkTemplateId', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -1075,67 +1148,8 @@ _SCANNERCRONJOBTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2299,
-  serialized_end=2485,
-)
-
-
-_STREAMSJOBTEMPLATE = _descriptor.Descriptor(
-  name='StreamsJobTemplate',
-  full_name='types.StreamsJobTemplate',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='description', full_name='types.StreamsJobTemplate.description', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='streamsTemplateId', full_name='types.StreamsJobTemplate.streamsTemplateId', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='analyzeTemplateId', full_name='types.StreamsJobTemplate.analyzeTemplateId', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='anonymizeTemplateId', full_name='types.StreamsJobTemplate.anonymizeTemplateId', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='datasinkTemplateId', full_name='types.StreamsJobTemplate.datasinkTemplateId', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=2488,
-  serialized_end=2640,
+  serialized_start=2506,
+  serialized_end=2672,
 )
 
 
@@ -1165,8 +1179,8 @@ _TRIGGER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2642,
-  serialized_end=2686,
+  serialized_start=2674,
+  serialized_end=2718,
 )
 
 
@@ -1196,8 +1210,8 @@ _SCHEDULE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2688,
-  serialized_end=2724,
+  serialized_start=2720,
+  serialized_end=2756,
 )
 
 _ANALYZETEMPLATE.fields_by_name['fields'].message_type = common__pb2._FIELDTYPES
@@ -1208,16 +1222,17 @@ _TRANSFORMATION.fields_by_name['replaceValue'].message_type = _REPLACEVALUE
 _TRANSFORMATION.fields_by_name['redactValue'].message_type = _REDACTVALUE
 _TRANSFORMATION.fields_by_name['hashValue'].message_type = _HASHVALUE
 _TRANSFORMATION.fields_by_name['maskValue'].message_type = _MASKVALUE
+_TRANSFORMATION.fields_by_name['fPEValue'].message_type = _FPEVALUE
 _DATASINK.fields_by_name['dbConfig'].message_type = _DBCONFIG
 _DATASINK.fields_by_name['cloudStorageConfig'].message_type = _CLOUDSTORAGECONFIG
 _DATASINK.fields_by_name['streamConfig'].message_type = _STREAMCONFIG
-_DATASINKTEMPLATE.fields_by_name['datasink'].message_type = _DATASINK
+_DATASINKTEMPLATE.fields_by_name['analyzeDatasink'].message_type = _DATASINK
+_DATASINKTEMPLATE.fields_by_name['anonymizeDatasink'].message_type = _DATASINK
 _CLOUDSTORAGECONFIG.fields_by_name['blobStorageConfig'].message_type = _BLOBSTORAGECONFIG
 _CLOUDSTORAGECONFIG.fields_by_name['s3Config'].message_type = _S3CONFIG
 _CLOUDSTORAGECONFIG.fields_by_name['GoogleStorageConfig'].message_type = _GOOGLESTORAGECONFIG
 _STREAMCONFIG.fields_by_name['kafkaConfig'].message_type = _KAFKACONFIG
 _STREAMCONFIG.fields_by_name['ehConfig'].message_type = _EHCONFIG
-_STREAMCONFIG.fields_by_name['kinesisConfig'].message_type = _KINESISCONFIG
 _STREAMTEMPLATE.fields_by_name['streamConfig'].message_type = _STREAMCONFIG
 _SCANTEMPLATE.fields_by_name['cloudStorageConfig'].message_type = _CLOUDSTORAGECONFIG
 _SCANNERCRONJOBTEMPLATE.fields_by_name['trigger'].message_type = _TRIGGER
@@ -1230,6 +1245,7 @@ DESCRIPTOR.message_types_by_name['ReplaceValue'] = _REPLACEVALUE
 DESCRIPTOR.message_types_by_name['RedactValue'] = _REDACTVALUE
 DESCRIPTOR.message_types_by_name['HashValue'] = _HASHVALUE
 DESCRIPTOR.message_types_by_name['MaskValue'] = _MASKVALUE
+DESCRIPTOR.message_types_by_name['FPEValue'] = _FPEVALUE
 DESCRIPTOR.message_types_by_name['DBConfig'] = _DBCONFIG
 DESCRIPTOR.message_types_by_name['Datasink'] = _DATASINK
 DESCRIPTOR.message_types_by_name['DatasinkTemplate'] = _DATASINKTEMPLATE
@@ -1240,7 +1256,6 @@ DESCRIPTOR.message_types_by_name['CloudStorageConfig'] = _CLOUDSTORAGECONFIG
 DESCRIPTOR.message_types_by_name['StreamConfig'] = _STREAMCONFIG
 DESCRIPTOR.message_types_by_name['KafkaConfig'] = _KAFKACONFIG
 DESCRIPTOR.message_types_by_name['EHConfig'] = _EHCONFIG
-DESCRIPTOR.message_types_by_name['KinesisConfig'] = _KINESISCONFIG
 DESCRIPTOR.message_types_by_name['StreamTemplate'] = _STREAMTEMPLATE
 DESCRIPTOR.message_types_by_name['ScanTemplate'] = _SCANTEMPLATE
 DESCRIPTOR.message_types_by_name['ScannerCronJobTemplate'] = _SCANNERCRONJOBTEMPLATE
@@ -1304,6 +1319,13 @@ MaskValue = _reflection.GeneratedProtocolMessageType('MaskValue', (_message.Mess
   # @@protoc_insertion_point(class_scope:types.MaskValue)
   ))
 _sym_db.RegisterMessage(MaskValue)
+
+FPEValue = _reflection.GeneratedProtocolMessageType('FPEValue', (_message.Message,), dict(
+  DESCRIPTOR = _FPEVALUE,
+  __module__ = 'template_pb2'
+  # @@protoc_insertion_point(class_scope:types.FPEValue)
+  ))
+_sym_db.RegisterMessage(FPEValue)
 
 DBConfig = _reflection.GeneratedProtocolMessageType('DBConfig', (_message.Message,), dict(
   DESCRIPTOR = _DBCONFIG,
@@ -1374,13 +1396,6 @@ EHConfig = _reflection.GeneratedProtocolMessageType('EHConfig', (_message.Messag
   # @@protoc_insertion_point(class_scope:types.EHConfig)
   ))
 _sym_db.RegisterMessage(EHConfig)
-
-KinesisConfig = _reflection.GeneratedProtocolMessageType('KinesisConfig', (_message.Message,), dict(
-  DESCRIPTOR = _KINESISCONFIG,
-  __module__ = 'template_pb2'
-  # @@protoc_insertion_point(class_scope:types.KinesisConfig)
-  ))
-_sym_db.RegisterMessage(KinesisConfig)
 
 StreamTemplate = _reflection.GeneratedProtocolMessageType('StreamTemplate', (_message.Message,), dict(
   DESCRIPTOR = _STREAMTEMPLATE,

@@ -25,6 +25,7 @@ func connect(addr string) (*grpc.ClientConn, error) {
 
 	conn, err := grpc.DialContext(ctx, addr,
 		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(callOpts...)),
+		// TODO: We need to add TLS option as well
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithBackoffMaxDelay(5*time.Second),

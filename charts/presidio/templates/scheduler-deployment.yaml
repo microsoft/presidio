@@ -19,7 +19,7 @@ spec:
       serviceAccountName: {{ $fullname }}
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.registry }}/{{ .Values.scheduler.name }}:{{ default .Chart.AppVersion .Values.scheduler.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.scheduler.name }}:{{ default .Chart.Version .Values.scheduler.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.scheduler.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.scheduler.service.internalPort }}
@@ -39,11 +39,11 @@ spec:
           - name: DATASINK_GRPC_PORT
             value: "5000"
           - name: DATASINK_IMAGE_NAME
-            value: {{ .Values.registry }}/{{ .Values.datasink.name }}:{{ default .Chart.AppVersion .Values.datasink.tag }}
+            value: {{ .Values.registry }}/{{ .Values.datasink.name }}:{{ default .Chart.Version .Values.datasink.tag }}
           - name: DATASINK_PULL_POLICY
             value: {{ default "IfNotPresent" .Values.datasink.imagePullPolicy }}
           - name: COLLECTOR_IMAGE_NAME
-            value: {{ .Values.registry }}/{{ .Values.collector.name }}:{{ default .Chart.AppVersion .Values.collector.tag }}
+            value: {{ .Values.registry }}/{{ .Values.collector.name }}:{{ default .Chart.Version .Values.collector.tag }}
           - name: COLLECTOR_IMAGE_PULL_POLICY
             value: {{ default "IfNotPresent" .Values.collector.imagePullPolicy }}
       {{ if .Values.privateRegistry }}imagePullSecrets:

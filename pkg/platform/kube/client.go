@@ -42,6 +42,5 @@ func kubeConfigPath() string {
 		return defConfig
 	}
 
-	// If we get here, we might be in-Pod.
 	return ""
 }

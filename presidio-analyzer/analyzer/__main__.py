@@ -3,8 +3,6 @@ import matcher
 import grpc
 import analyze_pb2
 import analyze_pb2_grpc
-import common_pb2
-import template_pb2
 from concurrent import futures
 import time
 import sys
@@ -42,8 +40,9 @@ helps['analyze'] = """
                    license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE"
 """
 
+loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
-    format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
+    format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
 
 
 class PresidioCLIHelp(CLIHelp):
