@@ -1,5 +1,5 @@
 
-# Development 
+# Development
 
 ## Setting up the environment
 
@@ -60,14 +60,31 @@
     protoc -I . --go_out=plugins=grpc:../golang ./*.proto
     ```
 
-
 ## Development notes
+
 - Build the bins with `make build`
 - Build the the Docker image with `make docker-build`
 - Push the Docker images with `make docker-push`
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
+
+### Set the following environnement variables
+
+#### presidio-analyzer
+
+- `GRPC_PORT`: `3001` GRPC listen port
+
+#### presidio-anonymizer
+
+- `GRPC_PORT`: `3002` GRPC listen port
+
+#### presidio-api
+
+- `WEB_PORT`: `8080` HTTP listen port
+- `REDIS_URL`: `localhost:6379`, Optional: Redis address
+- `ANALYZER_SVC_ADDRESS`: `localhost:3001`, Analyzer address
+- `ANONYMIZER_SVC_ADDRESS`: `localhost:3002`, Anonymizer address
 
 ## Load test
 
