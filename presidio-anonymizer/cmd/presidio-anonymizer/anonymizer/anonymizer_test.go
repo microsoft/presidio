@@ -3,6 +3,8 @@ package anonymizer
 import (
 	"testing"
 
+	"encoding/json"
+
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
@@ -160,6 +162,97 @@ var testPlans = []struct {
 			},
 		},
 	}},
+}, {
+	desc:     "Detect duplicate element",
+	text:     "My name is danger and my location is Seattle",
+	expected: "My name is <person> and my location is <loc>",
+	analyzeResults: []*types.AnalyzeResult{{
+		Location: &types.Location{
+			Start: 11,
+			End:   17,
+		},
+		Score: 0.2,
+		Field: &types.FieldTypes{
+			Name: types.FieldTypesEnum_LOCATION.String(),
+		},
+	},
+		{
+			Location: &types.Location{
+				Start: 11,
+				End:   17,
+			},
+			Score: 0.85,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_PERSON.String(),
+			},
+		},
+		{
+			Location: &types.Location{
+				Start: 11,
+				End:   17,
+			},
+			Score: 0.65,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_NRP.String(),
+			},
+		},
+		{
+			Location: &types.Location{
+				Start: 37,
+				End:   44,
+			},
+			Score: 0.35,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_DATE_TIME.String(),
+			},
+		},
+		{
+			Location: &types.Location{
+				Start: 37,
+				End:   44,
+			},
+			Score: 0.65,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_LOCATION.String(),
+			},
+		}},
+	fieldTypeTransformation: []*types.FieldTypeTransformation{{
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_PERSON.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<person>",
+			},
+		},
+	}, {
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_LOCATION.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<loc>",
+			},
+		},
+	}, {
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_NRP.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<nrp group>",
+			},
+		},
+	}, {
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_DATE_TIME.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<thisisdate>",
+			},
+		},
+	}},
 },
 }
 
@@ -176,4 +269,75 @@ func TestPlan(t *testing.T) {
 		}
 		assert.Equal(t, plan.expected, output)
 	}
+}
+
+func TestMultipleValuesBasedOnJSON(t *testing.T) {
+	var analyzeResultsJSON = `[{"text":"4095-2609-9393-4932","field":{"name":"CREDIT_CARD"},"score":1,"location":{"start":76,"end":95,"length":19}},{"text":"16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ","field":{"name":"CRYPTO"},"score":1,"location":{"start":118,"end":152,"length":34}},{"text":"September 18","field":{"name":"DATE_TIME"},"score":0.85,"location":{"start":167,"end":179,"length":12}},{"text":"microsoft.com","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":192,"end":205,"length":13}},{"text":"test@presidio.site","field":{"name":"EMAIL_ADDRESS"},"score":1,"location":{"start":225,"end":243,"length":18}},{"text":"presidio.site","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":230,"end":243,"length":13}},{"text":"IL150120690000003111111","field":{"name":"IBAN_CODE"},"score":1,"location":{"start":254,"end":277,"length":23}},{"text":"192.168.0.1","field":{"name":"IP_ADDRESS"},"score":0.95,"location":{"start":286,"end":297,"length":11}},{"text":"David Johnson","field":{"name":"PERSON"},"score":0.85,"location":{"start":315,"end":328,"length":13}},{"text":"2854567876542","field":{"name":"US_BANK_NUMBER"},"score":0.6,"location":{"start":348,"end":361,"length":13}},{"text":"H12234567","field":{"name":"US_DRIVER_LICENSE"},"score":0.65,"location":{"start":389,"end":398,"length":9}},{"text":"912803456","field":{"name":"US_BANK_NUMBER"},"score":0.05,"location":{"start":414,"end":423,"length":9}},{"text":"912803456","field":{"name":"US_PASSPORT"},"score":0.6,"location":{"start":414,"end":423,"length":9}},{"text":"912803456","field":{"name":"US_ITIN"},"score":0.3,"location":{"start":414,"end":423,"length":9}},{"text":"(212) 555-1234","field":{"name":"PHONE_NUMBER"},"score":1,"location":{"start":442,"end":456,"length":14}},{"text":"078-05-1120","field":{"name":"US_SSN"},"score":0.85,"location":{"start":486,"end":497,"length":11}},{"text":"cla.microsoft.com","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":761,"end":778,"length":17}},{"text":"opencode@microsoft.com","field":{"name":"EMAIL_ADDRESS"},"score":1,"location":{"start":1193,"end":1215,"length":22}},{"text":"microsoft.com","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":1202,"end":1215,"length":13}}]`
+	analyzeResults := []*types.AnalyzeResult{}
+	err := json.Unmarshal([]byte(analyzeResultsJSON), &analyzeResults)
+	if err != nil {
+		assert.Error(t, err)
+	}
+
+	var anonymizeTemplateJSON = `{"fieldTypeTransformations":[{"fields":[{"name":"DOMAIN_NAME"}],"transformation":{"replaceValue":{"newValue":"<DOMAIN_NAME>"}}},{"fields":[{"name":"PERSON"}],"transformation":{"replaceValue":{"newValue":"<PERSON>"}}},{"fields":[{"name":"US_BANK_NUMBER"}],"transformation":{"replaceValue":{"newValue":"<US_BANK_NUMBER>"}}},{"fields":[{"name":"CRYPTO"}],"transformation":{"replaceValue":{"newValue":"<CRYPTO>"}}},{"fields":[{"name":"EMAIL_ADDRESS"}],"transformation":{"replaceValue":{"newValue":"<EMAIL_ADDRESS>"}}},{"fields":[{"name":"US_PASSPORT"}],"transformation":{"replaceValue":{"newValue":"<US_PASSPORT>"}}},{"fields":[{"name":"DATE_TIME"}],"transformation":{"replaceValue":{"newValue":"<DATE_TIME>"}}},{"fields":[{"name":"IP_ADDRESS"}],"transformation":{"replaceValue":{"newValue":"<IP_ADDRESS>"}}},{"fields":[{"name":"NRP"}],"transformation":{"replaceValue":{"newValue":"<NRP>"}}},{"fields":[{"name":"UK_NHS"}],"transformation":{"replaceValue":{"newValue":"<UK_NHS>"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"replaceValue":{"newValue":"<CREDIT_CARD>"}}},{"fields":[{"name":"IBAN_CODE"}],"transformation":{"replaceValue":{"newValue":"<IBAN_CODE>"}}},{"fields":[{"name":"LOCATION"}],"transformation":{"replaceValue":{"newValue":"<LOCATION>"}}},{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"<PHONE_NUMBER>"}}},{"fields":[{"name":"US_DRIVER_LICENSE"}],"transformation":{"replaceValue":{"newValue":"<US_DRIVER_LICENSE>"}}},{"fields":[{"name":"US_ITIN"}],"transformation":{"replaceValue":{"newValue":"<US_ITIN>"}}},{"fields":[{"name":"US_SSN"}],"transformation":{"replaceValue":{"newValue":"<US_SSN>"}}}]}`
+	anonymizerTemplate := types.AnonymizeTemplate{}
+	err = json.Unmarshal([]byte(anonymizeTemplateJSON), &anonymizerTemplate)
+	if err != nil {
+		assert.Error(t, err)
+	}
+
+	text := `Here are a few examples of entities we currently support:
+
+    Credit card: 4095-2609-9393-4932
+    Crypto wallet id: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ
+    DateTime: September 18
+    Domain: microsoft.com
+    Email address: test@presidio.site
+    IBAN: IL150120690000003111111
+    IP: 192.168.0.1
+    Person name: David Johnson
+
+    Bank account: 2854567876542
+    Driver license number: H12234567 
+    Passport: 912803456
+    Phone number: (212) 555-1234.
+    Social security number: 078-05-1120
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the 
+PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact 
+opencode@microsoft.com with any additional questions or comments.`
+
+	output, err := ApplyAnonymizerTemplate(text, analyzeResults, &anonymizerTemplate)
+	if err != nil {
+		assert.Error(t, err)
+	}
+
+	expected := `Here are a few examples of entities we currently support:
+
+    Credit card: <CREDIT_CARD>
+    Crypto wallet id: <CRYPTO>
+    DateTime: <DATE_TIME>
+    Domain: <DOMAIN_NAME>
+    Email address: <EMAIL_ADDRESS>
+    IBAN: <IBAN_CODE>
+    IP: <IP_ADDRESS>
+    Person name: <PERSON>
+
+    Bank account: <US_BANK_NUMBER>
+    Driver license number: <US_DRIVER_LICENSE> 
+    Passport: <US_PASSPORT>
+    Phone number: <PHONE_NUMBER>.
+    Social security number: <US_SSN>
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://<DOMAIN_NAME>.
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the 
+PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact 
+<EMAIL_ADDRESS> with any additional questions or comments.`
+
+	assert.Equal(t, expected, output)
 }
