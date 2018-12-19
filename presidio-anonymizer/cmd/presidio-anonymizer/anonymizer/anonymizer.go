@@ -14,7 +14,13 @@ type sortedResults []*types.AnalyzeResult
 func (a sortedResults) Len() int      { return len(a) }
 func (a sortedResults) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a sortedResults) Less(i, j int) bool {
-	return a[i].Location.Start <= a[j].Location.Start && a[i].Score >= a[j].Score
+	if a[i].Location.Start < a[j].Location.Start {
+		return true
+	}
+	if a[i].Location.Start > a[j].Location.Start {
+		return false
+	}
+	return a[i].Score > a[j].Score
 }
 
 //ApplyAnonymizerTemplate ...
@@ -25,7 +31,7 @@ func ApplyAnonymizerTemplate(text string, results []*types.AnalyzeResult, templa
 
 	//Remove duplicates based on score
 	if len(results) > 1 {
-		results = removeDuplicates(results)
+		results = removeDuplicatesBaseOnScore(results)
 	}
 
 	//Apply new values
@@ -62,7 +68,7 @@ func ApplyAnonymizerTemplate(text string, results []*types.AnalyzeResult, templa
 	return text, nil
 }
 
-func removeDuplicates(results []*types.AnalyzeResult) []*types.AnalyzeResult {
+func removeDuplicatesBaseOnScore(results []*types.AnalyzeResult) []*types.AnalyzeResult {
 
 	j := 0
 	for i := 1; i < len(results); i++ {
@@ -70,6 +76,8 @@ func removeDuplicates(results []*types.AnalyzeResult) []*types.AnalyzeResult {
 			continue
 		}
 		j++
+
+		// Swap
 		results[i], results[j] = results[j], results[i]
 	}
 
