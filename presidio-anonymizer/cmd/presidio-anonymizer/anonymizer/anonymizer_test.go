@@ -160,6 +160,97 @@ var testPlans = []struct {
 			},
 		},
 	}},
+}, {
+	desc:     "Detect duplicate element",
+	text:     "My name is danger and my location is Seattle",
+	expected: "My name is <person> and my location is <location>",
+	analyzeResults: []*types.AnalyzeResult{{
+		Location: &types.Location{
+			Start: 11,
+			End:   17,
+		},
+		Score: 0.2,
+		Field: &types.FieldTypes{
+			Name: types.FieldTypesEnum_LOCATION.String(),
+		},
+	},
+		{
+			Location: &types.Location{
+				Start: 11,
+				End:   17,
+			},
+			Score: 0.85,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_PERSON.String(),
+			},
+		},
+		{
+			Location: &types.Location{
+				Start: 11,
+				End:   17,
+			},
+			Score: 0.50,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_NRP.String(),
+			},
+		},
+		{
+			Location: &types.Location{
+				Start: 37,
+				End:   44,
+			},
+			Score: 0.35,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_DATE_TIME.String(),
+			},
+		},
+		{
+			Location: &types.Location{
+				Start: 37,
+				End:   44,
+			},
+			Score: 0.65,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_LOCATION.String(),
+			},
+		}},
+	fieldTypeTransformation: []*types.FieldTypeTransformation{{
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_PERSON.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<person>",
+			},
+		},
+	}, {
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_LOCATION.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<location>",
+			},
+		},
+	}, {
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_NRP.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<nrp>",
+			},
+		},
+	}, {
+		Fields: []*types.FieldTypes{{
+			Name: types.FieldTypesEnum_DATE_TIME.String(),
+		}},
+		Transformation: &types.Transformation{
+			ReplaceValue: &types.ReplaceValue{
+				NewValue: "<date>",
+			},
+		},
+	}},
 },
 }
 
