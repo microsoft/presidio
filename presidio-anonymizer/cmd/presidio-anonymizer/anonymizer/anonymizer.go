@@ -72,8 +72,8 @@ func removeDuplicates(results []*types.AnalyzeResult) []*types.AnalyzeResult {
 		j++
 		results[i], results[j] = results[j], results[i]
 	}
-	return results[:j+1]
 
+	return results[:j+1]
 }
 
 func transformField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (string, error) {

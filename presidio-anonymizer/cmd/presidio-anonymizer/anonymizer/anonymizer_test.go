@@ -247,7 +247,7 @@ var testPlans = []struct {
 		}},
 		Transformation: &types.Transformation{
 			ReplaceValue: &types.ReplaceValue{
-				NewValue: "<date>",
+				NewValue: "<thisisdate>",
 			},
 		},
 	}},
