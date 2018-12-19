@@ -11,15 +11,28 @@ import (
 
 type sortedResults []*types.AnalyzeResult
 
-func (a sortedResults) Len() int           { return len(a) }
-func (a sortedResults) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a sortedResults) Less(i, j int) bool { return a[i].Location.Start < a[j].Location.Start }
+func (a sortedResults) Len() int      { return len(a) }
+func (a sortedResults) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a sortedResults) Less(i, j int) bool {
+	if a[i].Location.Start < a[j].Location.Start {
+		return true
+	}
+	if a[i].Location.Start > a[j].Location.Start {
+		return false
+	}
+	return a[i].Score > a[j].Score
+}
 
 //ApplyAnonymizerTemplate ...
 func ApplyAnonymizerTemplate(text string, results []*types.AnalyzeResult, template *types.AnonymizeTemplate) (string, error) {
 
 	//Sort results by start location to verify order
 	sort.Sort(sortedResults(results))
+
+	//Remove duplicates based on score
+	if len(results) > 1 {
+		results = removeDuplicatesBaseOnScore(results)
+	}
 
 	//Apply new values
 	var err error
@@ -53,6 +66,22 @@ func ApplyAnonymizerTemplate(text string, results []*types.AnalyzeResult, templa
 	}
 
 	return text, nil
+}
+
+func removeDuplicatesBaseOnScore(results []*types.AnalyzeResult) []*types.AnalyzeResult {
+
+	j := 0
+	for i := 1; i < len(results); i++ {
+		if results[j].Location.Start == results[i].Location.Start && results[j].Location.End == results[i].Location.End {
+			continue
+		}
+		j++
+
+		// Swap
+		results[i], results[j] = results[j], results[i]
+	}
+
+	return results[:j+1]
 }
 
 func transformField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (string, error) {
