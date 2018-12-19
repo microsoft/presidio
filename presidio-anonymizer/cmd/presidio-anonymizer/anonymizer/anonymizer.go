@@ -76,16 +76,6 @@ func removeDuplicates(results []*types.AnalyzeResult) []*types.AnalyzeResult {
 
 }
 
-// func resultInSlice(a *types.AnalyzeResult, list []*types.AnalyzeResult) bool {
-
-// 	for _, b := range list {
-// 		if a.Location.Start == b.Location.Start && a.Location.End == b.Location.End {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
 func transformField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (string, error) {
 
 	if transformation.ReplaceValue != nil {
