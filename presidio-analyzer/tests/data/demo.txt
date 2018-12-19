@@ -1,11 +1,6 @@
-Presidio helps to ensure sensitive text is properly managed and governed. 
-It provides fast analytics and anonymization for sensitive text such as credit card numbers, bitcoin wallets, names, locations, 
-social security numbers, phone numbers and financial data. Presidio analyzes the text using predefined analyzers to identify patterns, 
-formats, and checksums with relevant context.
-
 Here are a few examples of entities we currently support:
 
-    Credit card: 4012-8888-8888-1881
+    Credit card: 4095-2609-9393-4932
     Crypto wallet id: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ
     DateTime: September 18
     Domain: microsoft.com
@@ -15,10 +10,10 @@ Here are a few examples of entities we currently support:
     Person name: David Johnson
 
     Bank account: 945456787654
-    Driver license number: AC3549211
+    Driver license number: H12234567
     Itin: 911-70-1234 
     Passport: 912803456
-    Phone number: (555) 253-0000.
+    Phone number: (212) 555-1234.
     Social security number: 078-05-1120
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring t
