@@ -8,8 +8,10 @@ import (
 	"google.golang.org/grpc/reflection"
 	apiv1 "k8s.io/api/core/v1"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
@@ -24,21 +26,17 @@ var (
 )
 
 func main() {
+
+	pflag.Int("grpc_port", 3002, "GRPC listen port")
+	pflag.Int("datasink_grpc_port", 5000, "Datasink GRPC listen port")
+	pflag.String("analyzer_svc_address", "localhost:3000", "Analyzer service address")
+	pflag.String("anonymizer_svc_address", "localhost:3001", "Anonymizer service address")
+	pflag.String("redis_url", "localhost:6379", "Redis address")
+
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
 	settings = platform.GetSettings()
-	if settings.GrpcPort == "" {
-		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", settings.GrpcPort)
-	}
-	if settings.AnalyzerSvcAddress == "" {
-		log.Fatal("analyzer service address is empty")
-	}
-
-	if settings.AnonymizerSvcAddress == "" {
-		log.Fatal("anonymizer service address is empty")
-	}
-
-	if settings.RedisURL == "" {
-		log.Fatal("redis service address is empty")
-	}
 
 	var err error
 	log.Info("namespace %s", settings.Namespace)

@@ -4,6 +4,9 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
@@ -13,17 +16,20 @@ import (
 
 func main() {
 
+	pflag.Int("web_port", 8080, "HTTP listen port")
+	pflag.String("analyzer_svc_address", "localhost:3000", "Analyzer service address")
+	pflag.String("anonymizer_svc_address", "localhost:3001", "Anonymizer service address")
+	pflag.String("redis_url", "", "Redis address")
+
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
 	settings := platform.GetSettings()
-	if settings.WebPort == "" {
-		log.Fatal("WEB_PORT env var must me set.")
-	}
 
 	port, err := strconv.Atoi(settings.WebPort)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	r := server.Setup(port)
 
 	var api *API
 
@@ -44,6 +50,12 @@ func main() {
 	}
 
 	api.setupGRPCServices()
+	setupHTTPServer(api, port)
+}
+
+func setupHTTPServer(api *API, port int) {
+
+	r := server.Setup(port)
 
 	// api/v1 group
 	v1 := r.Group("/api/v1")

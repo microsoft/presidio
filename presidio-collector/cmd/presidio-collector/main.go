@@ -5,6 +5,9 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/presidio"
@@ -17,6 +20,13 @@ var streamRequest *types.StreamRequest
 var scanRequest *types.ScanRequest
 
 func main() {
+
+	pflag.String("analyzer_svc_address", "localhost:3000", "Analyzer service address")
+	pflag.String("anonymizer_svc_address", "localhost:3001", "Anonymizer service address")
+	pflag.String("redis_url", "localhost:6379", "Redis address")
+
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
 
@@ -73,10 +83,6 @@ func setupDatasinkService(svc *presidio.Services, datasinkTemplate *types.Datasi
 }
 
 func parseRequest(settings *platform.Settings) {
-	if settings.GrpcPort == "" {
-		// Set to default
-		settings.GrpcPort = "5000"
-	}
 
 	streamRequest = &types.StreamRequest{}
 	presidio.ConvertJSONToInterface(settings.StreamRequest, streamRequest)

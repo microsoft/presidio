@@ -7,6 +7,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 
 	"google.golang.org/grpc"
@@ -29,12 +32,13 @@ var (
 type server struct{}
 
 func main() {
-	settings := platform.GetSettings()
 
-	if settings.DatasinkGrpcPort == "" {
-		// Set to default
-		settings.DatasinkGrpcPort = "5000"
-	}
+	pflag.Int("datasink_grpc_port", 5000, "GRPC listen port")
+
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
+	settings := platform.GetSettings()
 
 	// Setup server
 	lis, grpcServer = rpc.SetupClient(settings.DatasinkGrpcPort)
