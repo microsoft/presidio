@@ -21,9 +21,13 @@ var scanRequest *types.ScanRequest
 
 func main() {
 
-	pflag.String("analyzer_svc_address", "localhost:3000", "Analyzer service address")
-	pflag.String("anonymizer_svc_address", "localhost:3001", "Anonymizer service address")
-	pflag.String("redis_url", "localhost:6379", "Redis address")
+	pflag.String(platform.AnalyzerSvcAddress, "localhost:3000", "Analyzer service address")
+	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
+	pflag.String(platform.RedisURL, "localhost:6379", "Redis address")
+	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
+	pflag.Int(platform.RedisDb, 0, "Redis db")
+	pflag.String(platform.ScannerRequest, "", "Scanner request")
+	pflag.String(platform.StreamRequest, "", "Stream request")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
@@ -67,7 +71,6 @@ func main() {
 		}
 
 		// notify datasink that scanner is done
-
 		svc.DatasinkService.Completion(ctx, &types.CompletionMessage{})
 		log.Info("Done!")
 	}

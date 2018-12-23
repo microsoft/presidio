@@ -73,7 +73,7 @@ func (services *Services) SetupSchedulerService() {
 //SetupDatasinkService GRPC connection
 func (services *Services) SetupDatasinkService() {
 	address := "localhost"
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%s", address, settings.DatasinkGrpcPort))
+	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%d", address, settings.DatasinkGrpcPort))
 	if err != nil {
 		log.Fatal("Connection to datasink service failed %q", err)
 	}
@@ -87,11 +87,10 @@ func SetupCache() cache.Cache {
 		log.Fatal("redis address is empty")
 	}
 
-	// TODO: change the password and DB defaults
 	cache := redis.New(
 		settings.RedisURL,
-		"", // no password set
-		0,  // use default DB
+		settings.RedisPassword,
+		settings.RedisDB,
 	)
 	return cache
 }

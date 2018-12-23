@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -16,21 +15,17 @@ import (
 
 func main() {
 
-	pflag.Int("web_port", 8080, "HTTP listen port")
-	pflag.String("analyzer_svc_address", "localhost:3000", "Analyzer service address")
-	pflag.String("anonymizer_svc_address", "localhost:3001", "Anonymizer service address")
-	pflag.String("redis_url", "", "Redis address")
+	pflag.Int(platform.WebPort, 8080, "HTTP listen port")
+	pflag.String(platform.AnalyzerSvcAddress, "localhost:3000", "Analyzer service address")
+	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
+	pflag.String(platform.RedisURL, "", "Redis address")
+	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
+	pflag.Int(platform.RedisDb, 0, "Redis db")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
-
-	port, err := strconv.Atoi(settings.WebPort)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
 	var api *API
 
 	// Kubernetes platform
@@ -50,7 +45,7 @@ func main() {
 	}
 
 	api.setupGRPCServices()
-	setupHTTPServer(api, port)
+	setupHTTPServer(api, settings.WebPort)
 }
 
 func setupHTTPServer(api *API, port int) {

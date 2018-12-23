@@ -33,7 +33,7 @@ type server struct{}
 
 func main() {
 
-	pflag.Int("datasink_grpc_port", 5000, "GRPC listen port")
+	pflag.Int(platform.DatasinkGrpcPort, 5000, "GRPC listen port")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)

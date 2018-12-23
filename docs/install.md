@@ -40,19 +40,17 @@ $ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB
     $ helm install --name redis stable/redis --set usePassword=false,rbac.create=true --namespace presidio-system
     ```
 
-3. Install [Traefik](https://github.com/kubernetes/charts/tree/master/stable/traefik) (Optional - Ingress controller for presidio API)
+3. Optional - Ingress controller for presidio API.
+    - [Traefik](https://docs.traefik.io/user-guide/kubernetes/)
+    - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
 
-    ```sh
-    $ helm install --name traefik --set rbac.enabled=true stable/traefik --version 1.33.1 --namespace kube-system
-    ```
-
-4. Verify that Redis and Traefik are installed correctly
+4. Verify that Redis and Traefik/NGINX are installed correctly
 
 5. Deploy from `/charts/presidio`
 
     ```sh
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY} . --namespace presidio --version ${PRESIDIO_LABEL}
+    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},analyzer.tag=${PRESIDIO_LABEL},anonymizer.tag=${PRESIDIO_LABEL},api.tag=${PRESIDIO_LABEL},collector.tag=${PRESIDIO_LABEL},datasink.tag=${PRESIDIO_LABEL} . --namespace presidio
     ```
 
 ---

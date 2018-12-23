@@ -19,7 +19,7 @@ type server struct{}
 
 func main() {
 
-	pflag.Int("grpc_port", 3001, "GRPC listen port")
+	pflag.Int(platform.GrpcPort, 3001, "GRPC listen port")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
