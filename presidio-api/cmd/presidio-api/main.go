@@ -18,6 +18,7 @@ func main() {
 	pflag.Int(platform.WebPort, 8080, "HTTP listen port")
 	pflag.String(platform.AnalyzerSvcAddress, "localhost:3000", "Analyzer service address")
 	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
+	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address")
 	pflag.String(platform.RedisURL, "", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db")
@@ -34,14 +35,14 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store)
+		api = New(store, settings)
 	} else {
 		// Local platform
 		store, err := local.New(os.TempDir())
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store)
+		api = New(store, settings)
 	}
 
 	api.setupGRPCServices()

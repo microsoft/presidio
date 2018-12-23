@@ -11,6 +11,7 @@ import (
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/presidio"
+	"github.com/Microsoft/presidio/pkg/presidio/services"
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/processor"
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/streams"
@@ -36,18 +37,17 @@ func main() {
 
 	parseRequest(settings)
 
-	svc := presidio.Services{}
-
+	svc := services.New(settings)
 	svc.SetupAnalyzerService()
 
 	if streamRequest.StreamConfig != nil {
 		st := streams.CreateStream(context.Background(), streamRequest)
-		setupDatasinkService(&svc, streamRequest.DatasinkTemplate)
+		setupDatasinkService(svc, streamRequest.DatasinkTemplate)
 		if streamRequest.AnonymizeTemplate != nil {
 			svc.SetupAnonymizerService()
 		}
 
-		err := processor.ReceiveEventsFromStream(st, &svc, streamRequest)
+		err := processor.ReceiveEventsFromStream(st, svc, streamRequest)
 		if err != nil {
 			log.Error(err.Error())
 		}
@@ -55,8 +55,8 @@ func main() {
 	}
 
 	if scanRequest.ScanTemplate != nil {
-		cache := presidio.SetupCache()
-		setupDatasinkService(&svc, scanRequest.DatasinkTemplate)
+		cache := svc.SetupCache()
+		setupDatasinkService(svc, scanRequest.DatasinkTemplate)
 		if scanRequest.AnonymizeTemplate != nil {
 			svc.SetupAnonymizerService()
 		}
@@ -64,22 +64,22 @@ func main() {
 
 		// Scan
 		ctx := context.Background()
-		err := processor.ScanStorage(ctx, scan, cache, &svc, scanRequest)
+		err := processor.ScanStorage(ctx, scan, cache, svc, scanRequest)
 
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
 		// notify datasink that scanner is done
-		svc.DatasinkService.Completion(ctx, &types.CompletionMessage{})
+		svc.CloseDatasink(ctx, &types.CompletionMessage{})
 		log.Info("Done!")
 	}
 }
 
-func setupDatasinkService(svc *presidio.Services, datasinkTemplate *types.DatasinkTemplate) {
+func setupDatasinkService(svc presidio.ServicesAPI, datasinkTemplate *types.DatasinkTemplate) {
 	svc.SetupDatasinkService()
 
-	_, err := svc.DatasinkService.Init(context.Background(), datasinkTemplate)
+	_, err := svc.InitDatasink(context.Background(), datasinkTemplate)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
