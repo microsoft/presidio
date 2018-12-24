@@ -20,6 +20,7 @@ import (
 	cache_mock "github.com/Microsoft/presidio/pkg/cache/mock"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/presidio"
+	"github.com/Microsoft/presidio/pkg/presidio/services"
 	"github.com/Microsoft/presidio/pkg/storage"
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/processor"
 	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
@@ -41,7 +42,7 @@ var (
 	s3Config         stow.ConfigMap
 	containerName    = "test"
 	testCache        c.Cache
-	grpcSvc          = presidio.Services{}
+	grpcSvc          = services.Services{}
 )
 
 func TestMain(m *testing.M) {

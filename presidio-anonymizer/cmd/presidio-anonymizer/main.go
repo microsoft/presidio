@@ -6,10 +6,12 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
-
 	"github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer"
 )
 
@@ -17,17 +19,17 @@ type server struct{}
 
 func main() {
 
-	settings := platform.GetSettings()
+	pflag.Int(platform.GrpcPort, 3001, "GRPC listen port")
 
-	if settings.GrpcPort == "" {
-		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", settings.GrpcPort)
-	}
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
+	settings := platform.GetSettings()
 
 	lis, s := rpc.SetupClient(settings.GrpcPort)
 
 	types.RegisterAnonymizeServiceServer(s, &server{})
 	reflection.Register(s)
-
 	if err := s.Serve(lis); err != nil {
 		log.Fatal(err.Error())
 	}

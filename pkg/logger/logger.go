@@ -3,7 +3,9 @@ package logger
 import (
 	"os"
 	"strings"
-	"sync"
+
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -13,18 +15,8 @@ import (
 var sugaredLogger *zap.SugaredLogger
 var logger *zap.Logger
 
-//var logs *observer.ObservedLogs
-var once sync.Once
-
-// Init initializes a thread-safe singleton logger
-// This would be called from a main method when the application starts up
-// This function would ideally, take zap configuration, but is left out
-// in favor of simplicity using the example logger.
 func init() {
-	// once ensures the singleton is initialized only once
-	once.Do(func() {
-		initLogger()
-	})
+	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 }
 
 func initLogger() {
@@ -49,10 +41,13 @@ func initLogger() {
 		panic(err.Error())
 	}
 }
-func getLogLevel() zapcore.Level {
 
-	logLevel := os.Getenv("LOG_LEVEL")
+func getLogLevel() zapcore.Level {
+	logLevel := viper.GetString("LOG_LEVEL")
+
 	switch strings.ToLower(logLevel) {
+	case "debug":
+		return zapcore.DebugLevel
 	case "info":
 		return zapcore.InfoLevel
 	case "warn":
@@ -66,12 +61,15 @@ func getLogLevel() zapcore.Level {
 	case "fatal":
 		return zapcore.FatalLevel
 	default:
-		return zapcore.DebugLevel
+		return zapcore.InfoLevel
 	}
 }
 
 // GetLogger get native not sugared logger
 func GetLogger() *zap.Logger {
+	if logger == nil {
+		initLogger()
+	}
 	return logger
 }
 
@@ -85,26 +83,42 @@ func ObserveLogging(level zapcore.Level) *observer.ObservedLogs {
 
 // Debug logs a debug message with the given fields
 func Debug(message string, fields ...interface{}) {
+	if sugaredLogger == nil {
+		initLogger()
+	}
 	sugaredLogger.Debugf(message, fields...)
 }
 
 // Info logs a debug message with the given fields
 func Info(message string, fields ...interface{}) {
+	if sugaredLogger == nil {
+		initLogger()
+	}
 	sugaredLogger.Infof(message, fields...)
 }
 
 // Warn logs a debug message with the given fields
 func Warn(message string, fields ...interface{}) {
+	if sugaredLogger == nil {
+		initLogger()
+	}
 	sugaredLogger.Warnf(message, fields...)
 }
 
 // Error logs a debug message with the given fields
 func Error(message string, fields ...interface{}) {
+	if sugaredLogger == nil {
+		initLogger()
+	}
 	sugaredLogger.Errorf(message, fields...)
 }
 
 // Fatal logs a message than calls os.Exit(1)
 func Fatal(message string, fields ...interface{}) {
+	if sugaredLogger == nil {
+		initLogger()
+	}
 	sugaredLogger.Fatalf(message, fields...)
+	sugaredLogger.Sync()
 	os.Exit(1)
 }

@@ -1,4 +1,9 @@
 [![Build status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=48)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Microsoft/presidio)](https://goreportcard.com/report/github.com/Microsoft/presidio)
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+![](https://img.shields.io/github/release/Microsoft/presidio.svg)
+
+---
 
 # Presidio - Data Loss Prevention API
 
@@ -46,7 +51,6 @@ Presidio leverages:
 * [Redis](https://redis.io/)
 * [GRPC](https://grpc.io)
 
-
 The [design document](https://microsoft.github.io/presidio/design.html) introduces Presidio concepts and architecture.
 
 ## Quickstart
@@ -54,7 +58,6 @@ The [design document](https://microsoft.github.io/presidio/design.html) introduc
 1. Install [Presidio](https://microsoft.github.io/presidio/install.html)
 2. Create a Presidio project
 3. Start using the Presidio analyze and anonymize services
-
 
 **Note:** Examples are made with [HTTPie](https://httpie.org/)
 
@@ -135,7 +138,7 @@ You can also create reusable templates
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
