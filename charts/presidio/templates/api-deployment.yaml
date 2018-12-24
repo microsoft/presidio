@@ -50,5 +50,7 @@ spec:
             value:  {{ template "presidio.anonymizer.address" . }}
           - name: SCHEDULER_SVC_ADDRESS
             value:  {{ template "presidio.scheduler.address" . }}
+          - name: GIN_MODE
+            value: release
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}

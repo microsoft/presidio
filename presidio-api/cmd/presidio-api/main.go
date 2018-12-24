@@ -21,7 +21,8 @@ func main() {
 	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address")
 	pflag.String(platform.RedisURL, "", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
-	pflag.Int(platform.RedisDb, 0, "Redis db")
+	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
+	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
