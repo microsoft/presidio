@@ -1,4 +1,4 @@
-package presidio
+package services
 
 import (
 	"fmt"
@@ -11,10 +11,9 @@ import (
 	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/rpc"
 )
-
-var settings *platform.Settings = platform.GetSettings()
 
 //Services exposes GRPC services
 type Services struct {
@@ -22,15 +21,22 @@ type Services struct {
 	AnonymizeService types.AnonymizeServiceClient
 	DatasinkService  types.DatasinkServiceClient
 	SchedulerService types.SchedulerServiceClient
+	Settings         *platform.Settings
+}
+
+//New services with settings
+func New(settings *platform.Settings) presidio.ServicesAPI {
+	svc := Services{Settings: settings}
+	return &svc
 }
 
 //SetupAnalyzerService GRPC connection
 func (services *Services) SetupAnalyzerService() {
-	if settings.AnalyzerSvcAddress == "" {
+	if services.Settings.AnalyzerSvcAddress == "" {
 		log.Fatal("analyzer service address is empty")
 	}
 
-	analyzeService, err := rpc.SetupAnalyzerService(settings.AnalyzerSvcAddress)
+	analyzeService, err := rpc.SetupAnalyzerService(services.Settings.AnalyzerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to analyzer service failed %q", err)
 	}
@@ -41,11 +47,11 @@ func (services *Services) SetupAnalyzerService() {
 //SetupAnonymizerService GRPC connection
 func (services *Services) SetupAnonymizerService() {
 
-	if settings.AnonymizerSvcAddress == "" {
+	if services.Settings.AnonymizerSvcAddress == "" {
 		log.Fatal("anonymizer service address is empty")
 	}
 
-	anonymizeService, err := rpc.SetupAnonymizeService(settings.AnonymizerSvcAddress)
+	anonymizeService, err := rpc.SetupAnonymizeService(services.Settings.AnonymizerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
@@ -57,12 +63,12 @@ func (services *Services) SetupAnonymizerService() {
 //SetupSchedulerService GRPC connection
 func (services *Services) SetupSchedulerService() {
 
-	if settings.SchedulerSvcAddress == "" {
+	if services.Settings.SchedulerSvcAddress == "" {
 		log.Warn("scheduler service address is empty")
 		return
 	}
 
-	schedulerService, err := rpc.SetupSchedulerService(settings.SchedulerSvcAddress)
+	schedulerService, err := rpc.SetupSchedulerService(services.Settings.SchedulerSvcAddress)
 	if err != nil {
 		log.Fatal("Connection to anonymizer service failed %q", err)
 	}
@@ -73,7 +79,7 @@ func (services *Services) SetupSchedulerService() {
 //SetupDatasinkService GRPC connection
 func (services *Services) SetupDatasinkService() {
 	address := "localhost"
-	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%s", address, settings.DatasinkGrpcPort))
+	datasinkService, err := rpc.SetupDatasinkService(fmt.Sprintf("%s:%d", address, services.Settings.DatasinkGrpcPort))
 	if err != nil {
 		log.Fatal("Connection to datasink service failed %q", err)
 	}
@@ -82,16 +88,15 @@ func (services *Services) SetupDatasinkService() {
 }
 
 //SetupCache  Redis cache
-func SetupCache() cache.Cache {
-	if settings.RedisURL == "" {
+func (services *Services) SetupCache() cache.Cache {
+	if services.Settings.RedisURL == "" {
 		log.Fatal("redis address is empty")
 	}
 
-	// TODO: change the password and DB defaults
 	cache := redis.New(
-		settings.RedisURL,
-		"", // no password set
-		0,  // use default DB
+		services.Settings.RedisURL,
+		services.Settings.RedisPassword,
+		services.Settings.RedisDB,
 	)
 	return cache
 }
@@ -143,4 +148,24 @@ func (services *Services) SendResultToDatasink(ctx context.Context, analyzeResul
 
 	_, err := services.DatasinkService.Apply(ctx, datasinkRequest)
 	return err
+}
+
+//ApplyStream create stream job
+func (services *Services) ApplyStream(ctx context.Context, streamsJobRequest *types.StreamsJobRequest) (*types.StreamsJobResponse, error) {
+	return services.SchedulerService.ApplyStream(ctx, streamsJobRequest)
+}
+
+//ApplyScan create scan cron job
+func (services *Services) ApplyScan(ctx context.Context, scanJobRequest *types.ScannerCronJobRequest) (*types.ScannerCronJobResponse, error) {
+	return services.SchedulerService.ApplyScan(ctx, scanJobRequest)
+}
+
+//InitDatasink initialize datasink app
+func (services *Services) InitDatasink(ctx context.Context, datasinkTemplate *types.DatasinkTemplate) (*types.DatasinkResponse, error) {
+	return services.DatasinkService.Init(ctx, datasinkTemplate)
+}
+
+//CloseDatasink notify datasink the collector is finished
+func (services *Services) CloseDatasink(ctx context.Context, datasinkTemplate *types.CompletionMessage) (*types.DatasinkResponse, error) {
+	return services.DatasinkService.Completion(ctx, datasinkTemplate)
 }

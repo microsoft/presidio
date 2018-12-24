@@ -1,5 +1,5 @@
 {{ $fullname := include "presidio.api.fullname" . }}
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $fullname }}
@@ -10,6 +10,9 @@ metadata:
     heritage: "{{ .Release.Service }}"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $fullname }}
   template:
     metadata:
       labels:
@@ -18,7 +21,7 @@ spec:
       serviceAccountName: {{ $fullname }}
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.registry }}/{{ .Values.api.name }}:{{ default .Chart.Version .Values.api.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.api.name }}:{{ default .Chart.AppVersion .Values.api.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.api.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.api.service.internalPort }}
@@ -47,5 +50,7 @@ spec:
             value:  {{ template "presidio.anonymizer.address" . }}
           - name: SCHEDULER_SVC_ADDRESS
             value:  {{ template "presidio.scheduler.address" . }}
+          - name: GIN_MODE
+            value: release
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}

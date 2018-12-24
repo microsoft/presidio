@@ -7,8 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
-
-	pkg_templates "github.com/Microsoft/presidio/pkg/presidio"
+	"github.com/Microsoft/presidio/pkg/presidio"
 	server "github.com/Microsoft/presidio/pkg/server"
 )
 
@@ -24,8 +23,7 @@ func (api *API) getActionTemplate(c *gin.Context) {
 	action := c.Param("action")
 	project := c.Param("project")
 	id := c.Param("id")
-	key := pkg_templates.CreateKey(project, action, id)
-	result, err := api.Templates.GetTemplate(key)
+	result, err := api.Templates.GetTemplate(project, action, id)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -107,7 +105,7 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 
 func bindAndConvert(template interface{}, c *gin.Context) (string, error) {
 	if c.BindJSON(&template) == nil {
-		return pkg_templates.ConvertInterfaceToJSON(template)
+		return presidio.ConvertInterfaceToJSON(template)
 	}
 	return "", fmt.Errorf("No template found")
 }

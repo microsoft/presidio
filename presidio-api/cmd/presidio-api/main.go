@@ -2,7 +2,9 @@ package main
 
 import (
 	"os"
-	"strconv"
+
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
@@ -13,18 +15,19 @@ import (
 
 func main() {
 
+	pflag.Int(platform.WebPort, 8080, "HTTP listen port")
+	pflag.String(platform.AnalyzerSvcAddress, "localhost:3000", "Analyzer service address")
+	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
+	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address")
+	pflag.String(platform.RedisURL, "", "Redis address")
+	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
+	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
+	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
+
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
 	settings := platform.GetSettings()
-	if settings.WebPort == "" {
-		log.Fatal("WEB_PORT env var must me set.")
-	}
-
-	port, err := strconv.Atoi(settings.WebPort)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	r := server.Setup(port)
-
 	var api *API
 
 	// Kubernetes platform
@@ -33,17 +36,23 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store)
+		api = New(store, settings)
 	} else {
 		// Local platform
 		store, err := local.New(os.TempDir())
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store)
+		api = New(store, settings)
 	}
 
 	api.setupGRPCServices()
+	setupHTTPServer(api, settings.WebPort)
+}
+
+func setupHTTPServer(api *API, port int) {
+
+	r := server.Setup(port)
 
 	// api/v1 group
 	v1 := r.Group("/api/v1")

@@ -8,8 +8,12 @@ import (
 	"google.golang.org/grpc/reflection"
 	apiv1 "k8s.io/api/core/v1"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	"strings"
 
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+
+	types "github.com/Microsoft/presidio-genproto/golang"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
@@ -24,21 +28,20 @@ var (
 )
 
 func main() {
+
+	pflag.Int(platform.GrpcPort, 3002, "GRPC listen port")
+	pflag.Int(platform.DatasinkGrpcPort, 5000, "Datasink GRPC listen port")
+	pflag.String(platform.AnalyzerSvcAddress, "localhost:3000", "Analyzer service address")
+	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
+	pflag.String(platform.RedisURL, "localhost:6379", "Redis address")
+	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
+	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
+	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
+
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
 	settings = platform.GetSettings()
-	if settings.GrpcPort == "" {
-		log.Fatal("GRPC_PORT (currently [%s]) env var must me set.", settings.GrpcPort)
-	}
-	if settings.AnalyzerSvcAddress == "" {
-		log.Fatal("analyzer service address is empty")
-	}
-
-	if settings.AnonymizerSvcAddress == "" {
-		log.Fatal("anonymizer service address is empty")
-	}
-
-	if settings.RedisURL == "" {
-		log.Fatal("redis service address is empty")
-	}
 
 	var err error
 	log.Info("namespace %s", settings.Namespace)
@@ -89,7 +92,7 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 			Name:  "datasink",
 			Image: settings.DatasinkImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
+				{Name: strings.ToUpper(platform.DatasinkGrpcPort), Value: fmt.Sprintf("%d", settings.DatasinkGrpcPort)},
 			},
 			ImagePullPolicy: datasinkPolicy,
 		},
@@ -97,11 +100,13 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 			Name:  "scanner",
 			Image: settings.CollectorImage,
 			EnvVars: []apiv1.EnvVar{
-				{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
-				{Name: "REDIS_URL", Value: settings.RedisURL},
-				{Name: "ANALYZER_SVC_ADDRESS", Value: settings.AnalyzerSvcAddress},
-				{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
-				{Name: "SCANNER_REQUEST", Value: string(scanRequest)},
+				{Name: strings.ToUpper(platform.DatasinkGrpcPort), Value: fmt.Sprintf("%d", settings.DatasinkGrpcPort)},
+				{Name: strings.ToUpper(platform.RedisURL), Value: settings.RedisURL},
+				{Name: strings.ToUpper(platform.RedisPassword), Value: settings.RedisPassword},
+				{Name: strings.ToUpper(platform.RedisDb), Value: fmt.Sprintf("%d", settings.RedisDB)},
+				{Name: strings.ToUpper(platform.AnalyzerSvcAddress), Value: settings.AnalyzerSvcAddress},
+				{Name: strings.ToUpper(platform.AnonymizerSvcAddress), Value: settings.AnonymizerSvcAddress},
+				{Name: strings.ToUpper(platform.ScannerRequest), Value: string(scanRequest)},
 			},
 			ImagePullPolicy: collectorPolicy,
 		},
@@ -134,7 +139,7 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 				Name:  "datasink",
 				Image: settings.DatasinkImage,
 				EnvVars: []apiv1.EnvVar{
-					{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
+					{Name: strings.ToUpper(platform.DatasinkGrpcPort), Value: fmt.Sprintf("%d", settings.DatasinkGrpcPort)},
 				},
 				ImagePullPolicy: datasinkPolicy,
 			},
@@ -142,11 +147,13 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 				Name:  "streams",
 				Image: settings.CollectorImage,
 				EnvVars: []apiv1.EnvVar{
-					{Name: "DATASINK_GRPC_PORT", Value: settings.DatasinkGrpcPort},
-					{Name: "REDIS_URL", Value: settings.RedisURL},
-					{Name: "ANALYZER_SVC_ADDRESS", Value: settings.AnalyzerSvcAddress},
-					{Name: "ANONYMIZER_SVC_ADDRESS", Value: settings.AnonymizerSvcAddress},
-					{Name: "STREAM_REQUEST", Value: string(streamRequest)},
+					{Name: strings.ToUpper(platform.DatasinkGrpcPort), Value: fmt.Sprintf("%d", settings.DatasinkGrpcPort)},
+					{Name: strings.ToUpper(platform.RedisURL), Value: settings.RedisURL},
+					{Name: strings.ToUpper(platform.RedisPassword), Value: settings.RedisPassword},
+					{Name: strings.ToUpper(platform.RedisDb), Value: fmt.Sprintf("%d", settings.RedisDB)},
+					{Name: strings.ToUpper(platform.AnalyzerSvcAddress), Value: settings.AnalyzerSvcAddress},
+					{Name: strings.ToUpper(platform.AnonymizerSvcAddress), Value: settings.AnonymizerSvcAddress},
+					{Name: strings.ToUpper(platform.StreamRequest), Value: string(streamRequest)},
 				},
 				ImagePullPolicy: collectorPolicy,
 			},

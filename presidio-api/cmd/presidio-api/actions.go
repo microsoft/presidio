@@ -13,11 +13,9 @@ import (
 )
 
 func (api *API) setupGRPCServices() {
-	svc := presidio.Services{}
-	svc.SetupAnalyzerService()
-	svc.SetupAnonymizerService()
-	svc.SetupSchedulerService()
-	api.Services = &svc
+	api.Services.SetupAnalyzerService()
+	api.Services.SetupAnonymizerService()
+	api.Services.SetupSchedulerService()
 }
 
 func (api *API) analyze(c *gin.Context) {
@@ -95,7 +93,7 @@ func (api *API) scheduleScannerCronJob(c *gin.Context) {
 
 func (api *API) invokeScannerCronJobScheduler(scannerCronJobRequest *types.ScannerCronJobRequest, c *gin.Context) *types.ScannerCronJobResponse {
 
-	res, err := api.Services.SchedulerService.ApplyScan(c, scannerCronJobRequest)
+	res, err := api.Services.ApplyScan(c, scannerCronJobRequest)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
@@ -166,7 +164,7 @@ func (api *API) scheduleStreamsJob(c *gin.Context) {
 }
 
 func (api *API) invokeStreamsJobScheduler(streamsJobRequest *types.StreamsJobRequest, c *gin.Context) *types.StreamsJobResponse {
-	res, err := api.Services.SchedulerService.ApplyStream(c, streamsJobRequest)
+	res, err := api.Services.ApplyStream(c, streamsJobRequest)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
@@ -215,8 +213,7 @@ func (api *API) getStreamsJobRequest(jobAPIRequest *types.StreamsJobApiRequest, 
 }
 
 func (api *API) getTemplate(project string, action string, id string, obj interface{}, c *gin.Context) {
-	key := presidio.CreateKey(project, action, id)
-	template, err := api.Templates.GetTemplate(key)
+	template, err := api.Templates.GetTemplate(project, action, id)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
