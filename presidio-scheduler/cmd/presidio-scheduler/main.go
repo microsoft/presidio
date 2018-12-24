@@ -35,7 +35,8 @@ func main() {
 	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
 	pflag.String(platform.RedisURL, "localhost:6379", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
-	pflag.Int(platform.RedisDb, 0, "Redis db")
+	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
+	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
