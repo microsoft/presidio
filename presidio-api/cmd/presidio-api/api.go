@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/presidio"
+	"github.com/Microsoft/presidio/pkg/presidio/services"
+	"github.com/Microsoft/presidio/pkg/presidio/templates"
 )
 
 const (
@@ -17,15 +19,16 @@ const (
 
 //API kv store
 type API struct {
-	Templates *presidio.Templates
-	Services  *presidio.Services
+	Templates presidio.TemplatesStore
+	Services  presidio.ServicesAPI
 }
 
 //New KV store
-func New(s platform.Store) *API {
-	template := presidio.New(s)
+func New(store platform.Store, settings *platform.Settings) *API {
+	template := templates.New(store)
+	svc := services.New(settings)
 	return &API{
 		Templates: template,
-		Services:  &presidio.Services{},
+		Services:  svc,
 	}
 }

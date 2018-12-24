@@ -10,9 +10,9 @@ import (
 )
 
 //SetupClient setup grpc listener
-func SetupClient(grpcPort string) (net.Listener, *grpc.Server) {
+func SetupClient(grpcPort int) (net.Listener, *grpc.Server) {
 
-	addr := fmt.Sprintf(":%s", grpcPort)
+	addr := fmt.Sprintf(":%d", grpcPort)
 	log.Info(addr)
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
