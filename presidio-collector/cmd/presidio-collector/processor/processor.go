@@ -15,7 +15,7 @@ import (
 )
 
 //ReceiveEventsFromStream ..
-func ReceiveEventsFromStream(st stream.Stream, services *presidio.Services, streamRequest *types.StreamRequest) error {
+func ReceiveEventsFromStream(st stream.Stream, services presidio.ServicesAPI, streamRequest *types.StreamRequest) error {
 	return st.Receive(func(ctx context.Context, partition string, sequence string, text string) error {
 
 		analyzerResult, err := services.AnalyzeItem(ctx, text, streamRequest.AnalyzeTemplate)
@@ -45,7 +45,7 @@ func ReceiveEventsFromStream(st stream.Stream, services *presidio.Services, stre
 }
 
 //ScanStorage ..
-func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, services *presidio.Services, scanRequest *types.ScanRequest) error {
+func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, services presidio.ServicesAPI, scanRequest *types.ScanRequest) error {
 	return scan.Scan(func(item interface{}) error {
 		var analyzerResult []*types.AnalyzeResult
 

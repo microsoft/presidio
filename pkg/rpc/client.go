@@ -37,7 +37,7 @@ func connect(addr string) (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-//SetupAnonymizeService ...
+//SetupAnonymizeService connect to anonymizer service with GRPC
 func SetupAnonymizeService(address string) (types.AnonymizeServiceClient, error) {
 
 	conn, err := connect(address)
@@ -49,7 +49,7 @@ func SetupAnonymizeService(address string) (types.AnonymizeServiceClient, error)
 	return client, nil
 }
 
-//SetupAnalyzerService ...
+//SetupAnalyzerService connect to analyzer service with GRPC
 func SetupAnalyzerService(address string) (types.AnalyzeServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
@@ -59,7 +59,7 @@ func SetupAnalyzerService(address string) (types.AnalyzeServiceClient, error) {
 	return client, nil
 }
 
-//SetupDatasinkService ...
+//SetupDatasinkService connect to datasink service with GRPC
 func SetupDatasinkService(address string) (types.DatasinkServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
@@ -69,7 +69,7 @@ func SetupDatasinkService(address string) (types.DatasinkServiceClient, error) {
 	return client, nil
 }
 
-//SetupSchedulerService ...
+//SetupSchedulerService connect to scheduler service with GRPC
 func SetupSchedulerService(address string) (types.SchedulerServiceClient, error) {
 	conn, err := connect(address)
 	if err != nil {
