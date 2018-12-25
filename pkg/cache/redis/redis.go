@@ -4,6 +4,7 @@ import (
 	r "github.com/go-redis/redis"
 
 	"github.com/Microsoft/presidio/pkg/cache"
+	log "github.com/Microsoft/presidio/pkg/logger"
 )
 
 type redis struct {
@@ -23,12 +24,15 @@ func New(address string, password string, db int) cache.Cache {
 
 //Set key value
 func (c *redis) Set(key string, value string) error {
-	return c.client.Set(key, value, 0).Err()
+	err := c.client.Set(key, value, 0).Err()
+	log.Debug("Redis - Set key %s", key)
+	return err
 }
 
 //Get key value
 func (c *redis) Get(key string) (string, error) {
 	val, err := c.client.Get(key).Result()
+	log.Debug("Redis - Get key %s", key)
 	if err == r.Nil {
 		return "", nil
 	} else if err != nil {
@@ -36,4 +40,11 @@ func (c *redis) Get(key string) (string, error) {
 	} else {
 		return val, nil
 	}
+}
+
+//Delete key
+func (c *redis) Delete(key string) error {
+	err := c.client.Del(key).Err()
+	log.Debug("Redis - Delete key %s", key)
+	return err
 }

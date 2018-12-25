@@ -43,6 +43,8 @@ func initLogger() {
 }
 
 func getLogLevel() zapcore.Level {
+
+	viper.AutomaticEnv()
 	logLevel := viper.GetString("LOG_LEVEL")
 
 	switch strings.ToLower(logLevel) {

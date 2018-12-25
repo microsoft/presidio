@@ -6,10 +6,12 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
+	"github.com/Microsoft/presidio/pkg/cache"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
 	"github.com/Microsoft/presidio/pkg/platform/local"
+	"github.com/Microsoft/presidio/pkg/presidio/services"
 	server "github.com/Microsoft/presidio/pkg/server"
 )
 
@@ -28,7 +30,17 @@ func main() {
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
+	svc := services.New(settings)
+
 	var api *API
+
+	// Setup Redis cache
+
+	var cacheStore cache.Cache
+
+	if settings.RedisURL != "" {
+		cacheStore = svc.SetupCache()
+	}
 
 	// Kubernetes platform
 	if settings.Namespace != "" {
@@ -36,14 +48,14 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store, settings)
+		api = New(store, cacheStore, settings)
 	} else {
 		// Local platform
 		store, err := local.New(os.TempDir())
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store, settings)
+		api = New(store, cacheStore, settings)
 	}
 
 	api.setupGRPCServices()

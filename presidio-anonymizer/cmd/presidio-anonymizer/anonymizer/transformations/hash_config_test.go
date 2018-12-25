@@ -26,14 +26,10 @@ func TestHashValue1(t *testing.T) {
 	locations[0] = index0
 	locations[1] = index1
 	result, err := HashValue(str, locations[1])
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	result, err = HashValue(result, locations[0])
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	expected := "this is a 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92 and 20f3765880a5c269b747e1e906054a4b4a3a991259f1e16b5dde4742cec2319a"
 

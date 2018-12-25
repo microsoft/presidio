@@ -26,14 +26,10 @@ func TestReplaceValueSize1(t *testing.T) {
 	locations[0] = index0
 	locations[1] = index1
 	result, err := ReplaceValue(str, locations[1], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	result, err = ReplaceValue(result, locations[0], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	expected := "this is a test and test"
 
@@ -58,14 +54,10 @@ func TestReplaceValueSize2(t *testing.T) {
 	locations[0] = index0
 	locations[1] = index1
 	result, err := ReplaceValue(str, locations[1], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	result, err = ReplaceValue(result, locations[0], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	expected := "this is a test and test"
 
@@ -90,13 +82,10 @@ func TestReplaceValueSize3(t *testing.T) {
 	locations[0] = index0
 	locations[1] = index1
 	result, err := ReplaceValue(str, locations[1], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
+
 	result, err = ReplaceValue(result, locations[0], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	expected := "this is a test and test"
 
@@ -121,14 +110,10 @@ func TestReplaceValueSize4(t *testing.T) {
 	locations[0] = index0
 	locations[1] = index1
 	result, err := ReplaceValue(str, locations[1], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	result, err = ReplaceValue(result, locations[0], "test")
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	expected := "this is a test and test"
 

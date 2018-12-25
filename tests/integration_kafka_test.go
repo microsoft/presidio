@@ -35,7 +35,5 @@ func TestKafka(t *testing.T) {
 	}
 
 	err := c.Receive(r)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 }
