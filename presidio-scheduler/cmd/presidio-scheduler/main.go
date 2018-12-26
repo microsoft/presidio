@@ -36,6 +36,7 @@ func main() {
 	pflag.String(platform.RedisURL, "localhost:6379", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
+	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
 	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
 
 	pflag.Parse()
@@ -104,6 +105,7 @@ func applyScanRequest(r *types.ScannerCronJobRequest) (*types.ScannerCronJobResp
 				{Name: strings.ToUpper(platform.RedisURL), Value: settings.RedisURL},
 				{Name: strings.ToUpper(platform.RedisPassword), Value: settings.RedisPassword},
 				{Name: strings.ToUpper(platform.RedisDb), Value: fmt.Sprintf("%d", settings.RedisDB)},
+				{Name: strings.ToUpper(platform.RedisSSL), Value: fmt.Sprintf("%t", settings.RedisSSL)},
 				{Name: strings.ToUpper(platform.AnalyzerSvcAddress), Value: settings.AnalyzerSvcAddress},
 				{Name: strings.ToUpper(platform.AnonymizerSvcAddress), Value: settings.AnonymizerSvcAddress},
 				{Name: strings.ToUpper(platform.ScannerRequest), Value: string(scanRequest)},
@@ -151,6 +153,7 @@ func applyStreamRequest(r *types.StreamsJobRequest) (*types.StreamsJobResponse, 
 					{Name: strings.ToUpper(platform.RedisURL), Value: settings.RedisURL},
 					{Name: strings.ToUpper(platform.RedisPassword), Value: settings.RedisPassword},
 					{Name: strings.ToUpper(platform.RedisDb), Value: fmt.Sprintf("%d", settings.RedisDB)},
+					{Name: strings.ToUpper(platform.RedisSSL), Value: fmt.Sprintf("%t", settings.RedisSSL)},
 					{Name: strings.ToUpper(platform.AnalyzerSvcAddress), Value: settings.AnalyzerSvcAddress},
 					{Name: strings.ToUpper(platform.AnonymizerSvcAddress), Value: settings.AnonymizerSvcAddress},
 					{Name: strings.ToUpper(platform.StreamRequest), Value: string(streamRequest)},

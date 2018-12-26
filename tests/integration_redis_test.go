@@ -11,17 +11,17 @@ import (
 	"github.com/Microsoft/presidio/pkg/cache/redis"
 )
 
-const address = "localhost:6379"
-const password = ""
-const db = 0
-
 func init() {
 	os.Setenv("LOG_LEVEL", "debug")
 }
 
 func TestRedis(t *testing.T) {
 
-	c := redis.New(address, password, db)
+	address := "localhost:6379"
+	password := ""
+	db := 0
+
+	c := redis.New(address, password, db, false)
 	key := "k.e.y"
 	value := "v"
 

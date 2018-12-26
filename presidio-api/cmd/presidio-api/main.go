@@ -24,6 +24,7 @@ func main() {
 	pflag.String(platform.RedisURL, "", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
+	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
 	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
 
 	pflag.Parse()

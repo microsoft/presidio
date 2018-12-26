@@ -34,7 +34,7 @@ func (c *mockCache) Get(key string) (string, error) {
 		return val, nil
 	}
 
-	return "", fmt.Errorf("Key doesn't exist")
+	return "", nil
 }
 
 //Delete key value

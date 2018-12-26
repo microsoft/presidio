@@ -27,6 +27,7 @@ func main() {
 	pflag.String(platform.RedisURL, "localhost:6379", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db")
+	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
 	pflag.String(platform.ScannerRequest, "", "Scanner request")
 	pflag.String(platform.StreamRequest, "", "Stream request")
 

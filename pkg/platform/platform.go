@@ -57,6 +57,7 @@ type Settings struct {
 	RedisURL                 string
 	RedisPassword            string
 	RedisDB                  int
+	RedisSSL                 bool
 	DatasinkImage            string
 	CollectorImage           string
 	DatasinkImagePullPolicy  string
@@ -92,6 +93,9 @@ const RedisURL = "redis_url"
 
 //RedisDb redis db number
 const RedisDb = "redis_db"
+
+//RedisSSL redis ssl
+const RedisSSL = "redis_ssl"
 
 //RedisPassword redis db password
 const RedisPassword = "redis_password"
@@ -132,6 +136,7 @@ func GetSettings() *Settings {
 		SchedulerSvcAddress:      getTrimmedEnv(SchedulerSvcAddress),
 		RedisURL:                 getTrimmedEnv(RedisURL),
 		RedisDB:                  viper.GetInt(strings.ToUpper(RedisDb)),
+		RedisSSL:                 viper.GetBool(strings.ToUpper(RedisSSL)),
 		RedisPassword:            getTrimmedEnv(RedisPassword),
 		DatasinkImage:            getTrimmedEnv(DatasinkImageName),
 		CollectorImage:           getTrimmedEnv(CollectorImageName),

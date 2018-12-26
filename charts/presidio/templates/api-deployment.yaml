@@ -44,6 +44,12 @@ spec:
             value: {{ .Values.api.service.internalPort | quote }}
           - name: REDIS_URL
             value: {{ .Values.redis.url }}
+          - name: REDIS_PASSWORD
+            value: {{ .Values.redis.password | default "" }}
+          - name: REDIS_DB
+            value: {{ .Values.redis.db | default "0" | quote}}
+          - name: REDIS_SSL
+            value: {{ .Values.redis.ssl | default "false" | quote}}
           - name: ANALYZER_SVC_ADDRESS
             value:  {{ template "presidio.analyzer.address" . }}
           - name: ANONYMIZER_SVC_ADDRESS

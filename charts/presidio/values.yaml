@@ -5,6 +5,9 @@ registry: presidio.azurecr.io
 
 redis:
     url: redis-master.presidio-system.svc.cluster.local:6379
+    #password:
+    #db: 0
+    #ssl: false
 
 api:
   name: presidio-api

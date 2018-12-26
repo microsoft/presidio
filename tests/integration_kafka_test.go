@@ -14,11 +14,12 @@ import (
 	"github.com/Microsoft/presidio/pkg/stream/kafka"
 )
 
-const address = "localhost:9092"
-const topic = "presidio-topic"
-const cg = "presidio-cg"
-
 func TestKafka(t *testing.T) {
+
+	address := "localhost:9092"
+	topic := "presidio-topic"
+	cg := "presidio-cg"
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*10))
 	defer cancel()
 

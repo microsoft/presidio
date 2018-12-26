@@ -83,7 +83,7 @@ func TestS3Scan(t *testing.T) {
 	cacheValue, _ := testCache.Get(etag)
 
 	logs := logsList.TakeAll()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "test/"+filePath, cacheValue)
 	assert.Equal(t, 1, len(logs))
 	assert.Equal(t, logs[0].Entry.Message, "2 results were sent to the datasink successfully")
@@ -120,7 +120,7 @@ func TestAzureScan(t *testing.T) {
 	etag, _ := item.ETag()
 	cacheValue, _ := testCache.Get(etag)
 	logs := logsList.TakeAll()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "/devstoreaccount1/test/"+filePath, cacheValue)
 	assert.Equal(t, 1, len(logs))
 	assert.Equal(t, logs[0].Entry.Message, "2 results were sent to the datasink successfully")
@@ -129,7 +129,7 @@ func TestAzureScan(t *testing.T) {
 	// On the second scan the item that was already scan shouldn't be scanned again
 	err = processor.ScanStorage(context.Background(), s, testCache, &grpcSvc, scanRequest)
 	logs = logsList.TakeAll()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, 1, len(logs))
 	assert.Equal(t, logs[0].Entry.Message, fmt.Sprintf("item %s was already scanned", containerPath+filePath))
 	// on the second time the data sink server wasn't called
