@@ -1,6 +1,9 @@
 package redis
 
 import (
+	"crypto/tls"
+	"regexp"
+
 	r "github.com/go-redis/redis"
 
 	"github.com/Microsoft/presidio/pkg/cache"
@@ -13,13 +16,26 @@ type redis struct {
 
 //New Return new Redis cache
 func New(address string, password string, db int) cache.Cache {
+
+	re := regexp.MustCompile("[0-9]+")
+	s := re.FindString(address)
+
+	if s == "6380" {
+		return &redis{
+			client: r.NewClient(&r.Options{
+				Addr:      address,
+				Password:  password,
+				DB:        db,
+				TLSConfig: &tls.Config{InsecureSkipVerify: true},
+			})}
+	}
 	return &redis{
 		client: r.NewClient(&r.Options{
 			Addr:     address,
 			Password: password,
 			DB:       db,
-		}),
-	}
+		})}
+
 }
 
 //Set key value

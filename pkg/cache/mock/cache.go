@@ -2,6 +2,7 @@ package mock
 
 import (
 	"fmt"
+
 	"github.com/Microsoft/presidio/pkg/cache"
 	log "github.com/Microsoft/presidio/pkg/logger"
 )

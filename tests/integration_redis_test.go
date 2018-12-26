@@ -3,19 +3,25 @@
 package tests
 
 import (
-	"github.com/Microsoft/presidio/pkg/cache/redis"
-	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/Microsoft/presidio/pkg/cache/redis"
 )
 
 const address = "localhost:6379"
 const password = ""
 const db = 0
 
+func init() {
+	os.Setenv("LOG_LEVEL", "debug")
+}
+
 func TestRedis(t *testing.T) {
 
 	c := redis.New(address, password, db)
-
 	key := "k.e.y"
 	value := "v"
 
@@ -33,7 +39,6 @@ func TestRedis(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Verify value is deleted
-	_, err = c.Get(key)
-	assert.Error(t, err)
-
+	v1, _ := c.Get(key)
+	assert.Equal(t, "", v1)
 }

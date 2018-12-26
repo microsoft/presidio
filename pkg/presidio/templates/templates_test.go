@@ -3,10 +3,12 @@ package templates
 import (
 	"testing"
 
+	"os"
+
+	"github.com/stretchr/testify/assert"
+
 	cmock "github.com/Microsoft/presidio/pkg/cache/mock"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
-	"github.com/stretchr/testify/assert"
-	"os"
 )
 
 func init() {
