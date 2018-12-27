@@ -10,6 +10,8 @@ import (
 
 	"strings"
 
+	"flag"
+
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
@@ -40,6 +42,7 @@ func main() {
 	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
 	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 

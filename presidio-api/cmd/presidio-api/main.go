@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/spf13/pflag"
@@ -28,6 +29,7 @@ func main() {
 	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
 	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
@@ -63,12 +65,12 @@ func main() {
 	}
 
 	api.setupGRPCServices()
-	setupHTTPServer(api, settings.WebPort)
+	setupHTTPServer(api, settings.WebPort, settings.LogLevel)
 }
 
-func setupHTTPServer(api *API, port int) {
+func setupHTTPServer(api *API, port int, loglevel string) {
 
-	r := server.Setup(port)
+	r := server.Setup(port, loglevel)
 
 	// api/v1 group
 	v1 := r.Group("/api/v1")
