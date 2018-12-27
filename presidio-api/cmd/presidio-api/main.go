@@ -69,7 +69,7 @@ func setupHTTPServer(api *API, port int) {
 			{
 				// GET template
 				action.GET(":id", api.getActionTemplate)
-				// POST template
+				// POST create template
 				action.POST(":id", api.postActionTemplate)
 				// PUT, update template
 				action.PUT(":id", api.putActionTemplate)
