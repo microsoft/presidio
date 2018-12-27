@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Microsoft/presidio/pkg/cache"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/presidio/services"
@@ -24,8 +25,8 @@ type API struct {
 }
 
 //New KV store
-func New(store platform.Store, settings *platform.Settings) *API {
-	template := templates.New(store)
+func New(store platform.Store, cacheStore cache.Cache, settings *platform.Settings) *API {
+	template := templates.New(store, cacheStore)
 	svc := services.New(settings)
 	return &API{
 		Templates: template,

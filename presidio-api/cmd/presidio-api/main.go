@@ -1,15 +1,18 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
+	"github.com/Microsoft/presidio/pkg/cache"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
 	"github.com/Microsoft/presidio/pkg/platform/local"
+	"github.com/Microsoft/presidio/pkg/presidio/services"
 	server "github.com/Microsoft/presidio/pkg/server"
 )
 
@@ -22,13 +25,28 @@ func main() {
 	pflag.String(platform.RedisURL, "", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
+	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
 	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
+	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
+	log.CreateLogger(settings.LogLevel)
+
+	svc := services.New(settings)
+
 	var api *API
+
+	// Setup Redis cache
+
+	var cacheStore cache.Cache
+
+	if settings.RedisURL != "" {
+		cacheStore = svc.SetupCache()
+	}
 
 	// Kubernetes platform
 	if settings.Namespace != "" {
@@ -36,23 +54,23 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store, settings)
+		api = New(store, cacheStore, settings)
 	} else {
 		// Local platform
 		store, err := local.New(os.TempDir())
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store, settings)
+		api = New(store, cacheStore, settings)
 	}
 
 	api.setupGRPCServices()
-	setupHTTPServer(api, settings.WebPort)
+	setupHTTPServer(api, settings.WebPort, settings.LogLevel)
 }
 
-func setupHTTPServer(api *API, port int) {
+func setupHTTPServer(api *API, port int, loglevel string) {
 
-	r := server.Setup(port)
+	r := server.Setup(port, loglevel)
 
 	// api/v1 group
 	v1 := r.Group("/api/v1")

@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func generatePayload(name string) []byte {
@@ -30,9 +32,8 @@ func invokeHTTPRequest(t *testing.T, path string, method string, payload []byte)
 	}
 
 	resp, err := http.DefaultClient.Do(request)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
+
 	if resp.StatusCode >= 300 {
 		t.Errorf("%s %s: expected status code smaller than 300 , got '%d'\n", request.Method, request.URL.String(), resp.StatusCode)
 	}

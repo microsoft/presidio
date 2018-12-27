@@ -264,9 +264,7 @@ func TestPlan(t *testing.T) {
 			FieldTypeTransformations: plan.fieldTypeTransformation,
 		}
 		output, err := ApplyAnonymizerTemplate(plan.text, plan.analyzeResults, &anonymizerTemplate)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		assert.NoError(t, err)
 		assert.Equal(t, plan.expected, output)
 	}
 }
@@ -275,16 +273,12 @@ func TestMultipleValuesBasedOnJSON(t *testing.T) {
 	var analyzeResultsJSON = `[{"text":"4095-2609-9393-4932","field":{"name":"CREDIT_CARD"},"score":1,"location":{"start":76,"end":95,"length":19}},{"text":"16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ","field":{"name":"CRYPTO"},"score":1,"location":{"start":118,"end":152,"length":34}},{"text":"September 18","field":{"name":"DATE_TIME"},"score":0.85,"location":{"start":167,"end":179,"length":12}},{"text":"microsoft.com","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":192,"end":205,"length":13}},{"text":"test@presidio.site","field":{"name":"EMAIL_ADDRESS"},"score":1,"location":{"start":225,"end":243,"length":18}},{"text":"presidio.site","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":230,"end":243,"length":13}},{"text":"IL150120690000003111111","field":{"name":"IBAN_CODE"},"score":1,"location":{"start":254,"end":277,"length":23}},{"text":"192.168.0.1","field":{"name":"IP_ADDRESS"},"score":0.95,"location":{"start":286,"end":297,"length":11}},{"text":"David Johnson","field":{"name":"PERSON"},"score":0.85,"location":{"start":315,"end":328,"length":13}},{"text":"2854567876542","field":{"name":"US_BANK_NUMBER"},"score":0.6,"location":{"start":348,"end":361,"length":13}},{"text":"H12234567","field":{"name":"US_DRIVER_LICENSE"},"score":0.65,"location":{"start":389,"end":398,"length":9}},{"text":"912803456","field":{"name":"US_BANK_NUMBER"},"score":0.05,"location":{"start":414,"end":423,"length":9}},{"text":"912803456","field":{"name":"US_PASSPORT"},"score":0.6,"location":{"start":414,"end":423,"length":9}},{"text":"912803456","field":{"name":"US_ITIN"},"score":0.3,"location":{"start":414,"end":423,"length":9}},{"text":"(212) 555-1234","field":{"name":"PHONE_NUMBER"},"score":1,"location":{"start":442,"end":456,"length":14}},{"text":"078-05-1120","field":{"name":"US_SSN"},"score":0.85,"location":{"start":486,"end":497,"length":11}},{"text":"cla.microsoft.com","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":761,"end":778,"length":17}},{"text":"opencode@microsoft.com","field":{"name":"EMAIL_ADDRESS"},"score":1,"location":{"start":1193,"end":1215,"length":22}},{"text":"microsoft.com","field":{"name":"DOMAIN_NAME"},"score":1,"location":{"start":1202,"end":1215,"length":13}}]`
 	analyzeResults := []*types.AnalyzeResult{}
 	err := json.Unmarshal([]byte(analyzeResultsJSON), &analyzeResults)
-	if err != nil {
-		assert.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	var anonymizeTemplateJSON = `{"fieldTypeTransformations":[{"fields":[{"name":"DOMAIN_NAME"}],"transformation":{"replaceValue":{"newValue":"<DOMAIN_NAME>"}}},{"fields":[{"name":"PERSON"}],"transformation":{"replaceValue":{"newValue":"<PERSON>"}}},{"fields":[{"name":"US_BANK_NUMBER"}],"transformation":{"replaceValue":{"newValue":"<US_BANK_NUMBER>"}}},{"fields":[{"name":"CRYPTO"}],"transformation":{"replaceValue":{"newValue":"<CRYPTO>"}}},{"fields":[{"name":"EMAIL_ADDRESS"}],"transformation":{"replaceValue":{"newValue":"<EMAIL_ADDRESS>"}}},{"fields":[{"name":"US_PASSPORT"}],"transformation":{"replaceValue":{"newValue":"<US_PASSPORT>"}}},{"fields":[{"name":"DATE_TIME"}],"transformation":{"replaceValue":{"newValue":"<DATE_TIME>"}}},{"fields":[{"name":"IP_ADDRESS"}],"transformation":{"replaceValue":{"newValue":"<IP_ADDRESS>"}}},{"fields":[{"name":"NRP"}],"transformation":{"replaceValue":{"newValue":"<NRP>"}}},{"fields":[{"name":"UK_NHS"}],"transformation":{"replaceValue":{"newValue":"<UK_NHS>"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"replaceValue":{"newValue":"<CREDIT_CARD>"}}},{"fields":[{"name":"IBAN_CODE"}],"transformation":{"replaceValue":{"newValue":"<IBAN_CODE>"}}},{"fields":[{"name":"LOCATION"}],"transformation":{"replaceValue":{"newValue":"<LOCATION>"}}},{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"<PHONE_NUMBER>"}}},{"fields":[{"name":"US_DRIVER_LICENSE"}],"transformation":{"replaceValue":{"newValue":"<US_DRIVER_LICENSE>"}}},{"fields":[{"name":"US_ITIN"}],"transformation":{"replaceValue":{"newValue":"<US_ITIN>"}}},{"fields":[{"name":"US_SSN"}],"transformation":{"replaceValue":{"newValue":"<US_SSN>"}}}]}`
 	anonymizerTemplate := types.AnonymizeTemplate{}
 	err = json.Unmarshal([]byte(anonymizeTemplateJSON), &anonymizerTemplate)
-	if err != nil {
-		assert.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	text := `Here are a few examples of entities we currently support:
 
@@ -311,9 +305,7 @@ This project has adopted the Microsoft Open Source Code of Conduct. For more inf
 opencode@microsoft.com with any additional questions or comments.`
 
 	output, err := ApplyAnonymizerTemplate(text, analyzeResults, &anonymizerTemplate)
-	if err != nil {
-		assert.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	expected := `Here are a few examples of entities we currently support:
 

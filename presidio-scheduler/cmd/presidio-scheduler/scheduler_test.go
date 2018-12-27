@@ -38,13 +38,11 @@ func TestCreateScannerJob(t *testing.T) {
 		},
 	}
 	_, err := applyScanRequest(r)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
+
 	l, err := store.ListCronJobs()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
+
 	assert.Equal(t, 1, len(l))
 }
 
@@ -59,13 +57,10 @@ func TestCreateStreamJob(t *testing.T) {
 		PartitionCount: 32,
 	}
 	_, err := applyStreamRequest(r)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
+
 	l, err := store.ListJobs()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	assert.Equal(t, r.StreamsRequest.StreamConfig.PartitionCount, int32(len(l)))
 }

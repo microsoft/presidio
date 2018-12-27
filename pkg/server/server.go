@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -23,12 +24,16 @@ var (
 )
 
 //Setup ...
-func Setup(_port int) *gin.Engine {
+func Setup(_port int, loglevel string) *gin.Engine {
 	if _port == 0 {
 		_port = 8080
 	}
 	r := gin.New()
 	r.Use(gin.Recovery())
+
+	if strings.ToLower(loglevel) != "debug" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	// Add a ginzap middleware, which:
 	//   - Logs all requests, like a combined access and error log.
