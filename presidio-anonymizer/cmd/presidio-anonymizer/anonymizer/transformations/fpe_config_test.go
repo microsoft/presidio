@@ -32,28 +32,21 @@ func TestFFIValue(t *testing.T) {
 
 	// Encrypt
 	result, err := FPEValue(original, locations[1], k, tw, false)
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	result, err = FPEValue(result, locations[0], k, tw, false)
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
+
 	expected := "this is a b11-0uU and hPCdL8u"
 
 	assert.Equal(t, expected, result)
 
 	// Descrypt
 	result, err = FPEValue(expected, locations[1], k, tw, true)
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	result, err = FPEValue(result, locations[0], k, tw, true)
-	if err != nil {
-		t.Error(t, err)
-	}
+	assert.NoError(t, err)
 
 	assert.Equal(t, original, result)
 

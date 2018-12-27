@@ -3,28 +3,30 @@ package logger
 import (
 	"os"
 	"strings"
-
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
+	"sync"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 )
 
-var sugaredLogger *zap.SugaredLogger
-var logger *zap.Logger
+var once sync.Once
 
 func init() {
-	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
+	// once ensures the singleton is initialized only once
+	once.Do(func() {
+		CreateLogger("debug")
+	})
 }
 
-func initLogger() {
-	logLevel := getLogLevel()
-	level := zap.NewAtomicLevelAt(logLevel)
+//CreateLogger with specific log level
+func CreateLogger(logLevel string) {
+
+	level := getLogLevel(logLevel)
+	alevel := zap.NewAtomicLevelAt(level)
 
 	var config zap.Config
-	if logLevel == zapcore.DebugLevel {
+	if level == zapcore.DebugLevel {
 		config = zap.NewDevelopmentConfig()
 	} else {
 		config = zap.NewProductionConfig()
@@ -32,19 +34,17 @@ func initLogger() {
 	config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	config.DisableStacktrace = true
 	config.DisableCaller = true
-	config.Level = level
+	config.Level = alevel
 
-	build, err := config.Build()
-	logger = build
-	sugaredLogger = build.Sugar()
+	logger, err := config.Build()
+	zap.ReplaceGlobals(logger)
+
 	if err != nil {
 		panic(err.Error())
 	}
 }
 
-func getLogLevel() zapcore.Level {
-	logLevel := viper.GetString("LOG_LEVEL")
-
+func getLogLevel(logLevel string) zapcore.Level {
 	switch strings.ToLower(logLevel) {
 	case "debug":
 		return zapcore.DebugLevel
@@ -67,58 +67,41 @@ func getLogLevel() zapcore.Level {
 
 // GetLogger get native not sugared logger
 func GetLogger() *zap.Logger {
-	if logger == nil {
-		initLogger()
-	}
-	return logger
+	return zap.L()
 }
 
 // ObserveLogging constructs a logger through the zap/zaptest/observer framework
 // so that logs will be accessible in tests.
 func ObserveLogging(level zapcore.Level) *observer.ObservedLogs {
 	observedLogger, logs := observer.New(level)
-	sugaredLogger = zap.New(observedLogger).With().Sugar()
+	logger := zap.New(observedLogger)
+	zap.ReplaceGlobals(logger)
 	return logs
 }
 
 // Debug logs a debug message with the given fields
 func Debug(message string, fields ...interface{}) {
-	if sugaredLogger == nil {
-		initLogger()
-	}
-	sugaredLogger.Debugf(message, fields...)
+	zap.S().Debugf(message, fields...)
 }
 
 // Info logs a debug message with the given fields
 func Info(message string, fields ...interface{}) {
-	if sugaredLogger == nil {
-		initLogger()
-	}
-	sugaredLogger.Infof(message, fields...)
+	zap.S().Infof(message, fields...)
 }
 
 // Warn logs a debug message with the given fields
 func Warn(message string, fields ...interface{}) {
-	if sugaredLogger == nil {
-		initLogger()
-	}
-	sugaredLogger.Warnf(message, fields...)
+	zap.S().Warnf(message, fields...)
 }
 
 // Error logs a debug message with the given fields
 func Error(message string, fields ...interface{}) {
-	if sugaredLogger == nil {
-		initLogger()
-	}
-	sugaredLogger.Errorf(message, fields...)
+	zap.S().Errorf(message, fields...)
 }
 
 // Fatal logs a message than calls os.Exit(1)
 func Fatal(message string, fields ...interface{}) {
-	if sugaredLogger == nil {
-		initLogger()
-	}
-	sugaredLogger.Fatalf(message, fields...)
-	sugaredLogger.Sync()
+	zap.S().Fatalf(message, fields...)
+	zap.S().Sync()
 	os.Exit(1)
 }

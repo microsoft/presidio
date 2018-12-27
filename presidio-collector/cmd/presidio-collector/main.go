@@ -5,6 +5,8 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
+	"flag"
+
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
@@ -27,13 +29,17 @@ func main() {
 	pflag.String(platform.RedisURL, "localhost:6379", "Redis address")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db")
+	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
 	pflag.String(platform.ScannerRequest, "", "Scanner request")
 	pflag.String(platform.StreamRequest, "", "Stream request")
+	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
+	log.CreateLogger(settings.LogLevel)
 
 	parseRequest(settings)
 

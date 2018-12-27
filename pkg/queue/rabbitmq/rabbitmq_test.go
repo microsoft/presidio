@@ -18,9 +18,7 @@ package rabbitmq
 // 	r := New(ctx, "amqp://user:bitnami@localhost:5672/", "test")
 // 	msg := "test"
 // 	err := r.Send(msg)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
+// 	assert.NoError(t, err)
 
 // 	rc := func(data string) error {
 // 		log.Info("Received: %s", data)

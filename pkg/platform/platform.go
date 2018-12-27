@@ -57,6 +57,7 @@ type Settings struct {
 	RedisURL                 string
 	RedisPassword            string
 	RedisDB                  int
+	RedisSSL                 bool
 	DatasinkImage            string
 	CollectorImage           string
 	DatasinkImagePullPolicy  string
@@ -64,6 +65,7 @@ type Settings struct {
 	ScannerRequest           string
 	StreamRequest            string
 	QueueURL                 string
+	LogLevel                 string
 }
 
 //WebPort for http server
@@ -93,6 +95,9 @@ const RedisURL = "redis_url"
 //RedisDb redis db number
 const RedisDb = "redis_db"
 
+//RedisSSL redis ssl
+const RedisSSL = "redis_ssl"
+
 //RedisPassword redis db password
 const RedisPassword = "redis_password"
 
@@ -117,6 +122,9 @@ const StreamRequest = "stream_request"
 //QueueURL rabbitmq url
 const QueueURL = "queue_url"
 
+//LogLevel debug/info/warn/error/fatal
+const LogLevel = "log_level"
+
 //GetSettings from env vars
 func GetSettings() *Settings {
 
@@ -132,6 +140,7 @@ func GetSettings() *Settings {
 		SchedulerSvcAddress:      getTrimmedEnv(SchedulerSvcAddress),
 		RedisURL:                 getTrimmedEnv(RedisURL),
 		RedisDB:                  viper.GetInt(strings.ToUpper(RedisDb)),
+		RedisSSL:                 viper.GetBool(strings.ToUpper(RedisSSL)),
 		RedisPassword:            getTrimmedEnv(RedisPassword),
 		DatasinkImage:            getTrimmedEnv(DatasinkImageName),
 		CollectorImage:           getTrimmedEnv(CollectorImageName),
@@ -140,6 +149,7 @@ func GetSettings() *Settings {
 		ScannerRequest:           getTrimmedEnv(ScannerRequest),
 		StreamRequest:            getTrimmedEnv(StreamRequest),
 		QueueURL:                 getTrimmedEnv(QueueURL),
+		LogLevel:                 getTrimmedEnv(LogLevel),
 	}
 
 	return &settings

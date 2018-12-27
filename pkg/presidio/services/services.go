@@ -97,6 +97,7 @@ func (services *Services) SetupCache() cache.Cache {
 		services.Settings.RedisURL,
 		services.Settings.RedisPassword,
 		services.Settings.RedisDB,
+		services.Settings.RedisSSL,
 	)
 	return cache
 }

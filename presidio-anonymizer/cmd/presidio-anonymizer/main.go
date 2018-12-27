@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 
@@ -20,11 +22,14 @@ type server struct{}
 func main() {
 
 	pflag.Int(platform.GrpcPort, 3001, "GRPC listen port")
+	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
+	log.CreateLogger(settings.LogLevel)
 
 	lis, s := rpc.SetupClient(settings.GrpcPort)
 
