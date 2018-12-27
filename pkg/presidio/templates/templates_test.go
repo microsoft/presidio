@@ -3,17 +3,11 @@ package templates
 import (
 	"testing"
 
-	"os"
-
 	"github.com/stretchr/testify/assert"
 
 	cmock "github.com/Microsoft/presidio/pkg/cache/mock"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
 )
-
-func init() {
-	os.Setenv("LOG_LEVEL", "debug")
-}
 
 func TestTemplatesWithCache(t *testing.T) {
 	c := cmock.New()

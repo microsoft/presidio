@@ -3,17 +3,12 @@
 package tests
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/Microsoft/presidio/pkg/cache/redis"
 )
-
-func init() {
-	os.Setenv("LOG_LEVEL", "debug")
-}
 
 func TestRedis(t *testing.T) {
 

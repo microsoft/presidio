@@ -65,6 +65,7 @@ type Settings struct {
 	ScannerRequest           string
 	StreamRequest            string
 	QueueURL                 string
+	LogLevel                 string
 }
 
 //WebPort for http server
@@ -121,6 +122,9 @@ const StreamRequest = "stream_request"
 //QueueURL rabbitmq url
 const QueueURL = "queue_url"
 
+//LogLevel debug/info/warn/error/fatal
+const LogLevel = "log_level"
+
 //GetSettings from env vars
 func GetSettings() *Settings {
 
@@ -145,6 +149,7 @@ func GetSettings() *Settings {
 		ScannerRequest:           getTrimmedEnv(ScannerRequest),
 		StreamRequest:            getTrimmedEnv(StreamRequest),
 		QueueURL:                 getTrimmedEnv(QueueURL),
+		LogLevel:                 getTrimmedEnv(LogLevel),
 	}
 
 	return &settings

@@ -34,11 +34,13 @@ type server struct{}
 func main() {
 
 	pflag.Int(platform.DatasinkGrpcPort, 5000, "GRPC listen port")
+	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
+	log.CreateLogger(settings.LogLevel)
 
 	// Setup server
 	lis, grpcServer = rpc.SetupClient(settings.DatasinkGrpcPort)

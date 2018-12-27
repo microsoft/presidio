@@ -30,11 +30,13 @@ func main() {
 	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
 	pflag.String(platform.ScannerRequest, "", "Scanner request")
 	pflag.String(platform.StreamRequest, "", "Stream request")
+	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
+	log.CreateLogger(settings.LogLevel)
 
 	parseRequest(settings)
 

@@ -26,11 +26,14 @@ func main() {
 	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
 	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
 	pflag.String(platform.PresidioNamespace, "", "Presidio Kubernetes namespace (optional)")
+	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
+	log.CreateLogger(settings.LogLevel)
+
 	svc := services.New(settings)
 
 	var api *API
