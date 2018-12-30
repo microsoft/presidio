@@ -43,7 +43,7 @@ func main() {
 
 func (s *server) Apply(ctx context.Context, r *types.AnonymizeImageRequest) (*types.AnonymizeImageResponse, error) {
 
-	res, err := anonymizer.AnonymizeImage(r.Image, r.AnonymizeImageTypeEnum, r.AnalyzeResults, r.Template)
+	res, err := anonymizer.AnonymizeImage(r.Image, r.DetectionType, r.AnalyzeResults, r.Template)
 	if err != nil {
 		log.Error(err.Error())
 	}

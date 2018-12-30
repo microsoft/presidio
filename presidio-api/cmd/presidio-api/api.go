@@ -11,6 +11,7 @@ import (
 const (
 	analyze                = "analyze"
 	anonymize              = "anonymize"
+	anonymizeImage         = "anonymize-image"
 	scan                   = "scan"
 	stream                 = "stream"
 	datasink               = "datasink"

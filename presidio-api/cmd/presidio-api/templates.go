@@ -86,6 +86,9 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	case anonymize:
 		var anonymizeTemplate types.AnonymizeTemplate
 		return bindAndConvert(anonymizeTemplate, c)
+	case anonymizeImage:
+		var anonymizeImageTemplate types.AnonymizeImageTemplate
+		return bindAndConvert(anonymizeImageTemplate, c)
 	case scan:
 		var scanTemplate types.ScanTemplate
 		return bindAndConvert(scanTemplate, c)

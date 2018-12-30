@@ -7,7 +7,7 @@ import (
 )
 
 //AnonymizeImage text or just bounding boxes
-func AnonymizeImage(image *types.Image, anonymizeImageType types.AnonymizeImageTypeEnum, results []*types.AnalyzeResult, template *types.AnonymizeImageTemplate) (*types.Image, error) {
+func AnonymizeImage(image *types.Image, detectionType types.DetectionTypeEnum, results []*types.AnalyzeResult, template *types.AnonymizeImageTemplate) (*types.Image, error) {
 
 	img.Initialize()
 	defer img.Terminate()
@@ -16,7 +16,7 @@ func AnonymizeImage(image *types.Image, anonymizeImageType types.AnonymizeImageT
 	defer mw.Destroy()
 	mw.ReadImageBlob(image.Data)
 
-	if anonymizeImageType == types.AnonymizeImageTypeEnum_OCR {
+	if detectionType == types.DetectionTypeEnum_OCR {
 		redactText(mw, image, results, template)
 	}
 

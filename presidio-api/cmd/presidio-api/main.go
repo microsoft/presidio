@@ -21,8 +21,10 @@ func main() {
 	pflag.Int(platform.WebPort, 8080, "HTTP listen port")
 	pflag.String(platform.AnalyzerSvcAddress, "localhost:3000", "Analyzer service address")
 	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
-	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address")
-	pflag.String(platform.RedisURL, "", "Redis address")
+	pflag.String(platform.AnonymizerImageSvcAddress, "", "Anonymizer image service address (optional)")
+	pflag.String(platform.OcrSvcAddress, "", "ocr service address (optional)")
+	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address (optional)")
+	pflag.String(platform.RedisURL, "", "Redis address (optional)")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
 	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
@@ -106,6 +108,10 @@ func setupHTTPServer(api *API, port int, loglevel string) {
 			// Anonymize text
 			// /api/v1/projects/123/anonymize
 			projects.POST("/anonymize", api.anonymize)
+
+			// Anonymize image
+			// /api/v1/projects/123/anonymize-image
+			projects.POST("/anonymize-image", api.anonymizeImage)
 
 			// Schedule scanning cron job
 			// /api/v1/projects/123/schedule-scanner-cronjob

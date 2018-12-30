@@ -12,11 +12,18 @@ import (
 type ServicesAPI interface {
 	SetupAnalyzerService()
 	SetupAnonymizerService()
+	SetupAnonymizerImageService()
+	SetupOCRService()
 	SetupSchedulerService()
 	SetupDatasinkService()
 	SetupCache() cache.Cache
 	AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error)
-	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
+	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string,
+		anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
+	AnonymizeImageItem(ctx context.Context, image *types.Image, analyzeResults []*types.AnalyzeResult,
+		anonymizeImageTypeEnum types.DetectionTypeEnum,
+		anonymizeImageTemplate *types.AnonymizeImageTemplate) (*types.AnonymizeImageResponse, error)
+	OcrItem(ctx context.Context, image *types.Image) (*types.OcrResponse, error)
 	SendResultToDatasink(ctx context.Context, analyzeResults []*types.AnalyzeResult,
 		anonymizeResults *types.AnonymizeResponse, path string) error
 	ApplyStream(ctx context.Context, streamsJobRequest *types.StreamsJobRequest) (*types.StreamsJobResponse, error)
