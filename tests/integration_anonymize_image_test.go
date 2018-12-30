@@ -1,12 +1,16 @@
+// +build functional
+
 package tests
 
 import (
 	"encoding/json"
+	"io/ioutil"
+
+	"github.com/stretchr/testify/assert"
+
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer"
-	"github.com/stretchr/testify/assert"
-	"io/ioutil"
-	"os"
+	//"os"
 	"testing"
 )
 

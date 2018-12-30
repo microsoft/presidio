@@ -1,3 +1,5 @@
+// +build functional
+
 package tests
 
 import (
@@ -5,10 +7,11 @@ import (
 	"testing"
 
 	//"encoding/json"
-	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
 	"github.com/otiai10/gosseract"
 	"github.com/stretchr/testify/assert"
+
+	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
 )
 
 func TestOCR(t *testing.T) {
