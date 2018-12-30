@@ -54,6 +54,10 @@ spec:
             value:  {{ template "presidio.analyzer.address" . }}
           - name: ANONYMIZER_SVC_ADDRESS
             value:  {{ template "presidio.anonymizer.address" . }}
+          - name: ANONYMIZER_IMAGE_SVC_ADDRESS
+            value:  {{ template "presidio.anonymizer-image.address" . }}
+          - name: OCR_SVC_ADDRESS
+            value:  {{ template "presidio.ocr.address" . }}
           - name: SCHEDULER_SVC_ADDRESS
             value:  {{ template "presidio.scheduler.address" . }}
       {{ if .Values.privateRegistry }}imagePullSecrets:

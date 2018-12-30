@@ -21,6 +21,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "presidio.anonymizer.fullname" -}}
 {{ include "presidio.fullname" . | printf "%s-anonymizer" }}
 {{- end -}}
+{{- define "presidio.anonymizer-image.fullname" -}}
+{{ include "presidio.fullname" . | printf "%s-anonymizer-image" }}
+{{- end -}}
+{{- define "presidio.ocr.fullname" -}}
+{{ include "presidio.fullname" . | printf "%s-ocr" }}
+{{- end -}}
 {{- define "presidio.api.fullname" -}}
 {{ include "presidio.fullname" . | printf "%s-api" }}
 {{- end -}}

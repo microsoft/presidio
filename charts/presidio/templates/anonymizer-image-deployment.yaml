@@ -1,0 +1,35 @@
+{{ $fullname := include "presidio.anonymizer-image.fullname" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}
+  labels:
+    app: {{ $fullname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $fullname }}
+  template:
+    metadata:
+      labels:
+        app: {{ $fullname }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.registry }}/{{ .Values.anonymizer-image.name }}:{{ default .Chart.AppVersion .Values.anonymizer-image.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.anonymizer-image.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.anonymizer-image.service.internalPort }}
+        env:
+          - name: PRESIDIO_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: GRPC_PORT
+            value: {{ .Values.anonymizer-image.service.internalPort | quote }}
+      {{ if .Values.privateRegistry }}imagePullSecrets:
+        - name: {{.Values.privateRegistry}}{{ end }}
