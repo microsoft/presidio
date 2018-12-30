@@ -107,6 +107,10 @@ func setupHTTPServer(api *API, port int, loglevel string) {
 			// /api/v1/projects/123/anonymize
 			projects.POST("/anonymize", api.anonymize)
 
+			// Anonymize json
+			// /api/v1/projects/123/anonymize-json
+			projects.POST("/anonymize-json", api.anonymizeJSON)
+
 			// Schedule scanning cron job
 			// /api/v1/projects/123/schedule-scanner-cronjob
 			projects.POST("/schedule-scanner-cronjob", api.scheduleScannerCronJob)

@@ -1,7 +1,9 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
+	"regexp"
 
 	"context"
 
@@ -132,6 +134,31 @@ func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*t
 	return nil, nil
 }
 
+//AnonymizeJSON - anonymize text
+func (services *Services) AnonymizeJSON(ctx context.Context, jsonToAnonymize string, jsonSchema string, analyzeTemplate *types.AnalyzeTemplate, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
+	// Creating the maps for JSON
+	schemaMap := map[string]interface{}{}
+	valuesMap := map[string]interface{}{}
+
+	// Parsing/Unmarshalling JSON encoding/json
+	err := json.Unmarshal([]byte(jsonSchema), &schemaMap)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal([]byte(jsonToAnonymize), &valuesMap)
+	if err != nil {
+		return nil, err
+	}
+
+	services.parseMap(ctx, schemaMap, valuesMap, analyzeTemplate, anonymizeTemplate)
+
+	anonymizedJSON, err := json.Marshal(valuesMap)
+
+	return &types.AnonymizeResponse{
+		Text: string(anonymizedJSON),
+	}, err
+}
+
 //SendResultToDatasink - export results
 func (services *Services) SendResultToDatasink(ctx context.Context, analyzeResults []*types.AnalyzeResult,
 	anonymizeResults *types.AnonymizeResponse, path string) error {
@@ -169,4 +196,83 @@ func (services *Services) InitDatasink(ctx context.Context, datasinkTemplate *ty
 //CloseDatasink notify datasink the collector is finished
 func (services *Services) CloseDatasink(ctx context.Context, datasinkTemplate *types.CompletionMessage) (*types.DatasinkResponse, error) {
 	return services.DatasinkService.Completion(ctx, datasinkTemplate)
+}
+
+func (services *Services) analyzeAndAnonymizeJSON(ctx context.Context, val string, field string, analyzeTemplate *types.AnalyzeTemplate, anonymizeTemplate *types.AnonymizeTemplate) string {
+	match, _ := regexp.MatchString("<[A-Z]+(_*[A-Z]*)*>", field)
+	if match {
+		for key := range types.FieldTypesEnum_value {
+			fieldName := field[1 : len(field)-1]
+			if key == fieldName {
+				analyzeResults := services.buildAnalyzeResult(ctx, val, fieldName)
+				return services.getAnonymizeResult(ctx, val, anonymizeTemplate, analyzeResults)
+			}
+		}
+	}
+
+	if field == "analyze" {
+		analyzeResults, err := services.AnalyzeItem(ctx, val, analyzeTemplate)
+		if err != nil {
+			return ""
+		}
+		return services.getAnonymizeResult(ctx, val, anonymizeTemplate, analyzeResults)
+	}
+
+	return val
+}
+
+func (services *Services) getAnonymizeResult(ctx context.Context, text string, anonymizeTemplate *types.AnonymizeTemplate, analyzeResults []*types.AnalyzeResult) string {
+	result, err := services.AnonymizeItem(ctx, analyzeResults, text, anonymizeTemplate)
+	if err != nil {
+		return ""
+	}
+	return result.Text
+}
+
+func (services *Services) buildAnalyzeResult(ctx context.Context, text string, field string) []*types.AnalyzeResult {
+	return [](*types.AnalyzeResult){
+		&types.AnalyzeResult{
+			Text: text,
+			Field: &types.FieldTypes{
+				Name: field,
+			},
+			Score: 1,
+			Location: &types.Location{
+				Start: 0,
+				End:   int32(len(text)),
+			},
+		},
+	}
+}
+
+func (services *Services) parseMap(ctx context.Context, schemaMap map[string]interface{}, valuesMap map[string]interface{}, analyzeTemplate *types.AnalyzeTemplate, anonymizeTemplate *types.AnonymizeTemplate) {
+	for key, val := range schemaMap {
+		switch concreteVal := val.(type) {
+		case map[string]interface{}:
+			services.parseMap(ctx, val.(map[string]interface{}), (valuesMap[key]).(map[string]interface{}), analyzeTemplate, anonymizeTemplate)
+		case []interface{}:
+			services.parseArray(ctx, val.([]interface{}), (valuesMap[key]).([]interface{}), analyzeTemplate, anonymizeTemplate)
+		default:
+			valuesMap[key] = services.analyzeAndAnonymizeJSON(ctx, fmt.Sprint(valuesMap[key]), fmt.Sprint(concreteVal), analyzeTemplate, anonymizeTemplate)
+		}
+	}
+}
+
+func (services *Services) parseArray(ctx context.Context, schemaArray []interface{}, valuesArray []interface{}, analyzeTemplate *types.AnalyzeTemplate, anonymizeTemplate *types.AnonymizeTemplate) {
+	for _, val := range schemaArray {
+		switch concreteVal := val.(type) {
+		case map[string]interface{}:
+			for j := range valuesArray {
+				services.parseMap(ctx, val.(map[string]interface{}), valuesArray[j].(map[string]interface{}), analyzeTemplate, anonymizeTemplate)
+			}
+		case []interface{}:
+			for j := range valuesArray {
+				services.parseArray(ctx, val.([]interface{}), valuesArray[j].([]interface{}), analyzeTemplate, anonymizeTemplate)
+			}
+		default:
+			for j := range valuesArray {
+				valuesArray[j] = services.analyzeAndAnonymizeJSON(ctx, fmt.Sprint(valuesArray[j]), fmt.Sprint(concreteVal), analyzeTemplate, anonymizeTemplate)
+			}
+		}
+	}
 }

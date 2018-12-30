@@ -76,6 +76,40 @@ func (api *API) anonymize(c *gin.Context) {
 	}
 }
 
+func (api *API) anonymizeJSON(c *gin.Context) {
+	var anonymizeJSONApiRequest types.AnonymizeJsonApiRequest
+
+	if c.Bind(&anonymizeJSONApiRequest) == nil {
+		project := c.Param("project")
+
+		analyzeTemplate := api.getAnalyzeTemplate(anonymizeJSONApiRequest.AnalyzeTemplateId, anonymizeJSONApiRequest.AnalyzeTemplate, project, c)
+		if analyzeTemplate == nil {
+			return
+		}
+
+		anonymizeTemplate := api.getAnonymizeTemplate(anonymizeJSONApiRequest.AnonymizeTemplateId, anonymizeJSONApiRequest.AnonymizeTemplate, project, c)
+		if anonymizeTemplate == nil {
+			return
+		}
+
+		anonymizeJSONTemplate := api.getAnonymizeJSONTemplate(anonymizeJSONApiRequest.JsonSchemaId, anonymizeJSONApiRequest.JsonSchemaTemplate, project, c)
+		if anonymizeTemplate == nil {
+			return
+		}
+
+		anonymizeResult, err := api.Services.AnonymizeJSON(c, anonymizeJSONApiRequest.Json, anonymizeJSONTemplate.JsonSchema, analyzeTemplate, anonymizeTemplate)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		if anonymizeResult == nil {
+			return
+		}
+		server.WriteResponse(c, http.StatusOK, anonymizeResult)
+	}
+}
+
 func (api *API) scheduleScannerCronJob(c *gin.Context) {
 	var cronAPIJobRequest types.ScannerCronJobApiRequest
 
@@ -221,6 +255,20 @@ func (api *API) getTemplate(project string, action string, id string, obj interf
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
+}
+
+func (api *API) getAnonymizeJSONTemplate(anonymizeJSONTemplateID string, anonymizeJSONTemplate *types.JsonSchemaTemplate,
+	project string, c *gin.Context) *types.JsonSchemaTemplate {
+
+	if anonymizeJSONTemplate == nil && anonymizeJSONTemplateID != "" {
+		anonymizeJSONTemplate = &types.JsonSchemaTemplate{}
+		api.getTemplate(project, anonymizeJSON, anonymizeJSONTemplateID, anonymizeJSONTemplate, c)
+	} else if anonymizeJSONTemplate == nil {
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("anonymizeJSONTemplate or anonymizeJSONTemplateID must be supplied"))
+		return nil
+	}
+
+	return anonymizeJSONTemplate
 }
 
 func (api *API) getAnalyzeTemplate(analyzeTemplateID string, analyzeTemplate *types.AnalyzeTemplate,

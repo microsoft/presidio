@@ -17,6 +17,7 @@ type ServicesAPI interface {
 	SetupCache() cache.Cache
 	AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error)
 	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
+	AnonymizeJSON(ctx context.Context, jsonToAnonymize string, jsonSchema string, analyzeTemplate *types.AnalyzeTemplate, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
 	SendResultToDatasink(ctx context.Context, analyzeResults []*types.AnalyzeResult,
 		anonymizeResults *types.AnonymizeResponse, path string) error
 	ApplyStream(ctx context.Context, streamsJobRequest *types.StreamsJobRequest) (*types.StreamsJobResponse, error)
