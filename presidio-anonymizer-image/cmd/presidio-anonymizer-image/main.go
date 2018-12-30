@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 
+	"github.com/otiai10/gosseract"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 
@@ -14,10 +15,12 @@ import (
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
-	"github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer"
+	"github.com/Microsoft/presidio/presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer"
 )
 
 type server struct{}
+
+var client *gosseract.Client
 
 func main() {
 
@@ -33,7 +36,7 @@ func main() {
 
 	lis, s := rpc.SetupClient(settings.GrpcPort)
 
-	types.RegisterAnonymizeServiceServer(s, &server{})
+	types.RegisterAnonymizeImageServiceServer(s, &server{})
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
 		log.Fatal(err.Error())
@@ -41,11 +44,11 @@ func main() {
 
 }
 
-func (s *server) Apply(ctx context.Context, r *types.AnonymizeRequest) (*types.AnonymizeResponse, error) {
-	res, err := anonymizer.AnonymizeText(r.Text, r.AnalyzeResults, r.Template)
-	log.Debug(res)
+func (s *server) Apply(ctx context.Context, r *types.AnonymizeImageRequest) (*types.AnonymizeImageResponse, error) {
+
+	res, err := anonymizer.AnonymizeImage(r.Image, r.AnonymizeImageTypeEnum, r.AnalyzeResults, r.Template)
 	if err != nil {
 		log.Error(err.Error())
 	}
-	return &types.AnonymizeResponse{Text: res}, err
+	return &types.AnonymizeImageResponse{Image: res}, err
 }

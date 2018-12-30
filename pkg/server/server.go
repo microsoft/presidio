@@ -28,12 +28,13 @@ func Setup(_port int, loglevel string) *gin.Engine {
 	if _port == 0 {
 		_port = 8080
 	}
-	r := gin.New()
-	r.Use(gin.Recovery())
 
 	if strings.ToLower(loglevel) != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	r := gin.New()
+	r.Use(gin.Recovery())
 
 	// Add a ginzap middleware, which:
 	//   - Logs all requests, like a combined access and error log.

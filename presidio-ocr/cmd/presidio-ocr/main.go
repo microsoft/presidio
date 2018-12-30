@@ -1,9 +1,10 @@
 package main
 
 import (
+	"context"
 	"flag"
 
-	context "golang.org/x/net/context"
+	"github.com/otiai10/gosseract"
 	"google.golang.org/grpc/reflection"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
@@ -14,10 +15,12 @@ import (
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/rpc"
-	"github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer"
+	"github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
 )
 
 type server struct{}
+
+var client *gosseract.Client
 
 func main() {
 
@@ -31,9 +34,13 @@ func main() {
 	settings := platform.GetSettings()
 	log.CreateLogger(settings.LogLevel)
 
+	// Setup tesseract client
+	client = gosseract.NewClient()
+	defer client.Close()
+
 	lis, s := rpc.SetupClient(settings.GrpcPort)
 
-	types.RegisterAnonymizeServiceServer(s, &server{})
+	types.RegisterOcrServiceServer(s, &server{})
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
 		log.Fatal(err.Error())
@@ -41,11 +48,12 @@ func main() {
 
 }
 
-func (s *server) Apply(ctx context.Context, r *types.AnonymizeRequest) (*types.AnonymizeResponse, error) {
-	res, err := anonymizer.AnonymizeText(r.Text, r.AnalyzeResults, r.Template)
-	log.Debug(res)
+func (s *server) Apply(ctx context.Context, r *types.OcrRequest) (*types.OcrResponse, error) {
+
+	res, err := ocr.PerformOCR(client, r.Image)
 	if err != nil {
 		log.Error(err.Error())
 	}
-	return &types.AnonymizeResponse{Text: res}, err
+
+	return &types.OcrResponse{Image: res}, err
 }

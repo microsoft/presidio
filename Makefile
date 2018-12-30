@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= presidio.azurecr.io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
-IMAGES      = presidio-analyzer presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
+BINS        = presidio-ocr presidio-anonymizer-image presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
+IMAGES      = presidio-ocr presidio-anonymizer-image presidio-analyzer presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
 GOLANG_DEPS	= presidio-golang-deps
 PYTHON_DEPS	= presidio-python-deps
 GOLANG_BASE	= presidio-golang-base

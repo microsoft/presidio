@@ -1,0 +1,174 @@
+{
+  "Boundingboxes": [{
+      "xLocation": 2,
+      "width": 94,
+      "yLocation": 9,
+      "height": 32,
+      "text": "Please",
+      "endPosition": 5
+    },
+    {
+      "xLocation": 105,
+      "width": 149,
+      "yLocation": 9,
+      "height": 32,
+      "text": "call",
+      "startPosition": 7,
+      "endPosition": 10
+    },
+    {
+      "xLocation": 162,
+      "width": 210,
+      "yLocation": 15,
+      "height": 32,
+      "text": "me.",
+      "startPosition": 12,
+      "endPosition": 14
+    },
+    {
+      "xLocation": 224,
+      "width": 264,
+      "yLocation": 9,
+      "height": 38,
+      "text": "My",
+      "startPosition": 16,
+      "endPosition": 17
+    },
+    {
+      "xLocation": 275,
+      "width": 359,
+      "yLocation": 9,
+      "height": 38,
+      "text": "phone",
+      "startPosition": 19,
+      "endPosition": 23
+    },
+    {
+      "xLocation": 371,
+      "width": 465,
+      "yLocation": 9,
+      "height": 32,
+      "text": "number",
+      "startPosition": 25,
+      "endPosition": 30
+    },
+    {
+      "xLocation": 468,
+      "width": 508,
+      "yLocation": 9,
+      "height": 32,
+      "text": "is",
+      "startPosition": 32,
+      "endPosition": 33
+    },
+    {
+      "xLocation": 520,
+      "width": 593,
+      "yLocation": 9,
+      "height": 38,
+      "text": "(555)",
+      "startPosition": 35,
+      "endPosition": 39
+    },
+    {
+      "xLocation": 1,
+      "width": 143,
+      "yLocation": 45,
+      "height": 68,
+      "text": "253-0000.",
+      "startPosition": 41,
+      "endPosition": 49
+    },
+    {
+      "xLocation": 2,
+      "width": 77,
+      "yLocation": 81,
+      "height": 104,
+      "text": "Email",
+      "startPosition": 51,
+      "endPosition": 55
+    },
+    {
+      "xLocation": 89,
+      "width": 205,
+      "yLocation": 81,
+      "height": 104,
+      "text": "address:",
+      "startPosition": 57,
+      "endPosition": 64
+    },
+    {
+      "xLocation": 218,
+      "width": 476,
+      "yLocation": 81,
+      "height": 111,
+      "text": "foo@example.com",
+      "startPosition": 66,
+      "endPosition": 80
+    },
+    {
+      "xLocation": 1,
+      "width": 84,
+      "yLocation": 117,
+      "height": 140,
+      "text": "Credit",
+      "startPosition": 82,
+      "endPosition": 87
+    },
+    {
+      "xLocation": 94,
+      "width": 152,
+      "yLocation": 117,
+      "height": 140,
+      "text": "card",
+      "startPosition": 89,
+      "endPosition": 92
+    },
+    {
+      "xLocation": 165,
+      "width": 277,
+      "yLocation": 117,
+      "height": 140,
+      "text": "number:",
+      "startPosition": 94,
+      "endPosition": 100
+    },
+    {
+      "xLocation": 289,
+      "width": 571,
+      "yLocation": 117,
+      "height": 140,
+      "text": "4012888888881881",
+      "startPosition": 102,
+      "endPosition": 117
+    },
+    {
+      "xLocation": 2,
+      "width": 105,
+      "yLocation": 153,
+      "height": 176,
+      "text": "Driver's",
+      "startPosition": 119,
+      "endPosition": 126
+    },
+    {
+      "xLocation": 117,
+      "width": 219,
+      "yLocation": 153,
+      "height": 176,
+      "text": "license:",
+      "startPosition": 128,
+      "endPosition": 135
+    },
+    {
+      "xLocation": 231,
+      "width": 377,
+      "yLocation": 153,
+      "height": 176,
+      "text": "AC333991",
+      "startPosition": 137,
+      "endPosition": 143
+    }
+  ],
+  "text": "Please call me. My phone number is (555) 253-0000. Email address: foo@example.com Credit card number: 4012888888881881 Driver's license: AC333991 "
+}

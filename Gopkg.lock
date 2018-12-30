@@ -366,7 +366,8 @@
   revision = "23def4e6c14b4da8ac2ed8007337bc5eb5007998"
 
 [[projects]]
-  digest = "1:588beb9f80d2b0afddf05663b32d01c867da419458b560471d81cca0286e76b8"
+  branch = "master"
+  digest = "1:97239b8255df64c18138842365b135975e7402112beb593e139de1b91303d5bc"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -378,8 +379,7 @@
     "ptypes/wrappers",
   ]
   pruneopts = "UT"
-  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
-  version = "v1.2.0"
+  revision = "1d3f30b51784bec5aad268e59fd3c2fc1c2fe73f"
 
 [[projects]]
   branch = "master"
@@ -564,6 +564,14 @@
   pruneopts = "UT"
   revision = "4b7aa43c6742a2c18fdef89dd197aaae7dac7ccd"
   version = "1.0.1"
+
+[[projects]]
+  digest = "1:6411dc2c8891eb05c1d0599abf571e81f72cbc97ebd223b44d45712f4f1799c2"
+  name = "github.com/otiai10/gosseract"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b026a6fd291f00736db60738f4e83a79d26359cb"
+  version = "v2.2.0"
 
 [[projects]]
   digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
@@ -935,6 +943,17 @@
   version = "v8.18.2"
 
 [[projects]]
+  digest = "1:3261a88df0ef9f1cfaa7cdd7f95bb6e86c8b45dbe76a17a0a43dcfc00e72d621"
+  name = "gopkg.in/gographics/imagick.v3"
+  packages = [
+    "imagick",
+    "imagick/types",
+  ]
+  pruneopts = "UT"
+  revision = "e5c95c340c8d9bf140ca670563906805b655d9d9"
+  version = "v3.2.0"
+
+[[projects]]
   digest = "1:2d1fbdc6777e5408cabeb02bf336305e724b925ff4546ded0fa8715a7267922a"
   name = "gopkg.in/inf.v0"
   packages = ["."]
@@ -1173,10 +1192,12 @@
     "github.com/korovkin/limiter",
     "github.com/lib/pq",
     "github.com/mattn/go-sqlite3",
+    "github.com/otiai10/gosseract",
     "github.com/presid-io/stow",
     "github.com/presid-io/stow/azure",
     "github.com/presid-io/stow/s3",
     "github.com/satori/go.uuid",
+    "github.com/spf13/pflag",
     "github.com/spf13/viper",
     "github.com/streadway/amqp",
     "github.com/stretchr/testify/assert",
@@ -1189,6 +1210,7 @@
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
     "google.golang.org/grpc/reflection",
+    "gopkg.in/gographics/imagick.v3/imagick",
     "k8s.io/api/batch/v1",
     "k8s.io/api/batch/v1beta1",
     "k8s.io/api/core/v1",
