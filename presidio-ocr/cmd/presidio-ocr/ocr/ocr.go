@@ -51,7 +51,10 @@ func PerformOCR(client *gosseract.Client, image *types.Image) (*types.Image, err
 
 func convertHOcrToElements(hocr string) (document, error) {
 	var doc document
-	err := xml.Unmarshal(([]byte)(hocr), &doc)
+	x := html.UnescapeString(hocr)
+	header := `<?xml version="1.0" encoding="UTF-8"?>` + "\n"
+	x = header + x
+	err := xml.Unmarshal(([]byte)(x), &doc)
 	if err != nil {
 		return document{}, err
 	}
@@ -67,9 +70,9 @@ func convertElementsToLocations(doc document) *types.Image {
 	}
 
 	for i, element := range doc.Elements {
-		content := html.UnescapeString(element.Content)
+		content := element.Content
 		image.Text += content + " "
-		length := len(content)
+		length := len([]rune(content))
 		bBox := strings.Split(element.Title, " ")
 		reduceEnd := 0
 
@@ -104,7 +107,7 @@ func convertElementsToLocations(doc document) *types.Image {
 			Height:        (float32)(height),
 			Text:          content,
 			StartPosition: (int32)(currentLocation),
-			EndPosition:   (int32)(currentLocation + length - 1 - reduceEnd),
+			EndPosition:   (int32)(currentLocation + length),
 		}
 		currentLocation += length + 1
 	}
