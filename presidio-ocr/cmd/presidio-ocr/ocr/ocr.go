@@ -74,11 +74,6 @@ func convertElementsToLocations(doc document) *types.Image {
 		image.Text += content + " "
 		length := len([]rune(content))
 		bBox := strings.Split(element.Title, " ")
-		reduceEnd := 0
-
-		if i == len(doc.Elements)-1 {
-			reduceEnd++
-		}
 
 		xlocation, err := strconv.ParseFloat(bBox[1], 32)
 		if err != nil {
