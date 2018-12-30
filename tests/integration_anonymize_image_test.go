@@ -8,10 +8,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"testing"
+
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer"
-	//"os"
-	"testing"
 )
 
 func TestAnonymizeImage(t *testing.T) {
@@ -28,22 +28,22 @@ func TestAnonymizeImage(t *testing.T) {
 	json.Unmarshal(jcontent, image)
 
 	results := []*types.AnalyzeResult{
-		&types.AnalyzeResult{
+		{
 			Location: &types.Location{
 				Start: 35, End: 49,
 			},
 		},
-		&types.AnalyzeResult{
+		{
 			Location: &types.Location{
 				Start: 66, End: 81,
 			},
 		},
-		&types.AnalyzeResult{
+		{
 			Location: &types.Location{
 				Start: 102, End: 118,
 			},
 		},
-		&types.AnalyzeResult{
+		{
 			Location: &types.Location{
 				Start: 137, End: 144,
 			},
@@ -52,7 +52,7 @@ func TestAnonymizeImage(t *testing.T) {
 
 	template := &types.AnonymizeImageTemplate{
 		FieldTypeGraphics: []*types.FieldTypeGraphic{
-			&types.FieldTypeGraphic{
+			{
 				Graphic: &types.Graphic{
 					FillColorValue: &types.FillColorValue{
 						Red:   0,

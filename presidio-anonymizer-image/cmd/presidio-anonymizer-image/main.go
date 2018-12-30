@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 
-	"github.com/otiai10/gosseract"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/reflection"
 
@@ -19,8 +18,6 @@ import (
 )
 
 type server struct{}
-
-var client *gosseract.Client
 
 func main() {
 
