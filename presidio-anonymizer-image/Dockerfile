@@ -6,7 +6,7 @@ ARG NAME=presidio-anonymizer-image
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
 ARG VERSION=latest
 
-RUN apk --update add imagemagick --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
+RUN apk --update add imagemagick
 
 WORKDIR ${PRESIDIOPATH}/${NAME}/cmd/${NAME}
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Microsoft/presidio/pkg/version.Version=${VERSION}' -o /usr/bin/${NAME}
@@ -15,7 +15,7 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Mi
 
 FROM alpine:3.8
 
-RUN apk --update add imagemagick --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
+RUN apk --update add imagemagick
 
 ARG NAME=presidio-anonymizer-image
 WORKDIR  /usr/bin/
