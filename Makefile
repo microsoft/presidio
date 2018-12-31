@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= presidio.azurecr.io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-ocr presidio-anonymizer-image presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
-IMAGES      = presidio-ocr presidio-anonymizer-image presidio-analyzer presidio-anonymizer presidio-api presidio-scheduler presidio-datasink presidio-collector
+BINS        = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector
+IMAGES      = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-analyzer
 GOLANG_DEPS	= presidio-golang-deps
 PYTHON_DEPS	= presidio-python-deps
 GOLANG_BASE	= presidio-golang-base
@@ -41,9 +41,9 @@ docker-build-base:
 # DOCKER_REGISTRY to your own personal registry if you are not pushing to the official upstream.
 .PHONY: docker-build
 docker-build: docker-build-base
-docker-build: $(addsuffix -image,$(IMAGES))
+docker-build: $(addsuffix -dimage,$(IMAGES))
 
-%-image:
+%-dimage:
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 # You must be logged into DOCKER_REGISTRY before you can push.

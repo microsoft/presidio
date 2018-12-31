@@ -39,7 +39,7 @@
   version = "v1.1.3"
 
 [[projects]]
-  digest = "1:5fadaa95510a9c66967dea2ce0865f420f296af6d68e8285bc08875e9146da17"
+  digest = "1:ced435a7600ec61f81056fe3b8f6f51e773ef3cd9caf6f14564b3d81951e803d"
   name = "github.com/Azure/azure-event-hubs-go"
   packages = [
     ".",
@@ -48,8 +48,8 @@
     "storage",
   ]
   pruneopts = "UT"
-  revision = "5bee80eb97437a2daa40734b9b13cbc2c9d545e8"
-  version = "v1.1.0"
+  revision = "804d4a4235136f100951fde308046bedabe2d7c6"
+  version = "v1.1.1"
 
 [[projects]]
   digest = "1:d2ccb697dc13c8fbffafa37baae97594d5592ae8f7e113471084137315536e2b"
@@ -98,20 +98,20 @@
   version = "v11.2.8"
 
 [[projects]]
-  digest = "1:c99bd4548f502371b98c77534239a514c9a1e715d468af3c108db06186aa692a"
+  digest = "1:ed77032e4241e3b8329c9304d66452ed196e795876e14be677a546f36b94e67a"
   name = "github.com/DataDog/zstd"
   packages = ["."]
   pruneopts = "UT"
-  revision = "aebefd9fcb99f22cd691ef778a12ed68f0e6a1ab"
-  version = "v1.3.4"
+  revision = "c7161f8c63c045cbc7ca051dcc969dd0e4054de2"
+  version = "v1.3.5"
 
 [[projects]]
   branch = "master"
-  digest = "1:badf98fd26aa74cf9cab4851149476b38e6610e7291b89b8fef294d461db9909"
+  digest = "1:aadb1ac57ed6201de4f898495fd0791c0ed6c8e8d652d8b8b49f4d1f1c6d2eae"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "9316a054b1e4b300d3bddf159864faaaca908073"
+  revision = "03f9193b772ccd3b4bfe3ad4cdc6155748fcdb8d"
 
 [[projects]]
   digest = "1:a59a467c541a1bf8b06e4fad6113028c959be6573b78ceca9f8020cd0d2127fc"
@@ -122,7 +122,7 @@
   version = "v1.20.0"
 
 [[projects]]
-  digest = "1:a94220f2af28002d7a37af089ebb217d352226a70af7ab082fa81c45bb8a512a"
+  digest = "1:35564f1cd08e1163bf327e6f595b9e596c4470a77f7f13fe6421236ea99e5966"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -161,8 +161,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "5f1ca23f3ded773a9ba214e6fac36acd9a965a53"
-  version = "v1.16.6"
+  revision = "3991042237b45cf58c9d5f34295942d5533c28c6"
+  version = "v1.16.11"
 
 [[projects]]
   digest = "1:526d64d0a3ac6c24875724a9355895be56a21f89a5d3ab5ba88d91244269a7d8"
@@ -278,11 +278,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8c86b3a4f631171d60523cdaeba992e0ccc80b9923a9e9cb605e5a216df588c0"
+  digest = "1:264ce7a5d411d8d4304965d87ba016e379ed2d6bce26e62340112c108a786f38"
   name = "github.com/gin-contrib/zap"
   packages = ["."]
   pruneopts = "UT"
-  revision = "a4f331736217f34737505ce743f9d41efb41e0ab"
+  revision = "0672bb1dbf3af725a3d294a73bd92dab67cb8adc"
 
 [[projects]]
   digest = "1:d5083934eb25e45d17f72ffa86cae3814f4a9d6c073c4f16b64147169b245606"
@@ -298,7 +298,7 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:34a9a60fade37f8009ed4a19e02924198aba3eabfcc120ee5c6002b7de17212d"
+  digest = "1:424f6593024cdf0f6f90cba81bc69ca98df3758525e6fb248198ef15ead603a9"
   name = "github.com/go-redis/redis"
   packages = [
     ".",
@@ -311,16 +311,16 @@
     "internal/util",
   ]
   pruneopts = "UT"
-  revision = "b3d9bf10f6666b2ee5100a6f3f84f4caf3b4e37d"
-  version = "v6.14.2"
+  revision = "7f89fbac80bcc62ce920b6dbc6ca60238d7725d1"
+  version = "v6.15.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:b57b31665db80eb5a00c672458ab53b1bec0bea386a247368f59ec9b522af120"
+  digest = "1:23dca8a35ce10bf5caf35e92f6a2b5e633f55cbd28259c2207eb31d5b44b0c02"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
   pruneopts = "UT"
-  revision = "60d456a402782453be397030407e34decaf04d73"
+  revision = "c45f530f8e7fe40f4687eaa50d0c8c5f1b66f9e0"
 
 [[projects]]
   digest = "1:436e8c1845d92384995e9c93470f639b886dbbc4b49c7babf544f9cc06361198"
@@ -340,11 +340,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8368ed15381fa230c3a91ccfcc4e7300fc4fcd19f91266832365846383aee80d"
+  digest = "1:07af58eca86d0e46804aa8eda58b6cf9ecb3110783d2fec55a32cd64639198ea"
   name = "github.com/go-xorm/xorm"
   packages = ["."]
   pruneopts = "UT"
-  revision = "401f4ee8ff8cbc40a4754cb12192fbe4f02f3979"
+  revision = "a8f0a7110a8049c79069836b420538f1964e6339"
 
 [[projects]]
   digest = "1:b402bb9a24d108a9405a6f34675091b036c8b056aac843bf6ef2389a65c5cf48"
@@ -813,29 +813,29 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "e147a9138326bc0e9d4e179541ffd8af41cff8a9"
+  revision = "927f97764cc334a6575f4b7a1584a147864d5723"
 
 [[projects]]
   branch = "master"
-  digest = "1:d6b0cfc5ae30841c4b116ac589629f56f8add0955a39f11d8c0d06ca67f5b3d5"
+  digest = "1:04a5b0e4138f98eef79ce12a955a420ee358e9f787044cc3a553ac3c3ade997e"
   name = "golang.org/x/sync"
   packages = [
     "errgroup",
     "semaphore",
   ]
   pruneopts = "UT"
-  revision = "42b317875d0fa942474b76e1b46a6060d720ae6e"
+  revision = "37e7f081c4d4c64e13b10787722085407fe5d15f"
 
 [[projects]]
   branch = "master"
-  digest = "1:ba8cbf57cfd92d5f8592b4aca1a35d92c162363d32aeabd5b12555f8896635e7"
+  digest = "1:10405139b45e3a97a3842c93984710e30466eb933545f219ad3f5e45246973b4"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "4d1cda033e0619309c606fc686de3adcf599539e"
+  revision = "9a3f9b0469bbc6b8802087ae5c0af9f61502de01"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -874,15 +874,15 @@
   name = "google.golang.org/api"
   packages = ["support/bundler"]
   pruneopts = "UT"
-  revision = "41dc4b66e69d5dbf20efe4ba67e19d214d147ae3"
+  revision = "f26a60c56f148a32e87f3f4591c8ebf834b5561f"
 
 [[projects]]
   digest = "1:c25289f43ac4a68d88b02245742347c94f1e108c534dda442188015ff80669b3"
   name = "google.golang.org/appengine"
   packages = ["cloudsql"]
   pruneopts = "UT"
-  revision = "4a4468ece617fc8205e99368fa2200e9d1fad421"
-  version = "v1.3.0"
+  revision = "e9657d882bb81064595ca3b56cbe2546bbabf7b1"
+  version = "v1.4.0"
 
 [[projects]]
   branch = "master"
@@ -890,7 +890,7 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
-  revision = "bd91e49a0898e27abb88c339b432fa53d7497ac0"
+  revision = "bd9b4fb69e2ffd37621a6caa54dcbead29b546f2"
 
 [[projects]]
   digest = "1:8c8ed249fa6a8db070bf2082f02052c697695fa5e1558b4e28dd0fb5f15f70a2"

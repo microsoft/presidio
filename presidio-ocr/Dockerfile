@@ -6,11 +6,6 @@ ARG NAME=presidio-ocr
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
 ARG VERSION=latest
 
-RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/main' > /etc/apk/repositories \ 
-    && echo 'http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories \
-    && apk upgrade -U -a
-RUN apk --update add tesseract-ocr
-
 WORKDIR ${PRESIDIOPATH}/${NAME}/cmd/${NAME}
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Microsoft/presidio/pkg/version.Version=${VERSION}' -o /usr/bin/${NAME}
 
@@ -26,4 +21,4 @@ RUN apk --update add tesseract-ocr
 ARG NAME=presidio-ocr
 WORKDIR  /usr/bin/
 COPY --from=build-env /usr/bin/${NAME} /usr/bin/
-CMD  /usr/bin/${NAME}
+CMD  /usr/bin/presidio-ocr
