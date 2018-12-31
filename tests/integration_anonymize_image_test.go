@@ -8,10 +8,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"testing"
-
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer"
+
+	"testing"
 )
 
 func TestAnonymizeImage(t *testing.T) {
@@ -30,22 +30,27 @@ func TestAnonymizeImage(t *testing.T) {
 	results := []*types.AnalyzeResult{
 		{
 			Location: &types.Location{
-				Start: 35, End: 49,
+				Start: 27, End: 40,
 			},
 		},
 		{
 			Location: &types.Location{
-				Start: 66, End: 81,
+				Start: 294, End: 311,
 			},
 		},
 		{
 			Location: &types.Location{
-				Start: 102, End: 118,
+				Start: 323, End: 337,
 			},
 		},
 		{
 			Location: &types.Location{
-				Start: 137, End: 144,
+				Start: 749, End: 771,
+			},
+		},
+		{
+			Location: &types.Location{
+				Start: 758, End: 771,
 			},
 		},
 	}
@@ -64,12 +69,13 @@ func TestAnonymizeImage(t *testing.T) {
 		},
 	}
 
-	result, err := anonymizer.AnonymizeImage(image, types.AnonymizeImageTypeEnum_OCR, results, template)
+	result, err := anonymizer.AnonymizeImage(image, types.DetectionTypeEnum_OCR, results, template)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
-	// fo, err := os.Create("output.png")
-	// fo.Write(result.Data)
-	// fo.Sync()
-	// fo.Close()
+
+	savedOutputImage, err := ioutil.ReadFile("./testdata/ocr-output.png")
+	assert.NoError(t, err)
+
+	assert.Equal(t, len(savedOutputImage), len(result.Data))
 
 }

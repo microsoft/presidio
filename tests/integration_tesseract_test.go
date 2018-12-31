@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	//"encoding/json"
+	"encoding/json"
+
 	"github.com/otiai10/gosseract"
 	"github.com/stretchr/testify/assert"
 
@@ -30,7 +31,9 @@ func TestOCR(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEqual(t, "", result.Text)
 
-	//	b, _ := json.Marshal(result)
-	//	ioutil.WriteFile("test.json", b, 0777)
+	savedJSONResult, err := ioutil.ReadFile("./testdata/ocr-result.json")
+	assert.NoError(t, err)
+	jsonResult, _ := json.Marshal(result)
+	assert.Equal(t, savedJSONResult, jsonResult)
 
 }

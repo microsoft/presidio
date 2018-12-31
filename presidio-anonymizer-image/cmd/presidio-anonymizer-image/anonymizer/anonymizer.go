@@ -64,7 +64,7 @@ func fillBbox(mw *img.MagickWand, bbox *types.Boundingbox, location *types.Locat
 		dw.SetFillColor(pw)
 	}
 
-	if bbox.StartPosition >= location.Start && bbox.EndPosition <= location.End+1 {
+	if (bbox.StartPosition >= location.Start && bbox.EndPosition <= location.End+1) || (location.Start >= bbox.StartPosition && location.End <= bbox.EndPosition) {
 		x := (float64)(bbox.XLocation)
 		y := (float64)(bbox.YLocation)
 		w := (float64)(bbox.Width)
