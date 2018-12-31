@@ -20,6 +20,10 @@ You can find a more detailed list [here](https://microsoft.github.io/presidio/fi
 
 ## Features
 
+[![Image1](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)
+
+[![Image2](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)
+
 * Text analytics - Predefined analyzers with customizable fields.
 * Probability scores - Customize the sensitive text detection threshold.
 * Anonymization - Anonymize sensitive text and images
