@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -19,17 +18,15 @@ var updateTemplateCmd = &cobra.Command{
 	Short: "update a template resource",
 	Long:  `Use this command to update presidio template.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		path := getFlagValue(cmd, fileFlag)
-		templateName := getFlagValue(cmd, templateFlag)
 		actionName := getFlagValue(cmd, actionFlag)
+		path := getFlagValue(cmd, fileFlag)
 		projectName := getFlagValue(cmd, projectFlag)
+		templateName := getFlagValue(cmd, templateFlag)
 
 		fileContentStr, err := getJSONFileContent(path)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		check(err)
 
+		// Send a REST command to presidio instance to update the requested template
 		updateTemplate(&http.Client{}, projectName, actionName, templateName, fileContentStr)
 	},
 }

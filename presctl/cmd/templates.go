@@ -14,6 +14,7 @@ import (
 )
 
 const templateURLFormat = "http://%s:%s/api/v1/templates/%s/%s/%s"
+const actionURLFormat = "http://%s:%s/api/v1/projects/%s/%s"
 
 const (
 	create = 0
@@ -31,28 +32,38 @@ func check(err error) {
 	}
 }
 
-func saveToFile(response *http.Response, outputFilePath string) {
+func getBodyString(response *http.Response) string {
 	body, err := ioutil.ReadAll(response.Body)
 	check(err)
 
 	len := response.ContentLength
 	bodyStr := string(body[:len])
+
+	return bodyStr
+}
+func prettifyJSON(body string) string {
+	jsonStr := &bytes.Buffer{}
+	err := json.Indent(jsonStr, []byte(body), "", "  ")
+	check(err)
+	return jsonStr.String()
+}
+
+func prettyPrintJSON(jsonBody string) {
+	jsonStr := prettifyJSON(jsonBody)
+	fmt.Printf("Result: %s\n", jsonStr)
+}
+
+func saveToFile(jsonBody string, outputFilePath string) {
+	jsonStr := prettifyJSON(jsonBody)
 	file, err := os.Create(outputFilePath)
 	check(err)
-
+	_, err = file.WriteString(jsonStr)
 	defer file.Close()
-	unquotedStr, err := strconv.Unquote(bodyStr)
-	jsonStr := &bytes.Buffer{}
-	if err := json.Indent(jsonStr, []byte(unquotedStr), "", "  "); err != nil {
-		os.Exit(1)
-	}
-
-	file.WriteString(jsonStr.String())
 	check(err)
 	fmt.Printf("Template saved to: %s\n", outputFilePath)
 }
 
-// createTemplate sends a POST REST command to the Presidio instance, to create the requested template
+// templateRestCommand sends a POST REST command to the Presidio instance in order to manage templates
 func templateRestCommand(httpClient httpClient, op restOp, projectName string, actionName string, templateName string, fileContentStr string, outputFilePath string) {
 	var ip = viper.GetString("presidio_ip")
 	var port = viper.GetString("presidio_port")
@@ -64,32 +75,25 @@ func templateRestCommand(httpClient httpClient, op restOp, projectName string, a
 		actionName,
 		templateName)
 
-	var restMethod = ""
-	if op == update {
-		restMethod = "PUT"
-	} else if op == create {
-		restMethod = "POST"
-	} else if op == get {
-		restMethod = "GET"
-	} else if op == delete {
-		restMethod = "DELETE"
-	}
-
 	var req *http.Request
 	var err error
-	if op == create || op == update {
-		req, err = http.NewRequest(restMethod, url, strings.NewReader(fileContentStr))
-		check(err)
-	} else {
-		req, err = http.NewRequest(restMethod, url, nil)
-		check(err)
+	switch op {
+	case create:
+		req, err = http.NewRequest("POST", url, strings.NewReader(fileContentStr))
+	case update:
+		req, err = http.NewRequest("PUT", url, strings.NewReader(fileContentStr))
+	case delete:
+		req, err = http.NewRequest("DELETE", url, nil)
+	case get:
+		req, err = http.NewRequest("GET", url, nil)
 	}
+	check(err)
 
 	client := httpClient
 	response, err := client.Do(req)
 	check(err)
 
-	expectedStatusCode := -1
+	var expectedStatusCode int
 	if op == create {
 		expectedStatusCode = http.StatusCreated
 	} else if op == delete {
@@ -105,25 +109,38 @@ func templateRestCommand(httpClient httpClient, op restOp, projectName string, a
 		os.Exit(1)
 	}
 
-	if op == get {
-		saveToFile(response, outputFilePath)
+	if op != get {
+		fmt.Printf("Success")
+		return
+	}
+
+	unquotedStr, err := strconv.Unquote(getBodyString(response))
+	check(err)
+	if outputFilePath != "" {
+		saveToFile(unquotedStr, outputFilePath)
+	} else {
+		prettyPrintJSON(unquotedStr)
 	}
 
 	fmt.Printf("Success")
 }
 
+// createTemplate creates a new template
 func createTemplate(httpClient httpClient, projectName string, actionName string, templateName string, fileContentStr string) {
 	templateRestCommand(httpClient, create, projectName, actionName, templateName, fileContentStr, "")
 }
 
+// updateTemplate updates an existing template
 func updateTemplate(httpClient httpClient, projectName string, actionName string, templateName string, fileContentStr string) {
 	templateRestCommand(httpClient, update, projectName, actionName, templateName, fileContentStr, "")
 }
 
+// deleteTemplate deletes an existing template
 func deleteTemplate(httpClient httpClient, projectName string, actionName string, templateName string) {
 	templateRestCommand(httpClient, delete, projectName, actionName, templateName, "", "")
 }
 
+// getTemplate retrieved an existing template, can be logged or saved to a file
 func getTemplate(httpClient httpClient, projectName string, actionName string, templateName string, outputFilePath string) {
 	templateRestCommand(httpClient, get, projectName, actionName, templateName, "", outputFilePath)
 }

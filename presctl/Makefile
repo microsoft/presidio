@@ -24,3 +24,6 @@ build: $(TARGET)
 
 clean:
 	@rm -f $(TARGET)
+
+go-test-style:
+	gometalinter --config ../gometalinter.json ./...

@@ -22,7 +22,7 @@ func getJSONFileContent(path string) (string, error) {
 	fileContentStr := string(fileContentBytes)
 	isValidJSON := isJSON(fileContentStr)
 
-	if isValidJSON == false {
+	if !isValidJSON {
 		errMsg := "The given template file is not a valid json file or does not exists"
 		fmt.Println(errMsg)
 		return "", fmt.Errorf(errMsg)

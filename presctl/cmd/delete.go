@@ -18,10 +18,11 @@ var delTemplateCmd = &cobra.Command{
 	Short: "delete a template resource",
 	Long:  `Use this command to delete a template from presidio.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		templateName := getFlagValue(cmd, templateFlag)
 		actionName := getFlagValue(cmd, actionFlag)
 		projectName := getFlagValue(cmd, projectFlag)
+		templateName := getFlagValue(cmd, templateFlag)
 
+		// Send a REST command to presidio instance to delete the requested template
 		deleteTemplate(&http.Client{}, projectName, actionName, templateName)
 	},
 }
@@ -34,6 +35,7 @@ func init() {
 	delTemplateCmd.Flags().String(templateFlag, "", "template's name")
 	delTemplateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ['anonymize', 'analyze']")
 	delTemplateCmd.Flags().String(projectFlag, "", "project's name")
+
 	// mark flags as required
 	delTemplateCmd.MarkFlagRequired(templateFlag)
 	delTemplateCmd.MarkFlagRequired(actionFlag)

@@ -11,6 +11,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+// constants
+const fileFlag = "file"
+const templateFlag = "template"
+const actionFlag = "action"
+const stringFlag = "string"
+const projectFlag = "project"
+const outputFlag = "output"
+const analyzeTemplateIDFlag = "analyzeTemplateId"
+const anonymizeTemplateIDFlag = "anonymizeTemplateId"
+
 type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }

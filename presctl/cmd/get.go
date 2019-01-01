@@ -19,11 +19,12 @@ var getTemplateCmd = &cobra.Command{
 	Short: "adds a new template resource",
 	Long:  `Use this command to add to presidio a new template.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		outputFile := getFlagValue(cmd, outputFlag)
-		templateName := getFlagValue(cmd, templateFlag)
 		actionName := getFlagValue(cmd, actionFlag)
+		outputFile := getFlagValue(cmd, outputFlag)
 		projectName := getFlagValue(cmd, projectFlag)
+		templateName := getFlagValue(cmd, templateFlag)
 
+		// Send a REST command to presidio instance to get the requested template
 		getTemplate(&http.Client{}, projectName, actionName, templateName, outputFile)
 	},
 }
@@ -40,7 +41,6 @@ func init() {
 
 	// mark flags as required
 	getTemplateCmd.MarkFlagRequired(templateFlag)
-	getTemplateCmd.MarkFlagRequired(outputFlag)
 	getTemplateCmd.MarkFlagRequired(actionFlag)
 	getTemplateCmd.MarkFlagRequired(projectFlag)
 }
