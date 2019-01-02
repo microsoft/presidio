@@ -86,7 +86,7 @@ func (api *API) anonymizeImage(c *gin.Context) {
 
 	anonymizeImageAPIRequest.ImageType = c.PostForm("imageType")
 	if anonymizeImageAPIRequest.ImageType == "" {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Image type is missing (image/jpeg, image/png)"))
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Image type is missing (image/jpeg, image/png, image/tiff, image/gif, image/bmp)"))
 		return
 	}
 
@@ -113,6 +113,7 @@ func (api *API) anonymizeImage(c *gin.Context) {
 		}
 
 		analyzeResults := api.applyPresidioOCR(c, image, analyzeTemplate)
+		image.ImageType = anonymizeImageAPIRequest.ImageType
 		anonymizeResult, err := api.Services.AnonymizeImageItem(c, image, analyzeResults, anonymizeImageAPIRequest.DetectionType, anonymizeImageTemplate)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -130,8 +131,10 @@ func (api *API) applyPresidioOCR(c *gin.Context, image *types.Image, analyzeTemp
 	}
 	if ocrRes.Image.Text == "" {
 		c.AbortWithError(http.StatusNoContent, fmt.Errorf("No content found in image"))
+
 		return nil
 	}
+
 	image.Text = ocrRes.Image.Text
 	image.Boundingboxes = ocrRes.Image.Boundingboxes
 

@@ -1,7 +1,13 @@
 package anonymizer
 
 import (
-	img "gopkg.in/gographics/imagick.v3/imagick"
+	"bytes"
+	"fmt"
+	img "image"
+	"image/color"
+	"strings"
+
+	"github.com/disintegration/imaging"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 )
@@ -9,22 +15,48 @@ import (
 //AnonymizeImage text or just bounding boxes
 func AnonymizeImage(image *types.Image, detectionType types.DetectionTypeEnum, results []*types.AnalyzeResult, template *types.AnonymizeImageTemplate) (*types.Image, error) {
 
-	img.Initialize()
-	defer img.Terminate()
-
-	mw := img.NewMagickWand()
-	defer mw.Destroy()
-	mw.ReadImageBlob(image.Data)
-
-	if detectionType == types.DetectionTypeEnum_OCR {
-		redactText(mw, image, results, template)
+	// Get format
+	if image.ImageType == "" {
+		return nil, fmt.Errorf("Image type is empty")
 	}
 
-	newImage := mw.GetImageBlob()
-	return &types.Image{Data: newImage}, nil
+	splitted := strings.Split(image.ImageType, "/")
+	var f string
+	if len(splitted) == 2 {
+		f = splitted[1]
+	} else {
+		f = splitted[0]
+	}
+
+	format, err := imaging.FormatFromExtension(f)
+	if err != nil {
+		return nil, err
+	}
+
+	// Read byte slice
+	r := bytes.NewReader(image.Data)
+	decodedImage, err := imaging.Decode(r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Redact text
+	if detectionType == types.DetectionTypeEnum_OCR {
+		decodedImage = redactText(decodedImage, image, results, template)
+	}
+
+	// Save image
+	buf := new(bytes.Buffer)
+	err = imaging.Encode(buf, decodedImage, format)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.Image{Data: buf.Bytes()}, nil
 }
 
-func redactText(mw *img.MagickWand, image *types.Image, results []*types.AnalyzeResult, template *types.AnonymizeImageTemplate) {
+func redactText(dimg img.Image, image *types.Image, results []*types.AnalyzeResult, template *types.AnonymizeImageTemplate) img.Image {
 
 	for _, result := range results {
 		if result == nil {
@@ -37,12 +69,12 @@ func redactText(mw *img.MagickWand, image *types.Image, results []*types.Analyze
 
 			for _, graphic := range template.FieldTypeGraphics {
 				if graphic.Fields == nil {
-					fillBbox(mw, bbox, location, graphic)
+					dimg = fillBbox(dimg, bbox, location, graphic)
 					break
 				}
 				for _, fieldType := range graphic.Fields {
 					if fieldType.Name == result.Field.Name {
-						fillBbox(mw, bbox, location, graphic)
+						dimg = fillBbox(dimg, bbox, location, graphic)
 						break
 					}
 
@@ -50,27 +82,31 @@ func redactText(mw *img.MagickWand, image *types.Image, results []*types.Analyze
 			}
 		}
 	}
+	return dimg
 }
 
-func fillBbox(mw *img.MagickWand, bbox *types.Boundingbox, location *types.Location, graphic *types.FieldTypeGraphic) {
+func fillBbox(dimg img.Image, bbox *types.Boundingbox, location *types.Location, graphic *types.FieldTypeGraphic) img.Image {
 
-	dw := img.NewDrawingWand()
-
+	var col color.NRGBA
 	if graphic.Graphic != nil && graphic.Graphic.FillColorValue != nil {
-		pw := img.NewPixelWand()
-		pw.SetRed(graphic.Graphic.FillColorValue.Red)
-		pw.SetGreen(graphic.Graphic.FillColorValue.Green)
-		pw.SetBlue(graphic.Graphic.FillColorValue.Blue)
-		dw.SetFillColor(pw)
+		col = color.NRGBA{
+			(uint8)(graphic.Graphic.FillColorValue.Red),
+			(uint8)(graphic.Graphic.FillColorValue.Green),
+			(uint8)(graphic.Graphic.FillColorValue.Blue),
+			255,
+		}
+	} else {
+		col = color.NRGBA{0, 0, 0, 255} // Black
 	}
 
 	if (bbox.StartPosition >= location.Start && bbox.EndPosition <= location.End+1) || (location.Start >= bbox.StartPosition && location.End <= bbox.EndPosition) {
-		x := (float64)(bbox.XLocation)
-		y := (float64)(bbox.YLocation)
-		w := (float64)(bbox.Width)
-		h := (float64)(bbox.Height)
-		dw.Rectangle(x, y, w, h)
-		mw.DrawImage(dw)
-	}
+		x := int(bbox.XLocation)
+		y := int(bbox.YLocation)
+		w := int(bbox.Width)
+		h := int(bbox.Height)
 
+		dst := imaging.New(w-x, h-y, col)
+		dimg = imaging.Paste(dimg, dst, img.Pt(x, y))
+	}
+	return dimg
 }

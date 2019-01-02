@@ -55,6 +55,10 @@
   name = "github.com/presid-io/stow"
 
 [[constraint]]
+  name = "github.com/disintegration/imaging"
+  branch = "master"
+
+[[constraint]]
   name = "github.com/stretchr/testify"
   version = "1.2.1"
 

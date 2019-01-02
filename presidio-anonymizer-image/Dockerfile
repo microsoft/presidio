@@ -13,8 +13,6 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Mi
 
 FROM alpine:3.8
 
-RUN apk --update add imagemagick
-
 ARG NAME=presidio-anonymizer-image
 WORKDIR  /usr/bin/
 COPY --from=build-env /usr/bin/${NAME} /usr/bin/

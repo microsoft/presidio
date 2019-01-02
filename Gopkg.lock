@@ -81,7 +81,7 @@
   version = "0.3.0"
 
 [[projects]]
-  digest = "1:ef17fa8a0edc01cb33eefed09d6865064ebdcc74ceef1637693bc466c708deac"
+  digest = "1:8824d5e809d68fd509eef8d4e78e5e4472bd42d173ab6c4941ceb0d5c6b550aa"
   name = "github.com/Azure/go-autorest"
   packages = [
     "autorest",
@@ -92,6 +92,7 @@
     "autorest/validation",
     "logger",
     "tracing",
+    "version",
   ]
   pruneopts = "UT"
   revision = "f401b1ccc8eb505927fae7a0c7f6406d37ca1c7e"
@@ -219,6 +220,14 @@
   pruneopts = "UT"
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:7d0b66300f67891562442ba782b7927859bf9274afd36c4651371262396bbb65"
+  name = "github.com/disintegration/imaging"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9458da53d1e65e098d48467a4317c403327e4424"
 
 [[projects]]
   digest = "1:1f0c7ab489b407a7f8f9ad16c25a504d28ab461517a971d341388a56156c1bd7"
@@ -801,6 +810,18 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:acadbbf02e5c744709c60ac929e63258a69a3404ab36ed0c1a245cc28f056220"
+  name = "golang.org/x/image"
+  packages = [
+    "bmp",
+    "tiff",
+    "tiff/lzw",
+  ]
+  pruneopts = "UT"
+  revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
+
+[[projects]]
+  branch = "master"
   digest = "1:89a0cb976397aa9157a45bb2b896d0bcd07ee095ac975e0f03c53250c402265e"
   name = "golang.org/x/net"
   packages = [
@@ -941,17 +962,6 @@
   pruneopts = "UT"
   revision = "5f1438d3fca68893a817e4a66806cea46a9e4ebf"
   version = "v8.18.2"
-
-[[projects]]
-  digest = "1:3261a88df0ef9f1cfaa7cdd7f95bb6e86c8b45dbe76a17a0a43dcfc00e72d621"
-  name = "gopkg.in/gographics/imagick.v3"
-  packages = [
-    "imagick",
-    "imagick/types",
-  ]
-  pruneopts = "UT"
-  revision = "e5c95c340c8d9bf140ca670563906805b655d9d9"
-  version = "v3.2.0"
 
 [[projects]]
   digest = "1:2d1fbdc6777e5408cabeb02bf336305e724b925ff4546ded0fa8715a7267922a"
@@ -1182,6 +1192,7 @@
     "github.com/bsm/sarama-cluster",
     "github.com/capitalone/fpe/ff1",
     "github.com/denisenkom/go-mssqldb",
+    "github.com/disintegration/imaging",
     "github.com/gin-contrib/cors",
     "github.com/gin-contrib/zap",
     "github.com/gin-gonic/gin",
@@ -1210,7 +1221,6 @@
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
     "google.golang.org/grpc/reflection",
-    "gopkg.in/gographics/imagick.v3/imagick",
     "k8s.io/api/batch/v1",
     "k8s.io/api/batch/v1beta1",
     "k8s.io/api/core/v1",

@@ -13,10 +13,8 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Mi
 
 FROM alpine:3.8
 
-RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/main' > /etc/apk/repositories \ 
-    && echo 'http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories \
-    && apk upgrade -U -a
-RUN apk --update add tesseract-ocr
+RUN apk add 'icu-libs' --update-cache --repository http://nl.alpinelinux.org/alpine/edge/main
+RUN apk add 'tesseract-ocr>=4.0.0' --update-cache --repository http://nl.alpinelinux.org/alpine/edge/community
 
 ARG NAME=presidio-ocr
 WORKDIR  /usr/bin/
