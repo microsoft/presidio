@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
+
+	"github.com/Microsoft/presidio/presctl/cmd/entities"
 )
 
 // updateCmd represents the update command
@@ -27,7 +29,7 @@ var updateTemplateCmd = &cobra.Command{
 		check(err)
 
 		// Send a REST command to presidio instance to update the requested template
-		updateTemplate(&http.Client{}, projectName, actionName, templateName, fileContentStr)
+		entities.UpdateTemplate(&http.Client{}, projectName, actionName, templateName, fileContentStr)
 	},
 }
 

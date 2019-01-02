@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -21,8 +22,35 @@ const outputFlag = "output"
 const analyzeTemplateIDFlag = "analyzeTemplateId"
 const anonymizeTemplateIDFlag = "anonymizeTemplateId"
 
-type httpClient interface {
-	Do(req *http.Request) (*http.Response, error)
+func check(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+// isJson returns true if the given string is a valid JSON
+func isJSON(s string) bool {
+	var js map[string]interface{}
+	return json.Unmarshal([]byte(s), &js) == nil
+}
+
+// getJSONFileContent reads the content of a given file and if the content is a
+// valid JSON returns it
+func getJSONFileContent(path string) (string, error) {
+	fileContentBytes, err := ioutil.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("Failed reading file %s", path)
+	}
+	fileContentStr := string(fileContentBytes)
+	isValidJSON := isJSON(fileContentStr)
+
+	if !isValidJSON {
+		errMsg := "The given template file is not a valid json file or does not exists"
+		fmt.Println(errMsg)
+		return "", fmt.Errorf(errMsg)
+	}
+	return fileContentStr, nil
 }
 
 func getFlagValue(cmd *cobra.Command, flagName string) string {

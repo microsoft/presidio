@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strconv"
 	"testing"
+
+	"github.com/Microsoft/presidio/presctl/cmd/entities"
 )
 
 // clientMock is a mock for http client
@@ -42,7 +44,7 @@ func TestFailingCreateTemplate(t *testing.T) {
 	// we expect the exit code to be 1, if the returned status code is not as expected (not 201)
 	if os.Getenv("BE_CRASHER") == "1" {
 		mockFail := &clientMock{returningCode: 400}
-		createTemplate(mockFail, "myproj", "anonymize", "template1", "template text")
+		entities.CreateTemplate(mockFail, "myproj", "anonymize", "template1", "template text")
 		return
 	}
 	cmd := exec.Command(os.Args[0], "-test.run=TestFailingCreateTemplate")
@@ -59,14 +61,14 @@ func TestTemplatesOperations(t *testing.T) {
 	mockSuccess := &clientMock{returningCode: http.StatusCreated}
 
 	// verify all flows are ending with success
-	createTemplate(mockSuccess, "myproj", "anonymize", "template1", "template text")
+	entities.CreateTemplate(mockSuccess, "myproj", "anonymize", "template1", "template text")
 
 	mockSuccess = &clientMock{returningCode: http.StatusNoContent}
-	deleteTemplate(mockSuccess, "myproj", "anonymize", "template1")
+	entities.DeleteTemplate(mockSuccess, "myproj", "anonymize", "template1")
 
 	mockSuccess = &clientMock{returningCode: http.StatusOK}
-	updateTemplate(mockSuccess, "myproj", "anonymize", "template1", "template text")
-	getTemplate(mockSuccess, "myproj", "anonymize", "template1", "")
+	entities.UpdateTemplate(mockSuccess, "myproj", "anonymize", "template1", "template text")
+	entities.GetTemplate(mockSuccess, "myproj", "anonymize", "template1", "")
 }
 
 func (c *clientMock) Do(req *http.Request) (*http.Response, error) {

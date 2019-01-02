@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
+
+	"github.com/Microsoft/presidio/presctl/cmd/entities"
 )
 
 // getCmd represents the get command
@@ -25,7 +27,7 @@ var getTemplateCmd = &cobra.Command{
 		templateName := getFlagValue(cmd, templateFlag)
 
 		// Send a REST command to presidio instance to get the requested template
-		getTemplate(&http.Client{}, projectName, actionName, templateName, outputFile)
+		entities.GetTemplate(&http.Client{}, projectName, actionName, templateName, outputFile)
 	},
 }
 

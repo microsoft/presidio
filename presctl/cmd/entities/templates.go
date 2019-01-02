@@ -1,4 +1,4 @@
-package cmd
+package entities
 
 import (
 	"bytes"
@@ -125,22 +125,22 @@ func templateRestCommand(httpClient httpClient, op restOp, projectName string, a
 	fmt.Printf("Success")
 }
 
-// createTemplate creates a new template
-func createTemplate(httpClient httpClient, projectName string, actionName string, templateName string, fileContentStr string) {
+// CreateTemplate creates a new template
+func CreateTemplate(httpClient httpClient, projectName string, actionName string, templateName string, fileContentStr string) {
 	templateRestCommand(httpClient, create, projectName, actionName, templateName, fileContentStr, "")
 }
 
-// updateTemplate updates an existing template
-func updateTemplate(httpClient httpClient, projectName string, actionName string, templateName string, fileContentStr string) {
+// UpdateTemplate updates an existing template
+func UpdateTemplate(httpClient httpClient, projectName string, actionName string, templateName string, fileContentStr string) {
 	templateRestCommand(httpClient, update, projectName, actionName, templateName, fileContentStr, "")
 }
 
-// deleteTemplate deletes an existing template
-func deleteTemplate(httpClient httpClient, projectName string, actionName string, templateName string) {
+// DeleteTemplate deletes an existing template
+func DeleteTemplate(httpClient httpClient, projectName string, actionName string, templateName string) {
 	templateRestCommand(httpClient, delete, projectName, actionName, templateName, "", "")
 }
 
-// getTemplate retrieved an existing template, can be logged or saved to a file
-func getTemplate(httpClient httpClient, projectName string, actionName string, templateName string, outputFilePath string) {
+// GetTemplate retrieved an existing template, can be logged or saved to a file
+func GetTemplate(httpClient httpClient, projectName string, actionName string, templateName string, outputFilePath string) {
 	templateRestCommand(httpClient, get, projectName, actionName, templateName, "", outputFilePath)
 }

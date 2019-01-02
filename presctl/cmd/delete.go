@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
+
+	"github.com/Microsoft/presidio/presctl/cmd/entities"
 )
 
 // deleteCmd represents the delete command
@@ -23,7 +25,7 @@ var delTemplateCmd = &cobra.Command{
 		templateName := getFlagValue(cmd, templateFlag)
 
 		// Send a REST command to presidio instance to delete the requested template
-		deleteTemplate(&http.Client{}, projectName, actionName, templateName)
+		entities.DeleteTemplate(&http.Client{}, projectName, actionName, templateName)
 	},
 }
 

@@ -3,6 +3,8 @@ package cmd
 import (
 	"net/http"
 
+	"github.com/Microsoft/presidio/presctl/cmd/entities"
+
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +30,7 @@ var templateCmd = &cobra.Command{
 		check(err)
 
 		// Send a REST command to presidio instance to create the requested template
-		createTemplate(&http.Client{}, projectName, actionName, templateName, fileContentStr)
+		entities.CreateTemplate(&http.Client{}, projectName, actionName, templateName, fileContentStr)
 	},
 }
 
