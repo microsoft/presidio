@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -21,6 +23,12 @@ var anonymizeCmd = &cobra.Command{
 		path := getFlagValue(cmd, fileFlag)
 		projectName := getFlagValue(cmd, projectFlag)
 		queryStr := getFlagValue(cmd, stringFlag)
+
+		// currently there is no way to define a 'group' if required params in cobra
+		if path == "" && (queryStr == "" || analyzeTemplateID == "" || anonymizeTemplateID == "") {
+			fmt.Printf("must supply the '%s' flag or the '%s', %s' and '%s' flags", fileFlag, stringFlag, analyzeTemplateIDFlag, anonymizeTemplateIDFlag)
+			os.Exit(1)
+		}
 
 		// either create a json body from the given params, or send a given json file
 		var contentStr string
@@ -52,5 +60,4 @@ func init() {
 
 	// mark flags as required
 	anonymizeCmd.MarkFlagRequired(projectFlag)
-	// todo: make f or s mandatory but not both...
 }

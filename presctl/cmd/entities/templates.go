@@ -25,6 +25,7 @@ const (
 
 type restOp int
 
+// if error is not null print it and exit the program
 func check(err error) {
 	if err != nil {
 		fmt.Println(err)
@@ -32,6 +33,7 @@ func check(err error) {
 	}
 }
 
+// getBodyString returns the response's body
 func getBodyString(response *http.Response) string {
 	body, err := ioutil.ReadAll(response.Body)
 	check(err)
@@ -41,6 +43,8 @@ func getBodyString(response *http.Response) string {
 
 	return bodyStr
 }
+
+// prettifyJSON makes a valid json string 'pretty' (human readable / indented)
 func prettifyJSON(body string) string {
 	jsonStr := &bytes.Buffer{}
 	err := json.Indent(jsonStr, []byte(body), "", "  ")
@@ -48,11 +52,13 @@ func prettifyJSON(body string) string {
 	return jsonStr.String()
 }
 
+// prettyPrintJSON prints the given json in an indented manner
 func prettyPrintJSON(jsonBody string) {
 	jsonStr := prettifyJSON(jsonBody)
 	fmt.Printf("Result: %s\n", jsonStr)
 }
 
+// saveToFile saves the given json in a indented manner to a file
 func saveToFile(jsonBody string, outputFilePath string) {
 	jsonStr := prettifyJSON(jsonBody)
 	file, err := os.Create(outputFilePath)
