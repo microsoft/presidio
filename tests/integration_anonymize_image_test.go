@@ -11,7 +11,6 @@ import (
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer"
 
-	//"os"
 	"testing"
 )
 
@@ -75,9 +74,6 @@ func TestAnonymizeImage(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
-	// f, _ := os.Create("./testdata/ocr-output.png")
-	// f.Write(result.Data)
-	// f.Close()
 	savedOutputImage, err := ioutil.ReadFile("./testdata/ocr-result.png")
 	assert.NoError(t, err)
 

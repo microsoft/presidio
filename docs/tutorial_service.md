@@ -54,5 +54,5 @@ You can also create reusable templates
 
 2. Anonymize image
     ```sh
-        http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeTemplateId='<my-anonymize-template-name>' imageType='image/png' file@~/test-ocr.png
+        http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeTemplateId='<my-anonymize-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
     ```

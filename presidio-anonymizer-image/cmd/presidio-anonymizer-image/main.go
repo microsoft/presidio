@@ -21,7 +21,7 @@ type server struct{}
 
 func main() {
 
-	pflag.Int(platform.GrpcPort, 3001, "GRPC listen port")
+	pflag.Int(platform.GrpcPort, 3002, "GRPC listen port")
 	pflag.String("log_level", "info", "Log level - debug/info/warn/error")
 
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)

@@ -7,7 +7,7 @@
 
 # Presidio - Data Loss Prevention API
 
-**Context aware, customizable data loss prevention service in the text and images**
+**Context aware, customizable data loss prevention service in text and images**
 
 ## Description
 
@@ -123,7 +123,7 @@ You can also create reusable templates
 
 2. Anonymize image
     ```sh
-        http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png
+        http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
     ```
 
 ### Current Features Status
