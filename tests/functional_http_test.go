@@ -120,7 +120,7 @@ func TestImageAnonymizer(t *testing.T) {
 	assert.NoError(t, err)
 
 	payload := map[string]io.Reader{
-		"data":                   file,
+		"file":                   file,
 		"analyzeTemplate":        strings.NewReader((string)(generatePayload("analyze-image-template.json"))),
 		"anonymizeImageTemplate": strings.NewReader((string)(generatePayload("anonymize-image-template.json"))),
 		"imageType":              strings.NewReader("image/png"),
