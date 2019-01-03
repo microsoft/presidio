@@ -25,7 +25,7 @@ func (api *API) getActionTemplate(c *gin.Context) {
 	id := c.Param("id")
 	result, err := api.Templates.GetTemplate(project, action, id)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	server.WriteResponse(c, http.StatusOK, result)
@@ -37,12 +37,12 @@ func (api *API) postActionTemplate(c *gin.Context) {
 	id := c.Param("id")
 	value, err := validateTemplate(action, c)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	err = api.Templates.InsertTemplate(project, action, id, value)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	server.WriteResponse(c, http.StatusCreated, "Template added successfully ")
@@ -54,12 +54,13 @@ func (api *API) putActionTemplate(c *gin.Context) {
 	id := c.Param("id")
 	value, err := validateTemplate(action, c)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	err = api.Templates.UpdateTemplate(project, action, id, value)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
+		return
 	}
 
 	server.WriteResponse(c, http.StatusOK, "Template updated successfully")
@@ -71,7 +72,7 @@ func (api *API) deleteActionTemplate(c *gin.Context) {
 	id := c.Param("id")
 	err := api.Templates.DeleteTemplate(project, action, id)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	server.WriteResponse(c, http.StatusNoContent, "")
