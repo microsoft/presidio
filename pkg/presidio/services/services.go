@@ -151,7 +151,7 @@ func (services *Services) AnonymizeJSON(ctx context.Context, jsonToAnonymize str
 	}
 
 	jsoncrawler := jsonCrawler.New(ctx, services.AnalyzeItem, services.AnonymizeItem, analyzeTemplate, anonymizeTemplate)
-	jsoncrawler.ScanJson(schemaMap, valuesMap)
+	jsoncrawler.ScanJSON(schemaMap, valuesMap)
 
 	anonymizedJSON, err := json.Marshal(valuesMap)
 

@@ -11,6 +11,8 @@ import (
 type analyzeFunc func(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error)
 type anonymizeFunc func(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
 
+const errorMsg = "Schema Json and Json to Anonymize are not in the same json format"
+
 //JSONCrawler
 type JSONCrawler struct {
 	analyzeItem       analyzeFunc
@@ -31,29 +33,82 @@ func New(ctx context.Context, analyze analyzeFunc, anonymize anonymizeFunc, anal
 	}
 }
 
-// ScanJson scan the json in DFS to get to all the nodes
-func (jsonCrawler *JSONCrawler) ScanJson(schemaMap map[string]interface{}, valuesMap map[string]interface{}) error {
+// ScanJSON scan the json in DFS to get to all the nodes
+func (jsonCrawler *JSONCrawler) ScanJSON(schemaMap map[string]interface{}, valuesMap map[string]interface{}) error {
+	err := checkIfEmptyMap(schemaMap, valuesMap)
+	if err != nil {
+		return err
+	}
+
 	for key, val := range schemaMap {
 		switch concreteVal := val.(type) {
 		case map[string]interface{}:
-			err := jsonCrawler.ScanJson(val.(map[string]interface{}), (valuesMap[key]).(map[string]interface{}))
+			err := jsonCrawler.scanIfNotEmpty(valuesMap, key, val, "map")
 			if err != nil {
 				return err
 			}
+
 		case []interface{}:
-			err := jsonCrawler.scanArray(val.([]interface{}), (valuesMap[key]).([]interface{}))
+			err := jsonCrawler.scanIfNotEmpty(valuesMap, key, val, "array")
 			if err != nil {
 				return err
 			}
 		default:
-			newVal, err := jsonCrawler.analyzeAndAnonymizeJSON(fmt.Sprint(valuesMap[key]), fmt.Sprint(concreteVal))
+			newVal, err := checkIfKeyExistInMap(valuesMap, key)
 			if err != nil {
 				return err
 			}
-			valuesMap[key] = newVal
+			anonymizedVal, err := jsonCrawler.analyzeAndAnonymizeJSON(fmt.Sprint(newVal), fmt.Sprint(concreteVal))
+			if err != nil {
+				return err
+			}
+			valuesMap[key] = anonymizedVal
 		}
 	}
 	return nil
+}
+
+func (jsonCrawler *JSONCrawler) scanArray(schemaArray []interface{}, valuesArray []interface{}) error {
+	err := checkIfEmptyArray(schemaArray, valuesArray)
+	if err != nil {
+		return err
+	}
+
+	for _, val := range schemaArray {
+		for j := range valuesArray {
+			switch concreteVal := val.(type) {
+			case map[string]interface{}:
+				err := jsonCrawler.ScanJSON(val.(map[string]interface{}), valuesArray[j].(map[string]interface{}))
+				if err != nil {
+					return err
+				}
+			case []interface{}:
+				err := jsonCrawler.scanArray(val.([]interface{}), valuesArray[j].([]interface{}))
+				if err != nil {
+					return err
+				}
+			default:
+				newVal, err := jsonCrawler.analyzeAndAnonymizeJSON(fmt.Sprint(valuesArray[j]), fmt.Sprint(concreteVal))
+				if err != nil {
+					return err
+				}
+				valuesArray[j] = newVal
+			}
+		}
+	}
+	return nil
+}
+
+func (jsonCrawler *JSONCrawler) scanIfNotEmpty(valuesMap map[string]interface{}, key string, val interface{}, valType string) error {
+	newVal, err := checkIfKeyExistInMap(valuesMap, key)
+	if err != nil {
+		return err
+	}
+	if valType == "map" {
+		return jsonCrawler.ScanJSON(val.(map[string]interface{}), newVal.(map[string]interface{}))
+	} else {
+		return jsonCrawler.scanArray(val.([]interface{}), newVal.([]interface{}))
+	}
 }
 
 func (jsonCrawler *JSONCrawler) analyzeAndAnonymizeJSON(val string, field string) (string, error) {
@@ -91,32 +146,23 @@ func (jsonCrawler *JSONCrawler) getAnonymizeResult(text string, analyzeResults [
 	return result.Text, nil
 }
 
-func (jsonCrawler *JSONCrawler) scanArray(schemaArray []interface{}, valuesArray []interface{}) error {
-	for _, val := range schemaArray {
-		switch concreteVal := val.(type) {
-		case map[string]interface{}:
-			for j := range valuesArray {
-				err := jsonCrawler.ScanJson(val.(map[string]interface{}), valuesArray[j].(map[string]interface{}))
-				if err != nil {
-					return err
-				}
-			}
-		case []interface{}:
-			for j := range valuesArray {
-				err := jsonCrawler.scanArray(val.([]interface{}), valuesArray[j].([]interface{}))
-				if err != nil {
-					return err
-				}
-			}
-		default:
-			for j := range valuesArray {
-				newVal, err := jsonCrawler.analyzeAndAnonymizeJSON(fmt.Sprint(valuesArray[j]), fmt.Sprint(concreteVal))
-				if err != nil {
-					return err
-				}
-				valuesArray[j] = newVal
-			}
-		}
+func checkIfKeyExistInMap(valuesMap map[string]interface{}, key string) (interface{}, error) {
+	if newVal, ok := valuesMap[key]; ok {
+		return newVal, nil
+	}
+	return nil, fmt.Errorf(errorMsg)
+}
+
+func checkIfEmptyMap(schema map[string]interface{}, json map[string]interface{}) error {
+	if json == nil || schema == nil || len(json) == 0 {
+		return fmt.Errorf(errorMsg)
+	}
+	return nil
+}
+
+func checkIfEmptyArray(schema []interface{}, json []interface{}) error {
+	if json == nil || schema == nil || len(json) == 0 {
+		return fmt.Errorf(errorMsg)
 	}
 	return nil
 }
