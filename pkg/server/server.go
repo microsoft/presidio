@@ -91,3 +91,12 @@ func WriteResponse(
 ) {
 	c.JSON(statusCode, responseBody)
 }
+
+//AbortWithError aborts the request and returns the error in the response body
+func AbortWithError(c *gin.Context,
+	statusCode int,
+	err error) {
+	c.Error(err)
+	c.JSON(http.StatusBadRequest, err.Error())
+	c.Abort()
+}
