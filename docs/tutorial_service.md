@@ -44,3 +44,15 @@ You can also create reusable templates
     ```sh
     echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
     ```
+
+***Sample 5 (Image anonymization)***
+
+1. Create an anonymizer image template (This template redact values with black color)
+    ```sh
+    echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize-image/<my-anonymize-image-template-name>
+    ```
+
+2. Anonymize image
+    ```sh
+        http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeTemplateId='<my-anonymize-template-name>' imageType='image/png' file@~/test-ocr.png
+    ```

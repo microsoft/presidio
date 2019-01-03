@@ -151,7 +151,7 @@ func (api *API) applyPresidioOCR(c *gin.Context, image *types.Image, analyzeTemp
 }
 
 func getImageFile(c *gin.Context) []byte {
-	fileh, err := c.FormFile("data")
+	fileh, err := c.FormFile("file")
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return nil

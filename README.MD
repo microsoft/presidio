@@ -7,7 +7,7 @@
 
 # Presidio - Data Loss Prevention API
 
-**Context aware, born to the cloud, customizable data loss prevention service**
+**Context aware, customizable data loss prevention service in the text and images**
 
 ## Description
 
@@ -20,7 +20,11 @@ You can find a more detailed list [here](https://microsoft.github.io/presidio/fi
 
 ## Features
 
+***Free text***
+
 [![Image1](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)
+
+***Text In Images***
 
 [![Image2](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)
 
@@ -108,6 +112,18 @@ You can also create reusable templates
 2. Anonymize text
     ```sh
     echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
+    ```
+
+***Sample 5 (Image anonymization)***
+
+1. Create an anonymizer image template (This template redact values with black color)
+    ```sh
+    echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize-image/<my-anonymize-image-template-name>
+    ```
+
+2. Anonymize image
+    ```sh
+        http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png
     ```
 
 ### Current Features Status
