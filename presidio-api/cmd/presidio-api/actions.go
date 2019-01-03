@@ -361,7 +361,7 @@ func (api *API) getAnonymizeTemplate(anonymizeTemplateID string, anonymizeTempla
 		anonymizeTemplate = &types.AnonymizeTemplate{}
 		api.getTemplate(project, anonymize, anonymizeTemplateID, anonymizeTemplate, c)
 	} else if anonymizeTemplate == nil {
-		  server.AbortWithError(c, http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
+		server.AbortWithError(c, http.StatusBadRequest, fmt.Errorf("AnalyzeTemplate or AnalyzeTemplateId must be supplied"))
 		return nil
 	}
 
