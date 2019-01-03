@@ -2,7 +2,6 @@ package ocr
 
 import (
 	"encoding/xml"
-	"html"
 	"strconv"
 	"strings"
 
@@ -28,7 +27,11 @@ type element struct {
 }
 
 //PerformOCR and return hocr output
-func PerformOCR(client *gosseract.Client, image *types.Image) (*types.Image, error) {
+func PerformOCR(image *types.Image) (*types.Image, error) {
+
+	// Setup tesseract client
+	client := gosseract.NewClient()
+	defer client.Close()
 
 	err := client.SetImageFromBytes(image.Data)
 	if err != nil {
@@ -39,9 +42,9 @@ func PerformOCR(client *gosseract.Client, image *types.Image) (*types.Image, err
 	if err != nil {
 		return nil, err
 	}
-	out = html.UnescapeString(out)
 
 	log.Debug(out)
+
 	doc, err := convertHOcrToElements(out)
 	if err != nil {
 		return nil, err

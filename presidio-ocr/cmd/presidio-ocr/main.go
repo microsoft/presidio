@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 
-	"github.com/otiai10/gosseract"
 	"google.golang.org/grpc/reflection"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
@@ -20,8 +19,6 @@ import (
 
 type server struct{}
 
-var client *gosseract.Client
-
 func main() {
 
 	pflag.Int(platform.GrpcPort, 3001, "GRPC listen port")
@@ -33,10 +30,6 @@ func main() {
 
 	settings := platform.GetSettings()
 	log.CreateLogger(settings.LogLevel)
-
-	// Setup tesseract client
-	client = gosseract.NewClient()
-	defer client.Close()
 
 	lis, s := rpc.SetupClient(settings.GrpcPort)
 
@@ -50,7 +43,7 @@ func main() {
 
 func (s *server) Apply(ctx context.Context, r *types.OcrRequest) (*types.OcrResponse, error) {
 
-	res, err := ocr.PerformOCR(client, r.Image)
+	res, err := ocr.PerformOCR(r.Image)
 	if err != nil {
 		log.Error(err.Error())
 	}

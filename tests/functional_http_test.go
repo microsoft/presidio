@@ -128,7 +128,7 @@ func TestImageAnonymizer(t *testing.T) {
 	}
 
 	result := invokeHTTPUpload(t, "/api/v1/projects/test/anonymize-image", payload)
-	savedOutputImage, err := ioutil.ReadFile("./testdata/ocr-output.png")
+	savedOutputImage, err := ioutil.ReadFile("./testdata/ocr-result.png")
 	assert.NoError(t, err)
 
 	assert.Equal(t, len(savedOutputImage), len(result))

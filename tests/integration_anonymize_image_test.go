@@ -78,7 +78,7 @@ func TestAnonymizeImage(t *testing.T) {
 	// f, _ := os.Create("./testdata/ocr-output.png")
 	// f.Write(result.Data)
 	// f.Close()
-	savedOutputImage, err := ioutil.ReadFile("./testdata/ocr-output.png")
+	savedOutputImage, err := ioutil.ReadFile("./testdata/ocr-result.png")
 	assert.NoError(t, err)
 
 	assert.Equal(t, len(savedOutputImage), len(result.Data))
