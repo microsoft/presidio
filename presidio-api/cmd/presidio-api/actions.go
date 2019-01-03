@@ -84,7 +84,7 @@ func (api *API) anonymizeImage(c *gin.Context) {
 
 	anonymizeImageAPIRequest.ImageType = c.PostForm("imageType")
 	if anonymizeImageAPIRequest.ImageType == "" {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Image type is missing (image/jpeg, image/png, image/tiff, image/gif, image/bmp)"))
+		server.AbortWithError(c, http.StatusBadRequest, fmt.Errorf("Image type is missing (image/jpeg, image/png, image/tiff, image/gif, image/bmp)"))
 		return
 	}
 
@@ -114,7 +114,7 @@ func (api *API) anonymizeImage(c *gin.Context) {
 		image.ImageType = anonymizeImageAPIRequest.ImageType
 		anonymizeResult, err := api.Services.AnonymizeImageItem(c, image, analyzeResults, anonymizeImageAPIRequest.DetectionType, anonymizeImageTemplate)
 		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
+			server.AbortWithError(c, http.StatusInternalServerError, err)
 			return
 		}
 		c.Data(http.StatusOK, anonymizeImageAPIRequest.ImageType, anonymizeResult.Image.Data)
@@ -124,11 +124,11 @@ func (api *API) anonymizeImage(c *gin.Context) {
 func (api *API) applyPresidioOCR(c *gin.Context, image *types.Image, analyzeTemplate *types.AnalyzeTemplate) []*types.AnalyzeResult {
 	ocrRes, err := api.Services.OcrItem(c, image)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		server.AbortWithError(c, http.StatusInternalServerError, err)
 		return nil
 	}
 	if ocrRes.Image.Text == "" {
-		c.AbortWithError(http.StatusNoContent, fmt.Errorf("No content found in image"))
+		server.AbortWithError(c, http.StatusNoContent, fmt.Errorf("No content found in image"))
 
 		return nil
 	}
@@ -138,11 +138,11 @@ func (api *API) applyPresidioOCR(c *gin.Context, image *types.Image, analyzeTemp
 
 	analyzeResults, err := api.Services.AnalyzeItem(c, ocrRes.Image.Text, analyzeTemplate)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		server.AbortWithError(c, http.StatusInternalServerError, err)
 		return nil
 	}
 	if analyzeResults == nil {
-		c.AbortWithError(http.StatusNoContent, fmt.Errorf("No content found in image"))
+		server.AbortWithError(c, http.StatusNoContent, fmt.Errorf("No content found in image"))
 		return nil
 	}
 	return analyzeResults
@@ -151,29 +151,29 @@ func (api *API) applyPresidioOCR(c *gin.Context, image *types.Image, analyzeTemp
 func getImageFile(c *gin.Context) []byte {
 	fileh, err := c.FormFile("file")
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return nil
 	}
 	if fileh.Size >= maxImageSize {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("File size is over 4MB"))
+		server.AbortWithError(c, http.StatusBadRequest, fmt.Errorf("File size is over 4MB"))
 		return nil
 	}
 
 	file, err := fileh.Open()
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return nil
 	}
 
 	bt := make([]byte, fileh.Size)
 	_, err = file.Read(bt)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return nil
 	}
 	err = file.Close()
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		server.AbortWithError(c, http.StatusBadRequest, err)
 		return nil
 	}
 	return bt
@@ -375,7 +375,7 @@ func (api *API) getAnonymizeImageTemplate(anonymizeImageTemplateID string, anony
 		anonymizeImageTemplate = &types.AnonymizeImageTemplate{}
 		api.getTemplate(project, anonymizeImage, anonymizeImageTemplateID, anonymizeImageTemplate, c)
 	} else if anonymizeImageTemplate == nil {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("AnonymizeImageTemplate or AnonymizeImageTemplateId must be supplied"))
+		server.AbortWithError(c, http.StatusBadRequest, fmt.Errorf("AnonymizeImageTemplate or AnonymizeImageTemplateId must be supplied"))
 		return nil
 	}
 
