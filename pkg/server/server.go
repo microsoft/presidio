@@ -97,6 +97,6 @@ func AbortWithError(c *gin.Context,
 	statusCode int,
 	err error) {
 	c.Error(err)
-	c.JSON(http.StatusBadRequest, err.Error())
+	c.JSON(statusCode, err.Error())
 	c.Abort()
 }
