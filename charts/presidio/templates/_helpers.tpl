@@ -21,7 +21,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "presidio.anonymizer.fullname" -}}
 {{ include "presidio.fullname" . | printf "%s-anonymizer" }}
 {{- end -}}
-{{- define "presidio.anonymizer-image.fullname" -}}
+{{- define "presidio.anonymizerimage.fullname" -}}
 {{ include "presidio.fullname" . | printf "%s-anonymizer-image" }}
 {{- end -}}
 {{- define "presidio.ocr.fullname" -}}
@@ -40,6 +40,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "presidio.anonymizer.address" -}}
 {{template "presidio.anonymizer.fullname" .}}:{{.Values.anonymizer.service.externalPort}}
+{{- end -}}
+
+{{- define "presidio.anonymizerimage.address" -}}
+{{template "presidio.anonymizerimage.fullname" .}}:{{.Values.anonymizerimage.service.externalPort}}
+{{- end -}}
+
+{{- define "presidio.ocr.address" -}}
+{{template "presidio.ocr.fullname" .}}:{{.Values.ocr.service.externalPort}}
 {{- end -}}
 
 {{- define "presidio.scheduler.address" -}}

@@ -46,7 +46,7 @@ spec:
           - name: ANONYMIZER_SVC_ADDRESS
             value:  {{ template "presidio.anonymizer.address" . }}
           - name: ANONYMIZER_IMAGE_SVC_ADDRESS
-            value:  {{ template "presidio.anonymizer-image.address" . }}
+            value:  {{ template "presidio.anonymizerimage.address" . }}
           - name: OCR_SVC_ADDRESS
             value:  {{ template "presidio.ocr.address" . }}
           - name: DATASINK_GRPC_PORT

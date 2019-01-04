@@ -46,7 +46,7 @@ anonymizer:
     externalPort: 3001
     internalPort: 3001
 
-anonymizer-image:
+anonymizerimage:
   name: presidio-anonymizer-image
   # tag:
   imagePullPolicy: Always
