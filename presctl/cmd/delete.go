@@ -35,7 +35,7 @@ func init() {
 
 	// define supported flags for the add command
 	delTemplateCmd.Flags().String(templateFlag, "", "template's name")
-	delTemplateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ['anonymize', 'analyze']")
+	delTemplateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
 	delTemplateCmd.Flags().String(projectFlag, "", "project's name")
 
 	// mark flags as required

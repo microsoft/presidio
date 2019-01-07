@@ -41,7 +41,7 @@ func init() {
 	// define supported flags for the add command
 	templateCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
 	templateCmd.Flags().String(templateFlag, "", "new template's name")
-	templateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ['anonymize', 'analyze']")
+	templateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
 	templateCmd.Flags().String(projectFlag, "", "project's name")
 
 	// mark flags as required

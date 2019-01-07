@@ -8,6 +8,18 @@ import (
 	"github.com/Microsoft/presidio/pkg/cache"
 )
 
+const (
+	analyze                = "analyze"
+	anonymize              = "anonymize"
+	scan                   = "scan"
+	stream                 = "stream"
+	datasink               = "datasink"
+	scheduleScannerCronJob = "schedule-scanner-cronjob"
+	scheduleStreamsJob     = "schedule-streams-job"
+)
+
+var AllowedActions = []string{analyze, anonymize, scan, stream, datasink, scheduleScannerCronJob, scheduleStreamsJob}
+
 //ServicesAPI interface for services action
 type ServicesAPI interface {
 	SetupAnalyzerService()

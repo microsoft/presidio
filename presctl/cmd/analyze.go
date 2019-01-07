@@ -19,7 +19,6 @@ var analyzeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		analyzeTemplateID := getFlagValue(cmd, analyzeTemplateIDFlag)
-		anonymizeTemplateID := getFlagValue(cmd, anonymizeTemplateIDFlag)
 		outputFile := getFlagValue(cmd, outputFlag)
 		path := getFlagValue(cmd, fileFlag)
 		projectName := getFlagValue(cmd, projectFlag)
@@ -36,7 +35,7 @@ var analyzeCmd = &cobra.Command{
 		var err error
 		var jsonBytes []byte
 		if path == "" {
-			msg := entities.ActionMsg{Text: queryStr, AnalyzeTemplateID: analyzeTemplateID, AnonymizeTemplateID: anonymizeTemplateID}
+			msg := entities.ActionMsg{Text: queryStr, AnalyzeTemplateID: analyzeTemplateID}
 			jsonBytes, err = json.Marshal(&msg)
 			contentStr = string(jsonBytes)
 		} else {
@@ -57,7 +56,6 @@ func init() {
 	analyzeCmd.Flags().StringP(outputFlag, "o", "", "output file path")
 	analyzeCmd.Flags().StringP(stringFlag, "s", "", "string to analyze")
 	analyzeCmd.Flags().String(analyzeTemplateIDFlag, "", "the analyze templateId")
-	analyzeCmd.Flags().String(anonymizeTemplateIDFlag, "", "the anonymize templateId")
 
 	// mark flags as required
 	analyzeCmd.MarkFlagRequired(projectFlag)

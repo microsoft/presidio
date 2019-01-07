@@ -17,12 +17,8 @@ type httpClient interface {
 const (
 	Analyze   = "analyze"
 	Anonymize = "anonymize"
-)
-
-// types of jobs available for scheduling
-const (
-	Scanner = "schedule-scanner-cronjob"
-	Stream  = "schedule-streams-job"
+	Scanner   = "schedule-scanner-cronjob"
+	Stream    = "schedule-streams-job"
 )
 
 // ActionMsg defines the structure of the action post body

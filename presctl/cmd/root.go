@@ -6,21 +6,31 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/Microsoft/presidio/pkg/presidio"
 )
 
 // constants
-const fileFlag = "file"
-const templateFlag = "template"
-const actionFlag = "action"
-const stringFlag = "string"
-const projectFlag = "project"
-const outputFlag = "output"
-const analyzeTemplateIDFlag = "analyzeTemplateId"
-const anonymizeTemplateIDFlag = "anonymizeTemplateId"
+const (
+	fileFlag                  = "file"
+	templateFlag              = "template"
+	actionFlag                = "action"
+	stringFlag                = "string"
+	projectFlag               = "project"
+	outputFlag                = "output"
+	analyzeTemplateIDFlag     = "analyzeTemplateId"
+	anonymizeTemplateIDFlag   = "anonymizeTemplateId"
+	scheduleJobTemplateIDFlag = "jobTemplateId"
+)
+
+func getSupportedActions() string {
+	return strings.Join(presidio.AllowedActions, ", ")
+}
 
 func check(err error) {
 	if err != nil {
