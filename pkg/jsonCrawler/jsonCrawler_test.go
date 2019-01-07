@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"testing"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/stretchr/testify/assert"
+
+	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
 func analyzeFuncMock(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error) {
 	return []*types.AnalyzeResult{
-		&types.AnalyzeResult{
+		{
 			Field: &types.FieldTypes{
 				Name: "DOMAIN_NAME",
 			},
@@ -29,6 +30,8 @@ func anonymizeFuncMock(ctx context.Context, analyzeResults []*types.AnalyzeResul
 			anonymized = "<PHONE_NUMBER>"
 		case "DOMAIN_NAME":
 			anonymized = "*****"
+		case "LOCATION":
+			anonymized = "<LOCATION>"
 		}
 	}
 
@@ -79,6 +82,60 @@ func TestScanJSONWithSimple(t *testing.T) {
 			"PhoneNumber": "<PHONE_NUMBER>",
 			"Site": "*****",
 			"Other":23.2.2019
+		}
+	]}`)
+
+	assert.Equal(t, expextedResult, jsonToAnonymize)
+}
+
+func TestScanJSONComplexArrayWithSimple(t *testing.T) {
+	// Arrange
+	jsonSchema, _ := unmarshalJSON(`{"patients":[{
+		"Name":"<PERSON>",
+		"PhoneNumber":"<PHONE_NUMBER>",
+		"Site": "analyze",
+		"Other:"ignore"
+	},
+	{
+		"Age":"ignore",
+		"Address":"<LOCATION>",
+		"Site": "analyze",
+		"Other:"ignore"
+	}]}`)
+
+	jsonToAnonymize, _ := unmarshalJSON(`{"patients":[
+		{
+			"Name": "David Johnson",
+			"PhoneNumber": "(212) 555-1234",
+			"Site": "www.microsoft.com",
+			"Other":123456
+		},
+		{
+			"Age":23,
+			"Address":"New York",
+			"Site": "www.microsoft.com",
+			"Other:"abc cbd"
+		}
+	]}`)
+
+	crawler := New(context.Background(), analyzeFuncMock, anonymizeFuncMock, &types.AnalyzeTemplate{}, &types.AnonymizeTemplate{})
+
+	// Act
+	crawler.ScanJSON(jsonSchema, jsonToAnonymize)
+
+	// Assert
+	expextedResult, _ := unmarshalJSON(`{"patients":[
+		{
+			"Name": "<PERSON>",
+			"PhoneNumber": "<PHONE_NUMBER>",
+			"Site": "<DOMAIN>",
+			"Other":123456
+		},
+		{
+			"Age":23,
+			"Address":"<LOCATION>",
+			"Site": "<DOMAIN>,
+			"Other:"abc cbd"
 		}
 	]}`)
 

@@ -106,6 +106,17 @@ You can also create reusable templates
     echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
     ```
 
+***Sample 5***
+1. Create an anonymize json template, this will define the json schema to be analyzed and anonymized.
+   ```sh
+    echo -n '{"jsonSchema":"{\"Name\": \"<PERSON>\", "Address": "<LOCATION>}"}' | http <api-service-address>/api/v1/templates/<my-project>/anonymizeJSON/<my-anonymize-json-template-name>
+    ```
+
+2. Analyze and anonymize the json, providing pre-defined analyze and anonymize templates
+   ```sh
+   echo -n '{"json":"{\"Name\": \"John Davidson\", "Address": "New York"}","jsonSchemaTemplateId":"<my-anonymize-json-template-name>","analyzeTemplateId": "<my-analyze-template-name>", "anonymizeTemplateId":"<my-anonymize-template-name>" }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize-json
+    ```
+
 ### Current Features Status
 
 | Module              | Feature              | Status                 |

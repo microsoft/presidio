@@ -13,7 +13,7 @@ type anonymizeFunc func(ctx context.Context, analyzeResults []*types.AnalyzeResu
 
 const errorMsg = "Schema Json and Json to Anonymize are not in the same json format"
 
-//JSONCrawler
+//JSONCrawler for analyzing and anonymizing text
 type JSONCrawler struct {
 	analyzeItem       analyzeFunc
 	anonymizeItem     anonymizeFunc
@@ -74,28 +74,33 @@ func (jsonCrawler *JSONCrawler) scanArray(schemaArray []interface{}, valuesArray
 		return err
 	}
 
-	for _, val := range schemaArray {
-		for j := range valuesArray {
-			switch concreteVal := val.(type) {
-			case map[string]interface{}:
-				err := jsonCrawler.ScanJSON(val.(map[string]interface{}), valuesArray[j].(map[string]interface{}))
-				if err != nil {
-					return err
-				}
-			case []interface{}:
-				err := jsonCrawler.scanArray(val.([]interface{}), valuesArray[j].([]interface{}))
-				if err != nil {
-					return err
-				}
-			default:
-				newVal, err := jsonCrawler.analyzeAndAnonymizeJSON(fmt.Sprint(valuesArray[j]), fmt.Sprint(concreteVal))
-				if err != nil {
-					return err
-				}
-				valuesArray[j] = newVal
+	i := 0
+	for j := range valuesArray {
+		if len(schemaArray) > 1 {
+			i = j
+		}
+
+		val := schemaArray[i]
+		switch concreteVal := val.(type) {
+		case map[string]interface{}:
+			err := jsonCrawler.ScanJSON(val.(map[string]interface{}), valuesArray[j].(map[string]interface{}))
+			if err != nil {
+				return err
 			}
+		case []interface{}:
+			err := jsonCrawler.scanArray(val.([]interface{}), valuesArray[j].([]interface{}))
+			if err != nil {
+				return err
+			}
+		default:
+			newVal, err := jsonCrawler.analyzeAndAnonymizeJSON(fmt.Sprint(valuesArray[j]), fmt.Sprint(concreteVal))
+			if err != nil {
+				return err
+			}
+			valuesArray[j] = newVal
 		}
 	}
+
 	return nil
 }
 
@@ -106,9 +111,9 @@ func (jsonCrawler *JSONCrawler) scanIfNotEmpty(valuesMap map[string]interface{},
 	}
 	if valType == "map" {
 		return jsonCrawler.ScanJSON(val.(map[string]interface{}), newVal.(map[string]interface{}))
-	} else {
-		return jsonCrawler.scanArray(val.([]interface{}), newVal.([]interface{}))
 	}
+
+	return jsonCrawler.scanArray(val.([]interface{}), newVal.([]interface{}))
 }
 
 func (jsonCrawler *JSONCrawler) analyzeAndAnonymizeJSON(val string, field string) (string, error) {

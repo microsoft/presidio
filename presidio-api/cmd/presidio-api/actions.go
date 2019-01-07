@@ -79,7 +79,7 @@ func (api *API) anonymize(c *gin.Context) {
 func (api *API) anonymizeJSON(c *gin.Context) {
 	var anonymizeJSONApiRequest types.AnonymizeJsonApiRequest
 
-	if c.Bind(&anonymizeJSONApiRequest) == nil {
+	if c.BindJSON(&anonymizeJSONApiRequest) == nil {
 		project := c.Param("project")
 
 		analyzeTemplate := api.getAnalyzeTemplate(anonymizeJSONApiRequest.AnalyzeTemplateId, anonymizeJSONApiRequest.AnalyzeTemplate, project, c)
