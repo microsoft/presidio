@@ -58,8 +58,7 @@ func PerformOCR(image *types.Image) (*types.Image, error) {
 func convertHOcrToElements(hocr string) (document, error) {
 	var doc document
 	header := `<?xml version="1.0" encoding="UTF-8"?>` + "\n"
-	x := header + hocr
-	err := xml.Unmarshal(([]byte)(x), &doc)
+	err := xml.Unmarshal(([]byte)(header+hocr), &doc)
 	if err != nil {
 		return document{}, err
 	}

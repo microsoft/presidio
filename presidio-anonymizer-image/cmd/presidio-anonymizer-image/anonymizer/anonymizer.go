@@ -68,10 +68,12 @@ func redactText(dimg img.Image, image *types.Image, results []*types.AnalyzeResu
 		for _, bbox := range image.Boundingboxes {
 
 			for _, graphic := range template.FieldTypeGraphics {
+				//All fields will be redacted
 				if graphic.Fields == nil {
 					dimg = fillBbox(dimg, bbox, location, graphic)
 					break
 				}
+				//Specified fields will be redacted
 				for _, fieldType := range graphic.Fields {
 					if fieldType.Name == result.Field.Name {
 						dimg = fillBbox(dimg, bbox, location, graphic)

@@ -3,6 +3,7 @@ package presidio
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/cache"
@@ -58,6 +59,9 @@ type Item interface {
 
 // ConvertJSONToInterface convert Json to go Interface
 func ConvertJSONToInterface(template string, convertTo interface{}) error {
+	if template == "" {
+		return fmt.Errorf("template is empty")
+	}
 	err := json.Unmarshal([]byte(template), &convertTo)
 	return err
 }
