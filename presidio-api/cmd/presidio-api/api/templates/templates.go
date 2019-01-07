@@ -53,6 +53,10 @@ func DeleteActionTemplate(api *store.API, project, action, id string) (string, e
 //GetTemplate based on id or json(tmpl)
 func GetTemplate(api *store.API, project, action, id string, obj interface{}) error {
 
+	if id == "" {
+		return nil
+	}
+
 	template, err := api.Templates.GetTemplate(project, action, id)
 	if err != nil {
 		return err
