@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -111,24 +112,53 @@ func anonymizeText(c *gin.Context) {
 }
 
 func anonymizeImage(c *gin.Context) {
-	var anonymizeImageAPIRequest *types.AnonymizeImageApiRequest
+
 	project := c.Param("project")
-	anonymizeImageAPIRequest.ImageType = c.PostForm("imageType")
-	anonymizeImageTemplate := c.PostForm("anonymizeImageTemplate")
-	anonymizeImageTemplateID := c.PostForm("anonymizeImageTemplateId")
-	analyzeTemplate := c.PostForm("analyzeTemplate")
-	analyzeTemplateID := c.PostForm("analyzeTemplateId")
-	file, err := c.FormFile("file")
+
+	anonymizeImageAPIRequest, err := bindAnonymizeImageParameters(c)
 	if err != nil {
 		server.AbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
-	result, err := ai.AnonymizeImage(c, api, anonymizeImageAPIRequest, file, anonymizeImageTemplate, anonymizeImageTemplateID, analyzeTemplate, analyzeTemplateID, project)
+
+	result, err := ai.AnonymizeImage(c, api, anonymizeImageAPIRequest, project)
 	if err != nil {
 		server.AbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	c.Data(http.StatusOK, anonymizeImageAPIRequest.ImageType, result)
+}
+
+func bindAnonymizeImageParameters(c *gin.Context) (*types.AnonymizeImageApiRequest, error) {
+	anonymizeImageAPIRequest := &types.AnonymizeImageApiRequest{}
+
+	anonymizeImageAPIRequest.ImageType, _ = c.GetPostForm("imageType")
+
+	anonymizeImageTemplate, _ := c.GetPostForm("anonymizeImageTemplate")
+	if anonymizeImageTemplate != "" {
+		anonymizeImageAPIRequest.AnonymizeImageTemplate = &types.AnonymizeImageTemplate{}
+		presidio.ConvertJSONToInterface(anonymizeImageTemplate, &anonymizeImageAPIRequest.AnonymizeImageTemplate)
+	}
+
+	anonymizeImageAPIRequest.AnonymizeImageTemplateId, _ = c.GetPostForm("anonymizeImageTemplateId")
+
+	analyzeTemplate, _ := c.GetPostForm("analyzeTemplate")
+	if analyzeTemplate != "" {
+		anonymizeImageAPIRequest.AnalyzeTemplate = &types.AnalyzeTemplate{}
+		presidio.ConvertJSONToInterface(analyzeTemplate, &anonymizeImageAPIRequest.AnalyzeTemplate)
+	}
+
+	anonymizeImageAPIRequest.AnalyzeTemplateId, _ = c.GetPostForm("analyzeTemplateId")
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return nil, err
+	}
+	anonymizeImageAPIRequest.Data, err = openFile(file)
+	if err != nil {
+		return nil, err
+	}
+	return anonymizeImageAPIRequest, nil
 }
 
 func scheduleScannerCronJob(c *gin.Context) {
@@ -190,4 +220,21 @@ func bindAndConvert(template interface{}, c *gin.Context) (string, error) {
 		return presidio.ConvertInterfaceToJSON(template)
 	}
 	return "", fmt.Errorf("No template found")
+}
+
+func openFile(header *multipart.FileHeader) ([]byte, error) {
+
+	file, err := header.Open()
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+	bt := make([]byte, header.Size)
+	_, err = file.Read(bt)
+	if err != nil {
+		return nil, err
+	}
+
+	return bt, nil
 }

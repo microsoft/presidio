@@ -22,7 +22,7 @@ func setupMockServices() *store.API {
 
 	api := &store.API{
 		Services:  srv,
-		Templates: mocks.GetTemplateMock(mocks.GetEmptyTemplateMockResult()),
+		Templates: mocks.GetTemplateMock(),
 	}
 	return api
 }

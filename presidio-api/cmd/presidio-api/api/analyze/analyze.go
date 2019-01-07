@@ -18,7 +18,7 @@ func Analyze(ctx context.Context, api *store.API, analyzeAPIRequest *types.Analy
 		analyzeAPIRequest.AnalyzeTemplate = &types.AnalyzeTemplate{}
 	}
 
-	err := templates.GetTemplate(api.Templates, project, store.Analyze, analyzeAPIRequest.AnalyzeTemplateId, analyzeAPIRequest.AnalyzeTemplate)
+	err := templates.GetTemplate(api, project, store.Analyze, analyzeAPIRequest.AnalyzeTemplateId, analyzeAPIRequest.AnalyzeTemplate)
 	if err != nil {
 		return nil, err
 	}

@@ -50,14 +50,15 @@ func DeleteActionTemplate(api *store.API, project, action, id string) (string, e
 	return "", err
 }
 
-//GetTemplate based on id or json
-func GetTemplate(template presidio.TemplatesStore, project string, action string, id string, obj interface{}) error {
+//GetTemplate based on id or json(tmpl)
+func GetTemplate(api *store.API, project, action, id string, obj interface{}) error {
 
-	t, err := template.GetTemplate(project, action, id)
+	template, err := api.Templates.GetTemplate(project, action, id)
 	if err != nil {
 		return err
 	}
-	err = presidio.ConvertJSONToInterface(t, obj)
+
+	err = presidio.ConvertJSONToInterface(template, obj)
 	if err != nil {
 		return err
 	}

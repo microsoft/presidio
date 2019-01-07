@@ -13,7 +13,7 @@ import (
 //ScheduleStreamsJob schedule stream job
 func ScheduleStreamsJob(ctx context.Context, api *store.API, streamsJobAPIRequest *types.StreamsJobApiRequest, project string) (*types.StreamsJobResponse, error) {
 
-	streamsJobRequest, err := getStreamsJobRequest(api.Templates, streamsJobAPIRequest, project)
+	streamsJobRequest, err := getStreamsJobRequest(api, streamsJobAPIRequest, project)
 	if err != nil {
 		return nil, err
 	}
@@ -33,18 +33,18 @@ func invokeStreamsJobScheduler(ctx context.Context, services presidio.ServicesAP
 	return res, nil
 }
 
-func getStreamsJobRequest(t presidio.TemplatesStore, jobAPIRequest *types.StreamsJobApiRequest, project string) (*types.StreamsJobRequest, error) {
+func getStreamsJobRequest(api *store.API, jobAPIRequest *types.StreamsJobApiRequest, project string) (*types.StreamsJobRequest, error) {
 	streamsJobRequest := &types.StreamsJobRequest{}
 
 	if jobAPIRequest.GetStreamsJobTemplateId() != "" {
 		jobTemplate := &types.StreamsJobTemplate{}
-		err := templates.GetTemplate(t, project, store.ScheduleStreamsJob, jobAPIRequest.StreamsJobTemplateId, jobTemplate)
+		err := templates.GetTemplate(api, project, store.ScheduleStreamsJob, jobAPIRequest.StreamsJobTemplateId, jobTemplate)
 		if err != nil {
 			return nil, err
 		}
 		streamID := jobTemplate.GetStreamsTemplateId()
 		streamTemplate := &types.StreamTemplate{}
-		err = templates.GetTemplate(t, project, store.Stream, streamID, streamTemplate)
+		err = templates.GetTemplate(api, project, store.Stream, streamID, streamTemplate)
 		if err != nil {
 			return nil, err
 		}
@@ -53,18 +53,18 @@ func getStreamsJobRequest(t presidio.TemplatesStore, jobAPIRequest *types.Stream
 		}
 
 		datasinkTemplate := &types.DatasinkTemplate{}
-		err = templates.GetTemplate(t, project, store.Datasink, jobTemplate.GetDatasinkTemplateId(), datasinkTemplate)
+		err = templates.GetTemplate(api, project, store.Datasink, jobTemplate.GetDatasinkTemplateId(), datasinkTemplate)
 		if err != nil {
 			return nil, err
 		}
 		analyzeTemplate := &types.AnalyzeTemplate{}
-		err = templates.GetTemplate(t, project, store.Analyze, jobTemplate.GetAnalyzeTemplateId(), analyzeTemplate)
+		err = templates.GetTemplate(api, project, store.Analyze, jobTemplate.GetAnalyzeTemplateId(), analyzeTemplate)
 		if err != nil {
 			return nil, err
 		}
 		anonymizeTemplate := &types.AnonymizeTemplate{}
 		if jobTemplate.AnonymizeTemplateId != "" {
-			err = templates.GetTemplate(t, project, store.Anonymize, jobTemplate.GetAnonymizeTemplateId(), anonymizeTemplate)
+			err = templates.GetTemplate(api, project, store.Anonymize, jobTemplate.GetAnonymizeTemplateId(), anonymizeTemplate)
 			if err != nil {
 				return nil, err
 			}

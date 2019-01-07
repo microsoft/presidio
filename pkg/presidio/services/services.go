@@ -89,7 +89,7 @@ func (services *Services) SetupOCRService() {
 
 	ocrService, err := rpc.SetupOcrService(services.Settings.OcrSvcAddress)
 	if err != nil {
-		log.Fatal("Connection to anonymizer service failed %q", err)
+		log.Fatal("Connection to ocr service failed %q", err)
 	}
 
 	services.OcrService = ocrService
@@ -106,7 +106,7 @@ func (services *Services) SetupSchedulerService() {
 
 	schedulerService, err := rpc.SetupSchedulerService(services.Settings.SchedulerSvcAddress)
 	if err != nil {
-		log.Fatal("Connection to anonymizer service failed %q", err)
+		log.Fatal("Connection to scheduler service failed %q", err)
 	}
 	services.SchedulerService = schedulerService
 

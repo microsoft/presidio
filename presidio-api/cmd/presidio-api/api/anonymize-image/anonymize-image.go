@@ -3,7 +3,6 @@ package anonymizeimage
 import (
 	"context"
 	"fmt"
-	"mime/multipart"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/presidio"
@@ -22,11 +21,9 @@ const (
 )
 
 //AnonymizeImage anonymize image
-func AnonymizeImage(ctx context.Context, api *store.API, anonymizeImageAPIRequest *types.AnonymizeImageApiRequest, file *multipart.FileHeader,
-	anonymizeImageTemplate, anonymizeImageTemplateID, analyzeTemplate,
-	analyzeTemplateID, project string) ([]byte, error) {
+func AnonymizeImage(ctx context.Context, api *store.API, anonymizeImageAPIRequest *types.AnonymizeImageApiRequest, project string) ([]byte, error) {
 
-	err := validateFormat(anonymizeImageAPIRequest.ImageType)
+	err := validateFormat(anonymizeImageAPIRequest.Data, anonymizeImageAPIRequest.ImageType)
 	if err != nil {
 		return nil, err
 	}
@@ -36,17 +33,13 @@ func AnonymizeImage(ctx context.Context, api *store.API, anonymizeImageAPIReques
 		return nil, err
 	}
 
-	err = templates.GetTemplate(api.Templates, project, store.AnonymizeImage, anonymizeImageTemplateID, &anonymizeImageAPIRequest.AnonymizeImageTemplate)
+	err = templates.GetTemplate(api, project, store.AnonymizeImage, anonymizeImageAPIRequest.AnonymizeImageTemplateId, &anonymizeImageAPIRequest.AnonymizeImageTemplate)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := getImageFile(file)
-	if err != nil {
-		return nil, err
-	}
 	image := &types.Image{
-		Data: data,
+		Data: anonymizeImageAPIRequest.Data,
 	}
 
 	if anonymizeImageAPIRequest.DetectionType == types.DetectionTypeEnum_OCR {
@@ -56,7 +49,7 @@ func AnonymizeImage(ctx context.Context, api *store.API, anonymizeImageAPIReques
 			return nil, err
 		}
 
-		err = templates.GetTemplate(api.Templates, project, store.Analyze, analyzeTemplateID, &anonymizeImageAPIRequest.AnalyzeTemplate)
+		err = templates.GetTemplate(api, project, store.Analyze, anonymizeImageAPIRequest.AnalyzeTemplateId, &anonymizeImageAPIRequest.AnalyzeTemplate)
 		if err != nil {
 			return nil, err
 		}
@@ -75,7 +68,14 @@ func AnonymizeImage(ctx context.Context, api *store.API, anonymizeImageAPIReques
 	return nil, fmt.Errorf("Not method found")
 }
 
-func validateFormat(imageType string) error {
+func validateFormat(data []byte, imageType string) error {
+
+	if data == nil {
+		return fmt.Errorf("Image is empty or null")
+	}
+	if len(data) >= maxImageSize {
+		return fmt.Errorf("File size is over 4MB")
+	}
 	if imageType == "" || (imageType != jpg &&
 		imageType != jpeg &&
 		imageType != tif &&
@@ -98,7 +98,7 @@ func validateAnalyzeTemplate(anonymizeImageAPIRequest *types.AnonymizeImageApiRe
 
 func validateAnonymizeImageTemplate(anonymizeImageAPIRequest *types.AnonymizeImageApiRequest) error {
 	if anonymizeImageAPIRequest.AnonymizeImageTemplateId == "" && anonymizeImageAPIRequest.AnonymizeImageTemplate == nil {
-		return fmt.Errorf("Anonymize template is missing or empty")
+		return fmt.Errorf("Anonymize image template is missing or empty")
 	} else if anonymizeImageAPIRequest.AnonymizeImageTemplate == nil {
 		anonymizeImageAPIRequest.AnonymizeImageTemplate = &types.AnonymizeImageTemplate{}
 	}
@@ -128,24 +128,4 @@ func applyPresidioOCR(ctx context.Context, services presidio.ServicesAPI, image 
 
 	}
 	return analyzeResults, nil
-}
-
-func getImageFile(fileh *multipart.FileHeader) ([]byte, error) {
-	if fileh.Size >= maxImageSize {
-		return nil, fmt.Errorf("File size is over 4MB")
-	}
-
-	file, err := fileh.Open()
-	if err != nil {
-		return nil, err
-	}
-
-	defer file.Close()
-	bt := make([]byte, fileh.Size)
-	_, err = file.Read(bt)
-	if err != nil {
-		return nil, err
-	}
-
-	return bt, nil
 }

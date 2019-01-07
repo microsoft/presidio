@@ -5,6 +5,7 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/presidio"
+	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
 
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
@@ -17,6 +18,16 @@ type AnalyzerMockedObject struct {
 
 //AnonymizerMockedObject anonymizer mock
 type AnonymizerMockedObject struct {
+	mock.Mock
+}
+
+//AnonymizerImageMockedObject anonymizer mock
+type AnonymizerImageMockedObject struct {
+	mock.Mock
+}
+
+//OcrMockedObject anonymizer mock
+type OcrMockedObject struct {
 	mock.Mock
 }
 
@@ -66,7 +77,7 @@ func (m *AnalyzerMockedObject) Apply(c context.Context, analyzeRequest *types.An
 	return result, args.Error(1)
 }
 
-//GetAnonymizerMockResult get analyzer mock response
+//GetAnonymizerMockResult get anonymizer mock response
 func GetAnonymizerMockResult() *types.AnonymizeResponse {
 
 	return &types.AnonymizeResponse{
@@ -91,26 +102,78 @@ func (m *AnonymizerMockedObject) Apply(c context.Context, anonymizeRequest *type
 	return result, args.Error(1)
 }
 
-//GetTemplate mock
-func (m *TemplateMockedObject) GetTemplate(project string, action string, id string) (string, error) {
+//GetAnonymizerImageServiceMock get service mock
+func GetAnonymizerImageServiceMock(expectedResult *types.AnonymizeImageResponse) types.AnonymizeImageServiceClient {
+	anonymizerImageService := &AnonymizerImageMockedObject{}
+	anonymizerImageService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(expectedResult, nil)
+	return anonymizerImageService
+}
+
+//Apply anonymizer mock
+func (m *AnonymizerImageMockedObject) Apply(c context.Context, anonymizeImageRequest *types.AnonymizeImageRequest, opts ...grpc.CallOption) (*types.AnonymizeImageResponse, error) {
 	args := m.Mock.Called()
-	var result string
+	var result *types.AnonymizeImageResponse
 	if args.Get(0) != nil {
-		result = args.Get(0).(string)
+		result = args.Get(0).(*types.AnonymizeImageResponse)
 	}
 	return result, args.Error(1)
 }
 
-//GetEmptyTemplateMockResult mock
-func GetEmptyTemplateMockResult() string {
-	return "{}"
+//GetAnonymizerImageMockResult get anonymizer image mock response
+func GetAnonymizerImageMockResult() *types.AnonymizeImageResponse {
+
+	return &types.AnonymizeImageResponse{
+		Image: &types.Image{
+			Data:          make([]byte, 1),
+			Boundingboxes: make([]*types.Boundingbox, 1),
+		},
+	}
+}
+
+//GetOcrServiceMock get service mock
+func GetOcrServiceMock(expectedResult *types.OcrResponse) types.OcrServiceClient {
+	ocrService := &OcrMockedObject{}
+	ocrService.On("Apply", mock.Anything, mock.Anything, mock.Anything).Return(expectedResult, nil)
+	return ocrService
+}
+
+//Apply ocr mock
+func (m *OcrMockedObject) Apply(c context.Context, ocrRequest *types.OcrRequest, opts ...grpc.CallOption) (*types.OcrResponse, error) {
+	args := m.Mock.Called()
+	var result *types.OcrResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*types.OcrResponse)
+	}
+	return result, args.Error(1)
+}
+
+//GetOcrMockResult get ocr mock response
+func GetOcrMockResult() *types.OcrResponse {
+
+	return &types.OcrResponse{
+		Image: &types.Image{
+			Text: "My number is (555) 253-0000 and email johnsnow@foo.com",
+		},
+	}
 }
 
 //GetTemplateMock mock
-func GetTemplateMock(expectedResult string) presidio.TemplatesStore {
+func GetTemplateMock() presidio.TemplatesStore {
 	templateService := &TemplateMockedObject{}
-	templateService.On("GetTemplate", mock.Anything, mock.Anything, mock.Anything).Return(expectedResult, nil)
+	templateService.On("GetTemplate", mock.Anything, store.Analyze, mock.Anything).
+		Return(`{"fields":[{"name":"PHONE_NUMBER"}, {"name":"EMAIL_ADDRESS"}]}`, nil).
+		On("GetTemplate", mock.Anything, store.Anonymize, mock.Anything).
+		Return(`{"fieldTypeTransformations":[{"fields":[],"transformation":{"replaceValue":{"newValue":"<phone>"}}}]}`, nil).
+		On("GetTemplate", mock.Anything, store.AnonymizeImage, mock.Anything).
+		Return(`{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}`, nil)
 	return templateService
+}
+
+//GetTemplate mock
+func (m *TemplateMockedObject) GetTemplate(project string, action string, id string) (string, error) {
+	args := m.Mock.Called(project, action, id)
+	result := args.String(0)
+	return result, args.Error(1)
 }
 
 //InsertTemplate mock

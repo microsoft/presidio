@@ -17,12 +17,12 @@ func Anonymize(ctx context.Context, api *store.API, anonymizeAPIRequest *types.A
 		return nil, err
 	}
 
-	err = templates.GetTemplate(api.Templates, project, store.Analyze, anonymizeAPIRequest.AnalyzeTemplateId, anonymizeAPIRequest.AnalyzeTemplate)
+	err = templates.GetTemplate(api, project, store.Analyze, anonymizeAPIRequest.AnalyzeTemplateId, anonymizeAPIRequest.AnalyzeTemplate)
 	if err != nil {
 		return nil, err
 	}
 
-	err = templates.GetTemplate(api.Templates, project, store.Anonymize, anonymizeAPIRequest.AnonymizeTemplateId, anonymizeAPIRequest.AnonymizeTemplate)
+	err = templates.GetTemplate(api, project, store.Anonymize, anonymizeAPIRequest.AnonymizeTemplateId, anonymizeAPIRequest.AnonymizeTemplate)
 	if err != nil {
 		return nil, err
 	}

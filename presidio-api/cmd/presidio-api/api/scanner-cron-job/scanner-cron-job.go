@@ -13,7 +13,7 @@ import (
 //ScheduleScannerCronJob schedule scanner cron job
 func ScheduleScannerCronJob(ctx context.Context, api *store.API, cronAPIJobRequest *types.ScannerCronJobApiRequest, project string) (*types.ScannerCronJobResponse, error) {
 
-	scannerCronJobRequest, err := getScannerCronJobRequest(api.Templates, cronAPIJobRequest, project)
+	scannerCronJobRequest, err := getScannerCronJobRequest(api, cronAPIJobRequest, project)
 	if err != nil {
 		return nil, err
 	}
@@ -35,28 +35,28 @@ func invokeScannerCronJobScheduler(ctx context.Context, services presidio.Servic
 	return res, nil
 }
 
-func getScannerCronJobRequest(t presidio.TemplatesStore, cronJobAPIRequest *types.ScannerCronJobApiRequest, project string) (*types.ScannerCronJobRequest, error) {
+func getScannerCronJobRequest(api *store.API, cronJobAPIRequest *types.ScannerCronJobApiRequest, project string) (*types.ScannerCronJobRequest, error) {
 	scanRequest := &types.ScanRequest{}
 	trigger := &types.Trigger{}
 	var name string
 
 	if cronJobAPIRequest.ScannerCronJobTemplateId != "" {
 		cronJobTemplate := &types.ScannerCronJobTemplate{}
-		templates.GetTemplate(t, project, store.ScheduleScannerCronJob, cronJobAPIRequest.ScannerCronJobTemplateId, cronJobTemplate)
+		templates.GetTemplate(api, project, store.ScheduleScannerCronJob, cronJobAPIRequest.ScannerCronJobTemplateId, cronJobTemplate)
 
 		scanID := cronJobTemplate.ScanTemplateId
 		scanTemplate := &types.ScanTemplate{}
-		templates.GetTemplate(t, project, store.Scan, scanID, scanTemplate)
+		templates.GetTemplate(api, project, store.Scan, scanID, scanTemplate)
 
 		datasinkTemplate := &types.DatasinkTemplate{}
-		templates.GetTemplate(t, project, store.Datasink, cronJobTemplate.DatasinkTemplateId, datasinkTemplate)
+		templates.GetTemplate(api, project, store.Datasink, cronJobTemplate.DatasinkTemplateId, datasinkTemplate)
 
 		analyzeTemplate := &types.AnalyzeTemplate{}
-		templates.GetTemplate(t, project, store.Analyze, cronJobTemplate.AnalyzeTemplateId, analyzeTemplate)
+		templates.GetTemplate(api, project, store.Analyze, cronJobTemplate.AnalyzeTemplateId, analyzeTemplate)
 
 		anonymizeTemplate := &types.AnonymizeTemplate{}
 		if cronJobTemplate.AnonymizeTemplateId != "" {
-			templates.GetTemplate(t, project, store.Anonymize, cronJobTemplate.AnonymizeTemplateId, anonymizeTemplate)
+			templates.GetTemplate(api, project, store.Anonymize, cronJobTemplate.AnonymizeTemplateId, anonymizeTemplate)
 		}
 		trigger = cronJobTemplate.GetTrigger()
 		name = cronJobTemplate.GetName()

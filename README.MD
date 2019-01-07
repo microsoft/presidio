@@ -5,9 +5,9 @@
 
 ---
 
-# Presidio - Data Loss Prevention API
+# Presidio - Personally Identifiable Information (PII) Anonymization API
 
-**Context aware, pluggable and customizable data loss prevention service in text and images**
+**Context aware, pluggable and customizable PII anonymization service for text and images**
 
 ## Description
 
