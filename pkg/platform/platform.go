@@ -47,25 +47,27 @@ func ConvertPullPolicyStringToType(pullPolicy string) apiv1.PullPolicy {
 
 //Settings from all services
 type Settings struct {
-	WebPort                  int
-	GrpcPort                 int
-	DatasinkGrpcPort         int
-	Namespace                string
-	AnalyzerSvcAddress       string
-	AnonymizerSvcAddress     string
-	SchedulerSvcAddress      string
-	RedisURL                 string
-	RedisPassword            string
-	RedisDB                  int
-	RedisSSL                 bool
-	DatasinkImage            string
-	CollectorImage           string
-	DatasinkImagePullPolicy  string
-	CollectorImagePullPolicy string
-	ScannerRequest           string
-	StreamRequest            string
-	QueueURL                 string
-	LogLevel                 string
+	WebPort                   int
+	GrpcPort                  int
+	DatasinkGrpcPort          int
+	Namespace                 string
+	AnalyzerSvcAddress        string
+	AnonymizerSvcAddress      string
+	AnonymizerImageSvcAddress string
+	OcrSvcAddress             string
+	SchedulerSvcAddress       string
+	RedisURL                  string
+	RedisPassword             string
+	RedisDB                   int
+	RedisSSL                  bool
+	DatasinkImage             string
+	CollectorImage            string
+	DatasinkImagePullPolicy   string
+	CollectorImagePullPolicy  string
+	ScannerRequest            string
+	StreamRequest             string
+	QueueURL                  string
+	LogLevel                  string
 }
 
 //WebPort for http server
@@ -85,6 +87,12 @@ const AnalyzerSvcAddress = "analyzer_svc_address"
 
 //AnonymizerSvcAddress anonymizer service address
 const AnonymizerSvcAddress = "anonymizer_svc_address"
+
+//AnonymizerImageSvcAddress anonymizer image service address
+const AnonymizerImageSvcAddress = "anonymizer_image_svc_address"
+
+//OcrSvcAddress ocr service address
+const OcrSvcAddress = "ocr_svc_address"
 
 //SchedulerSvcAddress scheduler service address
 const SchedulerSvcAddress = "scheduler_svc_address"
@@ -131,25 +139,27 @@ func GetSettings() *Settings {
 	viper.AutomaticEnv()
 
 	settings := Settings{
-		WebPort:                  viper.GetInt(strings.ToUpper(WebPort)),
-		GrpcPort:                 viper.GetInt(strings.ToUpper(GrpcPort)),
-		DatasinkGrpcPort:         viper.GetInt(strings.ToUpper(DatasinkGrpcPort)),
-		Namespace:                getTrimmedEnv(PresidioNamespace),
-		AnalyzerSvcAddress:       getTrimmedEnv(AnalyzerSvcAddress),
-		AnonymizerSvcAddress:     getTrimmedEnv(AnonymizerSvcAddress),
-		SchedulerSvcAddress:      getTrimmedEnv(SchedulerSvcAddress),
-		RedisURL:                 getTrimmedEnv(RedisURL),
-		RedisDB:                  viper.GetInt(strings.ToUpper(RedisDb)),
-		RedisSSL:                 viper.GetBool(strings.ToUpper(RedisSSL)),
-		RedisPassword:            getTrimmedEnv(RedisPassword),
-		DatasinkImage:            getTrimmedEnv(DatasinkImageName),
-		CollectorImage:           getTrimmedEnv(CollectorImageName),
-		DatasinkImagePullPolicy:  getTrimmedEnv(DatasinkImagePullPolicy),
-		CollectorImagePullPolicy: getTrimmedEnv(CollectorImagePullPolicy),
-		ScannerRequest:           getTrimmedEnv(ScannerRequest),
-		StreamRequest:            getTrimmedEnv(StreamRequest),
-		QueueURL:                 getTrimmedEnv(QueueURL),
-		LogLevel:                 getTrimmedEnv(LogLevel),
+		WebPort:                   viper.GetInt(strings.ToUpper(WebPort)),
+		GrpcPort:                  viper.GetInt(strings.ToUpper(GrpcPort)),
+		DatasinkGrpcPort:          viper.GetInt(strings.ToUpper(DatasinkGrpcPort)),
+		Namespace:                 getTrimmedEnv(PresidioNamespace),
+		AnalyzerSvcAddress:        getTrimmedEnv(AnalyzerSvcAddress),
+		AnonymizerSvcAddress:      getTrimmedEnv(AnonymizerSvcAddress),
+		AnonymizerImageSvcAddress: getTrimmedEnv(AnonymizerImageSvcAddress),
+		OcrSvcAddress:             getTrimmedEnv(OcrSvcAddress),
+		SchedulerSvcAddress:       getTrimmedEnv(SchedulerSvcAddress),
+		RedisURL:                  getTrimmedEnv(RedisURL),
+		RedisDB:                   viper.GetInt(strings.ToUpper(RedisDb)),
+		RedisSSL:                  viper.GetBool(strings.ToUpper(RedisSSL)),
+		RedisPassword:             getTrimmedEnv(RedisPassword),
+		DatasinkImage:             getTrimmedEnv(DatasinkImageName),
+		CollectorImage:            getTrimmedEnv(CollectorImageName),
+		DatasinkImagePullPolicy:   getTrimmedEnv(DatasinkImagePullPolicy),
+		CollectorImagePullPolicy:  getTrimmedEnv(CollectorImagePullPolicy),
+		ScannerRequest:            getTrimmedEnv(ScannerRequest),
+		StreamRequest:             getTrimmedEnv(StreamRequest),
+		QueueURL:                  getTrimmedEnv(QueueURL),
+		LogLevel:                  getTrimmedEnv(LogLevel),
 	}
 
 	return &settings

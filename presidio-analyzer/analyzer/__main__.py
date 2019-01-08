@@ -31,7 +31,7 @@ cli_name = "presidio-analyzer"
 
 helps['serve'] = """
     short-summary: Create a GRPC server
-                   - presidio-analyzer serve --grpc_port 3000
+                   - presidio-analyzer serve --grpc-port 3000
 """
 
 helps['analyze'] = """
@@ -65,7 +65,7 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         return response
 
 
-def serve_command_handler(env_grpc_port=False, grpc_port=3001):
+def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(Analyzer(), server)
