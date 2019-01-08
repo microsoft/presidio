@@ -3,6 +3,7 @@ package presidio
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/cache"
@@ -12,12 +13,20 @@ import (
 type ServicesAPI interface {
 	SetupAnalyzerService()
 	SetupAnonymizerService()
+	SetupAnonymizerImageService()
+	SetupOCRService()
 	SetupSchedulerService()
 	SetupDatasinkService()
 	SetupCache() cache.Cache
 	AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error)
-	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
-	AnonymizeJSON(ctx context.Context, jsonToAnonymize string, jsonSchema string, analyzeTemplate *types.AnalyzeTemplate, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
+	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string,
+		anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
+	AnonymizeJSON(ctx context.Context, jsonToAnonymize string, jsonSchema string, analyzeTemplate *types.AnalyzeTemplate,
+		anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
+	AnonymizeImageItem(ctx context.Context, image *types.Image, analyzeResults []*types.AnalyzeResult,
+		anonymizeImageTypeEnum types.DetectionTypeEnum,
+		anonymizeImageTemplate *types.AnonymizeImageTemplate) (*types.AnonymizeImageResponse, error)
+	OcrItem(ctx context.Context, image *types.Image) (*types.OcrResponse, error)
 	SendResultToDatasink(ctx context.Context, analyzeResults []*types.AnalyzeResult,
 		anonymizeResults *types.AnonymizeResponse, path string) error
 	ApplyStream(ctx context.Context, streamsJobRequest *types.StreamsJobRequest) (*types.StreamsJobResponse, error)
@@ -52,6 +61,9 @@ type Item interface {
 
 // ConvertJSONToInterface convert Json to go Interface
 func ConvertJSONToInterface(template string, convertTo interface{}) error {
+	if template == "" {
+		return fmt.Errorf("template is empty")
+	}
 	err := json.Unmarshal([]byte(template), &convertTo)
 	return err
 }

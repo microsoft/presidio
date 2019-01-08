@@ -1,4 +1,4 @@
-package jsonCrawler
+package jsoncrawler
 
 import (
 	"context"

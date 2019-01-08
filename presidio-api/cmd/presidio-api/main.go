@@ -12,17 +12,23 @@ import (
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/platform/kube"
 	"github.com/Microsoft/presidio/pkg/platform/local"
+
 	"github.com/Microsoft/presidio/pkg/presidio/services"
 	server "github.com/Microsoft/presidio/pkg/server"
+	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
 )
+
+var api *store.API
 
 func main() {
 
 	pflag.Int(platform.WebPort, 8080, "HTTP listen port")
 	pflag.String(platform.AnalyzerSvcAddress, "localhost:3000", "Analyzer service address")
 	pflag.String(platform.AnonymizerSvcAddress, "localhost:3001", "Anonymizer service address")
-	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address")
-	pflag.String(platform.RedisURL, "", "Redis address")
+	pflag.String(platform.AnonymizerImageSvcAddress, "", "Anonymizer image service address (optional)")
+	pflag.String(platform.OcrSvcAddress, "", "ocr service address (optional)")
+	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address (optional)")
+	pflag.String(platform.RedisURL, "", "Redis address (optional)")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
 	pflag.Bool(platform.RedisSSL, false, "Redis ssl (optional)")
@@ -38,8 +44,6 @@ func main() {
 
 	svc := services.New(settings)
 
-	var api *API
-
 	// Setup Redis cache
 
 	var cacheStore cache.Cache
@@ -50,25 +54,25 @@ func main() {
 
 	// Kubernetes platform
 	if settings.Namespace != "" {
-		store, err := kube.New(settings.Namespace, "")
+		platformStore, err := kube.New(settings.Namespace, "")
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store, cacheStore, settings)
+		api = store.New(platformStore, cacheStore, settings)
 	} else {
 		// Local platform
-		store, err := local.New(os.TempDir())
+		platformStore, err := local.New(os.TempDir())
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		api = New(store, cacheStore, settings)
+		api = store.New(platformStore, cacheStore, settings)
 	}
 
-	api.setupGRPCServices()
-	setupHTTPServer(api, settings.WebPort, settings.LogLevel)
+	api.SetupGRPCServices()
+	setupHTTPServer(settings.WebPort, settings.LogLevel)
 }
 
-func setupHTTPServer(api *API, port int, loglevel string) {
+func setupHTTPServer(port int, loglevel string) {
 
 	r := server.Setup(port, loglevel)
 
@@ -86,13 +90,13 @@ func setupHTTPServer(api *API, port int, loglevel string) {
 			action := templates.Group("/:action")
 			{
 				// GET template
-				action.GET(":id", api.getActionTemplate)
+				action.GET(":id", getActionTemplate)
 				// POST template
-				action.POST(":id", api.postActionTemplate)
+				action.POST(":id", postActionTemplate)
 				// PUT, update template
-				action.PUT(":id", api.putActionTemplate)
+				action.PUT(":id", putActionTemplate)
 				// DELETE template
-				action.DELETE(":id", api.deleteActionTemplate)
+				action.DELETE(":id", deleteActionTemplate)
 			}
 		}
 
@@ -101,24 +105,27 @@ func setupHTTPServer(api *API, port int, loglevel string) {
 		{
 			// Analyze text
 			// /api/v1/projects/123/analyze
-			projects.POST("/analyze", api.analyze)
+			projects.POST("/analyze", analyzeText)
 
 			// Anonymize text
 			// /api/v1/projects/123/anonymize
-			projects.POST("/anonymize", api.anonymize)
+			projects.POST("/anonymize", anonymizeText)
+
+			// Anonymize image
+			// /api/v1/projects/123/anonymize-image
+			projects.POST("/anonymize-image", anonymizeImage)
 
 			// Anonymize json
 			// /api/v1/projects/123/anonymize-json
-			projects.POST("/anonymize-json", api.anonymizeJSON)
+			projects.POST("/anonymize-json", anonymizeJSON)
 
 			// Schedule scanning cron job
 			// /api/v1/projects/123/schedule-scanner-cronjob
-			projects.POST("/schedule-scanner-cronjob", api.scheduleScannerCronJob)
+			projects.POST("/schedule-scanner-cronjob", scheduleScannerCronJob)
 
 			// Schedule streams job
 			// /api/v1/projects/123/schedule-streams-job
-			projects.POST("/schedule-streams-job", api.scheduleStreamsJob)
-
+			projects.POST("/schedule-streams-job", scheduleStreamJob)
 		}
 
 	}

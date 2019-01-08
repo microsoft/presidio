@@ -16,14 +16,14 @@
 [[projects]]
   name = "github.com/Azure/azure-amqp-common-go"
   packages = [".","aad","auth","cbs","conn","internal","internal/tracing","log","persist","rpc","sas","uuid"]
-  revision = "12877250384ded92c1b1a2affe969579aaef97d4"
-  version = "v1.1.3"
+  revision = "b5ea4829bce0d96bc7b4d11bfc8ccd2afdf0ec4a"
+  version = "v1.1.4"
 
 [[projects]]
   name = "github.com/Azure/azure-event-hubs-go"
   packages = [".","atom","eph","storage"]
-  revision = "5bee80eb97437a2daa40734b9b13cbc2c9d545e8"
-  version = "v1.1.0"
+  revision = "aca3e9cfe138951ffb815665621095482a674ee9"
+  version = "v1.1.2"
 
 [[projects]]
   name = "github.com/Azure/azure-pipeline-go"
@@ -40,26 +40,26 @@
 [[projects]]
   name = "github.com/Azure/azure-storage-blob-go"
   packages = ["azblob"]
-  revision = "5152f14ace1c6db66bd9cb57840703a8358fa7bc"
-  version = "0.3.0"
+  revision = "45d0c5e3638e2b539942f93c48e419f4f2fc62e4"
+  version = "0.4.0"
 
 [[projects]]
   name = "github.com/Azure/go-autorest"
-  packages = ["autorest","autorest/adal","autorest/azure","autorest/date","autorest/to","autorest/validation","logger","tracing"]
-  revision = "f401b1ccc8eb505927fae7a0c7f6406d37ca1c7e"
-  version = "v11.2.8"
+  packages = ["autorest","autorest/adal","autorest/azure","autorest/date","autorest/to","autorest/validation","logger","tracing","version"]
+  revision = "be17756531f50014397912b7aa557ec335e39b98"
+  version = "v11.3.0"
 
 [[projects]]
   name = "github.com/DataDog/zstd"
   packages = ["."]
-  revision = "aebefd9fcb99f22cd691ef778a12ed68f0e6a1ab"
-  version = "v1.3.4"
+  revision = "c7161f8c63c045cbc7ca051dcc969dd0e4054de2"
+  version = "v1.3.5"
 
 [[projects]]
   branch = "master"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
-  revision = "9316a054b1e4b300d3bddf159864faaaca908073"
+  revision = "286ef40fe9461064bfe7aa527fab3e9e7a97ec25"
 
 [[projects]]
   name = "github.com/Shopify/sarama"
@@ -70,8 +70,8 @@
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/processcreds","aws/credentials/stscreds","aws/csm","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/ini","internal/s3err","internal/sdkio","internal/sdkrand","internal/sdkuri","internal/shareddefaults","private/protocol","private/protocol/eventstream","private/protocol/eventstream/eventstreamapi","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restxml","private/protocol/xml/xmlutil","service/s3","service/sts"]
-  revision = "5f1ca23f3ded773a9ba214e6fac36acd9a965a53"
-  version = "v1.16.6"
+  revision = "62936e15518acb527a1a9cb4a39d96d94d0fd9a2"
+  version = "v1.16.15"
 
 [[projects]]
   name = "github.com/bsm/sarama-cluster"
@@ -110,6 +110,12 @@
   version = "v3.2.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/disintegration/imaging"
+  packages = ["."]
+  revision = "9458da53d1e65e098d48467a4317c403327e4424"
+
+[[projects]]
   name = "github.com/eapache/go-resiliency"
   packages = ["breaker"]
   revision = "ea41b0fad31007accc7f806884dcdf3da98b79ce"
@@ -143,7 +149,7 @@
   branch = "master"
   name = "github.com/gin-contrib/cors"
   packages = ["."]
-  revision = "7c641a7a7dc5548100d5749436059b022de56075"
+  revision = "5e7acb10687f94a88d0d8e96297818fff2da8f88"
 
 [[projects]]
   branch = "master"
@@ -155,7 +161,7 @@
   branch = "master"
   name = "github.com/gin-contrib/zap"
   packages = ["."]
-  revision = "a4f331736217f34737505ce743f9d41efb41e0ab"
+  revision = "0672bb1dbf3af725a3d294a73bd92dab67cb8adc"
 
 [[projects]]
   name = "github.com/gin-gonic/gin"
@@ -165,15 +171,15 @@
 
 [[projects]]
   name = "github.com/go-redis/redis"
-  packages = [".","internal","internal/consistenthash","internal/hashtag","internal/pool","internal/proto","internal/singleflight","internal/util"]
-  revision = "b3d9bf10f6666b2ee5100a6f3f84f4caf3b4e37d"
-  version = "v6.14.2"
+  packages = [".","internal","internal/consistenthash","internal/hashtag","internal/pool","internal/proto","internal/util"]
+  revision = "22be8a3eaf992c828cecb69dc07348313bf08d2e"
+  version = "v6.15.1"
 
 [[projects]]
   branch = "master"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
-  revision = "60d456a402782453be397030407e34decaf04d73"
+  revision = "c45f530f8e7fe40f4687eaa50d0c8c5f1b66f9e0"
 
 [[projects]]
   name = "github.com/go-xorm/builder"
@@ -191,7 +197,7 @@
   branch = "master"
   name = "github.com/go-xorm/xorm"
   packages = ["."]
-  revision = "401f4ee8ff8cbc40a4754cb12192fbe4f02f3979"
+  revision = "a8f0a7110a8049c79069836b420538f1964e6339"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -206,10 +212,10 @@
   revision = "23def4e6c14b4da8ac2ed8007337bc5eb5007998"
 
 [[projects]]
+  branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["proto","protoc-gen-go/descriptor","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp","ptypes/wrappers"]
-  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
-  version = "v1.2.0"
+  revision = "1d3f30b51784bec5aad268e59fd3c2fc1c2fe73f"
 
 [[projects]]
   branch = "master"
@@ -245,7 +251,7 @@
   branch = "master"
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
   packages = ["retry","util/backoffutils","util/metautils"]
-  revision = "3304cc8863525cd0b328fbfd5bf745bbd38e7106"
+  revision = "4832df01553a810b8e3404b95743d01c9ab5313f"
 
 [[projects]]
   name = "github.com/hashicorp/hcl"
@@ -331,6 +337,12 @@
   version = "1.0.1"
 
 [[projects]]
+  name = "github.com/otiai10/gosseract"
+  packages = ["."]
+  revision = "b026a6fd291f00736db60738f4e83a79d26359cb"
+  version = "v2.2.0"
+
+[[projects]]
   name = "github.com/pelletier/go-toml"
   packages = ["."]
   revision = "c01d1270ff3e442a8a57cddc1c92dc1138598194"
@@ -357,8 +369,8 @@
 [[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
-  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
-  version = "v0.8.0"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
@@ -429,8 +441,8 @@
 [[projects]]
   name = "github.com/stretchr/testify"
   packages = ["assert","mock"]
-  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
-  version = "v1.2.2"
+  revision = "ffdc059bfe9ce6a4e144ba849dbedead332c6053"
+  version = "v1.3.0"
 
 [[projects]]
   name = "github.com/ugorji/go"
@@ -466,25 +478,31 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["md4","pkcs12","pkcs12/internal/rc2","ssh/terminal"]
-  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
+  revision = "ff983b9c42bc9fbf91556e191cc8efb585c16908"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/image"
+  packages = ["bmp","tiff","tiff/lzw"]
+  revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","http/httpguts","http2","http2/hpack","idna","internal/timeseries","trace"]
-  revision = "e147a9138326bc0e9d4e179541ffd8af41cff8a9"
+  revision = "45ffb0cd1ba084b73e26dee67e667e1be5acce83"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sync"
   packages = ["errgroup","semaphore"]
-  revision = "42b317875d0fa942474b76e1b46a6060d720ae6e"
+  revision = "37e7f081c4d4c64e13b10787722085407fe5d15f"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "4d1cda033e0619309c606fc686de3adcf599539e"
+  revision = "7fbe1cd0fcc20051e1fcb87fbabec4a1bacaaeba"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -499,22 +517,22 @@
   revision = "85acf8d2951cb2a3bde7632f9ff273ef0379bcbd"
 
 [[projects]]
-  branch = "master"
   name = "google.golang.org/api"
   packages = ["support/bundler"]
-  revision = "41dc4b66e69d5dbf20efe4ba67e19d214d147ae3"
+  revision = "19e022d8cf43ce81f046bae8cc18c5397cc7732f"
+  version = "v0.1.0"
 
 [[projects]]
   name = "google.golang.org/appengine"
   packages = ["cloudsql"]
-  revision = "4a4468ece617fc8205e99368fa2200e9d1fad421"
-  version = "v1.3.0"
+  revision = "e9657d882bb81064595ca3b56cbe2546bbabf7b1"
+  version = "v1.4.0"
 
 [[projects]]
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "bd91e49a0898e27abb88c339b432fa53d7497ac0"
+  revision = "bd9b4fb69e2ffd37621a6caa54dcbead29b546f2"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -573,6 +591,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a503ba3c1862e0583198f75347607b6c5785fb971164e1a564ed49a5602e650b"
+  inputs-digest = "df752ade7abc0689f8563377ad0bdff4382e170109d17433badbe09d7126b2fe"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -23,8 +23,8 @@ func (a sortedResults) Less(i, j int) bool {
 	return a[i].Score > a[j].Score
 }
 
-//ApplyAnonymizerTemplate ...
-func ApplyAnonymizerTemplate(text string, results []*types.AnalyzeResult, template *types.AnonymizeTemplate) (string, error) {
+//AnonymizeText ...
+func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.AnonymizeTemplate) (string, error) {
 
 	//Sort results by start location to verify order
 	sort.Sort(sortedResults(results))

@@ -3,9 +3,7 @@
 When running Presidio on a Kubernetes cluster you can set a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) to scan your data periodicly.
 You will need to configure the scan's input and the destination to which the analyzed and anonymized results will be stored.
 
-![Design](https://user-images.githubusercontent.com/13463870/43763824-70493396-9a34-11e8-9aa7-090057012369.jpg)
-
-* A detailed design of the Ingerss Control and the API Serivce can be found  [here](./design.md).
+* A detailed design of the Ingress Control and the API Service can be found  [here](./design.md).
 
 ## Job stages
 

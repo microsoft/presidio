@@ -44,20 +44,22 @@
     $ pip3 install cython
     ```
 
-7. Protobuf generator tools
+7. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
+
+8. Protobuf generator tools (Optional)
 
     - `https://github.com/golang/protobuf`
 
     - `https://grpc.io/docs/tutorials/basic/python.html`
 
-8. To generate proto files, clone [presidio-genproto](https://github.com/Microsoft/presidio-genproto) and run the following commands in `$GOPATH/src/github.com/Microsoft/presidio-genproto/src` folder
+    To generate proto files, clone [presidio-genproto](https://github.com/Microsoft/presidio-genproto) and run the following commands in `$GOPATH/src/github.com/Microsoft/presidio-genproto/src` folder
 
-    ```
-    python -m grpc_tools.protoc -I . --python_out=../python --grpc_python_out=../python ./*.proto
+    ```sh
+    $ python -m grpc_tools.protoc -I . --python_out=../python --grpc_python_out=../python ./*.proto
     ```
 
-    ```
-    protoc -I . --go_out=plugins=grpc:../golang ./*.proto
+    ```sh
+    $ protoc -I . --go_out=plugins=grpc:../golang ./*.proto
     ```
 
 ## Development notes

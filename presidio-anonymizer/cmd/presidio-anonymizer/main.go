@@ -42,7 +42,7 @@ func main() {
 }
 
 func (s *server) Apply(ctx context.Context, r *types.AnonymizeRequest) (*types.AnonymizeResponse, error) {
-	res, err := anonymizer.ApplyAnonymizerTemplate(r.Text, r.AnalyzeResults, r.Template)
+	res, err := anonymizer.AnonymizeText(r.Text, r.AnalyzeResults, r.Template)
 	log.Debug(res)
 	if err != nil {
 		log.Error(err.Error())
