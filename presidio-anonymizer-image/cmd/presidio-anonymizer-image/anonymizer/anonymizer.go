@@ -44,6 +44,8 @@ func AnonymizeImage(image *types.Image, detectionType types.DetectionTypeEnum, r
 	// Redact text
 	if detectionType == types.DetectionTypeEnum_OCR {
 		decodedImage = redactText(decodedImage, image, results, template)
+	} else {
+		return nil, fmt.Errorf("Detection method not supported")
 	}
 
 	// Save image

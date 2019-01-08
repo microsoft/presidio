@@ -164,8 +164,7 @@ func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*t
 			Text:           text,
 			AnalyzeResults: analyzeResults,
 		}
-		res, err := services.AnonymizeService.Apply(ctx, anonymizeRequest)
-		return res, err
+		return services.AnonymizeService.Apply(ctx, anonymizeRequest)
 	}
 	return nil, nil
 }
@@ -183,8 +182,8 @@ func (services *Services) AnonymizeImageItem(ctx context.Context, image *types.I
 			DetectionType:  detectionType,
 			AnalyzeResults: analyzeResults,
 		}
-		res, err := services.AnonymizeImageService.Apply(ctx, anonymizeImageRequest)
-		return res, err
+		return services.AnonymizeImageService.Apply(ctx, anonymizeImageRequest)
+
 	}
 	return nil, nil
 }
@@ -197,8 +196,7 @@ func (services *Services) OcrItem(ctx context.Context, image *types.Image) (*typ
 		ocrRequest := &types.OcrRequest{
 			Image: image,
 		}
-		res, err := services.OcrService.Apply(ctx, ocrRequest)
-		return res, err
+		return services.OcrService.Apply(ctx, ocrRequest)
 	}
 	return nil, nil
 }

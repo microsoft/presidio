@@ -47,7 +47,7 @@ func DeleteActionTemplate(api *store.API, project, action, id string) (string, e
 	if err != nil {
 		return "", err
 	}
-	return "", err
+	return "Template deleted successfully", err
 }
 
 //GetTemplate based on id or json(tmpl)

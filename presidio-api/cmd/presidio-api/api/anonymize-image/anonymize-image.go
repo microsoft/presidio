@@ -82,7 +82,7 @@ func validateFormat(data []byte, imageType string) error {
 		imageType != tiff &&
 		imageType != png &&
 		imageType != bmp) {
-		return fmt.Errorf("Image type is missing (image/jpg, image/jpeg, image/png, image/tiff, image/gif, image/bmp)")
+		return fmt.Errorf("Image type is missing or wrong (image/jpg, image/jpeg, image/png, image/tiff, image/gif, image/bmp)")
 	}
 	return nil
 }
