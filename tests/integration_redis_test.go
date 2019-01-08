@@ -1,4 +1,4 @@
-// +build functional
+// +build integration
 
 package tests
 

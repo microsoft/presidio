@@ -46,6 +46,24 @@ anonymizer:
     externalPort: 3001
     internalPort: 3001
 
+anonymizerimage:
+  name: presidio-anonymizer-image
+  # tag:
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
+ocr:
+  name: presidio-ocr
+  # tag:
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
+
 scheduler:
   name: presidio-scheduler
   imagePullPolicy: Always

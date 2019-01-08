@@ -5,7 +5,7 @@ presidio. It is a high-level explanation of the presidio design.
 
 ## Presidio As a Service - Kubernetes Deployment
 
-![persidio-design](https://user-images.githubusercontent.com/17064840/45154654-f706aa80-b1e0-11e8-9ff6-3567f8892bd4.png)
+![persidio-design](https://user-images.githubusercontent.com/17064840/50818154-dd13da80-132e-11e9-8b64-cdc4f3f6717d.png)
 
 
 This architecture gives us the following advantages:
