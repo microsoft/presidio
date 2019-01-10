@@ -2,8 +2,8 @@ package eventhubs
 
 import (
 	"context"
-	"os"
-	"os/signal"
+	//"os"
+	//"os/signal"
 	"time"
 
 	"github.com/Azure/azure-amqp-common-go/conn"
@@ -50,7 +50,7 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 	// SAS token provider for Azure Event Hubs
 	provider, err := sas.NewTokenProvider(sas.TokenProviderWithKey(parsed.KeyName, parsed.Key))
 	if err != nil {
-		// handle error
+		log.Fatal(err.Error())
 	}
 	// create a new Azure Storage Leaser / Checkpointer
 	cred, err := azblob.NewSharedKeyCredential(storageAccountName, storageAccountKey)
@@ -69,15 +69,6 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 		log.Fatal(err.Error())
 	}
 
-	// Wait for a signal to quit:
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt, os.Kill)
-	<-signalChan
-
-	err = hub.Close(context.Background())
-	if err != nil {
-		log.Error(err.Error())
-	}
 	return &eventhubs{
 		eph: hub,
 		ctx: ctx,
@@ -87,14 +78,23 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 //Receive message from eventhub partition.
 func (e *eventhubs) Receive(receiveFunc stream.ReceiveFunc) error {
 
-	e.eph.StartNonBlocking(e.ctx)
 	e.receiveFunc = receiveFunc
 	_, err := e.eph.RegisterHandler(e.ctx, e.handleEvent)
+	if err != nil {
+		return err
+	}
+
+	err = e.eph.Start(e.ctx)
+
 	return err
 }
 
 func (e *eventhubs) handleEvent(ctx context.Context, event *eh.Event) error {
-	err := e.receiveFunc(ctx, *event.PartitionKey, event.ID, string(event.Data))
+	key := "-1"
+	if event.PartitionKey != nil {
+		key = *event.PartitionKey
+	}
+	err := e.receiveFunc(ctx, key, event.ID, string(event.Data))
 	return err
 }
 
