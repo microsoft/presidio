@@ -28,9 +28,7 @@ func TestCreateAndDeleteJob(t *testing.T) {
 
 	// Create job
 	err := store.CreateJob(name, containerDetails)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	// List jobs
 	jobs, _ := store.ListJobs()
@@ -39,9 +37,7 @@ func TestCreateAndDeleteJob(t *testing.T) {
 
 	// Delete job
 	err = store.DeleteJob(name)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	// List jobs
 	jobs, _ = store.ListJobs()

@@ -2,8 +2,6 @@ package eventhubs
 
 import (
 	"context"
-	"time"
-
 	"github.com/Azure/azure-amqp-common-go/conn"
 	"github.com/Azure/azure-amqp-common-go/sas"
 	eh "github.com/Azure/azure-event-hubs-go"
@@ -11,9 +9,11 @@ import (
 	"github.com/Azure/azure-event-hubs-go/storage"
 	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/Azure/go-autorest/autorest/azure"
-
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/stream"
+	"os"
+	"os/signal"
+	"time"
 )
 
 type eventhubs struct {
@@ -67,6 +67,15 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 		log.Fatal(err.Error())
 	}
 
+	// Wait for a signal to quit:
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt, os.Kill)
+	<-signalChan
+
+	err = hub.Close(context.Background())
+	if err != nil {
+		log.Error(err.Error())
+	}
 	return &eventhubs{
 		eph: hub,
 		ctx: ctx,
