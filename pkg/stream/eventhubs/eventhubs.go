@@ -2,6 +2,10 @@ package eventhubs
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"time"
+
 	"github.com/Azure/azure-amqp-common-go/conn"
 	"github.com/Azure/azure-amqp-common-go/sas"
 	eh "github.com/Azure/azure-event-hubs-go"
@@ -9,11 +13,9 @@ import (
 	"github.com/Azure/azure-event-hubs-go/storage"
 	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/Azure/go-autorest/autorest/azure"
+
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/stream"
-	"os"
-	"os/signal"
-	"time"
 )
 
 type eventhubs struct {
