@@ -5,8 +5,7 @@ presidio. It is a high-level explanation of the presidio design.
 
 ## Presidio As a Service - Kubernetes Deployment
 
-![persidio-design-service](https://user-images.githubusercontent.com/1086572/50959542-e1292f00-14cb-11e9-8847-06e6121ba192.png)
-
+![persidio-design-service](https://user-images.githubusercontent.com/1086572/50979376-01261600-14ff-11e9-84e7-2f1f92ff457d.png)
 
 This architecture gives us the following advantages:
 * Resiliency for inter-service communications: Circuit-breaking, retries and timeouts, fault injection, fault handling, load balancing and failover.
