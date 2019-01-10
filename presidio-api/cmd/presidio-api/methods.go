@@ -210,6 +210,9 @@ func validateTemplate(action string, c *gin.Context) (string, error) {
 	case store.ScheduleStreamsJob:
 		var streamsJobTemplate types.StreamsJobTemplate
 		return bindAndConvert(streamsJobTemplate, c)
+	case store.Stream:
+		var streamTemplate types.StreamTemplate
+		return bindAndConvert(streamTemplate, c)
 	}
 
 	return "", fmt.Errorf("No template found")
