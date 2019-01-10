@@ -97,15 +97,15 @@
 
 [[constraint]]
   name = "k8s.io/api"
-  version = "kubernetes-1.11.0"
+  version = "kubernetes-1.13.0"
 
 [[constraint]]
-  branch = "release-1.11"
+  branch = "release-1.13"
   name = "k8s.io/apimachinery"
 
 [[constraint]]
   name = "k8s.io/client-go"
-  version = "8.0.0"
+  version = "10.0.0"
 
 [prune]
   go-tests = true
