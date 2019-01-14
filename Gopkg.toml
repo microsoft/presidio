@@ -33,7 +33,7 @@
 
 [[constraint]]
   name = "github.com/gin-gonic/gin"
-  version = "1.2.0"
+  version = "1.3.0"
 
 [[constraint]]
   name = "github.com/spf13/viper"
@@ -45,7 +45,7 @@
 
 [[constraint]]
   name = "github.com/go-redis/redis"
-  version = "6.13.2"
+  version = "6.15.1"
 
 [[constraint]]
   branch = "master"
