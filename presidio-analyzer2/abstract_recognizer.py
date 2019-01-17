@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-class AbstractMatcher(ABC):
+class AbstractRecognizer(ABC):
 
       @abstractmethod
-      def load_matcher():
+      def load_model():
             pass
 
       @abstractmethod
