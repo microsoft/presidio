@@ -7,7 +7,7 @@ import glob
 def import_plugins(plugins_package_directory_path, base_class=None, create_instance=True, filter_abstract=True):
 
     plugins_package_name = os.path.basename(plugins_package_directory_path)
-
+    result = []
     # -----------------------------
     # Iterate all python files within that directory
     plugin_file_paths = glob.glob(os.path.join(plugins_package_directory_path, "*.py"))
@@ -45,4 +45,10 @@ def import_plugins(plugins_package_directory_path, base_class=None, create_insta
             # -----------------------------
             # Instantiate / return type (depends on create_instance)
 
-            yield value() if create_instance else value
+            #yield value() if create_instance else value
+            if create_instance:
+                result.append(value())
+            else:
+                result.append(value)
+        
+    return result

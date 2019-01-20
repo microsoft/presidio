@@ -17,7 +17,7 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
-from models import spacy_recognizer
+from models import regex_recognizer
 #from models.regex import regex_recognizer
 
 WELCOME_MESSAGE = r"""
@@ -61,31 +61,16 @@ class PresidioCLIHelp(CLIHelp):
 
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self):
-        ## load all models
+        # load all models
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
         plugins_directory_path = os.path.join(SCRIPT_DIR, 'models')
-        logging.info(plugins_directory_path)
-        self.plugins = import_models.import_plugins(plugins_directory_path, base_class=AbstractRecognizer)
-        logging.info( self.plugins)
+        
+        self.plugins = import_models.import_plugins(
+            plugins_directory_path, base_class=AbstractRecognizer)
+        logging.info(self.plugins)
         for plugin in self.plugins:
+            logging.info(plugin)
             plugin.load_model()
-
-
-        # self.spacyRecognizer = spacy_recognizer.Recognizer()
-        # self.spacyRecognizer.load_model()
-        #module = importlib.import_module('models.spacy.spacy_recognizer')
-        #my_class = getattr(module, 'Recognizer')
-        #my_instance = my_class()
-
-        # modules = self.loadModules()
-        # logging.info(modules)
-
-        # for m in modules:
-        #     logging.info(modules[m])
-        #     cls = self.getClassByName(modules[m], "spacy_recognizer")
-        #     obj = cls()
-        # self.regexRecognizer = regex_recognizer.RegexRecognizer()
-        # self.regexRecognizer.load_model()
 
     def __sanitize_text(self, text):
         """Replace newline with whitespace to ease spacy analyze process
@@ -109,27 +94,25 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         else:
             for field_type in requested_fields:
                 field_type_string_filters.append(field_type.name)
-        
-        return field_type_string_filters
 
+        return field_type_string_filters
 
     def Apply(self, request, context):
         logging.info("Starting Apply " + request.text)
+        
         response = analyze_pb2.AnalyzeResponse()
-
         sanitized_text = self.__sanitize_text(request.text)
         fields = self.__get_field_types(request.analyzeTemplate.fields)
 
-  
-        for plugin in self.plugins:
-            results = plugin.analyze_text(sanitized_text, fields)
+        results = []
 
-        #results = self.regexRecognizer.analyze_text(sanitized_text, fields)
-        #results = self.spacyRecognizer.analyze_text(sanitized_text, fields)
+        for plugin in self.plugins:
+            r = plugin.analyze_text(sanitized_text, fields)
+            results.extend(r)
+
         response.analyzeResults.extend(results)
         return response
-    
-    
+
     def loadModules(self):
         res = {}
         import os
@@ -142,7 +125,7 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
                 dir.append(d)
         # load the modules
         for d in dir:
-            res[d] = __import__("models." + d, fromlist = ["*"])
+            res[d] = __import__("models." + d, fromlist=["*"])
         return res
 
     def getClassByName(self, module, className):
@@ -216,7 +199,6 @@ class CommandsLoader(CLICommandsLoader):
             ac.argument('text', required=True)
             ac.argument('fields', nargs='*', required=True)
         super(CommandsLoader, self).load_arguments(command)
-
 
 
 presidio_cli = CLI(
