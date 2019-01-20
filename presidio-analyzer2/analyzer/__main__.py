@@ -1,9 +1,13 @@
 import logging
-import matcher
+import import_models
+#import matcher
+import importlib
 import grpc
 import analyze_pb2
 import analyze_pb2_grpc
 from concurrent import futures
+from field_types import field_factory
+from abstract_recognizer import AbstractRecognizer
 import time
 import sys
 import os
@@ -13,6 +17,8 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
+#from models.spacy import spacy_recognizer
+#from models.regex import regex_recognizer
 
 WELCOME_MESSAGE = r"""
 
@@ -55,7 +61,30 @@ class PresidioCLIHelp(CLIHelp):
 
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self):
-        self.match = matcher.Matcher()
+        ## load all models
+        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+        plugins_directory_path = os.path.join(SCRIPT_DIR, 'models')
+        self.plugins = import_models.import_plugins(plugins_directory_path, base_class=AbstractRecognizer)
+        logging.info( self.plugins)
+        for plugin in self.plugins:
+            plugin.load_model()
+
+
+        #self.spacyRecognizer = spacy_recognizer.SpacyRecognizer()
+        #self.spacyRecognizer.load_model()
+        #module = importlib.import_module('models.spacy.spacy_recognizer')
+        #my_class = getattr(module, 'Recognizer')
+        #my_instance = my_class()
+
+        # modules = self.loadModules()
+        # logging.info(modules)
+
+        # for m in modules:
+        #     logging.info(modules[m])
+        #     cls = self.getClassByName(modules[m], "spacy_recognizer")
+        #     obj = cls()
+        # self.regexRecognizer = regex_recognizer.RegexRecognizer()
+        # self.regexRecognizer.load_model()
 
     def __sanitize_text(self, text):
         """Replace newline with whitespace to ease spacy analyze process
@@ -84,27 +113,50 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
 
 
     def Apply(self, request, context):
+        logging.info("Starting Apply " + request.text)
         response = analyze_pb2.AnalyzeResponse()
-        results = self.match.analyze_text(request.text,
-                                          request.analyzeTemplate.fields)
+
+        sanitized_text = self.__sanitize_text(request.text)
+        fields = self.__get_field_types(request.analyzeTemplate.fields)
+
+  
+        for plugin in self.plugins:
+            results = plugin.analyze_text(sanitized_text, fields)
+
+        #results = self.regexRecognizer.analyze_text(sanitized_text, fields)
+        #results = self.spacyRecognizer.analyze_text(sanitized_text, fields)
         response.analyzeResults.extend(results)
         return response
     
-    # def load_custom_models(): 
-    #     def loadModules():
-    #     res = {}
-    #     import os
-    #     # check subfolders
-    #     lst = os.listdir("custom-models")
-    #     dir = []
-    #     for d in lst:
-    #         s = os.path.abspath("custom-models") + os.sep + d
-    #         if os.path.isdir(s) and os.path.exists(s + os.sep + "__init__.py"):
-    #             dir.append(d)
-    #     # load the modules
-    #     for d in dir:
-    #         res[d] = __import__("services." + d, fromlist = ["*"])
-    #     return res
+    
+    def loadModules(self):
+        res = {}
+        import os
+        # check subfolders
+        lst = os.listdir("models")
+        dir = []
+        for d in lst:
+            s = os.path.abspath("models") + os.sep + d
+            if os.path.isdir(s) and os.path.exists(s + os.sep + "__init__.py"):
+                dir.append(d)
+        # load the modules
+        for d in dir:
+            res[d] = __import__("models." + d, fromlist = ["*"])
+        return res
+
+    def getClassByName(self, module, className):
+        if not module:
+            if className.startswith("models."):
+                className = className.split("models.")[1]
+            l = className.split(".")
+            m = __services__[l[0]]
+            return self.getClassByName(m, ".".join(l[1:]))
+        elif "." in className:
+            l = className.split(".")
+            m = getattr(module, l[0])
+            return self.getClassByName(m, ".".join(l[1:]))
+        else:
+            return getattr(module, className)
 
 
 def serve_command_handler(env_grpc_port=False, grpc_port=3001):

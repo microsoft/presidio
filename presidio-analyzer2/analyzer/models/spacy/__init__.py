@@ -1,0 +1,1 @@
+from .spacy_recognizer import Recognizer
