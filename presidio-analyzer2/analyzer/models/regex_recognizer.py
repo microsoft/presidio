@@ -13,11 +13,11 @@ NER_STRENGTH = 0.85
 CONTEXT_PREFIX_COUNT = 5
 CONTEXT_SUFFIX_COUNT = 0
 
-class Recognizer(AbstractRecognizer):
+class RegexRecognizer(AbstractRecognizer):
 
     def load_model(self): 
         # Load spaCy lg model
-        self.logger.info("Loading NLP model...")
+        self.logger.info("Loading regex model...")
         self.nlp = spacy.load('en_core_web_sm')
         
     def __check_pattern(self, text, results, field):
