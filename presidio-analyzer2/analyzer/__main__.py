@@ -17,7 +17,7 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
-#from models.spacy import spacy_recognizer
+from models import spacy_recognizer
 #from models.regex import regex_recognizer
 
 WELCOME_MESSAGE = r"""
@@ -64,14 +64,15 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         ## load all models
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
         plugins_directory_path = os.path.join(SCRIPT_DIR, 'models')
+        logging.info(plugins_directory_path)
         self.plugins = import_models.import_plugins(plugins_directory_path, base_class=AbstractRecognizer)
         logging.info( self.plugins)
         for plugin in self.plugins:
             plugin.load_model()
 
 
-        #self.spacyRecognizer = spacy_recognizer.SpacyRecognizer()
-        #self.spacyRecognizer.load_model()
+        # self.spacyRecognizer = spacy_recognizer.Recognizer()
+        # self.spacyRecognizer.load_model()
         #module = importlib.import_module('models.spacy.spacy_recognizer')
         #my_class = getattr(module, 'Recognizer')
         #my_instance = my_class()

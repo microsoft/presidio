@@ -1,4 +1,4 @@
-import spacy
+import en_core_web_lg
 import datetime
 import logging
 from abstract_recognizer import AbstractRecognizer
@@ -12,7 +12,7 @@ class Recognizer(AbstractRecognizer):
     def load_model(self): 
         # Load spaCy lg model
         self.logger.info("Loading NLP model...")
-        self.nlp = spacy.load('en_core_web_lg', disable=['parser', 'tagger'])
+        self.nlp = en_core_web_lg.load(disable=['parser', 'tagger'])
 
     def __check_ner(self, doc, results, field):
         """Check for specific NER in text
