@@ -6,6 +6,8 @@ from field_types import field_factory
 from field_types.globally import ner
 import re2 as re
 
+from analyzer import common_pb2  # noqa: E402
+
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 CONTEXT_SIMILARITY_FACTOR = 0.35
 MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
@@ -16,7 +18,7 @@ CONTEXT_SUFFIX_COUNT = 0
 class RegexRecognizer(AbstractRecognizer):
 
     def load_model(self): 
-        # Load spaCy lg model
+        # Load spaCy small model
         self.logger.info("Loading regex model...")
         self.nlp = spacy.load('en_core_web_sm')
         
@@ -75,10 +77,10 @@ class RegexRecognizer(AbstractRecognizer):
             if result_found:
                 max_matched_strength = pattern.strength
         
-    def analyze_text(self, text, requested_field_types):
+    def _AbstractRecognizer__analyze_text_core(self, text, field_types):
         results = []
 
-        for field_type_string_filter in requested_field_types:
+        for field_type_string_filter in field_types:
             self.__analyze_field_type(text, field_type_string_filter, results)
 
         #results = self.__remove_checksum_duplicates(results)
@@ -132,8 +134,7 @@ class RegexRecognizer(AbstractRecognizer):
 
         # Add context similarity
         context = self.__extract_context(text, start, end)
-        context_similarity = self.__calculate_context_similarity(
-            context, field)
+        context_similarity = self.__calculate_context_similarity(context, field)
         if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
             score += context_similarity * CONTEXT_SIMILARITY_FACTOR
             score = max(score, MIN_SCORE_WITH_CONTEXT_SIMILARITY)
@@ -206,3 +207,18 @@ class RegexRecognizer(AbstractRecognizer):
         keywords = list(set(map(lambda k: k.lemma_.lower(), keywords)))
 
         return keywords
+    
+    def get_supported_fields(self):
+         return [common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD), 
+         common_pb2.FieldTypesEnum.Name(common_pb2.CRYPTO),
+         common_pb2.FieldTypesEnum.Name(common_pb2.DOMAIN_NAME),
+         common_pb2.FieldTypesEnum.Name(common_pb2.EMAIL_ADDRESS),
+         common_pb2.FieldTypesEnum.Name(common_pb2.IBAN_CODE),
+         common_pb2.FieldTypesEnum.Name(common_pb2.IP_ADDRESS),
+         common_pb2.FieldTypesEnum.Name(common_pb2.US_BANK_NUMBER),
+         common_pb2.FieldTypesEnum.Name(common_pb2.US_DRIVER_LICENSE),
+         common_pb2.FieldTypesEnum.Name(common_pb2.US_ITIN),
+         common_pb2.FieldTypesEnum.Name(common_pb2.US_PASSPORT),
+         common_pb2.FieldTypesEnum.Name(common_pb2.PHONE_NUMBER),
+         common_pb2.FieldTypesEnum.Name(common_pb2.US_SSN),
+         common_pb2.FieldTypesEnum.Name(common_pb2.UK_NHS)]

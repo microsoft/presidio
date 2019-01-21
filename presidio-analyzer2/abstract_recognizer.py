@@ -21,14 +21,42 @@ class AbstractRecognizer(ABC):
             pass
 
       @abstractmethod
-      def analyze_text(text, requested_field_types):
+      def __analyze_text_core(self, text, field_types):
             """
+                    This is the core method for analyzing text, assuming field_types are 
+                    the subset of the supported field types. 
                     :param text: text to be analyzed
-                    :param requested_field_types: list of types to be extracted
+                    :param field_types: list of types to be extracted
                     :returns list of TextMatcherResult per found result
             """
 
             pass
+      
+      def __sanitize_text(self, text):
+        """Replace newline with whitespace to ease spacy analyze process
+
+        Args:
+          text: document text
+        """
+
+        text = text.replace('\n', ' ')
+        text = text.replace('\r', ' ')
+        return text
+
+      def analyze_text(self, text, requested_field_types):
+          fields_to_analyze = self.__get_fields_to_analyze(requested_field_types)
+
+          if len(fields_to_analyze) > 0:
+            return self.__analyze_text_core(self.__sanitize_text(text), fields_to_analyze)
+          
+          self.logger.info("No supported fields to analyze")
+    
+      @abstractmethod
+      def get_supported_fields(self):
+        """
+              :returns list of the model's supported fields
+        """
+      pass
       
       def create_result(self, field, start, end, score):
         """Create analyze result
@@ -53,3 +81,7 @@ class AbstractRecognizer(ABC):
         self.logger.debug("field: %s Value: %s Span: '%s:%s' Score: %.2f",
                           res.field, res.text, start, end, res.score)
         return res
+
+      def __get_fields_to_analyze(self, requested_fields):
+          supportedFields = self.get_supported_fields() 
+          return set(supportedFields).intersection(requested_fields)
