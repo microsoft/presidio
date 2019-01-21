@@ -26,18 +26,18 @@ def import_plugins(plugins_package_directory_path, base_class=None, create_insta
 
         # -----------------------------
         # Iterate items inside imported python file
-
         for item in dir(module):
+            
             value = getattr(module, item)
             if not value:
                 continue
-
+            
             if not inspect.isclass(value):
                 continue
-
+            
             if filter_abstract and inspect.isabstract(value):
                 continue
-
+            print(value)
             if base_class is not None:
                 if type(value) != type(base_class):
                     continue

@@ -67,21 +67,10 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         
         self.plugins = import_models.import_plugins(
             plugins_directory_path, base_class=AbstractRecognizer)
-        logging.info(self.plugins)
+
         for plugin in self.plugins:
             logging.info(plugin)
             plugin.load_model()
-
-    def __sanitize_text(self, text):
-        """Replace newline with whitespace to ease spacy analyze process
-
-        Args:
-          text: document text
-        """
-
-        text = text.replace('\n', ' ')
-        text = text.replace('\r', ' ')
-        return text
 
     def __get_field_types(self, requested_fields):
         """ If the requested field types array is empty,
@@ -101,47 +90,17 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         logging.info("Starting Apply " + request.text)
         
         response = analyze_pb2.AnalyzeResponse()
-        sanitized_text = self.__sanitize_text(request.text)
         fields = self.__get_field_types(request.analyzeTemplate.fields)
 
         results = []
 
         for plugin in self.plugins:
-            r = plugin.analyze_text(sanitized_text, fields)
-            results.extend(r)
+            r = plugin.analyze_text(request.text, fields)
+            if r is not None:
+                results.extend(r)
 
         response.analyzeResults.extend(results)
         return response
-
-    def loadModules(self):
-        res = {}
-        import os
-        # check subfolders
-        lst = os.listdir("models")
-        dir = []
-        for d in lst:
-            s = os.path.abspath("models") + os.sep + d
-            if os.path.isdir(s) and os.path.exists(s + os.sep + "__init__.py"):
-                dir.append(d)
-        # load the modules
-        for d in dir:
-            res[d] = __import__("models." + d, fromlist=["*"])
-        return res
-
-    def getClassByName(self, module, className):
-        if not module:
-            if className.startswith("models."):
-                className = className.split("models.")[1]
-            l = className.split(".")
-            m = __services__[l[0]]
-            return self.getClassByName(m, ".".join(l[1:]))
-        elif "." in className:
-            l = className.split(".")
-            m = getattr(module, l[0])
-            return self.getClassByName(m, ".".join(l[1:]))
-        else:
-            return getattr(module, className)
-
 
 def serve_command_handler(env_grpc_port=False, grpc_port=3001):
 
