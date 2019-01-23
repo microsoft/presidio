@@ -1,4 +1,4 @@
-from abstract_recognizer import AbstractRecognizer
+from abstract_recognizer import Recognizer
 import spacy
 import datetime
 import logging
@@ -15,14 +15,26 @@ NER_STRENGTH = 0.85
 CONTEXT_PREFIX_COUNT = 5
 CONTEXT_SUFFIX_COUNT = 0
 
-class RegexRecognizer(AbstractRecognizer):
+class PatternRecognizer(Recognizer):
+
+    @abstractmethod
+    def get_patterns(self):
+        pass
+    
+    @abstractmethod
+    def validate_pattern(self, text):
+        pass
+    
+    @abstractmethod
+    def get_context(self):
+        pass
 
     def load_model(self): 
         # Load spaCy small model
         self.logger.info("Loading regex model...")
         self.nlp = spacy.load('en_core_web_sm')
         
-    def __check_pattern(self, text, results, field):
+    def __check_pattern(self, text, results):
         """Check for specific pattern in text
 
         Args:
@@ -32,7 +44,7 @@ class RegexRecognizer(AbstractRecognizer):
         """
 
         max_matched_strength = -1.0
-        for pattern in field.patterns:
+        for pattern in self.get_patterns():
             if pattern.strength <= max_matched_strength:
                 break
             result_found = False
@@ -55,7 +67,7 @@ class RegexRecognizer(AbstractRecognizer):
                     continue
 
                 # Don't add duplicate
-                if len(field.patterns) > 1 and any(
+                if len(self.get_patterns()) > 1 and any(
                     ((x.location.start == start) or (x.location.end == end))
                         and ((x.field.name == field.name)) for x in results):
                     continue
@@ -77,7 +89,7 @@ class RegexRecognizer(AbstractRecognizer):
             if result_found:
                 max_matched_strength = pattern.strength
         
-    def _AbstractRecognizer__analyze_text_core(self, text, field_types):
+    def _Recognizer__analyze_text_core(self, text, field_types):
         results = []
 
         for field_type_string_filter in field_types:
@@ -98,13 +110,13 @@ class RegexRecognizer(AbstractRecognizer):
           results: array containing the created results
         """
 
-        current_field = field_factory.FieldFactory.create(field_type_string_filter)
+        # current_field = field_factory.FieldFactory.create(field_type_string_filter)
 
-        if current_field is None:
-            return
+        # if current_field is None:
+        #     return
 
         analyze_start_time = datetime.datetime.now()
-        self.__check_pattern(text, results, current_field)
+        self.__check_pattern(text, results)
 
         analyze_time = datetime.datetime.now() - analyze_start_time
         self.logger.debug('--- analyze_pattern_time[{}]: {}.{} seconds'.format(
@@ -208,17 +220,17 @@ class RegexRecognizer(AbstractRecognizer):
 
         return keywords
     
-    def get_supported_fields(self):
-         return [common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD), 
-         common_pb2.FieldTypesEnum.Name(common_pb2.CRYPTO),
-         common_pb2.FieldTypesEnum.Name(common_pb2.DOMAIN_NAME),
-         common_pb2.FieldTypesEnum.Name(common_pb2.EMAIL_ADDRESS),
-         common_pb2.FieldTypesEnum.Name(common_pb2.IBAN_CODE),
-         common_pb2.FieldTypesEnum.Name(common_pb2.IP_ADDRESS),
-         common_pb2.FieldTypesEnum.Name(common_pb2.US_BANK_NUMBER),
-         common_pb2.FieldTypesEnum.Name(common_pb2.US_DRIVER_LICENSE),
-         common_pb2.FieldTypesEnum.Name(common_pb2.US_ITIN),
-         common_pb2.FieldTypesEnum.Name(common_pb2.US_PASSPORT),
-         common_pb2.FieldTypesEnum.Name(common_pb2.PHONE_NUMBER),
-         common_pb2.FieldTypesEnum.Name(common_pb2.US_SSN),
-         common_pb2.FieldTypesEnum.Name(common_pb2.UK_NHS)]
+    # def get_supported_fields(self):
+    #      return [common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD), 
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.CRYPTO),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.DOMAIN_NAME),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.EMAIL_ADDRESS),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.IBAN_CODE),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.IP_ADDRESS),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.US_BANK_NUMBER),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.US_DRIVER_LICENSE),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.US_ITIN),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.US_PASSPORT),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.PHONE_NUMBER),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.US_SSN),
+    #      common_pb2.FieldTypesEnum.Name(common_pb2.UK_NHS)]

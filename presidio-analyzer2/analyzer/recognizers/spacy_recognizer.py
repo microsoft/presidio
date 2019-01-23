@@ -1,7 +1,7 @@
 import spacy
 import datetime
 import logging
-from abstract_recognizer import AbstractRecognizer
+from abstract_recognizer import Recognizer
 from field_types import field_factory
 from field_types.globally import ner
 
@@ -9,7 +9,7 @@ NER_STRENGTH = 0.85
 
 from analyzer import common_pb2  # noqa: E402
 
-class SpacyRecognizer(AbstractRecognizer):
+class SpacyRecognizer(Recognizer):
 
     def load_model(self):
         # Load spaCy sm model
@@ -64,7 +64,7 @@ class SpacyRecognizer(AbstractRecognizer):
             field_type_string_filter, analyze_time.seconds,
             analyze_time.microseconds))
 
-    def _AbstractRecognizer__analyze_text_core(self, text, field_types):
+    def _Recognizer__analyze_text_core(self, text, field_types):
         doc = self.nlp(text)
         results = []
 

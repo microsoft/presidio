@@ -7,7 +7,7 @@ import analyze_pb2
 import analyze_pb2_grpc
 from concurrent import futures
 from field_types import field_factory
-from abstract_recognizer import AbstractRecognizer
+from recognizer import Recognizer
 import time
 import sys
 import os
@@ -66,7 +66,7 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         plugins_directory_path = os.path.join(SCRIPT_DIR, 'models')
         
         self.plugins = import_models.import_plugins(
-            plugins_directory_path, base_class=AbstractRecognizer)
+            plugins_directory_path, base_class=Recognizer)
 
         for plugin in self.plugins:
             logging.info(plugin)
