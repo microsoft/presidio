@@ -4,7 +4,7 @@ import logging
 import os
 import tldextract
 
-class AbstractRecognizer(ABC):
+class Recognizer(ABC):
 
       def __init__(self):
         # Set log level
@@ -31,25 +31,6 @@ class AbstractRecognizer(ABC):
             """
 
             pass
-      
-      def __sanitize_text(self, text):
-        """Replace newline with whitespace to ease spacy analyze process
-
-        Args:
-          text: document text
-        """
-
-        text = text.replace('\n', ' ')
-        text = text.replace('\r', ' ')
-        return text
-
-      def analyze_text(self, text, requested_field_types):
-          fields_to_analyze = self.__get_fields_to_analyze(requested_field_types)
-
-          if len(fields_to_analyze) > 0:
-            return self.__analyze_text_core(self.__sanitize_text(text), fields_to_analyze)
-          
-          self.logger.info("No supported fields to analyze")
     
       @abstractmethod
       def get_supported_fields(self):
@@ -82,6 +63,25 @@ class AbstractRecognizer(ABC):
                           res.field, res.text, start, end, res.score)
         return res
 
+      def analyze_text(self, text, requested_field_types):
+          fields_to_analyze = self.__get_fields_to_analyze(requested_field_types)
+
+          if len(fields_to_analyze) > 0:
+            return self.__analyze_text_core(self.__sanitize_text(text), fields_to_analyze)
+          
+          self.logger.info("No supported fields to analyze")
+      
       def __get_fields_to_analyze(self, requested_fields):
           supportedFields = self.get_supported_fields() 
           return set(supportedFields).intersection(requested_fields)
+
+      def __sanitize_text(self, text):
+        """Replace newline with whitespace to ease spacy analyze process
+
+        Args:
+          text: document text
+        """
+
+        text = text.replace('\n', ' ')
+        text = text.replace('\r', ' ')
+        return text
