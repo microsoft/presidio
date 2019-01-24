@@ -3,6 +3,7 @@ package anonymizer
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
@@ -49,6 +50,7 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 				if err != nil {
 					return "", err
 				}
+				transformed = true
 				break
 			}
 
@@ -62,7 +64,25 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 					break
 				}
 			}
+
 		}
+
+		if transformed {
+			continue
+		}
+
+		// Now, for any analyzer result which wasn't transformed, either
+		// transform using the default transformation, as described in the
+		// template, or fallback to default transformation
+		if template.DefaultTransformation != nil {
+			text, err = transformField(template.DefaultTransformation, result, text)
+		} else {
+			text, err = methods.ReplaceValue(text, *result.Location, "<"+strings.ToUpper(result.Field.Name)+">")
+		}
+		if err != nil {
+			return "", err
+		}
+		transformed = true
 	}
 
 	return text, nil
