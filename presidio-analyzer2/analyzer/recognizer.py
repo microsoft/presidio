@@ -33,7 +33,7 @@ class Recognizer(ABC):
             pass
     
       @abstractmethod
-      def get_supported_fields(self):
+      def get_supported_entities(self):
         """
               :returns list of the model's supported fields
         """
@@ -52,7 +52,7 @@ class Recognizer(ABC):
         res.field.name = field.name
         res.score = score
         # TODO: this should probably needs to be removed.
-        res.text = field.text
+        #res.text = field.text
 
         # check score
         res.location.start = start
@@ -68,11 +68,17 @@ class Recognizer(ABC):
 
           if len(fields_to_analyze) > 0:
             return self.__analyze_text_core(self.__sanitize_text(text), fields_to_analyze)
-          
+
           self.logger.info("No supported fields to analyze")
       
       def __get_fields_to_analyze(self, requested_fields):
-          supportedFields = self.get_supported_fields() 
+          supportedFields = self.get_supported_entities() 
+          print("supported entities: ")
+          print(supportedFields)
+
+          print("requested entities: ")
+          print(requested_fields)
+          
           return set(supportedFields).intersection(requested_fields)
 
       def __sanitize_text(self, text):

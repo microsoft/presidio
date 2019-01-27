@@ -1,10 +1,10 @@
-from pattern_recognizer import PatternRecognizer
 from pattern import Pattern
+from analyzer.recognizers import PatternRecognizer
 
 class CreditCardRecognizer(PatternRecognizer):
 
-    def get_supported_fields(self):
-        return "CREDIT_CARD"
+    def get_supported_entities(self):
+        return ["CREDIT_CARD"]
     
     def get_patterns(self):
         patterns = []

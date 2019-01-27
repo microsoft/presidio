@@ -7,16 +7,12 @@ from recognizer import Recognizer
 
 class RecognizerRegistry():
 
-
-    def get_models(self): 
+    def load_models(self): 
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
         recognizer_directory_path = os.path.join(SCRIPT_DIR, 'recognizers')
-            
         return self.__load(recognizer_directory_path, base_class=Recognizer)
 
-
-
-    def __load(plugins_package_directory_path, base_class=None, create_instance=True, filter_abstract=True):
+    def __load(self, plugins_package_directory_path, base_class=None, create_instance=True, filter_abstract=True):
 
         plugins_package_name = os.path.basename(plugins_package_directory_path)
         result = []
