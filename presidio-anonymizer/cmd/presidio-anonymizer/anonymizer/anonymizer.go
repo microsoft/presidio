@@ -12,6 +12,33 @@ import (
 
 type sortedResults []*types.AnalyzeResult
 
+// anonymizeSingleResult anonymize a single analyze result
+func anonymizeSingleResult(result *types.AnalyzeResult, transformations []*types.FieldTypeTransformation, text string) (bool, string, error) {
+	var err error
+	var newtext string
+	for _, transformation := range transformations {
+		if transformation.Fields == nil {
+			newtext, err = transformField(transformation.Transformation, result, text)
+			if err != nil {
+				return false, "", err
+			}
+			return true, newtext, nil
+		}
+
+		for _, fieldType := range transformation.Fields {
+			if fieldType.Name == result.Field.Name {
+				newtext, err = transformField(transformation.Transformation, result, text)
+				if err != nil {
+					return false, "", err
+				}
+				return true, newtext, nil
+			}
+		}
+	}
+
+	return false, "", nil
+}
+
 func (a sortedResults) Len() int      { return len(a) }
 func (a sortedResults) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a sortedResults) Less(i, j int) bool {
@@ -36,38 +63,16 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 	}
 
 	//Apply new values
-	var err error
 	for i := len(results) - 1; i >= 0; i-- {
 
 		result := results[i]
-		transformed := false
-		for _, transformations := range template.FieldTypeTransformations {
-			if transformed {
-				break
-			}
-			if transformations.Fields == nil {
-				text, err = transformField(transformations.Transformation, result, text)
-				if err != nil {
-					return "", err
-				}
-				transformed = true
-				break
-			}
-
-			for _, fieldType := range transformations.Fields {
-				if fieldType.Name == result.Field.Name {
-					text, err = transformField(transformations.Transformation, result, text)
-					if err != nil {
-						return "", err
-					}
-					transformed = true
-					break
-				}
-			}
-
+		transformed, transformedText, err := anonymizeSingleResult(result, template.FieldTypeTransformations, text)
+		if err != nil {
+			return "", err
 		}
 
 		if transformed {
+			text = transformedText
 			continue
 		}
 
@@ -82,7 +87,6 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 		if err != nil {
 			return "", err
 		}
-		transformed = true
 	}
 
 	return text, nil
