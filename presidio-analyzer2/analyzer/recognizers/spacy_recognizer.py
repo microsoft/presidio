@@ -1,7 +1,7 @@
 import spacy
 import datetime
 import logging
-from abstract_recognizer import Recognizer
+from recognizer import Recognizer
 from field_types import field_factory
 from field_types.globally import ner
 
@@ -76,7 +76,7 @@ class SpacyRecognizer(Recognizer):
 
         return results
 
-    def get_supported_fields(self):
+    def get_supported_entities(self):
         return [common_pb2.FieldTypesEnum.Name(common_pb2.DATE_TIME),
          common_pb2.FieldTypesEnum.Name(common_pb2.NRP),
           common_pb2.FieldTypesEnum.Name(common_pb2.LOCATION),

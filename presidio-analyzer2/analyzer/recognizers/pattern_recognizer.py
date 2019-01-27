@@ -1,12 +1,9 @@
-from abstract_recognizer import Recognizer
+from recognizer import Recognizer
 import spacy
 import datetime
 import logging
-from field_types import field_factory
-from field_types.globally import ner
 import re2 as re
-
-from analyzer import common_pb2  # noqa: E402
+from abc import abstractmethod
 
 CONTEXT_SIMILARITY_THRESHOLD = 0.65
 CONTEXT_SIMILARITY_FACTOR = 0.35
@@ -14,6 +11,7 @@ MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
 NER_STRENGTH = 0.85
 CONTEXT_PREFIX_COUNT = 5
 CONTEXT_SUFFIX_COUNT = 0
+
 
 class PatternRecognizer(Recognizer):
 
@@ -40,7 +38,6 @@ class PatternRecognizer(Recognizer):
         Args:
         text: the text to analyze
         results: array containing the created results
-        field: current field type (pattern)
         """
 
         max_matched_strength = -1.0
@@ -51,29 +48,29 @@ class PatternRecognizer(Recognizer):
 
             match_start_time = datetime.datetime.now()
             matches = re.finditer(
-                pattern.regex,
+                pattern.pattern,
                 text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
             match_time = datetime.datetime.now() - match_start_time
             self.logger.debug('--- match_time[{}]: {}.{} seconds'.format(
-                field.name, match_time.seconds, match_time.microseconds))
+                pattern.name, match_time.seconds, match_time.microseconds))
 
             for match in matches:
                 start, end = match.span()
-                field.text = text[start:end]
+                text = text[start:end]
 
                 # Skip empty results
-                if field.text == '':
+                if text == '':
                     continue
 
                 # Don't add duplicate
                 if len(self.get_patterns()) > 1 and any(
                     ((x.location.start == start) or (x.location.end == end))
-                        and ((x.field.name == field.name)) for x in results):
+                        and ((x.field.name == pattern.name)) for x in results):
                     continue
 
-                score = self.__calculate_score(text, pattern.strength, field, start, end)
-                res = super().create_result(field, start, end, score)
+                score = self.__calculate_score(text, pattern, start, end)
+                res = super().create_result(pattern, start, end, score)
 
                 if res is None or res.score == 0:
                     continue
@@ -124,7 +121,7 @@ class PatternRecognizer(Recognizer):
             analyze_time.microseconds))
     
 
-    def __calculate_score(self, text, match_strength, field, start, end):
+    def __calculate_score(self, text, match_strength, pattern, start, end):
         """Calculate score of match by context
 
         Args:
@@ -135,18 +132,18 @@ class PatternRecognizer(Recognizer):
           end: match end offset
         """
 
-        if field.should_check_checksum:
-            if field.check_checksum() is not True:
-                self.logger.debug('Checksum failed for %s', field.text)
-                return 0
-            else:
-                return 1.0
+       
+        if pattern.validate_pattern() is not True:
+            self.logger.debug('Checksum failed for %s', text)
+            return 0
+        else:
+            return 1.0
 
-        score = match_strength
+        score = pattern.strength
 
         # Add context similarity
         context = self.__extract_context(text, start, end)
-        context_similarity = self.__calculate_context_similarity(context, field)
+        context_similarity = self.__calculate_context_similarity(context, pattern)
         if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
             score += context_similarity * CONTEXT_SIMILARITY_FACTOR
             score = max(score, MIN_SCORE_WITH_CONTEXT_SIMILARITY)
@@ -220,7 +217,7 @@ class PatternRecognizer(Recognizer):
 
         return keywords
     
-    # def get_supported_fields(self):
+    # def get_supported_entities(self):
     #      return [common_pb2.FieldTypesEnum.Name(common_pb2.CREDIT_CARD), 
     #      common_pb2.FieldTypesEnum.Name(common_pb2.CRYPTO),
     #      common_pb2.FieldTypesEnum.Name(common_pb2.DOMAIN_NAME),

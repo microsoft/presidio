@@ -1,13 +1,11 @@
 import logging
-import import_models
-#import matcher
+from recognizer_registry import RecognizerRegistry
 import importlib
 import grpc
 import analyze_pb2
 import analyze_pb2_grpc
 from concurrent import futures
 from field_types import field_factory
-from recognizer import Recognizer
 import time
 import sys
 import os
@@ -17,8 +15,7 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
-from models import regex_recognizer
-#from models.regex import regex_recognizer
+from recognizer import Recognizer
 
 WELCOME_MESSAGE = r"""
 
@@ -62,11 +59,8 @@ class PresidioCLIHelp(CLIHelp):
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self):
         # load all models
-        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-        plugins_directory_path = os.path.join(SCRIPT_DIR, 'models')
-        
-        self.plugins = import_models.import_plugins(
-            plugins_directory_path, base_class=Recognizer)
+        registry = RecognizerRegistry()
+        self.plugins = registry.load_models()
 
         for plugin in self.plugins:
             logging.info(plugin)
@@ -78,17 +72,55 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         field_type_string_filters = []
 
+        # get all supported fields from plugins
+        supportedFields = []
+        for plugin in self.plugins:
+            s = plugin.get_supported_entities()
+            print(s)
+            if isinstance(s, str):
+                supportedFields.append(s)
+            else:
+                supportedFields.extend(s)
+            
+
+        
+        print(supportedFields)
+        #supportedFields = list(set(supportedFields))
+
         if requested_fields is None or not requested_fields:
-            field_type_string_filters = field_factory.types_refs
+            field_type_string_filters = supportedFields
         else:
             for field_type in requested_fields:
                 field_type_string_filters.append(field_type.name)
 
         return field_type_string_filters
 
+    def __remove_duplicates(self, results):
+        certain_results = list(filter(lambda r: r.score == 1.0, results))
+
+        # Remove matches of the same text, if there's a match with score = 1
+        filtered_results = []
+
+        for result in results:
+            valid_result = True
+            if result not in certain_results:
+                for certain_result in certain_results:
+                    # If result is equal to or substring of a checksum result
+                    if (result.text == certain_result.text
+                            or (result.text in certain_result.text
+                                and result.location.start >= certain_result.location.start
+                                and result.location.end <= certain_result.location.end)):
+                        valid_result = False
+                        break
+
+            if valid_result:
+                filtered_results.append(result)
+
+        return filtered_results
+
     def Apply(self, request, context):
         logging.info("Starting Apply " + request.text)
-        
+
         response = analyze_pb2.AnalyzeResponse()
         fields = self.__get_field_types(request.analyzeTemplate.fields)
 
@@ -99,8 +131,10 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
             if r is not None:
                 results.extend(r)
 
+        results = self.__remove_duplicates(results)
         response.analyzeResults.extend(results)
         return response
+
 
 def serve_command_handler(env_grpc_port=False, grpc_port=3001):
 

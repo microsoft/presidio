@@ -1,0 +1,1 @@
+from recognizers.pattern_recognizer import PatternRecognizer
