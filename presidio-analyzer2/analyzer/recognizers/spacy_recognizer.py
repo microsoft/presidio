@@ -1,7 +1,7 @@
 import spacy
 import datetime
 import logging
-from recognizer import Recognizer
+from entity_recognizer import EntityRecognizer
 from field_types import field_factory
 from field_types.globally import ner
 
@@ -9,7 +9,7 @@ NER_STRENGTH = 0.85
 
 from analyzer import common_pb2  # noqa: E402
 
-class SpacyRecognizer(Recognizer):
+class SpacyRecognizer(EntityRecognizer):
 
     def load_model(self):
         # Load spaCy sm model

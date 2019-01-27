@@ -1,25 +1,42 @@
-from entity_recognizer import EntityRecognizer
-import spacy
-import datetime
+from abc import ABC, abstractmethod
+import common_pb2
 import logging
-import re2 as re
-from abc import abstractmethod
+import os
+import tldextract
 
-CONTEXT_SIMILARITY_THRESHOLD = 0.65
-CONTEXT_SIMILARITY_FACTOR = 0.35
-MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
-NER_STRENGTH = 0.85
-CONTEXT_PREFIX_COUNT = 5
-CONTEXT_SUFFIX_COUNT = 0
+#Change to entity recognizer
+class Recognizer(ABC):
 
+    def __init__(self):
+        # Set log level
+        loglevel = os.environ.get("LOG_LEVEL", "INFO")
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(loglevel)
+        logging.getLogger('tldextract').setLevel(loglevel)
 
-class PatternRecognizer(EntityRecognizer):
+        # Caching top level domains
+        tldextract.extract("")
+        self.loaded = False
 
-    def __init__(self, patterns, context, supported_fields):
+    @abstractmethod
+    def load_model(self):
+        pass
 
-        self.patterns = patterns
-        self.context = context
-        self.supported_fields = supported_fields
+    @abstractmethod
+    def __analyze_text_core(self, text, field_types):
+        """
+                This is the core method for analyzing text, assuming field_types are
+                the subset of the supported field types.
+                :param text: text to be analyzed
+                :param field_types: list of types to be extracted
+                :returns list of TextMatcherResult per found result
+        """
+
+    @abstractmethod
+    def get_supported_entities(self):
+        """
+              :returns list of the model's supported fields
+        """
 
     @abstractmethod
     def get_patterns(self):
@@ -200,20 +217,48 @@ class PatternRecognizer(EntityRecognizer):
         return similarity
 
     def __context_to_keywords(self, context):
-        """Convert context text to relevant keywords
+
+
+
+    def create_result(self, field, start, end, score):
+        """Create analyze result
 
         Args:
-           context: words prefix of specified pattern
+          field: current field type (pattern)
+          start: match start offset
+          end: match end offset
         """
 
-        nlp_context = self.nlp(context)
+        res = common_pb2.AnalyzeResult()
+        res.field.name = field.name
+        res.score = score
+        # TODO: this should probably needs to be removed.
+        #res.text = field.text
 
-        # Remove punctuation, stop words and take lemma form and remove
-        # duplicates
-        keywords = list(
-            filter(
-                lambda k: not self.nlp.vocab[k.text].is_stop and not k.is_punct and k.lemma_ != '-PRON-' and k.lemma_ != 'be',  # noqa: E501
-                nlp_context))
-        keywords = list(set(map(lambda k: k.lemma_.lower(), keywords)))
+        # check score
+        res.location.start = start
+        res.location.end = end
+        res.location.length = end - start
 
-        return keywords
+        self.logger.debug("field: %s Value: %s Span: '%s:%s' Score: %.2f",
+                          res.field, res.text, start, end, res.score)
+        return res
+
+    def analyze_text(self, text, requested_field_types):
+        # lazy loading - load only on first use.
+        if not self.loaded:
+            self.load_model()
+            self.loaded = True
+
+        fields_to_analyze = self.__get_fields_to_analyze(requested_field_types)
+
+        if not fields_to_analyze:
+            return self.__analyze_text_core(text, fields_to_analyze)
+
+        self.logger.info("No supported fields to analyze")
+        return []
+
+    def __get_fields_to_analyze(self, requested_fields):
+        supportedFields = self.get_supported_entities()
+
+        return set(supportedFields).intersection(requested_fields)

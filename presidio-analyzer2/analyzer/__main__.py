@@ -15,7 +15,7 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
-from recognizer import Recognizer
+from entity_recognizer import EntityRecognizer
 
 WELCOME_MESSAGE = r"""
 
@@ -57,14 +57,9 @@ class PresidioCLIHelp(CLIHelp):
 
 
 class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
-    def __init__(self):
-        # load all models
-        registry = RecognizerRegistry()
-        self.plugins = registry.load_models()
-
-        for plugin in self.plugins:
-            logging.info(plugin)
-            plugin.load_model()
+    def __init__(self, registry=RecognizerRegistry()):
+        # load all recognizer instances
+        self.recognizers = registry.load_entity_recognizers()
 
     def __get_field_types(self, requested_fields):
         """ If the requested field types array is empty,
@@ -72,20 +67,14 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         field_type_string_filters = []
 
-        # get all supported fields from plugins
+        # get all supported fields from recognizers
         supportedFields = []
-        for plugin in self.plugins:
-            s = plugin.get_supported_entities()
-            print(s)
+        for recognizer in self.recognizers:
+            s = recognizer.get_supported_entities()
             if isinstance(s, str):
                 supportedFields.append(s)
             else:
                 supportedFields.extend(s)
-            
-
-        
-        print(supportedFields)
-        #supportedFields = list(set(supportedFields))
 
         if requested_fields is None or not requested_fields:
             field_type_string_filters = supportedFields
@@ -95,7 +84,8 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return field_type_string_filters
 
-    def __remove_duplicates(self, results):
+    @staticmethod
+    def __remove_duplicates(results):
         certain_results = list(filter(lambda r: r.score == 1.0, results))
 
         # Remove matches of the same text, if there's a match with score = 1
@@ -118,6 +108,18 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return filtered_results
 
+    @staticmethod
+    def __transform_text(text):
+        """Replace newline with whitespace to ease spacy analyze process
+
+        Args:
+            text: document text
+        """
+
+        text = text.replace('\n', ' ')
+        text = text.replace('\r', ' ')
+        return text
+
     def Apply(self, request, context):
         logging.info("Starting Apply " + request.text)
 
@@ -125,13 +127,13 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
         fields = self.__get_field_types(request.analyzeTemplate.fields)
 
         results = []
-
+        transformed_text = Analyzer.__transform_text(request.text)
         for plugin in self.plugins:
-            r = plugin.analyze_text(request.text, fields)
+            r = plugin.analyze_text(transformed_text, fields)
             if r is not None:
                 results.extend(r)
 
-        results = self.__remove_duplicates(results)
+        results = Analyzer.__remove_duplicates(results)
         response.analyzeResults.extend(results)
         return response
 
