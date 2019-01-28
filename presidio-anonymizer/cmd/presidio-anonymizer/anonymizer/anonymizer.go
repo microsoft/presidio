@@ -12,26 +12,25 @@ import (
 
 type sortedResults []*types.AnalyzeResult
 
+// transformSingleField
+func transformSingleField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (bool, string, error) {
+	newtext, err := transformField(transformation, result, text)
+	if err != nil {
+		return false, "", err
+	}
+	return true, newtext, nil
+}
+
 // anonymizeSingleResult anonymize a single analyze result
 func anonymizeSingleResult(result *types.AnalyzeResult, transformations []*types.FieldTypeTransformation, text string) (bool, string, error) {
-	var err error
-	var newtext string
 	for _, transformation := range transformations {
 		if transformation.Fields == nil {
-			newtext, err = transformField(transformation.Transformation, result, text)
-			if err != nil {
-				return false, "", err
-			}
-			return true, newtext, nil
+			return transformSingleField(transformation.Transformation, result, text)
 		}
 
 		for _, fieldType := range transformation.Fields {
 			if fieldType.Name == result.Field.Name {
-				newtext, err = transformField(transformation.Transformation, result, text)
-				if err != nil {
-					return false, "", err
-				}
-				return true, newtext, nil
+				return transformSingleField(transformation.Transformation, result, text)
 			}
 		}
 	}
