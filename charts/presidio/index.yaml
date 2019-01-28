@@ -3,12 +3,12 @@ entries:
   presidio:
   - apiVersion: v1
     appVersion: "1831"
-    created: 2019-01-28T16:30:59.4586673+02:00
+    created: 2019-01-28T16:58:29.0262025+02:00
     description: A context aware, born to the cloud, customizable data loss prevention
       service
-    digest: 141630415f3b0d8307bca0a10173aacdd4b18d8cc624ea22862fa87d57587b62
+    digest: 13ad3df6e4d97757ebc9b64fee935857b96502dc72cf9ded223d9164439ca8ab
     name: presidio
     urls:
     - presidio-1831.tgz
     version: "1831"
-generated: 2019-01-28T16:30:59.4576673+02:00
+generated: 2019-01-28T16:58:29.0252174+02:00
