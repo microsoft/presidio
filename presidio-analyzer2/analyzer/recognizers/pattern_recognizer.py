@@ -32,7 +32,7 @@ class PatternRecognizer(Recognizer):
         self.logger.info("Loading regex model...")
         self.nlp = spacy.load('en_core_web_sm')
         
-    def __check_pattern(self, text, results):
+    def __;check_pattern(self, text, results):
         """Check for specific pattern in text
 
         Args:

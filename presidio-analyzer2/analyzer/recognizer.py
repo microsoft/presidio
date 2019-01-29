@@ -73,11 +73,6 @@ class Recognizer(ABC):
       
       def __get_fields_to_analyze(self, requested_fields):
           supportedFields = self.get_supported_entities() 
-          print("supported entities: ")
-          print(supportedFields)
-
-          print("requested entities: ")
-          print(requested_fields)
           
           return set(supportedFields).intersection(requested_fields)
 
