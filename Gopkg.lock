@@ -81,7 +81,7 @@
   version = "0.3.0"
 
 [[projects]]
-  digest = "1:8824d5e809d68fd509eef8d4e78e5e4472bd42d173ab6c4941ceb0d5c6b550aa"
+  digest = "1:ef17fa8a0edc01cb33eefed09d6865064ebdcc74ceef1637693bc466c708deac"
   name = "github.com/Azure/go-autorest"
   packages = [
     "autorest",
@@ -92,7 +92,6 @@
     "autorest/validation",
     "logger",
     "tracing",
-    "version",
   ]
   pruneopts = "UT"
   revision = "f401b1ccc8eb505927fae7a0c7f6406d37ca1c7e"
@@ -108,11 +107,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:aadb1ac57ed6201de4f898495fd0791c0ed6c8e8d652d8b8b49f4d1f1c6d2eae"
+  digest = "1:09d02863ffab900bdd5433a84148021ffdb309eda6949e111ae9fd3fd31985e3"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "03f9193b772ccd3b4bfe3ad4cdc6155748fcdb8d"
+  revision = "fb5d00d4a6df7f7e468b2cb1b9375f614d41a7b7"
 
 [[projects]]
   digest = "1:a59a467c541a1bf8b06e4fad6113028c959be6573b78ceca9f8020cd0d2127fc"
