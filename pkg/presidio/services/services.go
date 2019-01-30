@@ -17,11 +17,13 @@ import (
 
 //Services exposes GRPC services
 type Services struct {
-	AnalyzerService  types.AnalyzeServiceClient
-	AnonymizeService types.AnonymizeServiceClient
-	DatasinkService  types.DatasinkServiceClient
-	SchedulerService types.SchedulerServiceClient
-	Settings         *platform.Settings
+	AnalyzerService       types.AnalyzeServiceClient
+	AnonymizeService      types.AnonymizeServiceClient
+	AnonymizeImageService types.AnonymizeImageServiceClient
+	OcrService            types.OcrServiceClient
+	DatasinkService       types.DatasinkServiceClient
+	SchedulerService      types.SchedulerServiceClient
+	Settings              *platform.Settings
 }
 
 //New services with settings
@@ -60,6 +62,40 @@ func (services *Services) SetupAnonymizerService() {
 
 }
 
+//SetupAnonymizerImageService GRPC connection
+func (services *Services) SetupAnonymizerImageService() {
+
+	if services.Settings.AnonymizerImageSvcAddress == "" {
+		log.Warn("anonymizer image service address is empty")
+		return
+	}
+
+	anonymizeImageService, err := rpc.SetupAnonymizeImageService(services.Settings.AnonymizerImageSvcAddress)
+	if err != nil {
+		log.Fatal("Connection to anonymizer image service failed %q", err)
+	}
+
+	services.AnonymizeImageService = anonymizeImageService
+
+}
+
+//SetupOCRService GRPC connection
+func (services *Services) SetupOCRService() {
+
+	if services.Settings.OcrSvcAddress == "" {
+		log.Warn("ocr service address is empty")
+		return
+	}
+
+	ocrService, err := rpc.SetupOcrService(services.Settings.OcrSvcAddress)
+	if err != nil {
+		log.Fatal("Connection to ocr service failed %q", err)
+	}
+
+	services.OcrService = ocrService
+
+}
+
 //SetupSchedulerService GRPC connection
 func (services *Services) SetupSchedulerService() {
 
@@ -70,7 +106,7 @@ func (services *Services) SetupSchedulerService() {
 
 	schedulerService, err := rpc.SetupSchedulerService(services.Settings.SchedulerSvcAddress)
 	if err != nil {
-		log.Fatal("Connection to anonymizer service failed %q", err)
+		log.Fatal("Connection to scheduler service failed %q", err)
 	}
 	services.SchedulerService = schedulerService
 
@@ -118,7 +154,9 @@ func (services *Services) AnalyzeItem(ctx context.Context, text string, template
 }
 
 //AnonymizeItem - anonymize text
-func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
+func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult,
+	text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
+
 	if anonymizeTemplate != nil {
 
 		anonymizeRequest := &types.AnonymizeRequest{
@@ -126,8 +164,39 @@ func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*t
 			Text:           text,
 			AnalyzeResults: analyzeResults,
 		}
-		res, err := services.AnonymizeService.Apply(ctx, anonymizeRequest)
-		return res, err
+		return services.AnonymizeService.Apply(ctx, anonymizeRequest)
+	}
+	return nil, nil
+}
+
+//AnonymizeImageItem - anonymize image
+func (services *Services) AnonymizeImageItem(ctx context.Context, image *types.Image, analyzeResults []*types.AnalyzeResult,
+	detectionType types.DetectionTypeEnum,
+	anonymizeImageTemplate *types.AnonymizeImageTemplate) (*types.AnonymizeImageResponse, error) {
+
+	if anonymizeImageTemplate != nil {
+
+		anonymizeImageRequest := &types.AnonymizeImageRequest{
+			Image:          image,
+			Template:       anonymizeImageTemplate,
+			DetectionType:  detectionType,
+			AnalyzeResults: analyzeResults,
+		}
+		return services.AnonymizeImageService.Apply(ctx, anonymizeImageRequest)
+
+	}
+	return nil, nil
+}
+
+//OcrItem - ocr image
+func (services *Services) OcrItem(ctx context.Context, image *types.Image) (*types.OcrResponse, error) {
+
+	if image.Data != nil {
+
+		ocrRequest := &types.OcrRequest{
+			Image: image,
+		}
+		return services.OcrService.Apply(ctx, ocrRequest)
 	}
 	return nil, nil
 }
