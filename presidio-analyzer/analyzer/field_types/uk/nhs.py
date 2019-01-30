@@ -34,7 +34,7 @@ class UkNhs(field_type.FieldType):
 
         remainder = total % 11
         check_digit = 11 - remainder
-        if check_digit is 11:
+        if check_digit == 11:
             return True
 
         return False
