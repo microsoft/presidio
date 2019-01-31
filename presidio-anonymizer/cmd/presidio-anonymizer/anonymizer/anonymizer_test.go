@@ -16,6 +16,7 @@ var testPlans = []struct {
 	expected                string
 	analyzeResults          []*types.AnalyzeResult
 	fieldTypeTransformation []*types.FieldTypeTransformation
+	defaultTransformation   *types.Transformation
 }{{
 	desc:     "Replace 1 Element",
 	text:     "My phone number is 058-5559943",
@@ -254,6 +255,113 @@ var testPlans = []struct {
 		},
 	}},
 },
+	// Replace 1 custom field with a specific transformation for this kind of field
+	{
+		desc:     "Replace 1 custom field",
+		text:     "My custom field is myvalue",
+		expected: "My custom field is <CUSTOM_REPLACE>",
+		analyzeResults: []*types.AnalyzeResult{{
+			Location: &types.Location{
+				Start: 19,
+				End:   26,
+			},
+			Field: &types.FieldTypes{
+				Name: "customtype",
+			},
+		}},
+		fieldTypeTransformation: []*types.FieldTypeTransformation{{
+			Fields: []*types.FieldTypes{{
+				Name: "customtype",
+			}},
+			Transformation: &types.Transformation{
+				ReplaceValue: &types.ReplaceValue{
+					NewValue: "<CUSTOM_REPLACE>",
+				},
+			},
+		}},
+	},
+	// Replace 1 custom field with the basic default transformation
+	{
+		desc:     "Replace 1 undeclared field using default transformation",
+		text:     "My undeclared field is myvalue",
+		expected: "My undeclared field is <CUSTOMTYPE>",
+		analyzeResults: []*types.AnalyzeResult{{
+			Location: &types.Location{
+				Start: 23,
+				End:   30,
+			},
+			Field: &types.FieldTypes{
+				Name: "customtype",
+			},
+		}},
+	},
+	// Replace two custom fields with a transformation which was declared for ALL fields
+	{
+		desc:     "Replace 2 custom fields",
+		text:     "My custom field is myvalue and myvalue2",
+		expected: "My custom field is <CUSTOM_REPLACE> and <CUSTOM_REPLACE>",
+		analyzeResults: []*types.AnalyzeResult{{
+			Location: &types.Location{
+				Start: 19,
+				End:   26,
+			},
+			Field: &types.FieldTypes{
+				Name: "customtype",
+			},
+		},
+			{
+				Location: &types.Location{
+					Start: 31,
+					End:   39,
+				},
+				Field: &types.FieldTypes{
+					Name: "customtype2",
+				},
+			}},
+		fieldTypeTransformation: []*types.FieldTypeTransformation{{
+			Transformation: &types.Transformation{
+				ReplaceValue: &types.ReplaceValue{
+					NewValue: "<CUSTOM_REPLACE>",
+				},
+			},
+		}},
+	},
+	// Replace 1 custom field with a specific transformation. Replace the second with a default transformation
+	{
+		desc:     "Replace 2 custom fields, some with provided default transformation",
+		text:     "My custom field is myvalue and myvalue2",
+		expected: "My custom field is   and <CUSTOM_REPLACE>",
+		analyzeResults: []*types.AnalyzeResult{{
+			Location: &types.Location{
+				Start: 19,
+				End:   26,
+			},
+			Field: &types.FieldTypes{
+				Name: "customtype",
+			},
+		},
+			{
+				Location: &types.Location{
+					Start: 31,
+					End:   39,
+				},
+				Field: &types.FieldTypes{
+					Name: "customtype2",
+				},
+			}},
+		defaultTransformation: &types.Transformation{
+			RedactValue: &types.RedactValue{}},
+		fieldTypeTransformation: []*types.FieldTypeTransformation{{
+			Fields: []*types.FieldTypes{{
+				Name: "customtype2",
+			}},
+			Transformation: &types.Transformation{
+				ReplaceValue: &types.ReplaceValue{
+					NewValue: "<CUSTOM_REPLACE>",
+				},
+			},
+		}},
+	},
 }
 
 func TestPlan(t *testing.T) {
@@ -262,6 +370,7 @@ func TestPlan(t *testing.T) {
 
 		anonymizerTemplate := types.AnonymizeTemplate{
 			FieldTypeTransformations: plan.fieldTypeTransformation,
+			DefaultTransformation:    plan.defaultTransformation,
 		}
 		output, err := AnonymizeText(plan.text, plan.analyzeResults, &anonymizerTemplate)
 		assert.NoError(t, err)
