@@ -2,8 +2,6 @@ package eventhubs
 
 import (
 	"context"
-	//"os"
-	//"os/signal"
 	"time"
 
 	"github.com/Azure/azure-amqp-common-go/conn"
