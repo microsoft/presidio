@@ -1,12 +1,12 @@
 import spacy
-from local_recognizer import LocalRecognizer
+from pattern_recognizer import PatternRecognizer
 
 NER_STRENGTH = 0.85
 
-class SpacyRecognizer(LocalRecognizer):
+class SpacyRecognizer(PatternRecognizer):
 
     def __init__(self):
-        super().__init(None, None, None, None, 1.0)
+        super().__init__()
 
     def load(self):
         # Load spaCy sm model

@@ -3,6 +3,12 @@ from abc import ABC, abstractmethod
 
 class EntityRecognizer:
 
+      def __init__(self, supported_entities, supported_languages, version):
+            self.supported_entities = supported_entities
+            self.supported_languages = supported_languages
+            self.version = version
+
+
       @abstractmethod
       def load(self):
             pass
@@ -17,13 +23,18 @@ class EntityRecognizer:
                     :returns list of TextMatcherResult per found result
             """
 
-            pass
+            return None
     
-      @abstractmethod
+      
       def get_supported_entities(self):
-        """
-              :returns list of the model's supported fields
-        """
-      pass
+        return self.supported_entities
+
+
+      def get_supported_languages(self):
+        return self.supported_languages
+
+      def get_version(self):
+        return self.version
+
 
       
