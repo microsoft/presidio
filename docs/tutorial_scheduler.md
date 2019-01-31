@@ -210,20 +210,20 @@ odbc:server=<serverName>.database.windows.net;user id=<userId>;password=<passwor
 
 ### Stream configuration
 For Azure Event Hub, use the following configuration:
-You can either ehConnectionString or ehKeyName and ehKeyValue
+
 ```json
   "streamConfig": {
     "ehConfig": {
-      "ehNamespace": "<ehNamespace>",
-      "ehName": "<ehName>",
-      "ehConnectionString": "<ehConnectionString>",
-      "ehKeyName": "<ehKeyName>",
-      "ehKeyValue": "<ehKeyValue>"
+      "ehConnectionString": "<ehConnectionString>", // EH connection string. It is recommended to generate a connection string from EH and NOT from EH namespace.
+      "storageAccountName": "<storageAccountName>", // Storage account name for Azure EH EPH pattern
+      "storageAccountKeyValue": "<storageAccountKeyValue>", // Storage account key for Azure EH EPH pattern
+      "containerValue": "<containerValue>" // Storage container name for Azure EH EPH pattern
     }
   }
 ```
 
 For Kafka use the following configuration:
+
 ```json
   "streamConfig": {
     "kafkaConfig": {
