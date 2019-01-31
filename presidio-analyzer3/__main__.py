@@ -81,7 +81,6 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
                 supportedFields.append(s)
             else:
                 supportedFields.extend(s)
-            
 
         
         print(supportedFields)
