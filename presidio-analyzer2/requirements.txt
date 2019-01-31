@@ -1,0 +1,8 @@
+cython
+https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.0.0/en_core_web_lg-2.0.0.tar.gz
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz
+https://github.com/torosent/pyre2/archive/release/0.2.23.zip
+grpcio
+protobuf
+tldextract
+knack
