@@ -84,9 +84,7 @@ func (e *eventhubs) Receive(receiveFunc stream.ReceiveFunc) error {
 		return err
 	}
 
-	err = e.eph.Start(e.ctx)
-
-	return err
+	return e.eph.Start(e.ctx)
 }
 
 func (e *eventhubs) handleEvent(ctx context.Context, event *eh.Event) error {
@@ -94,14 +92,12 @@ func (e *eventhubs) handleEvent(ctx context.Context, event *eh.Event) error {
 	if event.PartitionKey != nil {
 		key = *event.PartitionKey
 	}
-	err := e.receiveFunc(ctx, key, event.ID, string(event.Data))
-	return err
+	return e.receiveFunc(ctx, key, event.ID, string(event.Data))
 }
 
 //Send message to eventhub
 func (e *eventhubs) Send(message string) error {
 	ctx, cancel := context.WithTimeout(e.ctx, 10*time.Second)
 	defer cancel()
-	err := e.hub.Send(ctx, eh.NewEventFromString(message))
-	return err
+	return e.hub.Send(ctx, eh.NewEventFromString(message))
 }
