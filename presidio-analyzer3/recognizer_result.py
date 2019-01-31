@@ -1,4 +1,4 @@
-class RecognizerResult():
+class RecognizerResult:
     
 
     def __init__(self, start, end, score, entity_type):
