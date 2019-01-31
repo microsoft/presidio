@@ -1,9 +1,7 @@
 from entity_recognizer import EntityRecognizer 
 
 
-
 class RemoteRecognizer(EntityRecognizer):
-
 
     def __init__(self):
         pass
@@ -17,5 +15,3 @@ class RemoteRecognizer(EntityRecognizer):
     
     def get_supported_entities(self):
         pass
-
-      
