@@ -48,7 +48,7 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 	// SAS token provider for Azure Event Hubs
 	provider, err := sas.NewTokenProvider(sas.TokenProviderWithKey(parsed.KeyName, parsed.Key))
 	if err != nil {
-		// handle error
+		log.Fatal(err.Error())
 	}
 	// create a new Azure Storage Leaser / Checkpointer
 	cred, err := azblob.NewSharedKeyCredential(storageAccountName, storageAccountKey)
@@ -76,21 +76,26 @@ func NewConsumer(ctx context.Context, eventHubConnStr string, storageAccountName
 //Receive message from eventhub partition.
 func (e *eventhubs) Receive(receiveFunc stream.ReceiveFunc) error {
 
-	e.eph.StartNonBlocking(e.ctx)
 	e.receiveFunc = receiveFunc
 	_, err := e.eph.RegisterHandler(e.ctx, e.handleEvent)
-	return err
+	if err != nil {
+		return err
+	}
+
+	return e.eph.Start(e.ctx)
 }
 
 func (e *eventhubs) handleEvent(ctx context.Context, event *eh.Event) error {
-	err := e.receiveFunc(ctx, *event.PartitionKey, event.ID, string(event.Data))
-	return err
+	key := "-1"
+	if event.PartitionKey != nil {
+		key = *event.PartitionKey
+	}
+	return e.receiveFunc(ctx, key, event.ID, string(event.Data))
 }
 
 //Send message to eventhub
 func (e *eventhubs) Send(message string) error {
 	ctx, cancel := context.WithTimeout(e.ctx, 10*time.Second)
 	defer cancel()
-	err := e.hub.Send(ctx, eh.NewEventFromString(message))
-	return err
+	return e.hub.Send(ctx, eh.NewEventFromString(message))
 }

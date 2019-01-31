@@ -27,9 +27,7 @@ func TestCreateAndDeleteCronJob(t *testing.T) {
 
 	// Create job
 	err := store.CreateCronJob(jobName, schedule, containerDetails)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	// List jobs
 	jobs, _ := store.ListCronJobs()
@@ -38,9 +36,7 @@ func TestCreateAndDeleteCronJob(t *testing.T) {
 
 	// Delete job
 	err = store.DeleteCronJob(jobName)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	// List jobs
 	jobs, _ = store.ListCronJobs()
