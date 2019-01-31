@@ -81,7 +81,7 @@
   version = "0.4.0"
 
 [[projects]]
-  digest = "1:9e8ebf3883dce8687221c4022bdb3b0bfdcde430b911be9cc7e52478a026893c"
+  digest = "1:ef17fa8a0edc01cb33eefed09d6865064ebdcc74ceef1637693bc466c708deac"
   name = "github.com/Azure/go-autorest"
   packages = [
     "autorest",
@@ -107,11 +107,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:122ab4d4a45cd1ce5d697fdf84a04cc91d2c4f8da097b92d2b13891a5fc5bd62"
+  digest = "1:09d02863ffab900bdd5433a84148021ffdb309eda6949e111ae9fd3fd31985e3"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "286ef40fe9461064bfe7aa527fab3e9e7a97ec25"
+  revision = "fb5d00d4a6df7f7e468b2cb1b9375f614d41a7b7"
 
 [[projects]]
   digest = "1:a59a467c541a1bf8b06e4fad6113028c959be6573b78ceca9f8020cd0d2127fc"
