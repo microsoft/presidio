@@ -127,3 +127,6 @@ debug
 .DS_Store
 vendor/
 *.db
+
+#pycharm
+.idea/*

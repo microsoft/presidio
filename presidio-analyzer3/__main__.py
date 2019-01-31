@@ -132,6 +132,7 @@ class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(r)
 
         results = self.__remove_duplicates(results)
+        results.sort(key=lambda x: x.location.start, reverse=False)
         response.analyzeResults.extend(results)
         return response
 
