@@ -17,7 +17,7 @@ class Email(field_type.FieldType):
 
     def check_checksum(self):
         result = tldextract.extract(self.text)
-        if result.fqdn is not '':
+        if result.fqdn != '':
             return True
         else:
             return False
