@@ -61,8 +61,8 @@ docker-push: $(addsuffix -push,$(IMAGES))
 
 .PHONY: docker-push-release
 docker-push-release: $(addsuffix -push-release,$(IMAGES))
-	git tag -a "$(RELEASE_VERSION)" -m "version $(RELEASE_VERSION)">/dev/null
-	git push --tags
+	#git tag -a "$(RELEASE_VERSION)" -m "version $(RELEASE_VERSION)">/dev/null
+	#git push --tags
 
 %-push-release:
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
