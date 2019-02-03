@@ -26,9 +26,15 @@ class CreditCardRecognizer(PatternRecognizer):
 
         super().__init__(["CREDIT_CARD"], [], patterns, None, context)
 
-    def analyze_text(self, text):
+    def validate_pattern_logic(self, text, result):
         self.__sanitize_value(text)
-        return self.__luhn_checksum() == 0
+        res = self.__luhn_checksum()
+        if res == 0:
+            result.score = 1
+        else:
+            result.score = 0
+
+        return result
 
     def __luhn_checksum(self):
         def digits_of(n):

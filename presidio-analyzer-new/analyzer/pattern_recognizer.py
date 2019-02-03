@@ -4,20 +4,15 @@ from pattern import Pattern
 import datetime
 import re2 as re
 
-DEFAULT_VERSION = "0.0.1"
-
 
 class PatternRecognizer(EntityRecognizer):
 
     def __init__(self, supported_entities, supported_languages, patterns=None,
-                 black_list=None, context=None, version=DEFAULT_VERSION):
+                 black_list=None, context=None, version="0.0.1"):
         """
-            :param supported_entities: the supported entities of the specific recognizer
-            :param supported_languages: the supported languages of the specific recognizer
             :param patterns: the list of patterns to detect
             :param black_list: the list of words to detect
             :param context: list of context words
-            :param version: the recognizer version
         """
         if len(supported_entities) > 1 and len(patterns) > 0:
             raise ValueError("Pattern recognizer supports only one entity")
@@ -39,7 +34,7 @@ class PatternRecognizer(EntityRecognizer):
     def analyze_all(self, text, entities):
         """
 
-        :param text: the text to analtze
+        :param text: the text to analyze
         :param entities: the entities to be detected
         :return: the analyze result- the detected entities and their location in the text
         """
@@ -50,10 +45,10 @@ class PatternRecognizer(EntityRecognizer):
 
             if pattern_result:
                 results.extend(pattern_result)
-        else:
-            analyzed_text = self.analyze_text(text, entities)
-            if analyzed_text:
-                results.extend(analyzed_text)
+
+        analyzed_text = self.analyze_text(text, entities)
+        if analyzed_text:
+            results.extend(analyzed_text)
 
         return results
 
@@ -66,6 +61,16 @@ class PatternRecognizer(EntityRecognizer):
         """
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern("black_list", 1.0, regex)
+
+    def validate_pattern_logic(self, pattern_text, result):
+        """
+        Validate the pattern logic, for example checksum method.
+        :param text: the pattern text to validate
+        :param result: the current result of the pattern (before
+        :return: The updated result - if the pattern is valid the score can be raised
+        """
+        return result
+
 
     def __analyze_regex_patterns(self, input_text):
         """Check for specific pattern in text
@@ -93,12 +98,8 @@ class PatternRecognizer(EntityRecognizer):
                 if current_match == '':
                     continue
 
-                analyzed_text = self.analyze_text(current_match, self.supported_entities[0])
-                score = pattern.strength
-                if analyzed_text == True:
-                    score = 1.0
-
-                res = RecognizerResult(start, end, score, self.supported_entities[0])
+                res = RecognizerResult(start, end, pattern.strength, self.supported_entities[0])
+                res = self.validate_pattern_logic(current_match, res)
 
                 if res is None or res.score == 0:
                     continue
