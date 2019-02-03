@@ -1,9 +1,11 @@
 import datetime
+from abc import abstractmethod
 
-from analyzer.entity_recognizer import EntityRecognizer
-from analyzer.pattern import Pattern
-from analyzer.recognizer_result import RecognizerResult
+from analyzer import EntityRecognizer
+from analyzer import Pattern
+from analyzer import RecognizerResult
 
+# Import 're2' regex engine if installed, if not- import 'regex'
 try:
     import re2 as re
 except ImportError:
@@ -34,6 +36,10 @@ class PatternRecognizer(EntityRecognizer):
             self.patterns.append(black_list_pattern)
 
     def load(self):
+        pass
+
+    @abstractmethod
+    def analyze_text(self, text, entities):
         pass
 
     def analyze_all(self, text, entities):
@@ -75,7 +81,6 @@ class PatternRecognizer(EntityRecognizer):
         :return: The updated result - if the pattern is valid the score can be raised
         """
         return result
-
 
     def __analyze_regex_patterns(self, input_text):
         """Check for specific pattern in text

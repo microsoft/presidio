@@ -1,4 +1,4 @@
-from analyzer.entity_recognizer import EntityRecognizer
+from analyzer import EntityRecognizer
 
 
 class RemoteRecognizer(EntityRecognizer):

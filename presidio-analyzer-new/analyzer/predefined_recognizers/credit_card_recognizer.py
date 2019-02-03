@@ -1,4 +1,5 @@
-from analyzer import PatternRecognizer, Pattern
+from analyzer import Pattern
+from analyzer import PatternRecognizer
 
 CREDIT_CARD_REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'
 CREDIT_CARD_CONTEXT = [
