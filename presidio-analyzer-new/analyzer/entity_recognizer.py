@@ -1,6 +1,6 @@
-from abc import abstractmethod
 import logging
 import os
+from abc import abstractmethod
 
 
 class EntityRecognizer:

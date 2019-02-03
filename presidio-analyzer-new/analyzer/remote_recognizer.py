@@ -1,4 +1,4 @@
-from entity_recognizer import EntityRecognizer 
+from analyzer.entity_recognizer import EntityRecognizer
 
 
 class RemoteRecognizer(EntityRecognizer):
@@ -12,6 +12,6 @@ class RemoteRecognizer(EntityRecognizer):
     def analyze_text(self, text, entities):
         # add code here to connect to the side car
         pass
-    
+
     def get_supported_entities(self):
         pass
