@@ -76,12 +76,19 @@ The script will install Presidio on your Kubenetes cluster. Prerequesites:
 kubectl version
 ```
 3. Local `helm` client.
+4. Recent presidio repo is cloned on your local machine.
+
+
+Navigate into `<root>\deployment` from command line.
 
 If You have helm installed, but havn't run `helm init`,
 then execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster.
 
 If you already have `helm` and `tiller` configured, or if you installed it in the previous step, 
-execute [deploy-presidio.sh](deploy-presidio.sh) in the command line.
+execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
+```sh
+deploy-presidio.sh <registry> <service principal> <password>
+```
 
 The script will install Presidio on your cluster using the deault values. 
 >Note: You can edit the file to use your own container registry and image.
