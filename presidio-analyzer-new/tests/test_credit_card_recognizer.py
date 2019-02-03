@@ -1,7 +1,6 @@
 # https://www.datatrans.ch/showcase/test-cc-numbers
 # https://www.freeformatter.com/credit-card-number-generator-validator.html
-from analyzer.predefined_recognizers.credit_card_recognizer import CreditCardRecognizer
-
+from analyzer.predefined_recognizers import CreditCardRecognizer
 
 credit_card_recognizer = CreditCardRecognizer()
 entities = ["CREDIT_CARD"]
