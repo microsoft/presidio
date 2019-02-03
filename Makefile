@@ -53,12 +53,23 @@ docker-push-deps:
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
 
+# push with the given label
 .PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:
 	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 
+# push docker images twice, once with new tag and once with latest tag
+.PHONY: docker-push-with-latest
+docker-push-with-latest: $(addsuffix -push-latest,$(IMAGES))
+
+%-push-latest:
+	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest
+	docker push $(DOCKER_REGISTRY)/$*:latest
+
+# pull an existing image tag, tag it again with a provided release tag and 'latest_stable_release' tag
 .PHONY: docker-push-release
 docker-push-release: $(addsuffix -push-release,$(IMAGES))
 
