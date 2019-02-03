@@ -11,6 +11,7 @@ GOLANG_BASE	= presidio-golang-base
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
 PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
+RELEASE_VERSION := 
 LDFLAGS   += -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
 
 CX_OSES = linux windows darwin
@@ -58,6 +59,17 @@ docker-push: $(addsuffix -push,$(IMAGES))
 %-push:
 	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 
+.PHONY: docker-push-release
+docker-push-release: $(addsuffix -push-release,$(IMAGES))
+	git tag -a "$(RELEASE_VERSION)" -m "version $(RELEASE_VERSION)">/dev/null
+	git push --tags
+
+%-push-release:
+	docker tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
+	docker push $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
+	docker tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest_stable_release
+	docker push $(DOCKER_REGISTRY)/$*:latest_stable_release
+	
 # All non-functional tests
 .PHONY: test
 test: python-test
