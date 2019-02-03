@@ -7,7 +7,7 @@ class EntityRecognizer:
 
     def __init__(self, supported_entities, supported_languages=["en"], version="0.01"):
         """
-        An abstract class, holds the logic for recognizing specific PII entities.
+        An abstract class to be inherited by Recognizers which hold the logic for recognizing specific PII entities.
 
         :param supported_entities: the entities supported by this recognizer (for example, phone number, address, etc.)
         :param supported_languages: the languages supported by this recognizer
@@ -31,11 +31,13 @@ class EntityRecognizer:
     @abstractmethod
     def analyze_text(self, text, entities):
         """
-                This is the core method for analyzing text, assuming entities are
-                the subset of the supported entities types.
-                :return: list of RecognizerResult
-                :param text: The text to be analyzed
-                :param entities: The list of entities to be detected
+        This is the core method for analyzing text, assuming entities are
+        the subset of the supported entities types.
+
+        :param text: The text to be analyzed
+        :param entities: The list of entities to be detected
+        :return: list of RecognizerResult
+        :rtype: [RecognizerResult]
         """
 
         return None
