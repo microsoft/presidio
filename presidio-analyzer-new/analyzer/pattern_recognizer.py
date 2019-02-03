@@ -21,7 +21,7 @@ class PatternRecognizer(EntityRecognizer):
             :param black_list: the list of words to detect
             :param context: list of context words
         """
-        if len(supported_entities) > 1 and len(patterns) > 0:
+        if supported_entities and len(supported_entities) > 1 and patterns and len(patterns) > 0:
             raise ValueError("Pattern recognizer supports only one entity")
 
         super().__init__(supported_entities, supported_languages, version)

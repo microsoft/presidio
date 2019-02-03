@@ -1,1 +1,2 @@
 from .credit_card_recognizer import CreditCardRecognizer
+from .spacy_recognizer import SpacyRecognizer
