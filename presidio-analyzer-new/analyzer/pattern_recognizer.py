@@ -40,11 +40,21 @@ class PatternRecognizer(EntityRecognizer):
 
     @abstractmethod
     def analyze_text(self, text, entities):
+        """
+        This is the core method for analyzing text, assuming entities are
+        the subset of the supported entities types.
+
+        :param text: The text to be analyzed
+        :param entities: The list of entities to be detected
+        :return: list of RecognizerResult
+        :rtype: [RecognizerResult]
+        """
         pass
 
     def analyze_all(self, text, entities):
         """
-
+        The full recognition logic, calling all patterns + custom analyze_text logic to come up with all detected
+        PIIs for this recognizer.
         :param text: the text to analyze
         :param entities: the entities to be detected
         :return: the analyze result- the detected entities and their location in the text
@@ -66,28 +76,32 @@ class PatternRecognizer(EntityRecognizer):
     @staticmethod
     def __black_list_to_regex(black_list):
         """
-          Convert a list of word to matching regex
+        Converts a list of word to a matching regex, to be analyzed by the regex engine as a part of the
+        analyze_all logic
+
         :param black_list: the list of words to detect
         :return:the regex of the words for detection
         """
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern("black_list", 1.0, regex)
 
-    def validate_pattern_logic(self, pattern_text, result):
+    def validate_pattern_logic(self, pattern_text, pattern_result):
         """
-        Validate the pattern logic, for example checksum method.
-        :param text: the pattern text to validate
-        :param result: the current result of the pattern (before
-        :return: The updated result - if the pattern is valid the score can be raised
+        Validates the pattern logic, for example for running checksum on a detected pattern.
+
+        :param pattern_text: the text to validated. Only the part in text that was detected by the regex engine
+        :param pattern_result: The output of a specific pattern detector that needs to be validated
+        :return: the updated result of the pattern. For example,
+        if a validation logic increased or decreased the score that was given by a regex pattern.
         """
-        return result
+        return pattern_result
 
     def __analyze_regex_patterns(self, input_text):
-        """Check for specific pattern in text
+        """
+        Evaluates all regex patterns in the provided input_text, including words in the provided blacklist
 
-        Args:
-          :return: the detection results
-          :param input_text:text to analyze
+        :param input_text: text to analyze
+        :return: A list of RecognizerResult
         """
         results = []
         for pattern in self.patterns:
