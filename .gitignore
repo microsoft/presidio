@@ -129,4 +129,5 @@ vendor/
 *.db
 
 #pycharm
+*/.idea/*
 .idea/*

@@ -1,5 +1,6 @@
 from tests import Pattern
 from tests import PatternRecognizer
+import pytest
 import os
 
 # https://www.datatrans.ch/showcase/test-cc-numbers
@@ -13,13 +14,9 @@ class TestRecognizer(PatternRecognizer):
 
 
 def test_multiple_entities_for_pattern_recognizer():
-    patterns = [Pattern("p1", 1.0, "someregex"),Pattern("p1", 2, "someregex")]
-
-    try:
+    with pytest.raises(ValueError):
+        patterns = [Pattern("p1", 1.0, "someregex"), Pattern("p1", 2, "someregex")]
         TestRecognizer(["ENTITY_1", "ENTITY_2"], patterns, [], None)
-        assert False
-    except ValueError as e:
-        assert "Pattern recognizer supports only one entity" == e.args[0]
 
 
 def test_black_list_works():
