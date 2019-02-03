@@ -65,9 +65,10 @@ docker-push-release: $(addsuffix -push-release,$(IMAGES))
 	git push --tags
 
 %-push-release:
-	docker tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
+	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
 	docker push $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
-	docker tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest_stable_release
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest_stable_release
 	docker push $(DOCKER_REGISTRY)/$*:latest_stable_release
 	
 # All non-functional tests
