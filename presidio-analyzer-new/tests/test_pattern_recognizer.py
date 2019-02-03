@@ -1,10 +1,10 @@
-from tests import Pattern
-from tests import PatternRecognizer
 import pytest
 import os
 
 # https://www.datatrans.ch/showcase/test-cc-numbers
 # https://www.freeformatter.com/credit-card-number-generator-validator.html
+from analyzer.pattern import Pattern
+from analyzer.pattern_recognizer import PatternRecognizer
 
 
 class TestRecognizer(PatternRecognizer):

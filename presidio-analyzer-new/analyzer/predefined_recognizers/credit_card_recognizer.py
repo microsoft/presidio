@@ -1,30 +1,31 @@
-from pattern_recognizer import PatternRecognizer
-from pattern import Pattern
+from analyzer import PatternRecognizer, Pattern
+
+CREDIT_CARD_REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'
+CREDIT_CARD_CONTEXT = [
+    "credit",
+    "card",
+    "visa",
+    "mastercard",
+    "cc ",
+    # "american express" #TODO: add after adding keyphrase support
+    "amex",
+    "discover",
+    "jcb",
+    "diners",
+    "maestro",
+    "instapayment"
+]
 
 
 class CreditCardRecognizer(PatternRecognizer):
+    """
+    Recognizes common credit card numbers using regex + checksum
+    """
 
     def __init__(self):
-        patterns = []
-        r = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'  # noqa: E501
-        p = Pattern('All Credit Cards (weak)', 0.3, r)
-        patterns.append(p)
-
-        context = [
-          "credit",
-          "card",
-          "visa",
-          "mastercard",
-          # "american express" #TODO: add after adding keyphrase support
-          "amex",
-          "discover",
-          "jcb",
-          "diners",
-          "maestro",
-          "instapayment"
-        ]
-
-        super().__init__(["CREDIT_CARD"], [], patterns, None, context)
+        patterns = [Pattern('All Credit Cards (weak)', 0.3, CREDIT_CARD_REGEX)]
+        context = CREDIT_CARD_CONTEXT
+        super().__init__(supported_entities=["CREDIT_CARD"], patterns=patterns, context=context)
 
     def validate_pattern_logic(self, text, result):
         self.__sanitize_value(text)

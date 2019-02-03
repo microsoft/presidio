@@ -1,13 +1,18 @@
-from entity_recognizer import EntityRecognizer 
-from recognizer_result import RecognizerResult
-from pattern import Pattern
 import datetime
-import re2 as re
+
+from analyzer.entity_recognizer import EntityRecognizer
+from analyzer.pattern import Pattern
+from analyzer.recognizer_result import RecognizerResult
+
+try:
+    import re2 as re
+except ImportError:
+    import regex as re
 
 
 class PatternRecognizer(EntityRecognizer):
 
-    def __init__(self, supported_entities, supported_languages, patterns=None,
+    def __init__(self, supported_entities, supported_languages='en', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
@@ -107,4 +112,3 @@ class PatternRecognizer(EntityRecognizer):
                 results.append(res)
 
         return results
-
