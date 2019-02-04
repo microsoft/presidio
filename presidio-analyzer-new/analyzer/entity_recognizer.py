@@ -61,3 +61,12 @@ class EntityRecognizer:
         :return: The current version of this recognizer
         """
         return self.version
+
+    def to_dict(self):
+        return __dict__
+
+    @classmethod
+    def from_dict(cls, data):
+        cls(supported_entities=data.get('supported_entities'),
+            supported_languages=data.get('supported_languages'),
+            version=data.get("version"))
