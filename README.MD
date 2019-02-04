@@ -84,10 +84,12 @@ Navigate into `<root>\deployment` from command line.
 If You have helm installed, but havn't run `helm init`,
 then execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster.
 
+Make sure to [grant AKS access to ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
+
 If you already have `helm` and `tiller` configured, or if you installed it in the previous step, 
 execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
 ```sh
-deploy-presidio.sh <registry> <service principal> <password>
+deploy-presidio.sh <registry>
 ```
 
 The script will install Presidio on your cluster using the deault values. 
