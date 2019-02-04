@@ -60,16 +60,16 @@ docker-push: $(addsuffix -push,$(IMAGES))
 %-push:
 	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 
-# push docker images twice, once with new tag and once with latest tag
-.PHONY: docker-push-with-latest
-docker-push-with-latest: $(addsuffix -push-latest,$(IMAGES))
+# push docker images twice, once with new tag and once with latest-dev tag
+.PHONY: docker-push-latest-dev
+docker-push-latest-dev: $(addsuffix -push-latest-dev,$(IMAGES))
 
-%-push-latest:
+%-push-latest-dev:
 	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
-	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest
-	docker push $(DOCKER_REGISTRY)/$*:latest
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest-dev
+	docker push $(DOCKER_REGISTRY)/$*:latest-dev
 
-# pull an existing image tag, tag it again with a provided release tag and 'latest_stable_release' tag
+# pull an existing image tag, tag it again with a provided release tag and 'latest' tag
 .PHONY: docker-push-release
 docker-push-release: $(addsuffix -push-release,$(IMAGES))
 
@@ -77,8 +77,8 @@ docker-push-release: $(addsuffix -push-release,$(IMAGES))
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
 	docker push $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
-	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest_stable_release
-	docker push $(DOCKER_REGISTRY)/$*:latest_stable_release
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest
+	docker push $(DOCKER_REGISTRY)/$*:latest
 	
 # All non-functional tests
 .PHONY: test
