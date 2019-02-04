@@ -1,4 +1,11 @@
 from analyzer import PatternRecognizer, RemoteRecognizer
+import importlib
+import inspect
+import os
+import glob
+
+from analyzer.predefined_recognizers import CreditCardRecognizer, SpacyRecognizer, CryptoRecognizer, DomainRecognizer, EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, UsBankRecognizer, UsLicenseRecognizer, UsItinRecognizer, UsPassportRecognizer, UsPhoneRecognizer, UsSsnRecognizer
+
 
 
 class RecognizerRegistry:
@@ -6,7 +13,7 @@ class RecognizerRegistry:
     Detects, registers and holds all recognizers to be used by the analyzer
     """
 
-    def __init__(self, recognizers=None, ):
+    def __init__(self, recognizers=None):
         if recognizers is None:
             recognizers = []
         self.recognizers = recognizers
@@ -26,10 +33,11 @@ class RecognizerRegistry:
         self.recognizers.append(RemoteRecognizer.from_dict(data))
 
     def load_local_recognizer(self, path_to_recognizers):
-        '''
-        Load local recognizer (in python file)
-        '''
-        pass
+        #TODO: Change the code to dynamic loading
+        self.recognizers.extend([CreditCardRecognizer, SpacyRecognizer, CryptoRecognizer, DomainRecognizer,
+                                 EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer,
+                                 UsBankRecognizer, UsLicenseRecognizer, UsItinRecognizer, UsPassportRecognizer,
+                                 UsPhoneRecognizer, UsSsnRecognizer])
 
     def get_recognizers(self, languages=None, entities=None):
         if languages is None and entities is None:

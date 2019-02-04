@@ -1,5 +1,4 @@
 import logging
-import matcher
 import grpc
 import analyze_pb2
 import analyze_pb2_grpc
@@ -13,6 +12,7 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
+from analyzer import Analyzer
 
 WELCOME_MESSAGE = r"""
 
@@ -27,7 +27,7 @@ WELCOME_MESSAGE = r"""
 
 """
 
-cli_name = "presidio-analyzer"
+CLI_NAME = "presidio-analyzer"
 
 helps['serve'] = """
     short-summary: Create a GRPC server
@@ -51,18 +51,6 @@ class PresidioCLIHelp(CLIHelp):
             cli_ctx=cli_ctx,
             privacy_statement='',
             welcome_message=WELCOME_MESSAGE)
-
-
-class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
-    def __init__(self):
-        self.match = matcher.Matcher()
-
-    def Apply(self, request, context):
-        response = analyze_pb2.AnalyzeResponse()
-        results = self.match.analyze_text(request.text,
-                                          request.analyzeTemplate.fields)
-        response.analyzeResults.extend(results)
-        return response
 
 
 def serve_command_handler(env_grpc_port=False, grpc_port=3000):
@@ -124,9 +112,9 @@ class CommandsLoader(CLICommandsLoader):
 
 
 presidio_cli = CLI(
-    cli_name=cli_name,
-    config_dir=os.path.join('~', '.{}'.format(cli_name)),
-    config_env_var_prefix=cli_name,
+    CLI_NAME=CLI_NAME,
+    config_dir=os.path.join('~', '.{}'.format(CLI_NAME)),
+    config_env_var_prefix=CLI_NAME,
     commands_loader_cls=CommandsLoader,
     help_cls=PresidioCLIHelp)
 exit_code = presidio_cli.invoke(sys.argv[1:])

@@ -1,6 +1,0 @@
-from analyzer.pattern import Pattern
-from analyzer.recognizer_result import RecognizerResult
-from analyzer.entity_recognizer import EntityRecognizer
-from analyzer.pattern_recognizer import PatternRecognizer
-from analyzer.remote_recognizer import RemoteRecognizer
-from analyzer.recognizer_registry.recognizer_registry import RecognizerRegistry

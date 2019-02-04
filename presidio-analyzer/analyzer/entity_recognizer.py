@@ -16,12 +16,12 @@ class EntityRecognizer:
         self.supported_entities = supported_entities
         self.supported_languages = supported_languages
         self.version = version
+        self.is_loaded = False
 
         loglevel = os.environ.get("LOG_LEVEL", "INFO")
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(loglevel)
 
-        self.load()
 
     @abstractmethod
     def load(self):
