@@ -169,8 +169,8 @@ You can also create reusable templates
 | Scanner             | Azure Blob Storage   | :white_check_mark:     |
 | Scanner             | S3                   | :white_check_mark:     |
 | Scanner             | Google Cloud Storage | :x:                    |
-| Streams             | Kafka                | :large_orange_diamond: |
-| Streams             | Azure Event Hub      | :large_orange_diamond:                    |
+| Streams             | Kafka                | :white_check_mark:     |
+| Streams             | Azure Event Hub      | :white_check_mark:     |
 | Datasink (output)   | MySQL                | :white_check_mark:     |
 | Datasink (output)   | MSSQL                | :white_check_mark:     |
 | Datasink (output)   | Oracle               | :x:                    |

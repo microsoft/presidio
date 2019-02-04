@@ -72,7 +72,7 @@ def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')
-        if port is not None or port is not '':
+        if port is not None or port != '':
             grpc_port = int(port)
 
     server.add_insecure_port('[::]:' + str(grpc_port))
@@ -89,7 +89,7 @@ def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
 
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')
-        if port is not None or port is not '':
+        if port is not None or port != '':
             grpc_port = int(port)
 
     channel = grpc.insecure_channel('localhost:' + str(grpc_port))

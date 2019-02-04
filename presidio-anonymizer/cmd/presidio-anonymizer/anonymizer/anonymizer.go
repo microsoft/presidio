@@ -3,6 +3,7 @@ package anonymizer
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
@@ -10,6 +11,32 @@ import (
 )
 
 type sortedResults []*types.AnalyzeResult
+
+// transformSingleField
+func transformSingleField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (bool, string, error) {
+	newtext, err := transformField(transformation, result, text)
+	if err != nil {
+		return false, "", err
+	}
+	return true, newtext, nil
+}
+
+// anonymizeSingleResult anonymize a single analyze result
+func anonymizeSingleResult(result *types.AnalyzeResult, transformations []*types.FieldTypeTransformation, text string) (bool, string, error) {
+	for _, transformation := range transformations {
+		if transformation.Fields == nil {
+			return transformSingleField(transformation.Transformation, result, text)
+		}
+
+		for _, fieldType := range transformation.Fields {
+			if fieldType.Name == result.Field.Name {
+				return transformSingleField(transformation.Transformation, result, text)
+			}
+		}
+	}
+
+	return false, "", nil
+}
 
 func (a sortedResults) Len() int      { return len(a) }
 func (a sortedResults) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
@@ -35,33 +62,29 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 	}
 
 	//Apply new values
-	var err error
 	for i := len(results) - 1; i >= 0; i-- {
 
 		result := results[i]
-		transformed := false
-		for _, transformations := range template.FieldTypeTransformations {
-			if transformed {
-				break
-			}
-			if transformations.Fields == nil {
-				text, err = transformField(transformations.Transformation, result, text)
-				if err != nil {
-					return "", err
-				}
-				break
-			}
+		transformed, transformedText, err := anonymizeSingleResult(result, template.FieldTypeTransformations, text)
+		if err != nil {
+			return "", err
+		}
 
-			for _, fieldType := range transformations.Fields {
-				if fieldType.Name == result.Field.Name {
-					text, err = transformField(transformations.Transformation, result, text)
-					if err != nil {
-						return "", err
-					}
-					transformed = true
-					break
-				}
-			}
+		if transformed {
+			text = transformedText
+			continue
+		}
+
+		// Now, for any analyzer result which wasn't transformed, either
+		// transform using the default transformation, as described in the
+		// template, or fallback to default transformation
+		if template.DefaultTransformation != nil {
+			text, err = transformField(template.DefaultTransformation, result, text)
+		} else {
+			text, err = methods.ReplaceValue(text, *result.Location, "<"+strings.ToUpper(result.Field.Name)+">")
+		}
+		if err != nil {
+			return "", err
 		}
 	}
 

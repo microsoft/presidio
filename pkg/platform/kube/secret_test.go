@@ -3,6 +3,8 @@ package kube
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPutKVPair(t *testing.T) {
@@ -12,9 +14,7 @@ func TestPutKVPair(t *testing.T) {
 	value := "value1"
 	key := "key@key@key"
 	err := store.PutKVPair(key, value)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	time.Sleep(time.Millisecond)
 
@@ -30,13 +30,11 @@ func TestDeleteKVPair(t *testing.T) {
 	key := "key@key@key"
 
 	err := store.PutKVPair(key, "somevalue")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+
 	err = store.DeleteKVPair(key)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+
 	_, err = store.GetKVPair(key)
 	if err == nil {
 		t.Fatal("Key wasn't deleted")
