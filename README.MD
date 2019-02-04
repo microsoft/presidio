@@ -92,7 +92,7 @@ execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
 deploy-presidio.sh <registry>
 ```
 
-The script will install Presidio on your cluster using the deault values. 
+The script will install Presidio on your cluster using the default values.
 >Note: You can edit the file to use your own container registry and image.
 
 ## Samples
