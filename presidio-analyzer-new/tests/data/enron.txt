@@ -1,0 +1,81 @@
+This file contains selected text snipets from the Enron emails dataset.
+=======================================================================
+
+
+It is 2 PM and I have to leave the office.  Please have my Dad call me with 
+the information about the units at home 713-463-8626.  He will know what I 
+mean.
+
+
+"Never argue; repeat your assertion.".........Robert Owen (1771 - 1858)
+Richard (Ric) C. Henderson, 5507 Ringgold Road, Chattanooga, TN 37412
+asi/291527, (P) 423.855.1540, (Fax) 423.855.1161 
+(Web) http://www.patriotichouse.com  ("Win the $1000 Drawing!!!")
+
+
+Please have your timesheet turned in by Friday, September 28th.
+
+
+Since Friday (09/21), there have been three (3) incidents that have confronted our environment which did not impact our business due to our fault tolerance, pro-active measures and relationship with Enron Networks.  All of these incidents could have had a serious impact to our business, so I thought it important to communicate these incidents and how they were handled which prevented any business impact.
+09/24 - 25:  W32.Vote.A@mm virus
+Working with Enron Networks, we were able to patch all servers and workstations in ETS Houston and Omaha, ETS Field Operations, Azurix and EOTT.  Below is a URL which conveys the damage potential this virus has which we avoided.  Teams had to work through the night, but the end result was no business impact.
+http://securityresponse.symantec.com/avcenter/venc/data/w32.vote.a@mm.html
+09/22:  Power hit at Ardmore Data Center Facility
+During the morning of Saturday, lighting struck near the Ardmore data center facility knocking out all power.  The battery backup systems assumed the system load while the generators came on-line.  The Ardmore facility ran on generators through the day until power was re-established with Reliant.  ETS' production SAN and the majority of our production database servers reside at Ardmore.  No systems were affected.
+09/21 SAN Drive Errors
+On Friday morning, one of the production drives on our Hitachi SAN reported drive errors.  The SAN phoned home for support, a support technician was dispatched and the drive reporting errors was replaced within 1 hour, 20 minutes.  Upon the detection of drive errors, the SAN engaged an on-line hot spare as a replacement which assumed the function of the drive with errors.  The drive was replaced, data replicated back over, and we were back live in our original configuration.  It is important to note that new devices have an infant mortality rate for initial errors detected after shipping.  This rate usually occurs within 60 days of production go-live.  Impact to the business:  None.
+These are 3 examples where our infrastructure withstood incidents.  I believe this communication is just as important as the communication we all desire in times of crisis.
+
+
+Attached are the bullets for the week of September 7:
+
+
+Training session on Nominations, Confirmatins and Scheduling process.  Presentation given by John Buchanan and Lynn Blair
+
+
+Our trader, Jon Hanna received a spreadsheet showing volumes NNG
+believes we owe for the Mt. Jesus location.  Can you send me the
+documentation NNG is using to come up with these volumes.
+
+
+We can make the meeting Thursday afternoon if that is better for you guys.  It will be short because there is not a whole lot to discuss.   
+Rick, FYI, Shelley postponed her meeting until 10:00 in the morning so she could listen in on FERC meeting.
+Possible means they do not have a final ruling as to what direction we are going, but she wanted to give us a "heads up" from a system perspective.  
+Hopefully that helps.  See ya'll in the morning.  Thanks. Lynn
+
+
+I talked with Mary Darveaux and there are some possible billing changes  coming that we need to discuss in the morning. 
+
+
+At Dave Neubauer's request, I am going to schedule a meeting for tomorrow to which you are all invited (and if I have left out a necessary participant, please let me know) to formulate a response to ONEOK's letter of October 16 to Dave (a copy of which I will circulate to you).  It has to do with the proposed special test.  I will have my a/a, Lee, circulate copies of (a) Dave's letter of October 5 and (b) ONEOK's reponse of October 16 to you all immediately.
+Given that so many schedules are involved, I went ahead and picked a time that both Drew and Dave have open: 4:00 p.m. to 5:00 p.m tomorrow, Thursday, October 18.  Debbie has reserved the video conference rooms in 49C2 and in Omaha.  Lee will get a call-in conference number for anyone that can't attend in person, and e-mail it out to you.
+I appreciate your patience.	
+Many thanks.
+Britt
+
+
+Investinme@enron.com on 05/21/2001 04:26:21 PM
+
+
+JAMES LYNN is now enrolled in: 
+Basics of Risk Management
+1400 Smith Street
+Houston TX - Room 552
+    
+
+We would appreicate help in ensuring NO ONE works on Gary Spraggins machine on the weekend. 
+
+
+John, would you please work with Brad Holmes and Jerry Medeles to capture all of the system enhancements we have made on NNG since last years meeting.
+
+There is a meeting scheduled for Wednesday, August 1, to reveiew how TW allocates through pools. 
+
+
+Dear Amber, Alfredo and Fabio,
+many thanks for the opportunity of visiting Enron in Houston.
+Your colleagues provided me with a great lot of information and advice.
+Rebecca Cantrell and Lynn Blair were very kind and helpful, in sparing their time with me and in organizing other meetings with colleagues.
+They are very fine and I appreciate.
+Maybe we would discuss, should the occasion come, some of the aspects of open access in the USA and their appropriateness for the italian case.
+Best Regards
+Mauro Formaggio
