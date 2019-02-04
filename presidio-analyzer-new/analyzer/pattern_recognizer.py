@@ -131,3 +131,15 @@ class PatternRecognizer(EntityRecognizer):
                 results.append(res)
 
         return results
+
+    def to_dict(self):
+        return __dict__
+
+    @classmethod
+    def from_dict(cls, data):
+        cls(supported_entities=data.get('supported_entities'),
+            supported_languages=data.get('supported_languages'),
+            patterns=data.get("patterns"),
+            black_list=data.get("black_list"),
+            context=data.get("context"),
+            version=data.get("version"))
