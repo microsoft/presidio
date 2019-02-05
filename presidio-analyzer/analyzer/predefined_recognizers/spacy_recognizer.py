@@ -27,14 +27,15 @@ class SpacyRecognizer(PatternRecognizer):
         results = []
 
         for entity in entities:
-            for ent in doc.ents:
-                if SpacyRecognizer.__check_label(entity, ent.label_) is False:
-                    continue
+            if entity in self. supported_entities:
+                for ent in doc.ents:
+                    if SpacyRecognizer.__check_label(entity, ent.label_) is False:
+                        continue
 
-                res = RecognizerResult(entity, ent.start_char, ent.end_char, NER_STRENGTH)
-                res = self.validate_pattern_logic(doc.text, res)
-                if res.score > 0:
-                    results.append(res)
+                    res = RecognizerResult(ent.start_char, ent.end_char, NER_STRENGTH, entity)
+                    res = self.validate_pattern_logic(ent.text, res)
+                    if res.score > 0:
+                        results.append(res)
 
         return results
 

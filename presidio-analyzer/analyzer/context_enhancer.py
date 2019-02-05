@@ -12,7 +12,6 @@ class ContextEnhancer:
 
     def __init__(self):
         # Load spaCy small model
-        self.logger.info("Loading regex model...")
         self.nlp = spacy.load('en_core_web_sm')
 
     def __context_to_keywords(self, context):
@@ -45,7 +44,7 @@ class ContextEnhancer:
         """
 
         context_keywords = self.__context_to_keywords(context)
-
+       
         # TODO: remove after supporting keyphrases (instead of keywords)
         if 'card' in pattern.context:
             pattern.context.remove('card')
@@ -61,17 +60,17 @@ class ContextEnhancer:
         return similarity
 
     @staticmethod
-    def __extract_context(doc, start, end):
+    def __extract_context(text, start, end):
         """Extract context for a specified match
 
         Args:
-          doc: spacy document to analyze
+          text: the text to analyze
           start: match start offset
           end: match end offset
         """
 
-        prefix = doc.text[0:start].split()
-        suffix = doc.text[end + 1:].split()
+        prefix = text[0:start].split()
+        suffix = text[end + 1:].split()
         context = ''
 
         context += ' '.join(
@@ -82,32 +81,26 @@ class ContextEnhancer:
 
         return context
 
-    def __calculate_score(self, doc, match_strength, field, start, end):
+    def enhance_score(self, text, result):
         """Calculate score of match by context
 
         Args:
-          doc: spacy document to analyze
-          match_strength: Base score according to the pattern strength
-          field: current field type (pattern)
-          start: match start offset
-          end: match end offset
+          text: the text to analyze
+          result: the current result to evaluate its score
+
         """
 
-        if field.should_check_checksum:
-            if field.check_checksum() is not True:
-                self.logger.debug('Checksum failed for %s', field.text)
-                return 0
-            else:
-                return 1.0
+        if result.score == 1.0:
+            return result
 
-        score = match_strength
+        score = result.score
 
         # Add context similarity
-        context = ContextEnhancer.__extract_context(doc, start, end)
-        context_similarity = self.__calculate_context_similarity(
-          context, field)
+        context = ContextEnhancer.__extract_context(text, result.start, result.end)
+        context_similarity = self.__calculate_context_similarity(context, result.entity_type)
         if context_similarity >= CONTEXT_SIMILARITY_THRESHOLD:
             score += context_similarity * CONTEXT_SIMILARITY_FACTOR
             score = max(score, MIN_SCORE_WITH_CONTEXT_SIMILARITY)
 
-        return min(score, 1)
+        result.score = min(score, 1)
+        return result
