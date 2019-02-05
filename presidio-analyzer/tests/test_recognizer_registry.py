@@ -40,9 +40,3 @@ class TestRecognizerRegistry(TestCase):
         registry = self.get_mock_recognizer_registry()
         recognizers = registry.get_recognizers(languages=['he'], entities=["PERSON"])
         assert len(recognizers) == 1
-
-    def test_get_local_recognizers(self):
-        registry = RecognizerRegistry()
-        registry.load_local_recognizer("../predefined_recognizers")
-
-        assert len(registry.get_all_recognizers()) == 14

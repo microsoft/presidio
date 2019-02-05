@@ -12,7 +12,7 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
-from analyzer import Analyzer
+from analyzer_engine import AnalyzerEngine
 
 WELCOME_MESSAGE = r"""
 
@@ -56,7 +56,7 @@ class PresidioCLIHelp(CLIHelp):
 def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(Analyzer(), server)
+    analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(AnalyzerEngine(), server)
 
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')
@@ -112,7 +112,7 @@ class CommandsLoader(CLICommandsLoader):
 
 
 presidio_cli = CLI(
-    CLI_NAME=CLI_NAME,
+    cli_name=CLI_NAME,
     config_dir=os.path.join('~', '.{}'.format(CLI_NAME)),
     config_env_var_prefix=CLI_NAME,
     commands_loader_cls=CommandsLoader,
