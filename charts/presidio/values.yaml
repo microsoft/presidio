@@ -2,6 +2,7 @@ registry: presidio.azurecr.io
 
 # Image pull secret
 #privateRegistry: acr-auth
+tag: latest
 
 redis:
     url: redis-master.presidio-system.svc.cluster.local:6379
@@ -11,7 +12,6 @@ redis:
 
 api:
   name: presidio-api
-  # tag:
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -30,7 +30,6 @@ api:
 
 analyzer:
   name: presidio-analyzer
-  # tag: 
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -39,7 +38,6 @@ analyzer:
 
 anonymizer:
   name: presidio-anonymizer
-  # tag:
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -48,7 +46,6 @@ anonymizer:
 
 anonymizerimage:
   name: presidio-anonymizer-image
-  # tag:
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -57,7 +54,6 @@ anonymizerimage:
 
 ocr:
   name: presidio-ocr
-  # tag:
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -67,7 +63,6 @@ ocr:
 scheduler:
   name: presidio-scheduler
   imagePullPolicy: Always
-  # tag:
   service:
     type: ClusterIP
     externalPort: 3001
@@ -76,9 +71,7 @@ scheduler:
 collector:
   name: presidio-collector
   imagePullPolicy: Always
-  # tag:
 
 datasink:
   name: presidio-datasink
   imagePullPolicy: Always
-  # tag:

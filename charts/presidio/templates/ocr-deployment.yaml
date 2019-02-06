@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.registry }}/{{ .Values.ocr.name }}:{{ default .Chart.AppVersion .Values.ocr.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.ocr.name }}:{{ default .Chart.AppVersion .Values.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.ocr.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.ocr.service.internalPort }}
