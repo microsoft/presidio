@@ -5,7 +5,6 @@ import common_pb2
 import os
 
 from analyzer import RecognizerRegistry
-from analyzer import ContextEnhancer
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
@@ -15,10 +14,10 @@ DEFAULT_LANGUAGE = "en"
 
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
+
     def __init__(self, registry=RecognizerRegistry()):
         # load all recognizers
         self.registry = registry
-        self.context_enhancer = ContextEnhancer()
         registry.load_local_recognizer("predefined-recognizers")
 
     @staticmethod
@@ -43,23 +42,25 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def Apply(self, request, context):
         logging.info("Starting Apply " + request.text)
         entities = self.__convert_fields_to_entities(request.analyzeTemplate.fields)
-        results = self.analyze(request.text, entities)
+        language_code = self.__get_language_code(request.analyzeTemplate.fields)
 
-        # enhance results with context
-        for result in results:
-            result = self.context_enhancer.enhance_score()
+        results = self.analyze(request.text, entities, language_code)
 
-        response = analyze_pb2.AnalyzeResponse()        
+        response = analyze_pb2.AnalyzeResponse()
         response.analyzeResults.extend(self.__convert_results_to_proto(results))
         logging.info("Found " + len(results) + " results")
         return response
 
-    def analyze(self, text, entities):
-        recognizers = self.registry.get_recognizers(languages=[DEFAULT_LANGUAGE], entities=entities)
+    def analyze(self, text, entities, language):
+        supported_languages = self.registry.get_all_supported_languages()
+        if language not in supported_languages:
+            raise ValueError("Language " + language + " is not supported")
+
+        recognizers = self.registry.get_recognizers(language=language, entities=entities)
         results = []
 
         for recognizer in recognizers:
-            # Lazy load of the relevant recognizers
+            # Lazy loading of the relevant recognizers
             if not recognizer.is_loaded:
                 recognizer.load()
                 recognizer.is_loaded = True
@@ -71,6 +72,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         sorted(results, key=lambda x: (x.start, x.score))
         return AnalyzerEngine.__remove_duplicates(results)
 
+    def __get_language_code(self, fields):
+        # Currently each field hold its own language code, we are going to change it
+        # so we will get only one language per request -> current logic: take the first language
+        if not fields or len(fields) == 0 or fields[0].languageCode is None:
+            return DEFAULT_LANGUAGE
+
+        return fields[0].languageCode
+
     def __convert_fields_to_entities(self, fields):
         # Convert fields to entities - will be changed once the API will be changed
         entities = []
@@ -81,7 +90,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __convert_results_to_proto(self, results):
         proto_results = []
         for result in results:
-
             res = common_pb2.AnalyzeResult()
             res.field.name = result.entity_type
             res.score = result.score
@@ -89,4 +97,5 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             res.location.end = result.end
             res.location.length = result.end - result.start
             proto_results.append(res)
+
         return proto_results

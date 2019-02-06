@@ -14,7 +14,6 @@ except ImportError:
 class SpacyRecognizer(PatternRecognizer):
 
     def __init__(self):
-
         super().__init__(supported_entities=SUPPORTED_ENTITIES, supported_languages=['en'])
 
     def load(self):

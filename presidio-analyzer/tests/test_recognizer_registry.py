@@ -28,15 +28,15 @@ class TestRecognizerRegistry(TestCase):
 
     def test_get_recognizers_one_language_one_entity(self):
         registry = self.get_mock_recognizer_registry()
-        recognizers = registry.get_recognizers(languages=['de'], entities=["PERSON"])
+        recognizers = registry.get_recognizers(language='de', entities=["PERSON"])
         assert len(recognizers) == 1
 
     def test_get_recognizers_unsupported_language(self):
         registry = self.get_mock_recognizer_registry()
-        recognizers = registry.get_recognizers(languages=['brrrr'], entities=["PERSON"])
+        recognizers = registry.get_recognizers(language='brrrr', entities=["PERSON"])
         assert len(recognizers) == 0
 
     def test_get_recognizers_specific_language_and_entity(self):
         registry = self.get_mock_recognizer_registry()
-        recognizers = registry.get_recognizers(languages=['he'], entities=["PERSON"])
+        recognizers = registry.get_recognizers(language='he', entities=["PERSON"])
         assert len(recognizers) == 1

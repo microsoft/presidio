@@ -1,15 +1,49 @@
 from unittest import TestCase
 from analyzer import AnalyzerEngine
+import pytest
+
+LANGUAGE = "en"
 
 
 class TestAnalyzer(TestCase):
-    def test_get_recognizers_all(self):
-        analyzer = AnalyzerEngine()
-        text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18     Domain: microsoft.com"
+
+    def test_analyze_with_predefined_recognizers_return_results(self):
+        analyze_engine = AnalyzerEngine()
+        text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
+               "Domain: microsoft.com"
         fields = ["CREDIT_CARD", "PHONE_NUMBER", "DATE_TIME", "PERSON"]
-        results = analyzer.analyze(text, fields)
+        results = analyze_engine.analyze(text, fields, LANGUAGE)
         assert len(results) == 3
         assert results[0].entity_type == "CREDIT_CARD"
         assert results[1].entity_type == "DATE_TIME"
         assert results[2].entity_type == "PERSON"
+
+        fields = ["CREDIT_CARD"]
+        results = analyze_engine.analyze(text, fields, LANGUAGE)
+        assert len(results) == 1
+        assert results[0].entity_type == "CREDIT_CARD"
+
+
+    def test_analyze_without_entities(self):
+        analyze_engine = AnalyzerEngine()
+        text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
+               "Domain: microsoft.com"
+        fields = []
+        results = analyze_engine.analyze(text, fields, LANGUAGE)
+        assert len(results) == 0
+
+
+    def test_analyze_with_empty_text(self):
+        analyze_engine = AnalyzerEngine()
+        text = ""
+        fields = ["CREDIT_CARD", "PERSON"]
+        results = analyze_engine.analyze(text, fields, LANGUAGE)
+        assert len(results) == 0
+
+    def test_analyze_with_not_supported_language(self):
+        with pytest.raises(ValueError):
+            analyze_engine = AnalyzerEngine()
+            text = ""
+            fields = ["CREDIT_CARD", "PERSON"]
+            results = analyze_engine.analyze(text, fields, "de")
 

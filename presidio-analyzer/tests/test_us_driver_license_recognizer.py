@@ -1,5 +1,4 @@
 from analyzer.predefined_recognizers import UsLicenseRecognizer
-import os
 
 us_license_recognizer = UsLicenseRecognizer()
 entities = ["US_DRIVER_LICENSE"]
@@ -10,13 +9,9 @@ def test_valid_us_driver_license_weak_WA():
     num2 = 'A*1234AB*CD9'
     results = us_license_recognizer.analyze_all('{} {}'.format(num1, num2), entities)
 
-    assert len(results) == 4
+    assert len(results) == 2
     assert 0.29 < results[0].score < 0.41
     assert 0.29 < results[1].score < 0.41
-
-    # These are duplicate results that will be removed by the analyzer
-    assert 0 < results[2].score < 0.1
-    assert 0 < results[3].score < 0.1
 
 # TODO: Test will work with context
 # def test_valid_us_driver_license_weak_WA_exact_context():
@@ -79,15 +74,16 @@ def test_invalid_us_driver_license():
 # Regex: r'\b([0-9]{1,9}|[0-9]{4,10}|[0-9]{6,10}|[0-9]{1,12}|[0-9]{12,14}|[0-9]{16})\b'
 
 
-def test_valid_us_driver_license_very_weak_digits():
-    num = '123456789 1234567890 12345679012 123456790123 1234567901234'
-    results = us_license_recognizer.analyze_all(num, entities)
-
-    assert len(results) == 5
-    for result in results:
-        assert 0 < result.score < 0.1
 
 # TODO: Test will work with context
+# def test_valid_us_driver_license_very_weak_digits():
+#     num = '123456789 1234567890 12345679012 123456790123 1234567901234'
+#     results = us_license_recognizer.analyze_all(num, entities)
+#
+#     assert len(results) == 5
+#     for result in results:
+#         assert 0 < result.score < 0.1
+
 # def test_valid_us_driver_license_very_weak_digits_exact_context():
 #     num = '1234567901234'
 #     context = 'my driver license is: '
