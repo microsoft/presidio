@@ -2,6 +2,7 @@ from analyzer.predefined_recognizers import SpacyRecognizer
 
 NER_STRENGTH = 0.85
 spacy_recognizer = SpacyRecognizer()
+spacy_recognizer.load()
 entities = ["PERSON"]
 
 

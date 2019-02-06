@@ -33,26 +33,33 @@ class RecognizerRegistry:
                              UsBankRecognizer(), UsLicenseRecognizer(), UsItinRecognizer(), UsPassportRecognizer(),
                              UsPhoneRecognizer(), UsSsnRecognizer()])
 
-
-    def get_recognizers(self, languages=None, entities=None):
-        if languages is None and entities is None:
+    def get_recognizers(self, language=None, entities=None):
+        if language is None and entities is None:
             return self.recognizers
 
-        if languages is None:
-            raise ValueError("No languages provided")
+        if language is None:
+            raise ValueError("No language provided")
 
         if entities is None:
             raise ValueError("No entities provided")
 
         to_return = []
-        for language in languages:
-            for entity in entities:
-                subset = [rec for rec in self.recognizers if
-                          entity in rec.supported_entities and language in rec.supported_languages]
-                to_return.extend(subset)
+        for entity in entities:
+            subset = [rec for rec in self.recognizers if
+                      entity in rec.supported_entities and language in rec.supported_languages]
+            to_return.extend(subset)
 
         # remove duplicates
         return to_return
 
     def get_all_recognizers(self):
         return self.recognizers
+
+    def get_all_supported_languages(self):
+        supported_languages = []
+        for recognizer in self.recognizers:
+            for lang in recognizer.supported_languages:
+                if lang not in supported_languages:
+                    supported_languages.append(lang)
+
+        return supported_languages

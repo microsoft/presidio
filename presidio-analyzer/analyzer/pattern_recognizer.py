@@ -137,9 +137,17 @@ class PatternRecognizer(EntityRecognizer):
 
     @classmethod
     def from_dict(cls, data):
-        cls(supported_entities=data.get('supported_entities'),
-            supported_languages=data.get('supported_languages'),
-            patterns=data.get("patterns"),
-            black_list=data.get("black_list"),
-            context=data.get("context"),
-            version=data.get("version"))
+        patterns = data.get("patterns")
+        patterns_list = []
+
+        if patterns:
+            for p in patterns:
+                patterns_list.append(Pattern(name=p.get('name'),
+                                             strength=p.get('strength'), pattern=p.get('pattern')))
+
+        return cls(supported_entities=data.get('supported_entities'),
+                   supported_languages=data.get('supported_languages'),
+                   patterns=patterns_list,
+                   black_list=data.get("black_list"),
+                   context=data.get("context"),
+                   version=data.get("version"))
