@@ -92,7 +92,7 @@ execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
 deploy-presidio.sh <registry>
 ```
 
-The script will install Presidio on your cluster using the deault values. 
+The script will install Presidio on your cluster using the default values.
 >Note: You can edit the file to use your own container registry and image.
 
 ## Samples
@@ -169,8 +169,8 @@ You can also create reusable templates
 | Scanner             | Azure Blob Storage   | :white_check_mark:     |
 | Scanner             | S3                   | :white_check_mark:     |
 | Scanner             | Google Cloud Storage | :x:                    |
-| Streams             | Kafka                | :large_orange_diamond: |
-| Streams             | Azure Event Hub      | :large_orange_diamond:                    |
+| Streams             | Kafka                | :white_check_mark:     |
+| Streams             | Azure Event Hub      | :white_check_mark:     |
 | Datasink (output)   | MySQL                | :white_check_mark:     |
 | Datasink (output)   | MSSQL                | :white_check_mark:     |
 | Datasink (output)   | Oracle               | :x:                    |

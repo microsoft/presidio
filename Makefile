@@ -11,7 +11,6 @@ GOLANG_BASE	= presidio-golang-base
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
 PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
-RELEASE_VERSION := 
 LDFLAGS   += -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
 
 CX_OSES = linux windows darwin
@@ -74,6 +73,9 @@ docker-push-latest-dev: $(addsuffix -push-latest-dev,$(IMAGES))
 docker-push-release: $(addsuffix -push-release,$(IMAGES))
 
 %-push-release:
+ifeq ($(RELEASE_VERSION),)
+	$(error RELEASE_VERSION is not set)
+endif
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
 	docker push $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
