@@ -78,15 +78,15 @@ kubectl version
 3. Local `helm` client.
 4. Recent presidio repo is cloned on your local machine.
 
+### Installation Steps
+1. Navigate into `<root>\deployment` from command line.
 
-Navigate into `<root>\deployment` from command line.
-
-If You have helm installed, but havn't run `helm init`,
+2. If You have helm installed, but havn't run `helm init`,
 then execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster.
 
-Make sure to [grant AKS access to ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
+3. Make sure to [grant AKS access to ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
 
-If you already have `helm` and `tiller` configured, or if you installed it in the previous step, 
+4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, 
 execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
 ```sh
 deploy-presidio.sh <registry>
