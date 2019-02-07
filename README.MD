@@ -67,6 +67,40 @@ The [design document](https://microsoft.github.io/presidio/design.html) introduc
 2. Create a Presidio project
 3. Start using the Presidio analyze and anonymize services
 
+## Single click deployment using the default values
+
+The script will install Presidio on your Kubenetes cluster. Prerequesites:
+
+1. A Kubernetes cluster.
+2. `kubectl` installed
+    * verify you can communicate with the cluster by running: 
+        ``` sh
+        kubectl version
+        ```
+3. Local `helm` client.
+4. Recent presidio repo is cloned on your local machine.
+
+### Installation Steps
+
+1. Navigate into `<root>\deployment` from command line.
+
+2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster.
+
+3. Grant the Kubernetes cluster access to the container registry
+    * If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
+
+4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
+
+```sh
+deploy-presidio.sh <registry>
+```
+
+The script will install Presidio on your cluster using the default values.
+>Note: You can edit the file to use your own container registry and image.
+
+## Samples
+
+
 **Note:** Examples are made with [HTTPie](https://httpie.org/)
 
 ***Sample 1***

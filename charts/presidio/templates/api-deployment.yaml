@@ -21,7 +21,7 @@ spec:
       serviceAccountName: {{ $fullname }}
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.registry }}/{{ .Values.api.name }}:{{ default .Chart.AppVersion .Values.api.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.api.name }}:{{ default .Chart.AppVersion .Values.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.api.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.api.service.internalPort }}

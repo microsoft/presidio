@@ -50,7 +50,7 @@ $ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB
 
     ```sh
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},analyzer.tag=${PRESIDIO_LABEL},anonymizer.tag=${PRESIDIO_LABEL},anonymizerimage.tag=${PRESIDIO_LABEL},ocr.tag=${PRESIDIO_LABEL},scheduler.tag=${PRESIDIO_LABEL},api.tag=${PRESIDIO_LABEL},collector.tag=${PRESIDIO_LABEL},datasink.tag=${PRESIDIO_LABEL} . --namespace presidio
+    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
     ```
 
 ---
