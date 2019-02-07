@@ -17,41 +17,41 @@ class TestPatternRecognizer(TestCase):
 
     def test_multiple_entities_for_pattern_recognizer(self):
         with pytest.raises(ValueError):
-        patterns = [Pattern("p1", "someregex", 1.0), Pattern("p1", "someregex", 0.5)]
+            patterns = [Pattern("p1", "someregex", 1.0), Pattern("p1", "someregex", 0.5)]
             MockRecognizer(["ENTITY_1", "ENTITY_2"], patterns, [], None)
 
     def test_black_list_works(self):
-    test_recognizer = MockRecognizer([], ["ENTITY_1"], ["phone", "name"], None)
+        test_recognizer = MockRecognizer([], ["ENTITY_1"], ["phone", "name"], None)
 
-    results = test_recognizer.analyze("my phone number is 555-1234, and my name is John", ["ENTITY_1"])
+        results = test_recognizer.analyze("my phone number is 555-1234, and my name is John", ["ENTITY_1"])
 
         assert len(results) == 2
-    assert results[0].entity_type == "ENTITY_1"
+        assert results[0].entity_type == "ENTITY_1"
         assert results[0].score == 1.0
-    assert results[0].start == 3
-    assert results[0].end == 8
+        assert results[0].start == 3
+        assert results[0].end == 8
 
-    assert results[1].entity_type == "ENTITY_1"
+        assert results[1].entity_type == "ENTITY_1"
         assert results[1].score == 1.0
-    assert results[1].start == 36
-    assert results[1].end == 40
+        assert results[1].start == 36
+        assert results[1].end == 40
 
     def test_from_dict(self):
         json = {'supported_entities': ['ENTITY_1'],
-                'supported_language': ['en'],
+                'supported_language': 'en',
                 'patterns': [{'name': 'p1', 'strength': 0.5, 'pattern': '([0-9]{1,9})'}],
                 'context': ['w1', 'w2', 'w3'],
-                'version': 1.0}
+                'version': "1.0"}
 
         new_recognizer = PatternRecognizer.from_dict(json)
+        assert new_recognizer.supported_entities == ['ENTITY_1']
+        assert new_recognizer.supported_language == 'en'
+        assert new_recognizer.patterns[0].name == 'p1'
+        assert new_recognizer.patterns[0].strength == 0.5
+        assert new_recognizer.patterns[0].pattern == '([0-9]{1,9})'
+        assert new_recognizer.context == ['w1','w2','w3']
+        assert new_recognizer.version == "1.0"
 
-    results = new_recognizer.analyze("my phone number is 5551234", ["ENTITY_1"])
-
-        assert len(results) == 1
-        assert results[0].entity_type == "ENTITY_1"
-        assert results[0].score == 0.5
-        assert results[0].start == 19
-        assert results[0].end == 26
 
     def test_from_dict_returns_instance(self):
         pattern1_dict = {'name': 'p1', 'strength': 0.5, 'pattern': '([0-9]{1,9})'}
