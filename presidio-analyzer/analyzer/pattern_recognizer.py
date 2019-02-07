@@ -12,7 +12,7 @@ except ImportError:
     import regex as re
 
 
-class PatternRecognizer(EntityRecognizer):
+class PatternRecognizer(LocalRecognizer):
 
     def __init__(self, supported_entities, supported_languages=['en'], patterns=None,
                  black_list=None, context=None, version="0.0.1"):
