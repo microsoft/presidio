@@ -52,12 +52,36 @@ docker-push-deps:
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
 
+# push with the given label
 .PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
 
 %-push:
 	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 
+# push docker images twice, once with new tag and once with latest-dev tag
+.PHONY: docker-push-latest-dev
+docker-push-latest-dev: $(addsuffix -push-latest-dev,$(IMAGES))
+
+%-push-latest-dev:
+	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest-dev
+	docker push $(DOCKER_REGISTRY)/$*:latest-dev
+
+# pull an existing image tag, tag it again with a provided release tag and 'latest' tag
+.PHONY: docker-push-release
+docker-push-release: $(addsuffix -push-release,$(IMAGES))
+
+%-push-release:
+ifeq ($(RELEASE_VERSION),)
+	$(error RELEASE_VERSION is not set)
+endif
+	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
+	docker push $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest
+	docker push $(DOCKER_REGISTRY)/$*:latest
+	
 # All non-functional tests
 .PHONY: test
 test: python-test
