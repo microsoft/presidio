@@ -26,15 +26,13 @@ class SpacyRecognizer(PatternRecognizer):
         results = []
 
         for entity in entities:
-            if entity in self. supported_entities:
+            if entity in self.supported_entities:
                 for ent in doc.ents:
-                    if SpacyRecognizer.__check_label(entity, ent.label_) is False:
-                        continue
-
-                    res = RecognizerResult(ent.start_char, ent.end_char, NER_STRENGTH, entity)
-                    res = self.validate_pattern_logic(ent.text, res)
-                    if res.score > 0:
-                        results.append(res)
+                    if SpacyRecognizer.__check_label(entity, ent.label_):
+                        res = RecognizerResult(ent.start_char, ent.end_char, NER_STRENGTH, entity)
+                        res = self.validate_pattern_logic(ent.text, res)
+                        if res.score > 0:
+                            results.append(res)
 
         return results
 
@@ -43,11 +41,9 @@ class SpacyRecognizer(PatternRecognizer):
         guid_pattern = r"(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}"  # noqa: E501
         result = re.match(pattern, text, re.IGNORECASE | re.UNICODE)
         if result is not None:
-            if len(text) > 16:
-                if re.match(guid_pattern, text,
-                            re.IGNORECASE | re.UNICODE) is not None:
-                    recognizer_result.score = 0
-                    return recognizer_result
+            if re.match(guid_pattern, text, re.IGNORECASE | re.UNICODE) is not None:
+                recognizer_result.score = 0
+                return recognizer_result
             return recognizer_result
 
         recognizer_result.score = 0

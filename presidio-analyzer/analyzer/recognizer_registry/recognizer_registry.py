@@ -26,7 +26,7 @@ class RecognizerRegistry:
         '''
         self.recognizers.append(RemoteRecognizer.from_dict(data))
 
-    def load_local_recognizer(self, path_to_recognizers):
+    def load_recognizers_from_path(self, path_to_recognizers):
         #   TODO: Change the code to dynamic loading
         self.recognizers.extend([CreditCardRecognizer(), SpacyRecognizer(), CryptoRecognizer(), DomainRecognizer(),
                              EmailRecognizer(), IbanRecognizer(), IpRecognizer(), NhsRecognizer(),
