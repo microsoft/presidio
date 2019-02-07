@@ -17,7 +17,9 @@ class RecognizerRegistry:
     def load_recognizers(self, path):
         #   TODO: Change the code to dynamic loading -
         # Task #598:  Support dynamic loading of the pre-defined recognizers
-        self.recognizers.extend([CreditCardRecognizer(), SpacyRecognizer(), CryptoRecognizer(), DomainRecognizer(),
+        self.recognizers.extend([CreditCardRecognizer(),
+                                 SpacyRecognizer(),
+                                 CryptoRecognizer(), DomainRecognizer(),
                                  EmailRecognizer(), IbanRecognizer(), IpRecognizer(), NhsRecognizer(),
                                  UsBankRecognizer(), UsLicenseRecognizer(), UsItinRecognizer(), UsPassportRecognizer(),
                                  UsPhoneRecognizer(), UsSsnRecognizer()])

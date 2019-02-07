@@ -41,10 +41,3 @@ class TestRecognizerRegistry(TestCase):
         recognizers = registry.get_recognizers(language='he', entities=["PERSON"])
         assert len(recognizers) == 1
 
-    def test_get_supported_languages(self):
-        registry = self.get_mock_recognizer_registry()
-        langs = registry.get_all_supported_languages()
-        assert "he" in langs
-        assert "de" in langs
-        assert "en" in langs
-
