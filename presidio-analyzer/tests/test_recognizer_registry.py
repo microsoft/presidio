@@ -6,10 +6,10 @@ from analyzer import RecognizerRegistry, PatternRecognizer, EntityRecognizer
 class TestRecognizerRegistry(TestCase):
 
     def get_mock_pattern_recognizer(self, lang, entities):
-        return PatternRecognizer(entities, [lang], ["REGEX"])
+        return PatternRecognizer(entities, lang, ["REGEX"])
 
     def get_mock_cusom_recognizer(self, lang, entities):
-        return EntityRecognizer(entities, [lang])
+        return EntityRecognizer(entities, lang)
 
     def get_mock_recognizer_registry(self):
         pattern_recognizer1 = self.get_mock_pattern_recognizer("en", ["PERSON"])
@@ -40,3 +40,11 @@ class TestRecognizerRegistry(TestCase):
         registry = self.get_mock_recognizer_registry()
         recognizers = registry.get_recognizers(language='he', entities=["PERSON"])
         assert len(recognizers) == 1
+
+    def test_get_supported_languages(self):
+        registry = self.get_mock_recognizer_registry()
+        langs = registry.get_all_supported_languages()
+        assert "he" in langs
+        assert "de" in langs
+        assert "en" in langs
+

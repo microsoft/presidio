@@ -35,7 +35,7 @@ class RecognizerRegistry:
         to_return = []
         for entity in entities:
             subset = [rec for rec in self.recognizers if
-                      entity in rec.supported_entities and language in rec.supported_language]
+                      entity in rec.supported_entities and language == rec.supported_language]
 
             if len(subset) == 0:
                 logging.warning(
@@ -54,4 +54,3 @@ class RecognizerRegistry:
             raise ValueError("No matching recognizers were found to serve the request.")
 
         return to_return
-
