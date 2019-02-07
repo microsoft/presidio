@@ -99,15 +99,15 @@ class TestAnalyzerEngine(TestCase):
 
 
     def test_remove_analyzer(self):
-        pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
-        pattern_recognizer = PatternRecognizer(["ROCKET"],
-                                               name="Rocket recognizer",
+        pattern = Pattern("spaceship pattern", r'\W*(spaceship)\W*', 0.8)
+        pattern_recognizer = PatternRecognizer(["SPACESHIP"],
+                                               name="Spaceship recognizer",
                                                patterns=[pattern])
 
         # 1. Make sure the analyzer doesn't get this entity
         analyze_engine = AnalyzerEngine()
-        text = "rocket is my favorite transportation"
-        entities = ["CREDIT_CARD", "ROCKET"]
+        text = "spaceship is my favorite transportation"
+        entities = ["CREDIT_CARD", "SPACESHIP"]
 
         res = analyze_engine.analyze(text=text, entities=entities, language='en')
 
@@ -119,10 +119,10 @@ class TestAnalyzerEngine(TestCase):
         # 3. Check that the entity is recognized:
         res = analyze_engine.analyze(text=text, entities=entities, language='en')
         assert res[0].start == 0
-        assert res[0].end == 7
+        assert res[0].end == 10
 
         # 4. Remove recognizer
-        analyze_engine.remove_recognizer("Rocket recognizer")
+        analyze_engine.remove_recognizer("Spaceship recognizer")
 
         # 5. Test again to see we didn't get any results
         res = analyze_engine.analyze(text=text, entities=entities, language='en')
