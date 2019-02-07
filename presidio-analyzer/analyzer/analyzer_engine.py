@@ -1,8 +1,9 @@
 import logging
+import os
+
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
-import os
 
 from analyzer import RecognizerRegistry
 
@@ -22,7 +23,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     @staticmethod
     def __remove_duplicates(results):
-        #TODO: improve logic
+        # TODO: improve logic
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one result as a substring of the other
         results = sorted(results, key=lambda x: (-x.score, x.start, x.end - x.start))
         filtered_results = []
@@ -80,6 +81,21 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(r)
 
         return AnalyzerEngine.__remove_duplicates(results)
+
+    def add_pattern_recognizer(self, pattern_recognizer_dict):
+        """
+        Adds a new recognizer
+        :param pattern_recognizer_dict: a dictionary representation of a pattern recognizer
+        """
+        self.registry.add_pattern_recognizer_from_dict(pattern_recognizer_dict)
+
+    def remove_recognizer(self, name):
+        """
+        Removes an existing recognizer, throws an exception if not found
+        :param name: name of recognizer to be removed
+        """
+        self.registry.remove_recognizer(name)
+
 
     # TODO: These 3 methods below, should be removed as part of the work in:
     # user story #543 implement redesigned templates and
