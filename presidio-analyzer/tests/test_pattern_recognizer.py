@@ -19,14 +19,14 @@ def test_multiple_entities_for_pattern_recognizer():
 
 
 def test_black_list_works():
-    test_recognizer = MockRecognizer([], ["BLACK_LIST"], ["phone", "name"], None)
+    test_recognizer = MockRecognizer([], ["ENTITY_1"], ["phone", "name"], None)
 
-    results = test_recognizer.analyze_all("my phone number is 555-1234, and my name is John", ["BLACK_LIST"])
+    results = test_recognizer.analyze_all("my phone number is 555-1234, and my name is John", ["ENTITY_1"])
 
     assert len(results) == 2
-    assert results[0].entity_type == "BLACK_LIST"
+    assert results[0].entity_type == "ENTITY_1"
     assert results[0].score == 1.0
-    assert results[1].entity_type == "BLACK_LIST"
+    assert results[1].entity_type == "ENTITY_1"
     assert results[1].score == 1.0
 
 

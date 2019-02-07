@@ -15,7 +15,7 @@ class DomainRecognizer(PatternRecognizer):
         patterns = [Pattern('Domain ()', 0.5, DOMAIN_REGEX)]
         super().__init__(supported_entities=["DOMAIN_NAME"], patterns=patterns, context=DOMAIN_CONTEXT)
 
-    def validate_pattern_logic(self, text, pattern_result):
+    def validate_result(self, text, pattern_result):
         result = tldextract.extract(text)
         pattern_result.score = 1.0 if result.fqdn is not '' else 0
         return pattern_result

@@ -17,7 +17,7 @@ class NhsRecognizer(PatternRecognizer):
         patterns = [Pattern('NHS (medium)', 0.5, NHS_REGEX)]
         super().__init__(supported_entities=["UK_NHS"], patterns=patterns, context=NHS_CONTEXT)
 
-    def validate_pattern_logic(self, text, pattern_result):
+    def validate_result(self, text, pattern_result):
         text = NhsRecognizer.__sanitize_value(text)
 
         multiplier = 10

@@ -14,7 +14,7 @@ except ImportError:
 
 class PatternRecognizer(EntityRecognizer):
 
-    def __init__(self, supported_entities, supported_languages='en', patterns=None,
+    def __init__(self, supported_entities, supported_languages=['en'], patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
@@ -62,7 +62,7 @@ class PatternRecognizer(EntityRecognizer):
         results = []
 
         if len(self.patterns) > 0:
-            pattern_result = self.__analyze_regex_patterns(text)
+            pattern_result = self.__analyze_patterns(text)
 
             if pattern_result:
                 results.extend(pattern_result)
@@ -85,7 +85,8 @@ class PatternRecognizer(EntityRecognizer):
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern("black_list", 1.0, regex)
 
-    def validate_pattern_logic(self, pattern_text, pattern_result):
+    @abstractmethod
+    def validate_result(self, pattern_text, pattern_result):
         """
         Validates the pattern logic, for example for running checksum on a detected pattern.
 
@@ -94,13 +95,12 @@ class PatternRecognizer(EntityRecognizer):
         :return: the updated result of the pattern. For example,
         if a validation logic increased or decreased the score that was given by a regex pattern.
         """
-        return pattern_result
 
-    def __analyze_regex_patterns(self, input_text):
+    def __analyze_patterns(self, text):
         """
-        Evaluates all regex patterns in the provided input_text, including words in the provided blacklist
+        Evaluates all patterns in the provided text, including words in the provided blacklist
 
-        :param input_text: text to analyze
+        :param text: text to analyze
         :return: A list of RecognizerResult
         """
         results = []
@@ -108,7 +108,7 @@ class PatternRecognizer(EntityRecognizer):
             match_start_time = datetime.datetime.now()
             matches = re.finditer(
                 pattern.pattern,
-                input_text,
+                text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
             match_time = datetime.datetime.now() - match_start_time
             self.logger.debug('--- match_time[{}]: {}.{} seconds'.format(
@@ -116,19 +116,18 @@ class PatternRecognizer(EntityRecognizer):
 
             for match in matches:
                 start, end = match.span()
-                current_match = input_text[start:end]
+                current_match = text[start:end]
 
                 # Skip empty results
                 if current_match == '':
                     continue
 
                 res = RecognizerResult(start, end, pattern.strength, self.supported_entities[0])
-                res = self.validate_pattern_logic(current_match, res)
+                res = self.validate_result(current_match, res)
 
-                if res is None or res.score == 0:
-                    continue
-
-                results.append(res)
+                if res:
+                    results.append(res)
+                
 
         return results
 

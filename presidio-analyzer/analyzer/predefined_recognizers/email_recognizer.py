@@ -15,7 +15,7 @@ class EmailRecognizer(PatternRecognizer):
         patterns = [Pattern('Email (Medium)', 0.5, EMAIL_REGEX)]
         super().__init__(supported_entities=["EMAIL_ADDRESS"], patterns=patterns, context=EMAIL_CONTEXT)
 
-    def validate_pattern_logic(self, text, pattern_result):
+    def validate_result(self, text, pattern_result):
         result = tldextract.extract(text)
 
         pattern_result.score = 1.0 if result.fqdn is not '' else 0

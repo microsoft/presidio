@@ -18,7 +18,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self, registry=RecognizerRegistry()):
         # load all recognizers
         self.registry = registry
-        registry.load_recognizers_from_path("predefined-recognizers")
+        registry.load_recognizers("predefined-recognizers")
 
     @staticmethod
     def __remove_duplicates(results):
@@ -42,21 +42,21 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def Apply(self, request, context):
         logging.info("Starting Apply " + request.text)
         entities = self.__convert_fields_to_entities(request.analyzeTemplate.fields)
-        language_code = self.__get_language_code(request.analyzeTemplate.fields)
+        languages = self.__get_language(request.analyzeTemplate.fields)
 
-        results = self.analyze(request.text, entities, language_code)
+        results = self.analyze(request.text, entities, languages)
 
         response = analyze_pb2.AnalyzeResponse()
         response.analyzeResults.extend(self.__convert_results_to_proto(results))
         logging.info("Found " + len(results) + " results")
         return response
 
-    def analyze(self, text, entities, language):
+    def analyze(self, text, entities, languages):
         supported_languages = self.registry.get_all_supported_languages()
         if language not in supported_languages:
-            raise ValueError("Language " + language + " is not supported")
+            raise ValueError("Language " + languages + " is not supported")
 
-        recognizers = self.registry.get_recognizers(language=language, entities=entities)
+        recognizers = self.registry.get_recognizers(languages=languages, entities=entities)
         results = []
 
         for recognizer in recognizers:
@@ -71,7 +71,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return AnalyzerEngine.__remove_duplicates(results)
 
-    def __get_language_code(self, fields):
+    def __get_language(self, fields):
         # Currently each field hold its own language code, we are going to change it
         # so we will get only one language per request -> current logic: take the first language
         if not fields or len(fields) == 0 or fields[0].languageCode is None:

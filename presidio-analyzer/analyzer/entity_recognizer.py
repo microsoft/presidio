@@ -66,7 +66,7 @@ class EntityRecognizer:
         return __dict__
 
     @classmethod
-    def from_dict(cls, data):
-        cls(supported_entities=data.get('supported_entities'),
-            supported_languages=data.get('supported_languages'),
-            version=data.get("version"))
+    def from_dict(cls, entity_recognizer_dict):
+        return cls(supported_entities=entity_recognizer_dict.get('supported_entities'),
+                supported_languages=entity_recognizer_dict.get('supported_languages'),
+                version=entity_recognizer_dict.get("version"))

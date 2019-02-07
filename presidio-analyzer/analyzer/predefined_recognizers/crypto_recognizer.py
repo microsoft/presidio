@@ -19,7 +19,7 @@ class CryptoRecognizer(PatternRecognizer):
         context = CRYPTO_CONTEXT
         super().__init__(supported_entities=["CRYPTO"], patterns=patterns, context=context)
 
-    def validate_pattern_logic(self, text, pattern_result):
+    def validate_result(self, text, pattern_result):
         # try:
         bcbytes = CryptoRecognizer.__decode_base58(text, 25)
         if bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]:
