@@ -38,9 +38,6 @@ class RecognizerRegistry:
         # remove duplicates
         return to_return
 
-    def get_all_recognizers(self):
-        return self.recognizers
-
     def get_all_supported_languages(self):
         supported_languages = []
         for recognizer in self.recognizers:

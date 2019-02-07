@@ -33,7 +33,9 @@ class CreditCardRecognizer(PatternRecognizer):
         res = self.__luhn_checksum()
         if res == 0:
             pattern_result.score = 1
-
+        else: 
+            pattern_result.score = 0
+            
         return pattern_result
 
     def __luhn_checksum(self):
