@@ -12,6 +12,8 @@ class RecognizerRegistry:
             recognizers = []
         self.recognizers = recognizers
 
+    
+
     def load_recognizers(self, path):
         #   TODO: Change the code to dynamic loading
         self.recognizers.extend([CreditCardRecognizer(), SpacyRecognizer(), CryptoRecognizer(), DomainRecognizer(),
