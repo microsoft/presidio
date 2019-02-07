@@ -11,3 +11,22 @@ class Pattern:
         self.pattern = pattern
         self.strength = strength
 
+        """
+        Turns this instance into a dictionary
+        :return: a dictionary
+        """
+
+        return_dict = {"name": self.name,
+                       "strength": self.strength,
+                       "pattern": self.pattern
+                       }
+        return return_dict
+
+    @classmethod
+    def from_dict(cls, pattern_dict):
+        """
+        Loads an instance from a dictionary
+        :param pattern_dict: a dictionary holding the pattern's parameters
+        :return: a Pattern instance
+        """
+        return cls(**pattern_dict)

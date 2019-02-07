@@ -20,8 +20,10 @@ class RemoteRecognizer(EntityRecognizer):
         pass
 
     def to_dict(self):
-        return __dict__
+        return_dict = super().to_dict()
+
+        return return_dict
 
     @classmethod
-    def from_dict(cls, data):
-        cls(**data)
+    def from_dict(cls, entity_recognizer_dict):
+        return cls(**entity_recognizer_dict)

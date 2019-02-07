@@ -112,21 +112,18 @@ class PatternRecognizer(LocalRecognizer):
         return results
 
     def to_dict(self):
-        return __dict__
+        return_dict = super().to_dict()
+
+        return_dict["patterns"] = [pat.to_dict() for pat in self.patterns]
+        return_dict["black_list"] = self.black_list
+        return_dict["context"] = self.context
+        return return_dict
 
     @classmethod
-    def from_dict(cls, data):
-        patterns = data.get("patterns")
-        patterns_list = []
-
+    def from_dict(cls, pattern_recognizer_dict):
+        patterns = pattern_recognizer_dict.get("patterns")
         if patterns:
-            for p in patterns:
-                patterns_list.append(Pattern(name=p.get('name'),
-                                             strength=p.get('strength'), pattern=p.get('pattern')))
+            patterns_list = [Pattern.from_dict(pat) for pat in patterns]
+            pattern_recognizer_dict['patterns'] = patterns_list
 
-        return cls(supported_entities=data.get('supported_entities'),
-                   supported_language=data.get('supported_language'),
-                   patterns=patterns_list,
-                   black_list=data.get("black_list"),
-                   context=data.get("context"),
-                   version=data.get("version"))
+        return cls(**pattern_recognizer_dict)

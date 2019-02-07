@@ -5,7 +5,7 @@ from abc import abstractmethod
 
 class EntityRecognizer:
 
-    def __init__(self, supported_entities, supported_language="en", version="0.01"):
+    def __init__(self, supported_entities, supported_language="en", version="0.0.1"):
         """
         An abstract class to be inherited by Recognizers which hold the logic for recognizing specific PII entities.
 
@@ -62,10 +62,11 @@ class EntityRecognizer:
         return self.version
 
     def to_dict(self):
-        return __dict__
+        return_dict = {"supported_entities": self.supported_entities,
+                       "supported_language": self.supported_language,
+                       "version": self.version}
+        return return_dict
 
     @classmethod
     def from_dict(cls, entity_recognizer_dict):
-        return cls(supported_entities=entity_recognizer_dict.get('supported_entities'),
-                   supported_language=entity_recognizer_dict.get('supported_language'),
-                   version=entity_recognizer_dict.get("version"))
+        return cls(**entity_recognizer_dict)
