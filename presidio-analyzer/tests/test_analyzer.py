@@ -1,5 +1,6 @@
 from unittest import TestCase
 from analyzer import AnalyzerEngine
+from analyzer import RecognizerResult
 import pytest
 
 LANGUAGE = "en"
@@ -23,7 +24,6 @@ class TestAnalyzer(TestCase):
         assert len(results) == 1
         assert results[0].entity_type == "CREDIT_CARD"
 
-
     def test_analyze_without_entities(self):
         analyze_engine = AnalyzerEngine()
         text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
@@ -31,7 +31,6 @@ class TestAnalyzer(TestCase):
         fields = []
         results = analyze_engine.analyze(text, fields, LANGUAGE)
         assert len(results) == 0
-
 
     def test_analyze_with_empty_text(self):
         analyze_engine = AnalyzerEngine()
@@ -47,3 +46,20 @@ class TestAnalyzer(TestCase):
             fields = ["CREDIT_CARD", "PERSON"]
             results = analyze_engine.analyze(text, fields, "de")
 
+    def test_remove_duplicates(self):
+        # test same result with different score will return only the highest
+        arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x"),
+               RecognizerResult(start=0, end=5, score=0.5, entity_type="x")]
+        results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
+
+        assert len(results) == 1
+        assert results[0].score == 0.5
+
+        #WIP
+        # # test substring with higher score will be returned
+        # arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x"),
+        #        RecognizerResult(start=2, end=3, score=0.5, entity_type="x")]
+        # results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
+
+        # assert len(results) == 1
+        # assert results[0].score == 0.5

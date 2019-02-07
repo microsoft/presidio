@@ -18,18 +18,18 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self, registry=RecognizerRegistry()):
         # load all recognizers
         self.registry = registry
-        registry.load_local_recognizer("predefined-recognizers")
+        registry.load_recognizers_from_path("predefined-recognizers")
 
     @staticmethod
     def __remove_duplicates(results):
-
+        results = sorted(results, key=lambda x: (-x.score, x.start, x.end - x.start))
         filtered_results = []
 
         for result in results:
             valid_result = True
             if result not in filtered_results:
                 for filtered in filtered_results:
-                    # If result is equal to or substring of a checksum result
+                    # If result is equal to or substring of one of the other results
                     if result.start >= filtered.start and result.end <= filtered.end:
                         valid_result = False
                         break
@@ -69,7 +69,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             if r is not None:
                 results.extend(r)
 
-        sorted(results, key=lambda x: (x.start, x.score))
         return AnalyzerEngine.__remove_duplicates(results)
 
     def __get_language_code(self, fields):
