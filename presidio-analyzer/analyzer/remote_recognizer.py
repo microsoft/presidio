@@ -5,7 +5,7 @@ class RemoteRecognizer(EntityRecognizer):
 
     def __init__(self, **kwargs):
         super().__init__(supported_entities=kwargs.get("supported_entities"),
-                         supported_languages=kwargs.get("supported_languages"),
+                         supported_language=kwargs.get("supported_language"),
                          version=kwargs.get("version"))
         pass
 

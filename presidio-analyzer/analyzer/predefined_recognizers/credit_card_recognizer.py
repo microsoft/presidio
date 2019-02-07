@@ -1,8 +1,8 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
-CREDIT_CARD_REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'
-CREDIT_CARD_CONTEXT = [
+REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'
+CONTEXT = [
     "credit",
     "card",
     "visa",
@@ -24,18 +24,17 @@ class CreditCardRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('All Credit Cards (weak)', 0.3, CREDIT_CARD_REGEX)]
-        context = CREDIT_CARD_CONTEXT
-        super().__init__(supported_entities=["CREDIT_CARD"], patterns=patterns, context=context)
+        patterns = [Pattern('All Credit Cards (weak)', REGEX, 0.3)]
+        super().__init__(supported_entities=["CREDIT_CARD"], patterns=patterns, context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         self.__sanitize_value(text)
         res = self.__luhn_checksum()
         if res == 0:
             pattern_result.score = 1
-        else: 
+        else:
             pattern_result.score = 0
-            
+
         return pattern_result
 
     def __luhn_checksum(self):

@@ -9,25 +9,30 @@ from analyzer import PatternRecognizer
 
 class MockRecognizer(PatternRecognizer):
     def __init__(self, patterns, entities, black_list, context):
-        super().__init__(entities, [], patterns, black_list, context)
+        super().__init__(entities, None, patterns, black_list, context)
 
 
 def test_multiple_entities_for_pattern_recognizer():
     with pytest.raises(ValueError):
-        patterns = [Pattern("p1", 1.0, "someregex"), Pattern("p1", 2, "someregex")]
+        patterns = [Pattern("p1", "someregex", 1.0), Pattern("p1", "someregex", 0.5)]
         MockRecognizer(["ENTITY_1", "ENTITY_2"], patterns, [], None)
 
 
 def test_black_list_works():
     test_recognizer = MockRecognizer([], ["ENTITY_1"], ["phone", "name"], None)
 
-    results = test_recognizer.analyze_all("my phone number is 555-1234, and my name is John", ["ENTITY_1"])
+    results = test_recognizer.analyze("my phone number is 555-1234, and my name is John", ["ENTITY_1"])
 
     assert len(results) == 2
     assert results[0].entity_type == "ENTITY_1"
     assert results[0].score == 1.0
+    assert results[0].start == 3
+    assert results[0].end == 8
+
     assert results[1].entity_type == "ENTITY_1"
     assert results[1].score == 1.0
+    assert results[1].start == 36
+    assert results[1].end == 40
 
 
 def test_from_dict():
@@ -39,7 +44,7 @@ def test_from_dict():
 
     new_recognizer = PatternRecognizer.from_dict(json)
 
-    results = new_recognizer.analyze_all("my phone number is 5551234", ["ENTITY_1"])
+    results = new_recognizer.analyze("my phone number is 5551234", ["ENTITY_1"])
 
     assert len(results) == 1
     assert results[0].entity_type == "ENTITY_1"

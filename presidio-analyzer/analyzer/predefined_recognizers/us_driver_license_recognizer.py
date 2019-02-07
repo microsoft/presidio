@@ -18,9 +18,9 @@ ALPHANUMERIC_REGEX = r'\b([A-Z][0-9]{3,6}|[A-Z][0-9]{5,9}|[A-Z][0-9]{6,8}|[A-Z][
 DIGITS_REGEX = r'\b([0-9]{1,9}|[0-9]{4,10}|[0-9]{6,10}|[0-9]{1,12}|[0-9]{12,14}|[0-9]{16})\b'  # noqa: E501
 
 LICENSE_CONTEXT = [
-        "driver", "license", "permit", "id", "lic", "identification", "card",
-        "cards", "dl", "dls", "cdls", "id", "lic#"
-    ]
+    "driver", "license", "permit", "id", "lic", "identification", "card",
+    "cards", "dl", "dls", "cdls", "id", "lic#"
+]
 
 
 class UsLicenseRecognizer(PatternRecognizer):
@@ -29,9 +29,8 @@ class UsLicenseRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Driver License - WA (weak) ', 0.4, WA_WEAK_REGEX),
-                    Pattern('Driver License - WA (very weak) ', 0.01, WA_VERY_WEAK_REGEX),
-                    Pattern('Driver License - Alphanumeric (weak) ', 0.3, ALPHANUMERIC_REGEX),
-                    Pattern('Driver License - Digits (very weak)', 0, DIGITS_REGEX)]
+        patterns = [Pattern('Driver License - WA (weak) ', WA_WEAK_REGEX, 0.4),
+                    Pattern('Driver License - WA (very weak) ', WA_VERY_WEAK_REGEX, 0.01),
+                    Pattern('Driver License - Alphanumeric (weak) ', ALPHANUMERIC_REGEX, 0.3),
+                    Pattern('Driver License - Digits (very weak)', DIGITS_REGEX, 0)]
         super().__init__(supported_entities=["US_DRIVER_LICENSE"], patterns=patterns, context=LICENSE_CONTEXT)
-

@@ -12,11 +12,11 @@ from analyzer import PatternRecognizer
 # With different weights, one to indicate letters only and
 # one to indicate at least one digit or one '*'
 
-SSN_VERY_WEAK_REGEX = r'\b(([0-9]{5})-([0-9]{4})|([0-9]{3})-([0-9]{6}))\b'
-SSN_WEAK_REGEX = r'\b[0-9]{9}\b'
-SSN_MEDIUM_REGEX = r'\b([0-9]{3})-([0-9]{2})-([0-9]{4})\b'
+VERY_WEAK_REGEX = r'\b(([0-9]{5})-([0-9]{4})|([0-9]{3})-([0-9]{6}))\b'
+WEAK_REGEX = r'\b[0-9]{9}\b'
+MEDIUM_REGEX = r'\b([0-9]{3})-([0-9]{2})-([0-9]{4})\b'
 
-US_SSN_CONTEXT = [
+CONTEXT = [
         "social",
         "security",
         # "sec", TODO: add keyphrase support in "social sec"
@@ -34,8 +34,8 @@ class UsSsnRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('SSN (very weak)', 0.05, SSN_VERY_WEAK_REGEX),
-                    Pattern('SSN (weak)', 0.3, SSN_WEAK_REGEX),
-                    Pattern('SSN (medium)', 0.5, SSN_MEDIUM_REGEX)]
-        super().__init__(supported_entities=["US_ITIN"], patterns=patterns, context=US_SSN_CONTEXT)
+        patterns = [Pattern('SSN (very weak)', VERY_WEAK_REGEX, 0.05),
+                    Pattern('SSN (weak)', WEAK_REGEX, 0.3),
+                    Pattern('SSN (medium)', MEDIUM_REGEX, 0.5)]
+        super().__init__(supported_entities=["US_SSN"], patterns=patterns, context=CONTEXT)
 

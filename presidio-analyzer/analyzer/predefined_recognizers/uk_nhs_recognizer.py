@@ -1,8 +1,8 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
-NHS_REGEX = r'\b([0-9]{3})[- ]?([0-9]{3})[- ]?([0-9]{4})\b'
-NHS_CONTEXT = [
+REGEX = r'\b([0-9]{3})[- ]?([0-9]{3})[- ]?([0-9]{4})\b'
+CONTEXT = [
     "national health service", "nhs", "health services authority",
     "health authority"
 ]
@@ -14,8 +14,8 @@ class NhsRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('NHS (medium)', 0.5, NHS_REGEX)]
-        super().__init__(supported_entities=["UK_NHS"], patterns=patterns, context=NHS_CONTEXT)
+        patterns = [Pattern('NHS (medium)', REGEX, 0.5)]
+        super().__init__(supported_entities=["UK_NHS"], patterns=patterns, context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         text = NhsRecognizer.__sanitize_value(text)

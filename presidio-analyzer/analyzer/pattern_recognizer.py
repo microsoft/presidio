@@ -1,7 +1,7 @@
 import datetime
 from abc import abstractmethod
 
-from analyzer import EntityRecognizer
+from analyzer import LocalRecognizer
 from analyzer import Pattern
 from analyzer import RecognizerResult
 
@@ -14,17 +14,20 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    def __init__(self, supported_entities, supported_languages=['en'], patterns=None,
+    def __init__(self, supported_entities, supported_language='en', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
             :param black_list: the list of words to detect
             :param context: list of context words
         """
-        if supported_entities and len(supported_entities) > 1 and patterns and len(patterns) > 0:
+        if supported_entities and len(supported_entities) > 1:
             raise ValueError("Pattern recognizer supports only one entity")
 
-        super().__init__(supported_entities, supported_languages, version)
+        if not patterns and not black_list:
+            raise ValueError("Pattern recognizer should be initialized with patterns or with black list")
+
+        super().__init__(supported_entities=supported_entities, supported_language=supported_language, version=version)
         if patterns is None:
             self.patterns = []
         else:
@@ -38,27 +41,7 @@ class PatternRecognizer(LocalRecognizer):
     def load(self):
         pass
 
-    @abstractmethod
-    def analyze_text(self, text, entities):
-        """
-        This is the core method for analyzing text, assuming entities are
-        the subset of the supported entities types.
-
-        :param text: The text to be analyzed
-        :param entities: The list of entities to be detected
-        :return: list of RecognizerResult
-        :rtype: [RecognizerResult]
-        """
-        pass
-
-    def analyze_all(self, text, entities):
-        """
-        The full recognition logic, calling all patterns + custom analyze_text logic to come up with all detected
-        PIIs for this recognizer.
-        :param text: the text to analyze
-        :param entities: the entities to be detected
-        :return: the analyze result- the detected entities and their location in the text
-        """
+    def analyze(self, text, entities):
         results = []
 
         if len(self.patterns) > 0:
@@ -67,23 +50,19 @@ class PatternRecognizer(LocalRecognizer):
             if pattern_result:
                 results.extend(pattern_result)
 
-        analyzed_text = self.analyze_text(text, entities)
-        if analyzed_text:
-            results.extend(analyzed_text)
-
         return results
 
     @staticmethod
     def __black_list_to_regex(black_list):
         """
         Converts a list of word to a matching regex, to be analyzed by the regex engine as a part of the
-        analyze_all logic
+        analyze logic
 
         :param black_list: the list of words to detect
         :return:the regex of the words for detection
         """
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
-        return Pattern("black_list", 1.0, regex)
+        return Pattern(name="black_list", pattern=regex, strength=1.0)
 
     @abstractmethod
     def validate_result(self, pattern_text, pattern_result):
@@ -95,6 +74,7 @@ class PatternRecognizer(LocalRecognizer):
         :return: the updated result of the pattern. For example,
         if a validation logic increased or decreased the score that was given by a regex pattern.
         """
+        return pattern_result
 
     def __analyze_patterns(self, text):
         """
@@ -145,7 +125,7 @@ class PatternRecognizer(LocalRecognizer):
                                              strength=p.get('strength'), pattern=p.get('pattern')))
 
         return cls(supported_entities=data.get('supported_entities'),
-                   supported_languages=data.get('supported_languages'),
+                   supported_language=data.get('supported_language'),
                    patterns=patterns_list,
                    black_list=data.get("black_list"),
                    context=data.get("context"),

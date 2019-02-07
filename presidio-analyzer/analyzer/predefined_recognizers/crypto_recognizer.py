@@ -5,8 +5,8 @@ from hashlib import sha256
 """Copied from:
   http://rosettacode.org/wiki/Bitcoin/address_validation#Python
   """
-CRYPTO_REGEX = r'\b[13][a-km-zA-HJ-NP-Z0-9]{26,33}\b'
-CRYPTO_CONTEXT = ["wallet", "btc", "bitcoin", "crypto"]
+REGEX = r'\b[13][a-km-zA-HJ-NP-Z0-9]{26,33}\b'
+CONTEXT = ["wallet", "btc", "bitcoin", "crypto"]
 
 
 class CryptoRecognizer(PatternRecognizer):
@@ -15,9 +15,8 @@ class CryptoRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Crypto (Medium)', 0.5, CRYPTO_REGEX)]
-        context = CRYPTO_CONTEXT
-        super().__init__(supported_entities=["CRYPTO"], patterns=patterns, context=context)
+        patterns = [Pattern('Crypto (Medium)', REGEX, 0.5)]
+        super().__init__(supported_entities=["CRYPTO"], patterns=patterns, context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         # try:
