@@ -9,8 +9,15 @@ from analyzer import PatternRecognizer
 
 
 class MockRecognizer(PatternRecognizer):
-    def __init__(self, patterns, entities, black_list, context):
-        super().__init__(entities, None, patterns, black_list, context)
+    def validate_result(self, pattern_text, pattern_result):
+        return pattern_result
+
+    def __init__(self, entities, patterns, black_list, name, context):
+        super().__init__(supported_entities=entities,
+                         name=name,
+                         patterns=patterns,
+                         black_list=black_list,
+                         context=context)
 
 
 class TestPatternRecognizer(TestCase):
@@ -18,10 +25,13 @@ class TestPatternRecognizer(TestCase):
     def test_multiple_entities_for_pattern_recognizer(self):
         with pytest.raises(ValueError):
             patterns = [Pattern("p1", "someregex", 1.0), Pattern("p1", "someregex", 0.5)]
-            MockRecognizer(["ENTITY_1", "ENTITY_2"], patterns, [], None)
+            MockRecognizer(entities=["ENTITY_1", "ENTITY_2"], patterns=patterns,
+                           black_list=[], name=None, context=None)
 
     def test_black_list_works(self):
-        test_recognizer = MockRecognizer([], ["ENTITY_1"], ["phone", "name"], None)
+        test_recognizer = MockRecognizer(patterns=[],
+                                         entities=["ENTITY_1"],
+                                         black_list=["phone", "name"], context=None, name=None)
 
         results = test_recognizer.analyze("my phone number is 555-1234, and my name is John", ["ENTITY_1"])
 
@@ -49,9 +59,8 @@ class TestPatternRecognizer(TestCase):
         assert new_recognizer.patterns[0].name == 'p1'
         assert new_recognizer.patterns[0].strength == 0.5
         assert new_recognizer.patterns[0].pattern == '([0-9]{1,9})'
-        assert new_recognizer.context == ['w1','w2','w3']
+        assert new_recognizer.context == ['w1', 'w2', 'w3']
         assert new_recognizer.version == "1.0"
-
 
     def test_from_dict_returns_instance(self):
         pattern1_dict = {'name': 'p1', 'strength': 0.5, 'pattern': '([0-9]{1,9})'}
