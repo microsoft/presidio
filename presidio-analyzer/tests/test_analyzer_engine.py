@@ -1,12 +1,14 @@
 from unittest import TestCase
-from analyzer import AnalyzerEngine
-from analyzer import RecognizerResult
+
 import pytest
+
+from analyzer import AnalyzerEngine, PatternRecognizer, Pattern
+from analyzer import RecognizerResult
 
 LANGUAGE = "en"
 
 
-class TestAnalyzer(TestCase):
+class TestAnalyzerEngine(TestCase):
 
     # def test_analyze_with_predefined_recognizers_return_results(self):
     #     analyze_engine = AnalyzerEngine()
@@ -71,3 +73,58 @@ class TestAnalyzer(TestCase):
 
         # TODO: add more cases with bug:
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one result as a substring of the other
+
+    def test_add_pattern_recognizer_from_dict(self):
+        pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
+        pattern_recognizer = PatternRecognizer(["ROCKET"],
+                                               name="Rocket recognizer",
+                                               patterns=[pattern])
+
+        # 1. Make sure the analyzer doesn't get this entity
+        analyze_engine = AnalyzerEngine()
+        text = "rocket is my favorite transportation"
+        entities = ["CREDIT_CARD", "ROCKET"]
+
+        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+
+        assert len(res) == 0
+
+        # 2. Add a new recognizer for the word "rocket" (case insensitive)
+        analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
+
+        # 3. Check that the entity is recognized:
+        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+        assert res[0].start == 0
+        assert res[0].end == 7
+
+
+    def test_remove_analyzer(self):
+        pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
+        pattern_recognizer = PatternRecognizer(["ROCKET"],
+                                               name="Rocket recognizer",
+                                               patterns=[pattern])
+
+        # 1. Make sure the analyzer doesn't get this entity
+        analyze_engine = AnalyzerEngine()
+        text = "rocket is my favorite transportation"
+        entities = ["CREDIT_CARD", "ROCKET"]
+
+        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+
+        assert len(res) == 0
+
+        # 2. Add a new recognizer for the word "rocket" (case insensitive)
+        analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
+
+        # 3. Check that the entity is recognized:
+        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+        assert res[0].start == 0
+        assert res[0].end == 7
+
+        # 4. Remove recognizer
+        analyze_engine.remove_recognizer("Rocket recognizer")
+
+        # 5. Test again to see we didn't get any results
+        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+
+        assert len(res) == 0

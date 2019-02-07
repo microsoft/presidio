@@ -2,10 +2,14 @@ from analyzer import EntityRecognizer
 
 
 class RemoteRecognizer(EntityRecognizer):
+    """
+    A configuration for a recognizer that runs on a different process / remote machine
+    """
 
     def __init__(self, **kwargs):
         super().__init__(supported_entities=kwargs.get("supported_entities"),
                          supported_language=kwargs.get("supported_language"),
+                         name=kwargs.get("name"),
                          version=kwargs.get("version"))
         pass
 
@@ -18,12 +22,3 @@ class RemoteRecognizer(EntityRecognizer):
 
     def get_supported_entities(self):
         pass
-
-    def to_dict(self):
-        return_dict = super().to_dict()
-
-        return return_dict
-
-    @classmethod
-    def from_dict(cls, entity_recognizer_dict):
-        return cls(**entity_recognizer_dict)

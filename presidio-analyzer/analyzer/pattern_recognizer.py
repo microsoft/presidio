@@ -14,7 +14,7 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    def __init__(self, supported_entities, supported_language='en', patterns=None,
+    def __init__(self, supported_entities, name=None, supported_language='en', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
@@ -27,7 +27,10 @@ class PatternRecognizer(LocalRecognizer):
         if not patterns and not black_list:
             raise ValueError("Pattern recognizer should be initialized with patterns or with black list")
 
-        super().__init__(supported_entities=supported_entities, supported_language=supported_language, version=version)
+        super().__init__(supported_entities=supported_entities,
+                         supported_language=supported_language,
+                         name=name,
+                         version=version)
         if patterns is None:
             self.patterns = []
         else:
@@ -37,6 +40,9 @@ class PatternRecognizer(LocalRecognizer):
         if black_list:
             black_list_pattern = PatternRecognizer.__black_list_to_regex(black_list)
             self.patterns.append(black_list_pattern)
+            self.black_list = black_list
+        else:
+            self.black_list = []
 
     def load(self):
         pass
@@ -107,7 +113,6 @@ class PatternRecognizer(LocalRecognizer):
 
                 if res:
                     results.append(res)
-                
 
         return results
 
