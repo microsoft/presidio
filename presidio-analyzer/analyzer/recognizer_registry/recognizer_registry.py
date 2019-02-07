@@ -12,21 +12,7 @@ class RecognizerRegistry:
             recognizers = []
         self.recognizers = recognizers
 
-    def load_pattern_recognizer(self, data):
-        """
-        Load pattern recognizer from json file
-        :param data: a dictionary (possibly created from a json) which holds the parameters of a recognizer
-        """
-        self.recognizers.append(PatternRecognizer.from_dict(data))
-
-    def load_external_recognizer(self, data):
-        '''
-        Load external recognizer (in separate container) from json metadata file
-        :param data: a dictionary (possibly created from a json) which holds the parameters of a recognizer
-        '''
-        self.recognizers.append(RemoteRecognizer.from_dict(data))
-
-    def load_recognizers_from_path(self, path_to_recognizers):
+    def load_recognizers(self, path):
         #   TODO: Change the code to dynamic loading
         self.recognizers.extend([CreditCardRecognizer(), SpacyRecognizer(), CryptoRecognizer(), DomainRecognizer(),
                              EmailRecognizer(), IbanRecognizer(), IpRecognizer(), NhsRecognizer(),

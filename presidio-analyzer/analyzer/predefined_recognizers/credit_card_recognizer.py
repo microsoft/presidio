@@ -28,13 +28,11 @@ class CreditCardRecognizer(PatternRecognizer):
         context = CREDIT_CARD_CONTEXT
         super().__init__(supported_entities=["CREDIT_CARD"], patterns=patterns, context=context)
 
-    def validate_pattern_logic(self, text, pattern_result):
+    def validate_result(self, text, pattern_result):
         self.__sanitize_value(text)
         res = self.__luhn_checksum()
         if res == 0:
             pattern_result.score = 1
-        else:
-            pattern_result.score = 0
 
         return pattern_result
 

@@ -30,13 +30,13 @@ class SpacyRecognizer(PatternRecognizer):
                 for ent in doc.ents:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
                         res = RecognizerResult(ent.start_char, ent.end_char, NER_STRENGTH, entity)
-                        res = self.validate_pattern_logic(ent.text, res)
+                        res = self.validate_result(ent.text, res)
                         if res.score > 0:
                             results.append(res)
 
         return results
 
-    def validate_pattern_logic(self, text, recognizer_result):
+    def validate_result(self, text, recognizer_result):
         pattern = r"^[a-zA-Z0-9-_'.() ]+$"
         guid_pattern = r"(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}"  # noqa: E501
         result = re.match(pattern, text, re.IGNORECASE | re.UNICODE)

@@ -19,7 +19,7 @@ class IbanRecognizer(PatternRecognizer):
         patterns = [Pattern('Iban (Medium)', 0.5, IBAN_REGEX)]
         super().__init__(supported_entities=["IBAN_CODE"], patterns=patterns, context=IBAN_CONTEXT)
 
-    def validate_pattern_logic(self, text, pattern_result):
+    def validate_result(self, text, pattern_result):
         is_valid_iban = IbanRecognizer.__generate_iban_check_digits(
             text) == text[2:4] and IbanRecognizer.__valid_iban(text)
 
