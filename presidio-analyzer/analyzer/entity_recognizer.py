@@ -5,23 +5,22 @@ from abc import abstractmethod
 
 class EntityRecognizer:
 
-    def __init__(self, supported_entities, supported_languages=["en"], version="0.01"):
+    def __init__(self, supported_entities, supported_language="en", version="0.01"):
         """
         An abstract class to be inherited by Recognizers which hold the logic for recognizing specific PII entities.
 
         :param supported_entities: the entities supported by this recognizer (for example, phone number, address, etc.)
-        :param supported_languages: the languages supported by this recognizer
+        :param supported_language: the language supported by this recognizer
         :param version: the recognizer current version
         """
         self.supported_entities = supported_entities
-        self.supported_languages = supported_languages
+        self.supported_language = supported_language
         self.version = version
         self.is_loaded = False
 
         loglevel = os.environ.get("LOG_LEVEL", "INFO")
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(loglevel)
-
 
     @abstractmethod
     def load(self):
@@ -31,7 +30,7 @@ class EntityRecognizer:
         pass
 
     @abstractmethod
-    def analyze_text(self, text, entities):
+    def analyze(self, text, entities):
         """
         This is the core method for analyzing text, assuming entities are
         the subset of the supported entities types.
@@ -50,11 +49,11 @@ class EntityRecognizer:
         """
         return self.supported_entities
 
-    def get_supported_languages(self):
+    def get_supported_language(self):
         """
-        :return: A list of the supported languages by this recognizer
+        :return: A list of the supported language by this recognizer
         """
-        return self.supported_languages
+        return self.supported_language
 
     def get_version(self):
         """
@@ -68,5 +67,5 @@ class EntityRecognizer:
     @classmethod
     def from_dict(cls, entity_recognizer_dict):
         return cls(supported_entities=entity_recognizer_dict.get('supported_entities'),
-                supported_languages=entity_recognizer_dict.get('supported_languages'),
-                version=entity_recognizer_dict.get("version"))
+                   supported_language=entity_recognizer_dict.get('supported_language'),
+                   version=entity_recognizer_dict.get("version"))

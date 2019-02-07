@@ -2,8 +2,8 @@ from analyzer import Pattern
 from analyzer import PatternRecognizer
 import string
 
-IBAN_REGEX = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
-IBAN_CONTEXT = ["iban"]
+REGEX = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
+CONTEXT = ["iban"]
 LETTERS = {
     ord(d): str(i)
     for i, d in enumerate(string.digits + string.ascii_uppercase)
@@ -16,8 +16,8 @@ class IbanRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Iban (Medium)', 0.5, IBAN_REGEX)]
-        super().__init__(supported_entities=["IBAN_CODE"], patterns=patterns, context=IBAN_CONTEXT)
+        patterns = [Pattern('Iban (Medium)', REGEX, 0.5)]
+        super().__init__(supported_entities=["IBAN_CODE"], patterns=patterns, context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         is_valid_iban = IbanRecognizer.__generate_iban_check_digits(

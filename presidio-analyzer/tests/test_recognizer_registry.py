@@ -1,5 +1,5 @@
 from unittest import TestCase
-
+import pytest
 from analyzer import RecognizerRegistry, PatternRecognizer, EntityRecognizer
 
 
@@ -32,9 +32,9 @@ class TestRecognizerRegistry(TestCase):
         assert len(recognizers) == 1
 
     def test_get_recognizers_unsupported_language(self):
-        registry = self.get_mock_recognizer_registry()
-        recognizers = registry.get_recognizers(language='brrrr', entities=["PERSON"])
-        assert len(recognizers) == 0
+        with pytest.raises(ValueError):
+            registry = self.get_mock_recognizer_registry()
+            registry.get_recognizers(language='brrrr', entities=["PERSON"])
 
     def test_get_recognizers_specific_language_and_entity(self):
         registry = self.get_mock_recognizer_registry()

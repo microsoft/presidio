@@ -12,11 +12,11 @@ from analyzer import PatternRecognizer
 # With different weights, one to indicate letters only and
 # one to indicate at least one digit or one '*'
 
-PHONE_STRONG_REGEX = r'(\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|d{3}[-\.\s]\d{3}[-\.\s]\d{4})'  # noqa: E501
-PHONE_MEDIUM_REGEX = r'\b(\d{3}[-\.\s]\d{3}[-\.\s]??\d{4})\b'
-PHONE_WEAK_REGEX = r'(\b\d{10}\b)'
+STRONG_REGEX = r'(\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|d{3}[-\.\s]\d{3}[-\.\s]\d{4})'  # noqa: E501
+MEDIUM_REGEX = r'\b(\d{3}[-\.\s]\d{3}[-\.\s]??\d{4})\b'
+WEAK_REGEX = r'(\b\d{10}\b)'
 
-PHONE_CONTEXT = ["phone", "number", "telephone", "cell", "mobile", "call"]
+CONTEXT = ["phone", "number", "telephone", "cell", "mobile", "call"]
 
 
 class UsPhoneRecognizer(PatternRecognizer):
@@ -25,8 +25,7 @@ class UsPhoneRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Phone (strong)', 0.7, PHONE_STRONG_REGEX),
-                    Pattern('Phone (medium)', 0.5, PHONE_MEDIUM_REGEX),
-                    Pattern('Phone (weak)', 0.05, PHONE_WEAK_REGEX)]
-        super().__init__(supported_entities=["PHONE_NUMBER"], patterns=patterns, context=PHONE_CONTEXT)
-
+        patterns = [Pattern('Phone (strong)', STRONG_REGEX, 0.7),
+                    Pattern('Phone (medium)', MEDIUM_REGEX, 0.5),
+                    Pattern('Phone (weak)', WEAK_REGEX, 0.05)]
+        super().__init__(supported_entities=["PHONE_NUMBER"], patterns=patterns, context=CONTEXT)
