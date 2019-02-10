@@ -3,7 +3,8 @@ from analyzer import EntityRecognizer
 
 class RemoteRecognizer(EntityRecognizer):
     """
-    A configuration for a recognizer that runs on a different process / remote machine
+    A configuration for a recognizer that runs on a different process
+     / remote machine
     """
 
     def __init__(self, **kwargs):
