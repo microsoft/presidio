@@ -8,7 +8,7 @@ SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
 try:
     import re2 as re
 except ImportError:
-    import regex as re
+    import regex as re  # noqa: F401
 
 
 class SpacyRecognizer(LocalRecognizer):

@@ -31,7 +31,7 @@ class NhsRecognizer(PatternRecognizer):
         remainder = total % 11
         check_digit = 11 - remainder
 
-        pattern_result.score = 1.0 if check_digit is 11 else 0
+        pattern_result.score = 1.0 if check_digit == 11 else 0
         return pattern_result
 
     @staticmethod

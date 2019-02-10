@@ -18,5 +18,5 @@ class DomainRecognizer(PatternRecognizer):
 
     def validate_result(self, text, pattern_result):
         result = tldextract.extract(text)
-        pattern_result.score = 1.0 if result.fqdn is not '' else 0
+        pattern_result.score = 1.0 if result.fqdn != '' else 0
         return pattern_result

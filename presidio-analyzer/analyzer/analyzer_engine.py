@@ -24,7 +24,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     @staticmethod
     def __remove_duplicates(results):
         # TODO: improve logic
-        # bug# 597: Analyzer remove duplicates doesn't handle all cases of one result as a substring of the other
+        # bug# 597: Analyzer remove duplicates doesn't handle all cases of one
+        # result as a substring of the other
         results = sorted(results,
                          key=lambda x: (-x.score, x.start, x.end - x.start))
         filtered_results = []
@@ -36,8 +37,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             valid_result = True
             if result not in filtered_results:
                 for filtered in filtered_results:
-                    # If result is equal to or substring of one of the other results
-                    if result.start >= filtered.start and result.end <= filtered.end:
+                    # If result is equal to or substring of
+                    # one of the other results
+                    if result.start >= filtered.start \
+                            and result.end <= filtered.end:
                         valid_result = False
                         break
 
