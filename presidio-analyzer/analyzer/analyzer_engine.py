@@ -1,10 +1,12 @@
 import logging
 import os
 
-from analyzer import RecognizerRegistry
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
+
+from analyzer import RecognizerRegistry  # noqa: F401
+
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
@@ -61,7 +63,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         response.analyzeResults.extend(
             self.__convert_results_to_proto(results))
-        logging.info("Found " + len(results) + " results")
+        logging.info("Found {} results".format(len(results)))
         return response
 
     def analyze(self, text, entities, language):
@@ -112,7 +114,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # Currently each field hold its own language code
         # we are going to change it so we will get only one language
         # per request -> current logic: take the first language
-        if not fields or len(fields) == 0 or fields[0].languageCode is None:
+        if not fields or len(fields) == 0 or fields[0].languageCode is None\
+                or fields[0].languageCode == "":
             return DEFAULT_LANGUAGE
 
         return fields[0].languageCode
