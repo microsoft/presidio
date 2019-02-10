@@ -13,11 +13,11 @@ class EmailRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Email (Medium)', REGEX, 0.5)]
-        super().__init__(supported_entities=["EMAIL_ADDRESS"], patterns=patterns, context=CONTEXT)
+        super().__init__(supported_entities=["EMAIL_ADDRESS"],
+                         patterns=patterns, context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         result = tldextract.extract(text)
 
         pattern_result.score = 1.0 if result.fqdn is not '' else 0
         return pattern_result
-

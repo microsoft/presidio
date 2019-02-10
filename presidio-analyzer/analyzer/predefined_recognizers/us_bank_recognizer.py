@@ -23,4 +23,5 @@ class UsBankRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Bank Account (weak)', REGEX, 0.05)]
-        super().__init__(supported_entities=["US_BANK_NUMBER"], patterns=patterns, context=CONTEXT)
+        super().__init__(supported_entities=["US_BANK_NUMBER"],
+                         patterns=patterns, context=CONTEXT)

@@ -14,7 +14,8 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    def __init__(self, supported_entities, name=None, supported_language='en', patterns=None,
+    def __init__(self, supported_entities, name=None, supported_language='en',
+                 patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
@@ -25,7 +26,9 @@ class PatternRecognizer(LocalRecognizer):
             raise ValueError("Pattern recognizer supports only one entity")
 
         if not patterns and not black_list:
-            raise ValueError("Pattern recognizer should be initialized with patterns or with black list")
+            raise ValueError(
+                "Pattern recognizer should be initialized with patterns"
+                " or with black list")
 
         super().__init__(supported_entities=supported_entities,
                          supported_language=supported_language,
@@ -38,7 +41,8 @@ class PatternRecognizer(LocalRecognizer):
         self.context = context
 
         if black_list:
-            black_list_pattern = PatternRecognizer.__black_list_to_regex(black_list)
+            black_list_pattern = PatternRecognizer.__black_list_to_regex(
+                black_list)
             self.patterns.append(black_list_pattern)
             self.black_list = black_list
         else:
@@ -61,8 +65,8 @@ class PatternRecognizer(LocalRecognizer):
     @staticmethod
     def __black_list_to_regex(black_list):
         """
-        Converts a list of word to a matching regex, to be analyzed by the regex engine as a part of the
-        analyze logic
+        Converts a list of word to a matching regex, to be analyzed by the
+         regex engine as a part of the analyze logic
 
         :param black_list: the list of words to detect
         :return:the regex of the words for detection
@@ -73,18 +77,23 @@ class PatternRecognizer(LocalRecognizer):
     @abstractmethod
     def validate_result(self, pattern_text, pattern_result):
         """
-        Validates the pattern logic, for example for running checksum on a detected pattern.
+        Validates the pattern logic, for example by running
+         checksum on a detected pattern.
 
-        :param pattern_text: the text to validated. Only the part in text that was detected by the regex engine
-        :param pattern_result: The output of a specific pattern detector that needs to be validated
-        :return: the updated result of the pattern. For example,
-        if a validation logic increased or decreased the score that was given by a regex pattern.
+        :param pattern_text: the text to validated.
+        Only the part in text that was detected by the regex engine
+        :param pattern_result: The output of a specific pattern
+        detector that needs to be validated
+        :return: the updated result of the pattern.
+        For example, if a validation logic increased or decreased the score
+         that was given by a regex pattern.
         """
         return pattern_result
 
     def __analyze_patterns(self, text):
         """
-        Evaluates all patterns in the provided text, including words in the provided blacklist
+        Evaluates all patterns in the provided text, including words in
+         the provided blacklist
 
         :param text: text to analyze
         :return: A list of RecognizerResult
@@ -108,7 +117,8 @@ class PatternRecognizer(LocalRecognizer):
                 if current_match == '':
                     continue
 
-                res = RecognizerResult(start, end, pattern.strength, self.supported_entities[0])
+                res = RecognizerResult(start, end, pattern.strength,
+                                       self.supported_entities[0])
                 res = self.validate_result(current_match, res)
 
                 if res:

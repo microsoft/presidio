@@ -14,7 +14,8 @@ except ImportError:
 class SpacyRecognizer(LocalRecognizer):
 
     def __init__(self):
-        super().__init__(supported_entities=SUPPORTED_ENTITIES, supported_language='en')
+        super().__init__(supported_entities=SUPPORTED_ENTITIES,
+                         supported_language='en')
 
     def load(self):
         # Load spaCy sm model
@@ -29,7 +30,9 @@ class SpacyRecognizer(LocalRecognizer):
             if entity in self.supported_entities:
                 for ent in doc.ents:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
-                        results.append(RecognizerResult(ent.start_char, ent.end_char, NER_STRENGTH, entity))
+                        results.append(
+                            RecognizerResult(ent.start_char, ent.end_char,
+                                             NER_STRENGTH, entity))
 
         return results
 

@@ -56,7 +56,8 @@ class PresidioCLIHelp(CLIHelp):
 def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(AnalyzerEngine(), server)
+    analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
+        AnalyzerEngine(), server)
 
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')

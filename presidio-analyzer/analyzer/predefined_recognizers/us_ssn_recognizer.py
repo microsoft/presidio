@@ -17,15 +17,15 @@ WEAK_REGEX = r'\b[0-9]{9}\b'
 MEDIUM_REGEX = r'\b([0-9]{3})-([0-9]{2})-([0-9]{4})\b'
 
 CONTEXT = [
-        "social",
-        "security",
-        # "sec", TODO: add keyphrase support in "social sec"
-        "ssn",
-        "ssns",
-        "ssn#",
-        "ss#",
-        "ssid"
-    ]
+    "social",
+    "security",
+    # "sec", TODO: add keyphrase support in "social sec"
+    "ssn",
+    "ssns",
+    "ssn#",
+    "ss#",
+    "ssid"
+]
 
 
 class UsSsnRecognizer(PatternRecognizer):
@@ -37,5 +37,5 @@ class UsSsnRecognizer(PatternRecognizer):
         patterns = [Pattern('SSN (very weak)', VERY_WEAK_REGEX, 0.05),
                     Pattern('SSN (weak)', WEAK_REGEX, 0.3),
                     Pattern('SSN (medium)', MEDIUM_REGEX, 0.5)]
-        super().__init__(supported_entities=["US_SSN"], patterns=patterns, context=CONTEXT)
-
+        super().__init__(supported_entities=["US_SSN"], patterns=patterns,
+                         context=CONTEXT)

@@ -1,7 +1,7 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
-REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'
+REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'  # noqa: E501
 CONTEXT = [
     "credit",
     "card",
@@ -25,7 +25,8 @@ class CreditCardRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('All Credit Cards (weak)', REGEX, 0.3)]
-        super().__init__(supported_entities=["CREDIT_CARD"], patterns=patterns, context=CONTEXT)
+        super().__init__(supported_entities=["CREDIT_CARD"], patterns=patterns,
+                         context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         self.__sanitize_value(text)

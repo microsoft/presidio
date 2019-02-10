@@ -19,4 +19,5 @@ class UsItinRecognizer(PatternRecognizer):
         patterns = [Pattern('Itin (very weak)', VERY_WEAK_REGEX, 0.05),
                     Pattern('Itin (weak)', WEAK_REGEX, 0.3),
                     Pattern('Itin (medium)', MEDIUM_REGEX, 0.5)]
-        super().__init__(supported_entities=["US_ITIN"], patterns=patterns, context=CONTEXT)
+        super().__init__(supported_entities=["US_ITIN"], patterns=patterns,
+                         context=CONTEXT)

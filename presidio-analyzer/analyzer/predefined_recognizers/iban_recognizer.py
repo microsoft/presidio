@@ -17,7 +17,8 @@ class IbanRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Iban (Medium)', REGEX, 0.5)]
-        super().__init__(supported_entities=["IBAN_CODE"], patterns=patterns, context=CONTEXT)
+        super().__init__(supported_entities=["IBAN_CODE"], patterns=patterns,
+                         context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         is_valid_iban = IbanRecognizer.__generate_iban_check_digits(
@@ -25,7 +26,6 @@ class IbanRecognizer(PatternRecognizer):
 
         pattern_result.score = 1.0 if is_valid_iban else 0
         return pattern_result
-
 
     @staticmethod
     def __number_iban(iban):

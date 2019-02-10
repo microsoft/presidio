@@ -13,7 +13,8 @@ class DomainRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Domain ()', REGEX, 0.5)]
-        super().__init__(supported_entities=["DOMAIN_NAME"], patterns=patterns, context=CONTEXT)
+        super().__init__(supported_entities=["DOMAIN_NAME"], patterns=patterns,
+                         context=CONTEXT)
 
     def validate_result(self, text, pattern_result):
         result = tldextract.extract(text)

@@ -5,10 +5,13 @@ from abc import abstractmethod
 
 class EntityRecognizer:
 
-    def __init__(self, supported_entities, name=None, supported_language="en", version="0.0.1"):
+    def __init__(self, supported_entities, name=None, supported_language="en",
+                 version="0.0.1"):
         """
-        An abstract class to be inherited by Recognizers which hold the logic for recognizing specific PII entities.
-        :param supported_entities: the entities supported by this recognizer (for example, phone number, address, etc.)
+        An abstract class to be inherited by Recognizers which hold the logic
+         for recognizing specific PII entities.
+        :param supported_entities: the entities supported by this recognizer
+        (for example, phone number, address, etc.)
         :param supported_language: the language supported by this recognizer
         :param name: the name of this recognizer (optional)
         :param version: the recognizer current version
@@ -16,7 +19,7 @@ class EntityRecognizer:
         self.supported_entities = supported_entities
 
         if name is None:
-            self.name = self.__class__.__name__ #assign class name as name
+            self.name = self.__class__.__name__  # assign class name as name
         else:
             self.name = name
 
@@ -31,7 +34,8 @@ class EntityRecognizer:
     @abstractmethod
     def load(self):
         """
-        Initialize the recognizer assets if needed (e.g. machine learning models)
+        Initialize the recognizer assets if needed
+        (e.g. machine learning models)
         """
         pass
 

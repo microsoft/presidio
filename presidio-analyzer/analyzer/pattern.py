@@ -11,7 +11,6 @@ class Pattern:
         self.pattern = pattern
         self.strength = strength
 
-
     def to_dict(self):
         """
         Turns this instance into a dictionary

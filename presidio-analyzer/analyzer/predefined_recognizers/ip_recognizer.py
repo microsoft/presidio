@@ -15,4 +15,5 @@ class IpRecognizer(PatternRecognizer):
     def __init__(self):
         patterns = [Pattern('IPv4', IP_V4_REGEX, 0.6),
                     Pattern('IPv6', IP_V6_REGEX, 0.6)]
-        super().__init__(supported_entities=["IP_ADDRESS"], patterns=patterns, context=IP_CONTEXT)
+        super().__init__(supported_entities=["IP_ADDRESS"], patterns=patterns,
+                         context=IP_CONTEXT)

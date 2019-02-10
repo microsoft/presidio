@@ -28,4 +28,5 @@ class UsPhoneRecognizer(PatternRecognizer):
         patterns = [Pattern('Phone (strong)', STRONG_REGEX, 0.7),
                     Pattern('Phone (medium)', MEDIUM_REGEX, 0.5),
                     Pattern('Phone (weak)', WEAK_REGEX, 0.05)]
-        super().__init__(supported_entities=["PHONE_NUMBER"], patterns=patterns, context=CONTEXT)
+        super().__init__(supported_entities=["PHONE_NUMBER"],
+                         patterns=patterns, context=CONTEXT)

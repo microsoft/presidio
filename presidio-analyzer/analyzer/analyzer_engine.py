@@ -25,7 +25,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __remove_duplicates(results):
         # TODO: improve logic
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one result as a substring of the other
-        results = sorted(results, key=lambda x: (-x.score, x.start, x.end - x.start))
+        results = sorted(results,
+                         key=lambda x: (-x.score, x.start, x.end - x.start))
         filtered_results = []
 
         for result in results:
@@ -47,7 +48,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def Apply(self, request, context):
         logging.info("Starting Apply ")
-        entities = self.__convert_fields_to_entities(request.analyzeTemplate.fields)
+        entities = self.__convert_fields_to_entities(
+            request.analyzeTemplate.fields)
         language = self.__get_language(request.analyzeTemplate.fields)
 
         results = self.analyze(request.text, entities, language)
@@ -55,19 +57,22 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
 
-        response.analyzeResults.extend(self.__convert_results_to_proto(results))
+        response.analyzeResults.extend(
+            self.__convert_results_to_proto(results))
         logging.info("Found " + len(results) + " results")
         return response
 
     def analyze(self, text, entities, language):
         """
-        analyzes the requested text, searching for the given entities in the given language
+        analyzes the requested text, searching for the given entities
+         in the given language
         :param text: the text to analyze
         :param entities: the text to search
         :param language: the language of the text
         :return: an array of the found entities in the text
         """
-        recognizers = self.registry.get_recognizers(language=language, entities=entities)
+        recognizers = self.registry.get_recognizers(language=language,
+                                                    entities=entities)
         results = []
 
         for recognizer in recognizers:
@@ -85,7 +90,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def add_pattern_recognizer(self, pattern_recognizer_dict):
         """
         Adds a new recognizer
-        :param pattern_recognizer_dict: a dictionary representation of a pattern recognizer
+        :param pattern_recognizer_dict: a dictionary representation
+         of a pattern recognizer
         """
         self.registry.add_pattern_recognizer_from_dict(pattern_recognizer_dict)
 
@@ -96,20 +102,22 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         self.registry.remove_recognizer(name)
 
-
     # TODO: These 3 methods below, should be removed as part of the work in:
     # user story #543 implement redesigned templates and
-    # user story #8: Update APIs and Analyzer to direct specific input language text to specific recognizers
+    # user story #8: Update APIs and Analyzer to direct specific
+    # input language text to specific recognizers
     def __get_language(self, fields):
-        # Currently each field hold its own language code, we are going to change it
-        # so we will get only one language per request -> current logic: take the first language
+        # Currently each field hold its own language code
+        # we are going to change it so we will get only one language
+        # per request -> current logic: take the first language
         if not fields or len(fields) == 0 or fields[0].languageCode is None:
             return DEFAULT_LANGUAGE
 
         return fields[0].languageCode
 
     def __convert_fields_to_entities(self, fields):
-        # Convert fields to entities - will be changed once the API will be changed
+        # Convert fields to entities - will be changed once the API
+        # will be changed
         entities = []
         for field in fields:
             entities.append(field.name)
