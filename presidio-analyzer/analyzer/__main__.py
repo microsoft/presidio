@@ -4,7 +4,7 @@ import analyze_pb2
 import analyze_pb2_grpc
 from concurrent import futures
 import time
-import sys
+from os import sys, path
 import os
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
@@ -12,7 +12,10 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
-from analyzer_engine import AnalyzerEngine
+
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from analyzer_engine import AnalyzerEngine  # noqa
 
 WELCOME_MESSAGE = r"""
 
@@ -56,6 +59,7 @@ class PresidioCLIHelp(CLIHelp):
 def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
         AnalyzerEngine(), server)
 

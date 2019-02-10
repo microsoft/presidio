@@ -16,10 +16,8 @@
     "gocyclo",
     "goimports",
     "golint",
-    "gosimple",
     "ineffassign",
     "misspell",
-    "unused",
     "vet"
   ]
 }
