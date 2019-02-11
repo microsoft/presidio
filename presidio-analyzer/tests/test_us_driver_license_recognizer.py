@@ -63,6 +63,7 @@ class TestUsLicenseRecognizer(TestCase):
     #     assert len(results) == 1
     #     assert 0.59 < results[0].score < 0.91
 
+     # Task #603: Support keyphrases
     ''' This test fails, since 'license' is a match and driver is a context.
         It should be fixed after adding support in keyphrase instead of keywords (context)
     def test_invalid_us_driver_license(self):
@@ -113,6 +114,7 @@ class TestUsLicenseRecognizer(TestCase):
 
         assert len(results) == 0
 
+     # Task #603: Support keyphrases
     ''' This test fails, since 'license' is a match and driver is a context.
         It should be fixed after adding support in keyphrase instead of keywords (context)
     def test_valid_us_driver_license_very_weak_letters_exact_context(self):

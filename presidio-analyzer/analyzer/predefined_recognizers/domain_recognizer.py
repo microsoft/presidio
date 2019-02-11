@@ -13,7 +13,7 @@ class DomainRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Domain ()', REGEX, 0.5)]
-        super().__init__(supported_entities=["DOMAIN_NAME"], patterns=patterns,
+        super().__init__(supported_entity="DOMAIN_NAME", patterns=patterns,
                          context=CONTEXT)
 
     def validate_result(self, text, pattern_result):

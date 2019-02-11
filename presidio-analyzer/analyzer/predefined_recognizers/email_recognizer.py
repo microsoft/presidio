@@ -13,7 +13,7 @@ class EmailRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Email (Medium)', REGEX, 0.5)]
-        super().__init__(supported_entities=["EMAIL_ADDRESS"],
+        super().__init__(supported_entity="EMAIL_ADDRESS",
                          patterns=patterns, context=CONTEXT)
 
     def validate_result(self, text, pattern_result):

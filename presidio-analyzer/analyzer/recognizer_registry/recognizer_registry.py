@@ -20,7 +20,8 @@ class RecognizerRegistry:
 
     def load_recognizers(self, path):
         #   TODO: Change the code to dynamic loading -
-        # Task #598:  Support dynamic loading of the pre-defined recognizers
+        # Task #598:  Support loading of the pre-defined recognizers
+        # from the given path.
         self.recognizers.extend([CreditCardRecognizer(),
                                  SpacyRecognizer(),
                                  CryptoRecognizer(), DomainRecognizer(),
@@ -49,6 +50,10 @@ class RecognizerRegistry:
         self.recognizers.append(pattern_recognizer)
 
     def remove_recognizer(self, name):
+        """
+        Removes a recognizer by the given name, from the recognizers list.
+        :param name: The recognizer name
+        """
         found = False
         for index, rec in enumerate(self.recognizers):
             if rec.name == name:
@@ -59,6 +64,15 @@ class RecognizerRegistry:
             raise ValueError("Requested recognizer was not found")
 
     def get_recognizers(self, entities=None, language=None):
+        """
+        Returns a list of the recognizer, which supports the specified name and
+        language. if no language and entities are given, all the available
+        recognizers will be returned
+        :param entities: the requested entities
+        :param language: the requested language
+        :return: A list of the recognizers which supports the supplied entities
+        and language
+        """
         if language is None and entities is None:
             return self.recognizers
 
@@ -82,15 +96,15 @@ class RecognizerRegistry:
             else:
                 to_return.extend(subset)
 
-        for recognizer in to_return:
-            # Lazy loading of the relevant recognizers
-
-            if not recognizer.is_loaded:
-                recognizer.load()
-                recognizer.is_loaded = True
-
         if len(to_return) == 0:
             raise ValueError(
                 "No matching recognizers were found to serve the request.")
+
+        for recognizer in to_return:
+            # Lazy loading of the relevant recognizers
+            # Bug #601: Disable the lazy loading of the recognizers
+            if not recognizer.is_loaded:
+                recognizer.load()
+                recognizer.is_loaded = True
 
         return to_return

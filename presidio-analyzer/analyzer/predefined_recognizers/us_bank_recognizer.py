@@ -6,7 +6,8 @@ REGEX = r'\b[0-9]{8,17}\b'
 
 CONTEXT = [
     "bank"
-    # TODO: change to "checking account" as part of keyphrase change
+    # Task #603: Support keyphrases: change to "checking account"
+    # as part of keyphrase change
     "checking",
     "account",
     "account#",
@@ -23,5 +24,5 @@ class UsBankRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Bank Account (weak)', REGEX, 0.05)]
-        super().__init__(supported_entities=["US_BANK_NUMBER"],
+        super().__init__(supported_entity="US_BANK_NUMBER",
                          patterns=patterns, context=CONTEXT)

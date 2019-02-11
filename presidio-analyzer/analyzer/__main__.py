@@ -13,6 +13,7 @@ from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
 
+# bug #602: Fix imports issue in python
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from analyzer_engine import AnalyzerEngine  # noqa

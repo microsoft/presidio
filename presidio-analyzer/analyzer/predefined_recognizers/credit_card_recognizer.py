@@ -8,7 +8,7 @@ CONTEXT = [
     "visa",
     "mastercard",
     "cc ",
-    # "american express" #TODO: add after adding keyphrase support
+    # "american express" #Task #603: Support keyphrases
     "amex",
     "discover",
     "jcb",
@@ -25,7 +25,7 @@ class CreditCardRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('All Credit Cards (weak)', REGEX, 0.3)]
-        super().__init__(supported_entities=["CREDIT_CARD"], patterns=patterns,
+        super().__init__(supported_entity="CREDIT_CARD", patterns=patterns,
                          context=CONTEXT)
 
     def validate_result(self, text, pattern_result):

@@ -24,7 +24,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     @staticmethod
     def __remove_duplicates(results):
-        # TODO: improve logic
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one
         # result as a substring of the other
         results = sorted(results,
@@ -106,9 +105,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         self.registry.remove_recognizer(name)
 
-    # TODO: These 3 methods below, should be removed as part of the work in:
-    # user story #543 implement redesigned templates and
-    # user story #8: Update APIs and Analyzer to direct specific
+    # These 3 methods below, should be removed as part of the work in:
+    # Task #543 implement redesigned templates and
+    # Task #580: API support for multiple languages
     # input language text to specific recognizers
     def __get_language(self, fields):
         # Currently each field hold its own language code

@@ -17,7 +17,7 @@ class IbanRecognizer(PatternRecognizer):
 
     def __init__(self):
         patterns = [Pattern('Iban (Medium)', REGEX, 0.5)]
-        super().__init__(supported_entities=["IBAN_CODE"], patterns=patterns,
+        super().__init__(supported_entity="IBAN_CODE", patterns=patterns,
                          context=CONTEXT)
 
     def validate_result(self, text, pattern_result):

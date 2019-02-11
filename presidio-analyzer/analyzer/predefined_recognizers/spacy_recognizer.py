@@ -31,8 +31,8 @@ class SpacyRecognizer(LocalRecognizer):
                 for ent in doc.ents:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
                         results.append(
-                            RecognizerResult(ent.start_char, ent.end_char,
-                                             NER_STRENGTH, entity))
+                            RecognizerResult(entity, ent.start_char,
+                                             ent.end_char, NER_STRENGTH))
 
         return results
 

@@ -1,9 +1,7 @@
 import datetime
 from abc import abstractmethod
 
-from analyzer import LocalRecognizer
-from analyzer import Pattern
-from analyzer import RecognizerResult
+from analyzer import LocalRecognizer, Pattern, RecognizerResult
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -14,7 +12,7 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    def __init__(self, supported_entities, name=None, supported_language='en',
+    def __init__(self, supported_entity, name=None, supported_language='en',
                  patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
@@ -22,15 +20,16 @@ class PatternRecognizer(LocalRecognizer):
             :param black_list: the list of words to detect
             :param context: list of context words
         """
-        if supported_entities and len(supported_entities) > 1:
-            raise ValueError("Pattern recognizer supports only one entity")
+        if not supported_entity:
+            raise ValueError(
+                "Pattern recognizer should be initialized with entity")
 
         if not patterns and not black_list:
             raise ValueError(
                 "Pattern recognizer should be initialized with patterns"
                 " or with black list")
 
-        super().__init__(supported_entities=supported_entities,
+        super().__init__(supported_entities=[supported_entity],
                          supported_language=supported_language,
                          name=name,
                          version=version)
@@ -117,8 +116,8 @@ class PatternRecognizer(LocalRecognizer):
                 if current_match == '':
                     continue
 
-                res = RecognizerResult(start, end, pattern.strength,
-                                       self.supported_entities[0])
+                res = RecognizerResult(self.supported_entities[0], start, end,
+                                       pattern.strength)
                 res = self.validate_result(current_match, res)
 
                 if res:
@@ -132,6 +131,9 @@ class PatternRecognizer(LocalRecognizer):
         return_dict["patterns"] = [pat.to_dict() for pat in self.patterns]
         return_dict["black_list"] = self.black_list
         return_dict["context"] = self.context
+        return_dict["supported_entity"] = return_dict["supported_entities"][0]
+        del (return_dict["supported_entities"])
+
         return return_dict
 
     @classmethod
