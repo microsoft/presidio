@@ -33,7 +33,7 @@ class TestAnalyzerEngine(TestCase):
         assert results[2].end == 83
 
         entities = ["CREDIT_CARD"]
-        results = analyze_engine.analyze(text, entities, LANGUAGE)
+        results = analyze_engine.analyze(text, entities, langauge)
         assert len(results) == 1
         assert results[0].entity_type == "CREDIT_CARD"
         assert results[0].score == 1.0
