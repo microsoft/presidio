@@ -7,7 +7,6 @@ import common_pb2
 
 from analyzer import RecognizerRegistry  # noqa: F401
 
-
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
     format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
@@ -113,7 +112,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # Currently each field hold its own language code
         # we are going to change it so we will get only one language
         # per request -> current logic: take the first language
-        if not fields or len(fields) == 0 or fields[0].languageCode is None\
+        if not fields or len(fields) == 0 or fields[0].languageCode is None \
                 or fields[0].languageCode == "":
             return DEFAULT_LANGUAGE
 
