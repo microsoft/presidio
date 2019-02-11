@@ -2,35 +2,39 @@ from unittest import TestCase
 
 import pytest
 
-from analyzer import AnalyzerEngine, PatternRecognizer, Pattern
-from analyzer import RecognizerResult
+from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
+    RecognizerResult, RecognizerRegistry
+from analyzer.predefined_recognizers import CreditCardRecognizer, \
+    UsPhoneRecognizer
 
+
+class MockRecognizerRegistry(RecognizerRegistry):
+    def load_recognizers(self, path):
+        #   TODO: Change the code to dynamic loading -
+        # Task #598:  Support loading of the pre-defined recognizers
+        # from the given path.
+        self.recognizers.extend([CreditCardRecognizer(),
+                                 UsPhoneRecognizer()])
 
 
 class TestAnalyzerEngine(TestCase):
 
     def test_analyze_with_predefined_recognizers_return_results(self):
-        analyze_engine = AnalyzerEngine()
-        text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
-               "Domain: microsoft.com"
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         langauge = "en"
-        entities = ["CREDIT_CARD", "PHONE_NUMBER", "DATE_TIME", "PERSON"]
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
         results = analyze_engine.analyze(text, entities, langauge)
-        assert len(results) == 3
+        assert len(results) == 2
         assert results[0].entity_type == "CREDIT_CARD"
         assert results[0].score == 1.0
         assert results[0].start == 14
         assert results[0].end == 33
 
-        assert results[1].entity_type == "PERSON"
-        assert results[1].score == 0.85
+        assert results[1].entity_type == "PHONE_NUMBER"
+        assert results[1].score == 0.5
         assert results[1].start == 48
         assert results[1].end == 59
-
-        assert results[2].entity_type == "DATE_TIME"
-        assert results[2].score == 0.85
-        assert results[2].start == 71
-        assert results[2].end == 83
 
         entities = ["CREDIT_CARD"]
         results = analyze_engine.analyze(text, entities, langauge)
@@ -43,26 +47,26 @@ class TestAnalyzerEngine(TestCase):
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
             langauge = "en"
-            analyze_engine = AnalyzerEngine()
+            analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
             text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
                    "Domain: microsoft.com"
             entities = []
             analyze_engine.analyze(text, entities, langauge)
 
     def test_analyze_with_empty_text(self):
-        analyze_engine = AnalyzerEngine()
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
         langauge = "en"
         text = ""
-        entities = ["CREDIT_CARD", "PERSON"]
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
         results = analyze_engine.analyze(text, entities, langauge)
         assert len(results) == 0
 
     def test_analyze_with_unsupported_language(self):
         with pytest.raises(ValueError):
             langauge = "de"
-            analyze_engine = AnalyzerEngine()
+            analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
             text = ""
-            entities = ["CREDIT_CARD", "PERSON"]
+            entities = ["CREDIT_CARD", "PHONE_NUMBER"]
             analyze_engine.analyze(text, entities, "de")
 
     def test_remove_duplicates(self):
@@ -84,11 +88,12 @@ class TestAnalyzerEngine(TestCase):
                                                patterns=[pattern])
 
         # Make sure the analyzer doesn't get this entity
-        analyze_engine = AnalyzerEngine()
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
-        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+        res = analyze_engine.analyze(text=text, entities=entities,
+                                     language='en')
 
         assert len(res) == 0
 
@@ -96,10 +101,10 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
 
         # Check that the entity is recognized:
-        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+        res = analyze_engine.analyze(text=text, entities=entities,
+                                     language='en')
         assert res[0].start == 0
         assert res[0].end == 7
-
 
     def test_remove_analyzer(self):
         pattern = Pattern("spaceship pattern", r'\W*(spaceship)\W*', 0.8)
@@ -108,11 +113,12 @@ class TestAnalyzerEngine(TestCase):
                                                patterns=[pattern])
 
         # Make sure the analyzer doesn't get this entity
-        analyze_engine = AnalyzerEngine()
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
         text = "spaceship is my favorite transportation"
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
-        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+        res = analyze_engine.analyze(text=text, entities=entities,
+                                     language='en')
 
         assert len(res) == 0
 
@@ -120,7 +126,8 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
 
         # Check that the entity is recognized:
-        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+        res = analyze_engine.analyze(text=text, entities=entities,
+                                     language='en')
         assert res[0].start == 0
         assert res[0].end == 10
 
@@ -128,6 +135,7 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine.remove_recognizer("Spaceship recognizer")
 
         # Test again to see we didn't get any results
-        res = analyze_engine.analyze(text=text, entities=entities, language='en')
+        res = analyze_engine.analyze(text=text, entities=entities,
+                                     language='en')
 
         assert len(res) == 0
