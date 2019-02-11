@@ -31,6 +31,7 @@ class EntityRecognizer:
         loglevel = os.environ.get("LOG_LEVEL", "INFO")
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(loglevel)
+        self.load()
 
     @abstractmethod
     def load(self):

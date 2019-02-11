@@ -100,11 +100,4 @@ class RecognizerRegistry:
             raise ValueError(
                 "No matching recognizers were found to serve the request.")
 
-        for recognizer in to_return:
-            # Lazy loading of the relevant recognizers
-            # Bug #601: Disable the lazy loading of the recognizers
-            if not recognizer.is_loaded:
-                recognizer.load()
-                recognizer.is_loaded = True
-
         return to_return
