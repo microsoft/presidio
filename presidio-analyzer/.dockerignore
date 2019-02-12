@@ -5,7 +5,6 @@
 !model*
 !setup*
 !requirements.txt
-!tests/*
 # Make an exception for private SDKs if they exist
 !privates/*
 # Make an exception for the license file
