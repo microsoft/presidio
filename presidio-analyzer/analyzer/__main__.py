@@ -1,11 +1,10 @@
 import logging
-import matcher
 import grpc
 import analyze_pb2
 import analyze_pb2_grpc
 from concurrent import futures
 import time
-import sys
+from os import sys, path
 import os
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
@@ -13,6 +12,11 @@ from knack.arguments import ArgumentsContext
 from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
+
+# bug #602: Fix imports issue in python
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from analyzer_engine import AnalyzerEngine  # noqa
 
 WELCOME_MESSAGE = r"""
 
@@ -27,7 +31,7 @@ WELCOME_MESSAGE = r"""
 
 """
 
-cli_name = "presidio-analyzer"
+CLI_NAME = "presidio-analyzer"
 
 helps['serve'] = """
     short-summary: Create a GRPC server
@@ -53,22 +57,12 @@ class PresidioCLIHelp(CLIHelp):
             welcome_message=WELCOME_MESSAGE)
 
 
-class Analyzer(analyze_pb2_grpc.AnalyzeServiceServicer):
-    def __init__(self):
-        self.match = matcher.Matcher()
-
-    def Apply(self, request, context):
-        response = analyze_pb2.AnalyzeResponse()
-        results = self.match.analyze_text(request.text,
-                                          request.analyzeTemplate.fields)
-        response.analyzeResults.extend(results)
-        return response
-
-
 def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(Analyzer(), server)
+
+    analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
+        AnalyzerEngine(), server)
 
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')
@@ -124,9 +118,9 @@ class CommandsLoader(CLICommandsLoader):
 
 
 presidio_cli = CLI(
-    cli_name=cli_name,
-    config_dir=os.path.join('~', '.{}'.format(cli_name)),
-    config_env_var_prefix=cli_name,
+    cli_name=CLI_NAME,
+    config_dir=os.path.join('~', '.{}'.format(CLI_NAME)),
+    config_env_var_prefix=CLI_NAME,
     commands_loader_cls=CommandsLoader,
     help_cls=PresidioCLIHelp)
 exit_code = presidio_cli.invoke(sys.argv[1:])
