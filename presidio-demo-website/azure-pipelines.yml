@@ -1,0 +1,13 @@
+resources:
+- repo: self
+queue:
+  name: Hosted Ubuntu 1604
+steps:
+- task: Docker@1
+  displayName: 'ACR Login'
+  inputs:
+    azureSubscriptionEndpoint: presidio
+    azureContainerRegistry: presidio.azurecr.io
+    command: login
+- script: docker build -t $(DOCKER_REGISTRY)/presidio-demo-website:$(Build.BuildID) .
+- script: docker push $(DOCKER_REGISTRY)/presidio-demo-website:$(Build.BuildID)

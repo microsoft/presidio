@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: presidio-demo-website
+  labels:
+    app: presidio-demo-website
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: presidio-demo-website
+  template:
+    metadata:
+      labels:
+        app: presidio-demo-website
+    spec:
+      containers:
+      - name: presidio-demo-website
+        image: presidio.azurecr.io/presidio-demo-website
+        tag: 
+        env:
+        - name: PORT
+          value: "5000"
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: presidio-demo-website-service
+spec:
+  selector:
+    app: presidio-demo-website
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000

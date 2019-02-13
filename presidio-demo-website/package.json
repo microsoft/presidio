@@ -1,0 +1,46 @@
+{
+  "name": "presidio-demo-website",
+  "version": "0.1.0",
+  "devDependencies": {
+    "@types/jest": "^22.2.3",
+    "@types/lodash": "^4.14.55",
+    "@types/node": "^8.10.11",
+    "@types/react": "^16.3.13",
+    "@types/react-dom": "^16.0.5",
+    "@types/react-router-dom": "^4.2.5",
+    "@types/request-promise": "^4.1.42",
+    "@types/webfontloader": "^1.6.29",
+    "mobx": "^5.0.2",
+    "mobx-react": "^5.2.3",
+    "moment": "^2.22.1",
+    "node-sass": "^4.9.3",
+    "npm-run-all": "^4.1.2",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-md": "^1.4.0",
+    "react-router": "^4.2.0",
+    "react-router-dom": "next",
+    "react-scripts-ts": "^2.16.0",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2",
+    "typescript": "^2.8.3",
+    "webfontloader": "^1.6.28",
+    "xhr-request": "^1.1.0"
+  },
+  "dependencies": {
+    "@types/react-adal": "^0.4.1",
+    "ajv": "^6.5.4",
+    "express": "^4.16.3"
+  },
+  "scripts": {
+    "build-css": "node-sass --include-path ./node_modules src/ -o src",
+    "watch-css": "npm run build-css && node-sass --include-path ./node_modules src/ -o src/ --watch --recursive",
+    "start-js": "react-scripts-ts start",
+    "start-dev": "npm-run-all -p watch-css start-js",
+    "start": "node server",
+    "lint": "tslint src",
+    "build": "npm run build-css && react-scripts-ts build && rm -rf ../build/static && cp -rf build ../",
+    "coverage": "react-scripts-ts test --env=jsdom --coverage --collectCoverageFrom=src/**/*.{ts,tsx} --collectCoverageFrom=!src/**/*.d.ts --collectCoverageFrom=!src/tests/**",
+    "test": "react-scripts-ts test --env=jsdom"
+  }
+}
