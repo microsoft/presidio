@@ -52,8 +52,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         logging.info("Starting Apply ")
         entities = self.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
-        language = request.analyzeTemplate.languageCode
-
+        language = self.get_language_from_request(request)
         results = self.analyze(request.text, entities, language)
 
         # Create Analyze Response Object
@@ -63,6 +62,12 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             self.__convert_results_to_proto(results))
         logging.info("Found {} results".format(len(results)))
         return response
+
+    def get_language_from_request(self, request):
+        language = request.analyzeTemplate.languageCode
+        if language is None or language == "":
+            language = DEFAULT_LANGUAGE
+        return language
 
     def analyze(self, text, entities, language):
         """
