@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from assertions import assert_result_within_score_range
 from analyzer.predefined_recognizers import IpRecognizer
 
 ip_recognizer = IpRecognizer()
@@ -14,11 +15,7 @@ class TestIpRecognizer(TestCase):
         results = ip_recognizer.analyze(context + ip, entities)
 
         assert len(results) == 1
-        assert 0.59 < results[0].score < 0.8
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 14
-        assert results[0].end == 25
-
+        assert_result_within_score_range(results[0], entities[0], 14, 25, 0.6, 0.81)
 
     '''
     TODO: enable with task #582 re-support context model in analyzer

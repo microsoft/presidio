@@ -4,7 +4,7 @@ import pytest
 
 from analyzer import RecognizerRegistry, PatternRecognizer, EntityRecognizer, Pattern
 
-
+### consider refactoring
 class TestRecognizerRegistry(TestCase):
 
     def get_mock_pattern_recognizer(self, lang, entity, name):
