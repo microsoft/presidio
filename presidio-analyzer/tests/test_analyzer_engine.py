@@ -153,11 +153,7 @@ class TestAnalyzerEngine(TestCase):
         response = analyze_engine.Apply(request, None)
 
         assert response.analyzeResults is not None
-        assert response.analyzeResults[0].location.start == 25
-        assert response.analyzeResults[0].location.end == 41
-        assert response.analyzeResults[0].text == ''
-        assert response.analyzeResults[0].field.name == 'CREDIT_CARD'
-        assert response.analyzeResults[0].score > 0
+
 
     def test_Apply_with_no_language_returns_default(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
