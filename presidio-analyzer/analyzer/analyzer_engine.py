@@ -49,10 +49,13 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         return filtered_results
 
     def Apply(self, request, context):
-        logging.info("Starting Apply ")
+        logging.info("Starting Apply")
         entities = self.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
-        language = request.analyzeTemplate.languageCode
+        langCode = request.analyzeTemplate.languageCode
+        language = None
+        if langCode != "":
+            language = langCode
 
         results = self.analyze(request.text, entities, language)
 
