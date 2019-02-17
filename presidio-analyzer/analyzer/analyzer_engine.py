@@ -52,7 +52,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         logging.info("Starting Apply ")
         entities = self.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
-        language = self.__get_language(request.analyzeTemplate.fields)
+        language = request.analyzeTemplate.languageCode
 
         results = self.analyze(request.text, entities, language)
 
@@ -103,20 +103,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :param name: name of recognizer to be removed
         """
         self.registry.remove_recognizer(name)
-
-    # These 3 methods below, should be removed as part of the work in:
-    # Task #543 implement redesigned templates and
-    # Task #580: API support for multiple languages
-    # input language text to specific recognizers
-    def __get_language(self, fields):
-        # Currently each field hold its own language code
-        # we are going to change it so we will get only one language
-        # per request -> current logic: take the first language
-        if not fields or len(fields) == 0 or fields[0].languageCode is None \
-                or fields[0].languageCode == "":
-            return DEFAULT_LANGUAGE
-
-        return fields[0].languageCode
 
     def __convert_fields_to_entities(self, fields):
         # Convert fields to entities - will be changed once the API

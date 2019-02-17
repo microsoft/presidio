@@ -4,6 +4,7 @@ import pytest
 
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
+from analyzer.analyze_pb2 import AnalyzeRequest
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer
 
@@ -139,3 +140,36 @@ class TestAnalyzerEngine(TestCase):
                                      language='en')
 
         assert len(res) == 0
+
+    def test_Apply_with_language_returns_correct_response(self):
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+
+        request = AnalyzeRequest()
+        request.analyzeTemplate.languageCode = 'en'
+        new_field = request.analyzeTemplate.fields.add()
+        new_field.name = 'CREDIT_CARD'
+        new_field.minScore = '0.5'
+        request.text = "My credit card number is 4916994465041084"
+        response = analyze_engine.Apply(request, None)
+
+        assert response.analyzeResults is not None
+        assert response.analyzeResults[0].location.start == 25
+        assert response.analyzeResults[0].location.end == 41
+        assert response.analyzeResults[0].text == ''
+        assert response.analyzeResults[0].field.name == 'CREDIT_CARD'
+        assert response.analyzeResults[0].score > 0
+
+    def test_Apply_with_no_language_returns_exception(self):
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+
+        request = AnalyzeRequest()
+        request.analyzeTemplate.languageCode = ''
+        new_field = request.analyzeTemplate.fields.add()
+        new_field.name = 'CREDIT_CARD'
+        new_field.minScore = '0.5'
+        request.text = "My credit card number is 4916994465041084"
+        with pytest.raises(ValueError):
+            response = analyze_engine.Apply(request, None)
+
+
+
