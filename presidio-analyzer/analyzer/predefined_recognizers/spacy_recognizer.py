@@ -4,6 +4,7 @@ from analyzer import RecognizerResult, LocalRecognizer
 NER_STRENGTH = 0.85
 SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
 
+
 class SpacyRecognizer(LocalRecognizer):
 
     def __init__(self):
