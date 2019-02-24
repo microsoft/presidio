@@ -11,7 +11,7 @@ entities = ["PERSON", "DATE_TIME"]
 class TestSpacyRecognizer(TestCase):
 
 # Test Name Entity 
-    # Bug #617 : Spacy Recognizer doesn't recognize Mr. Tailor as PERSON even though online spacy demo indicates that it does
+    # Bug #617 : Spacy Recognizer doesn't recognize Dan as PERSON even though online spacy demo indicates that it does
     # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
     # def test_person_first_name(self):
     #     name = 'Dan'
@@ -97,7 +97,7 @@ class TestSpacyRecognizer(TestCase):
         assert len(results) == 1
         assert_result(results[0], entities[0], 0, 7, NER_STRENGTH, )
     
-    # Bug #617 : Spacy Recognizer doesn't recognize Mr. Tailor as PERSON even though online spacy demo indicates that it does
+    # Bug #617 : Spacy Recognizer doesn't recognize Dan May as PERSON even though online spacy demo indicates that it does
     # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
     def test_person_last_name_is_also_a_date_with_context_expected_person_only(self):
         name = 'Dan May'
@@ -107,7 +107,7 @@ class TestSpacyRecognizer(TestCase):
         assert len(results) == 1
         assert_result_within_score_range(results[0], entities[0], 0, 7, NER_STRENGTH, 1)
 
-    # Bug #617 : Spacy Recognizer doesn't recognize Mr. Tailor as PERSON even though online spacy demo indicates that it does
+    # Bug #617 : Spacy Recognizer doesn't recognize Mr. May as PERSON even though online spacy demo indicates that it does
     # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
     # def test_person_title_and_last_name_is_also_a_date_expected_person_only(self):
     #     name = 'Mr. May'
@@ -116,7 +116,7 @@ class TestSpacyRecognizer(TestCase):
     #     assert len(results) == 1
     #     assert_result(results[0], entities[0], 4, 7, NER_STRENGTH)
 
-    # Bug #617 : Spacy Recognizer doesn't recognize Mr. Tailor as PERSON even though online spacy demo indicates that it does
+    # Bug #617 : Spacy Recognizer doesn't recognize Mr. May as PERSON even though online spacy demo indicates that it does
     # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
     # def test_person_title_and_last_name_is_also_a_date_with_context_expected_person_only(self):
     #     name = 'Mr. May'
@@ -142,7 +142,7 @@ class TestSpacyRecognizer(TestCase):
         assert len(results) == 1
         assert_result_within_score_range(results[0], entities[1], 19, 23, NER_STRENGTH, 1)
 
-    # Bug #617 : Spacy Recognizer doesn't recognize Mr. Tailor as DATE_TIME even though online spacy demo indicates that it does
+    # Bug #617 : Spacy Recognizer doesn't recognize May as DATE_TIME even though online spacy demo indicates that it does
     # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
     # def test_date_time_month(self):
     #     date = 'May'
