@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import pytest
 
+from assertions import assert_result
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
 from analyzer.analyze_pb2 import AnalyzeRequest
@@ -17,33 +18,28 @@ class MockRecognizerRegistry(RecognizerRegistry):
         self.recognizers.extend([CreditCardRecognizer(),
                                  UsPhoneRecognizer()])
 
-
 class TestAnalyzerEngine(TestCase):
 
-    def test_analyze_with_predefined_recognizers_return_results(self):
+    def test_analyze_with_single_predefined_recognizers(self):
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        langauge = "en"
+        entities = ["CREDIT_CARD"]
+        results = analyze_engine.analyze(text, entities, langauge)
+       
+        assert len(results) == 1
+        assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
+
+    def test_analyze_with_multiple_predefined_recognizers(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         langauge = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
         results = analyze_engine.analyze(text, entities, langauge)
+       
         assert len(results) == 2
-        assert results[0].entity_type == "CREDIT_CARD"
-        assert results[0].score == 1.0
-        assert results[0].start == 14
-        assert results[0].end == 33
-
-        assert results[1].entity_type == "PHONE_NUMBER"
-        assert results[1].score == 0.5
-        assert results[1].start == 48
-        assert results[1].end == 59
-
-        entities = ["CREDIT_CARD"]
-        results = analyze_engine.analyze(text, entities, langauge)
-        assert len(results) == 1
-        assert results[0].entity_type == "CREDIT_CARD"
-        assert results[0].score == 1.0
-        assert results[0].start == 14
-        assert results[0].end == 33
+        assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
+        assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
 
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
@@ -60,6 +56,7 @@ class TestAnalyzerEngine(TestCase):
         text = ""
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
         results = analyze_engine.analyze(text, entities, langauge)
+        
         assert len(results) == 0
 
     def test_analyze_with_unsupported_language(self):
@@ -93,19 +90,20 @@ class TestAnalyzerEngine(TestCase):
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
-        res = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(text=text, entities=entities,
                                      language='en')
 
-        assert len(res) == 0
+        assert len(results) == 0
 
         # Add a new recognizer for the word "rocket" (case insensitive)
         analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
 
         # Check that the entity is recognized:
-        res = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(text=text, entities=entities,
                                      language='en')
-        assert res[0].start == 0
-        assert res[0].end == 7
+        
+        assert len(results) == 1
+        assert_result(results[0], "ROCKET", 0, 7, 0.8)
 
     def test_remove_analyzer(self):
         pattern = Pattern("spaceship pattern", r'\W*(spaceship)\W*', 0.8)
@@ -118,28 +116,29 @@ class TestAnalyzerEngine(TestCase):
         text = "spaceship is my favorite transportation"
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
-        res = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(text=text, entities=entities,
                                      language='en')
 
-        assert len(res) == 0
+        assert len(results) == 0
 
         # Add a new recognizer for the word "rocket" (case insensitive)
         analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
 
         # Check that the entity is recognized:
-        res = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(text=text, entities=entities,
                                      language='en')
-        assert res[0].start == 0
-        assert res[0].end == 10
+        assert len(results) == 1
+        assert_result(results[0], "SPACESHIP", 0, 10, 0.8)
 
         # Remove recognizer
         analyze_engine.remove_recognizer("Spaceship recognizer")
 
         # Test again to see we didn't get any results
-        res = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(text=text, entities=entities,
                                      language='en')
 
-        assert len(res) == 0
+        assert len(results) == 0
+
 
     def test_Apply_with_language_returns_correct_response(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
@@ -166,6 +165,4 @@ class TestAnalyzerEngine(TestCase):
         request.text = "My credit card number is 4916994465041084"
         response = analyze_engine.Apply(request, None)
         assert response.analyzeResults is not None
-
-
-
+        

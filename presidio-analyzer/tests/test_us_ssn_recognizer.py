@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from assertions import assert_result, assert_result_within_score_range
 from analyzer.predefined_recognizers import UsSsnRecognizer
 
 us_ssn_recognizer = UsSsnRecognizer()
@@ -14,37 +15,29 @@ class TestUsSsnRecognizer(TestCase):
         results = us_ssn_recognizer.analyze('{} {}'.format(num1, num2), entities)
 
         assert len(results) == 2
-        assert 0.01 < results[0].score < 0.31
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 0
-        assert results[0].end == 10
-
-        assert 0.01 < results[1].score < 0.31
-        assert results[1].start == 11
-        assert results[1].end == 21
-        assert results[1].entity_type == entities[0]
-
+        
+        assert results[0].score != 0
+        assert_result_within_score_range(results[0], entities[0], 0, 10, 0, 0.3)
+       
+        assert results[0].score != 0
+        assert_result_within_score_range(results[1], entities[0], 11, 21, 0, 0.3)
 
     def test_valid_us_ssn_weak_match(self):
         num = '078051120'
         results = us_ssn_recognizer.analyze(num, entities)
 
         assert len(results) == 1
-        assert 0.29 < results[0].score < 0.41
-        assert results[0].start == 0
-        assert results[0].end == 9
-        assert results[0].entity_type == entities[0]
-
+        assert results[0].score != 0
+        assert_result_within_score_range(results[0], entities[0], 0, 9, 0.3, 0.4)
 
     def test_valid_us_ssn_medium_match(self):
         num = '078-05-1120'
         results = us_ssn_recognizer.analyze(num, entities)
 
         assert len(results) == 1
+        assert results[0].score != 0
+        assert_result_within_score_range(results[0], entities[0], 0, 11, 0.5, 0.6)
         assert 0.49 < results[0].score < 0.6
-        assert results[0].start == 0
-        assert results[0].end == 11
-        assert results[0].entity_type == entities[0]
 
 
     # # TODO: enable with task #582 re-support context model in analyzer

@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from assertions import assert_result
 from analyzer.predefined_recognizers import IbanRecognizer
 
 iban_recognizer = IbanRecognizer()
@@ -13,31 +14,19 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(number, entities)
 
         assert len(results) == 1
-        assert results[0].score == 1
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 0
-        assert results[0].end == 23
-
+        assert_result(results[0], entities[0], 0, 23, 1.0)
 
     def test_invalid_iban(self):
         number = 'IL150120690000003111141'
         results = iban_recognizer.analyze(number, entities)
 
         assert len(results) == 1
-        assert results[0].score == 0
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 0
-        assert results[0].end == 23
+        assert_result(results[0], entities[0], 0, 23, 0)
 
-
-    # Context should not change the result if the checksum fails
-    def test_invalid_iban_with_exact_context(self):
+    def test_invalid_iban_with_exact_context_does_not_change_Score(self):
         number = 'IL150120690000003111141'
         context = 'my iban number is '
         results = iban_recognizer.analyze(context + number, entities)
 
         assert len(results) == 1
-        assert results[0].score == 0
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 18
-        assert results[0].end == 41
+        assert_result(results[0], entities[0], 18, 41, 0)

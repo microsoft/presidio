@@ -4,12 +4,6 @@ from analyzer import RecognizerResult, LocalRecognizer
 NER_STRENGTH = 0.85
 SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
 
-# Import 're2' regex engine if installed, if not- import 'regex'
-try:
-    import re2 as re
-except ImportError:
-    import regex as re  # noqa: F401
-
 
 class SpacyRecognizer(LocalRecognizer):
 
@@ -18,7 +12,7 @@ class SpacyRecognizer(LocalRecognizer):
                          supported_language='en')
 
     def load(self):
-        # Load spaCy sm model
+        # Load spaCy English lg model
         self.logger.info("Loading NLP model...")
         self.nlp = spacy.load("en_core_web_lg", disable=['parser', 'tagger'])
 

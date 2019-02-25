@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from assertions import assert_result
 from analyzer.predefined_recognizers import CryptoRecognizer
 
 crypto_recognizer = CryptoRecognizer()
@@ -15,10 +16,7 @@ class TestCreditCardRecognizer(TestCase):
         results = crypto_recognizer.analyze(wallet, entities)
 
         assert len(results) == 1
-        assert results[0].score == 1
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 0
-        assert results[0].end == 34
+        assert_result(results[0], entities[0], 0, 34, 1.0)
 
     def test_valid_btc_with_exact_context(self):
         wallet = '16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ'
@@ -26,10 +24,7 @@ class TestCreditCardRecognizer(TestCase):
         results = crypto_recognizer.analyze(context + wallet, entities)
 
         assert len(results) == 1
-        assert results[0].score == 1
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 22
-        assert results[0].end == 56
+        assert_result(results[0], entities[0], 22, 56, 1.0)
 
     def test_invalid_btc(self):
         wallet = '16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ2'

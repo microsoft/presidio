@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from assertions import assert_result, assert_result_within_score_range
 from analyzer.predefined_recognizers import UsLicenseRecognizer
 
 us_license_recognizer = UsLicenseRecognizer()
@@ -14,15 +15,8 @@ class TestUsLicenseRecognizer(TestCase):
         results = us_license_recognizer.analyze('{} {}'.format(num1, num2), entities)
 
         assert len(results) == 2
-        assert 0.29 < results[0].score < 0.41
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 0
-        assert results[0].end == 12
-
-        assert 0.29 < results[1].score < 0.41
-        assert results[1].entity_type == entities[0]
-        assert results[1].start == 13
-        assert results[1].end == 25
+        assert_result_within_score_range(results[0], entities[0], 0, 12, 0.3, 0.4)
+        assert_result_within_score_range(results[1], entities[0], 13, 25, 0.3, 0.4)
 
     # TODO: enable with task #582 re-support context model in analyzer
     # def test_valid_us_driver_license_weak_WA_exact_context(self):
