@@ -10,6 +10,7 @@ class TestEntityRecognizer(TestCase):
     def test_to_dict_correct_dictionary(self):
         ent_recognizer = EntityRecognizer(["ENTITY"])
         entity_rec_dict = ent_recognizer.to_dict()
+        
         assert entity_rec_dict is not None
         assert entity_rec_dict['supported_entities'] == ['ENTITY']
         assert entity_rec_dict['supported_language'] == 'en'

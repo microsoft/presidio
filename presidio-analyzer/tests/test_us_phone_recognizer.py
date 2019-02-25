@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from assertions import assert_result_within_score_range
 from analyzer.predefined_recognizers import UsPhoneRecognizer
 
 phone_recognizer = UsPhoneRecognizer()
@@ -13,10 +14,8 @@ class UsPhoneRecognizer(TestCase):
         results = phone_recognizer.analyze(number, entities)
 
         assert len(results) == 1
-        assert 0.69 < results[0].score < 1
-        assert results[0].entity_type == entities[0]
-        assert results[0].start == 0
-        assert results[0].end == 14
+        assert results[0].score != 1
+        assert_result_within_score_range(results[0], entities[0], 0, 14, 0.7, 1)
 
     # TODO: enable with task #582 re-support context model in analyzer
     # def test_phone_number_strong_match_with_phone_context(self):
@@ -94,7 +93,7 @@ class UsPhoneRecognizer(TestCase):
     #     assert 0.59 < results[0].score < 0.81
     #
     #
-    # def test_phone_numbers_lemmatized_context_phones(self):
+    # def test_phone_numbers_lemma_context_phones(self):
     #     number1 = '052 5552606'
     #     number2 = '074-7111234'
     #     results = phone_recognizer.analyze(

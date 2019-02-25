@@ -4,6 +4,7 @@ import pytest
 
 # https://www.datatrans.ch/showcase/test-cc-numbers
 # https://www.freeformatter.com/credit-card-number-generator-validator.html
+from assertions import assert_result
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
@@ -28,7 +29,7 @@ class TestPatternRecognizer(TestCase):
             MockRecognizer(entity=[], patterns=patterns,
                            black_list=[], name=None, context=None)
 
-    def test_black_list_works(self):
+    def test_black_list_keywords_found(self):
         test_recognizer = MockRecognizer(patterns=[],
                                          entity="ENTITY_1",
                                          black_list=["phone", "name"], context=None, name=None)
@@ -36,15 +37,17 @@ class TestPatternRecognizer(TestCase):
         results = test_recognizer.analyze("my phone number is 555-1234, and my name is John", ["ENTITY_1"])
 
         assert len(results) == 2
-        assert results[0].entity_type == "ENTITY_1"
-        assert results[0].score == 1.0
-        assert results[0].start == 3
-        assert results[0].end == 8
+        assert_result(results[0], "ENTITY_1", 3, 8, 1.0)
+        assert_result(results[1], "ENTITY_1", 36, 40, 1.0)
 
-        assert results[1].entity_type == "ENTITY_1"
-        assert results[1].score == 1.0
-        assert results[1].start == 36
-        assert results[1].end == 40
+    def test_black_list_keywords_not_found(self):
+        test_recognizer = MockRecognizer(patterns=[],
+                                         entity="ENTITY_1",
+                                         black_list=["phone", "name"], context=None, name=None)
+
+        results = test_recognizer.analyze("No blacklist words, though includes PII entities: 555-1234, John", ["ENTITY_1"])
+
+        assert len(results) == 0
 
     def test_from_dict(self):
         json = {'supported_entity': 'ENTITY_1',
@@ -54,6 +57,7 @@ class TestPatternRecognizer(TestCase):
                 'version': "1.0"}
 
         new_recognizer = PatternRecognizer.from_dict(json)
+        ### consider refactoring assertions
         assert new_recognizer.supported_entities == ['ENTITY_1']
         assert new_recognizer.supported_language == 'en'
         assert new_recognizer.patterns[0].name == 'p1'
