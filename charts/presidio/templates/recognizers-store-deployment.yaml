@@ -1,4 +1,4 @@
-{{ $fullname := include "presidio.analyzer.fullname" . }}
+{{ $fullname := include "presidio.recognizersstore.fullname" . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,10 +20,10 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.registry }}/{{ .Values.analyzer.name }}:{{ default .Chart.AppVersion .Values.tag }}"
-        imagePullPolicy: {{ default "IfNotPresent" .Values.analyzer.imagePullPolicy }}
+        image: "{{ .Values.registry }}/{{ .Values.recognizersstore.name }}:{{ default .Chart.AppVersion .Values.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.recognizersstore.imagePullPolicy }}
         ports:
-        - containerPort: {{ .Values.analyzer.service.internalPort }}
+        - containerPort: {{ .Values.recognizersstore.service.internalPort }}
         resources:
           requests:
             memory: "1500Mi"
@@ -36,9 +36,15 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          - name: RECOGNIZERS_STORE_SVC_ADDRESS
-            value:  {{ template "presidio.recognizersstore.address" . }} 
+          - name: REDIS_URL
+            value: {{ .Values.redis_internal.url }}
+          - name: REDIS_PASSWORD
+            value: {{ .Values.redis_internal.password | default "" }}
+          - name: REDIS_DB
+            value: {{ .Values.redis_internal.db | default "0" | quote}}
+          - name: REDIS_SSL
+            value: {{ .Values.redis_internal.ssl | default "false" | quote}}
           - name: GRPC_PORT
-            value: {{ .Values.analyzer.service.internalPort | quote }}
+            value: {{ .Values.recognizersstore.service.internalPort | quote }}
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}

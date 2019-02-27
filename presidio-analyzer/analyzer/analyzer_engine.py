@@ -5,6 +5,7 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
+
 from analyzer import RecognizerRegistry  # noqa: F401
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
@@ -19,7 +20,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self, registry=RecognizerRegistry()):
         # load all recognizers
         self.registry = registry
-        registry.load_recognizers("predefined-recognizers")
+        registry.load_predefined_recognizers()
 
     @staticmethod
     def __remove_duplicates(results):

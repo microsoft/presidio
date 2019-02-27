@@ -17,6 +17,7 @@ type ServicesAPI interface {
 	SetupOCRService()
 	SetupSchedulerService()
 	SetupDatasinkService()
+	SetupRecognizerStoreService()
 	SetupCache() cache.Cache
 	AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error)
 	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string,
@@ -31,6 +32,13 @@ type ServicesAPI interface {
 	ApplyScan(ctx context.Context, scanJobRequest *types.ScannerCronJobRequest) (*types.ScannerCronJobResponse, error)
 	InitDatasink(ctx context.Context, datasinkTemplate *types.DatasinkTemplate) (*types.DatasinkResponse, error)
 	CloseDatasink(ctx context.Context, datasinkTemplate *types.CompletionMessage) (*types.DatasinkResponse, error)
+
+	InsertRecognizer(ctx context.Context, rec *types.PatternRecognizer) (*types.RecognizersStoreResponse, error)
+	UpdateRecognizer(ctx context.Context, rec *types.PatternRecognizer) (*types.RecognizersStoreResponse, error)
+	DeleteRecognizer(ctx context.Context, name string) (*types.RecognizersStoreResponse, error)
+	GetRecognizer(ctx context.Context, name string) (*types.RecognizersGetResponse, error)
+	GetAllRecognizers(ctx context.Context) (*types.RecognizersGetResponse, error)
+	GetUpdateTimeStamp(ctx context.Context) (*types.RecognizerTimestampResponse, error)
 }
 
 //TemplatesStore interface for template actions

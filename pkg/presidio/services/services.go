@@ -17,13 +17,14 @@ import (
 
 //Services exposes GRPC services
 type Services struct {
-	AnalyzerService       types.AnalyzeServiceClient
-	AnonymizeService      types.AnonymizeServiceClient
-	AnonymizeImageService types.AnonymizeImageServiceClient
-	OcrService            types.OcrServiceClient
-	DatasinkService       types.DatasinkServiceClient
-	SchedulerService      types.SchedulerServiceClient
-	Settings              *platform.Settings
+	AnalyzerService         types.AnalyzeServiceClient
+	AnonymizeService        types.AnonymizeServiceClient
+	AnonymizeImageService   types.AnonymizeImageServiceClient
+	OcrService              types.OcrServiceClient
+	DatasinkService         types.DatasinkServiceClient
+	SchedulerService        types.SchedulerServiceClient
+	RecognizersStoreService types.RecognizersStoreServiceClient
+	Settings                *platform.Settings
 }
 
 //New services with settings
@@ -123,6 +124,21 @@ func (services *Services) SetupDatasinkService() {
 	services.DatasinkService = datasinkService
 }
 
+//SetupRecognizerStoreService GRPC connection
+func (services *Services) SetupRecognizerStoreService() {
+	if services.Settings.RecognizersStoreSvcAddress == "" {
+		log.Warn("recognizers store service address is empty")
+		return
+	}
+
+	recognizerStoreService, err := rpc.SetupRecognizerStoreService(services.Settings.RecognizersStoreSvcAddress)
+	if err != nil {
+		log.Fatal("Connection to recognizers store service failed %q", err)
+	}
+
+	services.RecognizersStoreService = recognizerStoreService
+}
+
 //SetupCache  Redis cache
 func (services *Services) SetupCache() cache.Cache {
 	if services.Settings.RedisURL == "" {
@@ -136,6 +152,100 @@ func (services *Services) SetupCache() cache.Cache {
 		services.Settings.RedisSSL,
 	)
 	return cache
+}
+
+// InsertRecognizer use the recognizers store service to insert a new recognizer
+func (services *Services) InsertRecognizer(
+	ctx context.Context, rec *types.PatternRecognizer) (
+	*types.RecognizersStoreResponse, error) {
+	request := &types.RecognizerInsertOrUpdateRequest{
+		Value: rec,
+	}
+
+	results, err := services.RecognizersStoreService.ApplyInsert(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+// UpdateRecognizer use the recognizers store service to update a recognizer
+func (services *Services) UpdateRecognizer(
+	ctx context.Context, rec *types.PatternRecognizer) (
+	*types.RecognizersStoreResponse, error) {
+	request := &types.RecognizerInsertOrUpdateRequest{
+		Value: rec,
+	}
+
+	results, err := services.RecognizersStoreService.ApplyUpdate(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+// DeleteRecognizer use the recognizers store service to delete a recognizer
+func (services *Services) DeleteRecognizer(
+	ctx context.Context, name string) (
+	*types.RecognizersStoreResponse, error) {
+	request := &types.RecognizerDeleteRequest{
+		Name: name,
+	}
+
+	results, err := services.RecognizersStoreService.ApplyDelete(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+// GetRecognizer use the recognizers store service to get a recognizer
+func (services *Services) GetRecognizer(
+	ctx context.Context, name string) (
+	*types.RecognizersGetResponse, error) {
+	request := &types.RecognizerGetRequest{
+		Name: name,
+	}
+
+	results, err := services.RecognizersStoreService.ApplyGet(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+// GetAllRecognizers use the recognizers store service to get all recognizers
+func (services *Services) GetAllRecognizers(
+	ctx context.Context) (
+	*types.RecognizersGetResponse, error) {
+	request := &types.RecognizersGetAllRequest{}
+
+	results, err := services.RecognizersStoreService.ApplyGetAll(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+// GetUpdateTimeStamp use the recognizers store service to get the last
+// timestamp when the store was updated
+func (services *Services) GetUpdateTimeStamp(
+	ctx context.Context) (
+	*types.RecognizerTimestampResponse, error) {
+	request := &types.RecognizerGetTimestampRequest{}
+
+	results, err := services.RecognizersStoreService.ApplyGetTimestamp(ctx,
+		request)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 //AnalyzeItem - search for PII

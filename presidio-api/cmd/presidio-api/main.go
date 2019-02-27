@@ -28,6 +28,7 @@ func main() {
 	pflag.String(platform.AnonymizerImageSvcAddress, "", "Anonymizer image service address (optional)")
 	pflag.String(platform.OcrSvcAddress, "", "ocr service address (optional)")
 	pflag.String(platform.SchedulerSvcAddress, "", "Scheduler service address (optional)")
+	pflag.String(platform.RecognizersStoreSvcAddress, "localhost:3004", "Recognizers store service address")
 	pflag.String(platform.RedisURL, "", "Redis address (optional)")
 	pflag.String(platform.RedisPassword, "", "Redis db password (optional)")
 	pflag.Int(platform.RedisDb, 0, "Redis db (optional)")
@@ -124,6 +125,25 @@ func setupHTTPServer(port int, loglevel string) {
 			projects.POST("/schedule-streams-job", scheduleStreamJob)
 		}
 
+		// recognizers group
+		// /api/v1/recognizers
+		recognizers := v1.Group("/analyzer/recognizers")
+		{
+			// Get an existing recognizer
+			recognizers.GET(":id", getRecognizer)
+
+			// Get all existing recognizer
+			recognizers.GET("/", getAllRecognizers)
+
+			// Insert a new recognizer
+			recognizers.POST(":id", insertRecognizer)
+
+			// Update an existing recognizer
+			recognizers.PUT(":id", updateRecognizer)
+
+			// DELETE a recognizer
+			recognizers.DELETE(":id", deleteRecognizer)
+		}
 	}
 	server.Start(r)
 }

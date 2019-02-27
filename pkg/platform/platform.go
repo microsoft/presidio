@@ -47,27 +47,29 @@ func ConvertPullPolicyStringToType(pullPolicy string) apiv1.PullPolicy {
 
 //Settings from all services
 type Settings struct {
-	WebPort                   int
-	GrpcPort                  int
-	DatasinkGrpcPort          int
-	Namespace                 string
-	AnalyzerSvcAddress        string
-	AnonymizerSvcAddress      string
-	AnonymizerImageSvcAddress string
-	OcrSvcAddress             string
-	SchedulerSvcAddress       string
-	RedisURL                  string
-	RedisPassword             string
-	RedisDB                   int
-	RedisSSL                  bool
-	DatasinkImage             string
-	CollectorImage            string
-	DatasinkImagePullPolicy   string
-	CollectorImagePullPolicy  string
-	ScannerRequest            string
-	StreamRequest             string
-	QueueURL                  string
-	LogLevel                  string
+	WebPort                    int
+	GrpcPort                   int
+	DatasinkGrpcPort           int
+	Namespace                  string
+	AnalyzerSvcAddress         string
+	AnonymizerSvcAddress       string
+	AnonymizerImageSvcAddress  string
+	OcrSvcAddress              string
+	SchedulerSvcAddress        string
+	RecognizersStoreSvcAddress string
+	RedisURL                   string
+	RedisPassword              string
+	RedisDB                    int
+	RedisSSL                   bool
+	DatasinkImage              string
+	CollectorImage             string
+	DatasinkImagePullPolicy    string
+	CollectorImagePullPolicy   string
+	ScannerRequest             string
+	StreamRequest              string
+	QueueURL                   string
+	LogLevel                   string
+	RecognizersStoreGrpcPort   int
 }
 
 //WebPort for http server
@@ -78,6 +80,9 @@ const GrpcPort = "grpc_port"
 
 //DatasinkGrpcPort for data sink GRPC server
 const DatasinkGrpcPort = "datasink_grpc_port"
+
+//RecognizersStoreGrpcPort for data sink GRPC server
+const RecognizersStoreGrpcPort = "recognizers_store_grpc_port"
 
 //PresidioNamespace for k8s deployment
 const PresidioNamespace = "presidio_namespace"
@@ -96,6 +101,9 @@ const OcrSvcAddress = "ocr_svc_address"
 
 //SchedulerSvcAddress scheduler service address
 const SchedulerSvcAddress = "scheduler_svc_address"
+
+//RecognizersStoreSvcAddress recognizers store service address
+const RecognizersStoreSvcAddress = "recognizers_store_svc_address"
 
 //RedisURL redis address
 const RedisURL = "redis_url"
@@ -139,27 +147,29 @@ func GetSettings() *Settings {
 	viper.AutomaticEnv()
 
 	settings := Settings{
-		WebPort:                   viper.GetInt(strings.ToUpper(WebPort)),
-		GrpcPort:                  viper.GetInt(strings.ToUpper(GrpcPort)),
-		DatasinkGrpcPort:          viper.GetInt(strings.ToUpper(DatasinkGrpcPort)),
-		Namespace:                 getTrimmedEnv(PresidioNamespace),
-		AnalyzerSvcAddress:        getTrimmedEnv(AnalyzerSvcAddress),
-		AnonymizerSvcAddress:      getTrimmedEnv(AnonymizerSvcAddress),
-		AnonymizerImageSvcAddress: getTrimmedEnv(AnonymizerImageSvcAddress),
-		OcrSvcAddress:             getTrimmedEnv(OcrSvcAddress),
-		SchedulerSvcAddress:       getTrimmedEnv(SchedulerSvcAddress),
-		RedisURL:                  getTrimmedEnv(RedisURL),
-		RedisDB:                   viper.GetInt(strings.ToUpper(RedisDb)),
-		RedisSSL:                  viper.GetBool(strings.ToUpper(RedisSSL)),
-		RedisPassword:             getTrimmedEnv(RedisPassword),
-		DatasinkImage:             getTrimmedEnv(DatasinkImageName),
-		CollectorImage:            getTrimmedEnv(CollectorImageName),
-		DatasinkImagePullPolicy:   getTrimmedEnv(DatasinkImagePullPolicy),
-		CollectorImagePullPolicy:  getTrimmedEnv(CollectorImagePullPolicy),
-		ScannerRequest:            getTrimmedEnv(ScannerRequest),
-		StreamRequest:             getTrimmedEnv(StreamRequest),
-		QueueURL:                  getTrimmedEnv(QueueURL),
-		LogLevel:                  getTrimmedEnv(LogLevel),
+		WebPort:                    viper.GetInt(strings.ToUpper(WebPort)),
+		GrpcPort:                   viper.GetInt(strings.ToUpper(GrpcPort)),
+		DatasinkGrpcPort:           viper.GetInt(strings.ToUpper(DatasinkGrpcPort)),
+		RecognizersStoreGrpcPort:   viper.GetInt(strings.ToUpper(RecognizersStoreGrpcPort)),
+		Namespace:                  getTrimmedEnv(PresidioNamespace),
+		AnalyzerSvcAddress:         getTrimmedEnv(AnalyzerSvcAddress),
+		AnonymizerSvcAddress:       getTrimmedEnv(AnonymizerSvcAddress),
+		AnonymizerImageSvcAddress:  getTrimmedEnv(AnonymizerImageSvcAddress),
+		OcrSvcAddress:              getTrimmedEnv(OcrSvcAddress),
+		SchedulerSvcAddress:        getTrimmedEnv(SchedulerSvcAddress),
+		RecognizersStoreSvcAddress: getTrimmedEnv(RecognizersStoreSvcAddress),
+		RedisURL:                   getTrimmedEnv(RedisURL),
+		RedisDB:                    viper.GetInt(strings.ToUpper(RedisDb)),
+		RedisSSL:                   viper.GetBool(strings.ToUpper(RedisSSL)),
+		RedisPassword:              getTrimmedEnv(RedisPassword),
+		DatasinkImage:              getTrimmedEnv(DatasinkImageName),
+		CollectorImage:             getTrimmedEnv(CollectorImageName),
+		DatasinkImagePullPolicy:    getTrimmedEnv(DatasinkImagePullPolicy),
+		CollectorImagePullPolicy:   getTrimmedEnv(CollectorImagePullPolicy),
+		ScannerRequest:             getTrimmedEnv(ScannerRequest),
+		StreamRequest:              getTrimmedEnv(StreamRequest),
+		QueueURL:                   getTrimmedEnv(QueueURL),
+		LogLevel:                   getTrimmedEnv(LogLevel),
 	}
 
 	return &settings

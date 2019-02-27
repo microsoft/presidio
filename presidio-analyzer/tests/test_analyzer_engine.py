@@ -1,16 +1,70 @@
 from unittest import TestCase
 
 import pytest
+import gc
 
 from assertions import assert_result
+
+import time
+import logging
+
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
-from analyzer.analyze_pb2 import AnalyzeRequest
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer
+    UsPhoneRecognizer, CustomRecognizer
+from analyzer.recognizer_registry.recognizers_store_api \
+    import RecognizerStoreApi  # noqa: F401
+
+
+class RecognizerStoreApiMock(RecognizerStoreApi):
+    """
+    A mock that acts as a recognizers store, allows to add and get recognizers
+    """
+
+    def __init__(self):
+        self.latest_timestamp = 0
+        self.recognizers = []
+
+    def get_latest_timestamp(self):
+        return self.latest_timestamp
+
+    def get_all_recognizers(self):
+        return self.recognizers
+
+    def add_custom_pattern_recognizer(self, new_recognizer, skip_timestamp_update=False):
+        patterns = []
+        for pat in new_recognizer.patterns:
+            patterns.extend([Pattern(pat.name, pat.regex, pat.score)])
+        new_custom_recognizer = CustomRecognizer(name=new_recognizer.name, entity=new_recognizer.supported_entities[0],
+                                                 language=new_recognizer.supported_language,
+                                                 black_list=new_recognizer.black_list,
+                                                 context=new_recognizer.context,
+                                                 patterns=patterns)
+        self.recognizers.append(new_custom_recognizer)
+
+        if skip_timestamp_update:
+            return
+
+        # making sure there is a time difference (when the test run so fast two
+        # sequential operations are with the same timestamp
+        time.sleep(1)
+        self.latest_timestamp = int(time.time())
+
+    def remove_recognizer(self, name):
+        for i in self.recognizers:
+            if i.name == name:
+                self.recognizers.remove(i)
+        # making sure there is a time difference (when the test run so fast two
+        # sequential operations are with the same timestamp
+        time.sleep(1)
+        self.latest_timestamp = int(time.time())
 
 
 class MockRecognizerRegistry(RecognizerRegistry):
+    """
+    A mock that acts as a recognizers registry
+    """
+
     def load_recognizers(self, path):
         #   TODO: Change the code to dynamic loading -
         # Task #598:  Support loading of the pre-defined recognizers
@@ -21,8 +75,10 @@ class MockRecognizerRegistry(RecognizerRegistry):
 
 class TestAnalyzerEngine(TestCase):
 
-    def test_analyze_with_single_predefined_recognizers(self):
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+    def test_analyze_with_predefined_recognizers_return_results(self):
+        recognizers_store_api_mock = RecognizerStoreApiMock()
+        analyze_engine = AnalyzerEngine(
+            MockRecognizerRegistry(recognizers_store_api_mock))
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         langauge = "en"
         entities = ["CREDIT_CARD"]
@@ -30,6 +86,9 @@ class TestAnalyzerEngine(TestCase):
 
         assert len(results) == 1
         assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
+
+        del analyze_engine
+        gc.collect()
 
     def test_analyze_with_multiple_predefined_recognizers(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
@@ -42,52 +101,65 @@ class TestAnalyzerEngine(TestCase):
         assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
         assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
 
+        del analyze_engine
+        gc.collect()
+
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
             langauge = "en"
-            analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+            recognizers_store_api_mock = RecognizerStoreApiMock()
+            analyze_engine = AnalyzerEngine(
+                MockRecognizerRegistry(recognizers_store_api_mock))
             text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
                    "Domain: microsoft.com"
             entities = []
             analyze_engine.analyze(text, entities, langauge)
+            del analyze_engine
 
     def test_analyze_with_empty_text(self):
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        recognizers_store_api_mock = RecognizerStoreApiMock()
+        analyze_engine = AnalyzerEngine(
+            MockRecognizerRegistry(recognizers_store_api_mock))
         langauge = "en"
         text = ""
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
         results = analyze_engine.analyze(text, entities, langauge)
 
         assert len(results) == 0
+        del analyze_engine
+        gc.collect()
 
     def test_analyze_with_unsupported_language(self):
         with pytest.raises(ValueError):
             langauge = "de"
-            analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+            recognizers_store_api_mock = RecognizerStoreApiMock()
+            analyze_engine = AnalyzerEngine(
+                MockRecognizerRegistry(recognizers_store_api_mock))
             text = ""
             entities = ["CREDIT_CARD", "PHONE_NUMBER"]
             analyze_engine.analyze(text, entities, "de")
+            del analyze_engine
 
     def test_remove_duplicates(self):
         # test same result with different score will return only the highest
         arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x"),
                RecognizerResult(start=0, end=5, score=0.5, entity_type="x")]
         results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
-
         assert len(results) == 1
         assert results[0].score == 0.5
-
         # TODO: add more cases with bug:
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one result as a substring of the other
 
-    def test_add_pattern_recognizer_from_dict(self):
+    def test_added_pattern_recognizer_works(self):
         pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
         pattern_recognizer = PatternRecognizer("ROCKET",
                                                name="Rocket recognizer",
                                                patterns=[pattern])
 
         # Make sure the analyzer doesn't get this entity
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        recognizers_store_api_mock = RecognizerStoreApiMock()
+        analyze_engine = AnalyzerEngine(
+            MockRecognizerRegistry(recognizers_store_api_mock))
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
@@ -97,7 +169,8 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 0
 
         # Add a new recognizer for the word "rocket" (case insensitive)
-        analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
+        recognizers_store_api_mock.add_custom_pattern_recognizer(
+            pattern_recognizer)
 
         # Check that the entity is recognized:
         results = analyze_engine.analyze(text=text, entities=entities,
@@ -106,14 +179,16 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 1
         assert_result(results[0], "ROCKET", 0, 7, 0.8)
 
-    def test_remove_analyzer(self):
+    def test_removed_pattern_recognizer_doesnt_work(self):
         pattern = Pattern("spaceship pattern", r'\W*(spaceship)\W*', 0.8)
         pattern_recognizer = PatternRecognizer("SPACESHIP",
                                                name="Spaceship recognizer",
                                                patterns=[pattern])
 
         # Make sure the analyzer doesn't get this entity
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        recognizers_store_api_mock = RecognizerStoreApiMock()
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry(
+            recognizers_store_api_mock))
         text = "spaceship is my favorite transportation"
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
@@ -123,8 +198,8 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 0
 
         # Add a new recognizer for the word "rocket" (case insensitive)
-        analyze_engine.add_pattern_recognizer(pattern_recognizer.to_dict())
-
+        recognizers_store_api_mock.add_custom_pattern_recognizer(
+            pattern_recognizer)
         # Check that the entity is recognized:
         results = analyze_engine.analyze(text=text, entities=entities,
                                          language='en')
@@ -132,8 +207,8 @@ class TestAnalyzerEngine(TestCase):
         assert_result(results[0], "SPACESHIP", 0, 10, 0.8)
 
         # Remove recognizer
-        analyze_engine.remove_recognizer("Spaceship recognizer")
-
+        recognizers_store_api_mock.remove_recognizer(
+            "Spaceship recognizer")
         # Test again to see we didn't get any results
         results = analyze_engine.analyze(text=text, entities=entities,
                                          language='en')

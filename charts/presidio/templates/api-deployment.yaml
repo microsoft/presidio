@@ -56,6 +56,8 @@ spec:
             value:  {{ template "presidio.anonymizer.address" . }}
           - name: ANONYMIZER_IMAGE_SVC_ADDRESS
             value:  {{ template "presidio.anonymizerimage.address" . }}
+          - name: RECOGNIZERS_STORE_SVC_ADDRESS
+            value:  {{ template "presidio.recognizersstore.address" . }}
           - name: OCR_SVC_ADDRESS
             value:  {{ template "presidio.ocr.address" . }}
           - name: SCHEDULER_SVC_ADDRESS

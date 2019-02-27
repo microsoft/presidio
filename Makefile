@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= presidio.azurecr.io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector
-IMAGES      = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-analyzer
+BINS        = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store
+IMAGES      = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-analyzer presidio-recognizers-store
 GOLANG_DEPS	= presidio-golang-deps
 PYTHON_DEPS	= presidio-python-deps
 GOLANG_BASE	= presidio-golang-base
@@ -117,6 +117,7 @@ test-functional: docker-build
 	-docker rm test-presidio-anonymizer -f
 	-docker rm test-presidio-anonymizer-image -f
 	-docker rm test-presidio-ocr -f
+	-docker rm test-presidio-recognizers-store -f
 
 	-docker network create testnetwork
 	docker run --rm --name test-azure-emulator --network testnetwork -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite
@@ -127,8 +128,9 @@ test-functional: docker-build
 	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(PRESIDIO_LABEL)
 	docker run --rm --name test-presidio-anonymizer-image --network testnetwork -d -p 3002:3002 -e GRPC_PORT=3002 $(DOCKER_REGISTRY)/presidio-anonymizer-image:$(PRESIDIO_LABEL)
 	docker run --rm --name test-presidio-ocr --network testnetwork -d -p 3003:3003 -e GRPC_PORT=3003 $(DOCKER_REGISTRY)/presidio-ocr:$(PRESIDIO_LABEL)
+	docker run --rm --name test-presidio-recognizers-store --network testnetwork -d -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=test-redis:6379 $(DOCKER_REGISTRY)/presidio-recognizers-store:$(PRESIDIO_LABEL)
 	sleep 30
-	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=test-presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=test-presidio-anonymizer:3001 -e ANONYMIZER_IMAGE_SVC_ADDRESS=test-presidio-anonymizer-image:3002 -e OCR_SVC_ADDRESS=test-presidio-ocr:3003 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
+	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=test-presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=test-presidio-anonymizer:3001 -e ANONYMIZER_IMAGE_SVC_ADDRESS=test-presidio-anonymizer-image:3002 -e OCR_SVC_ADDRESS=test-presidio-ocr:3003 -e RECOGNIZERS_STORE_SVC_ADDRESS=test-presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
 	go test --tags functional ./tests -count=1
 	docker rm test-presidio-api -f
 	docker rm test-presidio-analyzer -f
@@ -139,6 +141,7 @@ test-functional: docker-build
 	docker rm test-kafka -f
 	docker rm test-redis -f
 	docker rm test-s3-emulator -f
+	docker rm test-presidio-recognizers-store -f
 	docker network rm testnetwork
 
 

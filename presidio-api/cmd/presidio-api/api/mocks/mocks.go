@@ -26,6 +26,11 @@ type AnonymizerImageMockedObject struct {
 	mock.Mock
 }
 
+//RecognizersStoreMockedObject recognizers store mock
+type RecognizersStoreMockedObject struct {
+	mock.Mock
+}
+
 //OcrMockedObject anonymizer mock
 type OcrMockedObject struct {
 	mock.Mock
@@ -192,4 +197,154 @@ func (m *TemplateMockedObject) UpdateTemplate(project, action, id, value string)
 func (m *TemplateMockedObject) DeleteTemplate(project string, action string, id string) error {
 	args := m.Mock.Called()
 	return args.Error(1)
+}
+
+//GetRecognizersStoreGetMockResult get recognizers mock response
+func GetRecognizersStoreGetMockResult() *types.RecognizersGetResponse {
+
+	pattern := &types.Pattern{
+		Name:  "FirstPattern",
+		Regex: "myregex",
+		Score: 0.1}
+	patternArr := []*types.Pattern{}
+	patternArr = append(patternArr, pattern)
+
+	recognizer := &types.PatternRecognizer{
+		Name:     "MockRecognizer",
+		Entity:   "SPACESHIP",
+		Language: "he",
+		Patterns: patternArr,
+	}
+
+	recognizersArr := []*types.PatternRecognizer{}
+	recognizersArr = append(recognizersArr, recognizer)
+
+	return &types.RecognizersGetResponse{
+		Recognizers: recognizersArr,
+	}
+}
+
+//GetRecognizersStoreGetAllMockResult get recognizers mock response
+func GetRecognizersStoreGetAllMockResult() *types.RecognizersGetResponse {
+
+	pattern := &types.Pattern{
+		Name:  "FirstPattern",
+		Regex: "myregex",
+		Score: 0.1}
+	patternArr := []*types.Pattern{}
+	patternArr = append(patternArr, pattern)
+
+	recognizer := &types.PatternRecognizer{
+		Name:     "MockRecognizer",
+		Entity:   "SPACESHIP",
+		Language: "he",
+		Patterns: patternArr,
+	}
+
+	recognizer2 := &types.PatternRecognizer{
+		Name:     "MockRecognizer2",
+		Entity:   "SPACESHIP",
+		Language: "he",
+		Patterns: patternArr,
+	}
+
+	recognizersArr := []*types.PatternRecognizer{}
+	recognizersArr = append(recognizersArr, recognizer)
+	recognizersArr = append(recognizersArr, recognizer2)
+
+	return &types.RecognizersGetResponse{
+		Recognizers: recognizersArr,
+	}
+}
+
+//GetRecognizersStoreInsertOrUpdateMockResult get recognizers mock response
+func GetRecognizersStoreInsertOrUpdateMockResult() *types.RecognizersStoreResponse {
+	return &types.RecognizersStoreResponse{}
+}
+
+//GetRecognizersStoreDeleteMockResult get recognizers mock response
+func GetRecognizersStoreDeleteMockResult() *types.RecognizersStoreResponse {
+	return &types.RecognizersStoreResponse{}
+}
+
+//GetRecognizersStoreGetTimestampMockResult get recognizers mock response
+func GetRecognizersStoreGetTimestampMockResult() *types.RecognizerTimestampResponse {
+	return &types.RecognizerTimestampResponse{UnixTimestamp: 1552811059}
+}
+
+//GetRecognizersStoreServiceMock get service mock
+func GetRecognizersStoreServiceMock(
+	expectedGetResult *types.RecognizersGetResponse,
+	expectedGetAllResult *types.RecognizersGetResponse,
+	expectedInsertOrUpdateAllResult *types.RecognizersStoreResponse,
+	expectedDeleteResult *types.RecognizersStoreResponse,
+	expectedTimestampResult *types.RecognizerTimestampResponse) types.RecognizersStoreServiceClient {
+	service := &RecognizersStoreMockedObject{}
+	service.On("ApplyGet", mock.Anything, mock.Anything, mock.Anything).Return(expectedGetResult, nil)
+	service.On("ApplyGetAll", mock.Anything, mock.Anything, mock.Anything).Return(expectedGetAllResult, nil)
+	service.On("ApplyInsert", mock.Anything, mock.Anything, mock.Anything).Return(expectedInsertOrUpdateAllResult, nil)
+	service.On("ApplyUpdate", mock.Anything, mock.Anything, mock.Anything).Return(expectedInsertOrUpdateAllResult, nil)
+	service.On("ApplyDelete", mock.Anything, mock.Anything, mock.Anything).Return(expectedDeleteResult, nil)
+	service.On("ApplyGetTimestamp", mock.Anything, mock.Anything, mock.Anything).Return(expectedTimestampResult, nil)
+	return service
+}
+
+//ApplyGet recognizers mock
+func (m *RecognizersStoreMockedObject) ApplyGet(ctx context.Context, r *types.RecognizerGetRequest, opts ...grpc.CallOption) (*types.RecognizersGetResponse, error) {
+	args := m.Mock.Called()
+	var result *types.RecognizersGetResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*types.RecognizersGetResponse)
+	}
+	return result, args.Error(1)
+}
+
+//ApplyGetAll recognizers mock
+func (m *RecognizersStoreMockedObject) ApplyGetAll(ctx context.Context, r *types.RecognizersGetAllRequest, opts ...grpc.CallOption) (*types.RecognizersGetResponse, error) {
+	args := m.Mock.Called()
+	var result *types.RecognizersGetResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*types.RecognizersGetResponse)
+	}
+	return result, args.Error(1)
+}
+
+//ApplyInsert recognizers mock
+func (m *RecognizersStoreMockedObject) ApplyInsert(ctx context.Context, r *types.RecognizerInsertOrUpdateRequest, opts ...grpc.CallOption) (*types.RecognizersStoreResponse, error) {
+	args := m.Mock.Called()
+	var result *types.RecognizersStoreResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*types.RecognizersStoreResponse)
+	}
+	return result, args.Error(1)
+}
+
+//ApplyUpdate recognizers mock
+func (m *RecognizersStoreMockedObject) ApplyUpdate(ctx context.Context, r *types.RecognizerInsertOrUpdateRequest, opts ...grpc.CallOption) (*types.RecognizersStoreResponse, error) {
+	args := m.Mock.Called()
+	var result *types.RecognizersStoreResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*types.RecognizersStoreResponse)
+	}
+	return result, args.Error(1)
+}
+
+//ApplyDelete recognizers mock
+func (m *RecognizersStoreMockedObject) ApplyDelete(ctx context.Context, r *types.RecognizerDeleteRequest, opts ...grpc.CallOption) (*types.RecognizersStoreResponse, error) {
+	args := m.Mock.Called()
+	var result *types.RecognizersStoreResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*types.RecognizersStoreResponse)
+	}
+	return result, args.Error(1)
+}
+
+//ApplyGetTimestamp recognizers mock
+func (m *RecognizersStoreMockedObject) ApplyGetTimestamp(ctx context.Context, r *types.RecognizerGetTimestampRequest, opts ...grpc.CallOption) (*types.RecognizerTimestampResponse, error) {
+	args := m.Mock.Called()
+	var result *types.RecognizerTimestampResponse
+	if args.Get(0) != nil {
+		result = args.Get(0).(*types.RecognizerTimestampResponse)
+	}
+	return result, args.Error(1)
 }
