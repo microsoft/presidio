@@ -5,6 +5,7 @@ import json
 import hashlib
 import time
 import pytest
+import gc
 
 from assertions import assert_result
 from analyzer.analyze_pb2 import AnalyzeRequest
@@ -94,6 +95,9 @@ class TestAnalyzerEngine(TestCase):
         assert_result(results[0], "CREDIT_CARD", 14,
                       33, EntityRecognizer.MAX_SCORE)
 
+        del analyze_engine
+        gc.collect()
+
     def test_analyze_with_multiple_predefined_recognizers(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
@@ -105,6 +109,9 @@ class TestAnalyzerEngine(TestCase):
         assert_result(results[0], "CREDIT_CARD", 14,
                       33, EntityRecognizer.MAX_SCORE)
         assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
+
+        del analyze_engine
+        gc.collect()
 
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
@@ -122,6 +129,8 @@ class TestAnalyzerEngine(TestCase):
             text, entities, language, all_fields=False)
 
         assert len(results) == 0
+        del analyze_engine
+        gc.collect()
 
     def test_analyze_with_unsupported_language(self):
         with pytest.raises(ValueError):
@@ -234,7 +243,8 @@ class TestAnalyzerEngine(TestCase):
         request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
             "Domain: microsoft.com"
         response = analyze_engine.Apply(request, None)
-        returned_entities = [field.field.name for field in response.analyzeResults]
+        returned_entities = [
+            field.field.name for field in response.analyzeResults]
 
         assert response.analyzeResults is not None
         assert "CREDIT_CARD" in returned_entities
@@ -248,7 +258,8 @@ class TestAnalyzerEngine(TestCase):
         request.text = "My name is David and I live in Seattle." \
             "Domain: microsoft.com "
         response = analyze_engine.Apply(request, None)
-        returned_entities = [field.field.name for field in response.analyzeResults]
+        returned_entities = [
+            field.field.name for field in response.analyzeResults]
         assert response.analyzeResults is not None
         assert "PERSON" in returned_entities
         assert "LOCATION" in returned_entities

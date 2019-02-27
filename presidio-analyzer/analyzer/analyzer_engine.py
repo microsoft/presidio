@@ -5,6 +5,7 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
+
 from analyzer import RecognizerRegistry  # noqa: F401
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")

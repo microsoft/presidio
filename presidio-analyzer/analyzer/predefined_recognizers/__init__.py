@@ -13,3 +13,4 @@ from .us_itin_recognizer import UsItinRecognizer  # noqa: F401
 from .us_passport_recognizer import UsPassportRecognizer  # noqa: F401
 from .us_phone_recognizer import UsPhoneRecognizer  # noqa: F401
 from .us_ssn_recognizer import UsSsnRecognizer  # noqa: F401
+from .custom_recognizer import CustomRecognizer  # noqa: F401
