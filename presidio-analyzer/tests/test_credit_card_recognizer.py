@@ -124,16 +124,26 @@ class TestCreditCardRecognizer(TestCase):
         assert results[0].score == 1.0
         assert_result(results[0], entities[0], 0, 16, 1.0)
 
-    def test_invalid_credit_card(self):
+    def test_invalid_credit_card_with_no_context(self):
+        number = '4012-8888-8888-1882'
+        results = credit_card_recognizer.analyze(number, entities)
+
+        assert len(results) == 0
+
+    def test_invalid_credit_card_with_context(self):
         number = '4012-8888-8888-1882'
         results = credit_card_recognizer.analyze('my credit card number is ' + number, entities)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0],25, 44, 0)
+        assert len(results) == 0
 
-    def test_invalid_diners_card(self):
+    def test_invalid_diners_card_with_no_context(self):
+        number = '36168002586008'
+        results = credit_card_recognizer.analyze(number, entities)
+
+        assert len(results) == 0
+    
+    def test_invalid_diners_card_with_context(self):
         number = '36168002586008'
         results = credit_card_recognizer.analyze('my credit card number is ' + number, entities)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0],25, 39, 0)
+        assert len(results) == 0

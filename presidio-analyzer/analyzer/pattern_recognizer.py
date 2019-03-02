@@ -53,7 +53,7 @@ class PatternRecognizer(LocalRecognizer):
     def analyze(self, text, entities):
         results = []
 
-        if len(self.patterns) > 0:
+        if self.patterns:
             pattern_result = self.__analyze_patterns(text)
 
             if pattern_result:
@@ -72,6 +72,7 @@ class PatternRecognizer(LocalRecognizer):
         """
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", pattern=regex, strength=1.0)
+
 
     @abstractmethod
     def validate_result(self, pattern_text, pattern_result):
@@ -105,8 +106,8 @@ class PatternRecognizer(LocalRecognizer):
                 text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
             match_time = datetime.datetime.now() - match_start_time
-            self.logger.debug('--- match_time[{}]: {}.{} seconds'.format(
-                pattern.name, match_time.seconds, match_time.microseconds))
+            self.logger.debug('--- match_time[%s]: %d.%d seconds', pattern.name,
+                              match_time.seconds, match_time.microseconds)
 
             for match in matches:
                 start, end = match.span()
@@ -120,7 +121,7 @@ class PatternRecognizer(LocalRecognizer):
                                        pattern.strength)
                 res = self.validate_result(current_match, res)
 
-                if res:
+                if res and res.score is not 0:
                     results.append(res)
 
         return results
@@ -132,15 +133,15 @@ class PatternRecognizer(LocalRecognizer):
         return_dict["black_list"] = self.black_list
         return_dict["context"] = self.context
         return_dict["supported_entity"] = return_dict["supported_entities"][0]
-        del (return_dict["supported_entities"])
+        del return_dict["supported_entities"]
 
         return return_dict
 
     @classmethod
-    def from_dict(cls, pattern_recognizer_dict):
-        patterns = pattern_recognizer_dict.get("patterns")
+    def from_dict(cls, entity_recognizer_dict):
+        patterns = entity_recognizer_dict.get("patterns")
         if patterns:
             patterns_list = [Pattern.from_dict(pat) for pat in patterns]
-            pattern_recognizer_dict['patterns'] = patterns_list
+            entity_recognizer_dict['patterns'] = patterns_list
 
-        return cls(**pattern_recognizer_dict)
+        return cls(**entity_recognizer_dict)
