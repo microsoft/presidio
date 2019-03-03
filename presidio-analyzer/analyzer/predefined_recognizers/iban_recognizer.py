@@ -1,6 +1,6 @@
 import string
 
-from analyzer.predefined_recognizers.iban_patterns import iban_regex_per_country
+from analyzer.predefined_recognizers.iban_patterns import regex_per_country
 from analyzer import Pattern, PatternRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
@@ -18,18 +18,23 @@ LETTERS = {
     for i, d in enumerate(string.digits + string.ascii_uppercase)
 }
 
+
 class IbanRecognizer(PatternRecognizer):
     """
     Recognizes IBAN code using regex and checksum
     """
     def __init__(self):
-        patterns = [Pattern('IBAN Generic', IBAN_GENERIC_REGEX, IBAN_GENERIC_SCORE)]
-        super().__init__(supported_entity="IBAN_CODE", patterns=patterns,
+        patterns = [Pattern('IBAN Generic',
+                            IBAN_GENERIC_REGEX,
+                            IBAN_GENERIC_SCORE)]
+        super().__init__(supported_entity="IBAN_CODE",
+                         patterns=patterns,
                          context=CONTEXT)
 
     def validate_result(self, pattern_text, pattern_result):
         pattern_text = pattern_text.replace(' ', '')
-        is_valid_checksum = IbanRecognizer.__generate_iban_check_digits(pattern_text) == pattern_text[2:4]
+        is_valid_checksum = (IbanRecognizer.__generate_iban_check_digits(
+            pattern_text) == pattern_text[2:4])
 
         score = 0
         if is_valid_checksum:
@@ -46,14 +51,16 @@ class IbanRecognizer(PatternRecognizer):
 
     @staticmethod
     def __generate_iban_check_digits(iban):
-        number_iban = IbanRecognizer.__number_iban((iban[:2] + '00' + iban[4:]).upper())
+        transformed_iban = (iban[:2] + '00' + iban[4:]).upper()
+        number_iban = IbanRecognizer.__number_iban(transformed_iban)
         return '{:0>2}'.format(98 - (int(number_iban) % 97))
 
     @staticmethod
     def __is_valid_format(iban):
         country_code = iban[:2]
-        if country_code in iban_regex_per_country:
-            country_regex = iban_regex_per_country[country_code]
-            return country_regex and re.match(country_regex, iban, flags=re.DOTALL | re.MULTILINE)
+        if country_code in regex_per_country:
+            country_regex = regex_per_country[country_code]
+            return country_regex and re.match(country_regex, iban,
+                                              flags=re.DOTALL | re.MULTILINE)
         else:
             return False
