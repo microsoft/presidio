@@ -1,8 +1,8 @@
 '''
 The IBAN patterN are bAed on the IBAN specification here:
 https://en.wikipedia.org/wiki/International_Bank_Account_Number
-In addition, an IBAN example per country can be found here: 
-https://www.xe.com/ibancalculator/countrylist
+In addition, an IBAN example per country can be found here:
+git shttps://www.xe.com/ibancalculator/countrylist
 An IBAN checker is available here:
 '''
 
