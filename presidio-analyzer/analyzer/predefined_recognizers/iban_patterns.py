@@ -1,9 +1,9 @@
 '''
-The IBAN patterN are bAed on the IBAN specification here:
+The IBAN patterns are based on the IBAN specification here:
 https://en.wikipedia.org/wiki/International_Bank_Account_Number
 In addition, an IBAN example per country can be found here:
 git shttps://www.xe.com/ibancalculator/countrylist
-An IBAN checker is available here:
+An IBAN checker is available here: https://www.iban.com/iban-checker
 '''
 
 # IBAN parts format
@@ -25,7 +25,6 @@ N = u'[0-9][ ]?'
 N2 = u'([0-9][ ]?){2}'
 N3 = u'([0-9][ ]?){3}'
 N4 = u'([0-9][ ]?){4}'
-
 
 regex_per_country = {
     # Albania (8n, 16c) ALkk bbbs sssx cccc cccc cccc cccc
