@@ -1,4 +1,5 @@
 from unittest import TestCase
+from analyzer.entity_recognizer import EntityRecognizer
 
 import pytest
 
@@ -28,7 +29,7 @@ class TestAnalyzerEngine(TestCase):
         results = analyze_engine.analyze(text, entities, langauge)
        
         assert len(results) == 1
-        assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
+        assert_result(results[0], "CREDIT_CARD", 14, 33, EntityRecognizer.MAX_SCORE)
 
     def test_analyze_with_multiple_predefined_recognizers(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
@@ -38,7 +39,7 @@ class TestAnalyzerEngine(TestCase):
         results = analyze_engine.analyze(text, entities, langauge)
        
         assert len(results) == 2
-        assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
+        assert_result(results[0], "CREDIT_CARD", 14, 33, EntityRecognizer.MAX_SCORE)
         assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
 
     def test_analyze_without_entities(self):

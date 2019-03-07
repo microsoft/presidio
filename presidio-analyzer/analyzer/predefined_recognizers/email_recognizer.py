@@ -1,5 +1,6 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
+from analyzer.entity_recognizer import EntityRecognizer
 import tldextract
 
 REGEX = r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b"  # noqa: E501
@@ -19,5 +20,8 @@ class EmailRecognizer(PatternRecognizer):
     def validate_result(self, text, pattern_result):
         result = tldextract.extract(text)
 
-        pattern_result.score = 1.0 if result.fqdn != '' else 0
+        if result.fqdn != '':
+            pattern_result.score = EntityRecognizer.MAX_SCORE
+        else:
+            pattern_result.score = EntityRecognizer.MIN_SCORE
         return pattern_result

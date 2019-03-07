@@ -3,6 +3,7 @@ import string
 
 from assertions import assert_result
 from analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer, IBAN_GENERIC_SCORE, LETTERS
+from analyzer.entity_recognizer import EntityRecognizer
 
 iban_recognizer = IbanRecognizer()
 entities = ["IBAN_CODE"]
@@ -26,14 +27,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_AL_iban_valid_with_spaces(self):
         iban = 'AL47 2121 1009 0000 0002 3569 8741'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_AL_iban_invalid_format_valid_checksum(self):
         iban = 'AL47 212A 1009 0000 0002 3569 8741'
@@ -60,14 +61,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_AD_iban_valid_with_spaces(self):
         iban = 'AD12 0001 2030 2003 5910 0100'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
 
     def test_AD_iban_invalid_format_valid_checksum(self):
         iban = 'AD12000A2030200359100100'
@@ -94,14 +95,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 20, 1.0)
+        assert_result(results[0], entities[0], 0, 20, EntityRecognizer.MAX_SCORE)
 
     def test_AT_iban_valid_with_spaces(self):
         iban = 'AT61 1904 3002 3457 3201'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
     
     def test_AT_iban_invalid_format_valid_checksum(self):
         iban = 'AT61 1904 A002 3457 3201'
@@ -128,14 +129,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_AZ_iban_valid_with_spaces(self):
         iban = 'AZ21 NABZ 0000 0000 1370 1000 1944'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
 
     def test_AZ_iban_invalid_format_valid_checksum(self):
         iban = 'AZ21NABZ000000001370100019'
@@ -162,14 +163,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def testBH_iban_valid__with_spaces(self):
         iban = 'BH67 BMAG 0000 1299 1234 56'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_BH_iban_invalid_format_valid_checksum(self):
         iban = 'BH67BMA100001299123456'
@@ -196,14 +197,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_BY_iban_valid_with_spaces(self):
         iban = 'BY13 NBRB 3600 9000 0000 2Z00 AB00'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_BY_iban_invalid_format_valid_checksum(self):
         iban = 'BY13NBRBA600900000002Z00AB00'
@@ -230,14 +231,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 16, 1.0)
+        assert_result(results[0], entities[0], 0, 16, EntityRecognizer.MAX_SCORE)
 
     def test_BE_iban_valid_with_spaces(self):
         iban = 'BE71 0961 2345 6769'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 19, 1.0)
+        assert_result(results[0], entities[0], 0, 19, EntityRecognizer.MAX_SCORE)
     
     def test_BE_iban_invalid_format_valid_checksum(self):
         iban = 'BE71 A961 2345 6769'
@@ -264,14 +265,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 20, 1.0)
+        assert_result(results[0], entities[0], 0, 20, EntityRecognizer.MAX_SCORE)
 
     def test_BA_iban_valid_with_spaces(self):
         iban = 'BA39 1290 0794 0102 8494'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_BA_iban_invalid_format_valid_checksum(self):
         iban = 'BA39 A290 0794 0102 8494'
@@ -298,14 +299,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
 
     def test_BR_iban_valid_with_spaces(self):
         iban = 'BR97 0036 0305 0000 1000 9795 493P 1'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 36, 1.0)
+        assert_result(results[0], entities[0], 0, 36, EntityRecognizer.MAX_SCORE)
     
     def test_BR_iban_invalid_format_valid_checksum(self):
         iban = 'BR97 0036 A305 0000 1000 9795 493P 1'
@@ -332,14 +333,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_BG_iban_valid_with_spaces(self):
         iban = 'BG80 BNBG 9661 1020 3456 78'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_BG_iban_invalid_format_valid_checksum(self):
         iban = 'BG80 BNBG 9661 A020 3456 78'
@@ -366,14 +367,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_CR_iban_valid_with_spaces(self):
         iban = 'CR05 0152 0200 1026 2840 66'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_CR_iban_invalid_format_valid_checksum(self):
         iban = 'CR05 0152 0200 1026 2840 6A'
@@ -400,14 +401,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 21, 1.0)
+        assert_result(results[0], entities[0], 0, 21, EntityRecognizer.MAX_SCORE)
 
     def test_HR_iban_valid_with_spaces(self):
         iban = 'HR12 1001 0051 8630 0016 0'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, 1.0)
+        assert_result(results[0], entities[0], 0, 26, EntityRecognizer.MAX_SCORE)
     
     def test_HR_iban_invalid_format_valid_checksum(self):
         iban = 'HR12 001 0051 8630 0016 A'
@@ -434,14 +435,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_CY_iban_valid_with_spaces(self):
         iban = 'CY17 0020 0128 0000 0012 0052 7600'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_CY_iban_invalid_format_valid_checksum(self):
         iban = 'CY17 0020 A128 0000 0012 0052 7600'
@@ -468,14 +469,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_CZ_iban_valid_with_spaces(self):
         iban = 'CZ65 0800 0000 1920 0014 5399'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_CZ_iban_invalid_format_valid_checksum(self):
         iban = 'CZ65 0800 A000 1920 0014 5399'
@@ -502,14 +503,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 18, 1.0)
+        assert_result(results[0], entities[0], 0, 18, EntityRecognizer.MAX_SCORE)
 
     def test_DK_iban_valid_with_spaces(self):
         iban = 'DK50 0040 0440 1162 43'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
     
     def test_DK_iban_invalid_format_valid_checksum(self):
         iban = 'DK50 0040 A440 1162 43'
@@ -536,14 +537,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_DO_iban_valid_with_spaces(self):
         iban = 'DO28 BAGR 0000 0001 2124 5361 1324'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_DO_iban_invalid_format_valid_checksum(self):
         iban = 'DO28 BAGR A000 0001 2124 5361 1324'
@@ -570,14 +571,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 23, 1.0)
+        assert_result(results[0], entities[0], 0, 23, EntityRecognizer.MAX_SCORE)
 
     def test_TL_iban_valid_with_spaces(self):
         iban = 'TL38 0080 0123 4567 8910 157'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
     
     def test_TL_iban_invalid_format_valid_checksum(self):
         iban = 'TL38 A080 0123 4567 8910 157'
@@ -598,14 +599,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 20, 1.0)
+        assert_result(results[0], entities[0], 0, 20, EntityRecognizer.MAX_SCORE)
 
     def test_EE_iban_valid_with_spaces(self):
         iban = 'EE38 2200 2210 2014 5685'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
     
     def test_EE_iban_invalid_format_valid_checksum(self):
         iban = 'EE38 A200 2210 2014 5685'
@@ -626,14 +627,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 18, 1.0)
+        assert_result(results[0], entities[0], 0, 18, EntityRecognizer.MAX_SCORE)
 
     def test_FO_iban_valid_with_spaces(self):
         iban = 'FO62 6460 0001 6316 34'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
     
     def test_FO_iban_invalid_format_valid_checksum(self):
         iban = 'FO62 A460 0001 6316 34'
@@ -654,14 +655,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 18, 1.0)
+        assert_result(results[0], entities[0], 0, 18, EntityRecognizer.MAX_SCORE)
 
     def test_FI_iban_valid_with_spaces(self):
         iban = 'FI21 1234 5600 0007 85'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_FI_iban_invalid_format_valid_checksum(self):
         iban = 'FI21 A234 5600 0007 85'
@@ -682,14 +683,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
 
     def test_FR_iban_valid_with_spaces(self):
         iban = 'FR14 2004 1010 0505 0001 3M02 606'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 33, 1.0)
+        assert_result(results[0], entities[0], 0, 33, EntityRecognizer.MAX_SCORE)
     
     def test_FR_iban_invalid_format_valid_checksum(self):
         iban = 'FR14 A004 1010 0505 0001 3M02 606'
@@ -710,14 +711,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_GE_iban_valid_with_spaces(self):
         iban = 'GE29 NB00 0000 0101 9049 17'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_GE_iban_invalid_format_valid_checksum(self):
         iban = 'GE29 NBA0 0000 0101 9049 17'
@@ -738,14 +739,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_DE_iban_valid_with_spaces(self):
         iban = 'DE89 3704 0044 0532 0130 00'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_DE_iban_invalid_format_valid_checksum(self):
         iban = 'DE89 A704 0044 0532 0130 00'
@@ -766,14 +767,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 23, 1.0)
+        assert_result(results[0], entities[0], 0, 23, EntityRecognizer.MAX_SCORE)
 
     def test_GI_iban_valid_with_spaces(self):
         iban = 'GI75 NWBK 0000 0000 7099 453'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
   
     def test_GI_iban_invalid_format_valid_checksum(self):
         iban = 'GI75 aWBK 0000 0000 7099 453'
@@ -796,14 +797,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
 
     def test_GR_iban_valid_with_spaces(self):
         iban = 'GR16 0110 1250 0000 0001 2300 695'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 33, 1.0)
+        assert_result(results[0], entities[0], 0, 33, EntityRecognizer.MAX_SCORE)
     
     def test_GR_iban_invalid_format_valid_checksum(self):
         iban = 'GR16 A110 1250 0000 0001 2300 695'
@@ -824,14 +825,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 18, 1.0)
+        assert_result(results[0], entities[0], 0, 18, EntityRecognizer.MAX_SCORE)
 
     def test_GL_iban_valid_with_spaces(self):
         iban = 'GL89 6471 0001 0002 06'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
     
     def test_GL_iban_invalid_format_valid_checksum(self):
         iban = 'GL89 A471 0001 0002 06'
@@ -852,14 +853,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_GT_iban_valid_with_spaces(self):
         iban = 'GT82 TRAJ 0102 0000 0012 1002 9690'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_GT_iban_invalid_format_valid_checksum(self):
         iban = 'GT82 TRAJ 0102 0000 0012 1002 9690 A'
@@ -880,14 +881,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_HU_iban_valid_with_spaces(self):
         iban = 'HU42 1177 3016 1111 1018 0000 0000'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_HU_iban_invalid_format_valid_checksum(self):
         iban = 'HU42 A177 3016 1111 1018 0000 0000'
@@ -908,14 +909,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, 1.0)
+        assert_result(results[0], entities[0], 0, 26, EntityRecognizer.MAX_SCORE)
 
     def test_IS_iban_valid_with_spaces(self):
         iban = 'IS14 0159 2600 7654 5510 7303 39'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 32, 1.0)
+        assert_result(results[0], entities[0], 0, 32, EntityRecognizer.MAX_SCORE)
     
     def test_IS_iban_invalid_format_valid_checksum(self):
         iban = 'IS14 A159 2600 7654 5510 7303 39'
@@ -936,14 +937,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_IE_iban_valid_with_spaces(self):
         iban = 'IE29 AIBK 9311 5212 3456 78'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_IE_iban_invalid_format_valid_checksum(self):
         iban = 'IE29 AIBK A311 5212 3456 78'
@@ -964,14 +965,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 23, 1.0)
+        assert_result(results[0], entities[0], 0, 23, EntityRecognizer.MAX_SCORE)
 
     def test_IL_iban_valid_with_spaces(self):
         iban = 'IL62 0108 0000 0009 9999 999'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
     
     def test_IL_iban_invalid_format_valid_checksum(self):
         iban = 'IL62 A108 0000 0009 9999 999'
@@ -992,14 +993,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
 
     def test_IT_iban_valid_with_spaces(self):
         iban = 'IT60 X054 2811 1010 0000 0123 456'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 33, 1.0)
+        assert_result(results[0], entities[0], 0, 33, EntityRecognizer.MAX_SCORE)
     
     def test_IT_iban_invalid_format_valid_checksum(self):
         iban = 'IT60 XW54 2811 1010 0000 0123 456'
@@ -1020,14 +1021,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 30, 1.0)
+        assert_result(results[0], entities[0], 0, 30, EntityRecognizer.MAX_SCORE)
 
     def test_JO_iban_valid_with_spaces(self):
         iban = 'JO94 CBJO 0010 0000 0000 0131 0003 02'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 37, 1.0)
+        assert_result(results[0], entities[0], 0, 37, EntityRecognizer.MAX_SCORE)
     
     def test_JO_iban_invalid_format_valid_checksum(self):
         iban = 'JO94 CBJO A010 0000 0000 0131 0003 02'
@@ -1048,14 +1049,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 20, 1.0)
+        assert_result(results[0], entities[0], 0, 20, EntityRecognizer.MAX_SCORE)
 
     def test_KZ_iban_valid_with_spaces(self):
         iban = 'KZ86 125K ZT50 0410 0100'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
     
     def test_KZ_iban_invalid_format_valid_checksum(self):
         iban = 'KZ86 A25K ZT50 0410 0100'
@@ -1076,14 +1077,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 20, 1.0)
+        assert_result(results[0], entities[0], 0, 20, EntityRecognizer.MAX_SCORE)
 
     def test_XK_iban_valid_with_spaces(self):
         iban = 'XK05 1212 0123 4567 8906'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
     
     def test_XK_iban_invalid_format_valid_checksum(self):
         iban = 'XK05 A212 0123 4567 8906'
@@ -1104,14 +1105,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 30, 1.0)
+        assert_result(results[0], entities[0], 0, 30, EntityRecognizer.MAX_SCORE)
 
     def test_KW_iban_valid_with_spaces(self):
         iban = 'KW81 CBKU 0000 0000 0000 1234 5601 01'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 37, 1.0)
+        assert_result(results[0], entities[0], 0, 37, EntityRecognizer.MAX_SCORE)
     
     def test_KW_iban_invalid_format_valid_checksum(self):
         iban = 'KW81 aBKU 0000 0000 0000 1234 5601 01'
@@ -1134,14 +1135,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 21, 1.0)
+        assert_result(results[0], entities[0], 0, 21, EntityRecognizer.MAX_SCORE)
 
     def test_LV_iban_valid_with_spaces(self):
         iban = 'LV80 BANK 0000 4351 9500 1'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, 1.0)
+        assert_result(results[0], entities[0], 0, 26, EntityRecognizer.MAX_SCORE)
     
     def test_LV_iban_invalid_format_valid_checksum(self):
         iban = 'LV80 bANK 0000 4351 9500 1'
@@ -1163,14 +1164,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_LB_iban_valid_with_spaces(self):
         iban = 'LB62 0999 0000 0001 0019 0122 9114'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_LB_iban_invalid_format_valid_checksum(self):
         iban = 'LB62 A999 0000 0001 0019 0122 9114'
@@ -1191,14 +1192,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 21, 1.0)
+        assert_result(results[0], entities[0], 0, 21, EntityRecognizer.MAX_SCORE)
 
     def test_LI_iban_valid_with_spaces(self):
         iban = 'LI21 0881 0000 2324 013A A'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, 1.0)
+        assert_result(results[0], entities[0], 0, 26, EntityRecognizer.MAX_SCORE)
     
     def test_LI_iban_invalid_format_valid_checksum(self):
         iban = 'LI21 A881 0000 2324 013A A'
@@ -1219,14 +1220,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 20, 1.0)
+        assert_result(results[0], entities[0], 0, 20, EntityRecognizer.MAX_SCORE)
 
     def test_LT_iban_valid_with_spaces(self):
         iban = 'LT12 1000 0111 0100 1000'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
     
     def test_LT_iban_invalid_format_valid_checksum(self):
         iban = 'LT12 A000 0111 0100 1000'
@@ -1247,14 +1248,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 20, 1.0)
+        assert_result(results[0], entities[0], 0, 20, EntityRecognizer.MAX_SCORE)
 
     def test_LU_iban_valid_with_spaces(self):
         iban = 'LU28 0019 4006 4475 0000'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
     
     def test_LU_iban_invalid_format_valid_checksum(self):
         iban = 'LU28 A019 4006 4475 0000'
@@ -1275,14 +1276,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 31, 1.0)
+        assert_result(results[0], entities[0], 0, 31, EntityRecognizer.MAX_SCORE)
 
     def test_MT_iban_valid_with_spaces(self):
         iban = 'MT84 MALT 0110 0001 2345 MTLC AST0 01S'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 38, 1.0)
+        assert_result(results[0], entities[0], 0, 38, EntityRecognizer.MAX_SCORE)
     
     def test_MT_iban_invalid_format_valid_checksum(self):
         iban = 'MT84 MALT A110 0001 2345 MTLC AST0 01S'
@@ -1303,14 +1304,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
 
     def test_MR_iban_valid_with_spaces(self):
         iban = 'MR13 0002 0001 0100 0012 3456 753'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 33, 1.0)
+        assert_result(results[0], entities[0], 0, 33, EntityRecognizer.MAX_SCORE)
     
     def test_MR_iban_invalid_format_valid_checksum(self):
         iban = 'MR13 A002 0001 0100 0012 3456 753'
@@ -1331,14 +1332,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 30, 1.0)
+        assert_result(results[0], entities[0], 0, 30, EntityRecognizer.MAX_SCORE)
 
     def test_MU_iban_valid_with_spaces(self):
         iban = 'MU17 BOMM 0101 1010 3030 0200 000M UR'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 37, 1.0)
+        assert_result(results[0], entities[0], 0, 37, EntityRecognizer.MAX_SCORE)
     
     def test_MU_iban_invalid_format_valid_checksum(self):
         iban = 'MU17 BOMM A101 1010 3030 0200 000M UR'
@@ -1359,14 +1360,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_MD_iban_valid_with_spaces(self):
         iban = 'MD24 AG00 0225 1000 1310 4168'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_MD_iban_invalid_format_valid_checksum(self):
         iban = 'MD24 AG00 0225 1000 1310 4168 9'
@@ -1387,14 +1388,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
 
     def test_MC_iban_valid_with_spaces(self):
         iban = 'MC58 1122 2000 0101 2345 6789 030'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 33, 1.0)
+        assert_result(results[0], entities[0], 0, 33, EntityRecognizer.MAX_SCORE)
     
     def test_MC_iban_invalid_format_valid_checksum(self):
         iban = 'MC58 A122 2000 0101 2345 6789 030'
@@ -1415,14 +1416,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_ME_iban_valid_with_spaces(self):
         iban = 'ME25 5050 0001 2345 6789 51'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_ME_iban_invalid_format_valid_checksum(self):
         iban = 'ME25 A050 0001 2345 6789 51'
@@ -1443,14 +1444,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 18, 1.0)
+        assert_result(results[0], entities[0], 0, 18, EntityRecognizer.MAX_SCORE)
 
     def test_NL_iban_valid_with_spaces(self):
         iban = 'NL91 ABNA 0417 1643 00'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
     
     def test_NL_iban_invalid_format_valid_checksum(self):
         iban = 'NL91 1BNA 0417 1643 00'
@@ -1471,14 +1472,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 19, 1.0)
+        assert_result(results[0], entities[0], 0, 19, EntityRecognizer.MAX_SCORE)
 
     def test_MK_iban_valid_with_spaces(self):
         iban = 'MK07 2501 2000 0058 984'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 23, 1.0)
+        assert_result(results[0], entities[0], 0, 23, EntityRecognizer.MAX_SCORE)
     
     def test_MK_iban_invalid_format_valid_checksum(self):
         iban = 'MK07 A501 2000 0058 984'
@@ -1499,14 +1500,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 15, 1.0)
+        assert_result(results[0], entities[0], 0, 15, EntityRecognizer.MAX_SCORE)
 
     def test_NO_iban_valid_with_spaces(self):
         iban = 'NO93 8601 1117 947'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 18, 1.0)
+        assert_result(results[0], entities[0], 0, 18, EntityRecognizer.MAX_SCORE)
     
     def test_NO_iban_invalid_format_valid_checksum(self):
         iban = 'NO93 A601 1117 947'
@@ -1527,14 +1528,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_PK_iban_valid_with_spaces(self):
         iban = 'PK36 SCBL 0000 0011 2345 6702'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_PK_iban_invalid_format_valid_checksum(self):
         iban = 'PK36 SCBL A000 0011 2345 6702'
@@ -1555,14 +1556,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
 
     def test_PS_iban_valid_with_spaces(self):
         iban = 'PS92 PALS 0000 0000 0400 1234 5670 2'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 36, 1.0)
+        assert_result(results[0], entities[0], 0, 36, EntityRecognizer.MAX_SCORE)
     
     def test_PS_iban_invalid_format_valid_checksum(self):
         iban = 'PS92 PALS A000 0000 0400 1234 5670 2'
@@ -1583,14 +1584,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
 
     def test_PL_iban_valid_with_spaces(self):
         iban = 'PL61 1090 1014 0000 0712 1981 2874'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 34, 1.0)
+        assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
     
     def test_PL_iban_invalid_format_valid_checksum(self):
         iban = 'PL61 A090 1014 0000 0712 1981 2874'
@@ -1611,14 +1612,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 25, 1.0)
+        assert_result(results[0], entities[0], 0, 25, EntityRecognizer.MAX_SCORE)
 
     def test_PT_iban_valid_with_spaces(self):
         iban = 'PT50 0002 0123 1234 5678 9015 4'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 31, 1.0)
+        assert_result(results[0], entities[0], 0, 31, EntityRecognizer.MAX_SCORE)
     
     def test_PT_iban_invalid_format_valid_checksum(self):
         iban = 'PT50 A002 0123 1234 5678 9015 4'
@@ -1639,14 +1640,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
 
     def test_QA_iban_valid_with_spaces(self):
         iban = 'QA58 DOHB 0000 1234 5678 90AB CDEF G'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 36, 1.0)
+        assert_result(results[0], entities[0], 0, 36, EntityRecognizer.MAX_SCORE)
     
     def test_QA_iban_invalid_format_valid_checksum(self):
         iban = 'QA58 0OHB 0000 1234 5678 90AB CDEF G'
@@ -1669,14 +1670,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_RO_iban_valid_with_spaces(self):
         iban = 'RO49 AAAA 1B31 0075 9384 0000'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_RO_iban_invalid_format_valid_checksum(self):
         iban = 'RO49 0AAA 1B31 0075 9384 0000'
@@ -1702,14 +1703,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
 
     def test_SM_iban_valid_with_spaces(self):
         iban = 'SM86 U032 2509 8000 0000 0270 100'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 33, 1.0)
+        assert_result(results[0], entities[0], 0, 33, EntityRecognizer.MAX_SCORE)
     
     def test_SM_iban_invalid_format_valid_checksum(self):
         iban = 'SM86 0032 2509 8000 0000 0270 100'
@@ -1732,14 +1733,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_SA_iban_valid_with_spaces(self):
         iban = 'SA03 8000 0000 6080 1016 7519'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_SA_iban_invalid_format_valid_checksum(self):
         iban = 'SA03 A000 0000 6080 1016 7519'
@@ -1760,14 +1761,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_RS_iban_valid_with_spaces(self):
         iban = 'RS35 2600 0560 1001 6113 79'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_RS_iban_invalid_format_valid_checksum(self):
         iban = 'RS35 A600 0560 1001 6113 79'
@@ -1788,14 +1789,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_RS_iban_valid_with_spaces(self):
         iban = 'SK31 1200 0000 1987 4263 7541'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_RS_iban_invalid_format_valid_checksum(self):
         iban = 'SK31 A200 0000 1987 4263 7541'
@@ -1816,14 +1817,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 19, 1.0)
+        assert_result(results[0], entities[0], 0, 19, EntityRecognizer.MAX_SCORE)
 
     def test_SI_iban_valid_with_spaces(self):
         iban = 'SI56 2633 0001 2039 086'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 23, 1.0)
+        assert_result(results[0], entities[0], 0, 23, EntityRecognizer.MAX_SCORE)
     
     def test_SI_iban_invalid_format_valid_checksum(self):
         iban = 'SI56 A633 0001 2039 086'
@@ -1844,14 +1845,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_ES_iban_valid_with_spaces(self):
         iban = 'ES91 2100 0418 4502 0005 1332'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_ES_iban_invalid_format_valid_checksum(self):
         iban = 'ES91 A100 0418 4502 0005 1332'
@@ -1872,14 +1873,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_SE_iban_valid_with_spaces(self):
         iban = 'SE45 5000 0000 0583 9825 7466'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_SE_iban_invalid_format_valid_checksum(self):
         iban = 'SE45 A000 0000 0583 9825 7466'
@@ -1900,14 +1901,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 21, 1.0)
+        assert_result(results[0], entities[0], 0, 21, EntityRecognizer.MAX_SCORE)
 
     def test_CH_iban_valid_with_spaces(self):
         iban = 'CH93 0076 2011 6238 5295 7'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, 1.0)
+        assert_result(results[0], entities[0], 0, 26, EntityRecognizer.MAX_SCORE)
     
     def test_CH_iban_invalid_format_valid_checksum(self):
         iban = 'CH93 A076 2011 6238 5295 7'
@@ -1928,14 +1929,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_TN_iban_valid_with_spaces(self):
         iban = 'TN59 1000 6035 1835 9847 8831'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_TN_iban_invalid_format_valid_checksum(self):
         iban = 'TN59 A000 6035 1835 9847 8831'
@@ -1956,14 +1957,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, 1.0)
+        assert_result(results[0], entities[0], 0, 26, EntityRecognizer.MAX_SCORE)
 
     def test_TR_iban_valid_with_spaces(self):
         iban = 'TR33 0006 1005 1978 6457 8413 26'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 32, 1.0)
+        assert_result(results[0], entities[0], 0, 32, EntityRecognizer.MAX_SCORE)
     
     def test_TR_iban_invalid_format_valid_checksum(self):
         iban = 'TR33 A006 1005 1978 6457 8413 26'
@@ -1984,14 +1985,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 23, 1.0)
+        assert_result(results[0], entities[0], 0, 23, EntityRecognizer.MAX_SCORE)
 
     def test_AE_iban_valid_with_spaces(self):
         iban = 'AE07 0331 2345 6789 0123 456'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, 1.0)
+        assert_result(results[0], entities[0], 0, 28, EntityRecognizer.MAX_SCORE)
     
     def test_AE_iban_invalid_format_valid_checksum(self):
         iban = 'AE07 A331 2345 6789 0123 456'
@@ -2012,14 +2013,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_GB_iban_valid_with_spaces(self):
         iban = 'GB29 NWBK 6016 1331 9268 19'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_GB_iban_invalid_format_valid_checksum(self):
         iban = 'GB29 1WBK 6016 1331 9268 19'
@@ -2040,14 +2041,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 22, 1.0)
+        assert_result(results[0], entities[0], 0, 22, EntityRecognizer.MAX_SCORE)
 
     def test_VA_iban_valid_with_spaces(self):
         iban = 'VA59 0011 2300 0012 3456 78'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 27, 1.0)
+        assert_result(results[0], entities[0], 0, 27, EntityRecognizer.MAX_SCORE)
     
     def test_VA_iban_invalid_format_valid_checksum(self):
         iban = 'VA59 A011 2300 0012 3456 78'
@@ -2068,14 +2069,14 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 24, 1.0)
+        assert_result(results[0], entities[0], 0, 24, EntityRecognizer.MAX_SCORE)
 
     def test_VG_iban_valid_with_spaces(self):
         iban = 'VG96 VPVG 0000 0123 4567 8901'
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 29, 1.0)
+        assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
     
     def test_VG_iban_invalid_format_valid_checksum(self):
         iban = 'VG96 VPVG A000 0123 4567 8901'

@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from assertions import assert_result, assert_result_within_score_range
 from analyzer.predefined_recognizers import SpacyRecognizer
+from analyzer.entity_recognizer import EntityRecognizer
 
 NER_STRENGTH = 0.85
 spacy_recognizer = SpacyRecognizer()
@@ -26,7 +27,7 @@ class TestSpacyRecognizer(TestCase):
         results = spacy_recognizer.analyze('{} {}'.format(context, name), entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[0], 11, 14, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[0], 11, 14, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def test_person_full_name(self):
         name = 'Dan Tailor'
@@ -41,7 +42,7 @@ class TestSpacyRecognizer(TestCase):
         results = spacy_recognizer.analyze('{} {}'.format(name, context), entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[0], 0, 11, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[0], 0, 11, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def test_person_last_name(self):
         name = 'Tailor'
@@ -66,8 +67,8 @@ class TestSpacyRecognizer(TestCase):
     #     results = spacy_recognizer.analyze('{} {}'.format(context, name), entities)
 
     #     assert len(results) == 2
-    #     assert_result_within_score_range(results[1], entities[1], 5, 12, NER_STRENGTH, 1)
-    #     assert_result_within_score_range(results[0], entities[0], 17, 23, NER_STRENGTH, 1)
+    #     assert_result_within_score_range(results[1], entities[1], 5, 12, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    #     assert_result_within_score_range(results[0], entities[0], 17, 23, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def test_person_full_middle_name(self):
         name = 'Richard Milhous Nixon'
@@ -105,7 +106,7 @@ class TestSpacyRecognizer(TestCase):
         results = spacy_recognizer.analyze('{} {}'.format(name, context), entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[0], 0, 7, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[0], 0, 7, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     # Bug #617 : Spacy Recognizer doesn't recognize Mr. May as PERSON even though online spacy demo indicates that it does
     # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
@@ -124,7 +125,7 @@ class TestSpacyRecognizer(TestCase):
     #     results = spacy_recognizer.analyze('{} {}'.format(context, name), entities)
 
     #     assert len(results) == 1
-    #     assert_result_within_score_range(results[0], entities[0], 17, 20, NER_STRENGTH, 1)
+    #     assert_result_within_score_range(results[0], entities[0], 17, 20, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
 #Test DATE_TIME Entity
     def test_date_time_year(self):
@@ -140,7 +141,7 @@ class TestSpacyRecognizer(TestCase):
         results = spacy_recognizer.analyze('{} {}'.format(context, date), entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[1], 19, 23, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[1], 19, 23, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     # Bug #617 : Spacy Recognizer doesn't recognize May as DATE_TIME even though online spacy demo indicates that it does
     # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
@@ -149,7 +150,7 @@ class TestSpacyRecognizer(TestCase):
     #     results = spacy_recognizer.analyze(date, entities)
 
     #     assert len(results) == 1
-    #     assert_result_within_score_range(results[0], entities[1], 0, 3, NER_STRENGTH, 1)
+    #     assert_result_within_score_range(results[0], entities[1], 0, 3, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
         
     def test_date_time_month_with_context(self):
         date = 'May'
@@ -157,14 +158,14 @@ class TestSpacyRecognizer(TestCase):
         results = spacy_recognizer.analyze('{} {}'.format(context, date), entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[1], 19, 22, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[1], 19, 22, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def test_date_time_day_in_month(self):
         date = 'May 1st'
         results = spacy_recognizer.analyze(date, entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[1], 0, 7, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[1], 0, 7, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
         
     def test_date_time_day_in_month_with_context(self):
         date = 'May 1st'
@@ -172,14 +173,14 @@ class TestSpacyRecognizer(TestCase):
         results = spacy_recognizer.analyze('{} {}'.format(context, date), entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[1], 19, 26, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[1], 19, 26, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def test_date_time_full_date(self):
         date = 'May 1st, 1977'
         results = spacy_recognizer.analyze(date, entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[1], 0, 13, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[1], 0, 13, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
         
     def test_date_time_day_in_month_with_context(self):
         date = 'May 1st, 1977'
@@ -187,4 +188,4 @@ class TestSpacyRecognizer(TestCase):
         results = spacy_recognizer.analyze('{} {}'.format(context, date), entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[1], 19, 32, NER_STRENGTH, 1)
+        assert_result_within_score_range(results[0], entities[1], 19, 32, NER_STRENGTH, EntityRecognizer.MAX_SCORE)

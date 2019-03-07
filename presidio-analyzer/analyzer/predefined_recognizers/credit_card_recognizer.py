@@ -1,5 +1,6 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
+from analyzer.entity_recognizer import EntityRecognizer
 
 REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'  # noqa: E501
 CONTEXT = [
@@ -32,9 +33,9 @@ class CreditCardRecognizer(PatternRecognizer):
         self.__sanitize_value(text)
         res = self.__luhn_checksum()
         if res == 0:
-            pattern_result.score = 1
+            pattern_result.score = EntityRecognizer.MAX_SCORE
         else:
-            pattern_result.score = 0
+            pattern_result.score = EntityRecognizer.MIN_SCORE
 
         return pattern_result
 
