@@ -91,7 +91,7 @@ func getExistingRecognizers() ([]types.PatternRecognizer, error) {
 	recognizersArr := make([]types.PatternRecognizer, 0)
 	existingItems, err := recognizersStore.Get(recognizersKey)
 	if err == nil && existingItems != "" {
-		log.Info("Found existing recognizers, appending...")
+		log.Info("Found existing recognizers...")
 		var recognizers []types.PatternRecognizer
 		err = json.Unmarshal([]byte(existingItems), &recognizers)
 		if err != nil {
@@ -131,10 +131,18 @@ func insertOrUpdateRecognizer(value string, isUpdate bool) error {
 	} else {
 		// Update, find and update
 		found := false
-		for _, element := range existingRecognizersArr {
+		for i, element := range existingRecognizersArr {
 			if element.Name == newRecognizer.Name {
 				found = true
-				element = newRecognizer
+
+				log.Info("Found recognizer to be updated")
+				// remove the 'old' value
+				existingRecognizersArr = append(existingRecognizersArr[:i],
+					existingRecognizersArr[i+1:]...)
+				// append the new one
+				existingRecognizersArr = append(existingRecognizersArr,
+					newRecognizer)
+				break
 			}
 		}
 		if found == false {

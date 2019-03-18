@@ -124,7 +124,7 @@ test-functional: docker-build
 	docker run --rm --name test-kafka -d -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=127.0.0.1 --env ADVERTISED_PORT=9092 spotify/kafka
 	docker run --rm --name test-redis --network testnetwork -d -p 6379:6379 redis
 	docker run --rm --name test-s3-emulator --network testnetwork -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock
-	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 $(DOCKER_REGISTRY)/presidio-analyzer:$(PRESIDIO_LABEL)
+	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 -e RECOGNIZERS_STORE_SVC_ADDRESS=test-presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-analyzer:$(PRESIDIO_LABEL)
 	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(PRESIDIO_LABEL)
 	docker run --rm --name test-presidio-anonymizer-image --network testnetwork -d -p 3002:3002 -e GRPC_PORT=3002 $(DOCKER_REGISTRY)/presidio-anonymizer-image:$(PRESIDIO_LABEL)
 	docker run --rm --name test-presidio-ocr --network testnetwork -d -p 3003:3003 -e GRPC_PORT=3003 $(DOCKER_REGISTRY)/presidio-ocr:$(PRESIDIO_LABEL)
