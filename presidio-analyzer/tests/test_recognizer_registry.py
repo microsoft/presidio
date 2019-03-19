@@ -42,7 +42,7 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
         if skip_timestamp_update:
             return
 
-        # making sure there is a time difference (when the test run so fast two
+        # making sure there is a time difference (the test run so fast two
         # sequential operations are with the same timestamp
         time.sleep(1)
         self.latest_timestamp = int(time.time())
@@ -52,7 +52,7 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
         for i in self.recognizers:
             if i.name == name:
                 self.recognizers.remove(i)
-        # making sure there is a time difference (when the test run so fast two
+        # making sure there is a time difference (the test run so fast two
         # sequential operations are with the same timestamp
         time.sleep(1)
         self.latest_timestamp = int(time.time())

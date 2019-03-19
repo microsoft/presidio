@@ -126,13 +126,13 @@ func setupHTTPServer(port int, loglevel string) {
 		}
 
 		// recognizers group
-		// /api/v1/recognizers
+		// /api/v1/analyzer/recognizers
 		recognizers := v1.Group("/analyzer/recognizers")
 		{
 			// Get an existing recognizer
 			recognizers.GET(":id", getRecognizer)
 
-			// Get all existing recognizer
+			// Get all existing recognizers
 			recognizers.GET("/", getAllRecognizers)
 
 			// Insert a new recognizer

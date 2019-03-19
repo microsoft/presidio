@@ -12,8 +12,11 @@ import (
 	types "github.com/Microsoft/presidio-genproto/golang"
 )
 
-// TestAddRecognizerAndAnalyze add a new custom recognizer and then use it to
+// TestAddRecognizerAndAnalyze tests the custom recognizers logic.
+// 1) It add a new custom recognizer and then use it to
 // to analyze text
+// 2) Updates the recognizer and verify the new version is used
+// 3) Delete the recognizer and verify the results
 func TestAddRecognizerAndAnalyze(t *testing.T) {
 	// Add a custom recognizer and use it
 	payload := generatePayload("new-custom-pattern-recognizer.json")

@@ -39,6 +39,8 @@ class RecognizerStoreApi:
         except grpc.RpcError:
             logging.info("Failed to get timestamp")
             return 0
+
+        logging.info("Latest timestamp found in store is: %d", lst_update)
         return lst_update
 
     def get_all_recognizers(self):

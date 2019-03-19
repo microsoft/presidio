@@ -201,8 +201,6 @@ func applyGetAll(r *types.RecognizersGetAllRequest) (*types.RecognizersGetRespon
 	}
 
 	if err == nil && itemsStr != "" {
-		log.Info("Preparing result to be returned")
-
 		var items []types.PatternRecognizer
 		var res []*types.PatternRecognizer
 		byteItems := []byte(itemsStr)
@@ -249,21 +247,20 @@ func applyDelete(r *types.RecognizerDeleteRequest) (*types.RecognizersStoreRespo
 	found := false
 	for i, element := range existingRecognizersArr {
 		if element.Name == r.Name {
-			log.Info("Found it...")
+			log.Info("Found recognizer '" + r.Name + "'. Deleting")
 			found = true
 			existingRecognizersArr = append(existingRecognizersArr[:i],
 				existingRecognizersArr[i+1:]...)
 		}
 	}
 	if found == false {
-		notFoundErrMsg := "Relevant item was not found"
+		notFoundErrMsg := "Failed to find recognizer '" + r.Name + "'"
 		log.Error(notFoundErrMsg)
 		return nil, errors.New(notFoundErrMsg)
 	}
 
 	recognizersBytes, _ := json.Marshal(existingRecognizersArr)
 	currentTimeStr := strconv.FormatInt(time.Now().Unix(), 10)
-
 	return &types.RecognizersStoreResponse{},
 		setValue(string(recognizersBytes), currentTimeStr)
 }

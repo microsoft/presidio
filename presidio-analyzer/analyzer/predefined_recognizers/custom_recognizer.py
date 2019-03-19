@@ -5,8 +5,8 @@ from analyzer.pattern_recognizer import PatternRecognizer
 
 class CustomRecognizer(PatternRecognizer):
     """
-    A genereic regex based, pattern recognizer, initiated to hold customer
-    custom regonizers which are uploaded using a dedicated API
+    A genereic regex based, pattern recognizer, each instance holds one
+    pattern recognizer (which are managed via a dedicated API)
     """
 
     def __init__(self, name, patterns, entity, language, black_list,

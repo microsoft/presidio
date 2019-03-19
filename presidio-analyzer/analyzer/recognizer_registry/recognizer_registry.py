@@ -125,7 +125,7 @@ class RecognizerRegistry:
                 self.loaded_custom_recognizers = []
                 # read all values
                 logging.info(
-                    "Requesting custom recognizers from persistent storage...")
+                    "Requesting custom recognizers from the storage...")
 
                 raw_recognizers = self.store_api.get_all_recognizers()
                 if raw_recognizers is None or len(raw_recognizers) == 0:
@@ -133,6 +133,8 @@ class RecognizerRegistry:
                         "No custom recognizers found")
                     return []
 
+                logging.info(
+                    "Found %d recognizers in the storage", len(raw_recognizers))
                 self.loaded_custom_recognizers = raw_recognizers
 
         return self.loaded_custom_recognizers
