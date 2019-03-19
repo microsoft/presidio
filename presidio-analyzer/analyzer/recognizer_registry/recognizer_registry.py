@@ -134,7 +134,8 @@ class RecognizerRegistry:
                     return []
 
                 logging.info(
-                    "Found %d recognizers in the storage", len(raw_recognizers))
+                    "Found %d recognizers in the storage",
+                    len(raw_recognizers))
                 self.loaded_custom_recognizers = raw_recognizers
 
         return self.loaded_custom_recognizers
