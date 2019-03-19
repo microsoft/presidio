@@ -53,7 +53,7 @@ class PatternRecognizer(LocalRecognizer):
     def analyze(self, text, entities):
         results = []
 
-        if len(self.patterns) > 0:
+        if self.patterns:
             pattern_result = self.__analyze_patterns(text)
 
             if pattern_result:
@@ -105,8 +105,10 @@ class PatternRecognizer(LocalRecognizer):
                 text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
             match_time = datetime.datetime.now() - match_start_time
-            self.logger.debug('--- match_time[{}]: {}.{} seconds'.format(
-                pattern.name, match_time.seconds, match_time.microseconds))
+            self.logger.debug('--- match_time[%s]: %s.%s seconds',
+                              pattern.name,
+                              match_time.seconds,
+                              match_time.microseconds)
 
             for match in matches:
                 start, end = match.span()
@@ -132,10 +134,12 @@ class PatternRecognizer(LocalRecognizer):
         return_dict["black_list"] = self.black_list
         return_dict["context"] = self.context
         return_dict["supported_entity"] = return_dict["supported_entities"][0]
+        # pylint: disable=superfluous-parens
         del (return_dict["supported_entities"])
 
         return return_dict
 
+    # pylint: disable=arguments-differ
     @classmethod
     def from_dict(cls, pattern_recognizer_dict):
         patterns = pattern_recognizer_dict.get("patterns")

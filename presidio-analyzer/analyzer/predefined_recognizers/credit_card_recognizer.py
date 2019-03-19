@@ -1,6 +1,7 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
+# pylint: disable=line-too-long
 REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'  # noqa: E501
 CONTEXT = [
     "credit",
@@ -28,8 +29,8 @@ class CreditCardRecognizer(PatternRecognizer):
         super().__init__(supported_entity="CREDIT_CARD", patterns=patterns,
                          context=CONTEXT)
 
-    def validate_result(self, text, pattern_result):
-        self.__sanitize_value(text)
+    def validate_result(self, pattern_text, pattern_result):
+        self.__sanitize_value(pattern_text)
         res = self.__luhn_checksum()
         if res == 0:
             pattern_result.score = 1
@@ -51,5 +52,6 @@ class CreditCardRecognizer(PatternRecognizer):
             checksum += sum(digits_of(d * 2))
         return checksum % 10
 
+    #  pylint: disable=attribute-defined-outside-init
     def __sanitize_value(self, text):
         self.sanitized_value = text.replace('-', '').replace(' ', '')
