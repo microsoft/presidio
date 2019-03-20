@@ -1,14 +1,14 @@
 registry: presidio.azurecr.io
 
 # Image pull secret
-#privateRegistry: acr-auth
+privateRegistry: acr-auth
 tag: latest
 
 redis:
-    url: redis-master.presidio-system.svc.cluster.local:6379
-    #password:
-    #db: 0
-    #ssl: false
+  master:
+    service:
+      port: 6379
+  usePassword: false
 
 api:
   name: presidio-api

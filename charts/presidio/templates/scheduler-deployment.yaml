@@ -34,7 +34,7 @@ spec:
           - name: GRPC_PORT
             value: {{ .Values.scheduler.service.internalPort | quote }}
           - name: REDIS_URL
-            value: {{ .Values.redis.url }}
+            value: {{ template "redis.address" . }}
           - name: REDIS_PASSWORD
             value: {{ .Values.redis.password | default "" }}
           - name: REDIS_DB

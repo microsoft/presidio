@@ -43,7 +43,7 @@ spec:
           - name: WEB_PORT
             value: {{ .Values.api.service.internalPort | quote }}
           - name: REDIS_URL
-            value: {{ .Values.redis.url }}
+            value: {{ template "redis.address" . }}
           - name: REDIS_PASSWORD
             value: {{ .Values.redis.password | default "" }}
           - name: REDIS_DB

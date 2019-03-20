@@ -34,6 +34,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ include "presidio.fullname" . | printf "%s-scheduler" }}
 {{- end -}}
 
+{{- define "redis.fullname" -}}
+{{- printf "%s-%s" .Release.Name "redis-internal" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
 {{- define "presidio.analyzer.address" -}}
 {{template "presidio.analyzer.fullname" .}}:{{.Values.analyzer.service.externalPort}}
 {{- end -}}
@@ -52,6 +56,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "presidio.scheduler.address" -}}
 {{template "presidio.scheduler.fullname" .}}:{{.Values.scheduler.service.externalPort}}
+{{- end -}}
+
+{{- define "redis.address" -}}
+{{template "redis.fullname" .}}{{ printf "-master.%s.svc.cluster.local" .Release.Namespace }}:{{.Values.redis.master.service.port}}
 {{- end -}}
 
 {{- define "presidio.rbac.version" }}rbac.authorization.k8s.io/v1beta1{{ end -}}
