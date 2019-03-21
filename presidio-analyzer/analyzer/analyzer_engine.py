@@ -67,7 +67,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     @classmethod
     def get_language_from_request(cls, request):
-        language = request.analyzeTemplate.languageCode
+        language = request.analyzeTemplate.language
         if language is None or language == "":
             language = DEFAULT_LANGUAGE
         return language
