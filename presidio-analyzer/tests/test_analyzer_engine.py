@@ -7,7 +7,7 @@ from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
 from analyzer.analyze_pb2 import AnalyzeRequest
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer
+    UsPhoneRecognizer, DomainRecognizer
 
 
 class MockRecognizerRegistry(RecognizerRegistry):
@@ -16,7 +16,8 @@ class MockRecognizerRegistry(RecognizerRegistry):
         # Task #598:  Support loading of the pre-defined recognizers
         # from the given path.
         self.recognizers.extend([CreditCardRecognizer(),
-                                 UsPhoneRecognizer()])
+                                 UsPhoneRecognizer(),
+                                 DomainRecognizer()])
 
 
 class TestAnalyzerEngine(TestCase):
@@ -144,7 +145,7 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
         request = AnalyzeRequest()
-        request.analyzeTemplate.languageCode = 'en'
+        request.analyzeTemplate.language = 'en'
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
@@ -157,10 +158,20 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
         request = AnalyzeRequest()
-        request.analyzeTemplate.languageCode = ''
+        request.analyzeTemplate.language = ''
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
         request.text = "My credit card number is 4916994465041084"
         response = analyze_engine.Apply(request, None)
         assert response.analyzeResults is not None
+
+    def test_when_allFields_is_true_return_all_fields(self):
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        request = AnalyzeRequest()
+        request.analyzeTemplate.allFields = True
+        request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
+                   "Domain: microsoft.com"
+        response = analyze_engine.Apply(request, None)
+        assert response.analyzeResults is not None
+        assert len(response.analyzeResults) is 3

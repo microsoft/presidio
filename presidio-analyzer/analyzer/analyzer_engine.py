@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -66,8 +67,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         return response
 
     @classmethod
-    def get_language_from_request(cls, request):
-        language = request.analyzeTemplate.languageCode
+    def get_language_from_request(request):
+        language = request.analyzeTemplate.language
         if language is None or language == "":
             language = DEFAULT_LANGUAGE
         return language
