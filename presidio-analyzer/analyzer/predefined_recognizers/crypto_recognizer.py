@@ -2,10 +2,8 @@ from hashlib import sha256
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
-# pylint: disable=pointless-string-statement
-"""Copied from:
-  http://rosettacode.org/wiki/Bitcoin/address_validation#Python
-"""
+# Copied from:
+# http://rosettacode.org/wiki/Bitcoin/address_validation#Python
 REGEX = r'\b[13][a-km-zA-HJ-NP-Z0-9]{26,33}\b'
 CONTEXT = ["wallet", "btc", "bitcoin", "crypto"]
 

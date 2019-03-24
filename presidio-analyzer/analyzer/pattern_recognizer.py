@@ -134,17 +134,15 @@ class PatternRecognizer(LocalRecognizer):
         return_dict["black_list"] = self.black_list
         return_dict["context"] = self.context
         return_dict["supported_entity"] = return_dict["supported_entities"][0]
-        # pylint: disable=superfluous-parens
-        del (return_dict["supported_entities"])
+        del return_dict["supported_entities"]
 
         return return_dict
 
-    # pylint: disable=arguments-differ
     @classmethod
-    def from_dict(cls, pattern_recognizer_dict):
-        patterns = pattern_recognizer_dict.get("patterns")
+    def from_dict(cls, entity_recognizer_dict):
+        patterns = entity_recognizer_dict.get("patterns")
         if patterns:
             patterns_list = [Pattern.from_dict(pat) for pat in patterns]
-            pattern_recognizer_dict['patterns'] = patterns_list
+            entity_recognizer_dict['patterns'] = patterns_list
 
-        return cls(**pattern_recognizer_dict)
+        return cls(**entity_recognizer_dict)

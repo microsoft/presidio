@@ -25,6 +25,7 @@ class CreditCardRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
+        self.sanitized_value = ""
         patterns = [Pattern('All Credit Cards (weak)', REGEX, 0.3)]
         super().__init__(supported_entity="CREDIT_CARD", patterns=patterns,
                          context=CONTEXT)
@@ -52,6 +53,5 @@ class CreditCardRecognizer(PatternRecognizer):
             checksum += sum(digits_of(d * 2))
         return checksum % 10
 
-    #  pylint: disable=attribute-defined-outside-init
     def __sanitize_value(self, text):
         self.sanitized_value = text.replace('-', '').replace(' ', '')
