@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -51,9 +50,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def Apply(self, request, context):
         logging.info("Starting Apply")
-        entities = self.__convert_fields_to_entities(request.analyzeTemplate.fields)
+        entities = self.__convert_fields_to_entities(
+            request.analyzeTemplate.fields)
         language = self.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language, request.analyzeTemplate.allFields)
+        results = self.analyze(request.text, entities, language,
+                               request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
@@ -76,7 +77,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :param text: the text to analyze
         :param entities: the text to search
         :param language: the language of the text
-        :param all_fields: a Flag to return all fields of the requested language
+        :param all_fields: a Flag to return all fields
+        of the requested language
         :return: an array of the found entities in the text
         """
         recognizers = self.registry.get_recognizers(language=language,
