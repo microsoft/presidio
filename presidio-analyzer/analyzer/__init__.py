@@ -12,6 +12,7 @@ from analyzer.local_recognizer import LocalRecognizer  # noqa: F401
 from analyzer.recognizer_result import RecognizerResult  # noqa: F401
 from analyzer.pattern_recognizer import PatternRecognizer  # noqa: F401
 from analyzer.remote_recognizer import RemoteRecognizer  # noqa: F401
-from analyzer.recognizer_registry.recognizer_registry \
-    import RecognizerRegistry  # noqa
+from analyzer.recognizer_registry.recognizer_registry import (  # noqa: F401
+    RecognizerRegistry
+)
 from analyzer.analyzer_engine import AnalyzerEngine  # noqa
