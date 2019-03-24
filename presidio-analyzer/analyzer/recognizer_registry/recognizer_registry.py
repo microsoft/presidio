@@ -104,4 +104,3 @@ class RecognizerRegistry:
                 "No matching recognizers were found to serve the request.")
 
         return to_return
-
