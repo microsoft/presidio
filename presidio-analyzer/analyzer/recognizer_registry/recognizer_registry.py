@@ -63,57 +63,43 @@ class RecognizerRegistry:
         if not found:
             raise ValueError("Requested recognizer was not found")
 
-    def get_recognizers(self, entities, language):
+    def get_recognizers(self, language, entities=None, all_fields=False):
         """
         Returns a list of the recognizer, which supports the specified name and
         language.
         :param entities: the requested entities
         :param language: the requested language
+        :param all_fields: a flag to return all fields of the requested language.
         :return: A list of the recognizers which supports the supplied entities
         and language
         """
         if language is None:
             raise ValueError("No language provided")
 
-        if entities is None:
+        if entities is None and all_fields is False:
             raise ValueError("No entities provided")
 
         to_return = []
-        for entity in entities:
-            subset = [rec for rec in self.recognizers if
-                      entity in rec.supported_entities
-                      and language == rec.supported_language]
+        if all_fields:
+            to_return = [rec for rec in self.recognizers if
+                         language == rec.supported_language]
+        else:
+            for entity in entities:
+                subset = [rec for rec in self.recognizers if
+                          entity in rec.supported_entities
+                          and language == rec.supported_language]
 
-            if len(subset) == 0:
-                logging.warning(
-                    "Entity " + entity +
-                    " doesn't have the corresponding recognizer in language :"
-                    + language)
-            else:
-                to_return.extend(subset)
-
-        if len(to_return) == 0:
-            raise ValueError(
-                "No matching recognizers were found to serve the request.")
-
-        return to_return
-
-    def get_all_recognizers_by_language(self, language):
-        """
-        Returns a list of all recognizers, which supports the specified language.
-        You must specify a language.
-        :param language: the requested language
-        :return: A list of the recognizers
-        """
-
-        if language is None:
-            raise ValueError("No language provided")
-
-        to_return = [rec for rec in self.recognizers if
-                     language == rec.supported_language]
+                if len(subset) == 0:
+                    logging.warning(
+                        "Entity " + entity +
+                        " doesn't have the corresponding recognizer in language :"
+                        + language)
+                else:
+                    to_return.extend(subset)
 
         if len(to_return) == 0:
             raise ValueError(
                 "No matching recognizers were found to serve the request.")
 
         return to_return
+
