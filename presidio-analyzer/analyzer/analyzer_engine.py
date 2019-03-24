@@ -82,11 +82,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :param all_fields: a Flag to return all fields of the requested language
         :return: an array of the found entities in the text
         """
-        if all_fields:
-            recognizers = self.registry.get_all_recognizers_by_language(language=language)
-        else:
-            recognizers = self.registry.get_recognizers(language=language,
-                                                        entities=entities)
+        recognizers = self.registry.get_recognizers(language=language,
+                                                    entities=entities,
+                                                    all_fields=all_fields)
         results = []
 
         for recognizer in recognizers:
