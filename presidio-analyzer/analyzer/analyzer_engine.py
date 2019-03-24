@@ -54,7 +54,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language)
+        results = self.analyze(request.text, entities, language, request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
@@ -72,17 +72,21 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, text, entities, language):
+    def analyze(self, text, entities, language, all_fields=False):
         """
         analyzes the requested text, searching for the given entities
          in the given language
         :param text: the text to analyze
         :param entities: the text to search
         :param language: the language of the text
+        :param all_fields: a Flag to return all fields of the requested language
         :return: an array of the found entities in the text
         """
-        recognizers = self.registry.get_recognizers(language=language,
-                                                    entities=entities)
+        if all_fields:
+            recognizers = self.registry.get_all_recognizers_by_language(language=language)
+        else:
+            recognizers = self.registry.get_recognizers(language=language,
+                                                        entities=entities)
         results = []
 
         for recognizer in recognizers:
