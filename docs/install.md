@@ -33,20 +33,15 @@ $ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB
 ### Installation
 
 1. Install [Helm](https://github.com/kubernetes/helm) with [RBAC](https://github.com/kubernetes/helm/blob/master/docs/rbac.md#tiller-and-role-based-access-control)
+ ```
 
-2. Install [Redis](https://hub.kubeapps.com/charts/stable/redis) (Cache for storage and database scanners)
-
-    ```sh
-    $ helm install --name redis stable/redis --set usePassword=false,rbac.create=true --namespace presidio-system
-    ```
-
-3. Optional - Ingress controller for presidio API.
+2. Optional - Ingress controller for presidio API.
     - [Traefik](https://docs.traefik.io/user-guide/kubernetes/)
     - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
 
-4. Verify that Redis and Traefik/NGINX are installed correctly
+3. Verify that Traefik/NGINX are installed correctly
 
-5. Deploy from `/charts/presidio`
+4. Deploy from `/charts/presidio`
 
     ```sh
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps

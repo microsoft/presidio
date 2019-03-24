@@ -10,7 +10,7 @@ You will need to configure the scan's input and the destination to which the ana
 1. Retrieves all new items in the provided storage.
 2. Analyzes/anonymizes these new items.
 3. Outputs the data into a configured destination.
-4. Marks the items as scanned using a Redis cache.
+4. Marks the items as scanned using a Redis cache (installed implicitly with Presidio).
 
 ## Job Configuration
 

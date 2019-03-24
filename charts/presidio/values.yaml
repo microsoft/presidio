@@ -4,6 +4,8 @@ registry: presidio.azurecr.io
 privateRegistry: acr-auth
 tag: latest
 
+# Redis cluster to be used both as a persistent storage for configuration values
+# and as a cache layer
 redis:
   master:
     service:
