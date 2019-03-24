@@ -70,7 +70,7 @@ class RecognizerRegistry:
         language.
         :param entities: the requested entities
         :param language: the requested language
-        :param all_fields: a flag to return all fields of the requested language.
+        :param all_fields: a flag to return all fields of a requested language.
         :return: A list of the recognizers which supports the supplied entities
         and language
         """
@@ -93,7 +93,8 @@ class RecognizerRegistry:
                 if len(subset) == 0:
                     logging.warning(
                         "Entity " + entity +
-                        " doesn't have the corresponding recognizer in language :"
+                        " doesn't have the corresponding " +
+                        "recognizer in language :"
                         + language)
                 else:
                     to_return.extend(subset)
@@ -103,4 +104,3 @@ class RecognizerRegistry:
                 "No matching recognizers were found to serve the request.")
 
         return to_return
-
