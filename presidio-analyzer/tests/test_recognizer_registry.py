@@ -27,7 +27,7 @@ class TestRecognizerRegistry(TestCase):
 
     def test_get_recognizers_all(self):
         registry = self.get_mock_recognizer_registry()
-        recognizers = registry.get_all_recognizers_by_language(language='de')
+        recognizers = registry.get_recognizers(language='de',all_fields=True)
         assert len(recognizers) == 2
 
     def test_get_recognizers_one_language_one_entity(self):
