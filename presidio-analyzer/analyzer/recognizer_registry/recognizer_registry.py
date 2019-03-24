@@ -64,19 +64,15 @@ class RecognizerRegistry:
         if not found:
             raise ValueError("Requested recognizer was not found")
 
-    def get_recognizers(self, entities=None, language=None):
+    def get_recognizers(self, entities, language):
         """
         Returns a list of the recognizer, which supports the specified name and
-        language. if no language and entities are given, all the available
-        recognizers will be returned
+        language.
         :param entities: the requested entities
         :param language: the requested language
         :return: A list of the recognizers which supports the supplied entities
         and language
         """
-        if language is None and entities is None:
-            return self.recognizers
-
         if language is None:
             raise ValueError("No language provided")
 
