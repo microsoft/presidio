@@ -105,22 +105,3 @@ class RecognizerRegistry:
 
         return to_return
 
-    def get_all_recognizers_by_language(self, language):
-        """
-        Returns a list of all recognizers, which supports the specified language.
-        You must specify a language.
-        :param language: the requested language
-        :return: A list of the recognizers
-        """
-
-        if language is None:
-            raise ValueError("No language provided")
-
-        to_return = [rec for rec in self.recognizers if
-                     language == rec.supported_language]
-
-        if len(to_return) == 0:
-            raise ValueError(
-                "No matching recognizers were found to serve the request.")
-
-        return to_return
