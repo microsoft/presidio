@@ -24,13 +24,6 @@ spec:
         imagePullPolicy: {{ default "IfNotPresent" .Values.recognizersstore.imagePullPolicy }}
         ports:
         - containerPort: {{ .Values.recognizersstore.service.internalPort }}
-        resources:
-          requests:
-            memory: "1500Mi"
-            cpu: "1500m"
-          limits:
-            memory: "3000Mi"
-            cpu: "2000m"
         env:
           - name: PRESIDIO_NAMESPACE
             valueFrom:

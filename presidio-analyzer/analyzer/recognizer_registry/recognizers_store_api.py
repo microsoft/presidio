@@ -5,7 +5,7 @@ import grpc
 import recognizers_store_pb2
 import recognizers_store_pb2_grpc
 
-from analyzer.predefined_recognizers import CustomRecognizer
+from analyzer import PatternRecognizer
 from analyzer import Pattern
 
 
@@ -49,7 +49,15 @@ class RecognizerStoreApi:
         recognizers stored in the underlying store
         """
         req = recognizers_store_pb2.RecognizersGetAllRequest()
-        raw_recognizers = self.rs_stub.ApplyGetAll(req).recognizers
+        raw_recognizers = []
+
+        try:
+            raw_recognizers = self.rs_stub.ApplyGetAll(req).recognizers
+
+        except grpc.RpcError:
+            logging.info("Failed getting recognizers from the remote store. \
+            Returning an empty list")
+            return raw_recognizers
 
         custom_recognizers = []
         for new_recognizer in raw_recognizers:
@@ -57,10 +65,10 @@ class RecognizerStoreApi:
             for pat in new_recognizer.patterns:
                 patterns.extend(
                     [Pattern(pat.name, pat.regex, pat.score)])
-            new_custom_recognizer = CustomRecognizer(
+            new_custom_recognizer = PatternRecognizer(
                 name=new_recognizer.name,
-                entity=new_recognizer.entity,
-                language=new_recognizer.language,
+                supported_entity=new_recognizer.entity,
+                supported_language=new_recognizer.language,
                 black_list=new_recognizer.blacklist,
                 context=new_recognizer.contextPhrases,
                 patterns=patterns)

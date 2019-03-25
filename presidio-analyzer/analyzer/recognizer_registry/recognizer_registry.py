@@ -1,9 +1,7 @@
 import time
 import logging
 
-from analyzer.recognizer_registry.recognizers_store_api \
-    import RecognizerStoreApi  # noqa: F401
-
+from analyzer.recognizer_registry import RecognizerStoreApi
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     SpacyRecognizer, CryptoRecognizer, DomainRecognizer, \
     EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, \
@@ -64,9 +62,16 @@ class RecognizerRegistry:
         if entities is None:
             raise ValueError("No entities provided")
 
+        all_possible_recognizers = self.recognizers.copy()
+        custom_recognizers = self.get_custom_recognizers()
+        all_possible_recognizers.extend(custom_recognizers)
+        logging.info("Found %d (total) custom recognizers",
+                     len(custom_recognizers))
+
+        # filter out unwanted recognizers
         to_return = []
         for entity in entities:
-            subset = [rec for rec in self.recognizers if
+            subset = [rec for rec in all_possible_recognizers if
                       entity in rec.supported_entities
                       and language == rec.supported_language]
 
@@ -77,16 +82,6 @@ class RecognizerRegistry:
                     + language)
             else:
                 to_return.extend(subset)
-
-        logging.info("Found %d predefined recognizers", len(to_return))
-        custom = self.get_custom_recognizers()
-        logging.info("Found %d (total) custom recognizers", len(custom))
-        for entity in entities:
-            subset_custom = [rec for rec in custom if
-                             entity in rec.supported_entities
-                             and language == rec.supported_language]
-            if subset_custom:
-                to_return.extend(subset_custom)
 
         logging.info(
             "Returning a total of %d recognizers (predefined + custom)",

@@ -9,7 +9,7 @@ from analyzer.analyze_pb2 import AnalyzeRequest
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer, CustomRecognizer
+    UsPhoneRecognizer
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
 
@@ -33,11 +33,11 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
         patterns = []
         for pat in new_recognizer.patterns:
             patterns.extend([Pattern(pat.name, pat.regex, pat.score)])
-        new_custom_recognizer = CustomRecognizer(name=new_recognizer.name, entity=new_recognizer.supported_entities[0],
-                                                 language=new_recognizer.supported_language,
-                                                 black_list=new_recognizer.black_list,
-                                                 context=new_recognizer.context,
-                                                 patterns=patterns)
+        new_custom_recognizer = PatternRecognizer(name=new_recognizer.name, supported_entity=new_recognizer.supported_entities[0],
+                                                  supported_language=new_recognizer.supported_language,
+                                                  black_list=new_recognizer.black_list,
+                                                  context=new_recognizer.context,
+                                                  patterns=patterns)
         self.recognizers.append(new_custom_recognizer)
 
         if skip_timestamp_update:

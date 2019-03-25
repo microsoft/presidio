@@ -12,8 +12,8 @@ import (
 // store service
 func InsertRecognizer(ctx context.Context,
 	api *store.API,
-	request *types.RecognizerInsertOrUpdateRequest) (
-	*types.RecognizersStoreResponse, error) {
+	request *types.RecognizerInsertOrUpdateRequest,
+) (*types.RecognizersStoreResponse, error) {
 	return api.Services.InsertRecognizer(ctx, request.Value)
 }
 
@@ -21,8 +21,8 @@ func InsertRecognizer(ctx context.Context,
 // store service
 func UpdateRecognizer(ctx context.Context,
 	api *store.API,
-	request *types.RecognizerInsertOrUpdateRequest) (
-	*types.RecognizersStoreResponse, error) {
+	request *types.RecognizerInsertOrUpdateRequest,
+) (*types.RecognizersStoreResponse, error) {
 	return api.Services.UpdateRecognizer(ctx, request.Value)
 }
 
@@ -30,8 +30,8 @@ func UpdateRecognizer(ctx context.Context,
 // store service
 func DeleteRecognizer(ctx context.Context,
 	api *store.API,
-	request *types.RecognizerDeleteRequest) (
-	*types.RecognizersStoreResponse, error) {
+	request *types.RecognizerDeleteRequest,
+) (*types.RecognizersStoreResponse, error) {
 	return api.Services.DeleteRecognizer(ctx, request.Name)
 }
 
@@ -39,8 +39,8 @@ func DeleteRecognizer(ctx context.Context,
 // store service
 func GetRecognizer(ctx context.Context,
 	api *store.API,
-	request *types.RecognizerGetRequest) (
-	*types.RecognizersGetResponse, error) {
+	request *types.RecognizerGetRequest,
+) (*types.RecognizersGetResponse, error) {
 	return api.Services.GetRecognizer(ctx, request.Name)
 }
 
@@ -48,15 +48,15 @@ func GetRecognizer(ctx context.Context,
 // store service
 func GetAllRecognizers(ctx context.Context,
 	api *store.API,
-	request *types.RecognizersGetAllRequest) (
-	*types.RecognizersGetResponse, error) {
+	request *types.RecognizersGetAllRequest,
+) (*types.RecognizersGetResponse, error) {
 	return api.Services.GetAllRecognizers(ctx)
 }
 
 // GetUpdateTimeStamp returns the timestamp when the store was changed
 func GetUpdateTimeStamp(ctx context.Context,
 	api *store.API,
-	request *types.RecognizerGetTimestampRequest) (
-	*types.RecognizerTimestampResponse, error) {
+	request *types.RecognizerGetTimestampRequest,
+) (*types.RecognizerTimestampResponse, error) {
 	return api.Services.GetUpdateTimeStamp(ctx)
 }
