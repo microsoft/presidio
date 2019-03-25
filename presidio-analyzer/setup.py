@@ -14,8 +14,8 @@ setuptools.setup(
         'analyzer', 'analyzer.predefined_recognizers'
     ],
     install_requires=[
-        'grpcio>=1.13.0', 'cython>=0.28.5', 'protobuf>=3.6.0',
-        'tldextract>=2.2.0', 'knack>=0.4.2', 'spacy==2.0.17'
+        'grpcio==1.13.0', 'cython==0.28.5', 'protobuf==3.6.0',
+        'tldextract==2.2.0', 'knack==0.4.2', 'spacy==2.0.17'
     ],
     include_package_data=True,
     license='MIT',
