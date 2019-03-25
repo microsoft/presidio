@@ -5,9 +5,6 @@ import json
 import hashlib
 import time
 import pytest
-import gc
-
-import analyze_pb2
 
 from assertions import assert_result
 from analyzer.analyze_pb2 import AnalyzeRequest
@@ -98,7 +95,6 @@ class TestAnalyzerEngine(TestCase):
                       33, EntityRecognizer.MAX_SCORE)
 
         del analyze_engine
-        gc.collect()
 
     def test_analyze_with_multiple_predefined_recognizers(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -113,7 +109,6 @@ class TestAnalyzerEngine(TestCase):
         assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
 
         del analyze_engine
-        gc.collect()
 
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
@@ -132,7 +127,6 @@ class TestAnalyzerEngine(TestCase):
 
         assert len(results) == 0
         del analyze_engine
-        gc.collect()
 
     def test_analyze_with_unsupported_language(self):
         with pytest.raises(ValueError):
