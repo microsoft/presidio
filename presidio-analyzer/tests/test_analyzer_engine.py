@@ -7,6 +7,8 @@ import time
 import pytest
 import gc
 
+import analyze_pb2
+
 from assertions import assert_result
 from analyzer.analyze_pb2 import AnalyzeRequest
 

@@ -10,7 +10,7 @@ class CustomRecognizer(PatternRecognizer):
     """
 
     def __init__(self, name, patterns, entity, language, black_list,
-                 context=[]):
+                 context=None):
         patterns_list = []
         for pat in patterns:
             patterns_list.extend([Pattern(pat.name, pat.regex, pat.score)])

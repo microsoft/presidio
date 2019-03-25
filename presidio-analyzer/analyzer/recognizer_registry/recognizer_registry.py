@@ -109,14 +109,14 @@ class RecognizerRegistry:
             subset_custom = [rec for rec in custom if
                              entity in rec.supported_entities
                              and language == rec.supported_language]
-            if len(subset_custom) > 0:
+            if subset_custom:
                 to_return.extend(subset_custom)
 
         logging.info(
             "Returning a total of %d recognizers (predefined + custom)",
             len(to_return))
 
-        if len(to_return) == 0:
+        if not to_return:
             raise ValueError(
                 "No matching recognizers were found to serve the request.")
 
