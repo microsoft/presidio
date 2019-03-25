@@ -1,7 +1,9 @@
 from analyzer import EntityRecognizer
 
-
+# pylint: disable=abstract-method, unused-argument
 # User Sroty: #498: Adding a new external recognizer
+
+
 class RemoteRecognizer(EntityRecognizer):
     """
     A configuration for a recognizer that runs on a different process
@@ -11,7 +13,6 @@ class RemoteRecognizer(EntityRecognizer):
     def __init__(self, supported_entities, supported_language, name, version,
                  **kwargs):
         super().__init__(supported_entities, supported_language, name, version)
-        pass
 
     def load(self):
         pass
