@@ -1,7 +1,8 @@
-cython
+cython==0.28.5
 https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.0.0/en_core_web_lg-2.0.0.tar.gz
 https://github.com/torosent/pyre2/archive/release/0.2.23.zip
-grpcio
-protobuf
-tldextract
-knack
+grpcio==1.13.0
+protobuf==3.6.0
+tldextract==2.2.0
+knack==0.4.2
+spacy==2.0.17
