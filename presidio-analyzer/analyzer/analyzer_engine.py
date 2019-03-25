@@ -112,8 +112,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         self.registry.remove_recognizer(name)
 
-    @classmethod
-    def __convert_fields_to_entities(cls, fields):
+    @staticmethod
+    def __convert_fields_to_entities(fields):
         # Convert fields to entities - will be changed once the API
         # will be changed
         entities = []
@@ -121,8 +121,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             entities.append(field.name)
         return entities
 
-    @classmethod
-    def __convert_results_to_proto(cls, results):
+    @staticmethod
+    def __convert_results_to_proto(results):
         proto_results = []
         for result in results:
             res = common_pb2.AnalyzeResult()

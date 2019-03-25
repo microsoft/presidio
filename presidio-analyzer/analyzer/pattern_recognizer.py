@@ -1,5 +1,4 @@
 import datetime
-from abc import abstractmethod
 
 from analyzer import LocalRecognizer, Pattern, RecognizerResult
 
@@ -73,7 +72,7 @@ class PatternRecognizer(LocalRecognizer):
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", pattern=regex, strength=1.0)
 
-    @abstractmethod
+    # pylint: disable=unused-argument, no-self-use
     def validate_result(self, pattern_text, pattern_result):
         """
         Validates the pattern logic, for example by running
