@@ -1,14 +1,10 @@
 from unittest import TestCase
 
+import time
 import pytest
-import gc
-
-import analyze_pb2
 
 from assertions import assert_result
-
-import time
-import logging
+from analyzer.analyze_pb2 import AnalyzeRequest
 
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
@@ -90,7 +86,6 @@ class TestAnalyzerEngine(TestCase):
         assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
 
         del analyze_engine
-        gc.collect()
 
     def test_analyze_with_multiple_predefined_recognizers(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
@@ -104,7 +99,6 @@ class TestAnalyzerEngine(TestCase):
         assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
 
         del analyze_engine
-        gc.collect()
 
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
@@ -129,7 +123,6 @@ class TestAnalyzerEngine(TestCase):
 
         assert len(results) == 0
         del analyze_engine
-        gc.collect()
 
     def test_analyze_with_unsupported_language(self):
         with pytest.raises(ValueError):
@@ -220,7 +213,7 @@ class TestAnalyzerEngine(TestCase):
     def test_apply_with_language_returns_correct_response(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
-        request = analyze_pb2.AnalyzeRequest()
+        request = AnalyzeRequest()
         request.analyzeTemplate.languageCode = 'en'
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
@@ -233,7 +226,7 @@ class TestAnalyzerEngine(TestCase):
     def test_apply_with_no_language_returns_default(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
-        request = analyze_pb2.AnalyzeRequest()
+        request = AnalyzeRequest()
         request.analyzeTemplate.languageCode = ''
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
