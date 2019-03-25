@@ -18,6 +18,7 @@ class RecognizerRegistry:
             recognizers = []
         self.recognizers = recognizers
 
+    # pylint: disable=unused-argument
     def load_recognizers(self, path):
         #   TODO: Change the code to dynamic loading -
         # Task #598:  Support loading of the pre-defined recognizers
@@ -88,7 +89,7 @@ class RecognizerRegistry:
                       entity in rec.supported_entities
                       and language == rec.supported_language]
 
-            if len(subset) == 0:
+            if not subset:
                 logging.warning(
                     "Entity " + entity +
                     " doesn't have the corresponding recognizer in language :"
@@ -96,7 +97,7 @@ class RecognizerRegistry:
             else:
                 to_return.extend(subset)
 
-        if len(to_return) == 0:
+        if not to_return:
             raise ValueError(
                 "No matching recognizers were found to serve the request.")
 

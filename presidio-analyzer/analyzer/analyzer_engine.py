@@ -48,22 +48,25 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return filtered_results
 
+    # pylint: disable=unused-argument
     def Apply(self, request, context):
         logging.info("Starting Apply")
-        entities = self.__convert_fields_to_entities(
+        entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
-        language = self.get_language_from_request(request)
+        language = AnalyzerEngine.get_language_from_request(request)
         results = self.analyze(request.text, entities, language)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
 
+        # pylint: disable=no-member
         response.analyzeResults.extend(
-            self.__convert_results_to_proto(results))
-        logging.info("Found {} results".format(len(results)))
+            AnalyzerEngine.__convert_results_to_proto(results))
+        logging.info("Found %d results", len(results))
         return response
 
-    def get_language_from_request(self, request):
+    @classmethod
+    def get_language_from_request(cls, request):
         language = request.analyzeTemplate.languageCode
         if language is None or language == "":
             language = DEFAULT_LANGUAGE
@@ -109,7 +112,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         self.registry.remove_recognizer(name)
 
-    def __convert_fields_to_entities(self, fields):
+    @staticmethod
+    def __convert_fields_to_entities(fields):
         # Convert fields to entities - will be changed once the API
         # will be changed
         entities = []
@@ -117,12 +121,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             entities.append(field.name)
         return entities
 
-    def __convert_results_to_proto(self, results):
+    @staticmethod
+    def __convert_results_to_proto(results):
         proto_results = []
         for result in results:
             res = common_pb2.AnalyzeResult()
+            # pylint: disable=no-member
             res.field.name = result.entity_type
             res.score = result.score
+            # pylint: disable=no-member
             res.location.start = result.start
             res.location.end = result.end
             res.location.length = result.end - result.start

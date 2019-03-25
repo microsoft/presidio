@@ -39,7 +39,6 @@ class EntityRecognizer:
         Initialize the recognizer assets if needed
         (e.g. machine learning models)
         """
-        pass
 
     @abstractmethod
     def analyze(self, text, entities):

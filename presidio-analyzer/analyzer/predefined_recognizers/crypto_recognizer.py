@@ -1,10 +1,9 @@
+from hashlib import sha256
 from analyzer import Pattern
 from analyzer import PatternRecognizer
-from hashlib import sha256
 
-"""Copied from:
-  http://rosettacode.org/wiki/Bitcoin/address_validation#Python
-  """
+# Copied from:
+# http://rosettacode.org/wiki/Bitcoin/address_validation#Python
 REGEX = r'\b[13][a-km-zA-HJ-NP-Z0-9]{26,33}\b'
 CONTEXT = ["wallet", "btc", "bitcoin", "crypto"]
 
@@ -19,9 +18,9 @@ class CryptoRecognizer(PatternRecognizer):
         super().__init__(supported_entity="CRYPTO", patterns=patterns,
                          context=CONTEXT)
 
-    def validate_result(self, text, pattern_result):
+    def validate_result(self, pattern_text, pattern_result):
         # try:
-        bcbytes = CryptoRecognizer.__decode_base58(text, 25)
+        bcbytes = CryptoRecognizer.__decode_base58(pattern_text, 25)
         if bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]:
             pattern_result.score = 1.0
         return pattern_result
