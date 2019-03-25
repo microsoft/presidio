@@ -3,6 +3,8 @@ from unittest import TestCase
 import pytest
 import gc
 
+import analyze_pb2
+
 from assertions import assert_result
 
 import time
@@ -215,10 +217,10 @@ class TestAnalyzerEngine(TestCase):
 
         assert len(results) == 0
 
-    def test_Apply_with_language_returns_correct_response(self):
+    def test_apply_with_language_returns_correct_response(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
-        request = AnalyzeRequest()
+        request = analyze_pb2.AnalyzeRequest()
         request.analyzeTemplate.languageCode = 'en'
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
@@ -228,10 +230,10 @@ class TestAnalyzerEngine(TestCase):
 
         assert response.analyzeResults is not None
 
-    def test_Apply_with_no_language_returns_default(self):
+    def test_apply_with_no_language_returns_default(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
-        request = AnalyzeRequest()
+        request = analyze_pb2.AnalyzeRequest()
         request.analyzeTemplate.languageCode = ''
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'

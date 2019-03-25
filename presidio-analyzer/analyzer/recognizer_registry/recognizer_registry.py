@@ -18,8 +18,11 @@ class RecognizerRegistry:
     """
 
     def __init__(self, recognizer_store_api=RecognizerStoreApi(),
-                 recognizers=[]):
-        self.recognizers = recognizers
+                 recognizers=None):
+        if recognizers:
+            self.recognizers = recognizers
+        else:
+            self.recognizers = []
         self.loaded_timestamp = None
         self.loaded_custom_recognizers = []
         self.store_api = recognizer_store_api
@@ -82,14 +85,14 @@ class RecognizerRegistry:
             subset_custom = [rec for rec in custom if
                              entity in rec.supported_entities
                              and language == rec.supported_language]
-            if len(subset_custom) > 0:
+            if subset_custom:
                 to_return.extend(subset_custom)
 
         logging.info(
             "Returning a total of %d recognizers (predefined + custom)",
             len(to_return))
 
-        if len(to_return) == 0:
+        if not to_return:
             raise ValueError(
                 "No matching recognizers were found to serve the request.")
 
@@ -128,7 +131,7 @@ class RecognizerRegistry:
                     "Requesting custom recognizers from the storage...")
 
                 raw_recognizers = self.store_api.get_all_recognizers()
-                if raw_recognizers is None or len(raw_recognizers) == 0:
+                if raw_recognizers is None or not raw_recognizers:
                     logging.info(
                         "No custom recognizers found")
                     return []
