@@ -102,16 +102,6 @@ class RecognizerRegistry:
             "Returning a total of %d recognizers (predefined + custom)",
             len(to_return))
 
-        logging.info("Found %d predefined recognizers", len(to_return))
-        custom = self.get_custom_recognizers()
-        logging.info("Found %d (total) custom recognizers", len(custom))
-        for entity in entities:
-            subset_custom = [rec for rec in custom if
-                             entity in rec.supported_entities
-                             and language == rec.supported_language]
-            if subset_custom:
-                to_return.extend(subset_custom)
-
         logging.info(
             "Returning a total of %d recognizers (predefined + custom)",
             len(to_return))
