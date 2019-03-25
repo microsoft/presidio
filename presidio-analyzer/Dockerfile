@@ -7,6 +7,7 @@ WORKDIR /usr/bin/${NAME}
 ADD ./${NAME} /usr/bin/${NAME}
 
 RUN pip install --no-cache-dir -r requirements-dev.txt && \
+    pylint analyzer && \
     flake8 analyzer --exclude "*pb2*.py" && \
     pytest --log-cli-level=0
 

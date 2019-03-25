@@ -1,6 +1,6 @@
+import string
 from analyzer import Pattern
 from analyzer import PatternRecognizer
-import string
 
 REGEX = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
 CONTEXT = ["iban"]
@@ -20,9 +20,10 @@ class IbanRecognizer(PatternRecognizer):
         super().__init__(supported_entity="IBAN_CODE", patterns=patterns,
                          context=CONTEXT)
 
-    def validate_result(self, text, pattern_result):
+    def validate_result(self, pattern_text, pattern_result):
         is_valid_iban = IbanRecognizer.__generate_iban_check_digits(
-            text) == text[2:4] and IbanRecognizer.__valid_iban(text)
+            pattern_text) == pattern_text[2:4] and \
+            IbanRecognizer.__valid_iban(pattern_text)
 
         pattern_result.score = 1.0 if is_valid_iban else 0
         return pattern_result

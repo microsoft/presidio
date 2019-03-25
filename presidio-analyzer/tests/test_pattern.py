@@ -22,3 +22,4 @@ class TestPattern(TestCase):
         assert expected.pattern == actual.pattern 
 
        # assert expected == actual
+
