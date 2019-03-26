@@ -17,6 +17,15 @@ class RecognizerRegistry:
 
     def __init__(self, recognizer_store_api=RecognizerStoreApi(),
                  recognizers=None):
+        """
+        :param recognizer_store_api: An instance of a class that has custom
+               recognizers management functionallity (insert, update, get,
+               delete). The default store if nothing is else is provided is
+               a store that uses a persistent storage
+        :param recognizers: An optional list of recognizers that will be
+               available in addition to the predefined recognizers and the
+               custom recognizers
+        """
         if recognizers:
             self.recognizers = recognizers
         else:
