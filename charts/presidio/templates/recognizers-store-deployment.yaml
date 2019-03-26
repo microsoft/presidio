@@ -9,6 +9,7 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
+  # Currently the store uses a mutex to synchronize writes to the storage, hence it relies on the fact that there is a single replica.
   replicas: 1
   selector:
     matchLabels:

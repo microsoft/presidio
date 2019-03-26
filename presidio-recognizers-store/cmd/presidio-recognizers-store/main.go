@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc/reflection"
@@ -34,6 +35,8 @@ var (
 	recognizersKey = "custom_recognizers"
 	timestampKey   = "custom_recognizers:last_update"
 )
+
+var mutex sync.RWMutex
 
 func main() {
 
@@ -66,6 +69,21 @@ func main() {
 	if err := s.Serve(lis); err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+// Acquires (or block until acquires) the lock to be able to write custom
+// recognizers
+func writersLock() {
+	log.Info("Acquiring lock")
+	mutex.Lock()
+	log.Info("Acquired")
+}
+
+// Releases the writers lock
+func writersUnlock() {
+	log.Info("Releasing lock")
+	mutex.Unlock()
+	log.Info("Released")
 }
 
 // setValue sets the recognizers array in the store and updates the last update
@@ -108,6 +126,11 @@ func insertOrUpdateRecognizer(value string, isUpdate bool) error {
 		return errors.New("cache is missing")
 	}
 
+	// When updating the underlying storage we want to ensure mutual
+	// exclusivness. To avoid situtation of two concurrent updates that creates
+	// a race condition. Resulting in a custom recognizer data loss
+	writersLock()
+	defer writersUnlock()
 	existingRecognizersArr, err := getExistingRecognizers()
 	if err != nil {
 		return err
@@ -239,6 +262,11 @@ func applyDelete(r *types.RecognizerDeleteRequest) (*types.RecognizersStoreRespo
 			errors.New("cache is missing")
 	}
 
+	// When updating the underlying storage we want to ensure mutual
+	// exclusivness. To avoid situtation of two concurrent updates that creates
+	// a race condition. Resulting in a custom recognizer data loss
+	writersLock()
+	defer writersUnlock()
 	existingRecognizersArr, err := getExistingRecognizers()
 	if err != nil {
 		return nil, err
