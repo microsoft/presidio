@@ -1,6 +1,7 @@
 import datetime
 
 from analyzer import LocalRecognizer, Pattern, RecognizerResult
+from analyzer import EntityRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -121,7 +122,7 @@ class PatternRecognizer(LocalRecognizer):
                                        pattern.strength)
                 res = self.validate_result(current_match, res)
 
-                if res:
+                if res and res.score != EntityRecognizer.MIN_SCORE:
                     results.append(res)
 
         return results

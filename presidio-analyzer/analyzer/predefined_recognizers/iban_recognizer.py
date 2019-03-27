@@ -1,9 +1,19 @@
 import string
-from analyzer import Pattern
-from analyzer import PatternRecognizer
 
-REGEX = u'[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}'
-CONTEXT = ["iban"]
+from analyzer.predefined_recognizers.iban_patterns import regex_per_country
+from analyzer import Pattern, PatternRecognizer
+from analyzer.entity_recognizer import EntityRecognizer
+
+# Import 're2' regex engine if installed, if not- import 'regex'
+try:
+    import re2 as re
+except ImportError:
+    import regex as re
+
+IBAN_GENERIC_REGEX = u'^[A-Z]{2}[0-9]{2}[ ]?([a-zA-Z0-9][ ]?){11,28}$'
+IBAN_GENERIC_SCORE = 0.5
+
+CONTEXT = ["iban", "bank", "transaction"]
 LETTERS = {
     ord(d): str(i)
     for i, d in enumerate(string.digits + string.ascii_uppercase)
@@ -16,16 +26,25 @@ class IbanRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Iban (Medium)', REGEX, 0.5)]
-        super().__init__(supported_entity="IBAN_CODE", patterns=patterns,
+        patterns = [Pattern('IBAN Generic',
+                            IBAN_GENERIC_REGEX,
+                            IBAN_GENERIC_SCORE)]
+        super().__init__(supported_entity="IBAN_CODE",
+                         patterns=patterns,
                          context=CONTEXT)
 
     def validate_result(self, pattern_text, pattern_result):
-        is_valid_iban = IbanRecognizer.__generate_iban_check_digits(
-            pattern_text) == pattern_text[2:4] and \
-            IbanRecognizer.__valid_iban(pattern_text)
+        pattern_text = pattern_text.replace(' ', '')
+        is_valid_checksum = (IbanRecognizer.__generate_iban_check_digits(
+            pattern_text) == pattern_text[2:4])
 
-        pattern_result.score = 1.0 if is_valid_iban else 0
+        score = EntityRecognizer.MIN_SCORE
+        if is_valid_checksum:
+            if IbanRecognizer.__is_valid_format(pattern_text):
+                score = EntityRecognizer.MAX_SCORE
+            elif IbanRecognizer.__is_valid_format(pattern_text.upper()):
+                score = IBAN_GENERIC_SCORE
+        pattern_result.score = score
         return pattern_result
 
     @staticmethod
@@ -34,9 +53,16 @@ class IbanRecognizer(PatternRecognizer):
 
     @staticmethod
     def __generate_iban_check_digits(iban):
-        number_iban = IbanRecognizer.__number_iban(iban[:2] + '00' + iban[4:])
+        transformed_iban = (iban[:2] + '00' + iban[4:]).upper()
+        number_iban = IbanRecognizer.__number_iban(transformed_iban)
         return '{:0>2}'.format(98 - (int(number_iban) % 97))
 
     @staticmethod
-    def __valid_iban(iban):
-        return int(IbanRecognizer.__number_iban(iban)) % 97 == 1
+    def __is_valid_format(iban):
+        country_code = iban[:2]
+        if country_code in regex_per_country:
+            country_regex = regex_per_country[country_code]
+            return country_regex and re.match(country_regex, iban,
+                                              flags=re.DOTALL | re.MULTILINE)
+
+        return False
