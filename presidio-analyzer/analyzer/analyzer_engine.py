@@ -98,21 +98,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return AnalyzerEngine.__remove_duplicates(results)
 
-    def add_pattern_recognizer(self, pattern_recognizer_dict):
-        """
-        Adds a new recognizer
-        :param pattern_recognizer_dict: a dictionary representation
-         of a pattern recognizer
-        """
-        self.registry.add_pattern_recognizer_from_dict(pattern_recognizer_dict)
-
-    def remove_recognizer(self, name):
-        """
-        Removes an existing recognizer, throws an exception if not found
-        :param name: name of recognizer to be removed
-        """
-        self.registry.remove_recognizer(name)
-
     @staticmethod
     def __convert_fields_to_entities(fields):
         # Convert fields to entities - will be changed once the API
