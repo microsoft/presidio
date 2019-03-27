@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from assertions import assert_result
 from analyzer.predefined_recognizers import NhsRecognizer
+from analyzer.entity_recognizer import EntityRecognizer
 
 nhs_recognizer = NhsRecognizer()
 entities = ["UK_NHS"]
@@ -34,9 +35,4 @@ class TestNhsRecognizer(TestCase):
         num = '401-023-2138'
         results = nhs_recognizer.analyze(num, entities)
 
-        assert len(results) == 1
-
-        assert results[0].score == 0
-        assert results[0].start == 0
-        assert results[0].end == 12
-        assert results[0].entity_type == entities[0]
+        assert len(results) == 0

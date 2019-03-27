@@ -36,6 +36,6 @@ class UsLicenseRecognizer(PatternRecognizer):
                     Pattern('Driver License - Alphanumeric (weak) ',
                             ALPHANUMERIC_REGEX, 0.3),
                     Pattern('Driver License - Digits (very weak)',
-                            DIGITS_REGEX, 0)]
+                            DIGITS_REGEX, 0.01)]
         super().__init__(supported_entity="US_DRIVER_LICENSE",
                          patterns=patterns, context=LICENSE_CONTEXT)
