@@ -73,7 +73,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, text, entities, language, all_fields=False):
+    def analyze(self, text, entities, language, all_fields):
         """
         analyzes the requested text, searching for the given entities
          in the given language

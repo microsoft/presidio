@@ -92,10 +92,9 @@ class RecognizerRegistry:
 
                 if not subset:
                     logging.warning(
-                        "Entity " + entity +
-                        " doesn't have the corresponding " +
-                        "recognizer in language :"
-                        + language)
+                        "Entity %s doesn't have the corresponding " +
+                        "recognizer in language : %s"
+                        , entity, language)
                 else:
                     to_return.extend(subset)
 
