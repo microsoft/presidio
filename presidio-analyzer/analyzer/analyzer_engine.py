@@ -54,7 +54,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language, request.analyzeTemplate.allFields)
+        results = self.analyze(request.text, entities, language,
+                               request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
@@ -66,7 +67,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         return response
 
     @classmethod
-    def get_language_from_request(request):
+    def get_language_from_request(cls, request):
         language = request.analyzeTemplate.language
         if language is None or language == "":
             language = DEFAULT_LANGUAGE

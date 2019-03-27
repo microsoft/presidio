@@ -90,7 +90,7 @@ class RecognizerRegistry:
                           entity in rec.supported_entities
                           and language == rec.supported_language]
 
-                if len(subset) == 0:
+                if not subset:
                     logging.warning(
                         "Entity " + entity +
                         " doesn't have the corresponding " +
