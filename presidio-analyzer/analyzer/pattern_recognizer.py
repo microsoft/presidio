@@ -1,5 +1,4 @@
 import datetime
-from abc import abstractmethod
 
 from analyzer import LocalRecognizer, Pattern, RecognizerResult
 from analyzer import EntityRecognizer
@@ -74,7 +73,7 @@ class PatternRecognizer(LocalRecognizer):
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", pattern=regex, strength=1.0)
 
-    @abstractmethod
+    # pylint: disable=unused-argument, no-self-use
     def validate_result(self, pattern_text, pattern_result):
         """
         Validates the pattern logic, for example by running
@@ -106,8 +105,9 @@ class PatternRecognizer(LocalRecognizer):
                 text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
             match_time = datetime.datetime.now() - match_start_time
-            self.logger.debug('--- match_time[%s]: %d.%d seconds',
-                              pattern.name, match_time.seconds,
+            self.logger.debug('--- match_time[%s]: %s.%s seconds',
+                              pattern.name,
+                              match_time.seconds,
                               match_time.microseconds)
 
             for match in matches:

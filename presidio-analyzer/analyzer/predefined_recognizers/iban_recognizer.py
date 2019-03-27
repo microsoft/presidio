@@ -24,6 +24,7 @@ class IbanRecognizer(PatternRecognizer):
     """
     Recognizes IBAN code using regex and checksum
     """
+
     def __init__(self):
         patterns = [Pattern('IBAN Generic',
                             IBAN_GENERIC_REGEX,
@@ -63,5 +64,5 @@ class IbanRecognizer(PatternRecognizer):
             country_regex = regex_per_country[country_code]
             return country_regex and re.match(country_regex, iban,
                                               flags=re.DOTALL | re.MULTILINE)
-        else:
-            return False
+
+        return False

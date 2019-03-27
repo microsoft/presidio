@@ -1,3 +1,4 @@
+# pylint: disable=wrong-import-position,wrong-import-order
 import logging
 import grpc
 import analyze_pb2
@@ -16,7 +17,7 @@ from knack.help_files import helps
 # bug #602: Fix imports issue in python
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from analyzer_engine import AnalyzerEngine  # noqa
+from analyzer_engine import AnalyzerEngine # noqa
 
 WELCOME_MESSAGE = r"""
 
@@ -70,7 +71,7 @@ def serve_command_handler(env_grpc_port=False, grpc_port=3000):
             grpc_port = int(port)
 
     server.add_insecure_port('[::]:' + str(grpc_port))
-    logging.info("Starting GRPC listener at port " + str(grpc_port))
+    logging.info("Starting GRPC listener at port %d", grpc_port)
     server.start()
     try:
         while True:
@@ -91,6 +92,7 @@ def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
     request = analyze_pb2.AnalyzeRequest()
     request.text = text
 
+    # pylint: disable=no-member
     for field_name in fields:
         field_type = request.analyzeTemplate.fields.add()
         field_type.name = field_name
@@ -101,7 +103,7 @@ def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
 class CommandsLoader(CLICommandsLoader):
     def load_command_table(self, args):
         with CommandGroup(self, '', '__main__#{}') as g:
-            g.command('serve', 'serve_command_handler', confirmation=False),
+            g.command('serve', 'serve_command_handler', confirmation=False)
             g.command('analyze', 'analyze_command_handler', confirmation=False)
         return super(CommandsLoader, self).load_command_table(args)
 

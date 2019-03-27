@@ -32,13 +32,13 @@ class SpacyRecognizer(LocalRecognizer):
 
     @staticmethod
     def __check_label(entity, label):
-        if entity == "LOCATION" and (label == 'GPE' or label == 'LOC'):
+        if entity == "LOCATION" and label in ('GPE', 'LOC'):
             return True
 
         if entity == "PERSON" and label == 'PERSON':
             return True
 
-        if entity == "DATE_TIME" and (label == 'DATE' or label == 'TIME'):
+        if entity == "DATE_TIME" and label in ('DATE', 'TIME'):
             return True
 
         if entity == "NRP" and label == 'NORP':

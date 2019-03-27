@@ -12,6 +12,7 @@ from analyzer import PatternRecognizer
 # With different weights, one to indicate letters only and
 # one to indicate at least one digit or one '*'
 
+# pylint: disable=line-too-long,abstract-method
 STRONG_REGEX = r'(\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|d{3}[-\.\s]\d{3}[-\.\s]\d{4})'  # noqa: E501
 MEDIUM_REGEX = r'\b(\d{3}[-\.\s]\d{3}[-\.\s]??\d{4})\b'
 WEAK_REGEX = r'(\b\d{10}\b)'

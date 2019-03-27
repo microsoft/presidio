@@ -1,5 +1,5 @@
 [MASTER]
-ignore-patterns=test_*
+ignore-patterns=test_*,.*pb2.*.py
 reports=no
 
 [MESSAGES CONTROL]
@@ -7,7 +7,7 @@ reports=no
 # locally-disabled: Warning locally suppressed using disable-msg
 # cyclic-import: because of https://github.com/PyCQA/pylint/issues/850
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
-disable=missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code
+disable=import-error,too-few-public-methods,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code
 
 [FORMAT]
 max-line-length=80
