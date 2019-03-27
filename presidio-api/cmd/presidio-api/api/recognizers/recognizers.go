@@ -53,10 +53,10 @@ func GetAllRecognizers(ctx context.Context,
 	return api.Services.GetAllRecognizers(ctx)
 }
 
-// GetUpdateTimeStamp returns the timestamp when the store was changed
-func GetUpdateTimeStamp(ctx context.Context,
+// GetHash returns the hash of the stored custom recognizers
+func GetHash(ctx context.Context,
 	api *store.API,
-	request *types.RecognizerGetTimestampRequest,
-) (*types.RecognizerTimestampResponse, error) {
-	return api.Services.GetUpdateTimeStamp(ctx)
+	request *types.RecognizerGetHashRequest,
+) (*types.RecognizerHashResponse, error) {
+	return api.Services.GetRecognizersHash(ctx)
 }

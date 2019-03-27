@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+import json
+import hashlib
 import pytest
 import logging
 from analyzer import RecognizerRegistry, PatternRecognizer, \
@@ -15,19 +17,19 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
     """
 
     def __init__(self):
-        self.latest_timestamp = 0
+        self.latest_hash = ""
         self.recognizers = []
         self.times_accessed_storage = 0
 
-    def get_latest_timestamp(self):
-        return self.latest_timestamp
+    def get_latest_hash(self):
+        return self.latest_hash
 
     def get_all_recognizers(self):
         self.times_accessed_storage = self.times_accessed_storage + 1
         return self.recognizers
 
     def add_custom_pattern_recognizer(self, new_recognizer,
-                                      skip_timestamp_update=False):
+                                      skip_hash_update=False):
         patterns = []
         for pat in new_recognizer.patterns:
             patterns.extend([Pattern(pat.name, pat.regex, pat.score)])
@@ -38,23 +40,23 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
                                                   patterns=patterns)
         self.recognizers.append(new_custom_recognizer)
 
-        if skip_timestamp_update:
+        if skip_hash_update:
             return
 
-        # making sure there is a time difference (the test run so fast two
-        # sequential operations are with the same timestamp
-        time.sleep(1)
-        self.latest_timestamp = int(time.time())
+        m = hashlib.md5()
+        for recognizer in self.recognizers:
+            m.update(recognizer.name.encode('utf-8'))
+        self.latest_hash = m.digest()
 
     def remove_recognizer(self, name):
         logging.info("removing recognizer " + name)
         for i in self.recognizers:
             if i.name == name:
                 self.recognizers.remove(i)
-        # making sure there is a time difference (the test run so fast two
-        # sequential operations are with the same timestamp
-        time.sleep(1)
-        self.latest_timestamp = int(time.time())
+        m = hashlib.md5()
+        for recognizer in self.recognizers:
+            m.update(recognizer.name.encode('utf-8'))
+        self.latest_hash = m.digest()
 
 
 class TestRecognizerRegistry(TestCase):
@@ -111,7 +113,7 @@ class TestRecognizerRegistry(TestCase):
             language='he', entities=["PERSON"])
         assert len(recognizers) == 1
 
-    # Test that the the cache is working as expected, i.e iff timestamp
+    # Test that the the cache is working as expected, i.e iff hash
     # changed then need to reload from the store
     def test_cache_logic(self):
         pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
@@ -125,15 +127,15 @@ class TestRecognizerRegistry(TestCase):
         custom_recognizers = recognizer_registry.get_custom_recognizers()
         # Nothing should be returned
         assert len(custom_recognizers) == 0
-        # Since no timestamp was returned, then no access to storage is expected
+        # Since no hash was returned, then no access to storage is expected
         assert recognizers_store_api_mock.times_accessed_storage == 0
 
         # Add a new recognizer
         recognizers_store_api_mock.add_custom_pattern_recognizer(
             pattern_recognizer,
-            skip_timestamp_update=True)
+            skip_hash_update=True)
 
-        # Since the timestamp wasn't updated the recognizers are stale from the cache
+        # Since the hash wasn't updated the recognizers are stale from the cache
         # without the newly added one
         custom_recognizers = recognizer_registry.get_custom_recognizers()
         assert len(custom_recognizers) == 0
@@ -141,7 +143,7 @@ class TestRecognizerRegistry(TestCase):
         assert recognizers_store_api_mock.times_accessed_storage == 0
 
         # Positive flow
-        # Now do the same only this time update the timestamp so it should work properly
+        # Now do the same only this time update the hash so it should work properly
         recognizers_store_api_mock = RecognizerStoreApiMock()
         recognizer_registry = RecognizerRegistry(recognizers_store_api_mock)
 
@@ -149,7 +151,7 @@ class TestRecognizerRegistry(TestCase):
         assert recognizers_store_api_mock.times_accessed_storage == 0
         recognizers_store_api_mock.add_custom_pattern_recognizer(
             pattern_recognizer,
-            skip_timestamp_update=False)
+            skip_hash_update=False)
         custom_recognizers = recognizer_registry.get_custom_recognizers()
         assert len(custom_recognizers) == 1
         # Accessed again

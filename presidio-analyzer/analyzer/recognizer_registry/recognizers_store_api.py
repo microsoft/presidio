@@ -11,7 +11,7 @@ from analyzer import Pattern
 
 class RecognizerStoreApi:
     """ The RecognizerStoreApi is the object that talks to the remote
-    recognizers store service and get the recognizers / timestamp
+    recognizers store service and get the recognizers / hash
     """
 
     def __init__(self):
@@ -25,23 +25,24 @@ class RecognizerStoreApi:
         self.rs_stub = recognizers_store_pb2_grpc.RecognizersStoreServiceStub(
             channel)
 
-    def get_latest_timestamp(self):
+    def get_latest_hash(self):
         """
-        Returns the timestamp (unix style) of when the store was last updated.
-        0 if not found
+        Returns the hash of all the stored custom recognizers. Returns empty
+        string in case of an error (e.g. the store is completly empty)
         """
-        timestamp_request = \
-            recognizers_store_pb2.RecognizerGetTimestampRequest()
-        lst_update = 0
-        try:
-            lst_update = self.rs_stub.ApplyGetTimestamp(
-                timestamp_request).unixTimestamp
-        except grpc.RpcError:
-            logging.info("Failed to get timestamp")
-            return 0
+        hash_request = \
+            recognizers_store_pb2.RecognizerGetHashRequest()
 
-        logging.info("Latest timestamp found in store is: %d", lst_update)
-        return lst_update
+        last_hash = ""
+        try:
+            last_hash = self.rs_stub.ApplyGetHash(
+                hash_request).recognizersHash
+        except grpc.RpcError:
+            logging.info("Failed to get recognizers hash")
+            return ""
+
+        logging.info("Latest hash found in store is: %d", last_hash)
+        return last_hash
 
     def get_all_recognizers(self):
         """

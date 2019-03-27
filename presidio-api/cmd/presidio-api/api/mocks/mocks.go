@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"context"
+	"crypto/md5"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/pkg/presidio"
@@ -267,9 +268,11 @@ func GetRecognizersStoreDeleteMockResult() *types.RecognizersStoreResponse {
 	return &types.RecognizersStoreResponse{}
 }
 
-//GetRecognizersStoreGetTimestampMockResult get recognizers mock response
-func GetRecognizersStoreGetTimestampMockResult() *types.RecognizerTimestampResponse {
-	return &types.RecognizerTimestampResponse{UnixTimestamp: 1552811059}
+//GetRecognizersStoreGetHashMockResult get recognizers mock response
+func GetRecognizersStoreGetHashMockResult() *types.RecognizerHashResponse {
+	h := md5.New()
+	bytesHash := h.Sum([]byte("recognizers objects will be here..."))
+	return &types.RecognizerHashResponse{RecognizersHash: string(bytesHash)}
 }
 
 //GetRecognizersStoreServiceMock get service mock
@@ -278,14 +281,14 @@ func GetRecognizersStoreServiceMock(
 	expectedGetAllResult *types.RecognizersGetResponse,
 	expectedInsertOrUpdateAllResult *types.RecognizersStoreResponse,
 	expectedDeleteResult *types.RecognizersStoreResponse,
-	expectedTimestampResult *types.RecognizerTimestampResponse) types.RecognizersStoreServiceClient {
+	expectedHashResult *types.RecognizerHashResponse) types.RecognizersStoreServiceClient {
 	service := &RecognizersStoreMockedObject{}
 	service.On("ApplyGet", mock.Anything, mock.Anything, mock.Anything).Return(expectedGetResult, nil)
 	service.On("ApplyGetAll", mock.Anything, mock.Anything, mock.Anything).Return(expectedGetAllResult, nil)
 	service.On("ApplyInsert", mock.Anything, mock.Anything, mock.Anything).Return(expectedInsertOrUpdateAllResult, nil)
 	service.On("ApplyUpdate", mock.Anything, mock.Anything, mock.Anything).Return(expectedInsertOrUpdateAllResult, nil)
 	service.On("ApplyDelete", mock.Anything, mock.Anything, mock.Anything).Return(expectedDeleteResult, nil)
-	service.On("ApplyGetTimestamp", mock.Anything, mock.Anything, mock.Anything).Return(expectedTimestampResult, nil)
+	service.On("ApplyGetHash", mock.Anything, mock.Anything, mock.Anything).Return(expectedHashResult, nil)
 	return service
 }
 
@@ -339,12 +342,12 @@ func (m *RecognizersStoreMockedObject) ApplyDelete(ctx context.Context, r *types
 	return result, args.Error(1)
 }
 
-//ApplyGetTimestamp recognizers mock
-func (m *RecognizersStoreMockedObject) ApplyGetTimestamp(ctx context.Context, r *types.RecognizerGetTimestampRequest, opts ...grpc.CallOption) (*types.RecognizerTimestampResponse, error) {
+//ApplyGetHash recognizers mock
+func (m *RecognizersStoreMockedObject) ApplyGetHash(ctx context.Context, r *types.RecognizerGetHashRequest, opts ...grpc.CallOption) (*types.RecognizerHashResponse, error) {
 	args := m.Mock.Called()
-	var result *types.RecognizerTimestampResponse
+	var result *types.RecognizerHashResponse
 	if args.Get(0) != nil {
-		result = args.Get(0).(*types.RecognizerTimestampResponse)
+		result = args.Get(0).(*types.RecognizerHashResponse)
 	}
 	return result, args.Error(1)
 }

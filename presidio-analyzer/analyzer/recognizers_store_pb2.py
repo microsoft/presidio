@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='recognizers_store.proto',
   package='types',
   syntax='proto3',
-  serialized_pb=_b('\n\x17recognizers_store.proto\x12\x05types\"5\n\x07Pattern\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05regex\x18\x02 \x01(\t\x12\r\n\x05score\x18\x03 \x01(\x02\"\x90\x01\n\x11PatternRecognizer\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0e\n\x06\x65ntity\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12 \n\x08patterns\x18\x04 \x03(\x0b\x32\x0e.types.Pattern\x12\x11\n\tblacklist\x18\x05 \x03(\t\x12\x16\n\x0e\x63ontextPhrases\x18\x06 \x03(\t\"J\n\x1fRecognizerInsertOrUpdateRequest\x12\'\n\x05value\x18\x01 \x01(\x0b\x32\x18.types.PatternRecognizer\"\'\n\x17RecognizerDeleteRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"$\n\x14RecognizerGetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1a\n\x18RecognizersGetAllRequest\"\x1f\n\x1dRecognizerGetTimestampRequest\"\x1a\n\x18RecognizersStoreResponse\"G\n\x16RecognizersGetResponse\x12-\n\x0brecognizers\x18\x01 \x03(\x0b\x32\x18.types.PatternRecognizer\"4\n\x1bRecognizerTimestampResponse\x12\x15\n\runixTimestamp\x18\x01 \x01(\x04\x32\x9b\x04\n\x17RecognizersStoreService\x12X\n\x0b\x41pplyInsert\x12&.types.RecognizerInsertOrUpdateRequest\x1a\x1f.types.RecognizersStoreResponse\"\x00\x12X\n\x0b\x41pplyUpdate\x12&.types.RecognizerInsertOrUpdateRequest\x1a\x1f.types.RecognizersStoreResponse\"\x00\x12P\n\x0b\x41pplyDelete\x12\x1e.types.RecognizerDeleteRequest\x1a\x1f.types.RecognizersStoreResponse\"\x00\x12H\n\x08\x41pplyGet\x12\x1b.types.RecognizerGetRequest\x1a\x1d.types.RecognizersGetResponse\"\x00\x12O\n\x0b\x41pplyGetAll\x12\x1f.types.RecognizersGetAllRequest\x1a\x1d.types.RecognizersGetResponse\"\x00\x12_\n\x11\x41pplyGetTimestamp\x12$.types.RecognizerGetTimestampRequest\x1a\".types.RecognizerTimestampResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x17recognizers_store.proto\x12\x05types\"5\n\x07Pattern\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05regex\x18\x02 \x01(\t\x12\r\n\x05score\x18\x03 \x01(\x02\"\x90\x01\n\x11PatternRecognizer\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0e\n\x06\x65ntity\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12 \n\x08patterns\x18\x04 \x03(\x0b\x32\x0e.types.Pattern\x12\x11\n\tblacklist\x18\x05 \x03(\t\x12\x16\n\x0e\x63ontextPhrases\x18\x06 \x03(\t\"J\n\x1fRecognizerInsertOrUpdateRequest\x12\'\n\x05value\x18\x01 \x01(\x0b\x32\x18.types.PatternRecognizer\"\'\n\x17RecognizerDeleteRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"$\n\x14RecognizerGetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1a\n\x18RecognizersGetAllRequest\"\x1a\n\x18RecognizerGetHashRequest\"\x1a\n\x18RecognizersStoreResponse\"G\n\x16RecognizersGetResponse\x12-\n\x0brecognizers\x18\x01 \x03(\x0b\x32\x18.types.PatternRecognizer\"1\n\x16RecognizerHashResponse\x12\x17\n\x0frecognizersHash\x18\x01 \x01(\t2\x8c\x04\n\x17RecognizersStoreService\x12X\n\x0b\x41pplyInsert\x12&.types.RecognizerInsertOrUpdateRequest\x1a\x1f.types.RecognizersStoreResponse\"\x00\x12X\n\x0b\x41pplyUpdate\x12&.types.RecognizerInsertOrUpdateRequest\x1a\x1f.types.RecognizersStoreResponse\"\x00\x12P\n\x0b\x41pplyDelete\x12\x1e.types.RecognizerDeleteRequest\x1a\x1f.types.RecognizersStoreResponse\"\x00\x12H\n\x08\x41pplyGet\x12\x1b.types.RecognizerGetRequest\x1a\x1d.types.RecognizersGetResponse\"\x00\x12O\n\x0b\x41pplyGetAll\x12\x1f.types.RecognizersGetAllRequest\x1a\x1d.types.RecognizersGetResponse\"\x00\x12P\n\x0c\x41pplyGetHash\x12\x1f.types.RecognizerGetHashRequest\x1a\x1d.types.RecognizerHashResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -253,9 +253,9 @@ _RECOGNIZERSGETALLREQUEST = _descriptor.Descriptor(
 )
 
 
-_RECOGNIZERGETTIMESTAMPREQUEST = _descriptor.Descriptor(
-  name='RecognizerGetTimestampRequest',
-  full_name='types.RecognizerGetTimestampRequest',
+_RECOGNIZERGETHASHREQUEST = _descriptor.Descriptor(
+  name='RecognizerGetHashRequest',
+  full_name='types.RecognizerGetHashRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -273,7 +273,7 @@ _RECOGNIZERGETTIMESTAMPREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=419,
-  serialized_end=450,
+  serialized_end=445,
 )
 
 
@@ -296,8 +296,8 @@ _RECOGNIZERSSTORERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=452,
-  serialized_end=478,
+  serialized_start=447,
+  serialized_end=473,
 )
 
 
@@ -327,22 +327,22 @@ _RECOGNIZERSGETRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=480,
-  serialized_end=551,
+  serialized_start=475,
+  serialized_end=546,
 )
 
 
-_RECOGNIZERTIMESTAMPRESPONSE = _descriptor.Descriptor(
-  name='RecognizerTimestampResponse',
-  full_name='types.RecognizerTimestampResponse',
+_RECOGNIZERHASHRESPONSE = _descriptor.Descriptor(
+  name='RecognizerHashResponse',
+  full_name='types.RecognizerHashResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='unixTimestamp', full_name='types.RecognizerTimestampResponse.unixTimestamp', index=0,
-      number=1, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      name='recognizersHash', full_name='types.RecognizerHashResponse.recognizersHash', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -358,8 +358,8 @@ _RECOGNIZERTIMESTAMPRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=553,
-  serialized_end=605,
+  serialized_start=548,
+  serialized_end=597,
 )
 
 _PATTERNRECOGNIZER.fields_by_name['patterns'].message_type = _PATTERN
@@ -371,10 +371,10 @@ DESCRIPTOR.message_types_by_name['RecognizerInsertOrUpdateRequest'] = _RECOGNIZE
 DESCRIPTOR.message_types_by_name['RecognizerDeleteRequest'] = _RECOGNIZERDELETEREQUEST
 DESCRIPTOR.message_types_by_name['RecognizerGetRequest'] = _RECOGNIZERGETREQUEST
 DESCRIPTOR.message_types_by_name['RecognizersGetAllRequest'] = _RECOGNIZERSGETALLREQUEST
-DESCRIPTOR.message_types_by_name['RecognizerGetTimestampRequest'] = _RECOGNIZERGETTIMESTAMPREQUEST
+DESCRIPTOR.message_types_by_name['RecognizerGetHashRequest'] = _RECOGNIZERGETHASHREQUEST
 DESCRIPTOR.message_types_by_name['RecognizersStoreResponse'] = _RECOGNIZERSSTORERESPONSE
 DESCRIPTOR.message_types_by_name['RecognizersGetResponse'] = _RECOGNIZERSGETRESPONSE
-DESCRIPTOR.message_types_by_name['RecognizerTimestampResponse'] = _RECOGNIZERTIMESTAMPRESPONSE
+DESCRIPTOR.message_types_by_name['RecognizerHashResponse'] = _RECOGNIZERHASHRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Pattern = _reflection.GeneratedProtocolMessageType('Pattern', (_message.Message,), dict(
@@ -419,12 +419,12 @@ RecognizersGetAllRequest = _reflection.GeneratedProtocolMessageType('Recognizers
   ))
 _sym_db.RegisterMessage(RecognizersGetAllRequest)
 
-RecognizerGetTimestampRequest = _reflection.GeneratedProtocolMessageType('RecognizerGetTimestampRequest', (_message.Message,), dict(
-  DESCRIPTOR = _RECOGNIZERGETTIMESTAMPREQUEST,
+RecognizerGetHashRequest = _reflection.GeneratedProtocolMessageType('RecognizerGetHashRequest', (_message.Message,), dict(
+  DESCRIPTOR = _RECOGNIZERGETHASHREQUEST,
   __module__ = 'recognizers_store_pb2'
-  # @@protoc_insertion_point(class_scope:types.RecognizerGetTimestampRequest)
+  # @@protoc_insertion_point(class_scope:types.RecognizerGetHashRequest)
   ))
-_sym_db.RegisterMessage(RecognizerGetTimestampRequest)
+_sym_db.RegisterMessage(RecognizerGetHashRequest)
 
 RecognizersStoreResponse = _reflection.GeneratedProtocolMessageType('RecognizersStoreResponse', (_message.Message,), dict(
   DESCRIPTOR = _RECOGNIZERSSTORERESPONSE,
@@ -440,12 +440,12 @@ RecognizersGetResponse = _reflection.GeneratedProtocolMessageType('RecognizersGe
   ))
 _sym_db.RegisterMessage(RecognizersGetResponse)
 
-RecognizerTimestampResponse = _reflection.GeneratedProtocolMessageType('RecognizerTimestampResponse', (_message.Message,), dict(
-  DESCRIPTOR = _RECOGNIZERTIMESTAMPRESPONSE,
+RecognizerHashResponse = _reflection.GeneratedProtocolMessageType('RecognizerHashResponse', (_message.Message,), dict(
+  DESCRIPTOR = _RECOGNIZERHASHRESPONSE,
   __module__ = 'recognizers_store_pb2'
-  # @@protoc_insertion_point(class_scope:types.RecognizerTimestampResponse)
+  # @@protoc_insertion_point(class_scope:types.RecognizerHashResponse)
   ))
-_sym_db.RegisterMessage(RecognizerTimestampResponse)
+_sym_db.RegisterMessage(RecognizerHashResponse)
 
 
 
@@ -455,8 +455,8 @@ _RECOGNIZERSSTORESERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=608,
-  serialized_end=1147,
+  serialized_start=600,
+  serialized_end=1124,
   methods=[
   _descriptor.MethodDescriptor(
     name='ApplyInsert',
@@ -504,12 +504,12 @@ _RECOGNIZERSSTORESERVICE = _descriptor.ServiceDescriptor(
     options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='ApplyGetTimestamp',
-    full_name='types.RecognizersStoreService.ApplyGetTimestamp',
+    name='ApplyGetHash',
+    full_name='types.RecognizersStoreService.ApplyGetHash',
     index=5,
     containing_service=None,
-    input_type=_RECOGNIZERGETTIMESTAMPREQUEST,
-    output_type=_RECOGNIZERTIMESTAMPRESPONSE,
+    input_type=_RECOGNIZERGETHASHREQUEST,
+    output_type=_RECOGNIZERHASHRESPONSE,
     options=None,
   ),
 ])

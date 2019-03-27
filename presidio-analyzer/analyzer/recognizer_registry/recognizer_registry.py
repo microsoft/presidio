@@ -30,6 +30,7 @@ class RecognizerRegistry:
             self.recognizers = recognizers
         else:
             self.recognizers = []
+        self.loaded_hash = None
         self.loaded_timestamp = None
         self.loaded_custom_recognizers = []
         self.store_api = recognizer_store_api
@@ -107,27 +108,27 @@ class RecognizerRegistry:
         Returns a list of custom recognizers retrieved from the store object
         """
 
-        if self.loaded_timestamp is not None:
+        if self.loaded_hash is not None:
             logging.info(
-                "Analyzer loaded custom recognizers on: %s (%s)",
+                "Analyzer loaded custom recognizers on: %s [hash %s]",
                 time.strftime(
                     '%Y-%m-%d %H:%M:%S',
                     time.localtime(int(self.loaded_timestamp))),
-                self.loaded_timestamp)
+                self.loaded_hash)
         else:
             logging.info("Analyzer loaded custom recognizers on: Never")
 
-        lst_update = self.store_api.get_latest_timestamp()
+        latest_hash = self.store_api.get_latest_hash()
         # is update time is not set, no custom recognizers in storage, skip
-        if lst_update > 0:
+        if latest_hash != "":
             logging.info(
-                "Persistent storage was last updated on: %s (%s)",
-                time.strftime('%Y-%m-%d %H:%M:%S',
-                              time.localtime(lst_update)), lst_update)
+                "Persistent storage has hash: %s",
+                latest_hash)
             # check if anything updated since last time
-            if self.loaded_timestamp is None or \
-                    lst_update > self.loaded_timestamp:
+            if self.loaded_hash is None or \
+                    latest_hash != self.loaded_hash:
                 self.loaded_timestamp = int(time.time())
+                self.loaded_hash = latest_hash
 
                 self.loaded_custom_recognizers = []
                 # read all values

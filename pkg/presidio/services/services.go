@@ -232,14 +232,14 @@ func (services *Services) GetAllRecognizers(
 	return results, nil
 }
 
-// GetUpdateTimeStamp use the recognizers store service to get the last
-// timestamp when the store was updated
-func (services *Services) GetUpdateTimeStamp(
+// GetRecognizersHash use the recognizers store service to get the current
+// hash value representing the currently stored custom recognizers
+func (services *Services) GetRecognizersHash(
 	ctx context.Context) (
-	*types.RecognizerTimestampResponse, error) {
-	request := &types.RecognizerGetTimestampRequest{}
+	*types.RecognizerHashResponse, error) {
+	request := &types.RecognizerGetHashRequest{}
 
-	results, err := services.RecognizersStoreService.ApplyGetTimestamp(ctx,
+	results, err := services.RecognizersStoreService.ApplyGetHash(ctx,
 		request)
 	if err != nil {
 		return nil, err

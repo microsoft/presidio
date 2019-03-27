@@ -39,10 +39,10 @@ class RecognizersStoreServiceStub(object):
         request_serializer=recognizers__store__pb2.RecognizersGetAllRequest.SerializeToString,
         response_deserializer=recognizers__store__pb2.RecognizersGetResponse.FromString,
         )
-    self.ApplyGetTimestamp = channel.unary_unary(
-        '/types.RecognizersStoreService/ApplyGetTimestamp',
-        request_serializer=recognizers__store__pb2.RecognizerGetTimestampRequest.SerializeToString,
-        response_deserializer=recognizers__store__pb2.RecognizerTimestampResponse.FromString,
+    self.ApplyGetHash = channel.unary_unary(
+        '/types.RecognizersStoreService/ApplyGetHash',
+        request_serializer=recognizers__store__pb2.RecognizerGetHashRequest.SerializeToString,
+        response_deserializer=recognizers__store__pb2.RecognizerHashResponse.FromString,
         )
 
 
@@ -85,7 +85,7 @@ class RecognizersStoreServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def ApplyGetTimestamp(self, request, context):
+  def ApplyGetHash(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -120,10 +120,10 @@ def add_RecognizersStoreServiceServicer_to_server(servicer, server):
           request_deserializer=recognizers__store__pb2.RecognizersGetAllRequest.FromString,
           response_serializer=recognizers__store__pb2.RecognizersGetResponse.SerializeToString,
       ),
-      'ApplyGetTimestamp': grpc.unary_unary_rpc_method_handler(
-          servicer.ApplyGetTimestamp,
-          request_deserializer=recognizers__store__pb2.RecognizerGetTimestampRequest.FromString,
-          response_serializer=recognizers__store__pb2.RecognizerTimestampResponse.SerializeToString,
+      'ApplyGetHash': grpc.unary_unary_rpc_method_handler(
+          servicer.ApplyGetHash,
+          request_deserializer=recognizers__store__pb2.RecognizerGetHashRequest.FromString,
+          response_serializer=recognizers__store__pb2.RecognizerHashResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

@@ -23,7 +23,7 @@ func setupMockServices() *store.API {
 			mocks.GetRecognizersStoreGetAllMockResult(),
 			mocks.GetRecognizersStoreInsertOrUpdateMockResult(),
 			mocks.GetRecognizersStoreDeleteMockResult(),
-			mocks.GetRecognizersStoreGetTimestampMockResult()),
+			mocks.GetRecognizersStoreGetHashMockResult()),
 	}
 
 	api := &store.API{
@@ -112,13 +112,13 @@ func TestGetAllRecognizer(t *testing.T) {
 	assert.Equal(t, len(results.Recognizers), 2)
 }
 
-func TestGetTimestamp(t *testing.T) {
+func TestGetHash(t *testing.T) {
 
 	api := setupMockServices()
 
-	r := types.RecognizerGetTimestampRequest{}
-	results, err := GetUpdateTimeStamp(context.Background(), api, &r)
+	r := types.RecognizerGetHashRequest{}
+	results, err := GetHash(context.Background(), api, &r)
 
 	assert.NoError(t, err)
-	assert.Equal(t, mocks.GetRecognizersStoreGetTimestampMockResult(), results)
+	assert.Equal(t, mocks.GetRecognizersStoreGetHashMockResult(), results)
 }

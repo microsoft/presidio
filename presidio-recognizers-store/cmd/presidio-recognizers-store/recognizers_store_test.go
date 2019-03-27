@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -220,27 +219,26 @@ func TestDeleteNonExistingRecognizer(t *testing.T) {
 	assert.Error(t, err)
 }
 
-// Try to get the latest timestamp (of when the store was last updated) and fail
-// as the store is empty
-func TestUpdateTimestampDoesNotExists(t *testing.T) {
+// Try to get the latest hash and fail as the store is empty
+func TestHashDoesNotExists(t *testing.T) {
 	// Mock the store with a fake redis
 	recognizersStore = mock.New()
 
 	// Store is empty...
-	res, err := applyGetTimestamp()
+	res, err := applyGetHash()
 	assert.Error(t, err)
-	assert.Equal(t, res, &types.RecognizerTimestampResponse{})
+	assert.Equal(t, res, &types.RecognizerHashResponse{})
 }
 
-// Try to get the latest timestamp (of when the store was last updated)
-func TestGetUpdateTimestamp(t *testing.T) {
+// Try to get the latest hash
+func TestGetHash(t *testing.T) {
 	// Mock the store with a fake redis
 	recognizersStore = mock.New()
 
 	// Store is empty...
-	res, err := applyGetTimestamp()
+	res, err := applyGetHash()
 	assert.Error(t, err)
-	assert.Equal(t, res, &types.RecognizerTimestampResponse{})
+	assert.Equal(t, res, &types.RecognizerHashResponse{})
 
 	// Now, insert an item
 	// Insert a new pattern recognizer
@@ -250,25 +248,22 @@ func TestGetUpdateTimestamp(t *testing.T) {
 	_, err = applyInsertOrUpdate(r, false)
 	assert.NoError(t, err)
 
-	// Get timestamp again, it should succeed and value should not be empty
-	res, err = applyGetTimestamp()
+	// Get hash again, it should succeed and value should not be empty
+	res, err = applyGetHash()
 	assert.NoError(t, err)
-	assert.NotEqual(t, res, &types.RecognizerTimestampResponse{})
+	assert.NotEqual(t, res, &types.RecognizerHashResponse{})
 
-	// Now, update the store, get the timestamp again, make sure the timestamp
+	// Now, update the store, get the hash again, make sure the hash
 	// is not as the previous one --> was updated
-	// the sleep is important as the test must be at least 1 second long for the
-	// timestamp to actually differ between calls
-	time.Sleep(1 * time.Second)
 	newRecognizer1.Language = "de"
 	r.Value = &newRecognizer1
 	_, err = applyInsertOrUpdate(r, true /* update */)
 	assert.NoError(t, err)
 
-	// Get timestamp again
-	res2, err2 := applyGetTimestamp()
+	// Get hash again
+	res2, err2 := applyGetHash()
 	assert.NoError(t, err2)
-	assert.NotEqual(t, res2, &types.RecognizerTimestampResponse{})
+	assert.NotEqual(t, res2, &types.RecognizerHashResponse{})
 	// this and previous one are different
-	assert.NotEqual(t, res.UnixTimestamp, res2.UnixTimestamp)
+	assert.NotEqual(t, res.RecognizersHash, res2.RecognizersHash)
 }

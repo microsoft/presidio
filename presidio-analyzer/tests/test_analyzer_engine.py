@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+import json
+import hashlib
 import time
 import pytest
 
@@ -20,16 +22,16 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
     """
 
     def __init__(self):
-        self.latest_timestamp = 0
+        self.latest_hash = ""
         self.recognizers = []
 
-    def get_latest_timestamp(self):
-        return self.latest_timestamp
+    def get_latest_hash(self):
+        return self.latest_hash
 
     def get_all_recognizers(self):
         return self.recognizers
 
-    def add_custom_pattern_recognizer(self, new_recognizer, skip_timestamp_update=False):
+    def add_custom_pattern_recognizer(self, new_recognizer, skip_hash_update=False):
         patterns = []
         for pat in new_recognizer.patterns:
             patterns.extend([Pattern(pat.name, pat.regex, pat.score)])
@@ -40,22 +42,23 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
                                                   patterns=patterns)
         self.recognizers.append(new_custom_recognizer)
 
-        if skip_timestamp_update:
+        if skip_hash_update:
             return
 
-        # making sure there is a time difference (the test run so fast two
-        # sequential operations are with the same timestamp
-        time.sleep(1)
-        self.latest_timestamp = int(time.time())
+        m = hashlib.md5()
+        for recognizer in self.recognizers:
+            m.update(recognizer.name.encode('utf-8'))
+        self.latest_hash = m.digest()
 
     def remove_recognizer(self, name):
         for i in self.recognizers:
             if i.name == name:
                 self.recognizers.remove(i)
-        # making sure there is a time difference (the test run so fast two
-        # sequential operations are with the same timestamp
-        time.sleep(1)
-        self.latest_timestamp = int(time.time())
+
+        m = hashlib.md5()
+        for recognizer in self.recognizers:
+            m.update(recognizer.name.encode('utf-8'))
+        self.latest_hash = m.digest()
 
 
 class MockRecognizerRegistry(RecognizerRegistry):
@@ -73,67 +76,51 @@ class MockRecognizerRegistry(RecognizerRegistry):
 
 class TestAnalyzerEngine(TestCase):
 
+    def __init__(self, *args, **kwargs):
+        super(TestAnalyzerEngine, self).__init__(*args, **kwargs)
+        self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
+        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry)
+
     def test_analyze_with_predefined_recognizers_return_results(self):
-        recognizers_store_api_mock = RecognizerStoreApiMock()
-        analyze_engine = AnalyzerEngine(
-            MockRecognizerRegistry(recognizers_store_api_mock))
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
-        langauge = "en"
+        language = "en"
         entities = ["CREDIT_CARD"]
-        results = analyze_engine.analyze(text, entities, langauge)
+        results = self.loaded_analyzer_engine.analyze(text, entities, language)
 
         assert len(results) == 1
         assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
 
-        del analyze_engine
-
     def test_analyze_with_multiple_predefined_recognizers(self):
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
-        langauge = "en"
+        language = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = analyze_engine.analyze(text, entities, langauge)
+        results = self.loaded_analyzer_engine.analyze(text, entities, language)
 
         assert len(results) == 2
         assert_result(results[0], "CREDIT_CARD", 14, 33, 1.0)
         assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
 
-        del analyze_engine
-
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
-            langauge = "en"
-            recognizers_store_api_mock = RecognizerStoreApiMock()
-            analyze_engine = AnalyzerEngine(
-                MockRecognizerRegistry(recognizers_store_api_mock))
-            text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
-                   "Domain: microsoft.com"
+            language = "en"
+            text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 Domain: microsoft.com"
             entities = []
-            analyze_engine.analyze(text, entities, langauge)
-            del analyze_engine
+            self.loaded_analyzer_engine.analyze(text, entities, language)
 
     def test_analyze_with_empty_text(self):
-        recognizers_store_api_mock = RecognizerStoreApiMock()
-        analyze_engine = AnalyzerEngine(
-            MockRecognizerRegistry(recognizers_store_api_mock))
-        langauge = "en"
+        language = "en"
         text = ""
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = analyze_engine.analyze(text, entities, langauge)
+        results = self.loaded_analyzer_engine.analyze(text, entities, language)
 
         assert len(results) == 0
-        del analyze_engine
 
     def test_analyze_with_unsupported_language(self):
         with pytest.raises(ValueError):
-            langauge = "de"
-            recognizers_store_api_mock = RecognizerStoreApiMock()
-            analyze_engine = AnalyzerEngine(
-                MockRecognizerRegistry(recognizers_store_api_mock))
+            language = "de"
             text = ""
             entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-            analyze_engine.analyze(text, entities, "de")
-            del analyze_engine
+            self.loaded_analyzer_engine.analyze(text, entities, language)
 
     def test_remove_duplicates(self):
         # test same result with different score will return only the highest
@@ -211,26 +198,22 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 0
 
     def test_apply_with_language_returns_correct_response(self):
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
-
         request = AnalyzeRequest()
         request.analyzeTemplate.languageCode = 'en'
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
         request.text = "My credit card number is 4916994465041084"
-        response = analyze_engine.Apply(request, None)
+        response = self.loaded_analyzer_engine.Apply(request, None)
 
         assert response.analyzeResults is not None
 
     def test_apply_with_no_language_returns_default(self):
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
-
         request = AnalyzeRequest()
         request.analyzeTemplate.languageCode = ''
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
         request.text = "My credit card number is 4916994465041084"
-        response = analyze_engine.Apply(request, None)
+        response = self.loaded_analyzer_engine.Apply(request, None)
         assert response.analyzeResults is not None

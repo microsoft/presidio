@@ -38,7 +38,7 @@ type ServicesAPI interface {
 	DeleteRecognizer(ctx context.Context, name string) (*types.RecognizersStoreResponse, error)
 	GetRecognizer(ctx context.Context, name string) (*types.RecognizersGetResponse, error)
 	GetAllRecognizers(ctx context.Context) (*types.RecognizersGetResponse, error)
-	GetUpdateTimeStamp(ctx context.Context) (*types.RecognizerTimestampResponse, error)
+	GetRecognizersHash(ctx context.Context) (*types.RecognizerHashResponse, error)
 }
 
 //TemplatesStore interface for template actions

@@ -2,11 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"errors"
-	"strconv"
 	"sync"
-	"time"
 
 	"google.golang.org/grpc/reflection"
 
@@ -16,6 +15,8 @@ import (
 	"github.com/spf13/viper"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+
+	"encoding/hex"
 
 	"github.com/Microsoft/presidio/pkg/cache"
 	log "github.com/Microsoft/presidio/pkg/logger"
@@ -33,7 +34,7 @@ var (
 
 var (
 	recognizersKey = "custom_recognizers"
-	timestampKey   = "custom_recognizers:last_update"
+	hashKey        = "custom_recognizers:hash"
 )
 
 var mutex sync.RWMutex
@@ -86,17 +87,18 @@ func writersUnlock() {
 	log.Info("Released")
 }
 
-// setValue sets the recognizers array in the store and updates the last update
-// timestamp
-func setValue(value string, timestamp string) error {
-	err := recognizersStore.Set(recognizersKey, value)
+// setValue sets the recognizers array in the store and updates the hash
+func setValue(value []byte) error {
+	err := recognizersStore.Set(recognizersKey, string(value))
 	if err != nil {
 		log.Error(err.Error())
 		return err
 	}
 
-	log.Info("Updating timestamp: " + timestamp)
-	err = recognizersStore.Set(timestampKey, timestamp)
+	hashVal := md5.Sum(value)
+	calculatedHash := hex.EncodeToString(hashVal[:])
+	log.Info("Updating hash: " + calculatedHash)
+	err = recognizersStore.Set(hashKey, calculatedHash)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -175,9 +177,7 @@ func insertOrUpdateRecognizer(value string, isUpdate bool) error {
 	}
 
 	recognizersBytes, _ := json.Marshal(existingRecognizersArr)
-	currentTimeStr := strconv.FormatInt(time.Now().Unix(), 10)
-
-	return setValue(string(recognizersBytes), currentTimeStr)
+	return setValue(recognizersBytes)
 }
 
 //applyGet returns a single recognizer
@@ -288,27 +288,23 @@ func applyDelete(r *types.RecognizerDeleteRequest) (*types.RecognizersStoreRespo
 	}
 
 	recognizersBytes, _ := json.Marshal(existingRecognizersArr)
-	currentTimeStr := strconv.FormatInt(time.Now().Unix(), 10)
-	return &types.RecognizersStoreResponse{},
-		setValue(string(recognizersBytes), currentTimeStr)
+	return &types.RecognizersStoreResponse{}, setValue(recognizersBytes)
 }
 
-//applyGetTimestamp returns the latest timestamp (unix style), when the store
-// was last updated on
-func applyGetTimestamp() (*types.RecognizerTimestampResponse, error) {
+//applyGetHash returns the hash of the stored recognizers
+func applyGetHash() (*types.RecognizerHashResponse, error) {
 	if recognizersStore == nil {
 		return nil, errors.New("cache is missing")
 	}
 
-	timestamp, err := recognizersStore.Get(timestampKey)
-	if err != nil || timestamp == "" {
-		errMsg := "Failed to find the last update timestamp"
+	hash, err := recognizersStore.Get(hashKey)
+	if err != nil || hash == "" {
+		errMsg := "Failed to find the latest hash"
 		log.Error(errMsg)
-		return &types.RecognizerTimestampResponse{}, errors.New(errMsg)
+		return &types.RecognizerHashResponse{}, errors.New(errMsg)
 	}
 
-	timeInSeconds, _ := strconv.ParseUint(timestamp, 10, 64)
-	return &types.RecognizerTimestampResponse{UnixTimestamp: timeInSeconds}, nil
+	return &types.RecognizerHashResponse{RecognizersHash: hash}, nil
 }
 
 // Server methods
@@ -363,13 +359,13 @@ func (s *server) ApplyDelete(ctx context.Context, r *types.RecognizerDeleteReque
 	return response, nil
 }
 
-func (s *server) ApplyGetTimestamp(ctx context.Context,
-	r *types.RecognizerGetTimestampRequest) (
-	*types.RecognizerTimestampResponse, error) {
-	response, err := applyGetTimestamp()
+func (s *server) ApplyGetHash(ctx context.Context,
+	r *types.RecognizerGetHashRequest) (
+	*types.RecognizerHashResponse, error) {
+	response, err := applyGetHash()
 	if err != nil {
 		log.Error(err.Error())
-		return &types.RecognizerTimestampResponse{}, err
+		return &types.RecognizerHashResponse{}, err
 	}
 
 	return response, nil
