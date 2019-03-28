@@ -8,7 +8,7 @@ from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
 from analyzer.analyze_pb2 import AnalyzeRequest
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer
+    UsPhoneRecognizer, DomainRecognizer
 
 
 class MockRecognizerRegistry(RecognizerRegistry):
@@ -17,7 +17,8 @@ class MockRecognizerRegistry(RecognizerRegistry):
         # Task #598:  Support loading of the pre-defined recognizers
         # from the given path.
         self.recognizers.extend([CreditCardRecognizer(),
-                                 UsPhoneRecognizer()])
+                                 UsPhoneRecognizer(),
+                                 DomainRecognizer()])
 
 
 class TestAnalyzerEngine(TestCase):
@@ -27,7 +28,7 @@ class TestAnalyzerEngine(TestCase):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         langauge = "en"
         entities = ["CREDIT_CARD"]
-        results = analyze_engine.analyze(text, entities, langauge)
+        results = analyze_engine.analyze(text, entities, langauge, all_fields=False)
 
         assert len(results) == 1
         assert_result(results[0], "CREDIT_CARD", 14, 33, EntityRecognizer.MAX_SCORE)
@@ -37,7 +38,7 @@ class TestAnalyzerEngine(TestCase):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         langauge = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = analyze_engine.analyze(text, entities, langauge)
+        results = analyze_engine.analyze(text, entities, langauge, all_fields=False)
 
         assert len(results) == 2
         assert_result(results[0], "CREDIT_CARD", 14, 33, EntityRecognizer.MAX_SCORE)
@@ -50,14 +51,14 @@ class TestAnalyzerEngine(TestCase):
             text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 " \
                    "Domain: microsoft.com"
             entities = []
-            analyze_engine.analyze(text, entities, langauge)
+            analyze_engine.analyze(text, entities, langauge, all_fields=False)
 
     def test_analyze_with_empty_text(self):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
         langauge = "en"
         text = ""
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = analyze_engine.analyze(text, entities, langauge)
+        results = analyze_engine.analyze(text, entities, langauge, all_fields=False)
 
         assert len(results) == 0
 
@@ -67,7 +68,7 @@ class TestAnalyzerEngine(TestCase):
             analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
             text = ""
             entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-            analyze_engine.analyze(text, entities, "de")
+            analyze_engine.analyze(text, entities, "de", all_fields=False)
 
     def test_remove_duplicates(self):
         # test same result with different score will return only the highest
@@ -93,7 +94,7 @@ class TestAnalyzerEngine(TestCase):
         entities = ["CREDIT_CARD", "ROCKET"]
 
         results = analyze_engine.analyze(text=text, entities=entities,
-                                         language='en')
+                                         language='en', all_fields=False)
 
         assert len(results) == 0
 
@@ -102,7 +103,7 @@ class TestAnalyzerEngine(TestCase):
 
         # Check that the entity is recognized:
         results = analyze_engine.analyze(text=text, entities=entities,
-                                         language='en')
+                                         language='en', all_fields=False)
 
         assert len(results) == 1
         assert_result(results[0], "ROCKET", 0, 7, 0.8)
@@ -119,7 +120,7 @@ class TestAnalyzerEngine(TestCase):
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
         results = analyze_engine.analyze(text=text, entities=entities,
-                                         language='en')
+                                         language='en', all_fields=False)
 
         assert len(results) == 0
 
@@ -128,7 +129,7 @@ class TestAnalyzerEngine(TestCase):
 
         # Check that the entity is recognized:
         results = analyze_engine.analyze(text=text, entities=entities,
-                                         language='en')
+                                         language='en', all_fields=False)
         assert len(results) == 1
         assert_result(results[0], "SPACESHIP", 0, 10, 0.8)
 
@@ -137,7 +138,7 @@ class TestAnalyzerEngine(TestCase):
 
         # Test again to see we didn't get any results
         results = analyze_engine.analyze(text=text, entities=entities,
-                                         language='en')
+                                         language='en', all_fields=False)
 
         assert len(results) == 0
 
@@ -145,7 +146,7 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
         request = AnalyzeRequest()
-        request.analyzeTemplate.languageCode = 'en'
+        request.analyzeTemplate.language = 'en'
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
@@ -158,10 +159,20 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
 
         request = AnalyzeRequest()
-        request.analyzeTemplate.languageCode = ''
+        request.analyzeTemplate.language = ''
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
         request.text = "My credit card number is 4916994465041084"
         response = analyze_engine.Apply(request, None)
         assert response.analyzeResults is not None
+
+    def test_when_allFields_is_true_return_all_fields(self):
+        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        request = AnalyzeRequest()
+        request.analyzeTemplate.allFields = True
+        request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
+                   "Domain: microsoft.com"
+        response = analyze_engine.Apply(request, None)
+        assert response.analyzeResults is not None
+        assert len(response.analyzeResults) is 3
