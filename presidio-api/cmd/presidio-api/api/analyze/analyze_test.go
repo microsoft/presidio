@@ -86,5 +86,5 @@ func TestLanguageCode(t *testing.T) {
 		AnalyzeTemplate:   &types.AnalyzeTemplate{},
 	}
 	Analyze(context.Background(), api, analyzeAPIRequest, project)
-	assert.Equal(t, "langtest", analyzeAPIRequest.AnalyzeTemplate.LanguageCode)
+	assert.Equal(t, "langtest", analyzeAPIRequest.AnalyzeTemplate.Language)
 }
