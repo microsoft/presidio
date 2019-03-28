@@ -32,7 +32,7 @@
     "persist",
     "rpc",
     "sas",
-    "uuid"
+    "uuid",
   ]
   pruneopts = "UT"
   revision = "b5ea4829bce0d96bc7b4d11bfc8ccd2afdf0ec4a"
@@ -45,7 +45,7 @@
     ".",
     "atom",
     "eph",
-    "storage"
+    "storage",
   ]
   pruneopts = "UT"
   revision = "aca3e9cfe138951ffb815665621095482a674ee9"
@@ -66,7 +66,7 @@
     "services/eventhub/mgmt/2017-04-01/eventhub",
     "services/storage/mgmt/2017-10-01/storage",
     "storage",
-    "version"
+    "version",
   ]
   pruneopts = "UT"
   revision = "199e71492c8f8ffb9d1d9432d425a1c8731fba19"
@@ -91,7 +91,7 @@
     "autorest/to",
     "autorest/validation",
     "logger",
-    "tracing"
+    "tracing",
   ]
   pruneopts = "UT"
   revision = "be17756531f50014397912b7aa557ec335e39b98"
@@ -106,12 +106,12 @@
   version = "v1.3.5"
 
 [[projects]]
-  branch = "support-all-fields-request"
-  digest = "1:d020c7bac116dd1a01523be75d6402bab0665a7aadb89fb79a11bfbfb0536e56"
+  branch = "development"
+  digest = "1:adff74f490225dc1732d0001e74ef43dd7a2e76f951c74f9aad31faf4671ae41"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "5975bdaf24d74e90491e869505e055c01df9abe7"
+  revision = "5d87077eb6d16eb2bb02c392dae601676a955792"
 
 [[projects]]
   digest = "1:a59a467c541a1bf8b06e4fad6113028c959be6573b78ceca9f8020cd0d2127fc"
@@ -158,7 +158,7 @@
     "private/protocol/restxml",
     "private/protocol/xml/xmlutil",
     "service/s3",
-    "service/sts"
+    "service/sts",
   ]
   pruneopts = "UT"
   revision = "1f8a24693bc965514ee0d7aadbabe0ceed184a88"
@@ -187,7 +187,7 @@
     "gen-go/agent/common/v1",
     "gen-go/agent/trace/v1",
     "gen-go/resource/v1",
-    "gen-go/trace/v1"
+    "gen-go/trace/v1",
   ]
   pruneopts = "UT"
   revision = "7f2434bc10da710debe5c4315ed6d4df454b4024"
@@ -207,7 +207,7 @@
   name = "github.com/denisenkom/go-mssqldb"
   packages = [
     ".",
-    "internal/cp"
+    "internal/cp",
   ]
   pruneopts = "UT"
   revision = "4e0d7dc8888fbb59764060e99b7b68e77a6f9698"
@@ -299,7 +299,7 @@
     ".",
     "binding",
     "json",
-    "render"
+    "render",
   ]
   pruneopts = "UT"
   revision = "b869fe1415e4b9eb52f247441830d502aece2d4d"
@@ -315,7 +315,7 @@
     "internal/hashtag",
     "internal/pool",
     "internal/proto",
-    "internal/util"
+    "internal/util",
   ]
   pruneopts = "UT"
   revision = "22be8a3eaf992c828cecb69dc07348313bf08d2e"
@@ -358,7 +358,7 @@
   name = "github.com/gogo/protobuf"
   packages = [
     "proto",
-    "sortkeys"
+    "sortkeys",
   ]
   pruneopts = "UT"
   revision = "4cbf7e384e768b4e01799441fdf2a706a5635ae7"
@@ -375,7 +375,7 @@
     "ptypes/any",
     "ptypes/duration",
     "ptypes/timestamp",
-    "ptypes/wrappers"
+    "ptypes/wrappers",
   ]
   pruneopts = "UT"
   revision = "347cf4a86c1cb8d262994d8ef5924d4576c5b331"
@@ -410,7 +410,7 @@
   packages = [
     "OpenAPIv2",
     "compiler",
-    "extensions"
+    "extensions",
   ]
   pruneopts = "UT"
   revision = "7c663266750e7d82587642f65e60bc4083f1f84e"
@@ -422,7 +422,7 @@
   name = "github.com/gregjones/httpcache"
   packages = [
     ".",
-    "diskcache"
+    "diskcache",
   ]
   pruneopts = "UT"
   revision = "c63ab54fda8f77302f8d414e19933f2b6026a089"
@@ -434,7 +434,7 @@
   packages = [
     "retry",
     "util/backoffutils",
-    "util/metautils"
+    "util/metautils",
   ]
   pruneopts = "UT"
   revision = "4832df01553a810b8e3404b95743d01c9ab5313f"
@@ -452,7 +452,7 @@
     "hcl/token",
     "json/parser",
     "json/scanner",
-    "json/token"
+    "json/token",
   ]
   pruneopts = "UT"
   revision = "8cb6e5b959231cc1119e43259c4a608f9c51a241"
@@ -503,7 +503,7 @@
   name = "github.com/lib/pq"
   packages = [
     ".",
-    "oid"
+    "oid",
   ]
   pruneopts = "UT"
   revision = "9eb73efc1fcc404148b56765b0d3f61d9a5ef8ee"
@@ -601,7 +601,7 @@
   name = "github.com/pierrec/lz4"
   packages = [
     ".",
-    "internal/xxh32"
+    "internal/xxh32",
   ]
   pruneopts = "UT"
   revision = "635575b42742856941dbc767b44905bb9ba083f6"
@@ -630,7 +630,7 @@
   packages = [
     ".",
     "azure",
-    "s3"
+    "s3",
   ]
   pruneopts = "UT"
   revision = "cf346b51d5f5bf4d4671ee346072cb2b7eddceab"
@@ -656,7 +656,7 @@
   name = "github.com/spf13/afero"
   packages = [
     ".",
-    "mem"
+    "mem",
   ]
   pruneopts = "UT"
   revision = "a5d6946387efe7d64d09dcba68cdd523dc1273a3"
@@ -715,7 +715,7 @@
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
-    "mock"
+    "mock",
   ]
   pruneopts = "UT"
   revision = "ffdc059bfe9ce6a4e144ba849dbedead332c6053"
@@ -747,7 +747,7 @@
     "trace",
     "trace/internal",
     "trace/propagation",
-    "trace/tracestate"
+    "trace/tracestate",
   ]
   pruneopts = "UT"
   revision = "b7bf3cdb64150a8c8c53b769fdeb2ba581bd4d4b"
@@ -779,7 +779,7 @@
     "internal/color",
     "internal/exit",
     "zapcore",
-    "zaptest/observer"
+    "zaptest/observer",
   ]
   pruneopts = "UT"
   revision = "ff33455a0e382e8a81d14dd7c922020b6b5e7982"
@@ -793,7 +793,7 @@
     "md4",
     "pkcs12",
     "pkcs12/internal/rc2",
-    "ssh/terminal"
+    "ssh/terminal",
   ]
   pruneopts = "UT"
   revision = "ff983b9c42bc9fbf91556e191cc8efb585c16908"
@@ -805,7 +805,7 @@
   packages = [
     "bmp",
     "tiff",
-    "tiff/lzw"
+    "tiff/lzw",
   ]
   pruneopts = "UT"
   revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
@@ -822,7 +822,7 @@
     "http2/hpack",
     "idna",
     "internal/timeseries",
-    "trace"
+    "trace",
   ]
   pruneopts = "UT"
   revision = "be1c187aa6c66b9daa1d9461c228d17e9dd2cab7"
@@ -833,7 +833,7 @@
   name = "golang.org/x/oauth2"
   packages = [
     ".",
-    "internal"
+    "internal",
   ]
   pruneopts = "UT"
   revision = "d668ce993890a79bda886613ee587a69dd5da7a6"
@@ -844,7 +844,7 @@
   name = "golang.org/x/sync"
   packages = [
     "errgroup",
-    "semaphore"
+    "semaphore",
   ]
   pruneopts = "UT"
   revision = "37e7f081c4d4c64e13b10787722085407fe5d15f"
@@ -855,7 +855,7 @@
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
   ]
   pruneopts = "UT"
   revision = "48ac38b7c8cbedd50b1613c0fccacfc7d88dfcdf"
@@ -877,7 +877,7 @@
     "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
-    "unicode/rangetable"
+    "unicode/rangetable",
   ]
   pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
@@ -910,7 +910,7 @@
     "internal/log",
     "internal/remote_api",
     "internal/urlfetch",
-    "urlfetch"
+    "urlfetch",
   ]
   pruneopts = "UT"
   revision = "e9657d882bb81064595ca3b56cbe2546bbabf7b1"
@@ -960,7 +960,7 @@
     "resolver/passthrough",
     "stats",
     "status",
-    "tap"
+    "tap",
   ]
   pruneopts = "UT"
   revision = "df014850f6dee74ba2fc94874043a9f3f75fbfd8"
@@ -1025,7 +1025,7 @@
     "settings/v1alpha1",
     "storage/v1",
     "storage/v1alpha1",
-    "storage/v1beta1"
+    "storage/v1beta1",
   ]
   pruneopts = "UT"
   revision = "89a74a8d264df0e993299876a8cde88379b940ee"
@@ -1073,7 +1073,7 @@
     "pkg/version",
     "pkg/watch",
     "third_party/forked/golang/json",
-    "third_party/forked/golang/reflect"
+    "third_party/forked/golang/reflect",
   ]
   pruneopts = "UT"
   revision = "2b1284ed4c93a43499e781493253e2ac5959c4fd"
@@ -1171,7 +1171,7 @@
     "util/connrotation",
     "util/flowcontrol",
     "util/homedir",
-    "util/integer"
+    "util/integer",
   ]
   pruneopts = "UT"
   revision = "e64494209f554a6723674bd494d69445fb76a1d4"
@@ -1198,7 +1198,7 @@
   name = "pack.ag/amqp"
   packages = [
     ".",
-    "internal/testconn"
+    "internal/testconn",
   ]
   pruneopts = "UT"
   revision = "a77984cb83aafae2bc3fcdf6f0ef75c93b87eea5"
@@ -1263,7 +1263,7 @@
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/kubernetes/fake",
-    "k8s.io/client-go/tools/clientcmd"
+    "k8s.io/client-go/tools/clientcmd",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
