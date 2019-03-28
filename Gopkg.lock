@@ -107,11 +107,11 @@
 
 [[projects]]
   branch = "development"
-  digest = "1:adff74f490225dc1732d0001e74ef43dd7a2e76f951c74f9aad31faf4671ae41"
+  digest = "1:d020c7bac116dd1a01523be75d6402bab0665a7aadb89fb79a11bfbfb0536e56"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "5d87077eb6d16eb2bb02c392dae601676a955792"
+  revision = "bdbe699528941d1a17ad1c9d015ed144c9bff022"
 
 [[projects]]
   digest = "1:a59a467c541a1bf8b06e4fad6113028c959be6573b78ceca9f8020cd0d2127fc"
