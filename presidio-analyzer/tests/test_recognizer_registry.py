@@ -93,8 +93,14 @@ class TestRecognizerRegistry(TestCase):
     def test_get_recognizers_all(self):
         registry = self.get_mock_recognizer_registry()
         registry.load_predefined_recognizers()
-        recognizers = registry.get_recognizers()
-        assert len(recognizers) == 5 + 14  # 14 predefined
+        recognizers = registry.get_recognizers(language='en', all_fields=True)
+        # 1 custom recognizer in english + 14 predefined
+        assert len(recognizers) == 1 + 14
+
+    def test_get_recognizers_all_fields(self):
+        registry = self.get_mock_recognizer_registry()
+        recognizers = registry.get_recognizers(language='de', all_fields=True)
+        assert len(recognizers) == 2
 
     def test_get_recognizers_one_language_one_entity(self):
         registry = self.get_mock_recognizer_registry()

@@ -167,7 +167,7 @@ func GetOcrMockResult() *types.OcrResponse {
 func GetTemplateMock() presidio.TemplatesStore {
 	templateService := &TemplateMockedObject{}
 	templateService.On("GetTemplate", mock.Anything, store.Analyze, mock.Anything).
-		Return(`{"fields":[{"name":"PHONE_NUMBER"}, {"name":"EMAIL_ADDRESS"}],"languageCode":"langtest"}`, nil).
+		Return(`{"fields":[{"name":"PHONE_NUMBER"}, {"name":"EMAIL_ADDRESS"}],"language":"langtest"}`, nil).
 		On("GetTemplate", mock.Anything, store.Anonymize, mock.Anything).
 		Return(`{"fieldTypeTransformations":[{"fields":[],"transformation":{"replaceValue":{"newValue":"<phone>"}}}]}`, nil).
 		On("GetTemplate", mock.Anything, store.AnonymizeImage, mock.Anything).

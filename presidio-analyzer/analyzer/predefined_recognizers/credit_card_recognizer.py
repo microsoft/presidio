@@ -1,5 +1,6 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
+from analyzer.entity_recognizer import EntityRecognizer
 
 # pylint: disable=line-too-long
 REGEX = r'\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b'  # noqa: E501
@@ -33,9 +34,9 @@ class CreditCardRecognizer(PatternRecognizer):
         sanitized_value = CreditCardRecognizer.__sanitize_value(pattern_text)
         res = CreditCardRecognizer.__luhn_checksum(sanitized_value)
         if res == 0:
-            pattern_result.score = 1
+            pattern_result.score = EntityRecognizer.MAX_SCORE
         else:
-            pattern_result.score = 0
+            pattern_result.score = EntityRecognizer.MIN_SCORE
 
         return pattern_result
 

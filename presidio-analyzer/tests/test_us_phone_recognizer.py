@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from assertions import assert_result_within_score_range
 from analyzer.predefined_recognizers import UsPhoneRecognizer
+from analyzer.entity_recognizer import EntityRecognizer
 
 phone_recognizer = UsPhoneRecognizer()
 entities = ["PHONE_NUMBER"]
@@ -15,7 +16,7 @@ class UsPhoneRecognizer(TestCase):
 
         assert len(results) == 1
         assert results[0].score != 1
-        assert_result_within_score_range(results[0], entities[0], 0, 14, 0.7, 1)
+        assert_result_within_score_range(results[0], entities[0], 0, 14, 0.7, EntityRecognizer.MAX_SCORE)
 
     # TODO: enable with task #582 re-support context model in analyzer
     # def test_phone_number_strong_match_with_phone_context(self):

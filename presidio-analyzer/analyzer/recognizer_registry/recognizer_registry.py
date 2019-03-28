@@ -52,24 +52,20 @@ class RecognizerRegistry:
             UsItinRecognizer(), UsPassportRecognizer(),
             UsPhoneRecognizer(), UsSsnRecognizer()])
 
-    def get_recognizers(self, entities=None, language=None):
+    def get_recognizers(self, language, entities=None, all_fields=False):
         """
-        Returns a list of recognizers, which support the specified name and
-        language. if no language and entities are given, all the available
-        recognizers will be returned
+        Returns a list of the recognizer, which supports the specified name and
+        language.
         :param entities: the requested entities
         :param language: the requested language
-        :return: A list of recognizers which support the supplied entities
+        :param all_fields: a flag to return all fields of a requested language.
+        :return: A list of the recognizers which supports the supplied entities
         and language
         """
-
-        if language is None and entities is None:
-            return self.recognizers
-
         if language is None:
             raise ValueError("No language provided")
 
-        if entities is None:
+        if entities is None and all_fields is False:
             raise ValueError("No entities provided")
 
         all_possible_recognizers = self.recognizers.copy()
@@ -80,18 +76,21 @@ class RecognizerRegistry:
 
         # filter out unwanted recognizers
         to_return = []
-        for entity in entities:
-            subset = [rec for rec in all_possible_recognizers if
-                      entity in rec.supported_entities
-                      and language == rec.supported_language]
+        if all_fields:
+            to_return = [rec for rec in all_possible_recognizers if
+                         language == rec.supported_language]
+        else:
+            for entity in entities:
+                subset = [rec for rec in all_possible_recognizers if
+                          entity in rec.supported_entities
+                          and language == rec.supported_language]
 
-            if not subset:
-                logging.warning(
-                    "Entity " + entity +
-                    " doesn't have the corresponding recognizer in language :"
-                    + language)
-            else:
-                to_return.extend(subset)
+                if not subset:
+                    logging.warning("Entity %s doesn't have the corresponding"
+                                    " recognizer in language : %s",
+                                    entity, language)
+                else:
+                    to_return.extend(subset)
 
         logging.info(
             "Returning a total of %d recognizers (predefined + custom)",

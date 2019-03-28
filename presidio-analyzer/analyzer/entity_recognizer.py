@@ -4,6 +4,8 @@ from abc import abstractmethod
 
 
 class EntityRecognizer:
+    MIN_SCORE = 0
+    MAX_SCORE = 1.0
 
     def __init__(self, supported_entities, name=None, supported_language="en",
                  version="0.0.1"):
