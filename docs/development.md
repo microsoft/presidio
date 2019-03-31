@@ -31,7 +31,14 @@
     $ cd re2 && make install
     ```
 
-6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
+6. Create a Python virtual environment
+
+    ```sh
+    python3.6 -m venv presidio-venv
+    source presidio-venv/bin/activate
+    ```
+
+7. Install the Python packages for the analyzer in the `presidio-analyzer` folder
 
     ```sh
     $ pip3 install -r requirements.txt
@@ -44,9 +51,9 @@
     $ pip3 install cython
     ```
 
-7. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
+8. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
 
-8. Protobuf generator tools (Optional)
+9. Protobuf generator tools (Optional)
 
     - `https://github.com/golang/protobuf`
 
