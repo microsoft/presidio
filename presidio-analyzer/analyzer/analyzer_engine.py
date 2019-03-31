@@ -1,12 +1,14 @@
 import logging
 import os
 
+from analyzer import RecognizerRegistry
+from analyzer.context_simplifier.nlp_context_simplifier \
+    import NLPContextSimplifier
+
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-
-from analyzer import RecognizerRegistry  # noqa: F401
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
@@ -17,10 +19,14 @@ DEFAULT_LANGUAGE = "en"
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry=RecognizerRegistry()):
+    def __init__(self, registry=RecognizerRegistry(),
+                 simplifier=NLPContextSimplifier()):
         # load all recognizers
         self.registry = registry
         registry.load_predefined_recognizers()
+        # The simplifier makes the context easier to manage:
+        # Transform to singular form, remove punctuation, etc...
+        self.simplifier = simplifier
 
     @staticmethod
     def __remove_duplicates(results):
@@ -96,7 +102,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.load()
                 recognizer.is_loaded = True
 
-            r = recognizer.analyze(text, entities)
+            r = recognizer.analyze(text, entities, self.simplifier)
             if r is not None:
                 results.extend(r)
 

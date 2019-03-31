@@ -104,7 +104,9 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 2
         assert_result(results[0], "CREDIT_CARD", 14,
                       33, EntityRecognizer.MAX_SCORE)
-        assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
+        expected_score = UsPhoneRecognizer.MEDIUM_REGEX_SCORE + \
+            PatternRecognizer.CONTEXT_SIMILARITY_FACTOR  # 0.5 + 0.35 = 0.85
+        assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):

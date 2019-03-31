@@ -17,14 +17,13 @@ class TestUsPassportRecognizer(TestCase):
         assert results[0].score != 0
         assert_result_within_score_range(results[0], entities[0], 0, 9, 0, 0.1)
 
-    # Task #582 re-support context model in analyzer
-    # def test_valid_us_passport_with_exact_context(self):
-    #     num = '912803456'
-    #     context = 'my passport number is '
-    #     results = us_passport_recognizer.analyze(context + num, entities)
-    #
-    #     assert len(results) == 1
-    #     assert 0.49 < results[0].score < 0.71
+    def test_valid_us_passport_with_exact_context(self):
+        num = '912803456'
+        context = 'my passport number is '
+        results = us_passport_recognizer.analyze(context + num, entities)
+
+        assert len(results) == 1
+        assert 0.49 < results[0].score < 0.71
 
     #  Task #603: Support keyphrases: Should pass after handling keyphrases, e.g. "travel document" or "travel permit"
 

@@ -16,7 +16,8 @@ class SpacyRecognizer(LocalRecognizer):
         self.logger.info("Loading NLP model...")
         self.nlp = spacy.load("en_core_web_lg", disable=['parser', 'tagger'])
 
-    def analyze(self, text, entities):
+    # pylint: disable=unused-argument
+    def analyze(self, text, entities, simplifier=None):
         doc = self.nlp(text)
         results = []
 

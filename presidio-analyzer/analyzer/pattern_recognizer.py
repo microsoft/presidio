@@ -1,7 +1,9 @@
 import datetime
 
-from analyzer import LocalRecognizer, Pattern, RecognizerResult
-from analyzer import EntityRecognizer
+from analyzer import LocalRecognizer, \
+    Pattern, \
+    RecognizerResult, \
+    EntityRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -12,8 +14,14 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    def __init__(self, supported_entity, name=None, supported_language='en',
-                 patterns=None,
+    CONTEXT_SIMILARITY_THRESHOLD = 0.65
+    CONTEXT_SIMILARITY_FACTOR = 0.35
+    MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
+    CONTEXT_PREFIX_COUNT = 5
+    CONTEXT_SUFFIX_COUNT = 0
+
+    def __init__(self, supported_entity, name=None,
+                 supported_language='en', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
@@ -50,11 +58,11 @@ class PatternRecognizer(LocalRecognizer):
     def load(self):
         pass
 
-    def analyze(self, text, entities):
+    def analyze(self, text, entities, simplifier=None):
         results = []
 
         if self.patterns:
-            pattern_result = self.__analyze_patterns(text)
+            pattern_result = self.__analyze_patterns(text, simplifier)
 
             if pattern_result:
                 results.extend(pattern_result)
@@ -73,6 +81,69 @@ class PatternRecognizer(LocalRecognizer):
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", regex=regex, score=1.0)
 
+    def __calculate_context_similarity(self,
+                                       context_text,
+                                       context_list,
+                                       simplifier):
+        """Context similarity is 1 if there's exact match between a keyword in
+           context_text and any keyword in context_list
+
+        :param context_text a string of the prefix and suffix of the found
+               match
+        :param context_list a list of words considered as context keywords
+        :param simplifier makes the context easier to manage.
+                          It transforms to singular form, remove punctuation,
+                          etc...
+        """
+
+        if context_list is None:
+            return 0
+
+        context_keywords = self.__context_to_keywords(context_text, simplifier)
+        if context_keywords is None:
+            return 0
+
+        similarity = 0.0
+        for context_keyword in context_keywords:
+            if context_keyword in context_list:
+                self.logger.info("Found context keyword '%s'", context_keyword)
+                similarity = 1
+                break
+
+        return similarity
+
+    @staticmethod
+    def __context_to_keywords(context, simplifier):
+        # if no simplifier is defined, just tokenize the text for best effort
+        if simplifier is None:
+            return context.split()
+
+        # if a simplifier is defined, use it.
+        return simplifier.simplify(context)
+
+    @staticmethod
+    def __extract_context(text, start, end):
+        """Extract context for a specified match
+        Args:
+          text: text to analyze
+          start: match start offset
+          end: match end offset
+        """
+
+        prefix = text[0:start].split()
+        suffix = text[end + 1:].split()
+        context = ''
+
+        context += ' '.join(
+            prefix[max(0,
+                       len(prefix) -
+                       PatternRecognizer.CONTEXT_PREFIX_COUNT):len(prefix)])
+        context += ' '
+        context += ' '.join(
+            suffix[0:min(PatternRecognizer.CONTEXT_SUFFIX_COUNT, len(suffix))])
+
+        return context
+
     # pylint: disable=unused-argument, no-self-use
     def validate_result(self, pattern_text, pattern_result):
         """
@@ -89,12 +160,15 @@ class PatternRecognizer(LocalRecognizer):
         """
         return pattern_result
 
-    def __analyze_patterns(self, text):
+    def __analyze_patterns(self, text, simplifier):
         """
         Evaluates all patterns in the provided text, including words in
          the provided blacklist
 
         :param text: text to analyze
+        :param simplifier makes the context easier to manage.
+                          It transforms to singular form, remove punctuation,
+                          etc...
         :return: A list of RecognizerResult
         """
         results = []
@@ -118,11 +192,26 @@ class PatternRecognizer(LocalRecognizer):
                 if current_match == '':
                     continue
 
-                res = RecognizerResult(self.supported_entities[0], start, end,
-                                       pattern.score)
-                res = self.validate_result(current_match, res)
+                score = pattern.score
+                context_text = self.__extract_context(text, start, end)
+                context_similarity = self.__calculate_context_similarity(
+                    context_text, self.context, simplifier)
+                if context_similarity >= \
+                        PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
+                    score += \
+                        context_similarity * \
+                        PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
+                    score = max(
+                        score,
+                        PatternRecognizer.MIN_SCORE_WITH_CONTEXT_SIMILARITY)
+                    score = min(
+                        score,
+                        EntityRecognizer.MAX_SCORE)
 
-                if res and res.score != EntityRecognizer.MIN_SCORE:
+                res = RecognizerResult(self.supported_entities[0], start, end,
+                                       score)
+                res = self.validate_result(current_match, res)
+                if res and res.score > EntityRecognizer.MIN_SCORE:
                     results.append(res)
 
         return results

@@ -45,13 +45,16 @@ class EntityRecognizer:
         """
 
     @abstractmethod
-    def analyze(self, text, entities):
+    def analyze(self, text, entities, simplifier):
         """
         This is the core method for analyzing text, assuming entities are
         the subset of the supported entities types.
 
         :param text: The text to be analyzed
         :param entities: The list of entities to be detected
+        :param simplifier: makes the context easier to manage.
+                           It transforms to singular form, remove punctuation,
+                           etc...
         :return: list of RecognizerResult
         :rtype: [RecognizerResult]
         """
