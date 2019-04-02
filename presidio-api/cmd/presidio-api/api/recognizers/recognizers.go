@@ -2,7 +2,6 @@ package recognizers
 
 import (
 	"context"
-	"encoding/json"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
@@ -53,17 +52,13 @@ func DeleteRecognizer(ctx context.Context,
 func GetRecognizer(ctx context.Context,
 	api *store.API,
 	request *types.RecognizerGetRequest,
-) (string, error) {
+) ([]*types.PatternRecognizer, error) {
 	res, err := api.Services.GetRecognizer(ctx, request.Name)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	b, err := json.Marshal(res.Recognizers)
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
+	return res.Recognizers, nil
 }
 
 // GetAllRecognizers retrieves all existing recognizers via the Recognizer
@@ -71,15 +66,11 @@ func GetRecognizer(ctx context.Context,
 func GetAllRecognizers(ctx context.Context,
 	api *store.API,
 	request *types.RecognizersGetAllRequest,
-) (string, error) {
+) ([]*types.PatternRecognizer, error) {
 	res, err := api.Services.GetAllRecognizers(ctx)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	b, err := json.Marshal(res.Recognizers)
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
+	return res.Recognizers, nil
 }

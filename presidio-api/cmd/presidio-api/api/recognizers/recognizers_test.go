@@ -2,7 +2,6 @@ package recognizers
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/stretchr/testify/assert"
 
@@ -92,14 +91,10 @@ func TestGetRecognizer(t *testing.T) {
 
 	assert.NoError(t, err)
 	mockResult := mocks.GetRecognizersStoreGetMockResult().Recognizers
-	bytesExpectedRecognizers, _ := json.Marshal(mockResult)
-	assert.Equal(t, string(bytesExpectedRecognizers), results)
+	assert.Equal(t, mockResult, results)
 	// Verify single result
 
-	var recognizers []types.PatternRecognizer
-	json.Unmarshal([]byte(results), &recognizers)
-
-	assert.Equal(t, 1, len(recognizers))
+	assert.Equal(t, 1, len(results))
 }
 
 func TestGetAllRecognizer(t *testing.T) {
@@ -111,11 +106,8 @@ func TestGetAllRecognizer(t *testing.T) {
 
 	assert.NoError(t, err)
 	mockResult := mocks.GetRecognizersStoreGetAllMockResult().Recognizers
-	bytesExpectedRecognizers, _ := json.Marshal(mockResult)
-	assert.Equal(t, string(bytesExpectedRecognizers), results)
+	assert.Equal(t, mockResult, results)
 
 	// Verify multiple results
-	recognizers := []types.PatternRecognizer{}
-	json.Unmarshal([]byte(results), &recognizers)
-	assert.Equal(t, 2, len(recognizers))
+	assert.Equal(t, 2, len(results))
 }
