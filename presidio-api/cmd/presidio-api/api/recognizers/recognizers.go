@@ -2,6 +2,7 @@ package recognizers
 
 import (
 	"context"
+	"encoding/json"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
@@ -13,8 +14,12 @@ import (
 func InsertRecognizer(ctx context.Context,
 	api *store.API,
 	request *types.RecognizerInsertOrUpdateRequest,
-) (*types.RecognizersStoreResponse, error) {
-	return api.Services.InsertRecognizer(ctx, request.Value)
+) (string, error) {
+	_, err := api.Services.InsertRecognizer(ctx, request.Value)
+	if err != nil {
+		return "", err
+	}
+	return "Recognizer was inserted successfully", nil
 }
 
 // UpdateRecognizer updates an existing recognizer via the Recognizer
@@ -22,8 +27,12 @@ func InsertRecognizer(ctx context.Context,
 func UpdateRecognizer(ctx context.Context,
 	api *store.API,
 	request *types.RecognizerInsertOrUpdateRequest,
-) (*types.RecognizersStoreResponse, error) {
-	return api.Services.UpdateRecognizer(ctx, request.Value)
+) (string, error) {
+	_, err := api.Services.UpdateRecognizer(ctx, request.Value)
+	if err != nil {
+		return "", err
+	}
+	return "Recognizer was updated successfully", nil
 }
 
 // DeleteRecognizer deletes an existing recognizer via the Recognizer
@@ -31,8 +40,12 @@ func UpdateRecognizer(ctx context.Context,
 func DeleteRecognizer(ctx context.Context,
 	api *store.API,
 	request *types.RecognizerDeleteRequest,
-) (*types.RecognizersStoreResponse, error) {
-	return api.Services.DeleteRecognizer(ctx, request.Name)
+) (string, error) {
+	_, err := api.Services.DeleteRecognizer(ctx, request.Name)
+	if err != nil {
+		return "", err
+	}
+	return "Recognizer was deleted successfully", nil
 }
 
 // GetRecognizer retrieves an existing recognizer via the Recognizer
@@ -40,8 +53,17 @@ func DeleteRecognizer(ctx context.Context,
 func GetRecognizer(ctx context.Context,
 	api *store.API,
 	request *types.RecognizerGetRequest,
-) (*types.RecognizersGetResponse, error) {
-	return api.Services.GetRecognizer(ctx, request.Name)
+) (string, error) {
+	res, err := api.Services.GetRecognizer(ctx, request.Name)
+	if err != nil {
+		return "", err
+	}
+
+	b, err := json.Marshal(res.Recognizers)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 // GetAllRecognizers retrieves all existing recognizers via the Recognizer
@@ -49,14 +71,15 @@ func GetRecognizer(ctx context.Context,
 func GetAllRecognizers(ctx context.Context,
 	api *store.API,
 	request *types.RecognizersGetAllRequest,
-) (*types.RecognizersGetResponse, error) {
-	return api.Services.GetAllRecognizers(ctx)
-}
+) (string, error) {
+	res, err := api.Services.GetAllRecognizers(ctx)
+	if err != nil {
+		return "", err
+	}
 
-// GetHash returns the hash of the stored custom recognizers
-func GetHash(ctx context.Context,
-	api *store.API,
-	request *types.RecognizerGetHashRequest,
-) (*types.RecognizerHashResponse, error) {
-	return api.Services.GetRecognizersHash(ctx)
+	b, err := json.Marshal(res.Recognizers)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }

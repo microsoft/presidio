@@ -2,6 +2,7 @@ package recognizers
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/stretchr/testify/assert"
 
@@ -57,10 +58,9 @@ func TestInsertRecognizer(t *testing.T) {
 	api := setupMockServices()
 
 	r := createInsertOrUpdateRequest()
-	results, err := InsertRecognizer(context.Background(), api, &r)
+	_, err := InsertRecognizer(context.Background(), api, &r)
 
 	assert.NoError(t, err)
-	assert.Equal(t, &types.RecognizersStoreResponse{}, results)
 }
 
 func TestUpdateRecognizer(t *testing.T) {
@@ -68,10 +68,9 @@ func TestUpdateRecognizer(t *testing.T) {
 	api := setupMockServices()
 
 	r := createInsertOrUpdateRequest()
-	results, err := UpdateRecognizer(context.Background(), api, &r)
+	_, err := UpdateRecognizer(context.Background(), api, &r)
 
 	assert.NoError(t, err)
-	assert.Equal(t, &types.RecognizersStoreResponse{}, results)
 }
 
 func TestDeleteRecognizer(t *testing.T) {
@@ -79,10 +78,9 @@ func TestDeleteRecognizer(t *testing.T) {
 	api := setupMockServices()
 
 	r := types.RecognizerDeleteRequest{Name: "myname"}
-	results, err := DeleteRecognizer(context.Background(), api, &r)
+	_, err := DeleteRecognizer(context.Background(), api, &r)
 
 	assert.NoError(t, err)
-	assert.Equal(t, &types.RecognizersStoreResponse{}, results)
 }
 
 func TestGetRecognizer(t *testing.T) {
@@ -93,10 +91,15 @@ func TestGetRecognizer(t *testing.T) {
 	results, err := GetRecognizer(context.Background(), api, &r)
 
 	assert.NoError(t, err)
-	assert.Equal(t, mocks.GetRecognizersStoreGetMockResult(), results)
+	mockResult := mocks.GetRecognizersStoreGetMockResult().Recognizers
+	bytesExpectedRecognizers, _ := json.Marshal(mockResult)
+	assert.Equal(t, string(bytesExpectedRecognizers), results)
 	// Verify single result
-	assert.Equal(t, len(results.Recognizers), 1)
 
+	var recognizers []types.PatternRecognizer
+	json.Unmarshal([]byte(results), &recognizers)
+
+	assert.Equal(t, 1, len(recognizers))
 }
 
 func TestGetAllRecognizer(t *testing.T) {
@@ -107,18 +110,12 @@ func TestGetAllRecognizer(t *testing.T) {
 	results, err := GetAllRecognizers(context.Background(), api, &r)
 
 	assert.NoError(t, err)
-	assert.Equal(t, mocks.GetRecognizersStoreGetAllMockResult(), results)
+	mockResult := mocks.GetRecognizersStoreGetAllMockResult().Recognizers
+	bytesExpectedRecognizers, _ := json.Marshal(mockResult)
+	assert.Equal(t, string(bytesExpectedRecognizers), results)
+
 	// Verify multiple results
-	assert.Equal(t, len(results.Recognizers), 2)
-}
-
-func TestGetHash(t *testing.T) {
-
-	api := setupMockServices()
-
-	r := types.RecognizerGetHashRequest{}
-	results, err := GetHash(context.Background(), api, &r)
-
-	assert.NoError(t, err)
-	assert.Equal(t, mocks.GetRecognizersStoreGetHashMockResult(), results)
+	recognizers := []types.PatternRecognizer{}
+	json.Unmarshal([]byte(results), &recognizers)
+	assert.Equal(t, 2, len(recognizers))
 }

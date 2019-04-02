@@ -30,7 +30,11 @@ class RecognizerRegistry:
             self.recognizers = recognizers
         else:
             self.recognizers = []
+        # loaded_hash is used to store the currently loaded hash of in memory
+        # recognizers, to avoid fetching the recognizers from t
         self.loaded_hash = None
+        # the loaded_timestamp is used for debugging purposes, so it will be
+        # easy to understand when did the last fetching occured
         self.loaded_timestamp = None
         self.loaded_custom_recognizers = []
         self.store_api = recognizer_store_api
