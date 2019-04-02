@@ -34,7 +34,7 @@
 6. Create a Python virtual environment
 
     ```sh
-    python3.6 -m venv presidio-venv
+    python3.7 -m venv presidio-venv
     source presidio-venv/bin/activate
     ```
 
