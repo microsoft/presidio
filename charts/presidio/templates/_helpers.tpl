@@ -33,9 +33,16 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "presidio.scheduler.fullname" -}}
 {{ include "presidio.fullname" . | printf "%s-scheduler" }}
 {{- end -}}
+{{- define "presidio.recognizersstore.fullname" -}}
+{{ include "presidio.fullname" . | printf "%s-recognizersstore" }}
+{{- end -}}
 
 {{- define "presidio.analyzer.address" -}}
 {{template "presidio.analyzer.fullname" .}}:{{.Values.analyzer.service.externalPort}}
+{{- end -}}
+
+{{- define "presidio.recognizersstore.address" -}}
+{{template "presidio.recognizersstore.fullname" .}}:{{.Values.recognizersstore.service.externalPort}}
 {{- end -}}
 
 {{- define "presidio.anonymizer.address" -}}

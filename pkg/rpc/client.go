@@ -93,6 +93,16 @@ func SetupDatasinkService(address string) (types.DatasinkServiceClient, error) {
 	return client, nil
 }
 
+//SetupRecognizerStoreService connect to recognizers store service with GRPC
+func SetupRecognizerStoreService(address string) (types.RecognizersStoreServiceClient, error) {
+	conn, err := connect(address)
+	if err != nil {
+		return nil, err
+	}
+	client := types.NewRecognizersStoreServiceClient(conn)
+	return client, nil
+}
+
 //SetupSchedulerService connect to scheduler service with GRPC
 func SetupSchedulerService(address string) (types.SchedulerServiceClient, error) {
 	conn, err := connect(address)

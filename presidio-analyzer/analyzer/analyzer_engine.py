@@ -5,6 +5,7 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
+
 from analyzer import RecognizerRegistry  # noqa: F401
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
@@ -19,7 +20,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self, registry=RecognizerRegistry()):
         # load all recognizers
         self.registry = registry
-        registry.load_recognizers("predefined-recognizers")
+        registry.load_predefined_recognizers()
 
     @staticmethod
     def __remove_duplicates(results):
@@ -100,21 +101,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(r)
 
         return AnalyzerEngine.__remove_duplicates(results)
-
-    def add_pattern_recognizer(self, pattern_recognizer_dict):
-        """
-        Adds a new recognizer
-        :param pattern_recognizer_dict: a dictionary representation
-         of a pattern recognizer
-        """
-        self.registry.add_pattern_recognizer_from_dict(pattern_recognizer_dict)
-
-    def remove_recognizer(self, name):
-        """
-        Removes an existing recognizer, throws an exception if not found
-        :param name: name of recognizer to be removed
-        """
-        self.registry.remove_recognizer(name)
 
     @staticmethod
     def __convert_fields_to_entities(fields):
