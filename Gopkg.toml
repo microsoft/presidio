@@ -52,7 +52,7 @@
   name = "github.com/korovkin/limiter"
 
 [[constraint]]
-  branch = "custom_recognizers_hash"
+  branch = "development"
   name = "github.com/Microsoft/presidio-genproto"
 
 [[constraint]]
