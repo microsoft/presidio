@@ -235,4 +235,14 @@ class TestAnalyzerEngine(TestCase):
             "Domain: microsoft.com"
         response = analyze_engine.Apply(request, None)
         assert response.analyzeResults is not None
-        assert len(response.analyzeResults) is 3
+        assert len(response.analyzeResults) == 3
+
+    def test_when_allFields_is_true_full_recognizers_list_return_all_fields(self):
+        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+        request = AnalyzeRequest()
+        request.analyzeTemplate.allFields = True
+        request.text = "My name is David, Credit card: 4095-2609-9393-4932" \
+            "Domain: microsoft.com and I live in Seattle"
+        response = analyze_engine.Apply(request, None)
+        assert response.analyzeResults is not None
+        assert len(response.analyzeResults) == 4
