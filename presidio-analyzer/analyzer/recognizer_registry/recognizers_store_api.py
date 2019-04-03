@@ -35,6 +35,7 @@ class RecognizerStoreApi:
 
         last_hash = ""
         try:
+            # todo: task 812: Change to pub sub pattern
             last_hash = self.rs_stub.ApplyGetHash(
                 hash_request).recognizersHash
         except grpc.RpcError:
