@@ -28,7 +28,7 @@ func PostActionTemplate(api *store.API, project, action, id, value string) (stri
 	if err != nil {
 		return "", err
 	}
-	return "Template added successfully ", nil
+	return "Template added successfully", nil
 }
 
 //PutActionTemplate update template

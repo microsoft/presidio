@@ -36,6 +36,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          - name: RECOGNIZERS_STORE_SVC_ADDRESS
+            value:  {{ template "presidio.recognizersstore.address" . }} 
           - name: GRPC_PORT
             value: {{ .Values.analyzer.service.internalPort | quote }}
       {{ if .Values.privateRegistry }}imagePullSecrets:

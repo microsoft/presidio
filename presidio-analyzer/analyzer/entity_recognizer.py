@@ -34,6 +34,8 @@ class EntityRecognizer:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(loglevel)
         self.load()
+        logging.info("Loaded recognizer: %s", self.name)
+        self.is_loaded = True
 
     @abstractmethod
     def load(self):

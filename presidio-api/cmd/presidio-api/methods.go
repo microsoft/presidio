@@ -14,6 +14,7 @@ import (
 	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/analyze"
 	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize"
 	ai "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize-image"
+	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/recognizers"
 	scj "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/scanner-cron-job"
 	sj "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/stream-job"
 	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/templates"
@@ -240,4 +241,71 @@ func openFile(header *multipart.FileHeader) ([]byte, error) {
 	}
 
 	return bt, nil
+}
+
+func insertRecognizer(c *gin.Context) {
+	var request *types.RecognizerInsertOrUpdateRequest
+	id := c.Param("id")
+	if c.Bind(&request) == nil {
+		request.Value.Name = id
+		result, err := recognizers.InsertRecognizer(
+			c, api, request)
+		if err != nil {
+			server.AbortWithError(c, http.StatusBadRequest, err)
+			return
+		}
+		server.WriteResponse(c, http.StatusOK, result)
+	}
+}
+
+func updateRecognizer(c *gin.Context) {
+	var request *types.RecognizerInsertOrUpdateRequest
+	id := c.Param("id")
+	if c.Bind(&request) == nil {
+		request.Value.Name = id
+		result, err := recognizers.UpdateRecognizer(
+			c, api, request)
+		if err != nil {
+			server.AbortWithError(c, http.StatusBadRequest, err)
+			return
+		}
+		server.WriteResponse(c, http.StatusOK, result)
+	}
+}
+
+func deleteRecognizer(c *gin.Context) {
+	var request types.RecognizerDeleteRequest
+	id := c.Param("id")
+	request.Name = id
+	result, err := recognizers.DeleteRecognizer(
+		c, api, &request)
+	if err != nil {
+		server.AbortWithError(c, http.StatusBadRequest, err)
+		return
+	}
+	server.WriteResponse(c, http.StatusOK, result)
+}
+
+func getRecognizer(c *gin.Context) {
+	var request types.RecognizerGetRequest
+	id := c.Param("id")
+	request.Name = id
+	result, err := recognizers.GetRecognizer(
+		c, api, &request)
+	if err != nil {
+		server.AbortWithError(c, http.StatusBadRequest, err)
+		return
+	}
+	server.WriteResponse(c, http.StatusOK, result)
+}
+
+func getAllRecognizers(c *gin.Context) {
+	var request *types.RecognizersGetAllRequest
+	result, err := recognizers.GetAllRecognizers(
+		c, api, request)
+	if err != nil {
+		server.AbortWithError(c, http.StatusBadRequest, err)
+		return
+	}
+	server.WriteResponse(c, http.StatusOK, result)
 }

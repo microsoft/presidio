@@ -1,15 +1,15 @@
 class Pattern:
 
-    def __init__(self, name, pattern, strength):
+    def __init__(self, name, regex, score):
         """
         A class that represents a regex pattern.
         :param name: the name of the pattern
-        :param pattern: the regex pattern to detect
-        :param strength: the pattern's strength (values varies 0-1)
+        :param regex: the regex pattern to detect
+        :param score: the pattern's strength (values varies 0-1)
         """
         self.name = name
-        self.pattern = pattern
-        self.strength = strength
+        self.regex = regex
+        self.score = score
 
     def to_dict(self):
         """
@@ -18,8 +18,8 @@ class Pattern:
         """
 
         return_dict = {"name": self.name,
-                       "strength": self.strength,
-                       "pattern": self.pattern
+                       "score": self.score,
+                       "regex": self.regex
                        }
         return return_dict
 

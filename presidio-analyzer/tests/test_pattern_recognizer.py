@@ -52,7 +52,7 @@ class TestPatternRecognizer(TestCase):
     def test_from_dict(self):
         json = {'supported_entity': 'ENTITY_1',
                 'supported_language': 'en',
-                'patterns': [{'name': 'p1', 'strength': 0.5, 'pattern': '([0-9]{1,9})'}],
+                'patterns': [{'name': 'p1', 'score': 0.5, 'regex': '([0-9]{1,9})'}],
                 'context': ['w1', 'w2', 'w3'],
                 'version': "1.0"}
 
@@ -61,14 +61,14 @@ class TestPatternRecognizer(TestCase):
         assert new_recognizer.supported_entities == ['ENTITY_1']
         assert new_recognizer.supported_language == 'en'
         assert new_recognizer.patterns[0].name == 'p1'
-        assert new_recognizer.patterns[0].strength == 0.5
-        assert new_recognizer.patterns[0].pattern == '([0-9]{1,9})'
+        assert new_recognizer.patterns[0].score == 0.5
+        assert new_recognizer.patterns[0].regex == '([0-9]{1,9})'
         assert new_recognizer.context == ['w1', 'w2', 'w3']
         assert new_recognizer.version == "1.0"
 
     def test_from_dict_returns_instance(self):
-        pattern1_dict = {'name': 'p1', 'strength': 0.5, 'pattern': '([0-9]{1,9})'}
-        pattern2_dict = {'name': 'p2', 'strength': 0.8, 'pattern': '([0-9]{1,9})'}
+        pattern1_dict = {'name': 'p1', 'score': 0.5, 'regex': '([0-9]{1,9})'}
+        pattern2_dict = {'name': 'p2', 'score': 0.8, 'regex': '([0-9]{1,9})'}
 
         ent_rec_dict = {"supported_entity": "A",
                         "supported_language": "he",
@@ -81,9 +81,9 @@ class TestPatternRecognizer(TestCase):
         assert pattern_recognizer.version == "0.0.1"
 
         assert pattern_recognizer.patterns[0].name == "p1"
-        assert pattern_recognizer.patterns[0].strength == 0.5
-        assert pattern_recognizer.patterns[0].pattern == '([0-9]{1,9})'
+        assert pattern_recognizer.patterns[0].score == 0.5
+        assert pattern_recognizer.patterns[0].regex == '([0-9]{1,9})'
 
         assert pattern_recognizer.patterns[1].name == "p2"
-        assert pattern_recognizer.patterns[1].strength == 0.8
-        assert pattern_recognizer.patterns[1].pattern == '([0-9]{1,9})'
+        assert pattern_recognizer.patterns[1].score == 0.8
+        assert pattern_recognizer.patterns[1].regex == '([0-9]{1,9})'

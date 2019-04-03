@@ -10,6 +10,11 @@ redis:
     #db: 0
     #ssl: false
 
+# Update url with the internal redis url, phase 2
+redis_internal:
+    nameOverride: persistent-redis
+    url: redis-master.presidio-system.svc.cluster.local:6379
+
 api:
   name: presidio-api
   imagePullPolicy: Always
@@ -67,6 +72,15 @@ scheduler:
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
+  
+recognizersstore:
+  name: presidio-recognizers-store
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3004
+    internalPort: 3004
+
 
 collector:
   name: presidio-collector

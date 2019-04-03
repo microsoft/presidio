@@ -71,7 +71,7 @@ class PatternRecognizer(LocalRecognizer):
         :return:the regex of the words for detection
         """
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
-        return Pattern(name="black_list", pattern=regex, strength=1.0)
+        return Pattern(name="black_list", regex=regex, score=1.0)
 
     # pylint: disable=unused-argument, no-self-use
     def validate_result(self, pattern_text, pattern_result):
@@ -101,7 +101,7 @@ class PatternRecognizer(LocalRecognizer):
         for pattern in self.patterns:
             match_start_time = datetime.datetime.now()
             matches = re.finditer(
-                pattern.pattern,
+                pattern.regex,
                 text,
                 flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
             match_time = datetime.datetime.now() - match_start_time
@@ -119,7 +119,7 @@ class PatternRecognizer(LocalRecognizer):
                     continue
 
                 res = RecognizerResult(self.supported_entities[0], start, end,
-                                       pattern.strength)
+                                       pattern.score)
                 res = self.validate_result(current_match, res)
 
                 if res and res.score != EntityRecognizer.MIN_SCORE:
