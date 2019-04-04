@@ -39,7 +39,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                     # If result is equal to or substring of
                     # one of the other results
                     if result.start >= filtered.start \
-                        and result.end <= filtered.end:
+                            and result.end <= filtered.end:
                         valid_result = False
                         break
 
