@@ -234,5 +234,34 @@ class TestAnalyzerEngine(TestCase):
         request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
             "Domain: microsoft.com"
         response = analyze_engine.Apply(request, None)
+        returned_entities = [field.field.name for field in response.analyzeResults]
+
         assert response.analyzeResults is not None
-        assert len(response.analyzeResults) is 3
+        assert "CREDIT_CARD" in returned_entities
+        assert "PHONE_NUMBER" in returned_entities
+        assert "DOMAIN_NAME" in returned_entities
+
+    def test_when_allFields_is_true_full_recognizers_list_return_all_fields(self):
+        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+        request = AnalyzeRequest()
+        request.analyzeTemplate.allFields = True
+        request.text = "My name is David and I live in Seattle." \
+            "Domain: microsoft.com "
+        response = analyze_engine.Apply(request, None)
+        returned_entities = [field.field.name for field in response.analyzeResults]
+        assert response.analyzeResults is not None
+        assert "PERSON" in returned_entities
+        assert "LOCATION" in returned_entities
+        assert "DOMAIN_NAME" in returned_entities
+
+    def test_when_allFields_is_true_and_entities_not_empty_exception(self):
+        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+        request = AnalyzeRequest()
+        request.text = "My name is David and I live in Seattle." \
+                       "Domain: microsoft.com "
+        request.analyzeTemplate.allFields = True
+        new_field = request.analyzeTemplate.fields.add()
+        new_field.name = 'CREDIT_CARD'
+        new_field.minScore = '0.5'
+        with pytest.raises(ValueError):
+            analyze_engine.Apply(request, None)

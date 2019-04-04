@@ -5,7 +5,6 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-
 from analyzer import RecognizerRegistry  # noqa: F401
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
@@ -85,11 +84,23 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         of the requested language
         :return: an array of the found entities in the text
         """
+
         recognizers = self.registry.get_recognizers(language=language,
                                                     entities=entities,
                                                     all_fields=all_fields)
-        results = []
 
+        if all_fields:
+            if entities:
+                raise ValueError("Cannot have both all_fields=True "
+                                 "and a populated list of entities. "
+                                 "Either have all_fields set to True "
+                                 "and entities are empty, or all_fields "
+                                 "is False and entities is populated")
+            # Since all_fields=True, list all entities by going
+            # over all recognizers
+            entities = self.__list_entities(recognizers)
+
+        results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
             if not recognizer.is_loaded:
@@ -101,6 +112,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(r)
 
         return AnalyzerEngine.__remove_duplicates(results)
+
+    @staticmethod
+    def __list_entities(recognizers):
+        entities = []
+        for recognizer in recognizers:
+            ents = [entity for entity in recognizer.supported_entities]
+            entities.extend(ents)
+
+        return list(set(entities))
 
     @staticmethod
     def __convert_fields_to_entities(fields):
