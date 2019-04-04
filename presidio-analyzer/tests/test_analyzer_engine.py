@@ -253,3 +253,15 @@ class TestAnalyzerEngine(TestCase):
         assert "PERSON" in returned_entities
         assert "LOCATION" in returned_entities
         assert "DOMAIN_NAME" in returned_entities
+
+    def test_when_allFields_is_true_and_entities_not_empty_exception(self):
+        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+        request = AnalyzeRequest()
+        request.text = "My name is David and I live in Seattle." \
+                       "Domain: microsoft.com "
+        request.analyzeTemplate.allFields = True
+        new_field = request.analyzeTemplate.fields.add()
+        new_field.name = 'CREDIT_CARD'
+        new_field.minScore = '0.5'
+        with pytest.raises(ValueError):
+            analyze_engine.Apply(request, None)
