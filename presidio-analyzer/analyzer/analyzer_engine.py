@@ -94,9 +94,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 raise ValueError("Cannot have both all_fields=True "
                                  "and a populated list of entities. "
                                  "Either have all_fields set to True "
-                                 "and entities are empty, or all_fields is False"
-                                 "and entities is populated")
-            # Since all_fields=True, list all entities by going over all recognizers
+                                 "and entities are empty, or all_fields "
+                                 "is False and entities is populated")
+            # Since all_fields=True, list all entities by going
+            # over all recognizers
             entities = self.__list_entities(recognizers)
 
         results = []
@@ -116,7 +117,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __list_entities(recognizers):
         entities = []
         for recognizer in recognizers:
-            entities.extend([entity for entity in recognizer.supported_entities])
+            ents = [entity for entity in recognizer.supported_entities]
+            entities.extend(ents)
 
         return list(set(entities))
 
