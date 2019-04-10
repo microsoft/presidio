@@ -57,6 +57,7 @@ type Settings struct {
 	OcrSvcAddress              string
 	SchedulerSvcAddress        string
 	RecognizersStoreSvcAddress string
+	APISvcAddress              string
 	RedisURL                   string
 	RedisPassword              string
 	RedisDB                    int
@@ -104,6 +105,9 @@ const SchedulerSvcAddress = "scheduler_svc_address"
 
 //RecognizersStoreSvcAddress recognizers store service address
 const RecognizersStoreSvcAddress = "recognizers_store_svc_address"
+
+//APISvcAddress api service address
+const APISvcAddress = "api_svc_address"
 
 //RedisURL redis address
 const RedisURL = "redis_url"
@@ -158,6 +162,7 @@ func GetSettings() *Settings {
 		OcrSvcAddress:              getTrimmedEnv(OcrSvcAddress),
 		SchedulerSvcAddress:        getTrimmedEnv(SchedulerSvcAddress),
 		RecognizersStoreSvcAddress: getTrimmedEnv(RecognizersStoreSvcAddress),
+		APISvcAddress:              getTrimmedEnv(APISvcAddress),
 		RedisURL:                   getTrimmedEnv(RedisURL),
 		RedisDB:                    viper.GetInt(strings.ToUpper(RedisDb)),
 		RedisSSL:                   viper.GetBool(strings.ToUpper(RedisSSL)),

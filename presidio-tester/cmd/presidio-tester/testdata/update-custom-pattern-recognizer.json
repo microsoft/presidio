@@ -1,0 +1,18 @@
+{
+    "value": {
+        "entity": "ROCKETS",
+        "language": "en",
+        "patterns": [
+            {
+                "name": "rocket-recognizer",
+                "regex": "\\W*(rocket)\\W*",
+                "score": 1
+            },
+            {
+                "name": "verb-recognizer",
+                "regex": "\\W*(launched)\\W*",
+                "score": 1
+            }
+        ]
+    }
+}

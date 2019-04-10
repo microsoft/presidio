@@ -1,0 +1,19 @@
+{
+    "fields": [
+        {
+            "name": "PHONE_NUMBER"
+        },
+        {
+            "name": "LOCATION"
+        },
+        {
+            "name": "DATE_TIME"
+        },
+        {
+            "name": "CREDIT_CARD"
+        },
+        {
+            "name": "ROCKETS"
+        }
+    ]
+}
