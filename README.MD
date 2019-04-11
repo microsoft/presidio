@@ -5,16 +5,14 @@
 
 ---
 
-# Presidio - Data Protection API
+# Presidio - Data protection and anonymization API
 
 **Context aware, pluggable and customizable data protection and PII anonymization service for text and images**
 
 ## Description
 
-Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data.
-Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context.
-
-You can find a more detailed list [here](https://microsoft.github.io/presidio/field_types.html)
+Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
+Presidio analyzes the text using predefined recognizers to identify entities, patterns, formats, and checksums with relevant context. Full list of predefined recognizers can be found [here](https://microsoft.github.io/presidio/field_types.html). Presidio leverages docker and kubernetes for workloads at scale. Refer to the [design page](https://microsoft.github.io/presidio/design.html) for more information.
 
 :warning: ***Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.***
 
@@ -28,10 +26,8 @@ You can find a more detailed list [here](https://microsoft.github.io/presidio/fi
 
 [![Image2](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)
 
-* Text analytics - Predefined analyzers with customizable fields.
-* Probability scores - Customize the sensitive text detection threshold.
-* Anonymization - Anonymize sensitive text and images
-* Workflow and pipeline integration -  Monitor your data with periodic scans or events of/from:
+## Input and output
+Presidio accepts multiple inputs for data annonymization. Specifically:
   1. Storage solutions
       * Azure Blob Storage
       * S3
@@ -44,11 +40,9 @@ You can find a more detailed list [here](https://microsoft.github.io/presidio/fi
   3. Streaming platforms
       * Kafka
       * Azure Events Hubs
+  4. REST requests
 
-  and export the results for further analytics:
-  1. Storage solutions
-  2. Databases
-  3. Streaming platforms
+It then can export the results for further analytics to storage solutions, databases or streaming platforms
 
 ## The Technology Stack
 
@@ -67,37 +61,6 @@ The [design document](https://microsoft.github.io/presidio/design.html) introduc
 2. Create a Presidio project
 3. Start using the Presidio analyze and anonymize services
 
-## Single click deployment using the default values
-
-The script will install Presidio on your Kubenetes cluster. Prerequesites:
-
-1. A Kubernetes cluster.
-2. `kubectl` installed
-    * verify you can communicate with the cluster by running: 
-        ``` sh
-        kubectl version
-        ```
-3. Local `helm` client.
-4. Recent presidio repo is cloned on your local machine.
-
-### Installation Steps
-
-1. Navigate into `<root>\deployment` from command line.
-
-2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster.
-
-3. Grant the Kubernetes cluster access to the container registry
-    * If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
-
-4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
-
-```sh
-deploy-presidio.sh <registry>
-```
-
-The script will install Presidio on your cluster using the default values.
->Note: You can edit the file to use your own container registry and image.
-
 ## Samples
 
 
@@ -107,7 +70,7 @@ The script will install Presidio on your cluster using the default values.
 
 1. Analyze text
     ```sh
-    $ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC333991", "analyzeTemplate":{"fields":[]}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+    $ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC333991", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
     ```
 
 ***Sample 2***
@@ -116,7 +79,7 @@ You can also create reusable templates
 
 1. Create an analyzer project
     ```sh
-    $ echo -n '{"fields":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+    $ echo -n '{"allFields":true}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
     ```
 
 2. Analyze text
@@ -126,7 +89,7 @@ You can also create reusable templates
 
 ***Sample 3***
 
-1. Create an analyzer project
+1. Create an analyzer project with a specific set of entities
     ```sh
     $ echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"}]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
     ```
@@ -160,7 +123,40 @@ You can also create reusable templates
     $ http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
     ```
 
-### Current Features Status
+
+
+## Single click deployment using the default values
+
+The script will install Presidio on your Kubenetes cluster. Prerequesites:
+
+1. A Kubernetes cluster.
+2. `kubectl` installed
+    * verify you can communicate with the cluster by running: 
+        ``` sh
+        kubectl version
+        ```
+3. Local `helm` client.
+4. Recent presidio repo is cloned on your local machine.
+
+### Installation Steps
+
+1. Navigate into `<root>\deployment` from command line.
+
+2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster.
+
+3. Grant the Kubernetes cluster access to the container registry
+    * If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
+
+4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
+
+```sh
+deploy-presidio.sh <registry>
+```
+
+The script will install Presidio on your cluster using the default values.
+>Note: You can edit the file to use your own container registry and image.
+
+### Current input/output components status
 
 | Module              | Feature              | Status                 |
 |---------------------|----------------------|------------------------|
