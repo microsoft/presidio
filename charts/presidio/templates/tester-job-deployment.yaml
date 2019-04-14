@@ -1,3 +1,4 @@
+{{- if .Values.tester.enabled -}}
 {{ $fullname := include "presidio.tester.fullname" . }}
 apiVersion: batch/v1
 kind: Job
@@ -41,3 +42,4 @@ spec:
             value:  {{ template "presidio.api.fullname" . }}
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}
+{{- end -}}        

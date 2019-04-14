@@ -82,6 +82,7 @@ recognizersstore:
     internalPort: 3004
 
 tester:
+  enabled: false
   name: presidio-tester
   imagePullPolicy: Always
   service:
