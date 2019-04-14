@@ -45,13 +45,15 @@ class EntityRecognizer:
         """
 
     @abstractmethod
-    def analyze(self, text, entities):
+    def analyze(self, text, entities, nlp_artifacts):
         """
         This is the core method for analyzing text, assuming entities are
         the subset of the supported entities types.
 
         :param text: The text to be analyzed
         :param entities: The list of entities to be detected
+        :param nlp_artifacts: A group of attributes which are the result of
+                              some NLP process over the matching text
         :return: list of RecognizerResult
         :rtype: [RecognizerResult]
         """

@@ -1,7 +1,9 @@
 import datetime
 
-from analyzer import LocalRecognizer, Pattern, RecognizerResult
-from analyzer import EntityRecognizer
+from analyzer import LocalRecognizer, \
+    Pattern, \
+    RecognizerResult, \
+    EntityRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -12,8 +14,14 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    def __init__(self, supported_entity, name=None, supported_language='en',
-                 patterns=None,
+    CONTEXT_SIMILARITY_THRESHOLD = 0.65
+    CONTEXT_SIMILARITY_FACTOR = 0.35
+    MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
+    CONTEXT_PREFIX_COUNT = 5
+    CONTEXT_SUFFIX_COUNT = 0
+
+    def __init__(self, supported_entity, name=None,
+                 supported_language='en', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
@@ -50,7 +58,8 @@ class PatternRecognizer(LocalRecognizer):
     def load(self):
         pass
 
-    def analyze(self, text, entities):
+    # pylint: disable=unused-argument
+    def analyze(self, text, entities, nlp_artifacts=None):
         results = []
 
         if self.patterns:
@@ -72,6 +81,29 @@ class PatternRecognizer(LocalRecognizer):
         """
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", regex=regex, score=1.0)
+
+    @staticmethod
+    def __extract_context_old(text, start, end):
+        """Extract context for a specified match
+        Args:
+          text: text to analyze
+          start: match start offset
+          end: match end offset
+        """
+
+        prefix = text[0:start].split()
+        suffix = text[end + 1:].split()
+        context = ''
+
+        context += ' '.join(
+            prefix[max(0,
+                       len(prefix) -
+                       PatternRecognizer.CONTEXT_PREFIX_COUNT):len(prefix)])
+        context += ' '
+        context += ' '.join(
+            suffix[0:min(PatternRecognizer.CONTEXT_SUFFIX_COUNT, len(suffix))])
+
+        return context
 
     # pylint: disable=unused-argument, no-self-use
     def validate_result(self, pattern_text, pattern_result):
@@ -118,11 +150,12 @@ class PatternRecognizer(LocalRecognizer):
                 if current_match == '':
                     continue
 
-                res = RecognizerResult(self.supported_entities[0], start, end,
-                                       pattern.score)
-                res = self.validate_result(current_match, res)
+                score = pattern.score
 
-                if res and res.score != EntityRecognizer.MIN_SCORE:
+                res = RecognizerResult(self.supported_entities[0], start, end,
+                                       score)
+                res = self.validate_result(current_match, res)
+                if res and res.score > EntityRecognizer.MIN_SCORE:
                     results.append(res)
 
         return results

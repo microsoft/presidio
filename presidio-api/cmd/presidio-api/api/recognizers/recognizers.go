@@ -74,11 +74,3 @@ func GetAllRecognizers(ctx context.Context,
 
 	return res.Recognizers, nil
 }
-
-// GetHash returns the hash of the stored custom recognizers
-func GetHash(ctx context.Context,
-	api *store.API,
-	request *types.RecognizerGetHashRequest,
-) (*types.RecognizerHashResponse, error) {
-	return api.Services.GetRecognizersHash(ctx)
-}

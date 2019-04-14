@@ -1,6 +1,7 @@
 from unittest import TestCase
 from analyzer.entity_recognizer import EntityRecognizer
 
+import os
 import json
 import hashlib
 import time
@@ -12,9 +13,13 @@ from analyzer.analyze_pb2 import AnalyzeRequest
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer, DomainRecognizer
+    UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
+    UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
+from analyzer.nlp_loader import NlpLoader
+
+from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
 
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
@@ -76,6 +81,15 @@ class MockRecognizerRegistry(RecognizerRegistry):
                                  DomainRecognizer()])
 
 
+ip_recognizer = IpRecognizer()
+us_ssn_recognizer = UsSsnRecognizer()
+phone_recognizer = UsPhoneRecognizer()
+us_itin_recognizer = UsItinRecognizer()
+us_license_recognizer = UsLicenseRecognizer()
+us_bank_recognizer = UsBankRecognizer()
+us_passport_recognizer = UsPassportRecognizer()
+
+
 class TestAnalyzerEngine(TestCase):
 
     def __init__(self, *args, **kwargs):
@@ -104,7 +118,9 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 2
         assert_result(results[0], "CREDIT_CARD", 14,
                       33, EntityRecognizer.MAX_SCORE)
-        assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
+        expected_score = UsPhoneRecognizer.MEDIUM_REGEX_SCORE + \
+            PatternRecognizer.CONTEXT_SIMILARITY_FACTOR  # 0.5 + 0.35 = 0.85
+        assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
@@ -267,3 +283,72 @@ class TestAnalyzerEngine(TestCase):
         new_field.minScore = '0.5'
         with pytest.raises(ValueError):
             analyze_engine.Apply(request, None)
+
+    # Context tests
+    def test_text_with_context_improves_score(self):
+        test_items = self.load_test_items()
+
+        # Currently we have 19 sentences, this is a sanity
+        assert(len(test_items) == 19)
+        analyze_engine = AnalyzerEngine()
+        nlp_loader = NlpLoader()
+        for item in test_items:
+            text = item[0]
+            recognizer = item[1]
+            entities = item[2]
+            nlp_doc = nlp_loader.get_nlp()(text)
+            results = recognizer.analyze(text, entities)
+
+            enhanced_results = analyze_engine.enhance_using_context(text,
+                                                                    recognizer,
+                                                                    results,
+                                                                    nlp_doc)
+            assert(results)
+            assert(len(results) == len(enhanced_results))
+            for i in range(len(results)):
+                assert(results[i].score < enhanced_results[i].score)
+
+    def load_test_items(self):
+        path = os.path.dirname(__file__) + '/data/context_sentences_tests.txt'
+        f = open(path, "r")
+        if not f.mode == 'r':
+            return []
+
+        content = f.read()
+        f.close()
+
+        lines = content.split('\n')
+        # remove empty lines
+        lines = list(filter(lambda k: k.strip(), lines))
+        # remove comments
+        lines = list(filter(lambda k: k[0] != '#', lines))
+
+        test_items = []
+        for i in range(len(lines)):
+            if i % 2 == 1:
+                continue
+            recognizer = None
+            entity_type = lines[i].strip()
+            if entity_type == "IP_ADDRESS":
+                recognizer = ip_recognizer
+            elif entity_type == "US_SSN":
+                recognizer = us_ssn_recognizer
+            elif entity_type == "PHONE_NUMBER":
+                recognizer = phone_recognizer
+            elif entity_type == "US_ITIN":
+                recognizer = us_itin_recognizer
+            elif entity_type == "US_DRIVER_LICENSE":
+                recognizer = us_license_recognizer
+            elif entity_type == "US_BANK_NUMBER":
+                recognizer = us_bank_recognizer
+            elif entity_type == "US_PASSPORT":
+                recognizer = us_passport_recognizer
+            else:
+                # will fail the test in its turn
+                print("bad type: ", entity_type)
+                return []
+
+            test_items.append((lines[i+1].strip(),
+                               recognizer,
+                               [lines[i].strip()]))
+        return test_items

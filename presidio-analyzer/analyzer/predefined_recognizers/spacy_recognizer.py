@@ -1,4 +1,3 @@
-import spacy
 from analyzer import RecognizerResult, LocalRecognizer
 
 NER_STRENGTH = 0.85
@@ -12,17 +11,23 @@ class SpacyRecognizer(LocalRecognizer):
                          supported_language='en')
 
     def load(self):
-        # Load spaCy English lg model
-        self.logger.info("Loading NLP model...")
-        self.nlp = spacy.load("en_core_web_lg", disable=['parser', 'tagger'])
+        # no need to load anything as the analyze method already receives
+        # preprocessed nlp artifacts
+        pass
 
-    def analyze(self, text, entities):
-        doc = self.nlp(text)
+        # pylint: disable=unused-argument
+    def analyze(self, text, entities, nlp_artifacts=None):
         results = []
+        if not nlp_artifacts:
+            self.logger.warning(
+                "Skipping SpaCy, nlp artifacts not provided...")
+            return results
+
+        metadata_entities = nlp_artifacts.entities
 
         for entity in entities:
             if entity in self.supported_entities:
-                for ent in doc.ents:
+                for ent in metadata_entities:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
                         results.append(
                             RecognizerResult(entity, ent.start_char,

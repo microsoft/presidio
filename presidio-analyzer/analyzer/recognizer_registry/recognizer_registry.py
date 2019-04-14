@@ -50,13 +50,13 @@ class RecognizerRegistry:
         # time consuming to load
         self.recognizers.extend([
             CreditCardRecognizer(),
-            SpacyRecognizer(),
             CryptoRecognizer(), DomainRecognizer(),
             EmailRecognizer(), IbanRecognizer(),
             IpRecognizer(), NhsRecognizer(),
             UsBankRecognizer(), UsLicenseRecognizer(),
             UsItinRecognizer(), UsPassportRecognizer(),
-            UsPhoneRecognizer(), UsSsnRecognizer()])
+            UsPhoneRecognizer(), UsSsnRecognizer(),
+            SpacyRecognizer()])
 
     def get_recognizers(self, language, entities=None, all_fields=False):
         """
@@ -97,10 +97,6 @@ class RecognizerRegistry:
                                     entity, language)
                 else:
                     to_return.extend(subset)
-
-        logging.info(
-            "Returning a total of %d recognizers (predefined + custom)",
-            len(to_return))
 
         logging.info(
             "Returning a total of %d recognizers (predefined + custom)",

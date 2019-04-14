@@ -1,12 +1,13 @@
 import logging
 import os
+import copy
+
+from analyzer import RecognizerRegistry, NlpLoader, PatternRecognizer, \
+    EntityRecognizer, NlpArtifacts
 
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
-
-
-from analyzer import RecognizerRegistry  # noqa: F401
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
@@ -18,8 +19,11 @@ DEFAULT_LANGUAGE = "en"
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=RecognizerRegistry()):
-        # load all recognizers
+        # load nlp module
+        self.nlp_loader = NlpLoader()
+
         self.registry = registry
+        # load all recognizers
         registry.load_predefined_recognizers()
 
     @staticmethod
@@ -97,10 +101,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                                  "Either have all_fields set to True "
                                  "and entities are empty, or all_fields "
                                  "is False and entities is populated")
-            # Since all_fields=True, list all entities by going
+            # Since all_fields=True, list all entities by iterating
             # over all recognizers
             entities = self.__list_entities(recognizers)
 
+        # run the nlp pipeline over the given text, store the results in
+        # a NlpArtifact instance
+        nlp_doc = self.nlp_loader.get_nlp()(text)
+        nlp_artifacts = NlpArtifacts(nlp_doc)
         results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
@@ -108,11 +116,160 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.load()
                 recognizer.is_loaded = True
 
-            r = recognizer.analyze(text, entities)
-            if r is not None:
-                results.extend(r)
+            raw_results = recognizer.analyze(text, entities, nlp_artifacts)
+            if raw_results is not None:
+                # try to improve the results score using the surronding context
+                # words
+                raw_results = \
+                    self.enhance_using_context(
+                        text, recognizer, raw_results, nlp_doc)
+                results.extend(raw_results)
 
         return AnalyzerEngine.__remove_duplicates(results)
+
+    def __calculate_context_similarity(self,
+                                       context_text,
+                                       context_list):
+        """Context similarity is 1 if there's exact match between a keyword in
+           context_text and any keyword in context_list
+
+        :param context_text a string of the prefix and suffix of the found
+               match
+        :param context_list a list of words considered as context keywords
+        """
+
+        if context_list is None:
+            return 0
+
+        context_keywords = self.__context_to_keywords(context_text)
+        if context_keywords is None:
+            return 0
+
+        similarity = 0.0
+        for context_keyword in context_keywords:
+            if context_keyword in context_list:
+                logging.info("Found context keyword '%s'", context_keyword)
+                similarity = 1
+                break
+
+        return similarity
+
+    def enhance_using_context(self, text, recognizer, raw_results, nlp_doc):
+        # create a deep copy of the results object so we can manipulate it
+        results = copy.deepcopy(raw_results)
+
+        # Sanity
+        if nlp_doc is None:
+            logging.warning('nlp document was not provided')
+            return results
+        if not hasattr(recognizer, 'context'):
+            logging.info('recognizer does not support context enhancement')
+            return results
+
+        for result in results:
+            # extract lemmatized context from the surronding of the match
+            logging.debug('match is \'%s\'', text[result.start:result.end])
+            context = self.__extract_context(
+                self.nlp_loader.get_nlp(),
+                nlp_doc,
+                text[result.start:result.end],
+                result.start,
+                result.end)
+
+            logging.debug('context is %s', context)
+            context_similarity = self.__calculate_context_similarity(
+                context, recognizer.context)
+            if context_similarity >= \
+                    PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
+                result.score += \
+                    context_similarity * \
+                    PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
+                result.score = max(
+                    result.score,
+                    PatternRecognizer.MIN_SCORE_WITH_CONTEXT_SIMILARITY)
+                result.score = min(
+                    result.score,
+                    EntityRecognizer.MAX_SCORE)
+        return results
+
+    @staticmethod
+    def __context_to_keywords(context):
+        return context.split(' ')
+
+    @staticmethod
+    def __extract_context(nlp, nlp_doc, word, start, end):
+        """ Extracts words surronding another given word.
+            The text from which the context is extracted is given in the nlp
+            doc
+            :param nlp: A NLP module
+            :param nlp_doc: The result of a NLP pipeline on a given text
+            :param word: The word to look for context around
+            :param start: The start index of the word in the original text
+            :param end: The end index of the word in the original text
+        """
+
+        logging.debug('Extracting context around \'%s\'', word)
+        keywords = list(
+            filter(
+                lambda k:
+                not nlp.vocab[k.text].is_stop and
+                not k.is_punct and
+                k.lemma_ != '-PRON-' and
+                k.lemma_ != 'be',
+                nlp_doc))
+        context_keywords = list(map(lambda k: k.lemma_.lower(), keywords))
+
+        # best effort, try even further to break tokens into sub tokens,
+        # this can result in reducing false negatives
+        context_keywords = [i.split(':') for i in context_keywords]
+
+        # splitting the list can, if happened, will result in list of lists,
+        # we flatten the list
+        context_keywords = \
+            [item for sublist in context_keywords for item in sublist]
+        found = False
+        # we use the known start index of the original word to find the actual
+        # token at that index, we are not checking for equivilance since the
+        # token might be just a substring of that word (e.g. for phone number
+        # 555-124564 the first token might be just '555')
+        for token in nlp_doc:
+            if ((token.idx == start) or
+                    (token.idx < start < token.idx + len(token))):
+                partial_token = token.text
+                found = True
+                break
+
+            # no need to continue iterating after the word is found
+            if found:
+                break
+
+        token_count = 0
+        if not found:
+            logging.error('Did not find expected word: %s', word)
+            return ''
+
+        # now, iterate over the lemmatized text to find the location of that
+        # partial token
+        for keyword in context_keywords:
+            if keyword == partial_token:
+                break
+            token_count += 1
+
+        # build the actual context
+        context = ''
+        i = 0
+        for keyword in context_keywords:
+            # if the current examined word is n chars before the token or m
+            # after, add it to the context string
+            if token_count-PatternRecognizer.CONTEXT_PREFIX_COUNT <= i+1 \
+                    <= token_count+PatternRecognizer.CONTEXT_SUFFIX_COUNT:
+                context += ' ' + keyword
+            i += 1
+
+        logging.debug('Context sentence for word \'%s\' is: %s',
+                      word,
+                      context)
+        return context
 
     @staticmethod
     def __list_entities(recognizers):

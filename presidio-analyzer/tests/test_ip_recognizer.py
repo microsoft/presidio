@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from assertions import assert_result_within_score_range
 from analyzer.predefined_recognizers import IpRecognizer
+from analyzer import NlpLoader
 
 ip_recognizer = IpRecognizer()
 entities = ["IP_ADDRESS"]
@@ -15,20 +16,8 @@ class TestIpRecognizer(TestCase):
         results = ip_recognizer.analyze(context + ip, entities)
 
         assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[0], 14, 25, 0.6, 0.81)
-
-    '''
-    TODO: enable with task #582 re-support context model in analyzer
-    
-    def test_valid_ipv4_with_exact_context(self):
-        ip = '192.168.0.1'
-        context = 'my ip: '
-        results = ip_recognizer.analyze(context + ip, entities)
-    
-        assert len(results) == 1
-        assert 0.79 < results[0].score < 1
-    '''
-
+        assert_result_within_score_range(
+            results[0], entities[0], 14, 25, 0.6, 0.81)
 
     def test_invalid_ipv4(self):
         ip = '192.168.0'
@@ -36,7 +25,6 @@ class TestIpRecognizer(TestCase):
         results = ip_recognizer.analyze(context + ip, entities)
 
         assert len(results) == 0
-
 
     '''
     TODO: fix ipv6 regex
@@ -59,7 +47,6 @@ class TestIpRecognizer(TestCase):
         assert results[0].text == ip
         assert results[0].score > 0.79 and results[0].score < 1
     '''
-
 
     def test_invalid_ipv6(self):
         ip = '684D:1111:222:3333:4444:5555:77'

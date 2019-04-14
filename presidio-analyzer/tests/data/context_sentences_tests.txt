@@ -1,0 +1,59 @@
+# Entity
+# Sentence
+
+IP_ADDRESS
+my ip: 192.168.0.1
+
+US_SSN
+my ssn is 078-051120 07805-1120
+
+US_SSN
+my social security number is 078051120
+
+US_SSN
+my social security number is 078-05-1120
+
+US_SSN
+my social security number is 078051120
+
+PHONE_NUMBER
+my phone number is (425) 882-9090
+
+PHONE_NUMBER
+my phone number is:(425) 882-9090
+
+PHONE_NUMBER
+my phone number is 425 8829090
+
+PHONE_NUMBER
+try one of these phones 052 5552606 074-7111234
+
+PHONE_NUMBER
+my phone number is 4258829090
+
+US_ITIN
+my itin: 911701234
+
+US_ITIN
+my itin is 911-70-1234
+
+US_ITIN
+my taxpayer id is 911-701234 91170-1234
+
+US_DRIVER_LICENSE
+my driver license number: AA1B2**9ABA7
+
+US_DRIVER_LICENSE
+my driver license is H12234567
+
+US_DRIVER_LICENSE
+my driver license is: 1234567901234
+
+US_BANK_NUMBER
+my bank account number is 912803456
+
+US_BANK_NUMBER
+my banking account number is 912803456
+
+US_PASSPORT
+my passport number is 912803456
