@@ -180,10 +180,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             context_similarity = self.__calculate_context_similarity(
                 context, recognizer.context)
             if context_similarity >= \
-                 PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
+               PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
                 result.score += \
-                    context_similarity * \
-                    PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
+                  context_similarity * \
+                  PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
                 result.score = max(
                     result.score,
                     PatternRecognizer.MIN_SCORE_WITH_CONTEXT_SIMILARITY)
