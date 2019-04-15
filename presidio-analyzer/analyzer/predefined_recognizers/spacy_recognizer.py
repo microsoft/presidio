@@ -23,11 +23,11 @@ class SpacyRecognizer(LocalRecognizer):
                 "Skipping SpaCy, nlp artifacts not provided...")
             return results
 
-        metadata_entities = nlp_artifacts.entities
+        ner_entities = nlp_artifacts.entities
 
         for entity in entities:
             if entity in self.supported_entities:
-                for ent in metadata_entities:
+                for ent in ner_entities:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
                         results.append(
                             RecognizerResult(entity, ent.start_char,

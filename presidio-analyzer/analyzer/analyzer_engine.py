@@ -1,13 +1,14 @@
+import copy
 import logging
 import os
-import copy
-
-from analyzer import RecognizerRegistry, NlpLoader, PatternRecognizer, \
-    EntityRecognizer, NlpArtifacts
 
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
+
+from analyzer import RecognizerRegistry, PatternRecognizer, \
+    EntityRecognizer
+from analyzer.nlp_engine import SpacyNlpEngine
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
@@ -18,13 +19,32 @@ DEFAULT_LANGUAGE = "en"
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry=RecognizerRegistry()):
+    def __init__(self, registry=RecognizerRegistry(),
+                 nlp_loader=SpacyNlpEngine()):
         # load nlp module
-        self.nlp_loader = NlpLoader()
+        self.nlp_loader = nlp_loader
 
         self.registry = registry
         # load all recognizers
         registry.load_predefined_recognizers()
+
+    # pylint: disable=unused-argument
+    def Apply(self, request, context):
+        logging.info("Starting Apply")
+        entities = AnalyzerEngine.__convert_fields_to_entities(
+            request.analyzeTemplate.fields)
+        language = AnalyzerEngine.get_language_from_request(request)
+        results = self.analyze(request.text, entities, language,
+                               request.analyzeTemplate.allFields)
+
+        # Create Analyze Response Object
+        response = analyze_pb2.AnalyzeResponse()
+
+        # pylint: disable=no-member
+        response.analyzeResults.extend(
+            AnalyzerEngine.__convert_results_to_proto(results))
+        logging.info("Found %d results", len(results))
+        return response
 
     @staticmethod
     def __remove_duplicates(results):
@@ -44,7 +64,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                     # If result is equal to or substring of
                     # one of the other results
                     if result.start >= filtered.start \
-                            and result.end <= filtered.end:
+                        and result.end <= filtered.end:
                         valid_result = False
                         break
 
@@ -52,24 +72,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 filtered_results.append(result)
 
         return filtered_results
-
-    # pylint: disable=unused-argument
-    def Apply(self, request, context):
-        logging.info("Starting Apply")
-        entities = AnalyzerEngine.__convert_fields_to_entities(
-            request.analyzeTemplate.fields)
-        language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language,
-                               request.analyzeTemplate.allFields)
-
-        # Create Analyze Response Object
-        response = analyze_pb2.AnalyzeResponse()
-
-        # pylint: disable=no-member
-        response.analyzeResults.extend(
-            AnalyzerEngine.__convert_results_to_proto(results))
-        logging.info("Found %d results", len(results))
-        return response
 
     @classmethod
     def get_language_from_request(cls, request):
@@ -106,9 +108,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             entities = self.__list_entities(recognizers)
 
         # run the nlp pipeline over the given text, store the results in
-        # a NlpArtifact instance
-        nlp_doc = self.nlp_loader.get_nlp()(text)
-        nlp_artifacts = NlpArtifacts(nlp_doc)
+        # a NlpArtifacts instance
+        nlp_artifacts = self.nlp_loader.process_text(text, language)
         results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
@@ -122,7 +123,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 # words
                 raw_results = \
                     self.enhance_using_context(
-                        text, recognizer, raw_results, nlp_doc)
+                        text, recognizer, raw_results, nlp_artifacts)
                 results.extend(raw_results)
 
         return AnalyzerEngine.__remove_duplicates(results)
@@ -154,13 +155,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return similarity
 
-    def enhance_using_context(self, text, recognizer, raw_results, nlp_doc):
+    def enhance_using_context(self, text, recognizer, raw_results,
+                              nlp_artifacts):
         # create a deep copy of the results object so we can manipulate it
         results = copy.deepcopy(raw_results)
 
         # Sanity
-        if nlp_doc is None:
-            logging.warning('nlp document was not provided')
+        if nlp_artifacts is None:
+            logging.warning('nlp artifacts were not provided')
             return results
         if not hasattr(recognizer, 'context'):
             logging.info('recognizer does not support context enhancement')
@@ -169,18 +171,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         for result in results:
             # extract lemmatized context from the surronding of the match
             logging.debug('match is \'%s\'', text[result.start:result.end])
-            context = self.__extract_context(
-                self.nlp_loader.get_nlp(),
-                nlp_doc,
-                text[result.start:result.end],
-                result.start,
-                result.end)
+            context = self.__extract_context(nlp_artifacts=nlp_artifacts,
+                                             word=text[result.start:result.end],
+                                             start=result.start)
 
             logging.debug('context is %s', context)
             context_similarity = self.__calculate_context_similarity(
                 context, recognizer.context)
             if context_similarity >= \
-                    PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
+                PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
                 result.score += \
                     context_similarity * \
                     PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
@@ -197,7 +196,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         return context.split(' ')
 
     @staticmethod
-    def __extract_context(nlp, nlp_doc, word, start, end):
+    def __extract_context(nlp_artifacts, word, start):
         """ Extracts words surronding another given word.
             The text from which the context is extracted is given in the nlp
             doc
@@ -209,32 +208,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
 
         logging.debug('Extracting context around \'%s\'', word)
-        keywords = list(
-            filter(
-                lambda k:
-                not nlp.vocab[k.text].is_stop and
-                not k.is_punct and
-                k.lemma_ != '-PRON-' and
-                k.lemma_ != 'be',
-                nlp_doc))
-        context_keywords = list(map(lambda k: k.lemma_.lower(), keywords))
-
-        # best effort, try even further to break tokens into sub tokens,
-        # this can result in reducing false negatives
-        context_keywords = [i.split(':') for i in context_keywords]
-
-        # splitting the list can, if happened, will result in list of lists,
-        # we flatten the list
-        context_keywords = \
-            [item for sublist in context_keywords for item in sublist]
+        context_keywords = nlp_artifacts.keywords
         found = False
         # we use the known start index of the original word to find the actual
         # token at that index, we are not checking for equivilance since the
         # token might be just a substring of that word (e.g. for phone number
         # 555-124564 the first token might be just '555')
-        for token in nlp_doc:
+        for token in nlp_artifacts.tokens:
             if ((token.idx == start) or
-                    (token.idx < start < token.idx + len(token))):
+                (token.idx < start < token.idx + len(token))):
                 partial_token = token.text
                 found = True
                 break
@@ -261,8 +243,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         for keyword in context_keywords:
             # if the current examined word is n chars before the token or m
             # after, add it to the context string
-            if token_count-PatternRecognizer.CONTEXT_PREFIX_COUNT <= i+1 \
-                    <= token_count+PatternRecognizer.CONTEXT_SUFFIX_COUNT:
+            if token_count - PatternRecognizer.CONTEXT_PREFIX_COUNT <= i + 1 \
+                <= token_count + PatternRecognizer.CONTEXT_SUFFIX_COUNT:
                 context += ' ' + keyword
             i += 1
 

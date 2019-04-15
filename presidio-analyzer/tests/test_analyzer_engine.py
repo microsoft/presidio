@@ -2,9 +2,7 @@ from unittest import TestCase
 from analyzer.entity_recognizer import EntityRecognizer
 
 import os
-import json
 import hashlib
-import time
 import pytest
 
 from assertions import assert_result
@@ -17,7 +15,7 @@ from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
-from analyzer.nlp_loader import NlpLoader
+from analyzer.nlp_engine.nlp_engine import NlpLoader
 
 from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
 
