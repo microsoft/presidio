@@ -15,9 +15,9 @@ from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
-from analyzer.nlp_engine.nlp_engine import NlpLoader
-
+from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
+from tests.mocks import MockNlpEngine
 
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
@@ -93,7 +93,8 @@ class TestAnalyzerEngine(TestCase):
     def __init__(self, *args, **kwargs):
         super(TestAnalyzerEngine, self).__init__(*args, **kwargs)
         self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
-        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry)
+        mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
+        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], nlp_artifacts=mock_nlp_artifacts))
 
     def test_analyze_with_predefined_recognizers_return_results(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -110,8 +111,11 @@ class TestAnalyzerEngine(TestCase):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = self.loaded_analyzer_engine.analyze(
-            text, entities, language, all_fields=False)
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry)
+        results = analyzer_engine_with_spacy.analyze(text, entities, language, all_fields=False)
 
         assert len(results) == 2
         assert_result(results[0], "CREDIT_CARD", 14,
@@ -271,7 +275,7 @@ class TestAnalyzerEngine(TestCase):
         assert "DOMAIN_NAME" in returned_entities
 
     def test_when_allFields_is_true_and_entities_not_empty_exception(self):
-        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry())
         request = AnalyzeRequest()
         request.text = "My name is David and I live in Seattle." \
                        "Domain: microsoft.com "
@@ -289,18 +293,19 @@ class TestAnalyzerEngine(TestCase):
         # Currently we have 19 sentences, this is a sanity
         assert(len(test_items) == 19)
         analyze_engine = AnalyzerEngine()
-        nlp_loader = NlpLoader()
+        nlp_engine = SpacyNlpEngine()
+        
         for item in test_items:
             text = item[0]
             recognizer = item[1]
             entities = item[2]
-            nlp_doc = nlp_loader.get_nlp()(text)
+            nlp_artifacts = nlp_engine.process_text(text, "en")
             results = recognizer.analyze(text, entities)
 
             enhanced_results = analyze_engine.enhance_using_context(text,
                                                                     recognizer,
                                                                     results,
-                                                                    nlp_doc)
+                                                                    nlp_artifacts)
             assert(results)
             assert(len(results) == len(enhanced_results))
             for i in range(len(results)):

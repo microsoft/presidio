@@ -20,10 +20,10 @@ DEFAULT_LANGUAGE = "en"
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=RecognizerRegistry(),
-                 nlp_loader=SpacyNlpEngine()):
+                 nlp_engine=SpacyNlpEngine()):
         # load nlp module
-        self.nlp_loader = nlp_loader
-
+        self.nlp_engine = nlp_engine
+        # prepare registry
         self.registry = registry
         # load all recognizers
         registry.load_predefined_recognizers()
@@ -64,7 +64,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                     # If result is equal to or substring of
                     # one of the other results
                     if result.start >= filtered.start \
-                        and result.end <= filtered.end:
+                          and result.end <= filtered.end:
                         valid_result = False
                         break
 
@@ -109,7 +109,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         # run the nlp pipeline over the given text, store the results in
         # a NlpArtifacts instance
-        nlp_artifacts = self.nlp_loader.process_text(text, language)
+        nlp_artifacts = self.nlp_engine.process_text(text, language)
         results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
@@ -171,15 +171,16 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         for result in results:
             # extract lemmatized context from the surronding of the match
             logging.debug('match is \'%s\'', text[result.start:result.end])
-            context = self.__extract_context(nlp_artifacts=nlp_artifacts,
-                                             word=text[result.start:result.end],
-                                             start=result.start)
+            context = self.__extract_context(
+                nlp_artifacts=nlp_artifacts,
+                word=text[result.start:result.end],
+                start=result.start)
 
             logging.debug('context is %s', context)
             context_similarity = self.__calculate_context_similarity(
                 context, recognizer.context)
             if context_similarity >= \
-                PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
+                 PatternRecognizer.CONTEXT_SIMILARITY_THRESHOLD:
                 result.score += \
                     context_similarity * \
                     PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
@@ -200,24 +201,28 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """ Extracts words surronding another given word.
             The text from which the context is extracted is given in the nlp
             doc
-            :param nlp: A NLP module
-            :param nlp_doc: The result of a NLP pipeline on a given text
+            :param nlp_artifacts: An abstraction layer which holds different
+                                  items which are result of a NLP pipeline
+                                  execution on a given text
             :param word: The word to look for context around
             :param start: The start index of the word in the original text
-            :param end: The end index of the word in the original text
         """
 
         logging.debug('Extracting context around \'%s\'', word)
         context_keywords = nlp_artifacts.keywords
+
         found = False
         # we use the known start index of the original word to find the actual
         # token at that index, we are not checking for equivilance since the
         # token might be just a substring of that word (e.g. for phone number
         # 555-124564 the first token might be just '555')
-        for token in nlp_artifacts.tokens:
-            if ((token.idx == start) or
-                (token.idx < start < token.idx + len(token))):
-                partial_token = token.text
+        tokens = nlp_artifacts.tokens
+        tokens_indices = nlp_artifacts.tokens_indices
+        for i in range(len(nlp_artifacts.tokens)):
+            if ((tokens_indices[i] == start) or
+                    (tokens_indices[i] < start <
+                     tokens_indices[i] + len(tokens[i]))):
+                partial_token = tokens_indices[i]
                 found = True
                 break
 
@@ -244,7 +249,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             # if the current examined word is n chars before the token or m
             # after, add it to the context string
             if token_count - PatternRecognizer.CONTEXT_PREFIX_COUNT <= i + 1 \
-                <= token_count + PatternRecognizer.CONTEXT_SUFFIX_COUNT:
+                  <= token_count + PatternRecognizer.CONTEXT_SUFFIX_COUNT:
                 context += ' ' + keyword
             i += 1
 

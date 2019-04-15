@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from assertions import assert_result_within_score_range
 from analyzer.predefined_recognizers import IpRecognizer
-from analyzer import NlpLoader
 
 ip_recognizer = IpRecognizer()
 entities = ["IP_ADDRESS"]
