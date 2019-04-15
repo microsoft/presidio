@@ -19,7 +19,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self, registry=RecognizerRegistry()):
         # load all recognizers
         self.registry = registry
-        registry.load_recognizers("predefined-recognizers")
+        registry.load_predefined_recognizers()
 
     @staticmethod
     def __remove_duplicates(results):
@@ -84,11 +84,23 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         of the requested language
         :return: an array of the found entities in the text
         """
+
         recognizers = self.registry.get_recognizers(language=language,
                                                     entities=entities,
                                                     all_fields=all_fields)
-        results = []
 
+        if all_fields:
+            if entities:
+                raise ValueError("Cannot have both all_fields=True "
+                                 "and a populated list of entities. "
+                                 "Either have all_fields set to True "
+                                 "and entities are empty, or all_fields "
+                                 "is False and entities is populated")
+            # Since all_fields=True, list all entities by going
+            # over all recognizers
+            entities = self.__list_entities(recognizers)
+
+        results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
             if not recognizer.is_loaded:
@@ -101,20 +113,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return AnalyzerEngine.__remove_duplicates(results)
 
-    def add_pattern_recognizer(self, pattern_recognizer_dict):
-        """
-        Adds a new recognizer
-        :param pattern_recognizer_dict: a dictionary representation
-         of a pattern recognizer
-        """
-        self.registry.add_pattern_recognizer_from_dict(pattern_recognizer_dict)
+    @staticmethod
+    def __list_entities(recognizers):
+        entities = []
+        for recognizer in recognizers:
+            ents = [entity for entity in recognizer.supported_entities]
+            entities.extend(ents)
 
-    def remove_recognizer(self, name):
-        """
-        Removes an existing recognizer, throws an exception if not found
-        :param name: name of recognizer to be removed
-        """
-        self.registry.remove_recognizer(name)
+        return list(set(entities))
 
     @staticmethod
     def __convert_fields_to_entities(fields):
