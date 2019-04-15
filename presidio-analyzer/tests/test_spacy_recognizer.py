@@ -1,13 +1,14 @@
 from unittest import TestCase
 
 from assertions import assert_result, assert_result_within_score_range
+
+from analyzer.nlp_engine import SpacyNlpEngine
 from analyzer.predefined_recognizers import SpacyRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
-from analyzer.nlp_loader import NlpLoader
-from analyzer.nlp_artifacts import NlpArtifacts
+from analyzer.nlp_engine.nlp_artifacts import NlpArtifacts
 
 NER_STRENGTH = 0.85
-nlp_loader = NlpLoader()
+nlp_engine = SpacyNlpEngine()
 spacy_recognizer = SpacyRecognizer()
 entities = ["PERSON", "DATE_TIME"]
 
@@ -29,14 +30,14 @@ class TestSpacyRecognizer(TestCase):
         context = 'my name is'
         text = '{} {}'.format(context, name)
 
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
         assert len(results) == 1
         assert_result_within_score_range(
             results[0], entities[0], 11, 14, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def test_person_full_name(self):
         text = 'Dan Tailor'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result(results[0], entities[0], 0, 10, NER_STRENGTH)
@@ -45,7 +46,7 @@ class TestSpacyRecognizer(TestCase):
         name = 'John Oliver'
         context = ' is the funniest comedian'
         text = '{} {}'.format(name, context)
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result_within_score_range(
@@ -53,7 +54,7 @@ class TestSpacyRecognizer(TestCase):
 
     def test_person_last_name(self):
         text = 'Tailor'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 0
 
@@ -79,28 +80,28 @@ class TestSpacyRecognizer(TestCase):
 
     def test_person_full_middle_name(self):
         text = 'Richard Milhous Nixon'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result(results[0], entities[0], 0, 21, NER_STRENGTH)
 
     def test_person_full_name_with_middle_letter(self):
         text = 'Richard M. Nixon'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result(results[0], entities[0], 0, 16, NER_STRENGTH)
 
     def test_person_full_name_complex(self):
         text = 'Richard (Ric) C. Henderson'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result(results[0], entities[0], 0, 26, NER_STRENGTH)
 
     def test_person_last_name_is_also_a_date_expected_person_only(self):
         text = 'Dan May'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result(results[0], entities[0], 0, 7, NER_STRENGTH, )
@@ -111,7 +112,7 @@ class TestSpacyRecognizer(TestCase):
         name = 'Dan May'
         context = "has a bank account"
         text = '{} {}'.format(name, context)
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result_within_score_range(
@@ -139,7 +140,7 @@ class TestSpacyRecognizer(TestCase):
 # Test DATE_TIME Entity
     def test_date_time_year(self):
         text = '1972'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result(results[0], entities[1], 0, 4, NER_STRENGTH)
@@ -148,7 +149,7 @@ class TestSpacyRecognizer(TestCase):
         date = '1972'
         context = 'I bought my car in'
         text = '{} {}'.format(context, date)
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result_within_score_range(
@@ -167,7 +168,7 @@ class TestSpacyRecognizer(TestCase):
         date = 'May'
         context = 'I bought my car in'
         text = '{} {}'.format(context, date)
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result_within_score_range(
@@ -175,7 +176,7 @@ class TestSpacyRecognizer(TestCase):
 
     def test_date_time_day_in_month(self):
         text = 'May 1st'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result_within_score_range(
@@ -183,7 +184,7 @@ class TestSpacyRecognizer(TestCase):
 
     def test_date_time_full_date(self):
         text = 'May 1st, 1977'
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result_within_score_range(
@@ -193,15 +194,14 @@ class TestSpacyRecognizer(TestCase):
         date = 'May 1st, 1977'
         context = 'I bought my car on'
         text = '{} {}'.format(context, date)
-        results = self.prepare_and_analyze(nlp_loader.get_nlp(), text)
+        results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
         assert_result_within_score_range(
             results[0], entities[1], 19, 32, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def prepare_and_analyze(self, nlp, text):
-        nlp_doc = nlp(text)
-        nlp_artifacts = NlpArtifacts(nlp_doc)
+        nlp_artifacts = nlp.proces_text(text)
         results = spacy_recognizer.analyze(
             text, entities, nlp_artifacts)
         return results
