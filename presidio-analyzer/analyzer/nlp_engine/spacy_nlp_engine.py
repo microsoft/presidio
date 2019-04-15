@@ -3,12 +3,14 @@ import os
 
 import spacy
 
-from analyzer import NlpArtifacts
-from analyzer.nlp_engine.nlp_engine import NlpEngine
+from analyzer.nlp_engine import NlpArtifacts, NlpEngine
 
 
 class SpacyNlpEngine(NlpEngine):
-    """ NlpLoader
+    """ SpacyNlpEngine is an abstraction layer over the nlp module.
+        It provides processing functionality as well as other queries
+        on tokens.
+        The SpacyNlpEngine uses SpaCy as its NLP module
     """
 
     def __init__(self):
@@ -17,22 +19,27 @@ class SpacyNlpEngine(NlpEngine):
         self.logger.setLevel(loglevel)
 
         self.logger.info("Loading NLP model...")
-        self.nlp = {"english": spacy.load("en_core_web_lg",
-                                          disable=['parser', 'tagger'])}
+        self.nlp = {"en": spacy.load("en_core_web_lg",
+                                     disable=['parser', 'tagger'])}
 
     def process_text(self, text, language):
         doc = self.nlp[language](text)
-        return self.doc_to_nlp_artifact(doc)
+        return self.doc_to_nlp_artifact(doc, language)
 
     def is_stopword(self, word, language):
         return self.nlp[language].vocab[word].is_stop
 
+    def is_punct(self, word, language):
+        return self.nlp[language].vocab[word].is_punct
+
     def get_nlp(self, language):
         return self.nlp[language]
 
-    def doc_to_nlp_artifact(self, doc):
+    def doc_to_nlp_artifact(self, doc, language):
         tokens = [token.text for token in doc]
-        lemmas = [token.lemma for token in doc]
+        lemmas = [token.lemma_ for token in doc]
+        tokens_indices = [token.idx for token in doc]
         entities = doc.ents
-        return NlpArtifacts(entities=entities, tokens=tokens, lemmas=lemmas,
-                            nlp_entine=self)
+        return NlpArtifacts(entities=entities, tokens=tokens,
+                            tokens_indices=tokens_indices, lemmas=lemmas,
+                            nlp_engine=self, language=language)

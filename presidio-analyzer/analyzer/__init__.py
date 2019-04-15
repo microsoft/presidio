@@ -6,7 +6,6 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))) + "/analyzer")
 
-from analyzer.nlp_engine.nlp_artifacts import NlpArtifacts  # noqa
 from analyzer.pattern import Pattern  # noqa: F401
 from analyzer.entity_recognizer import EntityRecognizer  # noqa: F401
 from analyzer.local_recognizer import LocalRecognizer  # noqa: F401

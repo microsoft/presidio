@@ -1,6 +1,3 @@
-from abc import abstractmethod, ABC
-
-
 class NlpArtifacts():
     """ NlpArtifacts is an abstraction layer over the results of an NLP pipeline
         processing over a given text, it holds attributes such as entities,
@@ -8,20 +5,24 @@ class NlpArtifacts():
     """
 
     # pylint: disable=abstract-method, unused-argument
-    def __init__(self, entities, tokens, lemmas, nlp_engine):
+    def __init__(self, entities, tokens, tokens_indices, lemmas, nlp_engine,
+                 language):
         self.entities = entities
         self.tokens = tokens
         self.lemmas = lemmas
+        self.tokens_indices = tokens_indices
+        self.keywords = self.set_keywords(nlp_engine, lemmas, language)
 
-        self.keywords = self.set_keywords(nlp_engine, tokens, lemmas)
+    @staticmethod
+    def set_keywords(nlp_engine, lemmas, language):
+        if not nlp_engine:
+            return []
 
-
-    def set_keywords(self, nlp_engine, lemmas):
         keywords = [k.lower() for k in lemmas if
-                not nlp_engine.is_stopword(k) and
-                not k.is_punct and
-                k != '-PRON-' and
-                k != 'be']
+                    not nlp_engine.is_stopword(k, language) and
+                    not nlp_engine.is_punct(k, language) and
+                    k != '-PRON-' and
+                    k != 'be']
 
         # best effort, try even further to break tokens into sub tokens,
         # this can result in reducing false negatives

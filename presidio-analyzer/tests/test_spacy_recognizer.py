@@ -5,7 +5,7 @@ from assertions import assert_result, assert_result_within_score_range
 from analyzer.nlp_engine import SpacyNlpEngine
 from analyzer.predefined_recognizers import SpacyRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
-from analyzer.nlp_engine.nlp_artifacts import NlpArtifacts
+from analyzer.nlp_engine import NlpArtifacts
 
 NER_STRENGTH = 0.85
 nlp_engine = SpacyNlpEngine()
@@ -201,7 +201,7 @@ class TestSpacyRecognizer(TestCase):
             results[0], entities[1], 19, 32, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def prepare_and_analyze(self, nlp, text):
-        nlp_artifacts = nlp.proces_text(text)
+        nlp_artifacts = nlp.process_text(text, "en")
         results = spacy_recognizer.analyze(
             text, entities, nlp_artifacts)
         return results
