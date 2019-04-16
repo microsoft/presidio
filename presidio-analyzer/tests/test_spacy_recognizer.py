@@ -96,18 +96,17 @@ class TestSpacyRecognizer(TestCase):
         text = 'Richard (Ric) C. Henderson'
         results = self.prepare_and_analyze(nlp_engine, text)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, NER_STRENGTH)
+        assert len(results) == 3
+        # Richard
+        assert text[results[0].start:results[0].end] == "Richard"
+        assert_result(results[0], entities[0], 0, 7, NER_STRENGTH)
+        # Ric
+        assert text[results[1].start:results[1].end] == "Ric"
+        assert_result(results[1], entities[0], 9, 12, NER_STRENGTH)
+        # C. Henderson
+        assert text[results[2].start:results[2].end] == "C. Henderson"
+        assert_result(results[2], entities[0], 14, 26, NER_STRENGTH)
 
-    def test_person_last_name_is_also_a_date_expected_person_only(self):
-        text = 'Dan May'
-        results = self.prepare_and_analyze(nlp_engine, text)
-
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 7, NER_STRENGTH, )
-
-    # Bug #617 : Spacy Recognizer doesn't recognize Dan May as PERSON even though online spacy demo indicates that it does
-    # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
     def test_person_last_name_is_also_a_date_with_context_expected_person_only(self):
         name = 'Dan May'
         context = "has a bank account"
@@ -115,27 +114,26 @@ class TestSpacyRecognizer(TestCase):
         results = self.prepare_and_analyze(nlp_engine, text)
 
         assert len(results) == 1
+        print(results[0].score)
+        print(results[0].entity_type)
+        print(text[results[0].start:results[0].end])
         assert_result_within_score_range(
             results[0], entities[0], 0, 7, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
-    # Bug #617 : Spacy Recognizer doesn't recognize Mr. May as PERSON even though online spacy demo indicates that it does
-    # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
-    # def test_person_title_and_last_name_is_also_a_date_expected_person_only(self):
-    #     name = 'Mr. May'
-    #     results = spacy_recognizer.analyze(name, entities)
+    def test_person_title_and_last_name_is_also_a_date_expected_person_only(self):
+        text = 'Mr. May'
+        results = self.prepare_and_analyze(nlp_engine, text)
 
-    #     assert len(results) == 1
-    #     assert_result(results[0], entities[0], 4, 7, NER_STRENGTH)
+        assert len(results) == 1
+        assert_result(results[0], entities[0], 4, 7, NER_STRENGTH)
 
-    # Bug #617 : Spacy Recognizer doesn't recognize Mr. May as PERSON even though online spacy demo indicates that it does
-    # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
-    # def test_person_title_and_last_name_is_also_a_date_with_context_expected_person_only(self):
-    #     name = 'Mr. May'
-    #     context = "They call me"
-    #     results = spacy_recognizer.analyze('{} {}'.format(context, name), entities)
-
-    #     assert len(results) == 1
-    #     assert_result_within_score_range(results[0], entities[0], 17, 20, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    def test_person_title_and_last_name_is_also_a_date_with_context_expected_person_only(self):
+        name = 'Mr. May'
+        context = "They call me"
+        text = '{} {}'.format(context, name)
+        results = self.prepare_and_analyze(nlp_engine, text)
+        assert len(results) == 1
+        assert_result_within_score_range(results[0], entities[0], 17, 20, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
 # Test DATE_TIME Entity
     def test_date_time_year(self):
@@ -154,15 +152,6 @@ class TestSpacyRecognizer(TestCase):
         assert len(results) == 1
         assert_result_within_score_range(
             results[0], entities[1], 19, 23, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
-
-    # Bug #617 : Spacy Recognizer doesn't recognize May as DATE_TIME even though online spacy demo indicates that it does
-    # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
-    # def test_date_time_month(self):
-    #     date = 'May'
-    #     results = spacy_recognizer.analyze(date, entities)
-
-    #     assert len(results) == 1
-    #     assert_result_within_score_range(results[0], entities[1], 0, 3, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
     def test_date_time_month_with_context(self):
         date = 'May'
