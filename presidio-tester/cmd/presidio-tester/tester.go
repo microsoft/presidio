@@ -20,8 +20,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// APIEP api endpoint
-var APIEP = ""
+// APIEndPoint api endpoint
+var APIEndPoint = ""
 
 func main() {
 	pflag.Int(platform.WebPort, 8080, "API Port")
@@ -33,7 +33,7 @@ func main() {
 	viper.BindPFlags(pflag.CommandLine)
 
 	settings := platform.GetSettings()
-	APIEP = settings.APISvcAddress + ":" + strconv.Itoa(settings.WebPort)
+	APIEndPoint = settings.APISvcAddress + ":" + strconv.Itoa(settings.WebPort)
 
 	log.Info("Starting e2e test")
 	TestAddTemplate()
@@ -56,7 +56,7 @@ func invokeHTTPRequest(path string, method string, payload []byte) string {
 
 	request := &http.Request{
 		Method: method,
-		URL:    &url.URL{Scheme: "http", Host: APIEP, Path: path},
+		URL:    &url.URL{Scheme: "http", Host: APIEndPoint, Path: path},
 		Body:   ioutil.NopCloser(bytes.NewReader(payload)),
 		Header: http.Header{
 			"Content-Type": []string{"application/json"},
@@ -105,7 +105,7 @@ func invokeHTTPUpload(path string, values map[string]io.Reader) []byte {
 
 	w.Close()
 
-	req, err := http.NewRequest("POST", "http://"+APIEP+path, &b)
+	req, err := http.NewRequest("POST", "http://"+APIEndPoint+path, &b)
 	if err != nil {
 		panic(err)
 	}
