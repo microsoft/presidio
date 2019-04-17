@@ -30,6 +30,11 @@ $ pipenv install --dev --sequential
 $ pipenv run pytest
 ```
 
+### 5. To run arbitrary scripts within the virtual env, start the command with `pipenv run`. For example:
+1. `pipenv run flake8 analyzer --exclude "*pb2*.py"`
+2. `pipenv run pylint analyzer`
+3. `pipenv run pip freeze`
+
 ## General pipenv instructions
 Pipenv documentation: https://pipenv.readthedocs.io/en/latest/
 
