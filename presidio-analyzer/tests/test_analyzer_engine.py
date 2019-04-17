@@ -302,10 +302,10 @@ class TestAnalyzerEngine(TestCase):
             nlp_artifacts = nlp_engine.process_text(text, "en")
             results = recognizer.analyze(text, entities)
 
-            enhanced_results = analyze_engine.enhance_using_context(text,
-                                                                    recognizer,
-                                                                    results,
-                                                                    nlp_artifacts)
+            enhanced_results = analyze_engine._AnalyzerEngine__enhance_using_context(text,
+                                                                                     recognizer,
+                                                                                     results,
+                                                                                     nlp_artifacts)
             assert(results)
             assert(len(results) == len(enhanced_results))
             for i in range(len(results)):

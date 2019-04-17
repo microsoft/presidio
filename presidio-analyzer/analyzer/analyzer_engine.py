@@ -121,10 +121,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             if raw_results is not None:
                 # try to improve the results score using the surronding context
                 # words
-                raw_results = \
-                    self.enhance_using_context(
-                        text, recognizer, raw_results, nlp_artifacts)
-                results.extend(raw_results)
+                enhanced_results = \
+                  self.__enhance_using_context(
+                      text, recognizer, raw_results, nlp_artifacts)
+                results.extend(enhanced_results)
 
         return AnalyzerEngine.__remove_duplicates(results)
 
@@ -155,8 +155,13 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return similarity
 
-    def enhance_using_context(self, text, recognizer, raw_results,
-                              nlp_artifacts):
+    def __enhance_using_context(self, text, recognizer, raw_results,
+                                nlp_artifacts):
+        """ using the surronding words of the actual word matches, look
+            for specific strings that if found contribute to the score
+            of the result, improving the confidence that the match is
+            indeed of that PII entity type
+        """
         # create a deep copy of the results object so we can manipulate it
         results = copy.deepcopy(raw_results)
 
@@ -208,6 +213,13 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             :param start: The start index of the word in the original text
         """
 
+        if not nlp_artifacts.tokens:
+            logging.info('Skipping context around \'%s\'', word)
+            # if there are no nlp artifacts, this is ok, we can
+            # extract context and we return a valid, yet empty
+            # context
+            return ''
+
         logging.debug('Extracting context around \'%s\'', word)
         context_keywords = nlp_artifacts.keywords
 
@@ -226,14 +238,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 found = True
                 break
 
-            # no need to continue iterating after the word is found
-            if found:
-                break
-
         token_count = 0
         if not found:
-            logging.error('Did not find expected word: %s', word)
-            return ''
+            raise ValueError("Did not find word '" + word + "' "
+                             "in the list of tokens altough it "
+                             "is expected to be found")
 
         # now, iterate over the lemmatized text to find the location of that
         # partial token
