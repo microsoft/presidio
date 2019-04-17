@@ -129,11 +129,12 @@ func TestAddTemplate() {
 	log.Info("Start TestAddTemplate")
 	log.Info("Adding analyze template")
 	payload := generatePayload("analyze-template.json")
-	invokeHTTPRequest("/api/v1/templates/test/analyze/test", "POST", payload)
-
+	var res = invokeHTTPRequest("/api/v1/templates/test/analyze/test", "POST", payload)
+	log.Info(res)
 	log.Info("Adding anonymize template")
 	payload = generatePayload("anonymize-template.json")
-	invokeHTTPRequest("/api/v1/templates/test/anonymize/test", "POST", payload)
+	res = invokeHTTPRequest("/api/v1/templates/test/anonymize/test", "POST", payload)
+	log.Info(res)
 	log.Info("End TestAddTemplate")
 }
 
@@ -141,9 +142,11 @@ func TestAddTemplate() {
 func TestDeleteTemplate() {
 	log.Info("Start TestDeleteTemplate")
 	log.Info("Delete analyze template")
-	invokeHTTPRequest("/api/v1/templates/test/analyze/test", "DELETE", []byte(""))
+	var res = invokeHTTPRequest("/api/v1/templates/test/analyze/test", "DELETE", []byte(""))
+	log.Info(res)
 	log.Info("Delete anonymize template")
-	invokeHTTPRequest("/api/v1/templates/test/anonymize/test", "DELETE", []byte(""))
+	res = invokeHTTPRequest("/api/v1/templates/test/anonymize/test", "DELETE", []byte(""))
+	log.Info(res)
 	log.Info("End TestDeleteTemplate")
 }
 
@@ -153,7 +156,11 @@ func TestAnalyzer() {
 	TestAddTemplate()
 	payload := generatePayload("analyze-request.json")
 	log.Info("Analyze request")
-	invokeHTTPRequest("/api/v1/projects/test/analyze", "POST", payload)
+	var res = invokeHTTPRequest("/api/v1/projects/test/analyze", "POST", payload)
+	log.Info(res)
+	if res != "[{\"field\":{\"name\":\"CREDIT_CARD\"},\"score\":1,\"location\":{\"start\":112,\"end\":127,\"length\":15}},{\"field\":{\"name\":\"DATE_TIME\"},\"score\":0.85,\"location\":{\"start\":7,\"end\":16,\"length\":9}},{\"field\":{\"name\":\"DATE_TIME\"},\"score\":0.85,\"location\":{\"start\":17,\"end\":24,\"length\":7}},{\"field\":{\"name\":\"LOCATION\"},\"score\":0.85,\"location\":{\"start\":28,\"end\":35,\"length\":7}},{\"field\":{\"name\":\"PHONE_NUMBER\"},\"score\":0.7,\"location\":{\"start\":60,\"end\":74,\"length\":14}}]" {
+		panic("Got different analyzer response than expected.")
+	}
 	log.Info("End TestAnalyzer")
 }
 
@@ -163,7 +170,11 @@ func TestAnonymizer() {
 	TestAddTemplate()
 	payload := generatePayload("anonymize-request.json")
 	log.Info("anonymize request")
-	invokeHTTPRequest("/api/v1/projects/test/anonymize", "POST", payload)
+	var res = invokeHTTPRequest("/api/v1/projects/test/anonymize", "POST", payload)
+	log.Info(res)
+	if res != "{\"text\":\"my phone number is \\u003cphone-number\\u003e and my credit card is  \"}" {
+		panic("Got different analyzer response than expected.")
+	}
 	log.Info("End TestAnonymizer")
 }
 
