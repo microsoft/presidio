@@ -66,6 +66,7 @@
 
 - Build the bins with `make build`
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Build the basecontainers with `make docker-build-deps --DOCKER_REGISTRY=${DOCKER_REGISTRY}`
 - Build the the Docker image with `make docker-build --DOCKER_REGISTRY=${DOCKER_REGISTRY}`
 - Push the Docker images with `make docker-push --DOCKER_REGISTRY=${DOCKER_REGISTRY}`
@@ -74,6 +75,11 @@
 - Build the the Docker image with `make docker-build --DOCKER_REGISTRY=[your registry]`
 - Push the Docker images with `make docker-push --DOCKER_REGISTRY=[your registry]`
 >>>>>>> add --docker-registry to dev docs
+=======
+- Build the basecontainers with `make docker-build-deps --DOCKER_REGISTRY=[registry name]`
+- Build the the Docker image with `make docker-build --DOCKER_REGISTRY=[registry name]`
+- Push the Docker images with `make docker-push --DOCKER_REGISTRY=[registry name]`
+>>>>>>> update readme
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
