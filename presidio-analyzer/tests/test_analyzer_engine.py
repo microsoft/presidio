@@ -94,7 +94,7 @@ class TestAnalyzerEngine(TestCase):
         super(TestAnalyzerEngine, self).__init__(*args, **kwargs)
         self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
-        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], nlp_artifacts=mock_nlp_artifacts))
+        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts))
 
     def test_analyze_with_predefined_recognizers_return_results(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
