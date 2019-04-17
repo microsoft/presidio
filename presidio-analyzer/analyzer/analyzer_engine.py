@@ -222,7 +222,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             if ((tokens_indices[i] == start) or
                     (tokens_indices[i] < start <
                      tokens_indices[i] + len(tokens[i]))):
-                partial_token = tokens_indices[i]
+                partial_token = tokens[i]
                 found = True
                 break
 
