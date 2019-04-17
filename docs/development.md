@@ -34,16 +34,12 @@
 6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
 
     ```sh
+    $ pip3 install cython
     $ pip3 install -r requirements.txt
     $ pip3 install -r requirements-dev.txt
     ```
 
-    **Note:** If you encounter errors with `pyre2` than install `cython` first
-
-    ```sh
-    $ pip3 install cython
-    ```
-
+    
 7. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
 
 8. Protobuf generator tools (Optional)
@@ -65,6 +61,7 @@
 ## Development notes
 
 - Build the bins with `make build`
+- Build the basecontainers with `make docker-build-deps`
 - Build the the Docker image with `make docker-build`
 - Push the Docker images with `make docker-push`
 - Run the tests with `make test`
