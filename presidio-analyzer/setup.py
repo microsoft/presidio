@@ -15,7 +15,7 @@ setuptools.setup(
     ],
     install_requires=[
         'grpcio>=1.13.0', 'cython>=0.28.5', 'protobuf>=3.6.0',
-        'tldextract>=2.2.0', 'knack>=0.4.2', 'spacy>=2.0.18'
+        'tldextract>=2.2.0', 'knack>=0.4.2', 'spacy==2.1.3'
     ],
     include_package_data=True,
     license='MIT',
