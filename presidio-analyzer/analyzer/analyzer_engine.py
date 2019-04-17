@@ -2,13 +2,10 @@ import copy
 import logging
 import os
 
-import analyze_pb2
-import analyze_pb2_grpc
-import common_pb2
-
-from analyzer import RecognizerRegistry, PatternRecognizer, \
-    EntityRecognizer
+from analyzer import PatternRecognizer, EntityRecognizer
 from analyzer.nlp_engine import SpacyNlpEngine
+from analyzer.proto import analyze_pb2_grpc, analyze_pb2, common_pb2
+from analyzer.recognizer_registry import RecognizerRegistry
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(

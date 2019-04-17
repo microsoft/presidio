@@ -1,14 +1,12 @@
+import hashlib
+import logging
 from unittest import TestCase
 
-import json
-import hashlib
 import pytest
-import logging
-from analyzer import RecognizerRegistry, PatternRecognizer, \
-    EntityRecognizer, Pattern
-from analyzer.recognizer_registry.recognizers_store_api \
-    import RecognizerStoreApi  # noqa: F401
-import time
+
+from analyzer import PatternRecognizer, EntityRecognizer, Pattern
+from analyzer.recognizer_registry import RecognizerRegistry
+from analyzer.recognizer_registry import RecognizerStoreApi
 
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
@@ -33,7 +31,10 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
         patterns = []
         for pat in new_recognizer.patterns:
             patterns.extend([Pattern(pat.name, pat.regex, pat.score)])
-        new_custom_recognizer = PatternRecognizer(name=new_recognizer.name, supported_entity=new_recognizer.supported_entities[0],
+        new_custom_recognizer = PatternRecognizer(name=new_recognizer.name,
+                                                  supported_entity=
+                                                  new_recognizer.supported_entities[
+                                                      0],
                                                   supported_language=new_recognizer.supported_language,
                                                   black_list=new_recognizer.black_list,
                                                   context=new_recognizer.context,
@@ -149,7 +150,8 @@ class TestRecognizerRegistry(TestCase):
         assert recognizers_store_api_mock.times_accessed_storage == 0
 
         # Positive flow
-        # Now do the same only this time update the hash so it should work properly
+        # Now do the same only this time update the hash so it should work
+        # properly
         recognizers_store_api_mock = RecognizerStoreApiMock()
         recognizer_registry = RecognizerRegistry(recognizers_store_api_mock)
 

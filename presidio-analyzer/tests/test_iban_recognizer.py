@@ -1,7 +1,6 @@
 from unittest import TestCase
-import string
 
-from assertions import assert_result
+from tests import assert_result
 from analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer, IBAN_GENERIC_SCORE, LETTERS
 from analyzer.entity_recognizer import EntityRecognizer
 

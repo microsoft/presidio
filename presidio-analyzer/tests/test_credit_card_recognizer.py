@@ -2,7 +2,7 @@
 # https://www.freeformatter.com/credit-card-number-generator-validator.html
 from unittest import TestCase
 
-from assertions import assert_result
+from tests import assert_result
 from analyzer.predefined_recognizers import CreditCardRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
 

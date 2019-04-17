@@ -1,9 +1,7 @@
 import datetime
 
-from analyzer import LocalRecognizer, \
-    Pattern, \
-    RecognizerResult, \
-    EntityRecognizer
+from analyzer import Pattern, RecognizerResult, LocalRecognizer, \
+     EntityRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -13,7 +11,6 @@ except ImportError:
 
 
 class PatternRecognizer(LocalRecognizer):
-
     CONTEXT_SIMILARITY_THRESHOLD = 0.65
     CONTEXT_SIMILARITY_FACTOR = 0.35
     MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6

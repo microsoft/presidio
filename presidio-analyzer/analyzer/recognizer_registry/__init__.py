@@ -1,4 +1,4 @@
-# pylint: disable=unused-import
-from analyzer.recognizer_registry.recognizers_store_api import (  # noqa: F401
-    RecognizerStoreApi
-)
+from .recognizers_store_api import RecognizerStoreApi
+from .recognizer_registry import RecognizerRegistry
+
+__all__ = ['RecognizerRegistry', 'RecognizerStoreApi']

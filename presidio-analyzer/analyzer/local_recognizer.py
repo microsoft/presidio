@@ -1,7 +1,12 @@
+from abc import ABC
+
 from analyzer import EntityRecognizer
 
 
-class LocalRecognizer(EntityRecognizer):
+class LocalRecognizer(EntityRecognizer, ABC):
+    """
+    A recognizer that runs within the analyzer process
+    """
 
     # pylint: disable=abstract-method, unused-argument
     def __init__(self, supported_entities, supported_language, name=None,

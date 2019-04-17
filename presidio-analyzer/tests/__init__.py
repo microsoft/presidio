@@ -1,6 +1,3 @@
-import os
-import sys
+from .assertions import assert_result, assert_result_within_score_range
 
-# bug #602: Fix imports issue in python
-sys.path.append(os.path.dirname(os.path.dirname(
-    os.path.abspath(__file__))) + "/tests")
+__all__ = ['assert_result', 'assert_result_within_score_range']

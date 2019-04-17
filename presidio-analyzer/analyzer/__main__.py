@@ -1,12 +1,11 @@
 # pylint: disable=wrong-import-position,wrong-import-order
 import logging
-import grpc
-import analyze_pb2
-import analyze_pb2_grpc
-from concurrent import futures
-import time
-from os import sys, path
 import os
+from os import (sys, path)
+import time
+from concurrent import futures
+
+import grpc
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
 from knack.arguments import ArgumentsContext
@@ -15,9 +14,10 @@ from knack.help import CLIHelp
 from knack.help_files import helps
 
 # bug #602: Fix imports issue in python
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+from analyzer import AnalyzerEngine
+from analyzer.proto import analyze_pb2_grpc, analyze_pb2
 
-from analyzer_engine import AnalyzerEngine # noqa
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 WELCOME_MESSAGE = r"""
 
@@ -59,7 +59,6 @@ class PresidioCLIHelp(CLIHelp):
 
 
 def serve_command_handler(env_grpc_port=False, grpc_port=3000):
-
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
@@ -81,7 +80,6 @@ def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
 
 def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
-
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')
         if port is not None or port != '':
