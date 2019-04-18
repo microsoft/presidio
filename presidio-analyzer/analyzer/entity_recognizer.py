@@ -118,7 +118,7 @@ class EntityRecognizer:
         if nlp_artifacts is None:
             self.logger.warning('nlp artifacts were not provided')
             return results
-        if not hasattr(self, 'context'):
+        if predefined_context_words is None or predefined_context_words == []:
             self.logger.info('recognizer does not support context enhancement')
             return results
 
