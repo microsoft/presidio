@@ -13,4 +13,5 @@ RUN apk --update add --no-cache g++ && \
     cd re2 && make install && cd .. && rm -rf re2 && rm re2.tar.gz && \
     pip install --no-cache-dir cython && \ 
     pip install --no-cache-dir -r requirements.txt && \
+    pip install --upgrade --force-reinstall spacy==2.0.18 && \
     apk del build_deps
