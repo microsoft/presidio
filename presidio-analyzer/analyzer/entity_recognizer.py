@@ -98,7 +98,7 @@ class EntityRecognizer:
 
     def enhance_using_context(self, text, raw_results,
                               nlp_artifacts, predefined_context_words):
-        """ using the surronding words of the actual word matches, look
+        """ using the surrounding words of the actual word matches, look
             for specific strings that if found contribute to the score
             of the result, improving the confidence that the match is
             indeed of that PII entity type
