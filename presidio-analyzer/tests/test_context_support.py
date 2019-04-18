@@ -62,6 +62,10 @@ def sentences_with_context(request):
         test_items.append((lines[i+1].strip(),
                            recognizer,
                            [lines[i].strip()]))
+    # Currently we have 19 sentences, this is a sanity
+    if not len(test_items) == 19:
+        raise ValueError("context sentences not as expected")
+
     request.cls.context_sentences = test_items
 
 @pytest.mark.usefixtures("sentences_with_context")
@@ -72,8 +76,6 @@ class TestContextSupport(TestCase):
 
     # Context tests
     def test_text_with_context_improves_score(self):
-        # Currently we have 19 sentences, this is a sanity
-        assert(len(self.context_sentences) == 19)
         nlp_engine = SpacyNlpEngine()
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
 
