@@ -58,7 +58,7 @@ class EntityRecognizer:
 
         :param text: The text to be analyzed
         :param entities: The list of entities to be detected
-        :param nlp_artifacts: Value of type NlpArtifacts. 
+        :param nlp_artifacts: Value of type NlpArtifacts.
         A group of attributes which are the result of
                               some NLP process over the matching text
         :return: list of RecognizerResult
