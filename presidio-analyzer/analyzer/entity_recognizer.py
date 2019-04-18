@@ -121,8 +121,8 @@ class EntityRecognizer:
                                 self.name)
             return results
         if predefined_context_words is None or predefined_context_words == []:
-            self.logger.info('recognizer \'%s\' does not support context '
-                            'enhancement', self.name)
+            self.logger.info("recognizer '%s' does not support context "
+                             "enhancement", self.name)
             return results
 
         for result in results:
