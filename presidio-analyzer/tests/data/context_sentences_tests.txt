@@ -1,5 +1,8 @@
-# Entity
-# Sentence
+# This file contains sentences with relevant context words that should be resulting in a better score
+# Each item has the following structure:
+#
+# 1) Entity type
+# 2) Sentence
 
 IP_ADDRESS
 my ip: 192.168.0.1

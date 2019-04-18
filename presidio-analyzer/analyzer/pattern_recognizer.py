@@ -14,12 +14,6 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    CONTEXT_SIMILARITY_THRESHOLD = 0.65
-    CONTEXT_SIMILARITY_FACTOR = 0.35
-    MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
-    CONTEXT_PREFIX_COUNT = 5
-    CONTEXT_SUFFIX_COUNT = 0
-
     def __init__(self, supported_entity, name=None,
                  supported_language='en', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
@@ -66,7 +60,12 @@ class PatternRecognizer(LocalRecognizer):
             pattern_result = self.__analyze_patterns(text)
 
             if pattern_result:
-                results.extend(pattern_result)
+                # try to improve the results score using the surronding context
+                # words
+                enhanced_results = \
+                  self.enhance_using_context(
+                      text, pattern_result, nlp_artifacts, self.context)
+                results.extend(enhanced_results)
 
         return results
 
@@ -81,29 +80,6 @@ class PatternRecognizer(LocalRecognizer):
         """
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", regex=regex, score=1.0)
-
-    @staticmethod
-    def __extract_context_old(text, start, end):
-        """Extract context for a specified match
-        Args:
-          text: text to analyze
-          start: match start offset
-          end: match end offset
-        """
-
-        prefix = text[0:start].split()
-        suffix = text[end + 1:].split()
-        context = ''
-
-        context += ' '.join(
-            prefix[max(0,
-                       len(prefix) -
-                       PatternRecognizer.CONTEXT_PREFIX_COUNT):len(prefix)])
-        context += ' '
-        context += ' '.join(
-            suffix[0:min(PatternRecognizer.CONTEXT_SUFFIX_COUNT, len(suffix))])
-
-        return context
 
     # pylint: disable=unused-argument, no-self-use
     def validate_result(self, pattern_text, pattern_result):
