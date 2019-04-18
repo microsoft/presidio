@@ -9,12 +9,17 @@ class NlpEngine(ABC):
 
     @abstractmethod
     def process_text(self, text, language):
-        pass
+        """ Execute the NLP pipeline on the given text and language
+        """
 
     @abstractmethod
     def is_stopword(self, word, language):
-        pass
+        """ returns true if the given word is a stop word
+            (within the given language)
+        """
 
     @abstractmethod
     def is_punct(self, word, language):
-        pass
+        """ returns true if the given word is a punctuation word
+            (within the given language)
+        """

@@ -59,13 +59,15 @@ class PatternRecognizer(LocalRecognizer):
         if self.patterns:
             pattern_result = self.__analyze_patterns(text)
 
-            if pattern_result:
-                # try to improve the results score using the surronding context
-                # words
-                enhanced_results = \
+            if pattern_result and self.context:
+                # try to improve the results score using the surrounding
+                # context words
+                enhanced_result = \
                   self.enhance_using_context(
                       text, pattern_result, nlp_artifacts, self.context)
-                results.extend(enhanced_results)
+                results.extend(enhanced_result)
+            elif pattern_result:
+                results.extend(pattern_result)
 
         return results
 

@@ -117,21 +117,21 @@ class EntityRecognizer:
 
         # Sanity
         if nlp_artifacts is None:
-            self.logger.warning('nlp artifacts were not provided')
+            self.logger.warning('[%s]. NLP artifacts were not provided',
+                                self.name)
             return results
         if predefined_context_words is None or predefined_context_words == []:
-            self.logger.info('recognizer does not support context enhancement')
+            self.logger.info('recognizer \'%s\' does not support context '
+                            'enhancement', self.name)
             return results
 
         for result in results:
             # extract lemmatized context from the surronding of the match
-            self.logger.debug('match is \'%s\'', text[result.start:result.end])
             context = self.__extract_context(
                 nlp_artifacts=nlp_artifacts,
                 word=text[result.start:result.end],
                 start=result.start)
 
-            self.logger.debug('context is %s', context)
             context_similarity = self.__calculate_context_similarity(
                 context, predefined_context_words)
             if context_similarity >= \
@@ -164,12 +164,12 @@ class EntityRecognizer:
         if context_list is None:
             return 0
 
-        context_keywords = self.__context_to_keywords(context_text)
-        if context_keywords is None:
+        lemmatized_keywords = self.__context_to_keywords(context_text)
+        if lemmatized_keywords is None:
             return 0
 
         similarity = 0.0
-        for context_keyword in context_keywords:
+        for context_keyword in lemmatized_keywords:
             if context_keyword in context_list:
                 self.logger.info("Found context keyword '%s'", context_keyword)
                 similarity = 1
@@ -189,27 +189,32 @@ class EntityRecognizer:
         """
 
         if not nlp_artifacts.tokens:
-            self.logger.info('Skipping context around \'%s\'', word)
+            self.logger.info('Skipping context extraction due to '
+                             'lack of NLP artifacts')
             # if there are no nlp artifacts, this is ok, we can
             # extract context and we return a valid, yet empty
             # context
             return ''
 
-        self.logger.debug('Extracting context around \'%s\'', word)
-        context_keywords = nlp_artifacts.keywords
+        # Get the already prepared words in the given text, in their
+        # LEMMATIZED version
+        lemmatized_keywords = nlp_artifacts.keywords
 
         found = False
         # we use the known start index of the original word to find the actual
         # token at that index, we are not checking for equivilance since the
         # token might be just a substring of that word (e.g. for phone number
         # 555-124564 the first token might be just '555')
+        # Note: we are iterating over the original tokens (not the lemmatized)
         tokens = nlp_artifacts.tokens
         tokens_indices = nlp_artifacts.tokens_indices
         for i in range(len(nlp_artifacts.tokens)):
             if ((tokens_indices[i] == start) or
                     (tokens_indices[i] < start <
                      tokens_indices[i] + len(tokens[i]))):
-                partial_token = tokens[i]
+                # found the interesting token, the one that around it
+                # we take n words
+                token_of_intrest = tokens[i]
                 found = True
                 break
 
@@ -221,23 +226,22 @@ class EntityRecognizer:
 
         # now, iterate over the lemmatized text to find the location of that
         # partial token
-        for keyword in context_keywords:
-            if keyword == partial_token:
+        found = False
+        for keyword in lemmatized_keywords:
+            if keyword == token_of_intrest:
                 break
             token_count += 1
 
         # build the actual context
-        context = ''
+        context_str = ''
         i = 0
-        for keyword in context_keywords:
+        for lemmatized_keyword in lemmatized_keywords:
             # if the current examined word is n chars before the token or m
             # after, add it to the context string
             if token_count - EntityRecognizer.CONTEXT_PREFIX_COUNT <= i + 1 \
                   <= token_count + EntityRecognizer.CONTEXT_SUFFIX_COUNT:
-                context += ' ' + keyword
+                context_str += ' ' + lemmatized_keyword
             i += 1
 
-        self.logger.debug('Context sentence for word \'%s\' is: %s',
-                          word,
-                          context)
-        return context
+        self.logger.debug('Context sentence is: %s', context_str)
+        return context_str

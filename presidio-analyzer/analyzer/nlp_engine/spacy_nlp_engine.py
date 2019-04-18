@@ -23,13 +23,22 @@ class SpacyNlpEngine(NlpEngine):
                                      disable=['parser', 'tagger'])}
 
     def process_text(self, text, language):
+        """ Execute the SpaCy NLP pipeline on the given text
+            and language
+        """
         doc = self.nlp[language](text)
         return self.doc_to_nlp_artifact(doc, language)
 
     def is_stopword(self, word, language):
+        """ returns true if the given word is a stop word
+            (within the given language)
+        """
         return self.nlp[language].vocab[word].is_stop
 
     def is_punct(self, word, language):
+        """ returns true if the given word is a punctuation word
+            (within the given language)
+        """
         return self.nlp[language].vocab[word].is_punct
 
     def get_nlp(self, language):
