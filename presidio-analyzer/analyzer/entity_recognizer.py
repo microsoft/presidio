@@ -177,6 +177,67 @@ class EntityRecognizer:
 
         return similarity
 
+    @staticmethod
+    def __add_n_words(index,
+                      n_words,
+                      lemmas,
+                      lemmatized_filtered_keywords,
+                      prefix,
+                      is_backward):
+        """ Prepare a string of context words, which surrounds a lemma
+            at a given index. The words will be collected only if exist
+            in the filtered array
+
+        :param index: index of the lemma that its surrounding words
+        :param n_words: number of words to take
+        :param lemmas: array of lemmas
+        :param lemmatized_filtered_keywords: the array of filter
+                                            lemmas,
+        :param prefix: string to be attached to the results as a prefix
+        :param is_backward: if true take the preceeding words, if false,
+                            take the successing words
+        """
+        i = index
+        # collect at most n words
+        remaining = n_words
+        while 0 <= i < len(lemmas) and remaining > 0:
+            if lemmas[i] in lemmatized_filtered_keywords:
+                remaining -= 1
+                prefix += ' ' + lemmas[i]
+            if is_backward:
+                i -= 1
+            else:
+                i += 1
+        return prefix
+
+    def __add_n_words_forward(self,
+                              index,
+                              n_words,
+                              lemmas,
+                              lemmatized_filtered_keywords,
+                              prefix):
+        return self.__add_n_words(
+            index,
+            n_words,
+            lemmas,
+            lemmatized_filtered_keywords,
+            prefix,
+            False)
+
+    def __add_n_words_backward(self,
+                               index,
+                               n_words,
+                               lemmas,
+                               lemmatized_filtered_keywords,
+                               prefix):
+        return self. __add_n_words(
+            index,
+            n_words,
+            lemmas,
+            lemmatized_filtered_keywords,
+            prefix,
+            True)
+
     def __extract_context(self, nlp_artifacts, word, start):
         """ Extracts words surronding another given word.
             The text from which the context is extracted is given in the nlp
@@ -213,35 +274,30 @@ class EntityRecognizer:
                     (tokens_indices[i] < start <
                      tokens_indices[i] + len(tokens[i]))):
                 # found the interesting token, the one that around it
-                # we take n words
-                token_of_intrest = tokens[i]
+                # we take n words, we save the matching lemma
                 found = True
                 break
 
-        token_count = 0
         if not found:
             raise ValueError("Did not find word '" + word + "' "
                              "in the list of tokens altough it "
                              "is expected to be found")
 
-        # now, iterate over the lemmatized text to find the location of that
-        # partial token
-        found = False
-        for keyword in lemmatized_keywords:
-            if keyword == token_of_intrest:
-                break
-            token_count += 1
-
-        # build the actual context
+        # index i belongs to the PII entity, take the preceding n words
+        # and the successing m words into a context string
         context_str = ''
-        i = 0
-        for lemmatized_keyword in lemmatized_keywords:
-            # if the current examined word is n chars before the token or m
-            # after, add it to the context string
-            if token_count - EntityRecognizer.CONTEXT_PREFIX_COUNT <= i + 1 \
-                  <= token_count + EntityRecognizer.CONTEXT_SUFFIX_COUNT:
-                context_str += ' ' + lemmatized_keyword
-            i += 1
+        context_str = \
+            self.__add_n_words_backward(i,
+                                        EntityRecognizer.CONTEXT_PREFIX_COUNT,
+                                        nlp_artifacts.lemmas,
+                                        lemmatized_keywords,
+                                        context_str)
+        context_str = \
+            self.__add_n_words_forward(i,
+                                       EntityRecognizer.CONTEXT_PREFIX_COUNT,
+                                       nlp_artifacts.lemmas,
+                                       lemmatized_keywords,
+                                       context_str)
 
         self.logger.debug('Context sentence is: %s', context_str)
         return context_str
