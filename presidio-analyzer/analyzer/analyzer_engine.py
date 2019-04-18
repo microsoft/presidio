@@ -117,7 +117,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
             # analyze using the current recognizer and append the results
             current_results = recognizer.analyze(text, entities, nlp_artifacts)
-            if current_results is not None:
+            if current_results:
                 results.extend(current_results)
 
         return AnalyzerEngine.__remove_duplicates(results)
