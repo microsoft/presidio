@@ -1,0 +1,19 @@
+pool:
+  name: Hosted Ubuntu 1604
+variables:
+  DOCKER_REGISTRY: 'presidio.azurecr.io'
+
+steps:
+- task: Docker@1
+  displayName: login
+  inputs:
+    azureSubscriptionEndpoint: 'presidio resource group'
+    azureContainerRegistry: presidio.azurecr.io
+    command: login
+
+- bash: |
+   make  DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_DEPS_LABEL=$(Build.BuildID) docker-build-deps 
+   make  DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_DEPS_LABEL=$(Build.BuildID) docker-push-deps
+   
+   
+  displayName: 'Build & Push Deps'
