@@ -9,7 +9,8 @@ You can install Presidio as a service in [Kubernetes](https://kubernetes.io/) or
 
 $ export DOCKER_REGISTRY=presidio
 $ export PRESIDIO_LABEL=latest
-$ make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build-deps
+$ export PRESIDIO_DEPS_LABEL=latest
+$ make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} docker-build-deps
 $ make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build
 
 # Run the containers
