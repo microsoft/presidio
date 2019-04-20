@@ -10,3 +10,9 @@ steps:
     tags: |
      $(Build.BuildId)
      latest
+trigger:
+  batch: true # batch changes if true, start a new build for every push if false
+  branches:
+    include: $(branch)
+  paths:
+    include: $(include) # file paths which must match to trigger a build
