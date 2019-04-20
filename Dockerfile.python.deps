@@ -14,4 +14,4 @@ RUN apk --update add --no-cache g++ && \
     pip install --no-cache-dir cython && \ 
     pip install --no-cache-dir -r requirements.txt && \
     pip install --upgrade --force-reinstall spacy==2.0.18 && \
-    apk del build_deps
+    apk del build_deps 
