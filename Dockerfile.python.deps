@@ -6,6 +6,7 @@ COPY ./${NAME}/requirements.txt /usr/bin/${NAME}/requirements.txt
 
 WORKDIR /usr/bin/${NAME}
 
+
 RUN apk --update add --no-cache g++ && \
     apk --update add --no-cache --virtual build_deps make tar wget clang && \
     wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz && \
