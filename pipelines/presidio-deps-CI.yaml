@@ -1,3 +1,5 @@
+queue:
+  name: Hosted Ubuntu 1604
 steps:
 - task: Docker@2
   displayName: 'Build and Push'
