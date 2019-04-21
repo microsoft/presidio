@@ -233,3 +233,11 @@
   </tbody>
 </table>
 <hr/>
+<h2>All fields</h2>
+In case you need to load all available fields in your Presidio deployment, you need to set the `allFields` flag to `true`.
+
+For example:
+```json
+"analyzeTemplate":{"allFields":true}
+```
+<hr/>
