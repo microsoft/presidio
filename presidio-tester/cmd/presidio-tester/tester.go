@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"io"
 	"io/ioutil"
@@ -124,6 +125,13 @@ func invokeHTTPUpload(path string, values map[string]io.Reader) []byte {
 	return bodyBytes
 }
 
+func convertToJSON(byt []byte, dat map[string]interface{}) map[string]interface{} {
+	if err := json.Unmarshal(byt, &dat); err != nil {
+		panic(err)
+	}
+	return dat
+}
+
 // TestAddTemplate Test Add Template
 func TestAddTemplate() {
 	log.Info("Start TestAddTemplate")
@@ -158,9 +166,33 @@ func TestAnalyzer() {
 	log.Info("Analyze request")
 	var res = invokeHTTPRequest("/api/v1/projects/test/analyze", "POST", payload)
 	log.Info(res)
-	if res != "[{\"field\":{\"name\":\"CREDIT_CARD\"},\"score\":1,\"location\":{\"start\":112,\"end\":127,\"length\":15}},{\"field\":{\"name\":\"DATE_TIME\"},\"score\":0.85,\"location\":{\"start\":7,\"end\":16,\"length\":9}},{\"field\":{\"name\":\"DATE_TIME\"},\"score\":0.85,\"location\":{\"start\":17,\"end\":24,\"length\":7}},{\"field\":{\"name\":\"LOCATION\"},\"score\":0.85,\"location\":{\"start\":28,\"end\":35,\"length\":7}},{\"field\":{\"name\":\"PHONE_NUMBER\"},\"score\":0.7,\"location\":{\"start\":60,\"end\":74,\"length\":14}}]" {
-		panic("Got different analyzer response than expected.")
+
+	//Convert to json and compare specific properties
+	var resultJSON, expectedJSON []anresponse
+	if err := json.Unmarshal([]byte(res), &resultJSON); err != nil {
+		panic(err)
 	}
+
+	var expectedResponseBytes = generatePayload("analyze-response.json")
+	if err := json.Unmarshal(expectedResponseBytes, &expectedJSON); err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < len(resultJSON); i++ {
+		if resultJSON[i].Field.Name != expectedJSON[i].Field.Name {
+			panic("Result field.name is different than expected")
+		}
+		if resultJSON[i].Location.Start != expectedJSON[i].Location.Start {
+			panic("Result location.start is different than expected")
+		}
+		if resultJSON[i].Location.End != expectedJSON[i].Location.End {
+			panic("Result location.end is different than expected")
+		}
+		if resultJSON[i].Location.Length != expectedJSON[i].Location.Length {
+			panic("Result location.length is different than expected")
+		}
+	}
+
 	log.Info("End TestAnalyzer")
 }
 
@@ -172,8 +204,20 @@ func TestAnonymizer() {
 	log.Info("anonymize request")
 	var res = invokeHTTPRequest("/api/v1/projects/test/anonymize", "POST", payload)
 	log.Info(res)
-	if res != "{\"text\":\"my phone number is \\u003cphone-number\\u003e and my credit card is  \"}" {
-		panic("Got different analyzer response than expected.")
+
+	//prase json and compare results
+	var resultJSON, expectedJSON map[string]string
+	if err := json.Unmarshal([]byte(res), &resultJSON); err != nil {
+		panic(err)
+	}
+
+	var expectedResponseBytes = generatePayload("anonymize-response.json")
+	if err := json.Unmarshal(expectedResponseBytes, &expectedJSON); err != nil {
+		panic(err)
+	}
+
+	if resultJSON["text"] != expectedJSON["text"] {
+		panic("Result text is different than expected")
 	}
 	log.Info("End TestAnonymizer")
 }
@@ -204,4 +248,18 @@ func TestImageAnonymizer() {
 		panic("Images are not equal")
 	}
 	log.Info("End TestImageAnonymizer")
+}
+
+type anresponse struct {
+	Field    field    `json:"field"`
+	Score    float64  `json:"score"`
+	Location location `json:"location"`
+}
+type field struct {
+	Name string `json:"name"`
+}
+type location struct {
+	Start  int `json:"start"`
+	End    int `json:"end"`
+	Length int `json:"length"`
 }
