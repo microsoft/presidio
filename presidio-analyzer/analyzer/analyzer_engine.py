@@ -5,7 +5,8 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-from analyzer import RecognizerRegistry  # noqa: F401
+from analyzer import RecognizerRegistry
+from analyzer.nlp_engine import SpacyNlpEngine
 
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
@@ -16,10 +17,32 @@ DEFAULT_LANGUAGE = "en"
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry=RecognizerRegistry()):
-        # load all recognizers
+    def __init__(self, registry=RecognizerRegistry(),
+                 nlp_engine=SpacyNlpEngine()):
+        # load nlp module
+        self.nlp_engine = nlp_engine
+        # prepare registry
         self.registry = registry
+        # load all recognizers
         registry.load_predefined_recognizers()
+
+    # pylint: disable=unused-argument
+    def Apply(self, request, context):
+        logging.info("Starting Apply")
+        entities = AnalyzerEngine.__convert_fields_to_entities(
+            request.analyzeTemplate.fields)
+        language = AnalyzerEngine.get_language_from_request(request)
+        results = self.analyze(request.text, entities, language,
+                               request.analyzeTemplate.allFields)
+
+        # Create Analyze Response Object
+        response = analyze_pb2.AnalyzeResponse()
+
+        # pylint: disable=no-member
+        response.analyzeResults.extend(
+            AnalyzerEngine.__convert_results_to_proto(results))
+        logging.info("Found %d results", len(results))
+        return response
 
     @staticmethod
     def __remove_duplicates(results):
@@ -39,7 +62,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                     # If result is equal to or substring of
                     # one of the other results
                     if result.start >= filtered.start \
-                            and result.end <= filtered.end:
+                          and result.end <= filtered.end:
                         valid_result = False
                         break
 
@@ -47,24 +70,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 filtered_results.append(result)
 
         return filtered_results
-
-    # pylint: disable=unused-argument
-    def Apply(self, request, context):
-        logging.info("Starting Apply")
-        entities = AnalyzerEngine.__convert_fields_to_entities(
-            request.analyzeTemplate.fields)
-        language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language,
-                               request.analyzeTemplate.allFields)
-
-        # Create Analyze Response Object
-        response = analyze_pb2.AnalyzeResponse()
-
-        # pylint: disable=no-member
-        response.analyzeResults.extend(
-            AnalyzerEngine.__convert_results_to_proto(results))
-        logging.info("Found %d results", len(results))
-        return response
 
     @classmethod
     def get_language_from_request(cls, request):
@@ -96,10 +101,13 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                                  "Either have all_fields set to True "
                                  "and entities are empty, or all_fields "
                                  "is False and entities is populated")
-            # Since all_fields=True, list all entities by going
+            # Since all_fields=True, list all entities by iterating
             # over all recognizers
             entities = self.__list_entities(recognizers)
 
+        # run the nlp pipeline over the given text, store the results in
+        # a NlpArtifacts instance
+        nlp_artifacts = self.nlp_engine.process_text(text, language)
         results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
@@ -107,9 +115,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.load()
                 recognizer.is_loaded = True
 
-            r = recognizer.analyze(text, entities)
-            if r is not None:
-                results.extend(r)
+            # analyze using the current recognizer and append the results
+            current_results = recognizer.analyze(text, entities, nlp_artifacts)
+            if current_results:
+                results.extend(current_results)
 
         return AnalyzerEngine.__remove_duplicates(results)
 

@@ -16,25 +16,8 @@ class UsPhoneRecognizer(TestCase):
 
         assert len(results) == 1
         assert results[0].score != 1
-        assert_result_within_score_range(results[0], entities[0], 0, 14, 0.7, EntityRecognizer.MAX_SCORE)
-
-    # TODO: enable with task #582 re-support context model in analyzer
-    # def test_phone_number_strong_match_with_phone_context(self):
-    #     number = '(425) 882-9090'
-    #     context = 'my phone number is '
-    #     results = phone_recognizer.analyze(context + number, entities)
-    #
-    #     assert len(results) == 1
-    #     assert results[0].score == 1
-    #
-    #
-    # def test_phone_number_strong_match_with_phone_context_no_space(self):
-    #     number = '(425) 882-9090'
-    #     context = 'my phone number is:'
-    #     results = phone_recognizer.analyze(context + number, entities)
-    #
-    #     assert len(results) == 1
-    #     assert results[0].score == 1
+        assert_result_within_score_range(
+            results[0], entities[0], 0, 14, 0.7, EntityRecognizer.MAX_SCORE)
 
     def test_phone_in_guid(self):
         number = '110bcd25-a55d-453a-8046-1297901ea002'
@@ -74,35 +57,6 @@ class UsPhoneRecognizer(TestCase):
         assert results[0].entity_type == entities[0]
         assert results[0].start == 0
         assert results[0].end == 11
-
-    # # TODO: enable with task #582 re-support context model in analyzer
-    # def test_phone_number_medium_match_with_phone_context(self):
-    #     number = '425 8829090'
-    #     context = 'my phone number is '
-    #     results = phone_recognizer.analyze(context + number, entities)
-    #
-    #     assert len(results) == 1
-    #     assert 0.75 < results[0].score < 0.9
-    #
-    #
-    # def test_phone_number_weak_match_with_phone_context(self):
-    #     number = '4258829090'
-    #     context = 'my phone number is '
-    #     results = phone_recognizer.analyze(context + number, entities)
-    #
-    #     assert len(results) == 1
-    #     assert 0.59 < results[0].score < 0.81
-    #
-    #
-    # def test_phone_numbers_lemma_context_phones(self):
-    #     number1 = '052 5552606'
-    #     number2 = '074-7111234'
-    #     results = phone_recognizer.analyze(
-    #         'try one of these phones ' + number1 + ' ' + number2, entities)
-    #
-    #     assert len(results) == 2
-    #     assert 0.75 < results[0].score < 0.9
-    #     assert 0.75 < results[0].score < 0.9
 
     ''' This test fails since available is not close enough to phone --> requires experimentation with language model
     
