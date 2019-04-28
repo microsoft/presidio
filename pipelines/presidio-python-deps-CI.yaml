@@ -1,3 +1,6 @@
+jobs:
+- job: Presidio-Build-Python-Deps
+  timeoutInMinutes: 120
 queue:
   name: Hosted Ubuntu 1604
 steps:
