@@ -19,7 +19,4 @@ jobs:
     inputs:
       containerRegistry: $(registry)
       repository: presidio-golang-deps
-      Dockerfile: Dockerfile.golang.deps
-      tags: |
-      $(Build.BuildId)
-      latest
+      Dockerfile: Dockerfile.golang.deps      
