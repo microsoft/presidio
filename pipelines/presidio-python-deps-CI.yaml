@@ -1,0 +1,20 @@
+queue:
+  name: Hosted Ubuntu 1604
+steps:
+- task: Docker@2
+  displayName: 'Build and Push'
+  inputs:
+    containerRegistry: $(registry)
+    repository: presidio-python-deps
+    Dockerfile: Dockerfile.python.deps
+    tags: |
+     $(Build.BuildId)
+     latest
+trigger:
+  batch: true 
+  branches:
+    include: build-deps
+  paths:
+    include: |
+      /Dockerfile.python.deps
+      /presidio-analyzer/requirements.txt
