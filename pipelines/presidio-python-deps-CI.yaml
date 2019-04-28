@@ -13,8 +13,9 @@ steps:
 trigger:
   batch: true 
   branches:
-    include: build-deps
+    include: 
+      - build-deps
   paths:
-    include: |
-      /Dockerfile.python.deps
-      /presidio-analyzer/requirements.txt
+    include: 
+      - /Dockerfile.python.deps
+      - /presidio-analyzer/requirements.txt
