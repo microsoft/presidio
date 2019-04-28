@@ -95,8 +95,7 @@ func TestAllFields(t *testing.T) {
 
 	project := "tests"
 	analyzeAPIRequest := &types.AnalyzeApiRequest{
-		Text:              "My number is (555) 253-0000 and email johnsnow@foo.com",
-		AnalyzeTemplateId: "test",
+		Text: "My number is (555) 253-0000 and email johnsnow@foo.com",
 		AnalyzeTemplate: &types.AnalyzeTemplate{
 			Language:  "en",
 			AllFields: true},
