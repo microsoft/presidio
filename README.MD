@@ -32,7 +32,7 @@ Presidio automatically detects PII entities in unstructured text, and given an a
 For example:
 
 [![Image1](docs/assets/before-after.png)](docs/assets/before-after.png)
-*The top image (Input text) is the text sent to presidio. The bottom image (Anonymized text) shows the response in which every PII entity was replaced with a*
+*The top image (Input text) is the text sent to presidio. The bottom image (Anonymized text) shows the response in which every PII entity was replaced with a token*
 
 For each PII entity, presidio returns a confidence score:
 
