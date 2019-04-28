@@ -1,3 +1,6 @@
+jobs:
+- job: Presidio-Build-Golang-Deps
+  timeoutInMinutes: 30
 queue:
   name: Hosted Ubuntu 1604
 steps:
