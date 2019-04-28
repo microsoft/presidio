@@ -13,4 +13,4 @@ RUN apk --update add --no-cache g++ && \
     cd re2 && make install && cd .. && rm -rf re2 && rm re2.tar.gz && \
     pip install --no-cache-dir cython && \ 
     pip install --no-cache-dir -r requirements.txt && \
-    apk del build_deps 
+    apk del build_deps
