@@ -1,19 +1,4 @@
-jobs:
-- job: Presidio-Build-Python-Deps
-  timeoutInMinutes: 120
-  queue:
-    name: Hosted Ubuntu 1604
-  steps:
-  - task: Docker@2
-    displayName: 'Build and Push'
-    inputs:
-      containerRegistry: $(registry)
-      repository: presidio-python-deps
-      Dockerfile: Dockerfile.python.deps
-      tags: |
-      $(Build.BuildId)
-      latest
-  trigger:
+trigger:
     batch: true 
     branches:
       include: 
@@ -22,3 +7,18 @@ jobs:
       include: 
         - /Dockerfile.python.deps
         - /presidio-analyzer/requirements.txt
+queue:
+    name: Hosted Ubuntu 1604
+jobs:
+- job: Presidio-Build-Python-Deps
+  timeoutInMinutes: 120
+  steps:
+  - task: Docker@2
+    displayName: 'Build and Push'
+    inputs:
+      containerRegistry: $(registry)
+      repository: presidio-python-deps
+      Dockerfile: Dockerfile.python.deps
+      tags: |
+        $(Build.BuildId)
+        latest
