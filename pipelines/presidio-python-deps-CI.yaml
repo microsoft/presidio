@@ -2,7 +2,7 @@ trigger: # Build triggers
     batch: true # batch changes if true, start a new build for every push if false
     branches:
       include:  # branch names which will trigger a build
-        - build-deps
+        - development
     paths:
       include: # file paths which must match to trigger a build
         - /Dockerfile.python.deps
