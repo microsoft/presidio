@@ -212,4 +212,3 @@ class TestRecognizerRegistry(TestCase):
         # Expects zero custom recognizers
         recognizers = recognizer_registry.get_custom_recognizers()
         assert len(recognizers) == 0
-        
