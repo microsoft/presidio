@@ -15,7 +15,7 @@ trigger:
   branches:
     include: build-deps
   paths:
-    include: |
-      /Dockerfile.golang.deps
-      /Gopkg.lock
-      /Gopkg.toml
+    include: 
+      - /Dockerfile.golang.deps
+      - /Gopkg.lock
+      - /Gopkg.toml
