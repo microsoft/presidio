@@ -13,7 +13,8 @@ steps:
 trigger:
   batch: true 
   branches:
-    include: build-deps
+    include: 
+      - build-deps
   paths:
     include: 
       - /Dockerfile.golang.deps
