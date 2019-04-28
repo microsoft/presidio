@@ -62,8 +62,8 @@
 
 - Set version numbers:
     ```sh
-    $ export PRESIDIO_LABEL=[version number]
-    $ export PRESIDIO_DEPS_LABEL=[version number]
+    $ export PRESIDIO_LABEL=[presidio label]
+    $ export PRESIDIO_DEPS_LABEL=[presidio dependencies label]
     ```
 - Set registry name:
     ```sh
