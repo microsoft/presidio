@@ -1,7 +1,9 @@
 import datetime
 
-from analyzer import LocalRecognizer, Pattern, RecognizerResult
-from analyzer import EntityRecognizer
+from analyzer import LocalRecognizer, \
+    Pattern, \
+    RecognizerResult, \
+    EntityRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -12,8 +14,8 @@ except ImportError:
 
 class PatternRecognizer(LocalRecognizer):
 
-    def __init__(self, supported_entity, name=None, supported_language='en',
-                 patterns=None,
+    def __init__(self, supported_entity, name=None,
+                 supported_language='en', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect
@@ -50,13 +52,21 @@ class PatternRecognizer(LocalRecognizer):
     def load(self):
         pass
 
-    def analyze(self, text, entities):
+    # pylint: disable=unused-argument
+    def analyze(self, text, entities, nlp_artifacts=None):
         results = []
 
         if self.patterns:
             pattern_result = self.__analyze_patterns(text)
 
-            if pattern_result:
+            if pattern_result and self.context:
+                # try to improve the results score using the surrounding
+                # context words
+                enhanced_result = \
+                  self.enhance_using_context(
+                      text, pattern_result, nlp_artifacts, self.context)
+                results.extend(enhanced_result)
+            elif pattern_result:
                 results.extend(pattern_result)
 
         return results
@@ -118,11 +128,12 @@ class PatternRecognizer(LocalRecognizer):
                 if current_match == '':
                     continue
 
-                res = RecognizerResult(self.supported_entities[0], start, end,
-                                       pattern.score)
-                res = self.validate_result(current_match, res)
+                score = pattern.score
 
-                if res and res.score != EntityRecognizer.MIN_SCORE:
+                res = RecognizerResult(self.supported_entities[0], start, end,
+                                       score)
+                res = self.validate_result(current_match, res)
+                if res and res.score > EntityRecognizer.MIN_SCORE:
                     results.append(res)
 
         return results

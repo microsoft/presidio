@@ -1,9 +1,8 @@
 from unittest import TestCase
 from analyzer.entity_recognizer import EntityRecognizer
 
-import json
+import os
 import hashlib
-import time
 import pytest
 
 from assertions import assert_result
@@ -12,10 +11,13 @@ from analyzer.analyze_pb2 import AnalyzeRequest
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer, DomainRecognizer
+    UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
+    UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
-
+from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
+from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
+from tests.mocks import MockNlpEngine
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
     """
@@ -61,7 +63,6 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
             m.update(recognizer.name.encode('utf-8'))
         self.latest_hash = m.digest()
 
-
 class MockRecognizerRegistry(RecognizerRegistry):
     """
     A mock that acts as a recognizers registry
@@ -76,12 +77,21 @@ class MockRecognizerRegistry(RecognizerRegistry):
                                  DomainRecognizer()])
 
 
+ip_recognizer = IpRecognizer()
+us_ssn_recognizer = UsSsnRecognizer()
+phone_recognizer = UsPhoneRecognizer()
+us_itin_recognizer = UsItinRecognizer()
+us_license_recognizer = UsLicenseRecognizer()
+us_bank_recognizer = UsBankRecognizer()
+us_passport_recognizer = UsPassportRecognizer()
+
 class TestAnalyzerEngine(TestCase):
 
     def __init__(self, *args, **kwargs):
         super(TestAnalyzerEngine, self).__init__(*args, **kwargs)
         self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
-        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry)
+        mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
+        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts))
 
     def test_analyze_with_predefined_recognizers_return_results(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -98,13 +108,18 @@ class TestAnalyzerEngine(TestCase):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = self.loaded_analyzer_engine.analyze(
-            text, entities, language, all_fields=False)
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry)
+        results = analyzer_engine_with_spacy.analyze(text, entities, language, all_fields=False)
 
         assert len(results) == 2
         assert_result(results[0], "CREDIT_CARD", 14,
                       33, EntityRecognizer.MAX_SCORE)
-        assert_result(results[1], "PHONE_NUMBER", 48, 59, 0.5)
+        expected_score = UsPhoneRecognizer.MEDIUM_REGEX_SCORE + \
+            PatternRecognizer.CONTEXT_SIMILARITY_FACTOR  # 0.5 + 0.35 = 0.85
+        assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
     def test_analyze_without_entities(self):
         with pytest.raises(ValueError):
@@ -234,7 +249,8 @@ class TestAnalyzerEngine(TestCase):
         request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
             "Domain: microsoft.com"
         response = analyze_engine.Apply(request, None)
-        returned_entities = [field.field.name for field in response.analyzeResults]
+        returned_entities = [
+            field.field.name for field in response.analyzeResults]
 
         assert response.analyzeResults is not None
         assert "CREDIT_CARD" in returned_entities
@@ -248,14 +264,15 @@ class TestAnalyzerEngine(TestCase):
         request.text = "My name is David and I live in Seattle." \
             "Domain: microsoft.com "
         response = analyze_engine.Apply(request, None)
-        returned_entities = [field.field.name for field in response.analyzeResults]
+        returned_entities = [
+            field.field.name for field in response.analyzeResults]
         assert response.analyzeResults is not None
         assert "PERSON" in returned_entities
         assert "LOCATION" in returned_entities
         assert "DOMAIN_NAME" in returned_entities
 
     def test_when_allFields_is_true_and_entities_not_empty_exception(self):
-        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry())
         request = AnalyzeRequest()
         request.text = "My name is David and I live in Seattle." \
                        "Domain: microsoft.com "
@@ -265,3 +282,4 @@ class TestAnalyzerEngine(TestCase):
         new_field.minScore = '0.5'
         with pytest.raises(ValueError):
             analyze_engine.Apply(request, None)
+    
