@@ -35,7 +35,7 @@ docker-build-deps:
 
 .PHONY: docker-build-base
 docker-build-base:
-	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
+	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
 
 
 # To use docker-build, you need to have Docker installed and configured. You should also set
@@ -45,7 +45,7 @@ docker-build: docker-build-base
 docker-build: $(addsuffix -dimage,$(IMAGES))
 
 %-dimage:
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) --build-arg DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push-deps

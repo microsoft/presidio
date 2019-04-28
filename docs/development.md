@@ -60,10 +60,19 @@
 
 ## Development notes
 
+- Set version numbers:
+    ```sh
+    $ export PRESIDIO_LABEL=[version number]
+    $ export PRESIDIO_DEPS_LABEL=[version number]
+    ```
+- Set registry name:
+    ```sh
+    $ export DOCKER_REGISTRY=[registry login server]
+    ```
 - Build the bins with `make build`
-- Build the basecontainers with `make docker-build-deps`
-- Build the the Docker image with `make docker-build`
-- Push the Docker images with `make docker-push`
+- Build the basecontainers with `make docker-build-deps DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL}`
+- Build the the Docker image with `make docker-build DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
+- Push the Docker images with `make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
