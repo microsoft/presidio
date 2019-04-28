@@ -7,7 +7,7 @@ You can install Presidio as a service in [Kubernetes](https://kubernetes.io/) or
 ```sh
 # Build the images
 
-$ export DOCKER_REGISTRY=mcr.microsoft.com
+$ export DOCKER_REGISTRY=presidio
 $ export PRESIDIO_LABEL=latest
 $ make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build-deps
 $ make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build
