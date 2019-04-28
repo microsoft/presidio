@@ -125,13 +125,6 @@ func invokeHTTPUpload(path string, values map[string]io.Reader) []byte {
 	return bodyBytes
 }
 
-func convertToJSON(byt []byte, dat map[string]interface{}) map[string]interface{} {
-	if err := json.Unmarshal(byt, &dat); err != nil {
-		panic(err)
-	}
-	return dat
-}
-
 // TestAddTemplate Test Add Template
 func TestAddTemplate() {
 	log.Info("Start TestAddTemplate")
