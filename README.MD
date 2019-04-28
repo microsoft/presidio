@@ -7,42 +7,63 @@
 
 # Presidio - Data protection and anonymization API
 
-**Context aware, pluggable and customizable data protection and PII anonymization service for text and images**
+**Context aware, pluggable and customizable PII anonymization service for text and images**
 
 ## Description
 
 Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
-Presidio analyzes the text using predefined recognizers to identify entities, patterns, formats, and checksums with relevant context. Full list of predefined recognizers can be found [here](https://microsoft.github.io/presidio/field_types.html). Presidio leverages docker and kubernetes for workloads at scale. Refer to the [design page](https://microsoft.github.io/presidio/design.html) for more information.
+Presidio analyzes the text using predefined recognizers to identify entities, patterns, formats, and checksums with relevant context. Presidio leverages docker and kubernetes for workloads at scale. Refer to the [design page](https://microsoft.github.io/presidio/design.html) for more information.
+
+#### Why use presidio?
+
+PII anonymization use-cases often require a different set of PII entities to be detected, some of which are domain or business specific. Presidio allows you to add new PII recognizers via API or code to best fit your anonymization needs.
+
 
 :warning: ***Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.***
 
+## Demo
+[Try presidio on your own data](https://presidio-demo.westeurope.cloudapp.azure.com/)
+
 ## Features
 
-***Free text anonymization***
+***Free-text anonymization***
 
-[![Image1](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)
+Presidio automatically detects PII entities in unstructured text, and given an annonymization mechanism per entity, returns a PII free string. 
+For example:
 
-***Text anonymization in images***
+[![Image1](docs/assets/before-after.png)](docs/assets/before-after.png)
+*The top image (Input text) is the text sent to presidio. The bottom image (Anonymized text) shows the response in which every PII entity was replaced with a*
+
+For each PII entity, presidio returns a confidence score:
+
+[![Image2](docs/assets/findings.png)](docs/assets/findings.png)
+*Left-hand side: entities found and their corresponding score (confidence). Right-hand side: The specific substring with its corresponding span.*
+
+***Text anonymization in images*** (beta)
 
 [![Image2](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)
 
 ## Input and output
-Presidio accepts multiple inputs for data annonymization. Specifically:
-  1. Storage solutions
-      * Azure Blob Storage
-      * S3
-      * Google Cloud Storage
-  2. Databases
-      * MySQL
-      * PostgreSQL
-      * Sql Server
-      * Oracle
-  3. Streaming platforms
-      * Kafka
-      * Azure Events Hubs
-  4. REST requests
+Presidio accepts multiple sources and targets for data annonymization. Specifically:
 
-It then can export the results for further analytics to storage solutions, databases or streaming platforms
+1. Storage solutions
+    * Azure Blob Storage
+    * S3
+    * Google Cloud Storage
+
+2. Databases
+    * MySQL
+    * PostgreSQL
+    * Sql Server
+    * Oracle
+
+3. Streaming platforms
+    * Kafka
+    * Azure Events Hubs
+
+4. REST requests
+
+It then can export the results for further analytics to file storage, databases or streaming platforms.
 
 ## The Technology Stack
 
@@ -62,7 +83,6 @@ The [design document](https://microsoft.github.io/presidio/design.html) introduc
 3. Start using the Presidio analyze and anonymize services
 
 ## Samples
-
 
 **Note:** Examples are made with [HTTPie](https://httpie.org/)
 
