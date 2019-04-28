@@ -9,7 +9,7 @@ trigger:
         - /presidio-analyzer/requirements.txt
 
 jobs:
-- job: Presidio-Build-Python-Deps
+- job: Presidio Build Python Deps
   timeoutInMinutes: 120
   pool:
     vmImage: 'ubuntu-latest'

@@ -10,7 +10,7 @@ trigger:
       - /Gopkg.toml
 
 jobs:
-- job: Presidio-Build-Golang-Deps
+- job: Presidio Build Golang Deps
   timeoutInMinutes: 30  
   pool:
     vmImage: 'ubuntu-latest'
