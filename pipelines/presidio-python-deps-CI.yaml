@@ -7,11 +7,13 @@ trigger:
       include: 
         - /Dockerfile.python.deps
         - /presidio-analyzer/requirements.txt
-queue:
-    name: Hosted Ubuntu 1604
+
 jobs:
 - job: Presidio-Build-Python-Deps
   timeoutInMinutes: 120
+  pool:
+    vmImage: 'ubuntu-latest'
+
   steps:
   - task: Docker@2
     displayName: 'Build and Push'
