@@ -188,7 +188,7 @@ class EntityRecognizer:
             at a given index. The words will be collected only if exist
             in the filtered array
 
-        :param index: index of the lemma that its surrounding words
+        :param index: index of the lemma that its surrounding words we want
         :param n_words: number of words to take
         :param lemmas: array of lemmas
         :param lemmatized_filtered_keywords: the array of filter
@@ -294,7 +294,7 @@ class EntityRecognizer:
                                         context_str)
         context_str = \
             self.__add_n_words_forward(i,
-                                       EntityRecognizer.CONTEXT_PREFIX_COUNT,
+                                       EntityRecognizer.CONTEXT_SUFFIX_COUNT,
                                        nlp_artifacts.lemmas,
                                        lemmatized_keywords,
                                        context_str)
