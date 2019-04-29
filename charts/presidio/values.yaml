@@ -1,4 +1,4 @@
-registry: presidio.azurecr.io
+registry: mcr.microsoft.com/presidio/
 
 # Image pull secret
 #privateRegistry: acr-auth
