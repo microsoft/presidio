@@ -1,0 +1,45 @@
+{{- if .Values.tester.enabled -}}
+{{ $fullname := include "presidio.tester.fullname" . }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ $fullname }}-post-install-hook"
+  labels:
+    app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+    app.kubernetes.io/instance: {{.Release.Name | quote }}
+    helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ $fullname }}-post-install-hook"
+      labels:
+        app: {{ $fullname }}
+        app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+        app.kubernetes.io/instance: {{.Release.Name | quote }}
+        helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ $fullname }}
+        image: "{{ .Values.registry }}/{{ .Values.tester.name }}:{{ default .Chart.AppVersion .Values.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.tester.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.tester.service.internalPort }}
+        env:
+          - name: PRESIDIO_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: WEB_PORT
+            value: {{ .Values.api.service.internalPort | quote }}
+          - name: API_SVC_ADDRESS
+            value:  {{ template "presidio.api.fullname" . }}
+      {{ if .Values.privateRegistry }}imagePullSecrets:
+        - name: {{.Values.privateRegistry}}{{ end }}
+{{- end -}}        

@@ -81,6 +81,14 @@ recognizersstore:
     externalPort: 3004
     internalPort: 3004
 
+tester:
+  enabled: false
+  name: presidio-tester
+  imagePullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 3001
+    internalPort: 3001
 
 collector:
   name: presidio-collector
