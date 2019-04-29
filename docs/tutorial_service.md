@@ -4,7 +4,7 @@
 
 1. Analyze text
     ```sh
-    echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC111921", "analyzeTemplate":{"fields":[]}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+    echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC111921", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
     ```
 
 ***Sample 2***
@@ -13,7 +13,7 @@ You can also create reusable templates
 
 1. Create an analyzer project
     ```sh
-    echo -n '{"fields":[]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+    echo -n '{"allFields":true}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
     ```
 
 2. Analyze text
