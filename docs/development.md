@@ -60,15 +60,20 @@
 
 ## Development notes
 
-- Set version numbers:
+- Optional: set version numbers (docker labels):
     ```sh
     $ export PRESIDIO_LABEL=[presidio label]
     $ export PRESIDIO_DEPS_LABEL=[presidio dependencies label]
     ```
-- Set registry name:
+    if not set, they will default to 'latest', and may cause consistency issues when pushed to a shared registry.
+
+- Optional - set registry name:
+    
     ```sh
     $ export DOCKER_REGISTRY=[registry login server]
     ```
+    if not set, the default is presidio's internal registry.
+
 - Build the bins with `make build`
 - Build the base containers with `make docker-build-deps DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL}`
 - Build the the Docker image with `make docker-build DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
