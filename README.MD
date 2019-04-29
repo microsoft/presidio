@@ -1,54 +1,70 @@
-[![Build status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=48)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Microsoft/presidio)](https://goreportcard.com/report/github.com/Microsoft/presidio)
-[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-![](https://img.shields.io/github/release/Microsoft/presidio.svg)
+# Presidio - Data protection and anonymization API
+
+**Context aware, pluggable and customizable PII anonymization service for text and images.**
 
 ---
 
-# Presidio - Data Protection API
-
-**Context aware, pluggable and customizable data protection and PII anonymization service for text and images**
+[![Build status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=48)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Microsoft/presidio)](https://goreportcard.com/report/github.com/Microsoft/presidio)
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 
 ## Description
 
-Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data.
-Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context.
+Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
+Presidio analyzes the text using predefined recognizers to identify entities, patterns, formats, and checksums with relevant context. Presidio leverages docker and kubernetes for workloads at scale. Refer to the [design page](https://microsoft.github.io/presidio/design.html) for more information.
 
-You can find a more detailed list [here](https://microsoft.github.io/presidio/field_types.html)
+### Why use presidio?
 
-:warning: ***Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.***
+Presidio can be integrated into any data pipeline for intelligent PII scrubbing. It is open-source, transparent and scalable. Additionally, PII anonymization use-cases often require a different set of PII entities to be detected, some of which are domain or business specific. Presidio allows you to **customize or add new PII recognizers** via API or code to best fit your anonymization needs.
+
+:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
+
+## Demo
+
+[Try presidio on your own data](https://presidio-demo.westeurope.cloudapp.azure.com/)
 
 ## Features
 
-***Free text anonymization***
+***Unstsructured text anonymization***
 
-[![Image1](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)
+Presidio automatically detects Personal-Identifiable Information (PII) in unstructured text, annonymizes it based on one or more anonymization mechanisms, and returns a string with no personal identifiable data.
+For example:
 
-***Text anonymization in images***
+[![Image1](docs/assets/before-after.png)](docs/assets/before-after.png)
+
+For each PII entity, presidio returns a confidence score:
+
+[![Image2](docs/assets/findings.png)](docs/assets/findings.png)
+
+***Text anonymization in images*** (beta)
+
+Presidio uses OCR to detect text in images. It further allows the redaction of the text from the original image.
 
 [![Image2](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)
 
-* Text analytics - Predefined analyzers with customizable fields.
-* Probability scores - Customize the sensitive text detection threshold.
-* Anonymization - Anonymize sensitive text and images
-* Workflow and pipeline integration -  Monitor your data with periodic scans or events of/from:
-  1. Storage solutions
-      * Azure Blob Storage
-      * S3
-      * Google Cloud Storage
-  2. Databases
-      * MySQL
-      * PostgreSQL
-      * Sql Server
-      * Oracle
-  3. Streaming platforms
-      * Kafka
-      * Azure Events Hubs
+## Input and output
 
-  and export the results for further analytics:
-  1. Storage solutions
-  2. Databases
-  3. Streaming platforms
+Presidio accepts multiple sources and targets for data annonymization. Specifically:
+
+1. Storage solutions
+    * Azure Blob Storage
+    * S3
+    * Google Cloud Storage
+
+2. Databases
+    * MySQL
+    * PostgreSQL
+    * Sql Server
+    * Oracle
+
+3. Streaming platforms
+    * Kafka
+    * Azure Events Hubs
+
+4. REST requests
+
+It then can export the results to file storage, databases or streaming platforms.
 
 ## The Technology Stack
 
@@ -64,8 +80,82 @@ The [design document](https://microsoft.github.io/presidio/design.html) introduc
 ## Quickstart
 
 1. Install [Presidio](https://microsoft.github.io/presidio/install.html)
-2. Create a Presidio project
-3. Start using the Presidio analyze and anonymize services
+2. Define a name for your Presidio project. In the following examples the project name is `<my-project>`.
+3. Start using the Presidio analyze and anonymize services.
+
+## Samples
+
+**Note:** Examples are made with [HTTPie](https://httpie.org/)
+
+***Sample 1***
+
+Simple text analysis:
+
+    ```sh
+    echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC333991", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+    ```
+
+***Sample 2***
+
+Create reusable templates:
+
+1. Create an analyzer template:
+
+    ```sh
+    echo -n '{"allFields":true}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+    ```
+
+2. Analyze text:
+
+    ```sh
+    echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+    ```
+
+***Sample 3***
+
+Detect specific entities
+
+1. Create an analyzer project with a specific set of entities:
+
+    ```sh
+    echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"}]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
+    ```
+
+2. Analyze text:
+
+    ```sh
+    echo -n '{"text":"We met yesterday morning in Seattle and his phone number is (212) 555 1234", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+    ```
+
+***Sample 4***
+
+Custom anonymization
+
+1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD):
+
+    ```sh
+    echo -n '{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+    ```
+
+2. Anonymize text:
+
+    ```sh
+    echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
+    ```
+
+***Sample 5 (Image anonymization)***
+
+1. Create an anonymizer image template (This template redacts values with black color):
+
+    ```sh
+    echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize-image/<my-anonymize-image-template-name>
+    ```
+
+2. Anonymize image:
+
+    ```sh
+    http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
+    ```
 
 ## Single click deployment using the default values
 
@@ -73,10 +163,12 @@ The script will install Presidio on your Kubenetes cluster. Prerequesites:
 
 1. A Kubernetes cluster.
 2. `kubectl` installed
-    * verify you can communicate with the cluster by running: 
+    * verify you can communicate with the cluster by running:
+
         ``` sh
         kubectl version
         ```
+
 3. Local `helm` client.
 4. Recent presidio repo is cloned on your local machine.
 
@@ -98,69 +190,7 @@ deploy-presidio.sh <registry>
 The script will install Presidio on your cluster using the default values.
 >Note: You can edit the file to use your own container registry and image.
 
-## Samples
-
-
-**Note:** Examples are made with [HTTPie](https://httpie.org/)
-
-***Sample 1***
-
-1. Analyze text
-    ```sh
-    $ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC333991", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
-    ```
-
-***Sample 2***
-
-You can also create reusable templates
-
-1. Create an analyzer project
-    ```sh
-    $ echo -n '{"allFields":true}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
-    ```
-
-2. Analyze text
-    ```sh
-    $ echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
-    ```
-
-***Sample 3***
-
-1. Create an analyzer project
-    ```sh
-    $ echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"}]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
-    ```
-
-2. Analyze text
-    ```sh
-    $ echo -n '{"text":"We met yesterday morning in Seattle and his phone number is (212) 555 1234", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
-    ```
-
-***Sample 4***
-
-1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD)
-    ```sh
-    $ echo -n '{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
-    ```
-
-2. Anonymize text
-    ```sh
-    $ echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
-    ```
-
-***Sample 5 (Image anonymization)***
-
-1. Create an anonymizer image template (This template redact values with black color)
-    ```sh
-    $ echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize-image/<my-anonymize-image-template-name>
-    ```
-
-2. Anonymize image
-    ```sh
-    $ http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
-    ```
-
-### Current Features Status
+### Current input/output components status
 
 | Module              | Feature              | Status                 |
 |---------------------|----------------------|------------------------|
@@ -185,8 +215,8 @@ You can also create reusable templates
 | Datasink (output)   | Google Cloud Storage | :x:                    |
 
 * :white_check_mark: - Working
-* :large_orange_diamond: - Partially working
-* :x: - Not working yet but we are on it :wink:
+* :large_orange_diamond: - Partially supported (alpha)
+* :x: - Not supported yet
 
 # Contributing
 
