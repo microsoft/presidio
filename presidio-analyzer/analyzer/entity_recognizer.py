@@ -198,12 +198,13 @@ class EntityRecognizer:
                             take the successing words
         """
         i = index
-        # collect at most n words
+        # collect at most n words (in lower case)
         remaining = n_words
         while 0 <= i < len(lemmas) and remaining > 0:
-            if lemmas[i] in lemmatized_filtered_keywords:
+            lower_lemma = lemmas[i].lower()
+            if lower_lemma in lemmatized_filtered_keywords:
                 remaining -= 1
-                prefix += ' ' + lemmas[i]
+                prefix += ' ' + lower_lemma
             if is_backward:
                 i -= 1
             else:

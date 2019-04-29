@@ -52,6 +52,14 @@ my driver license is H12234567
 US_DRIVER_LICENSE
 my driver license is: 1234567901234
 
+# Verify Upper case works
+US_DRIVER_LICENSE
+my DRIVER LICENSE is: 7774567901234
+
+# Verify Mixed case works
+US_DRIVER_LICENSE
+my DrIvEr LiCeNsE is: 7774567901234
+
 US_BANK_NUMBER
 my bank account number is 912803456
 
