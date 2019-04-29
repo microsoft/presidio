@@ -2,8 +2,8 @@ DOCKER_REGISTRY    ?= presidio.azurecr.io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store
-IMAGES      = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-analyzer presidio-recognizers-store
+BINS        = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
+IMAGES      = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-analyzer presidio-recognizers-store presidio-tester
 GOLANG_DEPS	= presidio-golang-deps
 PYTHON_DEPS	= presidio-python-deps
 GOLANG_BASE	= presidio-golang-base
@@ -79,8 +79,10 @@ endif
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
 	docker push $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
+	docker push $(DOCKER_REGISTRY)/public/$*:$(RELEASE_VERSION)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest
 	docker push $(DOCKER_REGISTRY)/$*:latest
+	docker push $(DOCKER_REGISTRY)/public/$*:latest
 	
 # All non-functional tests
 .PHONY: test
