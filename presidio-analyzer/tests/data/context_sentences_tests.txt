@@ -69,5 +69,9 @@ my banking account number is 912803456
 US_PASSPORT
 my passport number is 912803456
 
+# Verify that substring is also found (e.g. forgotten spaces)
+US_PASSPORT
+my passportnumber is 912803456
+
 US_PASSPORT
 my passport number is 912803456 and now there are a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot of other words

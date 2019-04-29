@@ -157,21 +157,31 @@ class EntityRecognizer:
            context_text and any keyword in context_list
 
         :param context_text a string of the prefix and suffix of the found
-               match
+               match, derived directly from the given text
         :param context_list a list of words considered as context keywords
+               manually specified by the recognizer's author
         """
 
+        # If the context list is empty, no need to continue
         if context_list is None:
             return 0
 
+        # Take the context text and break it into individual keywords
         lemmatized_keywords = self.__context_to_keywords(context_text)
         if lemmatized_keywords is None:
             return 0
 
         similarity = 0.0
-        for context_keyword in lemmatized_keywords:
-            if context_keyword in context_list:
-                self.logger.info("Found context keyword '%s'", context_keyword)
+        for predefined_context_word in context_list:
+            # result == true only if any of the predefined context words
+            # is found exactly or as a substring in any of the collected
+            # context words
+            result = \
+              next((True for keyword in lemmatized_keywords
+                    if predefined_context_word in keyword), False)
+            if result:
+                self.logger.info("Found context keyword '%s'",
+                                 predefined_context_word)
                 similarity = 1
                 break
 
