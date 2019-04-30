@@ -44,7 +44,7 @@ Presidio uses OCR to detect text in images. It further allows the redaction of t
 [![Image3](docs/assets/ocr-example.png)](docs/assets/ocr-example.png)
 
 ## Learn more
-More information could be found in the [Presidio documentation](https://github.com/Microsoft/presidio/blob/master/docs/index.md).
+More information could be found in the [Presidio documentation](docs/index.md).
 
 - [Installation guide](docs/install.md)
 - [Supported field types](docs/field_types.md)
