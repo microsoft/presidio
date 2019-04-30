@@ -1,4 +1,4 @@
-## Samples
+# Samples
 
 **Note:** Examples are made with [HTTPie](https://httpie.org/)
 

@@ -11,6 +11,9 @@ New to Presidio? Read this material to quickly get up and running.
 
 - [Installation guide](install.md)
 - [Supported field types](field_types.md)
-- [Database and storage scanner](tutorial_scheduler_cronjob.md)
+- [Database and storage scanner](tutorial_scheduler.md)
 - [Architecture](design.md)
 - [Setting up a development environment](development.md)
+- [Analyzer service tutorial](tutorial_analyzer.md)
+- [Scheduler tutorial](tutorial_scheduler.md)
+- [Calling the different services](tutorial_service.md)
