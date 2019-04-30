@@ -41,7 +41,7 @@ For each PII entity, presidio returns a confidence score:
 
 Presidio uses OCR to detect text in images. It further allows the redaction of the text from the original image.
 
-[![Image2](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)
+[![Image3](docs/assets/ocr-example.png)](docs/assets/ocr-example.png)
 
 ## Input and output
 
