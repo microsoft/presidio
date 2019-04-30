@@ -1,5 +1,3 @@
-// +build functional
-
 package tests
 
 import (
@@ -10,8 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/tests/common"
 )
+
+func TestGetAllRecognizers(t *testing.T) {
+	response := common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/", "GET", []byte(""))
+	assert.Equal(t, "null", response)
+
+	payload := common.GeneratePayload("new-custom-pattern-recognizer.json")
+	common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "POST", payload)
+
+	response = common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/", "GET", []byte(""))
+	expectedResponse := string(common.GeneratePayload("new-custom-recognizer-response.json"))
+
+	assert.Equal(t, response, expectedResponse)
+
+	common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "DELETE", []byte(""))
+}
 
 // TestAddRecognizerAndAnalyze tests the custom recognizers logic.
 // 1) It add a new custom recognizer and then use it to
@@ -51,7 +65,7 @@ func TestAddRecognizerAndAnalyze(t *testing.T) {
 			},
 		},
 	}
-
+	log.Info(results)
 	verifyResults(t, results, expectedResults)
 
 	// sleeping to make sure the timestamp changes
@@ -99,7 +113,8 @@ func TestAddRecognizerAndAnalyze(t *testing.T) {
 
 	// Now, delete this recognizer and expect all the 'rockets' not
 	// to appear
-	common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "DELETE", []byte(""))
+	delresponse := common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "DELETE", []byte(""))
+	log.Info(delresponse)
 
 	deletedAnalyzePayload := common.GeneratePayload("analyze-custom-recognizer-request.json")
 	newResults = common.InvokeHTTPRequest(t, "/api/v1/projects/test/analyze", "POST", deletedAnalyzePayload)
