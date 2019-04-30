@@ -199,7 +199,7 @@ The script will install Presidio on your Kubenetes cluster. Prerequesites:
 4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
 
 ```sh
-deploy-presidio.sh <registry>
+deploy-presidio.sh
 ```
 
 The script will install Presidio on your cluster using the default values.
