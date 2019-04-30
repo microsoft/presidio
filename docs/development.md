@@ -62,15 +62,15 @@
 
 - Optional: set version numbers (docker labels):
     ```sh
-    $ export PRESIDIO_LABEL=[presidio label]
-    $ export PRESIDIO_DEPS_LABEL=[presidio dependencies label]
+    export PRESIDIO_LABEL=[presidio label]
+    export PRESIDIO_DEPS_LABEL=[presidio dependencies label]
     ```
     if not set, they will default to 'latest', and may cause consistency issues when pushed to a shared registry.
 
 - Optional - set registry name:
     
     ```sh
-    $ export DOCKER_REGISTRY=[registry login server]
+    export DOCKER_REGISTRY=[registry login server]
     ```
     if not set, the default is presidio's internal registry.
 
