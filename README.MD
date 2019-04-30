@@ -176,7 +176,7 @@ This simple recognizer identifies the word "rocket" in a text and tags it as a "
 
 The script will install Presidio on your Kubenetes cluster. Prerequesites:
 
-1. A Kubernetes cluster.
+1. A Kubernetes cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled
 2. `kubectl` installed
     * verify you can communicate with the cluster by running:
 
