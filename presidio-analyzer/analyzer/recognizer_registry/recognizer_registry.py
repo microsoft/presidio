@@ -125,7 +125,7 @@ class RecognizerRegistry:
 
         latest_hash = self.store_api.get_latest_hash()
         # is update time is not set, no custom recognizers in storage, skip
-        if not latest_hash is None and latest_hash != "NOT_FOUND":
+        if latest_hash is not None:
             logging.info(
                 "Persistent storage has hash: %s",
                 latest_hash)

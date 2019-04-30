@@ -307,7 +307,7 @@ func applyGetHash() (*types.RecognizerHashResponse, error) {
 	// no error, however hash was not found, this means the redis is still
 	// empty.
 	if hash == "" {
-		return &types.RecognizerHashResponse{RecognizersHash: "NOT_FOUND"}, nil
+		return &types.RecognizerHashResponse{}, nil
 	}
 
 	return &types.RecognizerHashResponse{RecognizersHash: hash}, nil

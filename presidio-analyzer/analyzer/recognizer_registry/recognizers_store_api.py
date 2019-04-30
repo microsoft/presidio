@@ -42,7 +42,7 @@ class RecognizerStoreApi:
             logging.error("Failed to get recognizers hash")
             return None
 
-        if last_hash == "NOT_FOUND":
+        if not last_hash:
             logging.info("Recognizers hash was not found in store")
         else:
             logging.info("Latest hash found in store is: %d", last_hash)
