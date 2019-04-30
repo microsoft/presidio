@@ -75,3 +75,11 @@ my passportnumber is 912803456
 
 US_PASSPORT
 my passport number is 912803456 and now there are a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot a lot of other words
+
+# Verify that within the max window size (currently 5) the context is picked up
+US_PASSPORT
+my passport number is hi bye hello 912803456
+
+# Verify adjacent context words
+US_PASSPORT
+mypassportnumberis912803456

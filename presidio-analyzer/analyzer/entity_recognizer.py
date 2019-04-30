@@ -156,8 +156,8 @@ class EntityRecognizer:
         """Context similarity is 1 if there's exact match between a keyword in
            context_text and any keyword in context_list
 
-        :param context_text a string of the prefix and suffix of the found
-               match, derived directly from the given text
+        :param context_text words before and after the matched enitity within
+               a specified window size
         :param context_list a list of words considered as context keywords
                manually specified by the recognizer's author
         """
@@ -180,8 +180,8 @@ class EntityRecognizer:
               next((True for keyword in lemmatized_keywords
                     if predefined_context_word in keyword), False)
             if result:
-                self.logger.info("Found context keyword '%s'",
-                                 predefined_context_word)
+                self.logger.debug("Found context keyword '%s'",
+                                  predefined_context_word)
                 similarity = 1
                 break
 
@@ -208,17 +208,20 @@ class EntityRecognizer:
                             take the successing words
         """
         i = index
+        # The entity itself is no intrest to us...however we want to
+        # consider it anyway for cases were it is attached with no spaces
+        # to an interesting context word, so we allow it and add 1 to
+        # the number of collected words
+
         # collect at most n words (in lower case)
-        remaining = n_words
+        remaining = n_words + 1
         while 0 <= i < len(lemmas) and remaining > 0:
             lower_lemma = lemmas[i].lower()
             if lower_lemma in lemmatized_filtered_keywords:
                 remaining -= 1
                 prefix += ' ' + lower_lemma
-            if is_backward:
-                i -= 1
-            else:
-                i += 1
+
+            i = i-1 if is_backward else i+1
         return prefix
 
     def __add_n_words_forward(self,
