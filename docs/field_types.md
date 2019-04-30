@@ -241,3 +241,6 @@ For example:
 "analyzeTemplate":{"allFields":true}
 ```
 <hr/>
+<h2>Custom fields</h2>
+Presidio supports custom fields. Please refer <a href="custom_fields.md">here</a> to learn more
+<hr/>
