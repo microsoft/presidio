@@ -34,16 +34,12 @@
 6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
 
     ```sh
+    $ pip3 install cython
     $ pip3 install -r requirements.txt
     $ pip3 install -r requirements-dev.txt
     ```
 
-    **Note:** If you encounter errors with `pyre2` than install `cython` first
-
-    ```sh
-    $ pip3 install cython
-    ```
-
+    
 7. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
 
 8. Protobuf generator tools (Optional)
@@ -64,9 +60,24 @@
 
 ## Development notes
 
+- Optional: set version numbers (docker labels):
+    ```sh
+    $ export PRESIDIO_LABEL=[presidio label]
+    $ export PRESIDIO_DEPS_LABEL=[presidio dependencies label]
+    ```
+    if not set, they will default to 'latest', and may cause consistency issues when pushed to a shared registry.
+
+- Optional - set registry name:
+    
+    ```sh
+    $ export DOCKER_REGISTRY=[registry login server]
+    ```
+    if not set, the default is presidio's internal registry.
+
 - Build the bins with `make build`
-- Build the the Docker image with `make docker-build`
-- Push the Docker images with `make docker-push`
+- Build the base containers with `make docker-build-deps DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL}`
+- Build the the Docker image with `make docker-build DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
+- Push the Docker images with `make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
