@@ -226,8 +226,8 @@ func TestHashDoesNotExists(t *testing.T) {
 
 	// Store is empty...
 	res, err := applyGetHash()
-	assert.Error(t, err)
-	assert.Equal(t, res, &types.RecognizerHashResponse{})
+	assert.NoError(t, err)
+	assert.Equal(t, res, &types.RecognizerHashResponse{RecognizersHash: "NOT_FOUND"})
 }
 
 // Try to get the latest hash
@@ -237,8 +237,8 @@ func TestGetHash(t *testing.T) {
 
 	// Store is empty...
 	res, err := applyGetHash()
-	assert.Error(t, err)
-	assert.Equal(t, res, &types.RecognizerHashResponse{})
+	assert.NoError(t, err)
+	assert.Equal(t, res, &types.RecognizerHashResponse{RecognizersHash: "NOT_FOUND"})
 
 	// Now, insert an item
 	// Insert a new pattern recognizer

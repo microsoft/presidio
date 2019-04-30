@@ -17,7 +17,7 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
     """
 
     def __init__(self):
-        self.latest_hash = ""
+        self.latest_hash = "NOT_FOUND"
         self.recognizers = []
         self.times_accessed_storage = 0
 

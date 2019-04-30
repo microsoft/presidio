@@ -39,10 +39,13 @@ class RecognizerStoreApi:
             last_hash = self.rs_stub.ApplyGetHash(
                 hash_request).recognizersHash
         except grpc.RpcError:
-            logging.info("Failed to get recognizers hash")
-            return ""
+            logging.error("Failed to get recognizers hash")
+            return None
 
-        logging.info("Latest hash found in store is: %d", last_hash)
+        if last_hash == "NOT_FOUND":
+            logging.info("Recognizers hash was not found in store")
+        else:
+            logging.info("Latest hash found in store is: %d", last_hash)
         return last_hash
 
     def get_all_recognizers(self):
