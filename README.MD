@@ -48,7 +48,7 @@ More information could be found in the [Presidio documentation](docs/index.md).
 
 - [Installation guide](docs/install.md)
 - [Supported field types](docs/field_types.md)
-- [Database and storage scanner](docs/tutorial_scheduler_cronjob.md)
+- [Database and storage scanner](docs/tutorial_scheduler.md)
 - [Architecture](docs/design.md)
 - [Setting up a development environment](docs/development.md)
 
