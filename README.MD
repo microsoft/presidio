@@ -191,7 +191,7 @@ The script will install Presidio on your Kubenetes cluster. Prerequesites:
 
 1. Navigate into `<root>\deployment` from command line.
 
-2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster.
+2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions.
 
 3. Grant the Kubernetes cluster access to the container registry
     * If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
