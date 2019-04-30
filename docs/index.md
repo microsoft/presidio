@@ -15,5 +15,4 @@ New to Presidio? Read this material to quickly get up and running.
 - [Architecture](design.md)
 - [Setting up a development environment](development.md)
 - [Analyzer service tutorial](tutorial_analyzer.md)
-- [Scheduler tutorial](tutorial_scheduler.md)
 - [Calling the different services](tutorial_service.md)
