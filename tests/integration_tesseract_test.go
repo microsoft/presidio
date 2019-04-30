@@ -12,11 +12,12 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 	"github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
+	"github.com/Microsoft/presidio/tests/common"
 )
 
 func TestOCR(t *testing.T) {
 
-	content, err := ioutil.ReadFile("./testdata/ocr-test.png")
+	content, err := ioutil.ReadFile(common.TestDataPath + "ocr-test.png")
 	assert.NoError(t, err)
 
 	image := &types.Image{
@@ -27,7 +28,7 @@ func TestOCR(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEqual(t, "", result.Text)
 
-	savedJSONResult, err := ioutil.ReadFile("./testdata/ocr-result.json")
+	savedJSONResult, err := ioutil.ReadFile(common.TestDataPath + "ocr-result.json")
 	assert.NoError(t, err)
 	jsonResult, _ := json.Marshal(result)
 	assert.Equal(t, savedJSONResult, jsonResult)
