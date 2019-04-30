@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/tests/common"
 )
 
 // TestAddRecognizerAndAnalyze tests the custom recognizers logic.
@@ -19,14 +20,14 @@ import (
 // 3) Delete the recognizer and verify the results
 func TestAddRecognizerAndAnalyze(t *testing.T) {
 	// Add a custom recognizer and use it
-	payload := generatePayload("new-custom-pattern-recognizer.json")
-	invokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "POST", payload)
+	payload := common.GeneratePayload("new-custom-pattern-recognizer.json")
+	common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "POST", payload)
 
-	payload = generatePayload("analyze-custom-recognizer-template.json")
-	invokeHTTPRequest(t, "/api/v1/templates/test/analyze/test-custom", "POST", payload)
+	payload = common.GeneratePayload("analyze-custom-recognizer-template.json")
+	common.InvokeHTTPRequest(t, "/api/v1/templates/test/analyze/test-custom", "POST", payload)
 
-	payload = generatePayload("analyze-custom-recognizer-request.json")
-	results := invokeHTTPRequest(t, "/api/v1/projects/test/analyze", "POST", payload)
+	payload = common.GeneratePayload("analyze-custom-recognizer-request.json")
+	results := common.InvokeHTTPRequest(t, "/api/v1/projects/test/analyze", "POST", payload)
 
 	expectedResults := []*types.AnalyzeResult{
 		{
@@ -57,11 +58,11 @@ func TestAddRecognizerAndAnalyze(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	// Update the recognizer and expect a new entity to be found
-	updatePayload := generatePayload("update-custom-pattern-recognizer.json")
-	invokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "PUT", updatePayload)
+	updatePayload := common.GeneratePayload("update-custom-pattern-recognizer.json")
+	common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "PUT", updatePayload)
 
-	newAnalyzePayload := generatePayload("analyze-custom-recognizer-request.json")
-	newResults := invokeHTTPRequest(t, "/api/v1/projects/test/analyze", "POST", newAnalyzePayload)
+	newAnalyzePayload := common.GeneratePayload("analyze-custom-recognizer-request.json")
+	newResults := common.InvokeHTTPRequest(t, "/api/v1/projects/test/analyze", "POST", newAnalyzePayload)
 
 	updatedExpectedResults := []*types.AnalyzeResult{
 		{
@@ -98,10 +99,10 @@ func TestAddRecognizerAndAnalyze(t *testing.T) {
 
 	// Now, delete this recognizer and expect all the 'rockets' not
 	// to appear
-	invokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "DELETE", []byte(""))
+	common.InvokeHTTPRequest(t, "/api/v1/analyzer/recognizers/newrec1", "DELETE", []byte(""))
 
-	deletedAnalyzePayload := generatePayload("analyze-custom-recognizer-request.json")
-	newResults = invokeHTTPRequest(t, "/api/v1/projects/test/analyze", "POST", deletedAnalyzePayload)
+	deletedAnalyzePayload := common.GeneratePayload("analyze-custom-recognizer-request.json")
+	newResults = common.InvokeHTTPRequest(t, "/api/v1/projects/test/analyze", "POST", deletedAnalyzePayload)
 
 	deletedExpectedResults := []*types.AnalyzeResult{
 		{
