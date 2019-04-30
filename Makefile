@@ -11,6 +11,7 @@ GOLANG_BASE	= presidio-golang-base
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
 PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
+PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')
 LDFLAGS   += -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
 
 CX_OSES = linux windows darwin
@@ -27,14 +28,14 @@ $(BINS): vendor
 
 .PHONY: docker-build-deps
 docker-build-deps:
-	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS)
-	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS)
-	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_DEPS) -f Dockerfile.golang.deps .
-	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_DEPS) -f Dockerfile.python.deps .
+	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)
+	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL)
+	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) -f Dockerfile.golang.deps .
+	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) -f Dockerfile.python.deps .
 
 .PHONY: docker-build-base
 docker-build-base:
-	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
+	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
 
 
 # To use docker-build, you need to have Docker installed and configured. You should also set
@@ -44,13 +45,20 @@ docker-build: docker-build-base
 docker-build: $(addsuffix -dimage,$(IMAGES))
 
 %-dimage:
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push-deps
 docker-push-deps: 
+	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL)
+	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)
+ifneq ($(PRESIDIO_DEPS_LABEL),latest)
+	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
+	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest 
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
+endif
+	
 
 # push with the given label
 .PHONY: docker-push
