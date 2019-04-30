@@ -156,22 +156,32 @@ class EntityRecognizer:
         """Context similarity is 1 if there's exact match between a keyword in
            context_text and any keyword in context_list
 
-        :param context_text a string of the prefix and suffix of the found
-               match
+        :param context_text words before and after the matched enitity within
+               a specified window size
         :param context_list a list of words considered as context keywords
+               manually specified by the recognizer's author
         """
 
+        # If the context list is empty, no need to continue
         if context_list is None:
             return 0
 
+        # Take the context text and break it into individual keywords
         lemmatized_keywords = self.__context_to_keywords(context_text)
         if lemmatized_keywords is None:
             return 0
 
         similarity = 0.0
-        for context_keyword in lemmatized_keywords:
-            if context_keyword in context_list:
-                self.logger.info("Found context keyword '%s'", context_keyword)
+        for predefined_context_word in context_list:
+            # result == true only if any of the predefined context words
+            # is found exactly or as a substring in any of the collected
+            # context words
+            result = \
+              next((True for keyword in lemmatized_keywords
+                    if predefined_context_word in keyword), False)
+            if result:
+                self.logger.debug("Found context keyword '%s'",
+                                  predefined_context_word)
                 similarity = 1
                 break
 
@@ -188,7 +198,7 @@ class EntityRecognizer:
             at a given index. The words will be collected only if exist
             in the filtered array
 
-        :param index: index of the lemma that its surrounding words
+        :param index: index of the lemma that its surrounding words we want
         :param n_words: number of words to take
         :param lemmas: array of lemmas
         :param lemmatized_filtered_keywords: the array of filter
@@ -198,16 +208,20 @@ class EntityRecognizer:
                             take the successing words
         """
         i = index
-        # collect at most n words
-        remaining = n_words
+        # The entity itself is no intrest to us...however we want to
+        # consider it anyway for cases were it is attached with no spaces
+        # to an interesting context word, so we allow it and add 1 to
+        # the number of collected words
+
+        # collect at most n words (in lower case)
+        remaining = n_words + 1
         while 0 <= i < len(lemmas) and remaining > 0:
-            if lemmas[i] in lemmatized_filtered_keywords:
+            lower_lemma = lemmas[i].lower()
+            if lower_lemma in lemmatized_filtered_keywords:
                 remaining -= 1
-                prefix += ' ' + lemmas[i]
-            if is_backward:
-                i -= 1
-            else:
-                i += 1
+                prefix += ' ' + lower_lemma
+
+            i = i-1 if is_backward else i+1
         return prefix
 
     def __add_n_words_forward(self,
@@ -294,7 +308,7 @@ class EntityRecognizer:
                                         context_str)
         context_str = \
             self.__add_n_words_forward(i,
-                                       EntityRecognizer.CONTEXT_PREFIX_COUNT,
+                                       EntityRecognizer.CONTEXT_SUFFIX_COUNT,
                                        nlp_artifacts.lemmas,
                                        lemmatized_keywords,
                                        context_str)
