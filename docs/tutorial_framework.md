@@ -11,7 +11,7 @@ See [Install Presidio](install.md#L5) for a tutorial on how to install Presidio.
 First, we need to serve our model. We can do that very easily with (Takes about 10 seconds to load)
 
   ```sh
-  $ ./presidio-analyzer serve
+  ./presidio-analyzer serve
   ```
 
 Now that our model is up and running, we can send PII text to it. 
@@ -19,7 +19,7 @@ Now that our model is up and running, we can send PII text to it.
 *From another shell*
 
   ```sh
-  $ ./presidio-analyzer analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE"
+  ./presidio-analyzer analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE"
   ```
 
 The expected result is:
@@ -60,6 +60,13 @@ The expected result is:
 Use the analyzer Python code by importing `matcher.py` from `presidio-analyzer/analyzer`
 
 ```python
-match = matcher.Matcher()
-results = self.match.analyze_text(text, fields)
+analyzer = AnalyzerEngine()
+results = analyzer.analyze(text="My phone number is 212-555-5555",
+                           entities=["PHONE_NUMBER"],
+                           language='en',
+                           all_fields=False)
+print(
+    ["Entity: {ent}, score: {score}\n".format(ent=res.entity_type,
+                                              score=res.score)
+      for res in results])
 ```

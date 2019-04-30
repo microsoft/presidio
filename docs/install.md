@@ -55,7 +55,3 @@ $ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
     $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
     ```
-
----
-
-Prev: [Overview](overview.md) `|` Next: [Field Types](field_types.md)

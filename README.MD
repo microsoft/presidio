@@ -43,6 +43,15 @@ Presidio uses OCR to detect text in images. It further allows the redaction of t
 
 [![Image3](docs/assets/ocr-example.png)](docs/assets/ocr-example.png)
 
+## Learn more
+More information could be found in the [Presidio documentation](https://github.com/Microsoft/presidio/blob/master/docs/index.md).
+
+- [Installation guide](docs/install.md)
+- [Supported field types](docs/field_types.md)
+- [Database and storage scanner](docs/tutorial_scheduler_cronjob.md)
+- [Architecture](docs/design.md)
+- [Setting up a development environment](docs/development.md)
+
 ## Input and output
 
 Presidio accepts multiple sources and targets for data annonymization. Specifically:
@@ -172,6 +181,7 @@ This simple recognizer identifies the word "rocket" in a text and tags it as a "
     ```
 
 ---
+
 ## Single click deployment using the default values
 
 The script will install Presidio on your Kubenetes cluster. Prerequesites:
