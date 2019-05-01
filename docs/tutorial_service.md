@@ -57,7 +57,7 @@ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seat
 ***Sample 5:*** Add custom PII entity recognizer
 
 This sample shows how to add an new regex recognizer via API.
-This simple recognizer identifies the word "rocket" in a text and tags it as a "ROCKET entity.
+This simple recognizer identifies the word "rocket" in a text and tags it as a "ROCKET" entity. See the [custom fields documentation](docs/custom_fields.md) for more info.
 
 1. Add a custom recognizer
 
@@ -70,6 +70,7 @@ This simple recognizer identifies the word "rocket" in a text and tags it as a "
     ```sh
     echo -n '{"text":"They sent a rocket to the moon!", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
     ```
+
 
 ---
 ***Sample 6:*** Image anonymization

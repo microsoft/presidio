@@ -1,4 +1,10 @@
-<h1>Supported Fields</h1>
+# Supported Fields
+Presidio contains predefined recognizers for PII entities (fields). This page describes the different entities Presidio can detect and the method Presidio employs to detect those.
+
+In addition, Presidio allows you to add custom fields by API or code. For more information, refer to the [custom fields documentation]("custom_fields.md").
+
+
+
 <h2>Global</h2>
 <table>
   <tbody>
@@ -242,5 +248,5 @@ For example:
 ```
 <hr/>
 <h2>Custom fields</h2>
-Presidio supports custom fields. Please refer <a href="custom_fields.md">here</a> to learn more
+Presidio supports custom fields. Refer to the <a href="custom_fields.md">custom fields documentation</a> to learn more.
 <hr/>
