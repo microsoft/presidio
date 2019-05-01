@@ -39,7 +39,7 @@ jobs: # A job is a collection of steps to be run by an agent
     inputs:
       containerRegistry: $(registry) # input registry name	
       repository: 'presidio-python-deps'
-      Dockerfile: Dockerfile.pythin.deps # dockerfile path
+      Dockerfile: Dockerfile.python.deps # dockerfile path
       tags: | # image tags	
         $(Build.BuildId)	
 
