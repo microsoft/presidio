@@ -1,19 +1,18 @@
 # Presidio Documentation
 
 Everything you need to know about Presidio.  
-Browse the docs here: [https://microsoft.github.io/presidio/](https://microsoft.github.io/presidio/)
 
 ## Getting Started
 
-New to Presidio or to DLP systems in general? Well, you came to the right place: read this material to quickly get up and running.
+New to Presidio? Read this material to quickly get up and running.
 
 ## Table of Contents
 
-- [Presidio overview](overview.md)
-- [Install Guide](install.md)
-- [Supported Field Types](field_types.md)
-- [Framework Tutorial](tutorial_framework.md)
-- [Service Tutorial](tutorial_service.md)
-- [Database and Storage scanner](tutorial_scheduler.md)
-- [Design](design.md)
-- [Develop Presidio](development.md)
+- [Installation guide](install.md)
+- [Supported field types](field_types.md)
+- [Database and storage scanner](tutorial_scheduler.md)
+- [Architecture](design.md)
+- [Setting up a development environment](development.md)
+- [Analyzer service tutorial](tutorial_analyzer.md)
+- [Calling the different services](tutorial_service.md)
+- [Adding custom fields](custom_fields.md)

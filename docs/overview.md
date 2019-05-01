@@ -4,45 +4,68 @@
 
 ## Description
 
-Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, bitcoin wallets, names, locations, social security numbers, US phone numbers and financial data.
-Presidio analyzes the text using predefined analyzers to identify patterns, formats, and checksums with relevant context.
+Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
+Presidio analyzes the text using predefined or custom recognizers to identify entities, patterns, formats, and checksums with relevant context. Presidio leverages docker and kubernetes for workloads at scale. Refer to the [design page](design.md) for more information.
 
-You can find a more detailed list [here](https://microsoft.github.io/presidio/field_types.html)
+### Why use presidio?
 
-:warning: ***Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.***
+Presidio can be integrated into any data pipeline for intelligent PII scrubbing. It is open-source, transparent and scalable. Additionally, PII anonymization use-cases often require a different set of PII entities to be detected, some of which are domain or business specific. Presidio allows you to **customize or add new PII recognizers** via API or code to best fit your anonymization needs.
+
+:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
+
+## Demo
+
+[Try Presidio with your own data](https://presidio-demo.westeurope.cloudapp.azure.com/)
 
 ## Features
 
-***Free text anonymization***
+***Unstsructured text anonymization***
 
-[![Image1](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)](https://user-images.githubusercontent.com/17064840/50557166-2048ca80-0ceb-11e9-9153-d39a3f507d32.png)
+Presidio automatically detects Personal-Identifiable Information (PII) in unstructured text, annonymizes it based on one or more anonymization mechanisms, and returns a string with no personal identifiable data.
+For example:
 
-***Text anonymization in images***
+[![Image1](assets/before-after.png)](assets/before-after.png)
 
-[![Image2](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)](https://user-images.githubusercontent.com/17064840/50557215-bc72d180-0ceb-11e9-8c92-4fbc01bbcb2a.png)
+For each PII entity, presidio returns a confidence score:
 
-* Text analytics - Predefined analyzers with customizable fields.
-* Probability scores - Customize the sensitive text detection threshold.
-* Anonymization - Anonymize sensitive text and images
-* Workflow and pipeline integration -  Monitor your data with periodic scans or events of/from:
-  1. Storage solutions
-      * Azure Blob Storage
-      * S3
-      * Google Cloud Storage
-  2. Databases
-      * MySQL
-      * PostgreSQL
-      * Sql Server
-      * Oracle
-  3. Streaming platforms
-      * Kafka
-      * Azure Events Hubs
+[![Image2](assets/findings.png)](assets/findings.png)
 
-  and export the results for further analytics:
-  1. Storage solutions
-  2. Databases
-  3. Streaming platforms
+***Text anonymization in images*** (beta)
 
----
+Presidio uses OCR to detect text in images. It further allows the redaction of the text from the original image.
 
-Prev: [Docs Index](index.md) `|` Next: [Install Guide](install.md)
+[![Image3](assets/ocr-example.png)](assets/ocr-example.png)
+
+## Input and output
+
+Presidio accepts multiple sources and targets for data annonymization. Specifically:
+
+1. Storage solutions
+    * Azure Blob Storage
+    * S3
+    * Google Cloud Storage
+
+2. Databases
+    * MySQL
+    * PostgreSQL
+    * Sql Server
+    * Oracle
+
+3. Streaming platforms
+    * Kafka
+    * Azure Events Hubs
+
+4. REST requests
+
+It then can export the results to file storage, databases or streaming platforms.
+
+## The Technology Stack
+
+Presidio leverages:
+
+* [Kubernetes](https://kubernetes.io/)
+* [spaCy](https://spacy.io/)
+* [Redis](https://redis.io/)
+* [GRPC](https://grpc.io)
+
+The [design document](design.md) introduces Presidio's concepts and architecture.
