@@ -49,8 +49,9 @@ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_P
 
 4. Verify that Redis and Traefik/NGINX are installed correctly
 
-5. Verify that Kubernetes has access to the [Docker Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks).
+5. Deploy from `/charts/presidio`
 
+<<<<<<< HEAD
     - If using a Kubernetes secert, make sure it is registered under 'presidio' namespace
     
 6. Deploy from `/charts/presidio`
@@ -64,3 +65,9 @@ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_P
 ---
 
 Prev: [Overview](overview.md) `|` Next: [Field Types](field_types.md)
+=======
+    ```sh
+    # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
+    helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
+    ```
+>>>>>>> remove changes after moving to MCR
