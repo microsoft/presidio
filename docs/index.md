@@ -1,7 +1,6 @@
 # Presidio Documentation
 
 Everything you need to know about Presidio.  
-Browse the docs here: [https://microsoft.github.io/presidio/](https://microsoft.github.io/presidio/)
 
 ## Getting Started
 

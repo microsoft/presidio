@@ -12,7 +12,7 @@
 ## Description
 
 Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
-Presidio analyzes the text using predefined or custom recognizers to identify entities, patterns, formats, and checksums with relevant context. Presidio leverages docker and kubernetes for workloads at scale. Refer to the [design page](https://microsoft.github.io/presidio/design.html) for more information.
+Presidio analyzes the text using predefined or custom recognizers to identify entities, patterns, formats, and checksums with relevant context. Presidio leverages docker and kubernetes for workloads at scale. Refer to the [design page](docs/design.html) for more information.
 
 ### Why use presidio?
 
@@ -87,7 +87,7 @@ Presidio leverages:
 
 ## Quickstart
 
-1. Install [Presidio](https://microsoft.github.io/presidio/install.html)
+1. Install [Presidio](docs/install.html)
 2. Define a name for your Presidio project. In the following examples the project name is `<my-project>`.
 3. Start using the Presidio analyze and anonymize services.
 
