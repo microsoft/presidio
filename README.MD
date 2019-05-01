@@ -83,12 +83,12 @@ Presidio leverages:
 * [spaCy](https://spacy.io/)
 * [Redis](https://redis.io/)
 * [GRPC](https://grpc.io)
-* [re2] (https://github.com/google/re2)
+* [re2](https://github.com/google/re2)
 
 ## Quickstart
 
 1. Install [Presidio](docs/install.html)
-2. Define a name for your Presidio project. In the following examples the project name is `<my-project>`.
+2. Decide on a name for your Presidio project. In the following examples the project name is `<my-project>`.
 3. Start using the Presidio analyze and anonymize services.
 
 ## Samples
