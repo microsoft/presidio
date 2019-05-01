@@ -1,7 +1,7 @@
 # Custom fields
 
 Presidio supports custom fields using either online via a simple REST API or by adding new PII recognizers in code. The underlying object behind each field is called a 'Recognizer'. This documentation describes how to add new recognizers by API or code.
-
+ 
 1. API
 
     a. Getting a recoginzer
