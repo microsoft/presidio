@@ -7,7 +7,14 @@ trigger: # Build triggers
       include: # file paths which must match to trigger a build
         - Dockerfile.python.deps
         - presidio-analyzer/requirements.txt
-
+pr:
+    branches:
+      include:  # branch names which will trigger a build
+        - development
+    paths:
+      include: # file paths which must match to trigger a build
+        - Dockerfile.python.deps
+        - presidio-analyzer/requirements.txt
 jobs: # A job is a collection of steps to be run by an agent 
 - job: BuildPythonDeps
   timeoutInMinutes: 120 # how long to run the job before automatically cancelling
