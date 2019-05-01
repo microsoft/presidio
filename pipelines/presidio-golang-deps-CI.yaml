@@ -14,22 +14,32 @@ pr:
       - pipelines	
   paths:
     include: # file paths which must match to trigger a build	
-      - /Dockerfile.golang.deps	
-      - /Gopkg.lock	
-      - /Gopkg.toml
+      - Dockerfile.golang.deps	
+      - Gopkg.lock	
+      - Gopkg.toml
+      - Dockerfile.python.deps	
+      - presidio-analyzer/requirements.txt
 jobs: # A job is a collection of steps to be run by an agent 	
 - job: BuildGolangDeps
-  timeoutInMinutes: 30  # how long to run the job before automatically cancelling	
+  timeoutInMinutes: 90  # how long to run the job before automatically cancelling	
   pool:
     vmImage: 'ubuntu-latest'
 
   steps:
   - task: Docker@2
-    displayName: 'Build and Push'
+    displayName: 'Build and Push Golang'
     inputs:
       containerRegistry: $(registry) # input registry name	
       repository: presidio-golang-deps # name of image to build	
       Dockerfile: Dockerfile.golang.deps # dockerfile path	
+      tags: | # image tags	
+        $(Build.BuildId)	
+  - task: Docker@2
+    displayName: 'Build and Push Golang'
+    inputs:
+      containerRegistry: $(registry) # input registry name	
+      repository: 'presidio-python-deps'
+      Dockerfile: Dockerfile.golang.deps # dockerfile path
       tags: | # image tags	
         $(Build.BuildId)	
         
