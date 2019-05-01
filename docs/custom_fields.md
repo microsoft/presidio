@@ -106,13 +106,13 @@ Presidio supports custom fields using either online via a simple REST API or by 
 
 2. Custom recognizer by code
 
-    Code based recognizers are written in Python and are a part of the [presidio-analyzer]("../presidio-analyzer") module. The main modules in `presidio-analyzer` are the `AnalyzerEngine` and the `RecognizerRegistry`. The `AnalyzerEngine` is in charge of calling each requested recognizer. the `RecognizerRegistry` is in charge of providing the list of predefined and custom recognizers for analysis.
+    Code based recognizers are written in Python and are a part of the [presidio-analyzer](../presidio-analyzer) module. The main modules in `presidio-analyzer` are the `AnalyzerEngine` and the `RecognizerRegistry`. The `AnalyzerEngine` is in charge of calling each requested recognizer. the `RecognizerRegistry` is in charge of providing the list of predefined and custom recognizers for analysis.
 
     In order to implement a new recognizer by code, follow these two steps:
 
     a. Implement the abstract recognizer class:
 
-    Create a new Python class which implements [LocalRecognizer]("../presidio-analyzer/analyzer/local_recognizer.py"). `LocalRecognizer` implements the base [EntityRecognizer]("../presidio-analyzer/analyzer/entity_recognizer.py") class. All local recognizers run locally together with all other predefined recognizers as a part of the `presidio-analyzer` Python process. In contrast, `RemoteRecognizer` is a placeholder for recognizers that are external to the `presidio-analyzer` service, for example on a different microservice.
+    Create a new Python class which implements [LocalRecognizer](../presidio-analyzer/analyzer/local_recognizer.py). `LocalRecognizer` implements the base [EntityRecognizer](../presidio-analyzer/analyzer/entity_recognizer.py) class. All local recognizers run locally together with all other predefined recognizers as a part of the `presidio-analyzer` Python process. In contrast, `RemoteRecognizer` is a placeholder for recognizers that are external to the `presidio-analyzer` service, for example on a different microservice.
 
     The `EntityRecognizer` abstract class requires the implementation the following methods:
 
@@ -128,7 +128,7 @@ Presidio supports custom fields using either online via a simple REST API or by 
     def analyze(self, text, entities, nlp_artifacts):
     ```
 
-    The `analyze` method should return a list of [RecognizerResult]("../presidio-analyzer/analyzer/recognizer_result.py"). Refer to the [code documentation]("../presidio-analyzer/analyzer/entity_recognizer.py") for more information.
+    The `analyze` method should return a list of [RecognizerResult](../presidio-analyzer/analyzer/recognizer_result.py). Refer to the [code documentation](../presidio-analyzer/analyzer/entity_recognizer.py) for more information.
 
     b. Reference and add the new class to the `RecognizerRegistry` module, in the `load_predefined_recognizers` method, which registers all code based recognizers.
 
