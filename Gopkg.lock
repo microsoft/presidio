@@ -9,7 +9,7 @@
   revision = "0ebda48a7f143b1cce9eb37a8c1106ac762a3430"
   version = "v0.34.0"
 
-[[projects]] 
+[[projects]]
   digest = "1:b92928b73320648b38c93cacb9082c0fe3f8ac3383ad9bd537eef62c380e0e7a"
   name = "contrib.go.opencensus.io/exporter/ocagent"
   packages = ["."]
