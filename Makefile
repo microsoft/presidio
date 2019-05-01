@@ -11,7 +11,7 @@ GOLANG_BASE	= presidio-golang-base
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
 PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
-PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latestDev')	
+PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')	
 LDFLAGS   += -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
 
 CX_OSES = linux windows darwin
@@ -52,13 +52,20 @@ docker-build: $(addsuffix -dimage,$(IMAGES))
 docker-push-deps: 
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL)	
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)	
-ifneq ($(PRESIDIO_DEPS_LABEL),latest)	
+
+.PHONY: docker-push-latest-deps
+docker-push-latest-deps: 
 	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest	
 	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest 
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest	
-endif
 
+PHONY: docker-push-latest-dev-deps
+docker-push-latest-deps: 
+	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest	
+	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest 
+	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest-dev
+	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest-dev
 
 # push with the given label
 .PHONY: docker-push
