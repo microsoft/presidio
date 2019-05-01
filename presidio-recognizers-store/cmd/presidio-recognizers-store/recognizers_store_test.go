@@ -226,7 +226,7 @@ func TestHashDoesNotExists(t *testing.T) {
 
 	// Store is empty...
 	res, err := applyGetHash()
-	assert.Error(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, res, &types.RecognizerHashResponse{})
 }
 
@@ -237,7 +237,7 @@ func TestGetHash(t *testing.T) {
 
 	// Store is empty...
 	res, err := applyGetHash()
-	assert.Error(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, res, &types.RecognizerHashResponse{})
 
 	// Now, insert an item

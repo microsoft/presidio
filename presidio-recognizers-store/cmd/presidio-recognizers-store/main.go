@@ -298,10 +298,16 @@ func applyGetHash() (*types.RecognizerHashResponse, error) {
 	}
 
 	hash, err := recognizersStore.Get(hashKey)
-	if err != nil || hash == "" {
+	if err != nil {
 		errMsg := "Failed to find the latest hash"
 		log.Error(errMsg)
-		return &types.RecognizerHashResponse{}, errors.New(errMsg)
+		return nil, errors.New(errMsg)
+	}
+
+	// no error, however hash was not found, this means the redis is still
+	// empty.
+	if hash == "" {
+		return &types.RecognizerHashResponse{}, nil
 	}
 
 	return &types.RecognizerHashResponse{RecognizersHash: hash}, nil
