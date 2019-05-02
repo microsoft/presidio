@@ -3,7 +3,6 @@ variables:
   GOPATH: '$(system.defaultWorkingDirectory)/gopath'
   modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)'
   GOROOT: '/usr/local/go1.11'
-  DOCKER_REGISTRY: $(registry_url)
 
 
 jobs: # A job is a collection of steps to be run by an agent 	
@@ -72,14 +71,14 @@ jobs: # A job is a collection of steps to be run by an agent
       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       dep ensure
       echo "label: " $DEPS_LABEL
-      make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
+      make DOCKER_REGISTRY=$(registry_url) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
     workingDirectory: '$(modulePath)'
     displayName: 'Build & Test '
 
   - bash: |
-      make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildID) docker-push
-      make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(Build.TriggeredBy.BuildId) docker-push-latest-dev-deps
-      make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev
+      make DOCKER_REGISTRY=$(registry_url) PRESIDIO_LABEL=$(Build.BuildID) docker-push
+      make DOCKER_REGISTRY=$(registry_url) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(Build.TriggeredBy.BuildId) docker-push-latest-dev-deps
+      make DOCKER_REGISTRY=$(registry_url) PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev
     workingDirectory: '$(modulePath)'
     displayName: 'Push Docker Images'
 
