@@ -3,7 +3,7 @@ variables:
   GOPATH: '$(system.defaultWorkingDirectory)/gopath'
   modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)'
   GOROOT: '/usr/local/go1.11'
-  DOCKER_REGISTRY: $(registry).azurecr.io
+  DOCKER_REGISTRY: $(registry_name).azurecr.io
 
 jobs: # A job is a collection of steps to be run by an agent 	
 - job: BuildServices
