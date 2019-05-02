@@ -4,6 +4,9 @@ variables:
   modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)'
   GOROOT: '/usr/local/go1.11'
 
+trigger: none
+pr: none
+
 jobs: # A job is a collection of steps to be run by an agent 	
 - job: BuildServices
   timeoutInMinutes: 90  # how long to run the job before automatically cancelling	
