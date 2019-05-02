@@ -48,13 +48,10 @@ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_P
     - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
 
 4. Verify that Redis and Traefik/NGINX are installed correctly
-    
-6. Deploy from `/charts/presidio`
+
+5. Deploy from `/charts/presidio`
 
     ```sh
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
     $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
     ```
----
-
-Prev: [Overview](overview.md) `|` Next: [Field Types](field_types.md)

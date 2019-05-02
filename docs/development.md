@@ -72,7 +72,7 @@
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
 
-### Set the following environnement variables
+### Set the following environment variables
 
 #### presidio-analyzer
 
