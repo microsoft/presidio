@@ -70,7 +70,7 @@ jobs: # A job is a collection of steps to be run by an agent
       dep ensure      
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
     env:
-      REGISTRY_NAME: "$(name).azurecr.io"
+      REGISTRY_NAME: "$(registry_name)"
     workingDirectory: '$(modulePath)'
     displayName: 'Build & Test '
 
@@ -79,7 +79,7 @@ jobs: # A job is a collection of steps to be run by an agent
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(Build.TriggeredBy.BuildId) docker-push-latest-dev-deps
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev
     env:
-      REGISTRY_NAME: "$(name).azurecr.io"
+      REGISTRY_NAME: "$(registry_name)"
     workingDirectory: '$(modulePath)'
     displayName: 'Push Docker Images'
 
