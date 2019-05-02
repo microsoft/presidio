@@ -72,6 +72,9 @@ jobs: # A job is a collection of steps to be run by an agent
       echo $test2
       test3=$test1$test2
       echo $test3
+      test4=presidio$test2
+      echo $test4
+      
       echo "label: " $DEPS_LABEL
       echo "registry:" $(registry)
       echo "docker registry:"  $REGISTRY_NAME
