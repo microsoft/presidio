@@ -6,7 +6,6 @@ variables:
 
 trigger: none # Build triggers	
 pr:
-  batch: true # batch changes if true, start a new build for every push if false	
   branches:
       include: # branch names which will trigger a build	
       - development	
