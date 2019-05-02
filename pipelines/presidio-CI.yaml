@@ -67,11 +67,11 @@ jobs: # A job is a collection of steps to be run by an agent
       ArtifactName: dropchart
 
   - bash: |
-      curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-      dep ensure
       echo "label: " $DEPS_LABEL
       echo "registry:" $(registry)
       echo "docker registry: " $(registry_name).azurecr.io
+      curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      dep ensure      
       make DOCKER_REGISTRY=$(registry_name).azurecr.io PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
     workingDirectory: '$(modulePath)'
     displayName: 'Build & Test '
