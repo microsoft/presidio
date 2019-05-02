@@ -91,6 +91,4 @@ jobs: # A job is a collection of steps to be run by an agent
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'OSS Component Detection'
-    inputs:
-      scanType: '$(Parameters.scanType)'
     continueOnError: true
