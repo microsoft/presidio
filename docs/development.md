@@ -96,7 +96,7 @@
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
 
-### Set the following environment variables
+### Set the following environnement variables
 
 #### presidio-analyzer
 
@@ -121,3 +121,15 @@
     ```sh
     wrk -t2 -c2 -d30s -s post.lua http://<api-service-address>/api/v1/projects/<my-project>/analyze
     ```
+
+
+## Running in kubernetes
+
+    1. If deploying from a private registry, verify that Kubernetes has access to the [Docker Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks).
+
+    2. If using a Kubernetes secert to manage the registry authentication, make sure it is registered under 'presidio' namespace
+
+    3. Edit charts/presidio/values.yaml to:
+        - Setup secret name (for private registries)
+        - Change presidio services version
+        - Change default scale
