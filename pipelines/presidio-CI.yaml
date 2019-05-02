@@ -13,12 +13,11 @@ jobs: # A job is a collection of steps to be run by an agent
   steps:
   - bash: |
       if [ $(Build.Reason) = "BuildCompletion"  ]; then
-              export DEPS_LABEL=$(Build.TriggeredBy.BuildId)
               echo '##vso[task.setvariable variable=DEPS_LABEL]$(Build.TriggeredBy.BuildId)'
-              echo set deps label to build id: $(DEPS_LABEL)
+              echo set deps label to build id: $(Build.TriggeredBy.BuildId)
       else
               echo '##vso[task.setvariable variable=DEPS_LABEL]latest-dev'
-              echo set deps label to latest-dev:  $(DEPS_LABEL)
+              echo set deps label to latest-dev:  latest-dev
       fi
     displayName: 'Set DEPS label'
 
@@ -69,7 +68,9 @@ jobs: # A job is a collection of steps to be run by an agent
   - bash: |
       echo "label: " $DEPS_LABEL
       echo "registry:" $(registry)
+      export DOCKER_REGISTRY=$(registry_name).azurecr.io
       echo "docker registry: " $(registry_name).azurecr.io
+      echo "docker registry: $DOCKER_REGISTRY
       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       dep ensure      
       make DOCKER_REGISTRY=$(registry_name).azurecr.io PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
