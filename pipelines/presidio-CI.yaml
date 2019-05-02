@@ -69,8 +69,8 @@ jobs: # A job is a collection of steps to be run by an agent
       echo "label: " $DEPS_LABEL
       echo "registry:" $(registry)
       export DOCKER_REGISTRY=$(registry_name).azurecr.io
-      echo "docker registry: " $(registry_name).azurecr.io
-      echo "docker registry: $DOCKER_REGISTRY
+      echo docker registry:  $(registry_name).azurecr.io
+      echo docker registry: $DOCKER_REGISTRY
       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       dep ensure      
       make DOCKER_REGISTRY=$(registry_name).azurecr.io PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
