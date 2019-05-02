@@ -2,7 +2,8 @@ trigger: none
 pr: 
   branches:
       include: # branch names which will trigger a build	
-      - master	
+      - development	
+      - master
   paths:
     include: # file paths which must match to trigger a build	
       - Dockerfile.golang.deps	
