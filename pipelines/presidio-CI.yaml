@@ -24,7 +24,7 @@ jobs: # A job is a collection of steps to be run by an agent
 
   - task: Docker@2
     inputs:
-      containerRegistry: 'presidio-acr'
+      containerRegistry: $(registry)
       command: 'login'
 
   - bash: |
@@ -70,7 +70,7 @@ jobs: # A job is a collection of steps to be run by an agent
       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       dep ensure
       echo "label: " $DEPS_LABEL
-      make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
+      make DOCKER_REGISTRY=$(registry) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
       workingDirectory: '$(modulePath)'
       displayName: 'Build & Test '
 
