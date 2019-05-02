@@ -68,6 +68,7 @@ jobs: # A job is a collection of steps to be run by an agent
 
   - bash: |
       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      pwd
       dep ensure
       echo "label: " $DEPS_LABEL
       make DOCKER_REGISTRY=$(registry) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
