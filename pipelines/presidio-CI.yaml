@@ -68,19 +68,18 @@ jobs: # A job is a collection of steps to be run by an agent
 
   - bash: |
       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-      pwd
       dep ensure
       echo "label: " $DEPS_LABEL
       make DOCKER_REGISTRY=$(registry) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
-      workingDirectory: '$(modulePath)'
-      displayName: 'Build & Test '
+    workingDirectory: '$(modulePath)'
+    displayName: 'Build & Test '
 
   - bash: |
       make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildID) docker-push
       make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(Build.TriggeredBy.BuildId) docker-push-latest-dev-deps
       make DOCKER_REGISTRY=$(DOCKER_REGISTRY) PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev
-      workingDirectory: '$(modulePath)'
-      displayName: 'Push Docker Images'
+    workingDirectory: '$(modulePath)'
+    displayName: 'Push Docker Images'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'OSS Component Detection'
