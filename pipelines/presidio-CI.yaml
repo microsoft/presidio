@@ -22,12 +22,10 @@ jobs: # A job is a collection of steps to be run by an agent
       fi
     displayName: 'Set DEPS label'
 
-  - task: Docker@1
-    displayName: 'ACR Login'
+  - task: Docker@2
     inputs:
-      azureSubscriptionEndpoint: 'presidio resource group'
-      azureContainerRegistry: presidio.azurecr.io
-      command: login
+      containerRegistry: 'presidio-acr'
+      command: 'login'
 
   - bash: |
       mkdir -p '$(GOBIN)'
