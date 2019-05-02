@@ -62,8 +62,8 @@ docker-push-latest-deps:
 
 PHONY: docker-push-latest-dev-deps
 docker-push-latest-dev-deps: 
-	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest	
-	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest 
+	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest-dev	
+	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest-dev 
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest-dev
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest-dev
 
