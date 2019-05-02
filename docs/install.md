@@ -49,10 +49,9 @@ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_P
 
 4. Verify that Redis and Traefik/NGINX are installed correctly
 
-
 5. Deploy from `/charts/presidio`
 
     ```sh
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-    helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
+    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
     ```

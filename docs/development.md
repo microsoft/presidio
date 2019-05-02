@@ -113,7 +113,7 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 - Run functional tests with `make test-functional`
 - Updating python dependencies [instructions](./pipenv_readme.md)
 
-### Set the following environnement variables
+### Set the following environment variables
 
 #### presidio-analyzer
 
