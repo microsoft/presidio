@@ -1,3 +1,0 @@
-pytest
-flake8
-pylint==2.3.1
