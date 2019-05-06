@@ -14,3 +14,4 @@ RUN apk --update add --no-cache g++ && \
     pip install --no-cache-dir cython && \ 
     pip install --no-cache-dir -r requirements.txt && \
     apk del build_deps
+    
