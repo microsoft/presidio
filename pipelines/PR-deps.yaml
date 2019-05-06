@@ -5,7 +5,7 @@ pr:
       - development	
       - masters
   paths:
-    include: # file paths which must match to trigger a build	
+    exclude: # file paths which must match to trigger a build	
       - Dockerfile.golang.deps	
 jobs: # A job is a collection of steps to be run by an agent 	
 - job: BuildGolangDeps
