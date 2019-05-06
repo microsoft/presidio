@@ -5,8 +5,12 @@ pr:
       - development	
       - masters
   paths:
-    exclude: # file paths which must match to trigger a build	
+    include: # file paths which must match to trigger a build	
       - Dockerfile.golang.deps	
+      - Gopkg.lock	
+      - Gopkg.toml
+      - Dockerfile.python.deps	
+      - presidio-analyzer/requirements.txt
 jobs: # A job is a collection of steps to be run by an agent 	
 - job: BuildGolangDeps
   timeoutInMinutes: 90  # how long to run the job before automatically cancelling	
