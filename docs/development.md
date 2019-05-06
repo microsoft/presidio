@@ -34,16 +34,10 @@
 6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
 
     ```sh
-    pip3 install -r requirements.txt
-    pip3 install -r requirements-dev.txt
+    pipenv install --dev --sequential
     ```
 
-    **Note:** If you encounter errors with `pyre2` than install `cython` first
-
-    ```sh
-    $ pip3 install cython
-    ```
-
+    For additional information regarding Pipenv click [here](pipenv_readme.md)
 7. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
 
 8. Protobuf generator tools (Optional)
