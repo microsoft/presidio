@@ -9,7 +9,7 @@ setuptools.setup(
     description="Presidio analyzer package",
     # long_description=long_description,
     # long_description_content_type="text/markdown",
-    url="https://github.com/Microsoft/presidio",
+    url="https://github.com/microsoft/presidio",
     packages=[
         'analyzer', 'analyzer.predefined_recognizers'
     ],

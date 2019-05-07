@@ -5,8 +5,8 @@ import (
 
 	"github.com/streadway/amqp"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/queue"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/queue"
 )
 
 type rabbitmq struct {

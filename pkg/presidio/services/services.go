@@ -5,14 +5,14 @@ import (
 
 	"context"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/pkg/cache"
-	"github.com/Microsoft/presidio/pkg/cache/redis"
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/rpc"
+	"github.com/microsoft/presidio/pkg/cache"
+	"github.com/microsoft/presidio/pkg/cache/redis"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/rpc"
 )
 
 //Services exposes GRPC services

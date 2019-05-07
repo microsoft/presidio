@@ -5,9 +5,9 @@ import (
 	"sort"
 	"strings"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	methods "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations"
+	methods "github.com/microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations"
 )
 
 type sortedResults []*types.AnalyzeResult

@@ -7,7 +7,7 @@
   "DisableAll": true,
   "Linters": {
     "goimports": {
-      "Command": "goimports -l --local github.com/Microsoft/presidio"
+      "Command": "goimports -l --local github.com/microsoft/presidio"
     }
   },
   "Enable": [

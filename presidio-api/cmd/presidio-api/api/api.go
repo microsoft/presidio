@@ -1,11 +1,11 @@
 package api
 
 import (
-	"github.com/Microsoft/presidio/pkg/cache"
-	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/presidio/services"
-	"github.com/Microsoft/presidio/pkg/presidio/templates"
+	"github.com/microsoft/presidio/pkg/cache"
+	"github.com/microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/presidio/services"
+	"github.com/microsoft/presidio/pkg/presidio/templates"
 )
 
 const (

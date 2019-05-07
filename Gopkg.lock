@@ -108,7 +108,7 @@
 [[projects]]
   branch = "master"
   digest = "1:8d270b7938356d0f7262169aaff9a272a1b747ede5bcd5040bb5cc9c012e57e9"
-  name = "github.com/Microsoft/presidio-genproto"
+  name = "github.com/microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
   revision = "7f79038dbc10904f279cfa87eb49d84f5c3a9b24"
@@ -1223,7 +1223,7 @@
     "github.com/Azure/azure-event-hubs-go/storage",
     "github.com/Azure/azure-storage-blob-go/azblob",
     "github.com/Azure/go-autorest/autorest/azure",
-    "github.com/Microsoft/presidio-genproto/golang",
+    "github.com/microsoft/presidio-genproto/golang",
     "github.com/Shopify/sarama",
     "github.com/bsm/sarama-cluster",
     "github.com/capitalone/fpe/ff1",

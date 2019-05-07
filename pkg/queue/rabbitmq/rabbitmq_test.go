@@ -7,7 +7,7 @@ package rabbitmq
 
 // 	"github.com/stretchr/testify/assert"
 
-// 	log "github.com/Microsoft/presidio/pkg/logger"
+// 	log "github.com/microsoft/presidio/pkg/logger"
 // )
 
 // func TestSendReceive(t *testing.T) {

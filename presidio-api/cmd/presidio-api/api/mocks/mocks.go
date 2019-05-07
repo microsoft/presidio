@@ -4,9 +4,9 @@ import (
 	"context"
 	"crypto/md5"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
+	types "github.com/microsoft/presidio-genproto/golang"
+	"github.com/microsoft/presidio/pkg/presidio"
+	store "github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api"
 
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"

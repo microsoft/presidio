@@ -3,9 +3,9 @@ package recognizers
 import (
 	"context"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
+	store "github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api"
 )
 
 //InsertRecognizer Inserts a new custom pattern recognizer via the Recognizer

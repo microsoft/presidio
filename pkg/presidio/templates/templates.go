@@ -3,11 +3,11 @@ package templates
 import (
 	"fmt"
 
-	"github.com/Microsoft/presidio/pkg/cache"
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/cache"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/platform"
 
-	"github.com/Microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/presidio"
 )
 
 const separator = "."

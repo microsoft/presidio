@@ -3,8 +3,8 @@ package mock
 import (
 	"fmt"
 
-	"github.com/Microsoft/presidio/pkg/cache"
-	log "github.com/Microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/cache"
+	log "github.com/microsoft/presidio/pkg/logger"
 )
 
 type mockCache struct {

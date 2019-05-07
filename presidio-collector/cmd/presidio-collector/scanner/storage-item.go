@@ -6,10 +6,10 @@ import (
 
 	"github.com/presid-io/stow"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/storage"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/storage"
 )
 
 type storageItem struct {

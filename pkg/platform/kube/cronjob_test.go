@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	apiv1 "k8s.io/api/core/v1"
 
-	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform"
 )
 
 func TestCreateAndDeleteCronJob(t *testing.T) {

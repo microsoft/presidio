@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
+	log "github.com/microsoft/presidio/pkg/logger"
 )
 
 var (

@@ -6,12 +6,12 @@ import (
 
 	"github.com/presid-io/stow"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/storage"
+	"github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
 type cloudStorageDatasink struct {

@@ -3,20 +3,20 @@ package main
 import (
 	"context"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
 	"flag"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/presidio/services"
-	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/processor"
-	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
-	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/streams"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/presidio/services"
+	"github.com/microsoft/presidio/presidio-collector/cmd/presidio-collector/processor"
+	"github.com/microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
+	"github.com/microsoft/presidio/presidio-collector/cmd/presidio-collector/streams"
 )
 
 var streamRequest *types.StreamRequest

@@ -4,7 +4,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform"
 )
 
 // store represents a store engine

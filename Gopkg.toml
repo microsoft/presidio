@@ -53,7 +53,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/Microsoft/presidio-genproto"
+  name = "github.com/microsoft/presidio-genproto"
 
 [[constraint]]
   branch = "master"

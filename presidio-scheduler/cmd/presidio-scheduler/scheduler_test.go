@@ -5,13 +5,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform"
 
 	"testing"
 
-	"github.com/Microsoft/presidio/pkg/platform/kube"
+	"github.com/microsoft/presidio/pkg/platform/kube"
 )
 
 func TestMain(m *testing.M) {

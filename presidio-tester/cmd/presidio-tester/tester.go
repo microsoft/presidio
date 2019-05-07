@@ -13,9 +13,9 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
+	log "github.com/microsoft/presidio/pkg/logger"
 
-	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"

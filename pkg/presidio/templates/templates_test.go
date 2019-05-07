@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cmock "github.com/Microsoft/presidio/pkg/cache/mock"
-	"github.com/Microsoft/presidio/pkg/platform/kube"
+	cmock "github.com/microsoft/presidio/pkg/cache/mock"
+	"github.com/microsoft/presidio/pkg/platform/kube"
 )
 
 func TestTemplatesWithCache(t *testing.T) {

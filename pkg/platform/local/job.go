@@ -3,7 +3,7 @@ package local
 import (
 	"fmt"
 
-	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform"
 )
 
 func (s *store) CreateJob(name string, containerDetailsArray []platform.ContainerDetails) error {

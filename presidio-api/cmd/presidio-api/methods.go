@@ -7,17 +7,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	server "github.com/Microsoft/presidio/pkg/server"
-	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
-	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/analyze"
-	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize"
-	ai "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize-image"
-	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/recognizers"
-	scj "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/scanner-cron-job"
-	sj "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/stream-job"
-	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/templates"
+	types "github.com/microsoft/presidio-genproto/golang"
+	"github.com/microsoft/presidio/pkg/presidio"
+	server "github.com/microsoft/presidio/pkg/server"
+	store "github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api"
+	"github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api/analyze"
+	"github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize"
+	ai "github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize-image"
+	"github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api/recognizers"
+	scj "github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api/scanner-cron-job"
+	sj "github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api/stream-job"
+	"github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api/templates"
 )
 
 func getFieldTypes(c *gin.Context) {

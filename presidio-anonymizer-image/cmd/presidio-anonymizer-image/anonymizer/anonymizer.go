@@ -9,7 +9,7 @@ import (
 
 	"github.com/disintegration/imaging"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 )
 
 //AnonymizeImage text or just bounding boxes

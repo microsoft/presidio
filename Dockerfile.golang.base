@@ -2,8 +2,8 @@ ARG REGISTRY=presidio.azurecr.io
 
 FROM ${REGISTRY}/presidio-golang-deps
 
-WORKDIR $GOPATH/src/github.com/Microsoft/presidio
-ADD . $GOPATH/src/github.com/Microsoft/presidio
+WORKDIR $GOPATH/src/github.com/microsoft/presidio
+ADD . $GOPATH/src/github.com/microsoft/presidio
 
 RUN dep ensure
 RUN make go-test

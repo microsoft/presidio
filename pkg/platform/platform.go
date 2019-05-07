@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	apiv1 "k8s.io/api/core/v1"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
+	log "github.com/microsoft/presidio/pkg/logger"
 )
 
 //ContainerDetails ...

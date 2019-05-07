@@ -15,17 +15,17 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	c "github.com/Microsoft/presidio/pkg/cache"
-	cache_mock "github.com/Microsoft/presidio/pkg/cache/mock"
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/presidio/services"
-	"github.com/Microsoft/presidio/pkg/storage"
-	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/processor"
-	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
+	types "github.com/microsoft/presidio-genproto/golang"
+	c "github.com/microsoft/presidio/pkg/cache"
+	cache_mock "github.com/microsoft/presidio/pkg/cache/mock"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/presidio/services"
+	"github.com/microsoft/presidio/pkg/storage"
+	"github.com/microsoft/presidio/presidio-collector/cmd/presidio-collector/processor"
+	"github.com/microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
 
-	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
+	"github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
 )
 
 var (

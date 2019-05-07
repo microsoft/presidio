@@ -9,8 +9,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/tests/common"
+	types "github.com/microsoft/presidio-genproto/golang"
+	"github.com/microsoft/presidio/tests/common"
 )
 
 // TestAddRecognizerAndAnalyze tests the custom recognizers logic.

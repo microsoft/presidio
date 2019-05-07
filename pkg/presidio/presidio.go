@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/pkg/cache"
+	types "github.com/microsoft/presidio-genproto/golang"
+	"github.com/microsoft/presidio/pkg/cache"
 )
 
 //ServicesAPI interface for services action

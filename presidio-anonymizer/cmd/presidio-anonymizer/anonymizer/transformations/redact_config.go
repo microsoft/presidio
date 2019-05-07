@@ -1,7 +1,7 @@
 package transformations
 
 import (
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 )
 
 //RedactValue ...
