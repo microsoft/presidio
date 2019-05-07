@@ -22,6 +22,7 @@ api:
     type: ClusterIP
     externalPort: 8080
     internalPort: 8080
+    name: http
   # Configure liveness probes except `httpGet` and the belongings
   #livenessProbe:
   #  initialDelaySeconds: 20
@@ -40,6 +41,7 @@ analyzer:
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
+    name: grpc
 
 anonymizer:
   name: presidio-anonymizer
@@ -48,6 +50,7 @@ anonymizer:
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
+    name: grpc
 
 anonymizerimage:
   name: presidio-anonymizer-image
@@ -56,6 +59,7 @@ anonymizerimage:
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
+    name: grpc
 
 ocr:
   name: presidio-ocr
@@ -64,6 +68,7 @@ ocr:
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
+    name: grpc
 
 scheduler:
   name: presidio-scheduler
@@ -72,6 +77,7 @@ scheduler:
     type: ClusterIP
     externalPort: 3001
     internalPort: 3001
+    name: grpc
   
 recognizersstore:
   name: presidio-recognizers-store
@@ -80,6 +86,7 @@ recognizersstore:
     type: ClusterIP
     externalPort: 3004
     internalPort: 3004
+    name: grpc
 
 tester:
   enabled: false
