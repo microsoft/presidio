@@ -7,8 +7,8 @@ import (
 
 	"github.com/otiai10/gosseract"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	log "github.com/Microsoft/presidio/pkg/logger"
+	types "github.com/microsoft/presidio-genproto/golang"
+	log "github.com/microsoft/presidio/pkg/logger"
 )
 
 //HOCR document

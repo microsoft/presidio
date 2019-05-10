@@ -1,7 +1,7 @@
 package scanner
 
 import (
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 )
 
 // CreateScanner creates a new instance of the scanner according to the specified kind

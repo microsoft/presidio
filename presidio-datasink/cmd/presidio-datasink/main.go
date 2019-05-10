@@ -11,16 +11,16 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
+	log "github.com/microsoft/presidio/pkg/logger"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/Microsoft/presidio/pkg/rpc"
-	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
+	"github.com/microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/rpc"
+	"github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
 var (

@@ -3,7 +3,7 @@ package local
 import (
 	"fmt"
 
-	"github.com/Microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform"
 )
 
 // store represents a storage engine for a brigade.Project.

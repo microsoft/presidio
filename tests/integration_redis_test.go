@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/Microsoft/presidio/pkg/cache/redis"
+	"github.com/microsoft/presidio/pkg/cache/redis"
 )
 
 func TestRedis(t *testing.T) {

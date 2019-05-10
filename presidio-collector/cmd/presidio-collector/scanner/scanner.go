@@ -1,7 +1,7 @@
 package scanner
 
 import (
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 )
 
 // ScanFunc is the function the is executed on the scanned item

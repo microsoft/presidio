@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/stream"
-	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
-	"github.com/Microsoft/presidio/pkg/stream/kafka"
-	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/stream"
+	"github.com/microsoft/presidio/pkg/stream/eventhubs"
+	"github.com/microsoft/presidio/pkg/stream/kafka"
+	"github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
 )
 
 type streamDatasink struct {

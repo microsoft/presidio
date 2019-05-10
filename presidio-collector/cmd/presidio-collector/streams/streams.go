@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/pkg/stream"
-	"github.com/Microsoft/presidio/pkg/stream/eventhubs"
-	"github.com/Microsoft/presidio/pkg/stream/kafka"
+	"github.com/microsoft/presidio/pkg/stream"
+	"github.com/microsoft/presidio/pkg/stream/eventhubs"
+	"github.com/microsoft/presidio/pkg/stream/kafka"
 )
 
 //CreateStream create stream from configuration

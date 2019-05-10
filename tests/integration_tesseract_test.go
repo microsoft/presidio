@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
-	"github.com/Microsoft/presidio/tests/common"
+	types "github.com/microsoft/presidio-genproto/golang"
+	"github.com/microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
+	"github.com/microsoft/presidio/tests/common"
 )
 
 func TestOCR(t *testing.T) {

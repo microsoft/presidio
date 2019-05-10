@@ -7,7 +7,7 @@ import (
 
 	"github.com/capitalone/fpe/ff1"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 )
 
 // max tweak length

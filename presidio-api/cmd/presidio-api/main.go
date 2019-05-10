@@ -7,15 +7,15 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	"github.com/Microsoft/presidio/pkg/cache"
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/Microsoft/presidio/pkg/platform/kube"
-	"github.com/Microsoft/presidio/pkg/platform/local"
+	"github.com/microsoft/presidio/pkg/cache"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform/kube"
+	"github.com/microsoft/presidio/pkg/platform/local"
 
-	"github.com/Microsoft/presidio/pkg/presidio/services"
-	server "github.com/Microsoft/presidio/pkg/server"
-	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
+	"github.com/microsoft/presidio/pkg/presidio/services"
+	server "github.com/microsoft/presidio/pkg/server"
+	store "github.com/microsoft/presidio/presidio-api/cmd/presidio-api/api"
 )
 
 var api *store.API

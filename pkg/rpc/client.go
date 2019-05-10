@@ -9,7 +9,7 @@ import (
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 )
 
 func connect(addr string) (*grpc.ClientConn, error) {

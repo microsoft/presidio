@@ -52,7 +52,7 @@
 
     - `https://grpc.io/docs/tutorials/basic/python.html`
 
-    To generate proto files, clone [presidio-genproto](https://github.com/Microsoft/presidio-genproto) and run the following commands in `$GOPATH/src/github.com/Microsoft/presidio-genproto/src` folder
+    To generate proto files, clone [presidio-genproto](https://github.com/microsoft/presidio-genproto) and run the following commands in `$GOPATH/src/github.com/microsoft/presidio-genproto/src` folder
 
     ```sh
     python -m grpc_tools.protoc -I . --python_out=../python --grpc_python_out=../python ./*.proto

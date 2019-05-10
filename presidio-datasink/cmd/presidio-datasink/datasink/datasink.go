@@ -1,6 +1,6 @@
 package datasink
 
-import types "github.com/Microsoft/presidio-genproto/golang"
+import types "github.com/microsoft/presidio-genproto/golang"
 
 // Datasink represents the different data output types such as SQL and Datawarehouse
 type Datasink interface {

@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
+	log "github.com/microsoft/presidio/pkg/logger"
 )
 
 //SetupClient setup grpc listener

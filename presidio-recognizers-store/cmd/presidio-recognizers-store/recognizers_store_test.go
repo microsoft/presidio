@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/pkg/cache/mock"
-	"github.com/Microsoft/presidio/pkg/platform"
+	types "github.com/microsoft/presidio-genproto/golang"
+	"github.com/microsoft/presidio/pkg/cache/mock"
+	"github.com/microsoft/presidio/pkg/platform"
 
 	"testing"
 )

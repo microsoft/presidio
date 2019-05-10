@@ -15,11 +15,11 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/Microsoft/presidio/pkg/platform/kube"
-	"github.com/Microsoft/presidio/pkg/rpc"
+	types "github.com/microsoft/presidio-genproto/golang"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/platform/kube"
+	"github.com/microsoft/presidio/pkg/rpc"
 )
 
 type server struct{}

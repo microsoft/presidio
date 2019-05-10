@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"strings"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
+	log "github.com/microsoft/presidio/pkg/logger"
 
 	"github.com/korovkin/limiter"
 	"github.com/presid-io/stow"
 	"github.com/presid-io/stow/azure"
 	"github.com/presid-io/stow/s3"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 )
 
 //API storage

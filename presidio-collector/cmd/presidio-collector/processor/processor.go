@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/pkg/cache"
-	"github.com/Microsoft/presidio/pkg/presidio"
-	"github.com/Microsoft/presidio/pkg/stream"
+	"github.com/microsoft/presidio/pkg/cache"
+	"github.com/microsoft/presidio/pkg/presidio"
+	"github.com/microsoft/presidio/pkg/stream"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner"
 )
 
 //ReceiveEventsFromStream ..

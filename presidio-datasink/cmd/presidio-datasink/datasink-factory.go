@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
-	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
-	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/database"
-	datasinkInterface "github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
-	"github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/stream"
+	"github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage"
+	"github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/database"
+	datasinkInterface "github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink"
+	"github.com/microsoft/presidio/presidio-datasink/cmd/presidio-datasink/stream"
 )
 
 func createDatasink(datasink *types.Datasink, resultType string) (datasinkInterface.Datasink, error) {

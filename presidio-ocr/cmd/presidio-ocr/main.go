@@ -6,15 +6,15 @@ import (
 
 	"google.golang.org/grpc/reflection"
 
-	types "github.com/Microsoft/presidio-genproto/golang"
+	types "github.com/microsoft/presidio-genproto/golang"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	log "github.com/Microsoft/presidio/pkg/logger"
-	"github.com/Microsoft/presidio/pkg/platform"
-	"github.com/Microsoft/presidio/pkg/rpc"
-	"github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
+	log "github.com/microsoft/presidio/pkg/logger"
+	"github.com/microsoft/presidio/pkg/platform"
+	"github.com/microsoft/presidio/pkg/rpc"
+	"github.com/microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
 )
 
 type server struct{}
