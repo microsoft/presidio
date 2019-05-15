@@ -1,7 +1,7 @@
 variables:
   GOBIN: '$(GOPATH)/bin'
   GOPATH: '$(system.defaultWorkingDirectory)/gopath'
-  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)'
+  modulePath: '$(GOPATH)/src/$(build.repository.name)'
   GOROOT: '/usr/local/go1.11'
 
 trigger: # Build triggers	
