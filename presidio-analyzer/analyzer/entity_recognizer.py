@@ -285,7 +285,7 @@ class EntityRecognizer:
         tokens_indices = nlp_artifacts.tokens_indices
         for i in range(len(nlp_artifacts.tokens)):
             if ((tokens_indices[i] == start) or
-                    (tokens_indices[i] < start <
+                    (tokens_indices[i] <= start <=
                      tokens_indices[i] + len(tokens[i]))):
                 # found the interesting token, the one that around it
                 # we take n words, we save the matching lemma
