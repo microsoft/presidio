@@ -12,6 +12,7 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.api.ingress.class }}
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - http:
