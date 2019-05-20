@@ -105,7 +105,9 @@
 
     2. If using a Kubernetes secert to manage the registry authentication, make sure it is registered under 'presidio' namespace
 
-    3. Edit charts/presidio/values.yaml to:
-        - Setup secret name (for private registries)
-        - Change presidio services version
-        - Change default scale
+### Further configuration
+
+Edit [charts/presidio/values.yaml](../charts/presidio/values.yaml) to:
+- Setup secret name (for private registries)
+- Change presidio services version
+- Change default scale
