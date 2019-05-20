@@ -28,6 +28,15 @@ $ pipenv run pytest
 2. `pipenv run pylint analyzer`
 3. `pipenv run pip freeze`
 
+#### Alternatively, activate the virtual environment and use the commands without the 'pipenv run' prefix
+```
+$ pipenv shell
+$ pytest
+$ pylint analyzer
+$ pip freeze
+```
+
+
 ## General pipenv instructions
 Pipenv documentation: https://pipenv.readthedocs.io/en/latest/
 
