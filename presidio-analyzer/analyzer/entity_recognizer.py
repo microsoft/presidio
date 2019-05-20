@@ -279,7 +279,9 @@ class EntityRecognizer:
         # we use the known start index of the original word to find the actual
         # token at that index, we are not checking for equivilance since the
         # token might be just a substring of that word (e.g. for phone number
-        # 555-124564 the first token might be just '555')
+        # 555-124564 the first token might be just '555' or for a match like '
+        # rocket' the actual token will just be 'rocket' hence the misalignment
+        # of indices)
         # Note: we are iterating over the original tokens (not the lemmatized)
         tokens = nlp_artifacts.tokens
         tokens_indices = nlp_artifacts.tokens_indices
