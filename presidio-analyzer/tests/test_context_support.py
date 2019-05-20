@@ -92,10 +92,15 @@ class TestContextSupport(TestCase):
             for i in range(len(results_with_context)):
                 assert(results_without_context[i].score < results_with_context[i].score)
 
-    def test_text_with_context_improves_score_custom_recognizer(self):
+    def test_context_custom_recognizer(self):
         nlp_engine = SpacyNlpEngine()
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
 
+        # This test checks that a custom recognizer is also enhanced by context.
+        # However this test also verifies a specific case in which the pattern also
+        # includes a preceeding space (' rocket'). This in turn cause for a misalignment
+        # between the tokens and the regex match (the token will be just 'rocket').
+        # This misalignment is handled in order to find the correct context window.
         rocket_recognizer = PatternRecognizer(supported_entity="ROCKET",
                                               name="rocketrecognizer",
                                               context=["cool"],
