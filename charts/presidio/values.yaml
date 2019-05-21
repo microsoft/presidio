@@ -1,5 +1,5 @@
 registry: mcr.microsoft.com
-
+ 
 # Image pull secret
 #privateRegistry: acr-auth
 tag: latest
