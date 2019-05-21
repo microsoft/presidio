@@ -67,6 +67,13 @@ docker-push-latest-dev-deps:
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest-dev
 	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest-dev
 
+PHONY: docker-push-latest-branch-deps
+docker-push-latest-branch-deps: 
+	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_BRANCH_LABEL)	
+	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_BRANCH_LABEL)
+	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_BRANCH_LABEL)	
+	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_BRANCH_LABEL)	
+
 # push with the given label
 .PHONY: docker-push
 docker-push: $(addsuffix -push,$(IMAGES))
@@ -82,6 +89,11 @@ docker-push-latest-dev: $(addsuffix -push-latest-dev,$(IMAGES))
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest-dev
 	docker push $(DOCKER_REGISTRY)/$*:latest-dev
+
+%-push-latest-branch:
+	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
+	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(PRESIDIO_BRANCH_LABEL)
+	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_BRANCH_LABEL)
 
 # pull an existing image tag, tag it again with a provided release tag and 'latest' tag
 .PHONY: docker-push-release
