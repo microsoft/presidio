@@ -1,11 +1,11 @@
-trigger: # Build triggers	
-  batch: true # batch changes if true, start a new build for every push if false	
+trigger: 
+  batch: true 
   branches:
-      include: # branch names which will trigger a build	
+      include: 
       - development	
       - master
   paths:
-    include: # file paths which must match to trigger a build	
+    include: 
       - Dockerfile.golang.deps	
       - Gopkg.lock	
       - Gopkg.toml	
@@ -13,12 +13,12 @@ trigger: # Build triggers
       - presidio-analyzer/requirements.txt
 pr: 
   branches:
-      include: # branch names which will trigger a build	
+      include: 
       - development	
       - masters
 stages:
   - stage: GolangDeps # Build golang deps
-    jobs: # A job is a collection of steps to be run by an agent 	
+    jobs: 
 
       - job: BuildGolangDeps
         timeoutInMinutes: 15  # how long to run the job before automatically cancelling	
@@ -29,11 +29,11 @@ stages:
           displayName: 'Build and Push Golang dependencies'
           inputs:
             containerRegistry: $(registry) # input registry name	
-            repository: presidio-golang-deps # name of image to build	
-            Dockerfile: Dockerfile.golang.deps # dockerfile path	
-            tags: | # image tags	
+            repository: presidio-golang-deps 
+            Dockerfile: Dockerfile.golang.deps 
+            tags: | 
               $(Build.BuildId)	
-        - task: Docker@2
+        - task: Docker@2 # Feature branch CIs are pushed with branch-name tag. they don't have build-completion trigger for presidio-CI.  
           displayName: 'Push Branch tag'
           condition: and(ne(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.SourceBranchName'], 'development'))
           inputs:
@@ -43,10 +43,10 @@ stages:
             Dockerfile: Dockerfile.golang.deps
             tags: '$(Build.SourceBranchName)'
   - stage: PythonDeps # Build python deps
-    jobs: # A job is a collection of steps to be run by an agent 	
+    jobs: # 
 
       - job: BuildPytonDeps
-        timeoutInMinutes: 90  # how long to run the job before automatically cancelling	
+        timeoutInMinutes: 90  
         pool:
           vmImage: 'ubuntu-latest'
         steps:        
@@ -55,10 +55,10 @@ stages:
           inputs:
             containerRegistry: $(registry) # input registry name	
             repository: 'presidio-python-deps'
-            Dockerfile: Dockerfile.python.deps # dockerfile path
+            Dockerfile: Dockerfile.python.deps 
             tags: | # image tags	
               $(Build.BuildId)	
-        - task: Docker@2
+        - task: Docker@2 # Feature branch CIs are pushed with branch-name tag. they don't have build-completion trigger for presidio-CI.  
           displayName: 'Push Branch tag'
           condition: and(ne(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.SourceBranchName'], 'development'))
           inputs:

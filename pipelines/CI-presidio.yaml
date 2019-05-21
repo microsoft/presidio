@@ -6,14 +6,14 @@ variables:
   MASTER_BRANCH_LABEL: latest
   DEV_BRANCH_LABEL: latest-dev
 
-trigger: # Build triggers	
-  batch: true # batch changes if true, start a new build for every push if false	
+trigger: 
+  batch: true 
   branches:
-      include: # branch names which will trigger a build	
+      include: 
       - master	
       - development	
   paths:
-    exclude: # file paths which must match to trigger a build	
+    exclude: 
       - Dockerfile.golang.deps	
       - Gopkg.lock	
       - Gopkg.toml	
@@ -22,11 +22,11 @@ trigger: # Build triggers
       - '*.md'
 pr:
   branches:
-      include: # branch names which will trigger a build	
+      include: 
       - development	
       - masters
   paths:
-    exclude: # file paths which must match to trigger a build	
+    exclude: 
       - Dockerfile.golang.deps	
       - Gopkg.lock	
       - Gopkg.toml	
@@ -34,27 +34,27 @@ pr:
       - presidio-analyzer/requirements.txt
       - '*.md'
 
-jobs: # A job is a collection of steps to be run by an agent 	
+jobs: 
 - job: BuildServices
-  timeoutInMinutes: 90  # how long to run the job before automatically cancelling	
+  timeoutInMinutes: 90  
   pool:
     vmImage: 'ubuntu-latest'
 
   steps:
   - bash: |
-          # set brach_tag according to CI branch
+          # set brach_tag according to CI source branch 
           if [ $(Build.SourceBranchName) = "master"  ]; then
                   echo '##vso[task.setvariable variable=BRANCH_TAG]$(MASTER_BRANCH_LABEL)' 
                   echo 'set branch tag to master: $(MASTER_BRANCH_LABEL)'                     
           elif [ $(Build.SourceBranchName) = "development"  ]; then
                   echo '##vso[task.setvariable variable=BRANCH_TAG]$(DEV_BRANCH_LABEL)'       
                   echo 'set branch tag to development: $(DEV_BRANCH_LABEL)'                                   
-          else # we pull the latest for current branch                      
+          else                   
                   echo '##vso[task.setvariable variable=BRANCH_TAG]$(Build.SourceBranchName)' 
                   echo 'set branch tag to branch: $(Build.SourceBranchName)'                        
           fi
           # set deps label
-          # if the trigger is completion of deps-CI, we pull the image by build-id  
+          # if the CI trigger is the completion of CI-deps, we pull the image by build-id. otherwise by branch_tag  
           if [ $(Build.Reason) = "BuildCompletion"  ]; then
               echo '##vso[task.setvariable variable=DEPS_LABEL]$(Build.TriggeredBy.BuildId)'
               echo set deps label to build id: $(Build.TriggeredBy.BuildId)
@@ -100,7 +100,7 @@ jobs: # A job is a collection of steps to be run by an agent
     workingDirectory: '$(MODULEPATH)'
     displayName: 'Build & Test '
 
-  - bash: |
+  - bash: | # push according to source branch. this step is only applied when not in PR.
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) docker-push
       if [ $(Build.SourceBranchName) = "master"  ]; then
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
