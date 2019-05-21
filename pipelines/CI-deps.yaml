@@ -21,7 +21,7 @@ stages:
     jobs: # A job is a collection of steps to be run by an agent 	
 
       - job: BuildGolangDeps
-        timeoutInMinutes: 90  # how long to run the job before automatically cancelling	
+        timeoutInMinutes: 15  # how long to run the job before automatically cancelling	
         pool:
           vmImage: 'ubuntu-latest'
         steps:        
@@ -37,7 +37,7 @@ stages:
     jobs: # A job is a collection of steps to be run by an agent 	
 
       - job: BuildPytonDeps
-        timeoutInMinutes: 15  # how long to run the job before automatically cancelling	
+        timeoutInMinutes: 90  # how long to run the job before automatically cancelling	
         pool:
           vmImage: 'ubuntu-latest'
         steps:        
