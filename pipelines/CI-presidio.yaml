@@ -104,7 +104,7 @@ jobs: # A job is a collection of steps to be run by an agent
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) docker-push
       if [ $(Build.SourceBranchName) = "master"  ]; then
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) -push-release                    
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-release                   
       elif [ $(Build.SourceBranchName) = "development"  ]; then
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-dev-deps
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev
@@ -116,8 +116,8 @@ jobs: # A job is a collection of steps to be run by an agent
     env:
       REGISTRY_NAME: "$(registry_name)"
     workingDirectory: '$(MODULEPATH)'
-    displayName: 'Master Branch Push Docker Images'
-    condition: neq(variables['Build.Reason'], 'PullRequest')
+    displayName: 'Push Docker Images'
+    condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'OSS Component Detection'
