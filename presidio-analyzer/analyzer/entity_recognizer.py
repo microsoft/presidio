@@ -252,6 +252,34 @@ class EntityRecognizer:
             prefix,
             True)
 
+    @staticmethod
+    def find_index_of_match_token(word, start, tokens, tokens_indices):
+        found = False
+        # we use the known start index of the original word to find the actual
+        # token at that index, we are not checking for equivilance since the
+        # token might be just a substring of that word (e.g. for phone number
+        # 555-124564 the first token might be just '555' or for a match like '
+        # rocket' the actual token will just be 'rocket' hence the misalignment
+        # of indices)
+        # Note: we are iterating over the original tokens (not the lemmatized)
+        i = -1
+        for i, token in enumerate(tokens, 0):
+            # Either we found a token with the exact location, or
+            # we take a token which its characters indices covers
+            # the index we are looking for.
+            if ((tokens_indices[i] == start) or
+                    (start < tokens_indices[i] + len(token))):
+                # found the interesting token, the one that around it
+                # we take n words, we save the matching lemma
+                found = True
+                break
+
+        if not found:
+            raise ValueError("Did not find word '" + word + "' "
+                             "in the list of tokens altough it "
+                             "is expected to be found")
+        return i
+
     def __extract_context(self, nlp_artifacts, word, start):
         """ Extracts words surronding another given word.
             The text from which the context is extracted is given in the nlp
@@ -275,43 +303,26 @@ class EntityRecognizer:
         # LEMMATIZED version
         lemmatized_keywords = nlp_artifacts.keywords
 
-        found = False
-        # we use the known start index of the original word to find the actual
-        # token at that index, we are not checking for equivilance since the
-        # token might be just a substring of that word (e.g. for phone number
-        # 555-124564 the first token might be just '555' or for a match like '
-        # rocket' the actual token will just be 'rocket' hence the misalignment
-        # of indices)
-        # Note: we are iterating over the original tokens (not the lemmatized)
-        tokens = nlp_artifacts.tokens
-        tokens_indices = nlp_artifacts.tokens_indices
-        for i in range(len(nlp_artifacts.tokens)):
-            # Either we found a token with the exact location, or
-            # we take a token which its characters indices covers
-            # the index we are looking for.
-            if ((tokens_indices[i] == start) or
-                    (start < tokens_indices[i] + len(tokens[i]))):
-                # found the interesting token, the one that around it
-                # we take n words, we save the matching lemma
-                found = True
-                break
-
-        if not found:
-            raise ValueError("Did not find word '" + word + "' "
-                             "in the list of tokens altough it "
-                             "is expected to be found")
+        # since the list of tokens is not necessarily aligned
+        # with the actual index of the match, we look for the
+        # token index which corresponds to the match
+        token_index = EntityRecognizer.find_index_of_match_token(
+            word,
+            start,
+            nlp_artifacts.tokens,
+            nlp_artifacts.tokens_indices)
 
         # index i belongs to the PII entity, take the preceding n words
         # and the successing m words into a context string
         context_str = ''
         context_str = \
-            self.__add_n_words_backward(i,
+            self.__add_n_words_backward(token_index,
                                         EntityRecognizer.CONTEXT_PREFIX_COUNT,
                                         nlp_artifacts.lemmas,
                                         lemmatized_keywords,
                                         context_str)
         context_str = \
-            self.__add_n_words_forward(i,
+            self.__add_n_words_forward(token_index,
                                        EntityRecognizer.CONTEXT_SUFFIX_COUNT,
                                        nlp_artifacts.lemmas,
                                        lemmatized_keywords,
