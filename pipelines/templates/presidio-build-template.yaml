@@ -1,10 +1,10 @@
 parameters:
-  registry: ''
-  registry_name: ''
-  deps_label: ''
+  registry_paramter: ''
+  registry__name_paramter: ''
+  deps_label_parameter: ''
 steps:
 - bash: |
-    if [ -z "$DEPS_LABEL"  ]; then
+    if [ -z "$DEPS_LABEL_TAG"  ]; then
       echo '##vso[task.setvariable variable=deps_label]$(DEFAULT_DEPS_LABEL)' 
       echo 'deps label is empty, setting to default'
     else
@@ -13,7 +13,7 @@ steps:
     fi
   displayName: 'Setup deps label if empty'
   env:
-    DEPS_LABEL: ${{ parameters.deps_label }}
+    DEPS_LABEL_TAG: ${{ parameters.deps_label_parameter }}
 - task: Docker@2
   inputs:
     containerRegistry: ${{ parameters.registry }}
@@ -30,10 +30,10 @@ steps:
 - bash: |
     curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
     dep ensure      
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL_TAG test-functional
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
-    DEPS_LABEL: $(deps_label)
+    DEPS_LABEL_TAG: $(deps_label)
   workingDirectory: '$(MODULEPATH)'
   displayName: 'Build & Test '
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
@@ -63,28 +63,28 @@ steps:
   displayName: 'Push Docker Images - BuildId label'    # push with build-id label - all branches  
   condition: ne(variables['Build.Reason'], 'PullRequest')
 - bash: |
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL_TAG) docker-push-latest-deps
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
-    DEPS_LABEL: $(deps_label)
+    DEPS_LABEL_TAG: $(deps_label)
   displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
   condition: and( ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'master'))
 
 - bash: | 
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-dev-deps
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL_TAG) docker-push-latest-dev-deps
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev      
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
-    DEPS_LABEL: $(deps_label)
+    DEPS_LABEL_TAG: $(deps_label)
   displayName: 'Push Docker Images - Development Branch'    # push with latest-dev label - development branch
   condition:  and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'development'))
 
 - bash: | 
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) push-latest-branch
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL_TAG) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL_TAG) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) push-latest-branch
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
-    DEPS_LABEL: $(deps_label)
+    DEPS_LABEL_TAG: $(deps_label)
   displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
   condition: and(ne(variables['Build.Reason'], 'PullRequest'), and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master')))

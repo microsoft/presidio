@@ -88,8 +88,8 @@ stages:
         steps:  
         - template: templates/presidio-build-template.yaml  # Template reference
           parameters:
-            registry_name: $(registry_name)
-        registry: $(registry)
-        deps_label: $(Build.BuildId)
+            registry_name_paramter: $(registry_name)
+            registry_parameter: $(registry)
+            deps_label_parameter: $(Build.BuildId)
       
 

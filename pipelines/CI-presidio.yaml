@@ -44,9 +44,9 @@ jobs:
   steps:  
   - template: templates/presidio-build-template.yaml  # Template reference
     parameters:
-      registry_name: $(registry_name)
-      registry: $(registry)
-      deps_label: $(MASTER_BRANCH_LABEL)
+      registry_name_paramter: $(registry_name)
+      registry_paramter: $(registry)
+      deps_label_parameter: $(MASTER_BRANCH_LABEL)
 - job:  BuildAndPushPresidioDevelopment
   timeoutInMinutes: 90  
   condition: eq(variables['Build.SourceBranchName'], 'development')
@@ -55,9 +55,9 @@ jobs:
   steps:  
   - template: templates/presidio-build-template.yaml  # Template reference
     parameters:
-      registry_name: $(registry_name)
-      registry: $(registry)
-      deps_label: $(DEV_BRANCH_LABEL)
+      registry_name_paramter: $(registry_name)
+      registry_paramter: $(registry)
+      deps_label_parameter: $(DEV_BRANCH_LABEL)
 - job:  BuildAndPushPresidioFeature
   timeoutInMinutes: 90  
   condition: and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master'))
@@ -66,6 +66,6 @@ jobs:
   steps:  
   - template: templates/presidio-build-template.yaml  # Template reference
     parameters:
-      registry_name: $(registry_name)
-      registry: $(registry)
-      deps_label: $(dependency_label)
+      registry_name_paramter: $(registry_name)
+      registry_paramter: $(registry)
+      deps_label_parameter: $(dependency_label)
