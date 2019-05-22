@@ -3,11 +3,6 @@ parameters:
   registry_name: ''
   build_with_deps: ''
   deps_label: ''
-jobs: 
-- job: BuildAndTestJob # Build and test tasks
-  timeoutInMinutes: 90  
-  pool:
-    vmImage: 'ubuntu-latest'
   steps:
   - task: Docker@2
     inputs:

@@ -76,24 +76,29 @@ stages:
             command: 'buildAndPush'
             Dockerfile: Dockerfile.python.deps
             tags: '$(Build.SourceBranchName)'
-  - stage: BuildPresidio
+  - stage: BuildAndPushPresidio
     dependsOn: 
     - GolangDeps
     - PythonDeps
     jobs:
-    - template: templates/presidio-build-template.yaml  # Template reference
-      parameters:
-        registry_name: $(registry_name)
+      - job:  BuildPresidio
+        timeoutInMinutes: 90  
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:  
+        - template: templates/presidio-build-template.yaml  # Template reference
+          parameters:
+            registry_name: $(registry_name)
         registry: $(registry)
         deps_label: $(Build.BuildId)
-  - stage: PushPresidio
-    dependsOn: 
-    - BuildPresidio
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-    jobs:
-    - template: templates/presidio-push-template.yaml 
-      parameters:
-        registry_name: $(registry_name)
+      - job: PushPresidio
+        timeoutInMinutes: 10  
+        pool:
+          vmImage: 'ubuntu-latest'
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        steps:
+        - template: templates/presidio-push-template.yaml 
+          parameters:
+            registry_name: $(registry_name)
         deps_label: $(Build.BuildId)
- # Template reference
 
