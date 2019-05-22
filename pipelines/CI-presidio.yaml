@@ -3,11 +3,12 @@ variables:
   GOPATH: '$(system.defaultWorkingDirectory)/gopath'
   MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)'
   GOROOT: '/usr/local/go1.11'
-  MASTER_BRANCH_LABEL: latest
-  DEV_BRANCH_LABEL: latest-dev
+  MASTER_BRANCH_LABEL: latest # tag name of master branch
+  DEV_BRANCH_LABEL: latest-dev # tag name of development branch
+  DEFAULT_DEPS_LABEL: latest-dev
 
-trigger: 
-  batch: true 
+trigger: # CI triggers	
+  batch: false 
   branches:
       include: 
       - master	
@@ -20,7 +21,7 @@ trigger:
       - Dockerfile.python.deps	
       - presidio-analyzer/requirements.txt
       - '*.md'
-pr:
+pr: # PR triggers	
   branches:
       include: 
       - development	
@@ -33,102 +34,38 @@ pr:
       - Dockerfile.python.deps	
       - presidio-analyzer/requirements.txt
       - '*.md'
-
-jobs: 
-- job: BuildServices
-  timeoutInMinutes: 90  
-  pool:
-    vmImage: 'ubuntu-latest'
-
-  steps:
-  - bash: |
-          # set brach_tag according to CI source branch 
-          if [ $(Build.SourceBranchName) = "master"  ]; then
-                  echo '##vso[task.setvariable variable=BRANCH_TAG]$(MASTER_BRANCH_LABEL)' 
-                  echo 'set branch tag to master: $(MASTER_BRANCH_LABEL)'                     
-          elif [ $(Build.SourceBranchName) = "development"  ]; then
-                  echo '##vso[task.setvariable variable=BRANCH_TAG]$(DEV_BRANCH_LABEL)'       
-                  echo 'set branch tag to development: $(DEV_BRANCH_LABEL)'                                   
-          else                   
-                  echo '##vso[task.setvariable variable=BRANCH_TAG]$(Build.SourceBranchName)' 
-                  echo 'set branch tag to branch: $(Build.SourceBranchName)'                        
+stages:
+  - stage: SetEnvironment
+    steps:
+      - bash: |
+          echo '##vso[task.setvariable variable=DEPS_TAG]$(MASTER_BRANCH_LABEL)' 
+        displayName: 'Set labels for master branch'
+        condition: eq(variables['Build.SourceBranchName'], 'master')
+      - bash: |
+          echo '##vso[task.setvariable variable=DEPS_TAG]$(DEV_BRANCH_LABEL)'   
+        displayName: 'Set labels for development branch'
+        condition: eq(variables['Build.SourceBranchName'], 'development')
+      - bash: |
+          if [ -n $(feature_branch_label)  ]; then
+            echo '##vso[task.setvariable variable=DEPS_TAG]$(DEFAULT_DEPS_LABEL)' 
+          else
+            echo '##vso[task.setvariable variable=DEPS_TAG]$(feature_branch_label)' 
           fi
-          # set deps label
-          # if the CI trigger is the completion of CI-deps, we pull the image by build-id. otherwise by branch_tag  
-          if [ $(Build.Reason) = "BuildCompletion"  ]; then
-              echo '##vso[task.setvariable variable=DEPS_LABEL]$(Build.TriggeredBy.BuildId)'
-              echo set deps label to build id: $(Build.TriggeredBy.BuildId)
-          else # we pull the latest for current branch
-                  echo '##vso[task.setvariable variable=DEPS_LABEL]$(BRANCH_TAG)'
-                  echo set deps label to current branch latest:  $(BRANCH_TAG)
-          fi
-    displayName: 'Set Branch tag and lables'
-  - task: Docker@2
-    inputs:
-      containerRegistry: $(registry)
-      command: 'login'
-
-  - bash: |
-      mkdir -p '$(GOBIN)'
-      mkdir -p '$(GOPATH)/pkg'
-      mkdir -p '$(MODULEPATH)'
-      shopt -s extglob
-      mv !(gopath) '$(MODULEPATH)'
-      echo '##vso[task.prependpath]$(GOBIN)'
-      echo '##vso[task.prependpath]$(GOROOT)/bin'
-    displayName: 'Setup Go Env'
-
-  - task: CopyFiles@2
-    displayName: 'Copy Chart to Artifact Staging Directory'
-    inputs:
-      Contents: '**/presidio/charts/**'
-      TargetFolder: charts
-      CleanTargetFolder: true
-      flattenFolders: true
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: dropchart'
-    inputs:
-      PathtoPublish: charts
-      ArtifactName: dropchart
-
-  - bash: |
-      curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-      dep ensure      
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
-    env:
-      REGISTRY_NAME: "$(registry_name)"
-    workingDirectory: '$(MODULEPATH)'
-    displayName: 'Build & Test '
-
-  - bash: |
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) docker-push
-    env:
-      REGISTRY_NAME: "$(registry_name)"
-    displayName: 'Push Docker Images - BuildId label'    
+        displayName: 'Set labels for feature branch'
+        condition: and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master'))
+        env:
+          feature_branch_label: ${dependency_label}
+  - stage: BuildPresidio
+    jobs:
+    - template: templates/presidio-build-template.yaml  # Template reference
+      parameters:
+        registry_name: $(registry_name)
+        registry: $(registry)
+        deps_label: $(DEPS_TAG)
+  - stage: PushPresidio
     condition: ne(variables['Build.Reason'], 'PullRequest')
-  - bash: |
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
-    env:
-      REGISTRY_NAME: "$(registry_name)"
-    displayName: 'Push Docker Images - Master Branch'    
-    condition: and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'master'))
-  - bash: |
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-dev-deps
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev      
-    env:
-      REGISTRY_NAME: "$(registry_name)"
-    displayName: 'Push Docker Images - Development Branch'    
-    condition: and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'development'))
-  - bash: |      
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) push-latest-branch
-    env:
-      REGISTRY_NAME: "$(registry_name)"
-    displayName: 'Push Docker Images - Feature Branch'    
-    condition: and(ne(variables['Build.Reason'], 'PullRequest'), and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master')))
-
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'OSS Component Detection'
-    continueOnError: true
+    jobs:
+    - template: templates/presidio-push-template.yaml 
+      parameters:
+        registry_name: $(registry_name)
+        deps_label: $(DEPS_TAG)
