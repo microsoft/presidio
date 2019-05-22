@@ -35,9 +35,6 @@ steps:
     REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
   workingDirectory: '$(MODULEPATH)'
   displayName: 'Build & Test '
-- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-  displayName: 'OSS Component Detection'
-  continueOnError: true
 
 ### pushing and publishing on non PR only
 - task: CopyFiles@2
