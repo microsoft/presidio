@@ -3,29 +3,29 @@ parameters:
   registry_name: ''
   build_with_deps: ''
   deps_label: ''
-  steps:
-  - task: Docker@2
-    inputs:
-      containerRegistry: ${{ parameters.registry }}
-      command: 'login'
-  - bash: |
-      mkdir -p '$(GOBIN)'
-      mkdir -p '$(GOPATH)/pkg'
-      mkdir -p '$(MODULEPATH)'
-      shopt -s extglob
-      mv !(gopath) '$(MODULEPATH)'
-      echo '##vso[task.prependpath]$(GOBIN)'
-      echo '##vso[task.prependpath]$(GOROOT)/bin'
-    displayName: 'Setup Go Env'
-  - bash: |
-      curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-      dep ensure      
-      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
-    env:
-      REGISTRY_NAME: ${{ parameters.registry_name }}
-      DEPS_LABEL: ${{ parameters.deps_label }}
-    workingDirectory: '$(MODULEPATH)'
-    displayName: 'Build & Test '
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'OSS Component Detection'
-    continueOnError: true
+steps:
+- task: Docker@2
+  inputs:
+    containerRegistry: ${{ parameters.registry }}
+    command: 'login'
+- bash: |
+    mkdir -p '$(GOBIN)'
+    mkdir -p '$(GOPATH)/pkg'
+    mkdir -p '$(MODULEPATH)'
+    shopt -s extglob
+    mv !(gopath) '$(MODULEPATH)'
+    echo '##vso[task.prependpath]$(GOBIN)'
+    echo '##vso[task.prependpath]$(GOROOT)/bin'
+  displayName: 'Setup Go Env'
+- bash: |
+    curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+    dep ensure      
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    DEPS_LABEL: ${{ parameters.deps_label }}
+  workingDirectory: '$(MODULEPATH)'
+  displayName: 'Build & Test '
+- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+  displayName: 'OSS Component Detection'
+  continueOnError: true
