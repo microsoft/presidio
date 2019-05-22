@@ -36,29 +36,9 @@ pr: # PR triggers
       - '*.md'
 
 jobs:
-- job: SetLabels
-  steps:
-    - bash: |
-        echo '##vso[task.setvariable variable=DEPS_TAG]$(MASTER_BRANCH_LABEL)' 
-      displayName: 'Set labels for master branch'
-      condition: eq(variables['Build.SourceBranchName'], 'master')
-    - bash: |
-        echo '##vso[task.setvariable variable=DEPS_TAG]$(DEV_BRANCH_LABEL)'   
-      displayName: 'Set labels for development branch'
-      condition: eq(variables['Build.SourceBranchName'], 'development')
-    - bash: |
-        if [ -n $(feature_branch_label)  ]; then
-          echo '##vso[task.setvariable variable=DEPS_TAG]$(DEFAULT_DEPS_LABEL)' 
-        else
-          echo '##vso[task.setvariable variable=DEPS_TAG]$(feature_branch_label)' 
-        fi
-      displayName: 'Set labels for feature branch'
-      condition: and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master'))
-      env:
-        feature_branch_label: ${dependency_label}
-- job:  BuildPresidio
+- job:  BuildAndPushPresidioMaster
   timeoutInMinutes: 90  
-  dependsOn: SetLabels
+  condition: eq(variables['Build.SourceBranchName'], 'master')
   pool:
     vmImage: 'ubuntu-latest'
   steps:  
@@ -66,15 +46,26 @@ jobs:
     parameters:
       registry_name: $(registry_name)
       registry: $(registry)
-      deps_label: $(DEPS_TAG)
-- job: PushPresidio
-  timeoutInMinutes: 10  
-  dependsOn: BuildPresidio
+      deps_label: $(MASTER_BRANCH_LABEL)
+- job:  BuildAndPushPresidioDevelopment
+  timeoutInMinutes: 90  
+  condition: eq(variables['Build.SourceBranchName'], 'development')
   pool:
     vmImage: 'ubuntu-latest'
-  condition: ne(variables['Build.Reason'], 'PullRequest')
-  steps:
-  - template: templates/presidio-push-template.yaml 
+  steps:  
+  - template: templates/presidio-build-template.yaml  # Template reference
     parameters:
       registry_name: $(registry_name)
-      deps_label: $(DEPS_TAG)
+      registry: $(registry)
+      deps_label: $(DEV_BRANCH_LABEL)
+- job:  BuildAndPushPresidioFeature
+  timeoutInMinutes: 90  
+  condition: and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master'))
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:  
+  - template: templates/presidio-build-template.yaml  # Template reference
+    parameters:
+      registry_name: $(registry_name)
+      registry: $(registry)
+      deps_label: $(dependency_label)
