@@ -56,11 +56,11 @@
     [Pipenv](https://pipenv.readthedocs.io/en/latest/) is a Python workflow manager, handling dependencies and environment for python packages, it is used in the Presidio's Analyzer project as the dependencies manager
     #### Using Pip3:
     ```
-    $ pip3 install --user pipenv
+    pip3 install --user pipenv
     ```
     #### Homebrew
     ```
-    $ brew install pipenv
+    brew install pipenv
     ```
 
     Additional installation instructions: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
@@ -68,12 +68,12 @@
 3. Create virtualenv for the project & Install all requirements in the Pipfile, including dev requirements
 Install the Python packages for the analyzer in the `presidio-analyzer` folder, run:
     ```
-    $ pipenv install --dev --sequential
+    pipenv install --dev --sequential
     ```
 
 4. Run all tests
     ```
-    $ pipenv run pytest
+    pipenv run pytest
     ```
 
 5. To run arbitrary scripts within the virtual env, start the command with `pipenv run`. For example:
@@ -81,12 +81,19 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
     2. `pipenv run pylint analyzer`
     3. `pipenv run pip freeze`
 
-    #### Alternatively, activate the virtual environment and use the commands without the 'pipenv run' prefix
+#### Alternatively, activate the virtual environment and use the commands by starting a pipenv shell:
+
+1. Start shell:
+
     ```
-    $ pipenv shell
-    $ pytest
-    $ pylint analyzer
-    $ pip freeze
+    pipenv shell
+    ```
+2. Run commands in the shell
+
+    ```
+    pytest
+    pylint analyzer
+    pip freeze
     ```
 
 ## Development notes
@@ -126,7 +133,7 @@ Naviagate to `<Presidio folder>\presidio-analyzer\`
 
 Install the python packages if didn't do so yet:
 ```sh
-    pipenv install --dev --sequential
+pipenv install --dev --sequential
 ```
 
 To simply run unit tests, execute:
