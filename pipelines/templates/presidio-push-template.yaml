@@ -3,7 +3,7 @@ parameters:
   deps_label: ''
 jobs:
 - job: PublishArtifactsJob # publish helm charts
-  timeoutInMinutes: 30  
+  timeoutInMinutes: 3  
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -21,6 +21,10 @@ jobs:
       ArtifactName: dropchart  
 
 - job: PushImagesJob # push images to registry 
+  timeoutInMinutes: 30
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
   - bash: | 
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) docker-push
     env:
