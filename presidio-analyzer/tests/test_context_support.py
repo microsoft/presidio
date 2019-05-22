@@ -3,6 +3,7 @@ from unittest import TestCase
 import os
 import pytest
 
+from analyzer import PatternRecognizer, Pattern
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer, \
@@ -90,3 +91,28 @@ class TestContextSupport(TestCase):
             assert(len(results_without_context) == len(results_with_context))
             for i in range(len(results_with_context)):
                 assert(results_without_context[i].score < results_with_context[i].score)
+
+    def test_context_custom_recognizer(self):
+        nlp_engine = SpacyNlpEngine()
+        mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
+
+        # This test checks that a custom recognizer is also enhanced by context.
+        # However this test also verifies a specific case in which the pattern also
+        # includes a preceeding space (' rocket'). This in turn cause for a misalignment
+        # between the tokens and the regex match (the token will be just 'rocket').
+        # This misalignment is handled in order to find the correct context window.
+        rocket_recognizer = PatternRecognizer(supported_entity="ROCKET",
+                                              name="rocketrecognizer",
+                                              context=["cool"],
+                                              patterns=[Pattern("rocketpattern",
+                                                                "\\s+(rocket)",
+                                                                0.3)])
+        text = "hi, this is a cool ROCKET"
+        recognizer = rocket_recognizer
+        entities = ["ROCKET"]
+        nlp_artifacts = nlp_engine.process_text(text, "en")
+        results_without_context = recognizer.analyze(text, entities, mock_nlp_artifacts)
+        results_with_context = recognizer.analyze(text, entities, nlp_artifacts)
+        assert(len(results_without_context) == len(results_with_context))
+        for i in range(len(results_with_context)):
+            assert(results_without_context[i].score < results_with_context[i].score)
