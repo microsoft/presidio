@@ -84,6 +84,7 @@ jobs:
       Contents: '**/src/github.com/Microsoft/presidio/charts/**'
       TargetFolder: charts
       CleanTargetFolder: true
+      flattenFolders: true
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: dropchart'
@@ -100,24 +101,33 @@ jobs:
     workingDirectory: '$(MODULEPATH)'
     displayName: 'Build & Test '
 
-  - bash: | # push according to source branch. this step is only applied when not in PR.
+  - bash: |
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) docker-push
-      if [ $(Build.SourceBranchName) = "master"  ]; then
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-release                   
-      elif [ $(Build.SourceBranchName) = "development"  ]; then
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-dev-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev
-      else
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch
-      fi
-      
     env:
       REGISTRY_NAME: "$(registry_name)"
-    workingDirectory: '$(MODULEPATH)'
-    displayName: 'Push Docker Images'
+    displayName: 'Push Docker Images - BuildId label'    
     condition: ne(variables['Build.Reason'], 'PullRequest')
+  - bash: |
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
+    env:
+      REGISTRY_NAME: "$(registry_name)"
+    displayName: 'Push Docker Images - Master Branch'    
+    condition: and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'master'))
+  - bash: |
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-dev-deps
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev      
+    env:
+      REGISTRY_NAME: "$(registry_name)"
+    displayName: 'Push Docker Images - Development Branch'    
+    condition: and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'development'))
+  - bash: |      
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch
+    env:
+      REGISTRY_NAME: "$(registry_name)"
+    displayName: 'Push Docker Images - Feature Branch'    
+    condition: and(ne(variables['Build.Reason'], 'PullRequest'), and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master')))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'OSS Component Detection'
