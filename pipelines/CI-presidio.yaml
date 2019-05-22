@@ -34,8 +34,7 @@ pr: # PR triggers
       - Dockerfile.python.deps	
       - presidio-analyzer/requirements.txt
       - '*.md'
-stages:
-  - stage: SetEnvironment
+
     jobs:
     - job: SetLabels
       steps:
@@ -57,17 +56,23 @@ stages:
           condition: and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master'))
           env:
             feature_branch_label: ${dependency_label}
-  - stage: BuildPresidio
-    jobs:
-    - template: templates/presidio-build-template.yaml  # Template reference
-      parameters:
-        registry_name: $(registry_name)
-        registry: $(registry)
-        deps_label: $(DEPS_TAG)
-  - stage: PushPresidio
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-    jobs:
-    - template: templates/presidio-push-template.yaml 
-      parameters:
-        registry_name: $(registry_name)
-        deps_label: $(DEPS_TAG)
+    - job:  BuildPresidio
+      timeoutInMinutes: 90  
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:  
+      - template: templates/presidio-build-template.yaml  # Template reference
+        parameters:
+          registry_name: $(registry_name)
+          registry: $(registry)
+          deps_label: $(DEPS_TAG)
+    - job: PushPresidio
+      timeoutInMinutes: 10  
+      pool:
+        vmImage: 'ubuntu-latest'
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+      steps:
+      - template: templates/presidio-push-template.yaml 
+        parameters:
+          registry_name: $(registry_name)
+          deps_label: $(DEPS_TAG)
