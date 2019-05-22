@@ -1,3 +1,11 @@
+variables:
+  GOBIN: '$(GOPATH)/bin'
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath'
+  MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)'
+  GOROOT: '/usr/local/go1.11'
+  MASTER_BRANCH_LABEL: latest # tag name of master branch
+  DEV_BRANCH_LABEL: latest-dev # tag name of development branch
+
 trigger: 
   batch: true 
   branches:
@@ -43,6 +51,7 @@ stages:
             Dockerfile: Dockerfile.golang.deps
             tags: '$(Build.SourceBranchName)'
   - stage: PythonDeps # Build python deps
+    dependsOn: []    # this removes the implicit dependency on previous stage and causes this to run in parallel
     jobs: # 
 
       - job: BuildPytonDeps
@@ -67,4 +76,24 @@ stages:
             command: 'buildAndPush'
             Dockerfile: Dockerfile.python.deps
             tags: '$(Build.SourceBranchName)'
+  - stage: BuildPresidio
+    dependsOn: 
+    - GolangDeps
+    - PythonDeps
+    jobs:
+    - template: templates/presidio-build-template.yaml  # Template reference
+      parameters:
+        registry_name: $(registry_name)
+        registry: $(registry)
+        deps_label: $(Build.BuildId)
+  - stage: PushPresidio
+    dependsOn: 
+    - BuildPresidio
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+    jobs:
+    - template: templates/presidio-push-template.yaml 
+      parameters:
+        registry_name: $(registry_name)
+        deps_label: $(Build.BuildId)
+ # Template reference
 
