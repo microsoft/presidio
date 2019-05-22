@@ -10,7 +10,7 @@ steps:
       echo 'deps label is empty, setting to default'
     else
       #export DEPS_LABEL=$(DEPS_LABEL_TAG)
-      echo '##vso[task.setvariable variable=DEPS_LABEL]$(DEPS_LABEL_TAG)' 
+      echo '##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL_TAG' 
       echo 'deps label is not empty:' $DEPS_LABEL_TAG
     fi
   displayName: 'Setup deps label if empty'
