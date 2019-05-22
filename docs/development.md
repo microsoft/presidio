@@ -1,7 +1,7 @@
 
 # Development
 
-## Setting up the environment
+## Setting up the environment - Golang
 
 1. Docker
 
@@ -21,26 +21,9 @@
     dep ensure
     ```
 
-5. Build and install [re2](https://github.com/google/re2)
+5. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
 
-    ```sh
-    re2_version="2018-12-01"
-    wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
-    mkdir re2 
-    tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
-    cd re2 && make install
-    ```
-
-6. Install the Python packages for the analyzer in the `presidio-analyzer` folder
-
-    ```sh
-    pipenv install --dev --sequential
-    ```
-
-    For additional information regarding Pipenv click [here](pipenv_readme.md)
-7. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
-
-8. Protobuf generator tools (Optional)
+6. Protobuf generator tools (Optional)
 
     - `https://github.com/golang/protobuf`
 
@@ -56,6 +39,56 @@
     protoc -I . --go_out=plugins=grpc:../golang ./*.proto
     ```
 
+## Setting up the environment - Python
+
+1. Build and install [re2](https://github.com/google/re2)
+
+    ```sh
+    re2_version="2018-12-01"
+    wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
+    mkdir re2 
+    tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
+    cd re2 && make install
+    ```
+
+2. Install pipenv
+
+    [Pipenv](https://pipenv.readthedocs.io/en/latest/) is a Python workflow manager, handling dependencies and environment for python packages, it is used in the Presidio's Analyzer project as the dependencies manager
+    #### Using Pip3:
+    ```
+    $ pip3 install --user pipenv
+    ```
+    #### Homebrew
+    ```
+    $ brew install pipenv
+    ```
+
+    Additional installation instructions: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
+
+3. Create virtualenv for the project & Install all requirements in the Pipfile, including dev requirements
+Install the Python packages for the analyzer in the `presidio-analyzer` folder, run:
+    ```
+    $ pipenv install --dev --sequential
+    ```
+
+4. Run all tests
+    ```
+    $ pipenv run pytest
+    ```
+
+5. To run arbitrary scripts within the virtual env, start the command with `pipenv run`. For example:
+    1. `pipenv run flake8 analyzer --exclude "*pb2*.py"`
+    2. `pipenv run pylint analyzer`
+    3. `pipenv run pip freeze`
+
+    #### Alternatively, activate the virtual environment and use the commands without the 'pipenv run' prefix
+    ```
+    $ pipenv shell
+    $ pytest
+    $ pylint analyzer
+    $ pip freeze
+    ```
+
 ## Development notes
 
 - Build the bins with `make build`
@@ -64,7 +97,7 @@
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
-
+- Updating python dependencies [instructions](./pipenv_readme.md)
 ### Set the following environment variables
 
 #### presidio-analyzer
@@ -96,24 +129,19 @@ Install the python packages if didn't do so yet:
     pipenv install --dev --sequential
 ```
 
-Execute the virtual env:
-```
-pipenv shell
-```
-
 To simply run unit tests, execute:
 ```
-pytest --log-cli-level=0
+pipenv run pytest --log-cli-level=0
 ```
 
 If you want to experiment with `analyze` requests, navigate into the `analyzer` folder and start serving the analyzer service:
 ```sh
-python __main__.py serve --grpc-port 3000
+pipenv run python __main__.py serve --grpc-port 3000
 ```
 
 In a new `pipenv shell` window you can run `analyze` requests, for example:
 ```
-python __main__.py analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE" --grpc-port 3000
+pipenv run python __main__.py analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE" --grpc-port 3000
 ```
 
 
