@@ -30,6 +30,8 @@ steps:
     echo '##vso[task.prependpath]$(GOROOT)/bin'
   displayName: 'Setup Go Env'
 - bash: |
+    echo 'deps label:' $DEPS_LABEL
+    echo 'deps label:' $(DEPS_LABEL)
     curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
     dep ensure      
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional
