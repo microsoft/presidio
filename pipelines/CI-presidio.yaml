@@ -58,6 +58,7 @@ jobs:
         feature_branch_label: ${dependency_label}
 - job:  BuildPresidio
   timeoutInMinutes: 90  
+  dependsOn: SetLabels
   pool:
     vmImage: 'ubuntu-latest'
   steps:  
@@ -68,6 +69,7 @@ jobs:
       deps_label: $(DEPS_TAG)
 - job: PushPresidio
   timeoutInMinutes: 10  
+  dependsOn: BuildPresidio
   pool:
     vmImage: 'ubuntu-latest'
   condition: ne(variables['Build.Reason'], 'PullRequest')

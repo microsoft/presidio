@@ -92,6 +92,7 @@ stages:
         registry: $(registry)
         deps_label: $(Build.BuildId)
       - job: PushPresidio
+        dependsOn: BuildPresidio
         timeoutInMinutes: 10  
         pool:
           vmImage: 'ubuntu-latest'
