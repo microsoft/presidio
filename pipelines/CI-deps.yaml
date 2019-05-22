@@ -81,7 +81,7 @@ stages:
     - GolangDeps
     - PythonDeps
     jobs:
-      - job:  BuildPresidio
+      - job:  BuildAndPushPresidio
         timeoutInMinutes: 90  
         pool:
           vmImage: 'ubuntu-latest'
@@ -91,15 +91,5 @@ stages:
             registry_name: $(registry_name)
         registry: $(registry)
         deps_label: $(Build.BuildId)
-      - job: PushPresidio
-        dependsOn: BuildPresidio
-        timeoutInMinutes: 10  
-        pool:
-          vmImage: 'ubuntu-latest'
-        condition: ne(variables['Build.Reason'], 'PullRequest')
-        steps:
-        - template: templates/presidio-push-template.yaml 
-          parameters:
-            registry_name: $(registry_name)
-        deps_label: $(Build.BuildId)
+      
 

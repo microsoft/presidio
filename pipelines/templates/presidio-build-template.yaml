@@ -1,9 +1,16 @@
 parameters:
   registry: ''
   registry_name: ''
-  build_with_deps: ''
   deps_label: ''
 steps:
+- bash: |
+    if [ -z $(deps_label)  ]; then
+      echo '##vso[task.setvariable variable=deps_label]$(DEFAULT_DEPS_LABEL)' 
+      echo 'deps label is, setting to default'
+    else
+      echo 'deps label is not empty, setting to default'
+    fi
+    displayName: 'Setup deps label if empty'
 - task: Docker@2
   inputs:
     containerRegistry: ${{ parameters.registry }}
@@ -29,3 +36,52 @@ steps:
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'OSS Component Detection'
   continueOnError: true
+
+### pushing and publishing on non PR only
+- task: CopyFiles@2
+  displayName: 'Copy Chart to Artifact Staging Directory'
+  condition: ne(variables['Build.Reason'], 'PullRequest')
+  inputs:
+    Contents: '**/presidio/charts/**'
+    TargetFolder: charts
+    CleanTargetFolder: true
+    flattenFolders: true
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: dropchart'
+  condition: ne(variables['Build.Reason'], 'PullRequest')
+  inputs:
+    PathtoPublish: charts
+    ArtifactName: dropchart  
+
+- bash: | 
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) docker-push
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+  displayName: 'Push Docker Images - BuildId label'    # push with build-id label - all branches  
+  condition: ne(variables['Build.Reason'], 'PullRequest')
+- bash: |
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    DEPS_LABEL: ${{ parameters.deps_label }}
+  displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
+  condition: and( ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'master'))
+
+- bash: | 
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-dev-deps
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) docker-push-latest-dev      
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    DEPS_LABEL: ${{ parameters.deps_label }}
+  displayName: 'Push Docker Images - Development Branch'    # push with latest-dev label - development branch
+  condition:  and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranchName'], 'development'))
+
+- bash: | 
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) push-latest-branch
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    DEPS_LABEL: ${{ parameters.deps_label }}
+  displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
+  condition: and(ne(variables['Build.Reason'], 'PullRequest'), and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master')))
