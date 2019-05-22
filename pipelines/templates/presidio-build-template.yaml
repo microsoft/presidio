@@ -5,12 +5,12 @@ parameters:
 steps:
 - bash: |
     if [[ $DEPS_LABEL_TAG == *"dependency_default"*  ]]; then
-      export DEPS_LABEL=$(DEFAULT_DEPS_LABEL)
-      #echo '##vso[task.setvariable variable=deps_label]$(DEFAULT_DEPS_LABEL)' 
+      #export DEPS_LABEL=$(DEFAULT_DEPS_LABEL)
+      echo '##vso[task.setvariable variable=DEPS_LABEL]$(DEFAULT_DEPS_LABEL)' 
       echo 'deps label is empty, setting to default'
     else
-      export DEPS_LABEL=$(DEPS_LABEL_TAG)
-      # echo '##vso[task.setvariable variable=deps_label]$(DEPS_LABEL_TAG)' 
+      #export DEPS_LABEL=$(DEPS_LABEL_TAG)
+      echo '##vso[task.setvariable variable=DEPS_LABEL]$(DEPS_LABEL_TAG)' 
       echo 'deps label is not empty:' $DEPS_LABEL_TAG
     fi
   displayName: 'Setup deps label if empty'
