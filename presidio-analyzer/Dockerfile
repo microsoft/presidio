@@ -1,6 +1,7 @@
 ARG REGISTRY=presidio.azurecr.io
+ARG PRESIDIO_DEPS_LABEL=latest	
 
-FROM ${REGISTRY}/presidio-python-deps
+FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}	
 
 ARG NAME=presidio-analyzer
 WORKDIR /usr/bin/${NAME}
