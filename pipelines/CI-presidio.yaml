@@ -32,7 +32,7 @@ pr: # PR triggers
       - Gopkg.lock	
       - Gopkg.toml	
       - Dockerfile.python.deps	
-      - - presidio-analyzer/Pipfile
+      - presidio-analyzer/Pipfile
       - presidio-analyzer/Pipfile.lock
       - '*.md'
 
