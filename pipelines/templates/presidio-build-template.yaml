@@ -1,7 +1,7 @@
 parameters:
   registry_parameter: '' # container registry service connection name 
   registry_name_parameter: '' # container registry URI
-  deps_label_parameter: 'dependency_default' # presidio deps label: if not provided will use the default
+  : 'dependency_default' # presidio deps label: if not provided will use the default
 steps:
 - bash: |
     if [[ $DEPS_LABEL_TAG == *"dependency_default"*  ]]; then

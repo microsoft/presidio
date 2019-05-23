@@ -54,15 +54,6 @@ stages:
             Dockerfile: Dockerfile.golang.deps 
             tags: | 
               $(Build.BuildId)	
-        - task: Docker@2 # Feature branch CIs are pushed with branch-name tag. they don't have build-completion trigger for presidio-CI.  
-          displayName: 'Push Branch tag'
-          condition: and(ne(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.SourceBranchName'], 'development'))
-          inputs:
-            containerRegistry: $(registry)            
-            repository: 'presidio-golang-deps'
-            command: 'buildAndPush'
-            Dockerfile: Dockerfile.golang.deps
-            tags: '$(Build.SourceBranchName)'
   - stage: PythonDeps # Build python deps
     dependsOn: []    # this removes the implicit dependency on previous stage and causes this to run in parallel
     jobs: # 
@@ -80,15 +71,6 @@ stages:
             Dockerfile: Dockerfile.python.deps 
             tags: | # image tags	
               $(Build.BuildId)	
-        - task: Docker@2 # Feature branch CIs are pushed with branch-name tag. they don't have build-completion trigger for presidio-CI.  
-          displayName: 'Push Branch tag'
-          condition: and(ne(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.SourceBranchName'], 'development'))
-          inputs:
-            containerRegistry: $(registry)            
-            repository: 'presidio-python-deps'
-            command: 'buildAndPush'
-            Dockerfile: Dockerfile.python.deps
-            tags: '$(Build.SourceBranchName)'
   - stage: BuildAndPushPresidio
     dependsOn: 
     - GolangDeps
