@@ -1,0 +1,72 @@
+variables:
+  GOBIN: '$(GOPATH)/bin'
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath'
+  MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)'
+  GOROOT: '/usr/local/go1.11'
+  MASTER_BRANCH_LABEL: latest # tag name of master branch
+  DEV_BRANCH_LABEL: latest-dev # tag name of development branch
+  DEFAULT_DEPS_LABEL: latest-dev
+
+trigger: # CI triggers	
+  batch: false 
+  branches:
+      include: 
+      - master	
+      - development	
+  paths:
+    exclude: 
+      - Dockerfile.golang.deps	
+      - Gopkg.lock	
+      - Gopkg.toml	
+      - Dockerfile.python.deps	
+      - presidio-analyzer/requirements.txt
+      - '*.md'
+pr: # PR triggers	
+  branches:
+      include: 
+      - development	
+      - masters
+  paths:
+    exclude: 
+      - Dockerfile.golang.deps	
+      - Gopkg.lock	
+      - Gopkg.toml	
+      - Dockerfile.python.deps	
+      - presidio-analyzer/Pipfile
+      - presidio-analyzer/Pipfile.lock
+      - '*.md'
+
+jobs:
+- job:  BuildAndPushPresidioMaster
+  timeoutInMinutes: 90  
+  condition: eq(variables['Build.SourceBranchName'], 'master')
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:  
+  - template: templates/presidio-build-template.yaml  # Template reference
+    parameters:
+      registry_name_parameter: $(registry_name) # input parameter
+      registry_parameter: $(registry) # input parameter
+      deps_label_parameter: $(MASTER_BRANCH_LABEL)
+- job:  BuildAndPushPresidioDevelopment
+  timeoutInMinutes: 90  
+  condition: eq(variables['Build.SourceBranchName'], 'development')
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:  
+  - template: templates/presidio-build-template.yaml  # Template reference
+    parameters:
+      registry_name_parameter: $(registry_name) # input parameter
+      registry_parameter: $(registry) # input parameter
+      deps_label_parameter: $(DEV_BRANCH_LABEL)
+- job:  BuildAndPushPresidioFeature
+  timeoutInMinutes: 90  
+  condition: and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master'))
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:  
+  - template: templates/presidio-build-template.yaml  # Template reference
+    parameters:
+      registry_name_parameter: $(registry_name) # input parameter
+      registry_parameter: $(registry) # input parameter
+      deps_label_parameter: $(dependency_default) # input parameter
