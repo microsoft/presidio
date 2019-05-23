@@ -99,14 +99,12 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 ## Development notes
 
 - Build the bins with `make build`
-- Build the base containers with `make docker-build-deps DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL}`
-- Build the the Docker image with `make docker-build DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
-- Push the Docker images with `make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
+- Build the the Docker image with `make docker-build`
+- Push the Docker images with `make docker-push`
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
 - Updating python dependencies [instructions](./pipenv_readme.md)
-
 ### Set the following environment variables
 
 #### presidio-analyzer
@@ -163,17 +161,3 @@ pipenv run python __main__.py analyze --text "John Smith drivers license is AC43
     ```sh
     wrk -t2 -c2 -d30s -s post.lua http://<api-service-address>/api/v1/projects/<my-project>/analyze
     ```
-
-
-## Running in kubernetes
-
-    1. If deploying from a private registry, verify that Kubernetes has access to the [Docker Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks).
-
-    2. If using a Kubernetes secert to manage the registry authentication, make sure it is registered under 'presidio' namespace
-
-### Further configuration
-
-Edit [charts/presidio/values.yaml](../charts/presidio/values.yaml) to:
-- Setup secret name (for private registries)
-- Change presidio services version
-- Change default scale

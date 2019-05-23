@@ -33,11 +33,7 @@ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_P
 - Kubernetes 1.9+ with RBAC enabled.
 - Helm
 
-### Default installation using pre-made scripts
-
-Follow the installation guide at the [Readme page](https://github.com/Microsoft/presidio/blob/master/README.MD)
-
-### Step-by step installation with customizable parameters
+### Installation
 
 1. Install [Helm](https://github.com/kubernetes/helm) with [RBAC](https://github.com/kubernetes/helm/blob/master/docs/rbac.md#tiller-and-role-based-access-control)
 
@@ -59,5 +55,3 @@ Follow the installation guide at the [Readme page](https://github.com/Microsoft/
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
     helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
     ```
-
-6. For more options over the deployment, follow the [Development guide](https://github.com/Microsoft/presidio/blob/master/docs/development.md)
