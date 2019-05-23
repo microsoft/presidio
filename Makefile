@@ -90,8 +90,11 @@ docker-push-latest-dev: $(addsuffix -push-latest-dev,$(IMAGES))
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest-dev
 	docker push $(DOCKER_REGISTRY)/$*:latest-dev
 
-.PHONY: push-latest-branch
-push-latest-branch:
+.PHONY: docker-push-latest-branch
+docker-push-latest-branch: $(addsuffix -push-latest-branch,$(IMAGES))
+
+
+%-push-latest-branch:
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(PRESIDIO_BRANCH_LABEL)
 	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_BRANCH_LABEL)
