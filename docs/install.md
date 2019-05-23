@@ -55,23 +55,12 @@ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_P
     
 6. Deploy from `/charts/presidio`
 
-    - If using a public Docker Registry:
-    ```sh
-    # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-<<<<<<< HEAD
-    helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
-    ```
-=======
-    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
-    ```
 
-    - If using a private Docker Registry:
     ```sh
     # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL},privateRegistry=${SECRET_NAME} . --namespace presidio
+    $ helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
     ```
 
 ---
 
 Prev: [Overview](overview.md) `|` Next: [Field Types](field_types.md)
->>>>>>> update install and dev notes.
