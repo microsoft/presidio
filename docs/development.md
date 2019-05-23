@@ -99,7 +99,7 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 ## Development notes
 
 - Build the bins with `make build`
-<<<<<<< HEAD
+
 - Build the base containers with `make docker-build-deps DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL}`
 - Build the the Docker image with `make docker-build DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
 - Push the Docker images with `make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
@@ -107,7 +107,7 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 - Build the base containers with `make docker-build-deps --DOCKER_REGISTRY=${DOCKER_REGISTRY}`
 - Build the the Docker image with `make docker-build --DOCKER_REGISTRY=${DOCKER_REGISTRY}`
 - Push the Docker images with `make docker-push --DOCKER_REGISTRY=${DOCKER_REGISTRY}`
->>>>>>> remove redundant text
+>>>>>>> f256b6f810bc5389a032c2996ebd71855ef39f13
 - Run the tests with `make test`
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
