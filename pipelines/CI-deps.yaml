@@ -26,7 +26,7 @@ pr:
   branches:
       include: 
       - development	
-      - masters
+      - master
   paths:
     include: 
       - Dockerfile.golang.deps	
