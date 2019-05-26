@@ -37,9 +37,9 @@ The following pipelines are provided:
 ### Note that the following settings have to be set in Azure Pipelines, for each imported pipeline:
 
 #### Variables
-* ***registry*** - a docker registry service endpoint to your private docker registry
-* ***registry_name*** - the name of the registry
-* ***dependency_default*** - override dependency label in a Presidio-CI build.
+* ***REGISTRY*** - a docker registry service endpoint to your private docker registry
+* ***REGISTRY_NAME*** - the name of the registry
+* ***DEPENDENCY_DEFAULT*** - override dependency label in a Presidio-CI build.
 
 
 ### import a pipeline to Azure Devops
