@@ -29,6 +29,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     # pylint: disable=unused-argument
     def Apply(self, request, context):
         logging.info("Starting Apply")
+        logging.info("[ARID:" + context.Value(0) + "]")
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)

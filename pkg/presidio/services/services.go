@@ -13,6 +13,7 @@ import (
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/rpc"
+	guuid "github.com/google/uuid"
 )
 
 //Services exposes GRPC services
@@ -255,6 +256,9 @@ func (services *Services) AnalyzeItem(ctx context.Context, text string, template
 		Text:            text,
 	}
 
+	const aridKey key = 0
+	analyzeRequestID := guuid.New()
+	ctx = context.WithValue(ctx, aridKey, analyzeRequestID.ToString())
 	results, err := services.AnalyzerService.Apply(ctx, analyzeRequest)
 	if err != nil {
 		return nil, err
