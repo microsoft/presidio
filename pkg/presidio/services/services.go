@@ -7,13 +7,14 @@ import (
 
 	types "github.com/Microsoft/presidio-genproto/golang"
 
+	guuid "github.com/google/uuid"
+
 	"github.com/Microsoft/presidio/pkg/cache"
 	"github.com/Microsoft/presidio/pkg/cache/redis"
 	log "github.com/Microsoft/presidio/pkg/logger"
 	"github.com/Microsoft/presidio/pkg/platform"
 	"github.com/Microsoft/presidio/pkg/presidio"
 	"github.com/Microsoft/presidio/pkg/rpc"
-	guuid "github.com/google/uuid"
 )
 
 //Services exposes GRPC services
