@@ -105,7 +105,7 @@ docker-push-release: $(addsuffix -push-release,$(IMAGES))
 
 %-push-release:
 ifeq ($(RELEASE_VERSION),)
-	$(error RELEASE_VERSION is not set)
+	$(warning RELEASE_VERSION is not set)
 endif
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
