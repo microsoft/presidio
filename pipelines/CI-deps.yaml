@@ -49,7 +49,7 @@ stages:
         - task: Docker@2
           displayName: 'Build and Push Golang dependencies'
           inputs:
-            containerRegistry: $(registry) # input registry name	
+            containerRegistry: $(REGISTRY) # input registry name	
             repository: presidio-golang-deps 
             Dockerfile: Dockerfile.golang.deps 
             tags: | 
@@ -66,7 +66,7 @@ stages:
         - task: Docker@2
           displayName: 'Build and Push Python dependencies'
           inputs:
-            containerRegistry: $(registry) # input registry name	
+            containerRegistry: $(REGISTRY) # input registry name	
             repository: 'presidio-python-deps'
             Dockerfile: Dockerfile.python.deps 
             tags: | # image tags	
@@ -83,7 +83,7 @@ stages:
         steps:  
         - template: templates/presidio-build-template.yaml  # Template reference
           parameters:
-            registry_name_parameter: $(registry_name) # input parameter
-            registry_parameter: $(registry) # input parameter
+            registry_name_parameter: $(REGISTRY_NAME) # input parameter
+            registry_parameter: $(REGISTRY) # input parameter
             deps_label_parameter: $(Build.BuildId)
       
