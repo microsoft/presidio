@@ -41,10 +41,9 @@ steps:
   displayName: 'Copy Chart to Artifact Staging Directory'
   condition: ne(variables['Build.Reason'], 'PullRequest')
   inputs:
-    Contents: '**/presidio/charts/**'
+    Contents: '**/charts/**'
     TargetFolder: charts
     CleanTargetFolder: true
-    flattenFolders: true
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: dropchart'
   condition: ne(variables['Build.Reason'], 'PullRequest')
