@@ -18,14 +18,15 @@ trigger: # CI triggers
       - Dockerfile.golang.deps	
       - Gopkg.lock	
       - Gopkg.toml	
-      - Dockerfile.python.deps	
-      - presidio-analyzer/requirements.txt
+      - Dockerfile.python.deps
+      - presidio-analyzer/Pipfile
+      - presidio-analyzer/Pipfile.lock	
       - '*.md'
 pr: # PR triggers	
   branches:
       include: 
       - development	
-      - masters
+      - master
   paths:
     exclude: 
       - Dockerfile.golang.deps	
@@ -45,8 +46,8 @@ jobs:
   steps:  
   - template: templates/presidio-build-template.yaml  # Template reference
     parameters:
-      registry_name_parameter: $(registry_name) # input parameter
-      registry_parameter: $(registry) # input parameter
+      registry_name_parameter: $(REGISTRY_NAME) # input parameter
+      registry_parameter: $(REGISTRY) # input parameter
       deps_label_parameter: $(MASTER_BRANCH_LABEL)
 - job:  BuildAndPushPresidioDevelopment
   timeoutInMinutes: 90  
@@ -56,8 +57,8 @@ jobs:
   steps:  
   - template: templates/presidio-build-template.yaml  # Template reference
     parameters:
-      registry_name_parameter: $(registry_name) # input parameter
-      registry_parameter: $(registry) # input parameter
+      registry_name_parameter: $(REGISTRY_NAME) # input parameter
+      registry_parameter: $(REGISTRY) # input parameter
       deps_label_parameter: $(DEV_BRANCH_LABEL)
 - job:  BuildAndPushPresidioFeature
   timeoutInMinutes: 90  
@@ -67,6 +68,6 @@ jobs:
   steps:  
   - template: templates/presidio-build-template.yaml  # Template reference
     parameters:
-      registry_name_parameter: $(registry_name) # input parameter
-      registry_parameter: $(registry) # input parameter
-      deps_label_parameter: $(dependency_default) # input parameter
+      registry_name_parameter: $(REGISTRY_NAME) # input parameter
+      registry_parameter: $(REGISTRY) # input parameter
+      deps_label_parameter: $(DEPENDENCY_DEFAULT) # input parameter
