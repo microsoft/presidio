@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: {{ $fullname }}
   labels:
+    app: {{ $fullname }}
+    service: {{ $fullname }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
