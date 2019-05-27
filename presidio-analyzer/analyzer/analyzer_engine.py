@@ -1,10 +1,11 @@
 import logging
 import os
 
+import uuid
+
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
-import uuid
 
 from analyzer import RecognizerRegistry
 from analyzer.nlp_engine import SpacyNlpEngine
