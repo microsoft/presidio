@@ -26,11 +26,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # load all recognizers
         registry.load_predefined_recognizers()
 
-    # pylint: disable=unused-argument
     def Apply(self, request, context):
         logging.info("Starting Apply")
         if context:
-            logging.info("[ARID: %s]", context.Value(0))
+            logging.info(context)
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
