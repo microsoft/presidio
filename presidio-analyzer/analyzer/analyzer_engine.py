@@ -4,6 +4,7 @@ import os
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
+import uuid
 
 from analyzer import RecognizerRegistry
 from analyzer.nlp_engine import SpacyNlpEngine
@@ -29,6 +30,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     # pylint: disable=unused-argument
     def Apply(self, request, context):
         logging.info("Starting Apply")
+        guid = uuid.uuid4()
+        logging.info("GUID is: %s", guid)
+
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
