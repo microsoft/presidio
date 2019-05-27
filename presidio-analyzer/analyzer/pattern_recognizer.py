@@ -130,8 +130,11 @@ class PatternRecognizer(LocalRecognizer):
 
                 score = pattern.score
 
+                details = {}
+                details["matcher"] = pattern.regex
+                details['original_score'] = score
                 res = RecognizerResult(self.supported_entities[0], start, end,
-                                       score)
+                                       score, details)
                 res = self.validate_result(current_match, res)
                 if res and res.score > EntityRecognizer.MIN_SCORE:
                     results.append(res)

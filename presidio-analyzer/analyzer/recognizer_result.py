@@ -1,6 +1,7 @@
 class RecognizerResult:
 
-    def __init__(self, entity_type, start, end, score):
+    def __init__(self, entity_type, start, end, score,
+                 interpretability_details=None):
         """
         Recognizer Result represents the findings of the detected entity
         of the analyzer in the text.
@@ -13,3 +14,9 @@ class RecognizerResult:
         self.start = start
         self.end = end
         self.score = score
+        self.interpretability_details = {}
+        if interpretability_details:
+            self.interpretability_details = interpretability_details
+
+    def __repr__(self):
+        return str(self.__dict__)

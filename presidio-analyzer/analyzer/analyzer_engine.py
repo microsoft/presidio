@@ -1,6 +1,8 @@
 import logging
 import os
 
+import uuid
+
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
@@ -11,7 +13,6 @@ from analyzer.nlp_engine import SpacyNlpEngine
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
     format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
-
 DEFAULT_LANGUAGE = "en"
 
 
@@ -26,13 +27,33 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # load all recognizers
         registry.load_predefined_recognizers()
 
+        self.init_req_logger()
+
+    def init_req_logger(self):
+        formatter = logging.Formatter(
+            '%(asctime)s:%(levelname)s:[%(req_id)s]:%(message)s')
+        self.request_logger = logging.getLogger('analyze.request.logger')
+        handler = None
+        if self.request_logger.handlers:
+            handler = self.request_logger.handlers[0]
+        else:
+            handler = logging.StreamHandler()
+        handler.setLevel(logging.INFO)
+        handler.setFormatter(formatter)
+        self.request_logger.addHandler(handler)
+
     # pylint: disable=unused-argument
     def Apply(self, request, context):
-        logging.info("Starting Apply")
+        # generate a guid to differntiate requests
+        analyze_requestid = uuid.uuid4()
+        self.request_logger.info("Starting Apply",
+                                 extra={'req_id': analyze_requestid})
+
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language,
+        results = self.analyze(analyze_requestid,
+                               request.text, entities, language,
                                request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
@@ -41,7 +62,13 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # pylint: disable=no-member
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))
-        logging.info("Found %d results", len(results))
+
+        for res in results:
+            if not res.interpretability_details == {}:
+                self.request_logger.info(res,
+                                         extra={'req_id': analyze_requestid})
+        logging.info("Found %d results", len(results),
+                     extra={'req_id': analyze_requestid})
         return response
 
     @staticmethod
@@ -78,7 +105,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, text, entities, language, all_fields):
+    def analyze(self, analyze_requestid, text, entities, language, all_fields):
         """
         analyzes the requested text, searching for the given entities
          in the given language
@@ -90,9 +117,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :return: an array of the found entities in the text
         """
 
-        recognizers = self.registry.get_recognizers(language=language,
-                                                    entities=entities,
-                                                    all_fields=all_fields)
+        recognizers = self.registry.get_recognizers(
+            analyze_requestid=analyze_requestid,
+            language=language,
+            entities=entities,
+            all_fields=all_fields)
 
         if all_fields:
             if entities:
@@ -118,6 +147,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             # analyze using the current recognizer and append the results
             current_results = recognizer.analyze(text, entities, nlp_artifacts)
             if current_results:
+                for cur_res in current_results:
+                    cur_res.interpretability_details['recognizer'] = \
+                        recognizer.name
                 results.extend(current_results)
 
         return AnalyzerEngine.__remove_duplicates(results)

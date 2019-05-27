@@ -58,7 +58,8 @@ class RecognizerRegistry:
             UsPhoneRecognizer(), UsSsnRecognizer(),
             SpacyRecognizer()])
 
-    def get_recognizers(self, language, entities=None, all_fields=False):
+    def get_recognizers(self, analyze_requestid, language, entities=None,
+                        all_fields=False):
         """
         Returns a list of the recognizer, which supports the specified name and
         language.
@@ -78,7 +79,8 @@ class RecognizerRegistry:
         custom_recognizers = self.get_custom_recognizers()
         all_possible_recognizers.extend(custom_recognizers)
         logging.info("Found %d (total) custom recognizers",
-                     len(custom_recognizers))
+                     len(custom_recognizers),
+                     extra={'req_id': analyze_requestid})
 
         # filter out unwanted recognizers
         to_return = []
@@ -94,13 +96,15 @@ class RecognizerRegistry:
                 if not subset:
                     logging.warning("Entity %s doesn't have the corresponding"
                                     " recognizer in language : %s",
-                                    entity, language)
+                                    entity,
+                                    language,
+                                    extra={'req_id': analyze_requestid})
                 else:
                     to_return.extend(subset)
 
         logging.info(
             "Returning a total of %d recognizers (predefined + custom)",
-            len(to_return))
+            len(to_return), extra={'req_id': analyze_requestid})
 
         if not to_return:
             raise ValueError(

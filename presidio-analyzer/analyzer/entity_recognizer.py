@@ -38,9 +38,13 @@ class EntityRecognizer:
 
         loglevel = os.environ.get("LOG_LEVEL", "INFO")
         self.logger = logging.getLogger(__name__)
+        logging.basicConfig(
+            format='%(asctime)s:%(levelname)s:[%(req_id)s]%(message)s',
+            level=loglevel)
+
         self.logger.setLevel(loglevel)
         self.load()
-        logging.info("Loaded recognizer: %s", self.name)
+        logging.info("Loaded recognizer: %s", self.name, extra={'req_id': ''})
         self.is_loaded = True
 
     @abstractmethod
@@ -134,16 +138,20 @@ class EntityRecognizer:
 
             context_similarity = self.__calculate_context_similarity(
                 context, predefined_context_words)
-            if context_similarity >= \
-               self.CONTEXT_SIMILARITY_THRESHOLD:
+            original_score = result.score
+            if context_similarity != "":
                 result.score += \
-                  context_similarity * self.CONTEXT_SIMILARITY_FACTOR
+                  self.CONTEXT_SIMILARITY_FACTOR
                 result.score = max(
                     result.score,
                     self.MIN_SCORE_WITH_CONTEXT_SIMILARITY)
                 result.score = min(
                     result.score,
                     EntityRecognizer.MAX_SCORE)
+                result.interpretability_details['context_word'] = \
+                    context_similarity
+                result.interpretability_details['score_context_improvment'] = \
+                    result.score - original_score
         return results
 
     @staticmethod
@@ -162,16 +170,16 @@ class EntityRecognizer:
                manually specified by the recognizer's author
         """
 
+        word = ""
         # If the context list is empty, no need to continue
         if context_list is None:
-            return 0
+            return word
 
         # Take the context text and break it into individual keywords
         lemmatized_keywords = self.__context_to_keywords(context_text)
         if lemmatized_keywords is None:
-            return 0
+            return word
 
-        similarity = 0.0
         for predefined_context_word in context_list:
             # result == true only if any of the predefined context words
             # is found exactly or as a substring in any of the collected
@@ -182,10 +190,10 @@ class EntityRecognizer:
             if result:
                 self.logger.debug("Found context keyword '%s'",
                                   predefined_context_word)
-                similarity = 1
+                word = predefined_context_word
                 break
 
-        return similarity
+        return word
 
     @staticmethod
     def __add_n_words(index,
