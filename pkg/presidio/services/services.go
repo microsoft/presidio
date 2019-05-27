@@ -257,9 +257,14 @@ func (services *Services) AnalyzeItem(ctx context.Context, text string, template
 		Text:            text,
 	}
 
-	const aridKey key = 0
+	type key int
+
+	const (
+		aridKey key = iota
+	)
+
 	analyzeRequestID := guuid.New()
-	ctx = context.WithValue(ctx, aridKey, analyzeRequestID.ToString())
+	ctx = context.WithValue(ctx, aridKey, analyzeRequestID)
 	results, err := services.AnalyzerService.Apply(ctx, analyzeRequest)
 	if err != nil {
 		return nil, err
