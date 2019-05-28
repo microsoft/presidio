@@ -106,7 +106,7 @@ docker-push-release: $(addsuffix -push-release,$(IMAGES))
 %-push-release:
 ifeq ($(RELEASE_VERSION),)
 	$(warning RELEASE_VERSION is not set)
-endif
+else
 	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/public/$*:$(RELEASE_VERSION)
@@ -116,6 +116,7 @@ endif
 	docker push $(DOCKER_REGISTRY)/public/$*:$(RELEASE_VERSION)	
 	docker push $(DOCKER_REGISTRY)/$*:latest
 	docker push $(DOCKER_REGISTRY)/public/$*:latest
+endif
 	
 # All non-functional tests
 .PHONY: test
