@@ -109,7 +109,7 @@ To enable istio on your kubernetes cluster, refer to the official [quick-start g
     ```sh
     kubectl label namespace presidio istio-injection=enabled
 
-    helm install --name presidio-demo --set registry=$REGISTRY,tag=$TAG,ingress.class=istio ../charts/presidio --namespace presidio
+    helm install --name presidio-demo --set registry=$REGISTRY,tag=$TAG,api.ingress.class=istio ../charts/presidio --namespace presidio
     ```
 
 - Open the grafana dashbaord
@@ -120,7 +120,12 @@ To enable istio on your kubernetes cluster, refer to the official [quick-start g
 
 - Open your browser at http://localhost:3000
 
-- TODO: continue when we have the logs
+- Istio's grafana comes with several built in dashabords, for instance:
+
+    * **[Istio Mesh Dashboard](http://localhost:3000/dashboard/db/istio-mesh-dashboard)** - global view of the Mesh along with services and workloads in the mesh. 
+    * **[Service Dashboards](http://localhost:3000/dashboard/db/istio-service-dashboard)** - metrics for the service and then client workloads (workloads that are calling this service) and service workloads (workloads that are providing this service) for that service.
+    * **[Workload Dashboards](http://localhost:3000/dashboard/db/istio-workload-dashboard)** - metrics for each workload and then inbound workloads (workloads that are sending request to this workload) and outbound services (services to which this workload send requests) for that workload.
+
 
 - Alternatively, open Prometheus dashabord to query the database directly
 
@@ -142,7 +147,7 @@ kubectl port-forward -n istio-system $(kubectl get pod -n istio-system -l app=ki
 
 - Open your browser at http://localhost:20001/kiali/console/
 
-- TODO: continue when we have the logs
+- View workload, application and service health and the dependency graph between presidio services with network and performance KPIs.   
 
 
 ##### Example - Presidio Distributed Metrics
@@ -155,7 +160,9 @@ kubectl port-forward -n istio-system $(kubectl get pod -n istio-system -l app=ja
 
 - Open your browser at http://localhost:16686
 
-- TODO: continue when we have the logs
+- Note that jaeger has a sample rate of around 1/100, tracing may take time to show.
+
+- Use the search tab to find specific requests and the dependencies tab to view presidio service relations.
 
 ### Using Linkerd
 
@@ -173,4 +180,9 @@ linkerd dashboard
 
 - The browser is opened
 
-- TODO: continue when we have the logs
+- Linkerd dashbaord are built on top of prometheus and provide an overview of services health and KPIs.  
+    grafana is opened when clicking a service for greater insights, featuring the following dashbaords:  
+
+    * **Top Line Metrics** - "golden" KPIs for top services
+    * **Deployment Detail** - per deployment KPIs
+    * **Pod Details** - per pod KPIs

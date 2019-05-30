@@ -1,4 +1,4 @@
-{{- if .Values.api.ingress.enabled and .Values.api.ingress.class == "istio" -}}
+{{- if and (.Values.api.ingress.enabled) (eq .Values.api.ingress.class "istio") -}}
 {{- $serviceName := include "presidio.api.fullname" . -}}
 {{- $servicePort := .Values.api.service.externalPort -}}
 {{- $servicePortName := .Values.api.service.name -}}
@@ -11,9 +11,9 @@ spec:
     istio: ingressgateway # use istio default controller
   servers:
   - port:
-      number: {{ $servicePort }}
+      number: 80
       name: http
-      protocol: {{ $servicePortName }}
+      protocol: HTTP
     hosts:
     - "*"
 ---
@@ -34,4 +34,5 @@ spec:
     - destination:
         host: {{ $serviceName }}
         port:
-          number: 8080
+          number: {{ $servicePort }}
+{{- end -}}
