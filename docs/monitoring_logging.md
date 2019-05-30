@@ -60,7 +60,7 @@ Shipping logs from a microservices platform such as kubernetes to the logs datab
 The following section describes deploying an EFK (Elastic, FluentD, Kibana) stack to a development AKS cluster.  
 **Note that:** the following scripts do **not** fit a production environment in terms of security and scale.
 
-- Install elastic 
+- Install elasticsearch
 
 ```sh
 helm install stable/elasticsearch --name=elasticsearch --namespace logging --set client.replicas=1 --set master.replicas=1  --set cluster.env.MINIMUM_MASTER_NODES=1 --set cluster.env.RECOVER_AFTER_MASTER_NODES=1 --set cluster.env.EXPECTED_MASTER_NODES=1  --set data.replicas=1 --set data.heapSize=300m  --set master.persistence.storageClass=managed-premium --set data.persistence.storageClass=managed-premium
@@ -104,6 +104,14 @@ To enable istio on your kubernetes cluster, refer to the official [quick-start g
 
 ##### Example - Presidio Service Metrics
 
+- Make sure presidio namespace is tagged for istio sidecar injection and that presidio is deployed using the istio ingress.
+
+    ```sh
+    kubectl label namespace presidio istio-injection=enabled
+
+    helm install --name presidio-demo --set registry=$REGISTRY,tag=$TAG,ingress.class=istio ../charts/presidio --namespace presidio
+    ```
+
 - Open the grafana dashbaord
 
     ```sh
@@ -139,7 +147,7 @@ kubectl port-forward -n istio-system $(kubectl get pod -n istio-system -l app=ki
 
 ##### Example - Presidio Distributed Metrics
 
-- Open the [Jaeger](https://www.jaegertracing.io/) service mesh observability dashbaord
+- Open the [Jaeger](https://www.jaegertracing.io/) e2e distributed tracing tool
 
 ```sh
 kubectl port-forward -n istio-system $(kubectl get pod -n istio-system -l app=jaeger -o jsonpath='{.items[0].metadata.name}') 16686:16686
