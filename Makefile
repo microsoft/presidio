@@ -48,11 +48,6 @@ docker-build: $(addsuffix -dimage,$(IMAGES))
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 # You must be logged into DOCKER_REGISTRY before you can push.
-.PHONY: docker-push-deps
-docker-push-deps: 
-	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL)	
-	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)	
-
 .PHONY: docker-push-latest-deps
 docker-push-latest-deps: 
 	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest	
