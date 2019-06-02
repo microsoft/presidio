@@ -139,7 +139,7 @@ kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=pr
 
 ##### Example - Presidio Service Dependecies
 
-- Open the [Kiali](https://www.kiali.io/) service mesh observability dashbaord
+- Open the [Kiali](https://www.kiali.io/) service mesh observability dashboard
 
 ```sh
 kubectl port-forward -n istio-system $(kubectl get pod -n istio-system -l app=kiali -o jsonpath='{.items[0].metadata.name}') 20001:20001
