@@ -29,9 +29,14 @@ class SpacyRecognizer(LocalRecognizer):
             if entity in self.supported_entities:
                 for ent in ner_entities:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
-                        results.append(
-                            RecognizerResult(entity, ent.start_char,
-                                             ent.end_char, NER_STRENGTH))
+                        details = {}
+                        details["matcher"] = "SpaCy"
+                        details['original_score'] = NER_STRENGTH
+                        spacy_result = RecognizerResult(
+                            entity, ent.start_char,
+                            ent.end_char, NER_STRENGTH)
+                        spacy_result.interpretability_details = details
+                        results.append(spacy_result)
 
         return results
 
