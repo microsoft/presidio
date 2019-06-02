@@ -27,27 +27,28 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # load all recognizers
         registry.load_predefined_recognizers()
 
-        self.init_req_logger()
+        # self.init_req_logger()
 
-    def init_req_logger(self):
-        formatter = logging.Formatter(
-            '%(asctime)s:%(levelname)s:[%(req_id)s]:%(message)s')
-        self.request_logger = logging.getLogger('analyze.request.logger')
-        handler = None
-        if self.request_logger.handlers:
-            handler = self.request_logger.handlers[0]
-        else:
-            handler = logging.StreamHandler()
-        handler.setLevel(logging.INFO)
-        handler.setFormatter(formatter)
-        self.request_logger.addHandler(handler)
+    # def init_req_logger(self):
+    #     formatter = logging.Formatter(
+    #         '%(asctime)s:%(levelname)s:[%(req_id)s]:%(message)s')
+    #     self.request_logger = logging.getLogger('analyze.request.logger')
+    #     handler = None
+    #     if self.request_logger.handlers:
+    #         handler = self.request_logger.handlers[0]
+    #     else:
+    #         handler = logging.StreamHandler()
+    #     handler.setLevel(logging.INFO)
+    #     handler.setFormatter(formatter)
+    #     self.request_logger.addHandler(handler)
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
         # generate a guid to differntiate requests
         analyze_requestid = uuid.uuid4()
-        self.request_logger.info("Starting Apply",
-                                 extra={'req_id': analyze_requestid})
+        # self.request_logger.info("Starting Apply",
+        #                         extra={'req_id': analyze_requestid})
+        logging.info("Starting Apply")
 
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
@@ -63,12 +64,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))
 
-        for res in results:
-            if not res.interpretability_details == {}:
-                self.request_logger.info(res,
-                                         extra={'req_id': analyze_requestid})
-        logging.info("Found %d results", len(results),
-                     extra={'req_id': analyze_requestid})
+        # logging.info("Found %d results", len(results),
+        #             extra={'req_id': analyze_requestid})
+        logging.info("Found %d results", len(results))
         return response
 
     @staticmethod
@@ -148,11 +146,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             current_results = recognizer.analyze(text, entities, nlp_artifacts)
             if current_results:
                 for cur_res in current_results:
-                    cur_res.interpretability_details['recognizer'] = \
-                        recognizer.name
+                    cur_res.analyze_requestid = str(analyze_requestid)
                 results.extend(current_results)
 
-        return AnalyzerEngine.__remove_duplicates(results)
+        results = AnalyzerEngine.__remove_duplicates(results)
+        for res in results:
+            if not res.interpretability_details == {}:
+                logging.info(res)
+        return results
 
     @staticmethod
     def __list_entities(recognizers):
