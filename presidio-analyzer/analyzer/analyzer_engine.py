@@ -151,8 +151,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         results = AnalyzerEngine.__remove_duplicates(results)
         for res in results:
-            if not res.interpretability_details == {}:
-                logging.info(res)
+            logging.info(res)
         return results
 
     @staticmethod
