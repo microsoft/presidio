@@ -88,7 +88,7 @@ kubectl -n logging port-forward $(kubectl -n logging get pod -l app=kibana -o js
 
 - Open your browser at http://localhost:5601
 
-- TODO: continue when we have the logs
+- After initilization of kibana index, switch to the "Discover" tab and search for presidio specific logs.
 
 ### Service Level Metrics and Distributed Tracing
 
