@@ -21,9 +21,16 @@ class CryptoRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text, pattern_result):
         # try:
+        original_score = pattern_result.score
+
+        original_score = pattern_result.score
         bcbytes = CryptoRecognizer.__decode_base58(pattern_text, 25)
         if bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]:
             pattern_result.score = EntityRecognizer.MAX_SCORE
+
+        pattern_result.result_description['score_context_improvment'] = \
+            pattern_result.score - original_score
+
         return pattern_result
 
     @staticmethod

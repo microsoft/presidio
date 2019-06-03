@@ -53,11 +53,11 @@ class PatternRecognizer(LocalRecognizer):
         pass
 
     # pylint: disable=unused-argument
-    def analyze(self, text, entities, nlp_artifacts=None, request_id=None):
+    def analyze(self, text, entities, nlp_artifacts=None):
         results = []
 
         if self.patterns:
-            pattern_result = self.__analyze_patterns(text, request_id)
+            pattern_result = self.__analyze_patterns(text)
 
             if pattern_result and self.context:
                 # try to improve the results score using the surrounding
@@ -99,7 +99,20 @@ class PatternRecognizer(LocalRecognizer):
         """
         return pattern_result
 
-    def __analyze_patterns(self, text, request_id):
+    @staticmethod
+    def build_regex_explanation(
+            recognizer_name,
+            pattern_name,
+            pattern,
+            original_score):
+        description = {}
+        description["recognizer"] = recognizer_name
+        description["pattern_name"] = pattern_name
+        description["pattern"] = pattern
+        description['original_score'] = original_score
+        return description
+
+    def __analyze_patterns(self, text):
         """
         Evaluates all patterns in the provided text, including words in
          the provided blacklist
@@ -130,11 +143,17 @@ class PatternRecognizer(LocalRecognizer):
 
                 score = pattern.score
 
-                description = {}
-                description["matcher"] = pattern.regex
-                description['original_score'] = score
-                res = RecognizerResult(self.supported_entities[0], start, end,
-                                       score, request_id, description)
+                description = PatternRecognizer.build_regex_explanation(
+                    self.name,
+                    pattern.name,
+                    pattern.regex,
+                    score)
+                res = RecognizerResult(
+                    self.supported_entities[0],
+                    start,
+                    end,
+                    score,
+                    description)
                 res = self.validate_result(current_match, res)
                 if res and res.score > EntityRecognizer.MIN_SCORE:
                     results.append(res)

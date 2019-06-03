@@ -37,7 +37,7 @@ class IbanRecognizer(PatternRecognizer):
         pattern_text = pattern_text.replace(' ', '')
         is_valid_checksum = (IbanRecognizer.__generate_iban_check_digits(
             pattern_text) == pattern_text[2:4])
-
+        original_score = pattern_result.score
         score = EntityRecognizer.MIN_SCORE
         if is_valid_checksum:
             if IbanRecognizer.__is_valid_format(pattern_text):
@@ -45,6 +45,9 @@ class IbanRecognizer(PatternRecognizer):
             elif IbanRecognizer.__is_valid_format(pattern_text.upper()):
                 score = IBAN_GENERIC_SCORE
         pattern_result.score = score
+
+        pattern_result.result_description['score_context_improvment'] = \
+            pattern_result.score - original_score
         return pattern_result
 
     @staticmethod

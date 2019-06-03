@@ -15,8 +15,15 @@ class SpacyRecognizer(LocalRecognizer):
         # preprocessed nlp artifacts
         pass
 
+    @staticmethod
+    def build_spacy_explanation(recognizer_name, original_score):
+        description = {}
+        description["recognizer"] = recognizer_name
+        description['original_score'] = original_score
+        return description
+
         # pylint: disable=unused-argument
-    def analyze(self, text, entities, nlp_artifacts=None, request_id=None):
+    def analyze(self, text, entities, nlp_artifacts=None):
         results = []
         if not nlp_artifacts:
             self.logger.warning(
@@ -29,13 +36,13 @@ class SpacyRecognizer(LocalRecognizer):
             if entity in self.supported_entities:
                 for ent in ner_entities:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
-                        details = {}
-                        details["matcher"] = "SpaCy"
-                        details['original_score'] = NER_STRENGTH
+                        description = SpacyRecognizer.build_spacy_explanation(
+                            "SpaCy",
+                            NER_STRENGTH)
                         spacy_result = RecognizerResult(
                             entity, ent.start_char,
                             ent.end_char, NER_STRENGTH)
-                        spacy_result.result_description = details
+                        spacy_result.result_description = description
                         results.append(spacy_result)
 
         return results

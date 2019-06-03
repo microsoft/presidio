@@ -29,7 +29,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
-        logging.info("Starting Apply")
+        logging.info("Starting Analyzer's Apply")
 
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
@@ -126,13 +126,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             current_results = recognizer.analyze(
                 text=text,
                 entities=entities,
-                nlp_artifacts=nlp_artifacts,
-                request_id=request_id)
+                nlp_artifacts=nlp_artifacts)
             results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
-        for res in results:
-            logging.info(res)
+        logging.info("[%s] explanation: %s",
+                     request_id,
+                     str(results))
+        # for res in results:
+        #    logging.info(res)
         return results
 
     @staticmethod

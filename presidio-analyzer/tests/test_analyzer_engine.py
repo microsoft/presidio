@@ -256,7 +256,7 @@ class TestAnalyzerEngine(TestCase):
             field.field.name for field in response.analyzeResults]
 
         assert response.analyzeResults is not None
-        assert "CREDgIT_CARD" in returned_entities
+        assert "CREDIT_CARD" in returned_entities
         assert "PHONE_NUMBER" in returned_entities
         assert "DOMAIN_NAME" in returned_entities
 

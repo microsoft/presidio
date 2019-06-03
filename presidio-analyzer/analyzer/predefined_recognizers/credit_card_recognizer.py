@@ -33,10 +33,14 @@ class CreditCardRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text, pattern_result):
         sanitized_value = CreditCardRecognizer.__sanitize_value(pattern_text)
         res = CreditCardRecognizer.__luhn_checksum(sanitized_value)
+        original_score = pattern_result.score
         if res == 0:
             pattern_result.score = EntityRecognizer.MAX_SCORE
         else:
             pattern_result.score = EntityRecognizer.MIN_SCORE
+
+        pattern_result.result_description['score_context_improvment'] = \
+            pattern_result.score - original_score
 
         return pattern_result
 

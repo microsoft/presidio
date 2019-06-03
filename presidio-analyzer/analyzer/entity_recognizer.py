@@ -55,7 +55,7 @@ class EntityRecognizer:
         """
 
     @abstractmethod
-    def analyze(self, text, entities, nlp_artifacts, request_id):
+    def analyze(self, text, entities, nlp_artifacts):
         """
         This is the core method for analyzing text, assuming entities are
         the subset of the supported entities types.
@@ -148,6 +148,9 @@ class EntityRecognizer:
                 result.score = min(
                     result.score,
                     EntityRecognizer.MAX_SCORE)
+
+                # Update the explainability object with context information
+                # helped improving the score
                 result.result_description['context_word'] = \
                     context_similarity
                 result.result_description['score_context_improvment'] = \
