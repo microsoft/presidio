@@ -16,7 +16,7 @@ class SpacyRecognizer(LocalRecognizer):
         pass
 
         # pylint: disable=unused-argument
-    def analyze(self, text, entities, nlp_artifacts=None):
+    def analyze(self, text, entities, nlp_artifacts=None, request_id=None):
         results = []
         if not nlp_artifacts:
             self.logger.warning(
@@ -35,7 +35,7 @@ class SpacyRecognizer(LocalRecognizer):
                         spacy_result = RecognizerResult(
                             entity, ent.start_char,
                             ent.end_char, NER_STRENGTH)
-                        spacy_result.interpretability_details = details
+                        spacy_result.result_description = details
                         results.append(spacy_result)
 
         return results

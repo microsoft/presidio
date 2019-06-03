@@ -27,34 +27,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # load all recognizers
         registry.load_predefined_recognizers()
 
-        # self.init_req_logger()
-
-    # def init_req_logger(self):
-    #     formatter = logging.Formatter(
-    #         '%(asctime)s:%(levelname)s:[%(req_id)s]:%(message)s')
-    #     self.request_logger = logging.getLogger('analyze.request.logger')
-    #     handler = None
-    #     if self.request_logger.handlers:
-    #         handler = self.request_logger.handlers[0]
-    #     else:
-    #         handler = logging.StreamHandler()
-    #     handler.setLevel(logging.INFO)
-    #     handler.setFormatter(formatter)
-    #     self.request_logger.addHandler(handler)
-
     # pylint: disable=unused-argument
     def Apply(self, request, context):
-        # generate a guid to differntiate requests
-        analyze_requestid = uuid.uuid4()
-        # self.request_logger.info("Starting Apply",
-        #                         extra={'req_id': analyze_requestid})
         logging.info("Starting Apply")
 
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(analyze_requestid,
-                               request.text, entities, language,
+        results = self.analyze(request.text, entities, language,
                                request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
@@ -64,8 +44,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))
 
-        # logging.info("Found %d results", len(results),
-        #             extra={'req_id': analyze_requestid})
         logging.info("Found %d results", len(results))
         return response
 
@@ -103,7 +81,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, analyze_requestid, text, entities, language, all_fields):
+    def analyze(self, text, entities, language, all_fields):
         """
         analyzes the requested text, searching for the given entities
          in the given language
@@ -114,9 +92,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         of the requested language
         :return: an array of the found entities in the text
         """
+        # generate a guid to differntiate requests
+        request_id = str(uuid.uuid4())
+        logging.info("Generated request id: %s", request_id)
 
         recognizers = self.registry.get_recognizers(
-            analyze_requestid=analyze_requestid,
             language=language,
             entities=entities,
             all_fields=all_fields)
@@ -143,11 +123,12 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.is_loaded = True
 
             # analyze using the current recognizer and append the results
-            current_results = recognizer.analyze(text, entities, nlp_artifacts)
-            if current_results:
-                for cur_res in current_results:
-                    cur_res.analyze_requestid = str(analyze_requestid)
-                results.extend(current_results)
+            current_results = recognizer.analyze(
+                text=text,
+                entities=entities,
+                nlp_artifacts=nlp_artifacts,
+                request_id=request_id)
+            results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
         for res in results:

@@ -53,11 +53,11 @@ class PatternRecognizer(LocalRecognizer):
         pass
 
     # pylint: disable=unused-argument
-    def analyze(self, text, entities, nlp_artifacts=None):
+    def analyze(self, text, entities, nlp_artifacts=None, request_id=None):
         results = []
 
         if self.patterns:
-            pattern_result = self.__analyze_patterns(text)
+            pattern_result = self.__analyze_patterns(text, request_id)
 
             if pattern_result and self.context:
                 # try to improve the results score using the surrounding
@@ -99,7 +99,7 @@ class PatternRecognizer(LocalRecognizer):
         """
         return pattern_result
 
-    def __analyze_patterns(self, text):
+    def __analyze_patterns(self, text, request_id):
         """
         Evaluates all patterns in the provided text, including words in
          the provided blacklist
@@ -130,11 +130,11 @@ class PatternRecognizer(LocalRecognizer):
 
                 score = pattern.score
 
-                details = {}
-                details["matcher"] = pattern.regex
-                details['original_score'] = score
+                description = {}
+                description["matcher"] = pattern.regex
+                description['original_score'] = score
                 res = RecognizerResult(self.supported_entities[0], start, end,
-                                       score, details)
+                                       score, request_id, description)
                 res = self.validate_result(current_match, res)
                 if res and res.score > EntityRecognizer.MIN_SCORE:
                     results.append(res)

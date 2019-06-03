@@ -49,7 +49,7 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
         self.latest_hash = m.digest()
 
     def remove_recognizer(self, name):
-        logging.info("removing recognizer " + name)
+        logging.info("removing recognizer %s", name)
         for i in self.recognizers:
             if i.name == name:
                 self.recognizers.remove(i)
@@ -62,7 +62,7 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
 class TestRecognizerRegistry(TestCase):
     def __init__(self, *args, **kwargs):
         super(TestRecognizerRegistry, self).__init__(*args, **kwargs)
-        self.analyze_requestid = "UT"
+        self.request_id = "UT"
 
     def test_dummy(self):
         assert 1 == 1
@@ -97,32 +97,30 @@ class TestRecognizerRegistry(TestCase):
     def test_get_recognizers_all(self):
         registry = self.get_mock_recognizer_registry()
         registry.load_predefined_recognizers()
-        recognizers = registry.get_recognizers(analyze_requestid = self.analyze_requestid, language='en', all_fields=True)
+        recognizers = registry.get_recognizers(language='en', all_fields=True)
         # 1 custom recognizer in english + 14 predefined
         assert len(recognizers) == 1 + 14
 
     def test_get_recognizers_all_fields(self):
         registry = self.get_mock_recognizer_registry()
-        recognizers = registry.get_recognizers(analyze_requestid = self.analyze_requestid, language='de', all_fields=True)
+        recognizers = registry.get_recognizers(language='de', all_fields=True)
         assert len(recognizers) == 2
 
     def test_get_recognizers_one_language_one_entity(self):
         registry = self.get_mock_recognizer_registry()
         recognizers = registry.get_recognizers(
-            analyze_requestid = self.analyze_requestid,
             language='de', entities=["PERSON"])
         assert len(recognizers) == 1
 
     def test_get_recognizers_unsupported_language(self):
         with pytest.raises(ValueError):
             registry = self.get_mock_recognizer_registry()
-            registry.get_recognizers(analyze_requestid = self.analyze_requestid,
-            language='brrrr', entities=["PERSON"])
+            registry.get_recognizers(
+                language='brrrr', entities=["PERSON"])
 
     def test_get_recognizers_specific_language_and_entity(self):
         registry = self.get_mock_recognizer_registry()
         recognizers = registry.get_recognizers(
-            analyze_requestid = self.analyze_requestid,
             language='he', entities=["PERSON"])
         assert len(recognizers) == 1
 
