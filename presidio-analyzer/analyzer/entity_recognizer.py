@@ -151,9 +151,9 @@ class EntityRecognizer:
 
                 # Update the explainability object with context information
                 # helped improving the score
-                result.result_description['context_word'] = \
+                result.result_description['supportive_context_word'] = \
                     context_similarity
-                result.result_description['score_context_improvment'] = \
+                result.result_description['score_context_improvement'] = \
                     result.score - original_score
         return results
 

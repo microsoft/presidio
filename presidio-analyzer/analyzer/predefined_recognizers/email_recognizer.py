@@ -27,7 +27,7 @@ class EmailRecognizer(PatternRecognizer):
         else:
             pattern_result.score = EntityRecognizer.MIN_SCORE
 
-        pattern_result.result_description['score_context_improvment'] = \
+        pattern_result.result_description['score_context_improvement'] = \
             pattern_result.score - original_score
 
         return pattern_result

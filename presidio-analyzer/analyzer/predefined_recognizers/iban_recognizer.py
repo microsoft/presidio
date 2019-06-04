@@ -46,7 +46,7 @@ class IbanRecognizer(PatternRecognizer):
                 score = IBAN_GENERIC_SCORE
         pattern_result.score = score
 
-        pattern_result.result_description['score_context_improvment'] = \
+        pattern_result.result_description['score_context_improvement'] = \
             pattern_result.score - original_score
         return pattern_result
 

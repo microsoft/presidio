@@ -28,7 +28,7 @@ class CryptoRecognizer(PatternRecognizer):
         if bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]:
             pattern_result.score = EntityRecognizer.MAX_SCORE
 
-        pattern_result.result_description['score_context_improvment'] = \
+        pattern_result.result_description['score_context_improvement'] = \
             pattern_result.score - original_score
 
         return pattern_result
