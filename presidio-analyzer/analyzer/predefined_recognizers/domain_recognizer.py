@@ -21,14 +21,9 @@ class DomainRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text, pattern_result):
         result = tldextract.extract(pattern_text)
-        original_score = pattern_result.score
-
         if result.fqdn != '':
             pattern_result.score = EntityRecognizer.MAX_SCORE
         else:
             pattern_result.score = EntityRecognizer.MIN_SCORE
-
-        pattern_result.result_description['score_context_improvement'] = \
-            pattern_result.score - original_score
 
         return pattern_result

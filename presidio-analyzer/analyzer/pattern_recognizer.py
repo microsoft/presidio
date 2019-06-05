@@ -3,7 +3,8 @@ import datetime
 from analyzer import LocalRecognizer, \
     Pattern, \
     RecognizerResult, \
-    EntityRecognizer
+    EntityRecognizer, \
+    AnalysisExplanation
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -105,12 +106,8 @@ class PatternRecognizer(LocalRecognizer):
             pattern_name,
             pattern,
             original_score):
-        description = {}
-        description["recognizer"] = recognizer_name
-        description["pattern_name"] = pattern_name
-        description["pattern"] = pattern
-        description['original_score'] = original_score
-        return description
+        explanation = AnalysisExplanation(recognizer_name, pattern_name, pattern, original_score)
+        return explanation
 
     def __analyze_patterns(self, text):
         """
@@ -155,6 +152,7 @@ class PatternRecognizer(LocalRecognizer):
                     score,
                     description)
                 res = self.validate_result(current_match, res)
+                description.set_improved_score(res.score)
                 if res and res.score > EntityRecognizer.MIN_SCORE:
                     results.append(res)
 

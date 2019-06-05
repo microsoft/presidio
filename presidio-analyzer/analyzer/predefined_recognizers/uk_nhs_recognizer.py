@@ -20,7 +20,6 @@ class NhsRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text, pattern_result):
         text = NhsRecognizer.__sanitize_value(pattern_text)
-        original_score = pattern_result.score
         multiplier = 10
         total = 0
         for c in text:
@@ -33,8 +32,6 @@ class NhsRecognizer(PatternRecognizer):
 
         pattern_result.score = 1.0 if check_digit == 11 else 0
 
-        pattern_result.result_description['score_context_improvement'] = \
-            pattern_result.score - original_score
         return pattern_result
 
     @staticmethod

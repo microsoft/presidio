@@ -130,11 +130,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
-        logging.info("[%s] explanation: %s",
+        logging.info("request_id [%s], explanation: %s",
                      request_id,
                      str(results))
-        # for res in results:
-        #    logging.info(res)
+
         return results
 
     @staticmethod

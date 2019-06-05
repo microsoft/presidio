@@ -36,13 +36,12 @@ class SpacyRecognizer(LocalRecognizer):
             if entity in self.supported_entities:
                 for ent in ner_entities:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
-                        description = SpacyRecognizer.build_spacy_explanation(
+                        explanation = SpacyRecognizer.build_spacy_explanation(
                             "SpaCy",
                             NER_STRENGTH)
                         spacy_result = RecognizerResult(
                             entity, ent.start_char,
-                            ent.end_char, NER_STRENGTH)
-                        spacy_result.result_description = description
+                            ent.end_char, NER_STRENGTH, explanation)
                         results.append(spacy_result)
 
         return results

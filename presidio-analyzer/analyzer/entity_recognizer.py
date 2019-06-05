@@ -2,7 +2,7 @@ import logging
 import os
 from abc import abstractmethod
 import copy
-
+from analyzer.analysis_explanation import AnalysisExplanation
 
 class EntityRecognizer:
     MIN_SCORE = 0
@@ -151,10 +151,9 @@ class EntityRecognizer:
 
                 # Update the explainability object with context information
                 # helped improving the score
-                result.result_description['supportive_context_word'] = \
-                    context_similarity
-                result.result_description['score_context_improvement'] = \
-                    result.score - original_score
+                result.analysis_explanation.set_supportive_context_word(
+                    context_similarity)
+                result.analysis_explanation.set_improved_score(result.score)
         return results
 
     @staticmethod

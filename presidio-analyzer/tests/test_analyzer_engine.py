@@ -9,7 +9,7 @@ from assertions import assert_result
 from analyzer.analyze_pb2 import AnalyzeRequest
 
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
-    RecognizerResult, RecognizerRegistry
+    RecognizerResult, RecognizerRegistry, AnalysisExplanation
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
@@ -149,8 +149,10 @@ class TestAnalyzerEngine(TestCase):
 
     def test_remove_duplicates(self):
         # test same result with different score will return only the highest
-        arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x"),
-               RecognizerResult(start=0, end=5, score=0.5, entity_type="x")]
+        arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x",
+                   analysis_explanation=AnalysisExplanation('test', 'test', 'test', 0)),
+               RecognizerResult(start=0, end=5, score=0.5, entity_type="x",
+                   analysis_explanation=AnalysisExplanation('test', 'test', 'test', 0))]
         results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
         assert len(results) == 1
         assert results[0].score == 0.5
@@ -256,7 +258,7 @@ class TestAnalyzerEngine(TestCase):
             field.field.name for field in response.analyzeResults]
 
         assert response.analyzeResults is not None
-        assert "CREDIT_CARD" in returned_entities
+        assert "CRsEDIT_CARD" in returned_entities
         assert "PHONE_NUMBER" in returned_entities
         assert "DOMAIN_NAME" in returned_entities
 
