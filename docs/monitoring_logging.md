@@ -51,7 +51,7 @@ ContainerLog
 
 ### Logging with Elasticsearch, Kibana, FluentD
 
-Logs in presidio are outputted to stdrr and stdout as a standard of logging in 12 factor/microservices applications.  
+Logs in presidio are outputted to stderr and stdout as a standard of logging in 12 factor/microservices applications.  
 to store logs for long term retention and exploration during failures and RCA, use [elasticsearch](https://github.com/elastic/elasticsearch) or other document databases that are optimized to act as a search engine (solr, splunk, etc). elasticsearch logs are easily queried and visualized using [kibana](https://github.com/elastic/kibana) or [grafana](https://github.com/grafana/grafana).  
 Shipping logs from a microservices platform such as kubernetes to the logs database is done using a logs processor\forwarder such as the CNCF project [FluentD](https://www.fluentd.org/).  
 
