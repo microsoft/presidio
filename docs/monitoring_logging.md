@@ -21,7 +21,7 @@ The following section covers three logging technology stacks that include potent
 - EFK (Elastic, FluentD, Kibana)
 - Kubernetes service mesh (Istio and Linkerd) 
 
-### Azure Kubernetes Engine (AKS) and Azure Monitor logging and metrics 
+### Azure Kubernetes Service (AKS) and Azure Monitor logging and metrics 
 When deploying presidio to AKS, [Azure Monitor](https://docs.microsoft.com/en-us/azure/azure-monitor/overview) provides the easiest way to manage and query logs and metrics using OOTB tooling.  
 There are a number of ways to enable Azure Monitor on either a new or an exising cluster using the portal, CLI and Terraform, [read more](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/container-insights-onboard).
 
