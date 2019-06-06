@@ -109,7 +109,7 @@ To enable istio on your kubernetes cluster, refer to the official [quick-start g
     ```sh
     kubectl label namespace presidio istio-injection=enabled
 
-    helm install --name presidio-demo --set registry=$REGISTRY,tag=$TAG,api.ingress.class=istio ../charts/presidio --namespace presidio
+    helm install --name presidio-demo --set registry=$REGISTRY,tag=$TAG,api.ingress.enabled=true,api.ingress.class=istio ../charts/presidio --namespace presidio
     ```
 
 - Open the grafana dashbaord
@@ -135,7 +135,7 @@ kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=pr
 
 - Open your browser at http://localhost:9090
 
-- TODO: continue when we have the logs
+-Search Prometheus for presidio containers telemetry
 
 ##### Example - Presidio Service Dependecies
 
