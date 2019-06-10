@@ -111,7 +111,10 @@ To enable istio on your kubernetes cluster, refer to the official [quick-start g
     ```sh
     kubectl label namespace presidio istio-injection=enabled
 
-    helm install --name presidio-demo --set registry=$REGISTRY,tag=$TAG,api.ingress.enabled=true,api.ingress.class=istio ../charts/presidio --namespace presidio
+    export REGISTRY=mcr.microsoft.com
+    export TAG=latest
+    
+    helm install --name presidio-demo --set registry=$REGISTRY,tag=$TAG,api.ingress.enabled=true,api.ingress.class=istio charts/presidio --namespace presidio
     ```
 
 - Open the grafana dashbaord
