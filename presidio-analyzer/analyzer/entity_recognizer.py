@@ -132,28 +132,34 @@ class EntityRecognizer:
                 word=text[result.start:result.end],
                 start=result.start)
 
-            context_similarity = self.__calculate_context_similarity(
+            supportive_context_word = self.__find_supportive_context_word(
                 context, predefined_context_words)
-            if context_similarity >= \
-               self.CONTEXT_SIMILARITY_THRESHOLD:
+            if supportive_context_word != "":
                 result.score += \
-                  context_similarity * self.CONTEXT_SIMILARITY_FACTOR
+                  self.CONTEXT_SIMILARITY_FACTOR
                 result.score = max(
                     result.score,
                     self.MIN_SCORE_WITH_CONTEXT_SIMILARITY)
                 result.score = min(
                     result.score,
                     EntityRecognizer.MAX_SCORE)
+
+                # Update the explainability object with context information
+                # helped improving the score
+                result.analysis_explanation.set_supportive_context_word(
+                    supportive_context_word)
+                result.analysis_explanation.set_improved_score(result.score)
         return results
 
     @staticmethod
     def __context_to_keywords(context):
         return context.split(' ')
 
-    def __calculate_context_similarity(self,
+    def __find_supportive_context_word(self,
                                        context_text,
                                        context_list):
-        """Context similarity is 1 if there's exact match between a keyword in
+        """A word is considered a supportive context word if
+           there's exact match between a keyword in
            context_text and any keyword in context_list
 
         :param context_text words before and after the matched enitity within
@@ -162,16 +168,16 @@ class EntityRecognizer:
                manually specified by the recognizer's author
         """
 
+        word = ""
         # If the context list is empty, no need to continue
         if context_list is None:
-            return 0
+            return word
 
         # Take the context text and break it into individual keywords
         lemmatized_keywords = self.__context_to_keywords(context_text)
         if lemmatized_keywords is None:
-            return 0
+            return word
 
-        similarity = 0.0
         for predefined_context_word in context_list:
             # result == true only if any of the predefined context words
             # is found exactly or as a substring in any of the collected
@@ -182,10 +188,10 @@ class EntityRecognizer:
             if result:
                 self.logger.debug("Found context keyword '%s'",
                                   predefined_context_word)
-                similarity = 1
+                word = predefined_context_word
                 break
 
-        return similarity
+        return word
 
     @staticmethod
     def __add_n_words(index,

@@ -62,6 +62,7 @@ func GetAnalyzerMockResult() *types.AnalyzeResponse {
 		},
 	}
 	return &types.AnalyzeResponse{
+		RequestId:      "21020352-c0bd-4af6-81e0-f1d53f34f2cb",
 		AnalyzeResults: results,
 	}
 }

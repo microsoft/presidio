@@ -249,18 +249,18 @@ func (services *Services) GetRecognizersHash(
 }
 
 //AnalyzeItem - search for PII
-func (services *Services) AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error) {
+func (services *Services) AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) (*types.AnalyzeResponse, error) {
 	analyzeRequest := &types.AnalyzeRequest{
 		AnalyzeTemplate: template,
 		Text:            text,
 	}
 
-	results, err := services.AnalyzerService.Apply(ctx, analyzeRequest)
+	response, err := services.AnalyzerService.Apply(ctx, analyzeRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	return results.AnalyzeResults, nil
+	return response, nil
 }
 
 //AnonymizeItem - anonymize text

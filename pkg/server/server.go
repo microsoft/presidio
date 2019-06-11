@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/zap"
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 
@@ -91,6 +91,17 @@ func WriteResponse(
 	responseBody interface{},
 ) {
 	c.JSON(statusCode, responseBody)
+}
+
+//WriteResponseWithRequestID writes a response and adds a request id header
+func WriteResponseWithRequestID(
+	c *gin.Context,
+	statusCode int,
+	requestID string,
+	responseBody interface{},
+) {
+	c.Header("analyze-request-id", requestID)
+	WriteResponse(c, statusCode, responseBody)
 }
 
 //AbortWithError aborts the request and returns the error in the response body

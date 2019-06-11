@@ -1,4 +1,4 @@
-from analyzer import RecognizerResult, LocalRecognizer
+from analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 
 NER_STRENGTH = 0.85
 SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
@@ -15,6 +15,12 @@ class SpacyRecognizer(LocalRecognizer):
         # preprocessed nlp artifacts
         pass
 
+    @staticmethod
+    def build_spacy_explanation(recognizer_name, original_score):
+        explanation = AnalysisExplanation(recognizer_name, '',
+                                          '', original_score)
+        return explanation
+
         # pylint: disable=unused-argument
     def analyze(self, text, entities, nlp_artifacts=None):
         results = []
@@ -29,9 +35,13 @@ class SpacyRecognizer(LocalRecognizer):
             if entity in self.supported_entities:
                 for ent in ner_entities:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
-                        results.append(
-                            RecognizerResult(entity, ent.start_char,
-                                             ent.end_char, NER_STRENGTH))
+                        explanation = SpacyRecognizer.build_spacy_explanation(
+                            "SpaCy",
+                            NER_STRENGTH)
+                        spacy_result = RecognizerResult(
+                            entity, ent.start_char,
+                            ent.end_char, NER_STRENGTH, explanation)
+                        results.append(spacy_result)
 
         return results
 
