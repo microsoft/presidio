@@ -50,6 +50,10 @@ Follow the installation guide at the [Readme page](https://github.com/Microsoft/
 3. Optional - Ingress controller for presidio API.
     - [Traefik](https://docs.traefik.io/user-guide/kubernetes/)
     - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
+    - [Istio](https://istio.io/docs/tasks/traffic-management/ingress/)
+
+    **Note** that presidio is not deployed with an ingress controller by default.  
+    to change this behavior, deploy the helm chart with *api.ingress.enabled=true* and specify they type of ingress controller to be used with *api.ingress.class=nginx* (supported classes are: nginx, traefik or istio).
 
 4. Verify that Redis and Traefik/NGINX are installed correctly
 
