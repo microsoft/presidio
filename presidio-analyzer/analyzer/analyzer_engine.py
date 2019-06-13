@@ -44,7 +44,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
 
-        response.request_id = generated_request_id
+        response.requestId = generated_request_id
         # pylint: disable=no-member
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))
