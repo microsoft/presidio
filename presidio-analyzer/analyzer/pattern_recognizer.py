@@ -106,7 +106,8 @@ class PatternRecognizer(LocalRecognizer):
             pattern_name,
             pattern,
             original_score):
-        explanation = AnalysisExplanation(recognizer_name, pattern_name, pattern, original_score)
+        explanation = AnalysisExplanation(recognizer_name, pattern_name,
+                                          pattern, original_score)
         return explanation
 
     def __analyze_patterns(self, text):

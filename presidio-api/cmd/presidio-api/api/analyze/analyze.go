@@ -10,7 +10,7 @@ import (
 )
 
 //Analyze text
-func Analyze(ctx context.Context, api *store.API, analyzeAPIRequest *types.AnalyzeApiRequest, project string) ([]*types.AnalyzeResult, error) {
+func Analyze(ctx context.Context, api *store.API, analyzeAPIRequest *types.AnalyzeApiRequest, project string) (*types.AnalyzeResponse, error) {
 
 	if analyzeAPIRequest.AnalyzeTemplateId == "" && analyzeAPIRequest.AnalyzeTemplate == nil {
 		return nil, fmt.Errorf("Analyze template is missing or empty")

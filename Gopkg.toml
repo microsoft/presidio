@@ -52,7 +52,7 @@
   name = "github.com/korovkin/limiter"
 
 [[constraint]]
-  branch = "development"
+  branch = "logs_inter"
   name = "github.com/Microsoft/presidio-genproto"
 
 [[constraint]]

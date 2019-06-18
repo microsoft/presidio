@@ -1,4 +1,4 @@
-from analyzer import RecognizerResult, LocalRecognizer
+from analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 
 NER_STRENGTH = 0.85
 SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
@@ -17,10 +17,9 @@ class SpacyRecognizer(LocalRecognizer):
 
     @staticmethod
     def build_spacy_explanation(recognizer_name, original_score):
-        description = {}
-        description["recognizer"] = recognizer_name
-        description['original_score'] = original_score
-        return description
+        explanation = AnalysisExplanation(recognizer_name, '',
+                                          '', original_score)
+        return explanation
 
         # pylint: disable=unused-argument
     def analyze(self, text, entities, nlp_artifacts=None):

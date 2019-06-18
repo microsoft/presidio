@@ -136,10 +136,9 @@ class EntityRecognizer:
                 word=text[result.start:result.end],
                 start=result.start)
 
-            context_similarity = self.__calculate_context_similarity(
+            supportive_context_word = self.__find_supportive_context_word(
                 context, predefined_context_words)
-            original_score = result.score
-            if context_similarity != "":
+            if supportive_context_word != "":
                 result.score += \
                   self.CONTEXT_SIMILARITY_FACTOR
                 result.score = max(
@@ -152,7 +151,7 @@ class EntityRecognizer:
                 # Update the explainability object with context information
                 # helped improving the score
                 result.analysis_explanation.set_supportive_context_word(
-                    context_similarity)
+                    supportive_context_word)
                 result.analysis_explanation.set_improved_score(result.score)
         return results
 
@@ -160,10 +159,11 @@ class EntityRecognizer:
     def __context_to_keywords(context):
         return context.split(' ')
 
-    def __calculate_context_similarity(self,
+    def __find_supportive_context_word(self,
                                        context_text,
                                        context_list):
-        """Context similarity is 1 if there's exact match between a keyword in
+        """A word is considered a supportive context word if
+           there's exact match between a keyword in
            context_text and any keyword in context_list
 
         :param context_text words before and after the matched enitity within

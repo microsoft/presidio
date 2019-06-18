@@ -18,26 +18,26 @@ import (
 func ReceiveEventsFromStream(st stream.Stream, services presidio.ServicesAPI, streamRequest *types.StreamRequest) error {
 	return st.Receive(func(ctx context.Context, partition string, sequence string, text string) error {
 
-		analyzerResult, err := services.AnalyzeItem(ctx, text, streamRequest.AnalyzeTemplate)
+		analyzerResponse, err := services.AnalyzeItem(ctx, text, streamRequest.AnalyzeTemplate)
 		if err != nil {
 			err = fmt.Errorf("error analyzing message: %s, error: %q", text, err.Error())
 			return err
 		}
 
-		if len(analyzerResult) > 0 {
-			anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult, text, streamRequest.AnonymizeTemplate)
+		if len(analyzerResponse.AnalyzeResults) > 0 {
+			anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResponse.AnalyzeResults, text, streamRequest.AnonymizeTemplate)
 
 			if err != nil {
 				err = fmt.Errorf("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error())
 				return err
 			}
 
-			err = services.SendResultToDatasink(ctx, analyzerResult, anonymizerResult, fmt.Sprintf("%s/%s", partition, sequence))
+			err = services.SendResultToDatasink(ctx, analyzerResponse.AnalyzeResults, anonymizerResult, fmt.Sprintf("%s/%s", partition, sequence))
 			if err != nil {
 				err = fmt.Errorf("error sending message to datasink: %s/%s, error: %q", partition, sequence, err.Error())
 				return err
 			}
-			log.Debug("%d results were sent to the datasink successfully", len(analyzerResult))
+			log.Debug("%d results were sent to the datasink successfully", len(analyzerResponse.AnalyzeResults))
 
 		}
 		return nil
@@ -47,7 +47,7 @@ func ReceiveEventsFromStream(st stream.Stream, services presidio.ServicesAPI, st
 //ScanStorage ..
 func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, services presidio.ServicesAPI, scanRequest *types.ScanRequest) error {
 	return scan.Scan(func(item interface{}) error {
-		var analyzerResult []*types.AnalyzeResult
+		var analyzerResult *types.AnalyzeResponse //[]*types.AnalyzeResult
 
 		scanItem := scanner.CreateItem(scanRequest, item)
 		itemPath := scanItem.GetPath()
@@ -78,19 +78,19 @@ func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, s
 			if err != nil {
 				return err
 			}
-			log.Debug("analyzed %d results", len(analyzerResult))
+			log.Debug("analyzed %d results", len(analyzerResult.AnalyzeResults))
 
-			if len(analyzerResult) > 0 {
-				anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult, content, scanRequest.AnonymizeTemplate)
+			if len(analyzerResult.AnalyzeResults) > 0 {
+				anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult.AnalyzeResults, content, scanRequest.AnonymizeTemplate)
 				if err != nil {
 					return err
 				}
 
-				err = services.SendResultToDatasink(ctx, analyzerResult, anonymizerResult, itemPath)
+				err = services.SendResultToDatasink(ctx, analyzerResult.AnalyzeResults, anonymizerResult, itemPath)
 				if err != nil {
 					return err
 				}
-				log.Info("%d results were sent to the datasink successfully", len(analyzerResult))
+				log.Info("%d results were sent to the datasink successfully", len(analyzerResult.AnalyzeResults))
 
 			}
 			writeItemToCache(uniqueID, itemPath, cache)

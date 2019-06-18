@@ -34,12 +34,16 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language,
+
+        generated_request_id = str(uuid.uuid4())
+        results = self.analyze(generated_request_id, request.text,
+                               entities, language,
                                request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
 
+        response.requestId = generated_request_id
         # pylint: disable=no-member
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))
@@ -81,10 +85,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, text, entities, language, all_fields):
+    def analyze(self, request_id, text, entities, language, all_fields):
         """
         analyzes the requested text, searching for the given entities
          in the given language
+        :param request_id: the generated guid to be assigned with this request
         :param text: the text to analyze
         :param entities: the text to search
         :param language: the language of the text
@@ -93,7 +98,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :return: an array of the found entities in the text
         """
         # generate a guid to differntiate requests
-        request_id = str(uuid.uuid4())
+        request_id = request_id
         logging.info("Generated request id: %s", request_id)
 
         recognizers = self.registry.get_recognizers(
@@ -123,13 +128,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.is_loaded = True
 
             # analyze using the current recognizer and append the results
-            current_results = recognizer.analyze(
-                text=text,
-                entities=entities,
-                nlp_artifacts=nlp_artifacts)
-            results.extend(current_results)
+            current_results = recognizer.analyze(text, entities, nlp_artifacts)
+            if current_results:
+                results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
+        for result in results:
+            result.analysis_explanation.set_nlp_artifacts(nlp_artifacts)
+
         logging.info("request_id [%s], explanation: %s",
                      request_id,
                      str(results))
