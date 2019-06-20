@@ -2,7 +2,7 @@ import logging
 import os
 from abc import abstractmethod
 import copy
-from analyzer.analysis_explanation import AnalysisExplanation
+
 
 class EntityRecognizer:
     MIN_SCORE = 0

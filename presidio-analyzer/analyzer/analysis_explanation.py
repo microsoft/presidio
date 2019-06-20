@@ -3,7 +3,8 @@ class AnalysisExplanation:
         helps undestand why PII entities where indentified as such
     """
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, recognizer, pattern_name, pattern, original_score):
+    def __init__(self, recognizer, pattern_name,
+                 pattern, original_score, free_text=None):
         """
         """
         self.recognizer = recognizer
@@ -11,13 +12,9 @@ class AnalysisExplanation:
         self.pattern = pattern
         self.original_score = original_score
         self.score = original_score
-
+        self.free_text = free_text
         self.score_context_improvement = 0
         self.supportive_context_word = ''
-
-        self.nlp_artifacts = {}
-        self.nlp_artifacts["tokens"] = {}
-        self.nlp_artifacts["lemmas"] = {}
 
     def __repr__(self):
         return str(self.__dict__)
@@ -34,9 +31,8 @@ class AnalysisExplanation:
         """
         self.supportive_context_word = word
 
-    def set_nlp_artifacts(self, nlp_artifacts):
-        """ Sets the NLP artifacts that we used in the process, that
-            contributed to the identification of the PII entities
-        """
-        self.nlp_artifacts["tokens"] = nlp_artifacts.tokens
-        self.nlp_artifacts["lemmas"] = nlp_artifacts.lemmas
+    def append_free_text_line(self, text):
+        if self.free_text is None:
+            self.free_text = text
+        else:
+            self.free_text = "{}\n{}".format(self.free_text, text)

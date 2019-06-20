@@ -2,7 +2,7 @@ import logging
 
 
 class AppTracer:
-"""This class handles app traces"""
+    """This class handles app traces"""
     def __init__(self, enable_interpretability=True):
 
         logger = logging.getLogger('Interpretability')

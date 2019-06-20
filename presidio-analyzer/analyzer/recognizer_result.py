@@ -1,6 +1,10 @@
+from . import AnalysisExplanation
+
+
 class RecognizerResult:
 
-    def __init__(self, entity_type, start, end, score, analysis_explanation):
+    def __init__(self, entity_type, start, end, score,
+                 analysis_explanation: AnalysisExplanation = None):
         """
         Recognizer Result represents the findings of the detected entity
         of the analyzer in the text.
@@ -15,8 +19,11 @@ class RecognizerResult:
         self.start = start
         self.end = end
         self.score = score
-        if analysis_explanation:
-            self.analysis_explanation = analysis_explanation
+        self.analysis_explanation = analysis_explanation
+
+    def append_analysis_explenation_text(self, text):
+        if self.analysis_explanation:
+            self.analysis_explanation.append_free_text_line(text)
 
     def __repr__(self):
         return str(self.__dict__)

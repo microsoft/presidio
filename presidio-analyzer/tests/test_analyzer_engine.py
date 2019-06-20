@@ -17,7 +17,7 @@ from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
 from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
-from tests.mocks import MockNlpEngine
+from tests.mocks import MockNlpEngine, app_tracer_mock
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
     """
@@ -85,13 +85,15 @@ us_license_recognizer = UsLicenseRecognizer()
 us_bank_recognizer = UsBankRecognizer()
 us_passport_recognizer = UsPassportRecognizer()
 
+
 class TestAnalyzerEngine(TestCase):
 
     def __init__(self, *args, **kwargs):
         super(TestAnalyzerEngine, self).__init__(*args, **kwargs)
         self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
-        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts))
+        self.ml_tracer = app_tracer_mock.AppTracerMock(enable_interpretability=True)
+        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts), ml_tracer=self.ml_tracer)
         self.unit_test_guid = "00000000-0000-0000-0000-000000000000"
 
     def test_analyze_with_predefined_recognizers_return_results(self):
@@ -286,4 +288,12 @@ class TestAnalyzerEngine(TestCase):
         new_field.minScore = '0.5'
         with pytest.raises(ValueError):
             analyze_engine.Apply(request, None)
-    
+
+    def test_when_analyze_then_mltracer_has_value(self):
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
+        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry, ml_tracer=self.ml_tracer)
+        results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text, entities, language, all_fields=False)
+        assert len(results) == 2
+        assert self.ml_tracer.get_last_trace() is not None

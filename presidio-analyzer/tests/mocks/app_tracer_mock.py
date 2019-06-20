@@ -1,7 +1,7 @@
 import logging
 
 
-class MLTracerMock:
+class AppTracerMock:
 
     def __init__(self, enable_interpretability=True):
 

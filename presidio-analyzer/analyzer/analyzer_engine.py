@@ -1,6 +1,3 @@
-import logging
-import os
-
 import uuid
 
 import analyze_pb2
@@ -8,28 +5,31 @@ import analyze_pb2_grpc
 import common_pb2
 
 from analyzer import RecognizerRegistry
+from analyzer.logger import Logger
+from analyzer.app_tracer import AppTracer
 from analyzer.nlp_engine import SpacyNlpEngine
 
-loglevel = os.environ.get("LOG_LEVEL", "INFO")
-logging.basicConfig(
-    format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
+
 DEFAULT_LANGUAGE = "en"
+logger = Logger()
 
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=RecognizerRegistry(),
-                 nlp_engine=SpacyNlpEngine()):
+                 nlp_engine=SpacyNlpEngine(),
+                 ml_tracer=AppTracer()):
         # load nlp module
         self.nlp_engine = nlp_engine
         # prepare registry
         self.registry = registry
         # load all recognizers
         registry.load_predefined_recognizers()
+        self.ml_tracer = ml_tracer
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
-        logging.info("Starting Analyzer's Apply")
+        logger.info("Starting Analyzer's Apply")
 
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
@@ -48,7 +48,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))
 
-        logging.info("Found %d results", len(results))
+        logger.info("Found %d results", len(results))
         return response
 
     @staticmethod
@@ -97,9 +97,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         of the requested language
         :return: an array of the found entities in the text
         """
-        # generate a guid to differntiate requests
-        request_id = request_id
-        logging.info("Generated request id: %s", request_id)
+        logger.info("Generated request id: %s", request_id)
 
         recognizers = self.registry.get_recognizers(
             language=language,
@@ -120,6 +118,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # run the nlp pipeline over the given text, store the results in
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
+
+        self.ml_tracer.trace(request_id,
+                             "nlp artifacts:" + repr(nlp_artifacts))
+
         results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
@@ -133,12 +135,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
-        for result in results:
-            result.analysis_explanation.set_nlp_artifacts(nlp_artifacts)
-
-        logging.info("request_id [%s], explanation: %s",
-                     request_id,
-                     str(results))
+        self.ml_tracer.trace(request_id, repr(results))
 
         return results
 
