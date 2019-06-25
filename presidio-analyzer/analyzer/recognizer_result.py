@@ -23,7 +23,7 @@ class RecognizerResult:
 
     def append_analysis_explenation_text(self, text):
         if self.analysis_explanation:
-            self.analysis_explanation.append_free_text_line(text)
+            self.analysis_explanation.append_textual_explanation_line(text)
 
     def __repr__(self):
         return str(self.__dict__)

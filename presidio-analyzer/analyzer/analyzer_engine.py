@@ -18,14 +18,14 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=RecognizerRegistry(),
                  nlp_engine=SpacyNlpEngine(),
-                 ml_tracer=AppTracer()):
+                 app_tracer=AppTracer()):
         # load nlp module
         self.nlp_engine = nlp_engine
         # prepare registry
         self.registry = registry
         # load all recognizers
         registry.load_predefined_recognizers()
-        self.ml_tracer = ml_tracer
+        self.app_tracer = app_tracer
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
@@ -119,7 +119,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
-        self.ml_tracer.trace(request_id,
+        self.app_tracer.trace(request_id,
                              "nlp artifacts:" + repr(nlp_artifacts))
 
         results = []
@@ -135,7 +135,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
-        self.ml_tracer.trace(request_id, repr(results))
+        self.app_tracer.trace(request_id, repr(results))
 
         return results
 

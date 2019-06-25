@@ -1,10 +1,10 @@
 class AnalysisExplanation:
-    """ AnalysisExplanation is a class that holds forensic information that
-        helps undestand why PII entities where indentified as such
+    """ AnalysisExplanation is a class that holds tracing information
+     to explain why PII entities where indentified as such
     """
     # pylint: disable=too-many-instance-attributes
     def __init__(self, recognizer, pattern_name,
-                 pattern, original_score, free_text=None):
+                 pattern, original_score, textual_explanation=None):
         """
         """
         self.recognizer = recognizer
@@ -12,7 +12,7 @@ class AnalysisExplanation:
         self.pattern = pattern
         self.original_score = original_score
         self.score = original_score
-        self.free_text = free_text
+        self.textual_explanation = textual_explanation
         self.score_context_improvement = 0
         self.supportive_context_word = ''
 
@@ -31,8 +31,9 @@ class AnalysisExplanation:
         """
         self.supportive_context_word = word
 
-    def append_free_text_line(self, text):
-        if self.free_text is None:
-            self.free_text = text
+    def append_textual_explanation_line(self, text):
+        """Appends a new line to textual_explanation field"""
+        if self.textual_explanation is None:
+            self.textual_explanation = text
         else:
-            self.free_text = "{}\n{}".format(self.free_text, text)
+            self.textual_explanation = "{}\n{}".format(self.free_text, text)

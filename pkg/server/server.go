@@ -100,7 +100,7 @@ func WriteResponseWithRequestID(
 	requestID string,
 	responseBody interface{},
 ) {
-	c.Header("X-Request-Id", requestID)
+	c.Header("X-Correlation-Id", requestID)
 	WriteResponse(c, statusCode, responseBody)
 }
 
