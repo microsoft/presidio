@@ -119,8 +119,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
-        self.app_tracer.trace(request_id,
-                             "nlp artifacts:" + repr(nlp_artifacts))
+        self.app_tracer.trace(request_id, "nlp artifacts:"
+                              + repr(nlp_artifacts))
 
         results = []
         for recognizer in recognizers:
