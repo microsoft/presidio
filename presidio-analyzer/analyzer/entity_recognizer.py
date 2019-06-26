@@ -44,7 +44,7 @@ class EntityRecognizer:
 
         self.logger.setLevel(loglevel)
         self.load()
-        logging.info("Loaded recognizer: %s", self.name, extra={'req_id': ''})
+        logging.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
 
     @abstractmethod

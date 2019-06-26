@@ -18,7 +18,7 @@ class SpacyNlpEngine(NlpEngine):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(loglevel)
 
-        logging.info("Loading NLP model...", extra={'req_id': ''})
+        logging.info("Loading NLP model...")
         self.nlp = {"en": spacy.load("en_core_web_lg",
                                      disable=['parser', 'tagger'])}
 

@@ -4,7 +4,10 @@ from . import AnalysisExplanation
 class RecognizerResult:
 
     def __init__(self, entity_type, start, end, score,
-                 analysis_explanation: AnalysisExplanation = None):
+                 analysis_explanation: AnalysisExplanation = None,
+                 textual_result_explanation: str = None):
+
+
         """
         Recognizer Result represents the findings of the detected entity
         of the analyzer in the text.
@@ -20,6 +23,12 @@ class RecognizerResult:
         self.end = end
         self.score = score
         self.analysis_explanation = analysis_explanation
+
+        if self.analysis_explantion and textual_result_explanation:
+            raise ValueError("Expecting either analysis_explanation or textual_result_explanation, not both")
+
+        if not analysis_explanation:
+            self.analysis_explanation = AnalysisExplanation(textual_explanation=textual_result_explanation)
 
     def append_analysis_explenation_text(self, text):
         if self.analysis_explanation:
