@@ -17,9 +17,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __init__(self, registry,
                  nlp_engine):
         if not nlp_engine:
-            raise ValueError("Provide an nlp engine ")
+            from analyzer.nlp_engine import SpacyNlpEngine 
+            nlp_engine = SpacyNlpEngine()
         if not registry:
-            raise ValueError("Provide a recognizer registry ")
+            from analyzer import RecognizerRegistry 
+            registry = RecognizerRegistry()
         # load nlp module
 
         self.nlp_engine = nlp_engine
