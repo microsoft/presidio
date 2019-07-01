@@ -35,15 +35,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
 
-        generated_request_id = str(uuid.uuid4())
-        results = self.analyze(generated_request_id, request.text,
+        correlation_id = str(uuid.uuid4())
+        results = self.analyze(correlation_id, request.text,
                                entities, language,
                                request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
 
-        response.requestId = generated_request_id
+        response.requestId = correlation_id
         # pylint: disable=no-member
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))

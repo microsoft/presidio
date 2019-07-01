@@ -18,7 +18,7 @@ class NhsRecognizer(PatternRecognizer):
         super().__init__(supported_entity="UK_NHS", patterns=patterns,
                          context=CONTEXT)
 
-    def validate_result(self, pattern_text, pattern_result):
+    def validate_result(self, pattern_text):
         text = NhsRecognizer.__sanitize_value(pattern_text)
         multiplier = 10
         total = 0
@@ -30,9 +30,7 @@ class NhsRecognizer(PatternRecognizer):
         remainder = total % 11
         check_digit = 11 - remainder
 
-        pattern_result.score = 1.0 if check_digit == 11 else 0
-
-        return pattern_result
+        return check_digit == 11
 
     @staticmethod
     def __sanitize_value(text):

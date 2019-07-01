@@ -4,7 +4,7 @@ class AnalysisExplanation:
     """
     # pylint: disable=too-many-instance-attributes
     def __init__(self, recognizer, pattern_name,
-                 pattern, original_score, textual_explanation=None):
+                 pattern, original_score, validation_result, textual_explanation=None):
         """
         """
         self.recognizer = recognizer
@@ -15,6 +15,7 @@ class AnalysisExplanation:
         self.textual_explanation = textual_explanation
         self.score_context_improvement = 0
         self.supportive_context_word = ''
+        self.validation_result = validation_result
 
     def __repr__(self):
         return str(self.__dict__)

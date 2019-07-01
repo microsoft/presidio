@@ -30,19 +30,11 @@ class CreditCardRecognizer(PatternRecognizer):
         super().__init__(supported_entity="CREDIT_CARD", patterns=patterns,
                          context=CONTEXT)
 
-    def validate_result(self, pattern_text, pattern_result):
+    def validate_result(self, pattern_text):
         sanitized_value = CreditCardRecognizer.__sanitize_value(pattern_text)
-        res = CreditCardRecognizer.__luhn_checksum(sanitized_value)
+        checksum = CreditCardRecognizer.__luhn_checksum(sanitized_value)
 
-        # Send interpretability traces
-        pattern_result.append_analysis_explenation_text(
-            "Credit card checksum result: {}".format(str(res)))
-        if res == 0:
-            pattern_result.score = EntityRecognizer.MAX_SCORE
-        else:
-            pattern_result.score = EntityRecognizer.MIN_SCORE
-
-        return pattern_result
+        return checksum == 0
 
     @staticmethod
     def __luhn_checksum(sanitized_value):

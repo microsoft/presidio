@@ -85,29 +85,26 @@ class PatternRecognizer(LocalRecognizer):
         return Pattern(name="black_list", regex=regex, score=1.0)
 
     # pylint: disable=unused-argument, no-self-use
-    def validate_result(self, pattern_text, pattern_result):
+    def validate_result(self, pattern_text):
         """
         Validates the pattern logic, for example by running
          checksum on a detected pattern.
 
         :param pattern_text: the text to validated.
         Only the part in text that was detected by the regex engine
-        :param pattern_result: The output of a specific pattern
-        detector that needs to be validated
-        :return: the updated result of the pattern.
-        For example, if a validation logic increased or decreased the score
-         that was given by a regex pattern.
+        :return: A bool indicating whether the validation was successful.
         """
-        return pattern_result
+        return None
 
     @staticmethod
     def build_regex_explanation(
             recognizer_name,
             pattern_name,
             pattern,
-            original_score):
+            original_score,
+            validation_result):
         explanation = AnalysisExplanation(recognizer_name, pattern_name,
-                                          pattern, original_score)
+                                          pattern, original_score, validation_result)
         return explanation
 
     def __analyze_patterns(self, text):
@@ -141,21 +138,30 @@ class PatternRecognizer(LocalRecognizer):
 
                 score = pattern.score
 
+                validation_result = self.validate_result(current_match)
                 description = PatternRecognizer.build_regex_explanation(
                     self.name,
                     pattern.name,
                     pattern.regex,
-                    score)
-                res = RecognizerResult(
+                    score,
+                    validation_result
+                )
+                pattern_result = RecognizerResult(
                     self.supported_entities[0],
                     start,
                     end,
                     score,
                     description)
-                res = self.validate_result(current_match, res)
-                description.set_improved_score(res.score)
-                if res and res.score > EntityRecognizer.MIN_SCORE:
-                    results.append(res)
+
+                if validation_result is not None:
+                    if validation_result:
+                        pattern_result.score = EntityRecognizer.MAX_SCORE
+                    else:
+                        pattern_result.score = EntityRecognizer.MIN_SCORE
+
+
+                if pattern_result.score > EntityRecognizer.MIN_SCORE:
+                    results.append(pattern_result)
 
         return results
 

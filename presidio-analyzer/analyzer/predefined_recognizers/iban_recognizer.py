@@ -33,19 +33,17 @@ class IbanRecognizer(PatternRecognizer):
                          patterns=patterns,
                          context=CONTEXT)
 
-    def validate_result(self, pattern_text, pattern_result):
+    def validate_result(self, pattern_text):
         pattern_text = pattern_text.replace(' ', '')
         is_valid_checksum = (IbanRecognizer.__generate_iban_check_digits(
             pattern_text) == pattern_text[2:4])
         score = EntityRecognizer.MIN_SCORE
         if is_valid_checksum:
             if IbanRecognizer.__is_valid_format(pattern_text):
-                score = EntityRecognizer.MAX_SCORE
+                return True
             elif IbanRecognizer.__is_valid_format(pattern_text.upper()):
-                score = IBAN_GENERIC_SCORE
-        pattern_result.score = score
-
-        return pattern_result
+                return None
+        return False
 
     @staticmethod
     def __number_iban(iban):
