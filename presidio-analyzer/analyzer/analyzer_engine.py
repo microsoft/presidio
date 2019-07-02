@@ -16,10 +16,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=None, nlp_engine=None):
         if not nlp_engine:
-            from analyzer.nlp_engine import SpacyNlpEngine 
+            from analyzer.nlp_engine import SpacyNlpEngine
             nlp_engine = SpacyNlpEngine()
         if not registry:
-            from analyzer import RecognizerRegistry 
+            from analyzer import RecognizerRegistry
             registry = RecognizerRegistry()
         # load nlp module
 
@@ -27,7 +27,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # prepare registry
         self.registry = registry
         # load all recognizers
-        registry.load_predefined_recognizers()
+        registry.load_predefined_58()
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
