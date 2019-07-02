@@ -14,7 +14,7 @@ DEFAULT_LANGUAGE = "en"
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry,
+    def __init__(self, registry=None, nlp_engine=None)
                  nlp_engine):
         if not nlp_engine:
             from analyzer.nlp_engine import SpacyNlpEngine 
