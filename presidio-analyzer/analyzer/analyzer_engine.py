@@ -27,7 +27,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # prepare registry
         self.registry = registry
         # load all recognizers
-        registry.load_predefined_58()
+        registry.load_predefined_recognizers()
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
