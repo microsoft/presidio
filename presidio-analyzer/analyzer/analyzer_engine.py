@@ -5,9 +5,6 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-from analyzer import RecognizerRegistry
-from analyzer.nlp_engine import SpacyNlpEngine
-
 loglevel = os.environ.get("LOG_LEVEL", "INFO")
 logging.basicConfig(
     format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
@@ -17,9 +14,15 @@ DEFAULT_LANGUAGE = "en"
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry=RecognizerRegistry(),
-                 nlp_engine=SpacyNlpEngine()):
+    def __init__(self, registry=None, nlp_engine=None):
+        if not nlp_engine:
+            from analyzer.nlp_engine import SpacyNlpEngine
+            nlp_engine = SpacyNlpEngine()
+        if not registry:
+            from analyzer import RecognizerRegistry
+            registry = RecognizerRegistry()
         # load nlp module
+
         self.nlp_engine = nlp_engine
         # prepare registry
         self.registry = registry
