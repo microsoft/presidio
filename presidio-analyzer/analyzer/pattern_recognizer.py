@@ -103,8 +103,11 @@ class PatternRecognizer(LocalRecognizer):
             pattern,
             original_score,
             validation_result):
-        explanation = AnalysisExplanation(recognizer_name, pattern_name,
-                                          pattern, original_score, validation_result)
+        explanation = AnalysisExplanation(recognizer_name,
+                                          pattern_name,
+                                          pattern,
+                                          original_score,
+                                          validation_result)
         return explanation
 
     def __analyze_patterns(self, text):
@@ -158,7 +161,6 @@ class PatternRecognizer(LocalRecognizer):
                         pattern_result.score = EntityRecognizer.MAX_SCORE
                     else:
                         pattern_result.score = EntityRecognizer.MIN_SCORE
-
 
                 if pattern_result.score > EntityRecognizer.MIN_SCORE:
                     results.append(pattern_result)

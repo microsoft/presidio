@@ -2,7 +2,6 @@ import tldextract
 
 from analyzer import Pattern
 from analyzer import PatternRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
 
 # pylint: disable=line-too-long
 REGEX = r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b"  # noqa: E501

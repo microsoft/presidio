@@ -2,7 +2,6 @@ import string
 
 from analyzer.predefined_recognizers.iban_patterns import regex_per_country
 from analyzer import Pattern, PatternRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
 try:
@@ -37,7 +36,7 @@ class IbanRecognizer(PatternRecognizer):
         pattern_text = pattern_text.replace(' ', '')
         is_valid_checksum = (IbanRecognizer.__generate_iban_check_digits(
             pattern_text) == pattern_text[2:4])
-        score = EntityRecognizer.MIN_SCORE
+        # score = EntityRecognizer.MIN_SCORE
         if is_valid_checksum:
             if IbanRecognizer.__is_valid_format(pattern_text):
                 return True
