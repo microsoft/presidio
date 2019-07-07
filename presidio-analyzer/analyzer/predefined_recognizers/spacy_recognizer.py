@@ -18,7 +18,8 @@ class SpacyRecognizer(LocalRecognizer):
     @staticmethod
     def build_spacy_explanation(recognizer_name, original_score):
         explanation = AnalysisExplanation(recognizer_name, '',
-                                          '', original_score)
+                                          '', original_score,
+                                          validation_result=None)
         return explanation
 
         # pylint: disable=unused-argument

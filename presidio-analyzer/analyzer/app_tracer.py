@@ -3,7 +3,7 @@ import logging
 
 class AppTracer:
     """This class handles app traces"""
-    def __init__(self, enable_interpretability=True):
+    def __init__(self, enabled=True):
 
         logger = logging.getLogger('Interpretability')
         if not logger.handlers:
@@ -16,7 +16,7 @@ class AppTracer:
             logger.propagate = False
 
         self.logger = logger
-        self.enable_interpretability = enable_interpretability
+        self.enabled = enabled
 
     def trace(self, request_id, trace_data):
         """
@@ -25,5 +25,5 @@ class AppTracer:
         :param trace_data: A string to write.
         :return:
         """
-        if self.enable_interpretability:
+        if self.enabled:
             self.logger.info("[%s][%s]", request_id, trace_data)

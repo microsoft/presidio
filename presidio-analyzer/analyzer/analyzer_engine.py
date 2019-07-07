@@ -85,11 +85,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, request_id, text, entities, language, all_fields):
+    def analyze(self, correlation_id, text, entities, language, all_fields):
         """
         analyzes the requested text, searching for the given entities
          in the given language
-        :param request_id: the generated guid to be assigned with this request
+        :param correlation_id: cross call ID for this request
         :param text: the text to analyze
         :param entities: the text to search
         :param language: the language of the text
@@ -97,7 +97,6 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         of the requested language
         :return: an array of the found entities in the text
         """
-        logger.info("Generated request id: %s", request_id)
 
         recognizers = self.registry.get_recognizers(
             language=language,
@@ -119,7 +118,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
-        self.app_tracer.trace(request_id, "nlp artifacts:"
+        self.app_tracer.trace(correlation_id, "nlp artifacts:"
                               + repr(nlp_artifacts))
 
         results = []
@@ -135,7 +134,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
-        self.app_tracer.trace(request_id, repr(results))
+        self.app_tracer.trace(correlation_id, repr(results))
 
         return results
 

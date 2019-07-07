@@ -37,12 +37,13 @@ class IbanRecognizer(PatternRecognizer):
         is_valid_checksum = (IbanRecognizer.__generate_iban_check_digits(
             pattern_text) == pattern_text[2:4])
         # score = EntityRecognizer.MIN_SCORE
+        result = False
         if is_valid_checksum:
             if IbanRecognizer.__is_valid_format(pattern_text):
-                return True
+                result = True
             elif IbanRecognizer.__is_valid_format(pattern_text.upper()):
-                return None
-        return False
+                result = None
+        return result
 
     @staticmethod
     def __number_iban(iban):

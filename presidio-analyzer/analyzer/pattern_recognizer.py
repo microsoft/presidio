@@ -84,7 +84,7 @@ class PatternRecognizer(LocalRecognizer):
         regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", regex=regex, score=1.0)
 
-    # pylint: disable=unused-argument, no-self-use
+    # pylint: disable=unused-argument, no-self-use, assignment-from-none
     def validate_result(self, pattern_text):
         """
         Validates the pattern logic, for example by running
