@@ -4,10 +4,8 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-from analyzer import RecognizerRegistry
 from analyzer.logger import Logger
 from analyzer.app_tracer import AppTracer
-from analyzer.nlp_engine import SpacyNlpEngine
 
 
 DEFAULT_LANGUAGE = "en"
