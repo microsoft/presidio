@@ -31,6 +31,7 @@ docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_P
 ### Requirements
 
 - Kubernetes 1.9+ with RBAC enabled.
+  - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
 - Helm
 
 ### Default installation using pre-made scripts
