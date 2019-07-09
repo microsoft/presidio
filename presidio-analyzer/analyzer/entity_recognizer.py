@@ -1,7 +1,7 @@
-import logging
-import os
 from abc import abstractmethod
 import copy
+
+from analyzer.logger import Logger
 
 
 class EntityRecognizer:
@@ -36,15 +36,9 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
 
-        loglevel = os.environ.get("LOG_LEVEL", "INFO")
-        self.logger = logging.getLogger(__name__)
-        logging.basicConfig(
-            format='%(asctime)s:%(levelname)s:[%(req_id)s]%(message)s',
-            level=loglevel)
-
-        self.logger.setLevel(loglevel)
+        self.logger = Logger()
         self.load()
-        logging.info("Loaded recognizer: %s", self.name)
+        self.logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
 
     @abstractmethod

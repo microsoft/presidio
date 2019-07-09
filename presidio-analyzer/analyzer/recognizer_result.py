@@ -1,5 +1,3 @@
-import json
-
 from . import AnalysisExplanation
 
 
@@ -29,4 +27,3 @@ class RecognizerResult:
 
     def __repr__(self):
         return str(self.__dict__)
-
