@@ -119,7 +119,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
         self.app_tracer.trace(correlation_id, "nlp artifacts:"
-                              + repr(nlp_artifacts))
+                              + nlp_artifacts.to_json())
 
         results = []
         for recognizer in recognizers:

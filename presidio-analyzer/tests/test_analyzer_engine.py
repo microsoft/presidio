@@ -153,9 +153,9 @@ class TestAnalyzerEngine(TestCase):
     def test_remove_duplicates(self):
         # test same result with different score will return only the highest
         arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x",
-                   analysis_explanation=AnalysisExplanation('test', 'test', 'test', 0)),
+                   analysis_explanation=AnalysisExplanation('test', 'test', 'test', 0, validation_result=None)),
                RecognizerResult(start=0, end=5, score=0.5, entity_type="x",
-                   analysis_explanation=AnalysisExplanation('test', 'test', 'test', 0))]
+                   analysis_explanation=AnalysisExplanation('test', 'test', 'test', 0, validation_result=None))]
         results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
         assert len(results) == 1
         assert results[0].score == 0.5
