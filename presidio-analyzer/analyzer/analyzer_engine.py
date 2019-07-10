@@ -14,13 +14,15 @@ logger = Logger()
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry=None, nlp_engine=None, app_tracer=AppTracer()):
+    def __init__(self, registry=None, nlp_engine=None, app_tracer=None):
         if not nlp_engine:
             from analyzer.nlp_engine import SpacyNlpEngine
             nlp_engine = SpacyNlpEngine()
         if not registry:
             from analyzer import RecognizerRegistry
             registry = RecognizerRegistry()
+        if not app_tracer:
+            app_tracer = AppTracer()
         # load nlp module
 
         self.nlp_engine = nlp_engine
