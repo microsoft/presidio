@@ -2,6 +2,7 @@ from analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 
 NER_STRENGTH = 0.85
 SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
+SPACY_DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
 
 
 class SpacyRecognizer(LocalRecognizer):
@@ -16,17 +17,14 @@ class SpacyRecognizer(LocalRecognizer):
         pass
 
     @staticmethod
-    def build_spacy_explanation(recognizer_name, original_score):
+    def build_spacy_explanation(recognizer_name, original_score, entity):
         explanation = AnalysisExplanation(recognizer=recognizer_name,
-                                          pattern_name='',
-                                          pattern='',
                                           original_score=original_score,
-                                          validation_result=None)
-        """This function will be identified by spacy as way to
-        generate interpretation data"""
+                                          textual_explanation=SPACY_DEFAULT_EXPLANATION.format(entity))
         return explanation
 
         # pylint: disable=unused-argument
+
     def analyze(self, text, entities, nlp_artifacts=None):
         results = []
         if not nlp_artifacts:
@@ -41,8 +39,9 @@ class SpacyRecognizer(LocalRecognizer):
                 for ent in ner_entities:
                     if SpacyRecognizer.__check_label(entity, ent.label_):
                         explanation = SpacyRecognizer.build_spacy_explanation(
-                            "SpaCy",
-                            NER_STRENGTH)
+                            self.__name__,
+                            NER_STRENGTH,
+                            ent)
                         spacy_result = RecognizerResult(
                             entity, ent.start_char,
                             ent.end_char, NER_STRENGTH, explanation)

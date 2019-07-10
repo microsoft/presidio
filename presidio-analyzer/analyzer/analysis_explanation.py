@@ -1,13 +1,20 @@
 class AnalysisExplanation:
-    """ AnalysisExplanation is a class that holds tracing information
-     to explain why PII entities where indentified as such
-    """
+
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, recognizer, pattern_name,
-                 pattern, original_score, validation_result,
+    def __init__(self, recognizer, original_score, pattern_name=None,
+                 pattern=None, validation_result=None,
                  textual_explanation=None):
         """
+        AnalysisExplanation is a class that holds tracing information
+        to explain why PII entities where indentified as such
+        :param recognizer: name of recognizer that made the decision
+        :param original_score: recognizer's confidence in result
+        :param pattern_name: name of pattern (if decision was made by a PatternRecognizer)
+        :param pattern: regex pattern that was applied (if PatternRecognizer)
+        :param validation_result: result of a validation (e.g. checksum)
+        :param textual_explanation: Free text for describing a decision of a logic or model
         """
+
         self.recognizer = recognizer
         self.pattern_name = pattern_name
         self.pattern = pattern

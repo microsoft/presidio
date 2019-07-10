@@ -103,11 +103,11 @@ class PatternRecognizer(LocalRecognizer):
             pattern,
             original_score,
             validation_result):
-        explanation = AnalysisExplanation(recognizer_name,
-                                          pattern_name,
-                                          pattern,
-                                          original_score,
-                                          validation_result)
+        explanation = AnalysisExplanation(recognizer=recognizer_name,
+                                          original_score=original_score,
+                                          pattern_name=pattern_name,
+                                          pattern=pattern,
+                                          validation_result=validation_result)
         return explanation
 
     def __analyze_patterns(self, text):
