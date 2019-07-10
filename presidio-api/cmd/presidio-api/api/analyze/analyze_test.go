@@ -117,7 +117,7 @@ func TestAllFields(t *testing.T) {
 	assert.Equal(t, 2, len(results))
 }
 
-func TestEmptyResponseIsOK(t *testing.T) {
+func TestAnalyzeWhenNoEntitiesFoundThenExpectEmptyResponse(t *testing.T) {
 
 	api := setupEmptyResponseMockServices()
 
