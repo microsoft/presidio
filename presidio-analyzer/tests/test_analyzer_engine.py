@@ -309,5 +309,5 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 3
         for result in results:
             assert result.analysis_explanation is not None
-        assert self.app_tracer.get_msg_counter() == 3
+        assert self.app_tracer.get_msg_counter() == 2
         assert self.app_tracer.get_last_trace() is not None
