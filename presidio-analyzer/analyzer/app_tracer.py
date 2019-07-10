@@ -1,4 +1,4 @@
-import logging
+from analyzer.logger import Logger
 
 
 class AppTracer:
@@ -8,17 +8,8 @@ class AppTracer:
     This can be useful for analyzing the detection accuracy of the system."""
     def __init__(self, enabled=True):
 
-        logger = logging.getLogger('Interpretability')
-        if not logger.handlers:
-            ch = logging.StreamHandler()
-            formatter = logging.Formatter(
-                '[%(asctime)s][%(name)s][%(levelname)s]%(message)s')
-            ch.setFormatter(formatter)
-            logger.addHandler(ch)
-            logger.setLevel(logging.INFO)
-            logger.propagate = False
-
-        self.logger = logger
+        self.logger = Logger('Interpretability')
+        self.logger.set_level("INFO")
         self.enabled = enabled
 
     def trace(self, request_id, trace_data):

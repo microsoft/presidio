@@ -4,9 +4,12 @@ import os
 
 class Logger:
     """A wrapper class for logger"""
-    def __init__(self):
+    def __init__(self, logger_name=None):
+        if logger_name:
+            logger = logging.getLogger(logger_name)
+        else:
+            logger = logging.getLogger()
 
-        logger = logging.getLogger()
         if not logger.handlers:
             loglevel = os.environ.get("LOG_LEVEL", "INFO")
             ch = logging.StreamHandler()
@@ -17,6 +20,9 @@ class Logger:
             logger.setLevel(loglevel)
 
         self.__logger = logger
+
+    def set_level(self, level):
+        self.__logger.setLevel(level)
 
     def debug(self, msg, *args, **kwargs):
         """
