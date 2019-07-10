@@ -18,6 +18,8 @@ from knack.help_files import helps
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from analyzer_engine import AnalyzerEngine # noqa
+from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
+from nlp_engine.spacy_nlp_engine import SpacyNlpEngine # noqa
 
 WELCOME_MESSAGE = r"""
 
@@ -61,9 +63,10 @@ class PresidioCLIHelp(CLIHelp):
 def serve_command_handler(env_grpc_port=False, grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-
+    registry = RecognizerRegistry()
+    nlp_engine = SpacyNlpEngine()
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
-        AnalyzerEngine(), server)
+        AnalyzerEngine(registry, nlp_engine), server)
 
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')

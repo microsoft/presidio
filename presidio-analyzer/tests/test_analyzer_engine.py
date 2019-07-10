@@ -111,7 +111,7 @@ class TestAnalyzerEngine(TestCase):
 
         # This analyzer engine is different from the global one, as this one
         # also loads SpaCy so it can detect the phone number entity
-        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry)
+        analyzer_engine_with_spacy = AnalyzerEngine(registry=self.loaded_registry, nlp_engine=SpacyNlpEngine())
         results = analyzer_engine_with_spacy.analyze(text, entities, language, all_fields=False)
 
         assert len(results) == 2
@@ -164,8 +164,8 @@ class TestAnalyzerEngine(TestCase):
 
         # Make sure the analyzer doesn't get this entity
         recognizers_store_api_mock = RecognizerStoreApiMock()
-        analyze_engine = AnalyzerEngine(
-            MockRecognizerRegistry(recognizers_store_api_mock))
+        analyze_engine = AnalyzerEngine(registry=
+            MockRecognizerRegistry(recognizers_store_api_mock), nlp_engine=SpacyNlpEngine())
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
@@ -193,8 +193,8 @@ class TestAnalyzerEngine(TestCase):
 
         # Make sure the analyzer doesn't get this entity
         recognizers_store_api_mock = RecognizerStoreApiMock()
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry(
-            recognizers_store_api_mock))
+        analyze_engine = AnalyzerEngine(registry= MockRecognizerRegistry(
+            recognizers_store_api_mock), nlp_engine=SpacyNlpEngine())
         text = "spaceship is my favorite transportation"
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
@@ -243,7 +243,7 @@ class TestAnalyzerEngine(TestCase):
         assert response.analyzeResults is not None
 
     def test_when_allFields_is_true_return_all_fields(self):
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        analyze_engine = AnalyzerEngine(registry=MockRecognizerRegistry(), nlp_engine=SpacyNlpEngine())
         request = AnalyzeRequest()
         request.analyzeTemplate.allFields = True
         request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
@@ -258,7 +258,7 @@ class TestAnalyzerEngine(TestCase):
         assert "DOMAIN_NAME" in returned_entities
 
     def test_when_allFields_is_true_full_recognizers_list_return_all_fields(self):
-        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry(), nlp_engine=SpacyNlpEngine())
         request = AnalyzeRequest()
         request.analyzeTemplate.allFields = True
         request.text = "My name is David and I live in Seattle." \
@@ -272,7 +272,7 @@ class TestAnalyzerEngine(TestCase):
         assert "DOMAIN_NAME" in returned_entities
 
     def test_when_allFields_is_true_and_entities_not_empty_exception(self):
-        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry())
+        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry(), nlp_engine=SpacyNlpEngine())
         request = AnalyzeRequest()
         request.text = "My name is David and I live in Seattle." \
                        "Domain: microsoft.com "
