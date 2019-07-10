@@ -25,5 +25,5 @@ class RecognizerResult:
         if self.analysis_explanation:
             self.analysis_explanation.append_textual_explanation_line(text)
 
-    def __repr__(self):
+    def to_json(self):
         return str(self.__dict__)

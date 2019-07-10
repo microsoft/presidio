@@ -17,9 +17,13 @@ class SpacyRecognizer(LocalRecognizer):
 
     @staticmethod
     def build_spacy_explanation(recognizer_name, original_score):
-        explanation = AnalysisExplanation(recognizer_name, '',
-                                          '', original_score,
+        explanation = AnalysisExplanation(recognizer=recognizer_name,
+                                          pattern_name='',
+                                          pattern='',
+                                          original_score=original_score,
                                           validation_result=None)
+        """This function will be identified by spacy as way to
+        generate interpretation data"""
         return explanation
 
         # pylint: disable=unused-argument

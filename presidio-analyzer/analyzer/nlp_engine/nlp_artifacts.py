@@ -34,8 +34,5 @@ class NlpArtifacts():
             [item for sublist in keywords for item in sublist]
         return keywords
 
-    def __repr__(self):
-        return str(self.__dict__)
-
     def to_json(self):
-        return self.__repr__()
+        return str(self.__dict__)

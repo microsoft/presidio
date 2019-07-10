@@ -17,7 +17,9 @@ from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
 from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
-from tests.mocks import MockNlpEngine, app_tracer_mock
+from tests.mocks import MockNlpEngine
+from tests.mocks.app_tracer_mock import AppTracerMock
+
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
     """
@@ -92,7 +94,7 @@ class TestAnalyzerEngine(TestCase):
         super(TestAnalyzerEngine, self).__init__(*args, **kwargs)
         self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
-        self.app_tracer = app_tracer_mock.AppTracerMock(enable_interpretability=True)
+        self.app_tracer = AppTracerMock(enable_interpretability=True)
         self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts), app_tracer=self.app_tracer)
         self.unit_test_guid = "00000000-0000-0000-0000-000000000000"
 
@@ -290,11 +292,14 @@ class TestAnalyzerEngine(TestCase):
         with pytest.raises(ValueError):
             analyze_engine.Apply(request, None)
 
-    def test_when_analyze_then_mltracer_has_value(self):
+    def test_when_analyze_then_apptracer_has_value(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
         analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry, app_tracer=self.app_tracer)
         results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text, entities, language, all_fields=False)
         assert len(results) == 2
+        for result in results:
+            assert result.analysis_explanation is not None
+        assert self.app_tracer.get_msg_counter() == 2
         assert self.app_tracer.get_last_trace() is not None

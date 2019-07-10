@@ -1,3 +1,4 @@
+import json
 import uuid
 
 import analyze_pb2
@@ -40,6 +41,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
 
+        # correlation is used to group all traces related to on request
         correlation_id = str(uuid.uuid4())
         results = self.analyze(correlation_id, request.text,
                                entities, language,
@@ -139,7 +141,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
-        self.app_tracer.trace(correlation_id, repr(results))
+        self.app_tracer.trace(correlation_id, json.dumps(
+            [result.to_json() for result in results]))
 
         return results
 

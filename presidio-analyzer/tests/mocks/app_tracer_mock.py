@@ -18,6 +18,7 @@ class AppTracerMock:
         self.logger = logger
         self.last_trace = None
         self.enable_interpretability = enable_interpretability
+        self.msg_counter = 0
 
     def trace(self, request_id, trace_data):
         """
@@ -29,6 +30,10 @@ class AppTracerMock:
         if self.enable_interpretability:
             self.last_trace = "[{}][{}]".format(request_id, trace_data)
             self.logger.info("[%s][%s]", request_id, trace_data)
+            self.msg_counter = self.msg_counter + 1
 
     def get_last_trace(self):
         return self.last_trace
+
+    def get_msg_counter(self):
+        return self.msg_counter
