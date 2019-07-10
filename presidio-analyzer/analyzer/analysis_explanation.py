@@ -9,10 +9,12 @@ class AnalysisExplanation:
         to explain why PII entities where indentified as such
         :param recognizer: name of recognizer that made the decision
         :param original_score: recognizer's confidence in result
-        :param pattern_name: name of pattern (if decision was made by a PatternRecognizer)
+        :param pattern_name: name of pattern
+                (if decision was made by a PatternRecognizer)
         :param pattern: regex pattern that was applied (if PatternRecognizer)
         :param validation_result: result of a validation (e.g. checksum)
-        :param textual_explanation: Free text for describing a decision of a logic or model
+        :param textual_explanation: Free text for describing
+                a decision of a logic or model
         """
 
         self.recognizer = recognizer

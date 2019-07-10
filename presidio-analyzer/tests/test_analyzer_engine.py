@@ -301,13 +301,13 @@ class TestAnalyzerEngine(TestCase):
             analyze_engine.Apply(request, None)
 
     def test_when_analyze_then_apptracer_has_value(self):
-        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
-        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
+        entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
         analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry, app_tracer=self.app_tracer)
         results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text, entities, language, all_fields=False)
-        assert len(results) == 2
+        assert len(results) == 3
         for result in results:
             assert result.analysis_explanation is not None
-        assert self.app_tracer.get_msg_counter() == 2
+        assert self.app_tracer.get_msg_counter() == 3
         assert self.app_tracer.get_last_trace() is not None
