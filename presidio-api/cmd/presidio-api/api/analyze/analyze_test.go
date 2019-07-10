@@ -24,6 +24,18 @@ func setupMockServices() *store.API {
 	return api
 }
 
+func setupEmptyResponseMockServices() *store.API {
+	srv := &services.Services{
+		AnalyzerService: mocks.GetAnalyzeServiceMock(mocks.GetAnalyzerMockEmptyResult()),
+	}
+
+	api := &store.API{
+		Services:  srv,
+		Templates: mocks.GetTemplateMock(),
+	}
+	return api
+}
+
 func TestAnalyzeWithTemplateId(t *testing.T) {
 
 	api := setupMockServices()
@@ -103,4 +115,20 @@ func TestAllFields(t *testing.T) {
 	results, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(results))
+}
+
+func TestAnalyzeWhenNoEntitiesFoundThenExpectEmptyResponse(t *testing.T) {
+
+	api := setupEmptyResponseMockServices()
+
+	project := "tests"
+	noResultsanalyzeAPIRequest := &types.AnalyzeApiRequest{
+		Text: "hello world",
+		AnalyzeTemplate: &types.AnalyzeTemplate{
+			Language:  "en",
+			AllFields: true},
+	}
+	results, err := Analyze(context.Background(), api, noResultsanalyzeAPIRequest, project)
+	assert.NoError(t, err)
+	assert.Equal(t, 0, len(results))
 }
