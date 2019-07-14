@@ -28,7 +28,7 @@ func Analyze(ctx context.Context, api *store.API, analyzeAPIRequest *types.Analy
 		return nil, err
 	}
 	if res == nil {
-		return []*types.AnalyzeResult{}, err
+		return &types.AnalyzeResponse{}, err
 	}
 	return res, err
 

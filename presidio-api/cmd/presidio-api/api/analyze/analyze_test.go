@@ -132,7 +132,7 @@ func TestAnalyzeWhenNoEntitiesFoundThenExpectEmptyResponse(t *testing.T) {
 			Language:  "en",
 			AllFields: true},
 	}
-	results, err := Analyze(context.Background(), api, noResultsanalyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, noResultsanalyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 0, len(results))
+	assert.Equal(t, 0, len(response.AnalyzeResults))
 }
