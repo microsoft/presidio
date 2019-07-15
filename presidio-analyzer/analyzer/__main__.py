@@ -121,7 +121,7 @@ class CommandsLoader(CLICommandsLoader):
 
         with ArgumentsContext(self, 'serve') as ac:
             ac.argument('env_grpc_port', default=False, required=False)
-            ac.argument('enable_trace_pii', default=enable_trace_pii, required=True)
+            ac.argument('enable_trace_pii', default=enable_trace_pii, required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
         with ArgumentsContext(self, 'analyze') as ac:
             ac.argument('env_grpc_port', default=False, required=False)
