@@ -95,7 +95,7 @@ class TestAnalyzerEngine(TestCase):
         self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
         self.app_tracer = AppTracerMock(enable_interpretability=True)
-        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts), app_tracer=self.app_tracer)
+        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts), app_tracer=self.app_tracer, enable_trace_pii=True)
         self.unit_test_guid = "00000000-0000-0000-0000-000000000000"
 
     def test_analyze_with_predefined_recognizers_return_results(self):
@@ -304,7 +304,7 @@ class TestAnalyzerEngine(TestCase):
         text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
-        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry, app_tracer=self.app_tracer)
+        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry, app_tracer=self.app_tracer, enable_trace_pii=True)
         results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text, entities, language, all_fields=False)
         assert len(results) == 3
         for result in results:

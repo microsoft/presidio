@@ -15,7 +15,7 @@ logger = Logger()
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry=None, nlp_engine=None, app_tracer=None):
+    def __init__(self, registry=None, nlp_engine=None, app_tracer=None, enable_trace_pii=False):
         if not nlp_engine:
             from analyzer.nlp_engine import SpacyNlpEngine
             nlp_engine = SpacyNlpEngine()
@@ -32,6 +32,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # load all recognizers
         registry.load_predefined_recognizers()
         self.app_tracer = app_tracer
+        self.enable_trace_pii = enable_trace_pii
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
@@ -125,8 +126,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
-        self.app_tracer.trace(correlation_id, "nlp artifacts:"
-                              + nlp_artifacts.to_json())
+        if self.enable_trace_pii:
+            self.app_tracer.trace(correlation_id, "nlp artifacts:"
+                                  + nlp_artifacts.to_json())
 
         results = []
         for recognizer in recognizers:
