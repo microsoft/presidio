@@ -1,7 +1,6 @@
 from hashlib import sha256
 from analyzer import Pattern
 from analyzer import PatternRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
 
 # Copied from:
 # http://rosettacode.org/wiki/Bitcoin/address_validation#Python
@@ -19,12 +18,12 @@ class CryptoRecognizer(PatternRecognizer):
         super().__init__(supported_entity="CRYPTO", patterns=patterns,
                          context=CONTEXT)
 
-    def validate_result(self, pattern_text, pattern_result):
+    def validate_result(self, pattern_text):
         # try:
         bcbytes = CryptoRecognizer.__decode_base58(pattern_text, 25)
-        if bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]:
-            pattern_result.score = EntityRecognizer.MAX_SCORE
-        return pattern_result
+        result = bcbytes[-4:] == sha256(sha256(bcbytes[:-4])
+                                        .digest()).digest()[:4]
+        return result
 
     @staticmethod
     def __decode_base58(bc, length):

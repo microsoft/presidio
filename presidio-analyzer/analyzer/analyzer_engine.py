@@ -1,26 +1,30 @@
-import logging
-import os
+import json
+import uuid
 
 import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-loglevel = os.environ.get("LOG_LEVEL", "INFO")
-logging.basicConfig(
-    format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
+from analyzer.logger import Logger
+from analyzer.app_tracer import AppTracer
+
 
 DEFAULT_LANGUAGE = "en"
+logger = Logger()
 
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
-    def __init__(self, registry=None, nlp_engine=None):
+    def __init__(self, registry=None, nlp_engine=None,
+                 app_tracer=None, enable_trace_pii=False):
         if not nlp_engine:
             from analyzer.nlp_engine import SpacyNlpEngine
             nlp_engine = SpacyNlpEngine()
         if not registry:
             from analyzer import RecognizerRegistry
             registry = RecognizerRegistry()
+        if not app_tracer:
+            app_tracer = AppTracer()
         # load nlp module
 
         self.nlp_engine = nlp_engine
@@ -28,23 +32,32 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         self.registry = registry
         # load all recognizers
         registry.load_predefined_recognizers()
+        self.app_tracer = app_tracer
+        self.enable_trace_pii = enable_trace_pii
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
-        logging.info("Starting Apply")
+        logger.info("Starting Analyzer's Apply")
+
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
-        results = self.analyze(request.text, entities, language,
+
+        # correlation is used to group all traces related to on request
+        correlation_id = str(uuid.uuid4())
+        results = self.analyze(correlation_id, request.text,
+                               entities, language,
                                request.analyzeTemplate.allFields)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
 
+        response.requestId = correlation_id
         # pylint: disable=no-member
         response.analyzeResults.extend(
             AnalyzerEngine.__convert_results_to_proto(results))
-        logging.info("Found %d results", len(results))
+
+        logger.info("Found %d results", len(results))
         return response
 
     @staticmethod
@@ -81,10 +94,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, text, entities, language, all_fields):
+    def analyze(self, correlation_id, text, entities, language, all_fields):
         """
         analyzes the requested text, searching for the given entities
          in the given language
+        :param correlation_id: cross call ID for this request
         :param text: the text to analyze
         :param entities: the text to search
         :param language: the language of the text
@@ -93,9 +107,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :return: an array of the found entities in the text
         """
 
-        recognizers = self.registry.get_recognizers(language=language,
-                                                    entities=entities,
-                                                    all_fields=all_fields)
+        recognizers = self.registry.get_recognizers(
+            language=language,
+            entities=entities,
+            all_fields=all_fields)
 
         if all_fields:
             if entities:
@@ -111,6 +126,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # run the nlp pipeline over the given text, store the results in
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
+
+        if self.enable_trace_pii:
+            self.app_tracer.trace(correlation_id, "nlp artifacts:"
+                                  + nlp_artifacts.to_json())
+
         results = []
         for recognizer in recognizers:
             # Lazy loading of the relevant recognizers
@@ -123,7 +143,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             if current_results:
                 results.extend(current_results)
 
-        return AnalyzerEngine.__remove_duplicates(results)
+        results = AnalyzerEngine.__remove_duplicates(results)
+        self.app_tracer.trace(correlation_id, json.dumps(
+            [result.to_json() for result in results]))
+
+        return results
 
     @staticmethod
     def __list_entities(recognizers):

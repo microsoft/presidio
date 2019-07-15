@@ -60,13 +60,19 @@ class PresidioCLIHelp(CLIHelp):
             welcome_message=WELCOME_MESSAGE)
 
 
-def serve_command_handler(env_grpc_port=False, grpc_port=3000):
+def serve_command_handler(enable_trace_pii,
+                          env_grpc_port=False,
+                          grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+
     registry = RecognizerRegistry()
     nlp_engine = SpacyNlpEngine()
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
-        AnalyzerEngine(registry, nlp_engine), server)
+        AnalyzerEngine(registry=registry,
+                       nlp_engine=nlp_engine,
+                       enable_trace_pii=enable_trace_pii),
+        server)
 
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')
@@ -111,8 +117,15 @@ class CommandsLoader(CLICommandsLoader):
         return super(CommandsLoader, self).load_command_table(args)
 
     def load_arguments(self, command):
+        enable_trace_pii = os.environ.get('ENABLE_TRACE_PII')
+        if enable_trace_pii is None:
+            enable_trace_pii = False
+
         with ArgumentsContext(self, 'serve') as ac:
             ac.argument('env_grpc_port', default=False, required=False)
+            ac.argument('enable_trace_pii',
+                        default=enable_trace_pii,
+                        required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
         with ArgumentsContext(self, 'analyze') as ac:
             ac.argument('env_grpc_port', default=False, required=False)

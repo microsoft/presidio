@@ -118,14 +118,14 @@ func applyPresidioOCR(ctx context.Context, services presidio.ServicesAPI, image 
 	image.Text = ocrRes.Image.Text
 	image.Boundingboxes = ocrRes.Image.Boundingboxes
 
-	analyzeResults, err := services.AnalyzeItem(ctx, ocrRes.Image.Text, analyzeTemplate)
+	analyzeResponse, err := services.AnalyzeItem(ctx, ocrRes.Image.Text, analyzeTemplate)
 	if err != nil {
 		return nil, err
 
 	}
-	if analyzeResults == nil {
+	if analyzeResponse == nil || analyzeResponse.AnalyzeResults == nil {
 		return nil, fmt.Errorf("No PII content found in image")
 
 	}
-	return analyzeResults, nil
+	return analyzeResponse.AnalyzeResults, nil
 }

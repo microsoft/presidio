@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
@@ -46,9 +47,9 @@ func TestAnalyzeWithTemplateId(t *testing.T) {
 		AnalyzeTemplateId: "test",
 		AnalyzeTemplate:   &types.AnalyzeTemplate{},
 	}
-	results, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(results))
+	assert.Equal(t, 2, len(response.AnalyzeResults))
 }
 
 func TestAnalyzeWithTemplateStruct(t *testing.T) {
@@ -69,9 +70,9 @@ func TestAnalyzeWithTemplateStruct(t *testing.T) {
 			},
 		},
 	}
-	results, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(results))
+	assert.Equal(t, 2, len(response.AnalyzeResults))
 }
 
 func TestAnalyzeWithNoTemplate(t *testing.T) {
@@ -112,9 +113,12 @@ func TestAllFields(t *testing.T) {
 			Language:  "en",
 			AllFields: true},
 	}
-	results, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(results))
+	assert.Equal(t, 2, len(response.AnalyzeResults))
+	assert.NotEqual(t, "", response.RequestId)
+	_, err = uuid.FromString(response.RequestId)
+	assert.NoError(t, err)
 }
 
 func TestAnalyzeWhenNoEntitiesFoundThenExpectEmptyResponse(t *testing.T) {
@@ -128,7 +132,7 @@ func TestAnalyzeWhenNoEntitiesFoundThenExpectEmptyResponse(t *testing.T) {
 			Language:  "en",
 			AllFields: true},
 	}
-	results, err := Analyze(context.Background(), api, noResultsanalyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, noResultsanalyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 0, len(results))
+	assert.Equal(t, 0, len(response.AnalyzeResults))
 }
