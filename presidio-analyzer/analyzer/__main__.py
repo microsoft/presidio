@@ -60,7 +60,9 @@ class PresidioCLIHelp(CLIHelp):
             welcome_message=WELCOME_MESSAGE)
 
 
-def serve_command_handler(enable_trace_pii, env_grpc_port=False, grpc_port=3000):
+def serve_command_handler(enable_trace_pii,
+                          env_grpc_port=False,
+                          grpc_port=3000):
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
@@ -121,7 +123,9 @@ class CommandsLoader(CLICommandsLoader):
 
         with ArgumentsContext(self, 'serve') as ac:
             ac.argument('env_grpc_port', default=False, required=False)
-            ac.argument('enable_trace_pii', default=enable_trace_pii, required=False)
+            ac.argument('enable_trace_pii',
+                        default=enable_trace_pii,
+                        required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
         with ArgumentsContext(self, 'analyze') as ac:
             ac.argument('env_grpc_port', default=False, required=False)
