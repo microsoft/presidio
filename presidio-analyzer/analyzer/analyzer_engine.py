@@ -8,7 +8,6 @@ import common_pb2
 from analyzer.logger import Logger
 from analyzer.app_tracer import AppTracer
 
-
 DEFAULT_LANGUAGE = "en"
 logger = Logger()
 
@@ -47,7 +46,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         correlation_id = str(uuid.uuid4())
         results = self.analyze(correlation_id, request.text,
                                entities, language,
-                               request.analyzeTemplate.allFields)
+                               request.analyzeTemplate.allFields,
+                               request.resultsScoreThreshold)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
@@ -78,7 +78,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                     # If result is equal to or substring of
                     # one of the other results
                     if result.start >= filtered.start \
-                          and result.end <= filtered.end:
+                            and result.end <= filtered.end:
                         valid_result = False
                         break
 
@@ -87,6 +87,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return filtered_results
 
+    @staticmethod
+    def __remove_low_scores(results, score_threshold):
+        new_results = []
+        for result in results:
+            if result.score > score_threshold:
+                new_results.append(result)
+
+        return new_results
+
     @classmethod
     def get_language_from_request(cls, request):
         language = request.analyzeTemplate.language
@@ -94,7 +103,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, correlation_id, text, entities, language, all_fields):
+    def analyze(self, correlation_id, text, entities, language, all_fields,
+                score_threshold=0.1):
         """
         analyzes the requested text, searching for the given entities
          in the given language
@@ -104,6 +114,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :param language: the language of the text
         :param all_fields: a Flag to return all fields
         of the requested language
+        :param score_threshold: A minimumm value for which
+        to return an identified entity
         :return: an array of the found entities in the text
         """
 
@@ -144,6 +156,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 results.extend(current_results)
 
         results = AnalyzerEngine.__remove_duplicates(results)
+        results = AnalyzerEngine.__remove_low_scores(results, score_threshold)
         self.app_tracer.trace(correlation_id, json.dumps(
             [result.to_json() for result in results]))
 
