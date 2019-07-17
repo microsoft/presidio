@@ -52,7 +52,7 @@
   name = "github.com/korovkin/limiter"
 
 [[constraint]]
-  branch = "development"
+  branch = "analyzer_threshold_support"
   name = "github.com/Microsoft/presidio-genproto"
 
 [[constraint]]
