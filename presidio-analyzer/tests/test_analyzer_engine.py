@@ -92,6 +92,7 @@ us_license_recognizer = UsLicenseRecognizer()
 us_bank_recognizer = UsBankRecognizer()
 us_passport_recognizer = UsPassportRecognizer()
 
+loaded_spacy_nlp_engine = SpacyNlpEngine()
 
 class TestAnalyzerEngine(TestCase):
 
@@ -129,7 +130,7 @@ class TestAnalyzerEngine(TestCase):
         # also loads SpaCy so it can use the context words
 
         analyzer_engine_with_spacy = AnalyzerEngine(
-            registry=self.loaded_registry, nlp_engine=SpacyNlpEngine())
+            registry=self.loaded_registry, nlp_engine=loaded_spacy_nlp_engine)
         results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text,
                                                      entities, language,
                                                      all_fields=False)
@@ -306,7 +307,7 @@ class TestAnalyzerEngine(TestCase):
     def test_when_allFields_is_true_full_recognizers_list_return_all_fields(
             self):
         analyze_engine = AnalyzerEngine(registry=RecognizerRegistry(),
-                                        nlp_engine=SpacyNlpEngine())
+                                        nlp_engine=loaded_spacy_nlp_engine)
         request = AnalyzeRequest()
         request.analyzeTemplate.allFields = True
         request.text = "My name is David and I live in Seattle." \
