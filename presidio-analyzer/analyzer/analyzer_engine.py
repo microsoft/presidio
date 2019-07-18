@@ -48,12 +48,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             request.analyzeTemplate.fields)
         language = AnalyzerEngine.get_language_from_request(request)
 
-        # correlation is used to group all traces related to on request
-
         threshold = request.analyzeTemplate.resultsScoreThreshold
         all_fields = request.analyzeTemplate.allFields
 
-        # A unique identifier for a request, to be returned in the response
+        # correlation is used to group all traces related to on request
+
         correlation_id = str(uuid.uuid4())
         results = self.analyze(correlation_id, request.text,
                                entities, language,
