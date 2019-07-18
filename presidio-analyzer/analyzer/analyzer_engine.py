@@ -125,7 +125,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :param language: the language of the text
         :param all_fields: a Flag to return all fields
         of the requested language
-        :param score_threshold: A minimumm value for which
+        :param score_threshold: A minimum value for which
         to return an identified entity
         :return: an array of the found entities in the text
         """
