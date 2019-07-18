@@ -22,10 +22,6 @@
 
 5. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
 
-## Changing Presidio's API
-
-
-
 6. Protobuf generator tools (Optional)
 
     - `https://github.com/golang/protobuf`
