@@ -36,6 +36,12 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     # pylint: disable=unused-argument
     def Apply(self, request, context):
+        """
+        GRPC entry point to Presidio-Analyzer
+        :param request: Presidio Analyzer resuest of type AnalyzeRequest
+        :param context:
+        :return: List of [AnalyzeResult]
+        """
         logger.info("Starting Analyzer's Apply")
 
         entities = AnalyzerEngine.__convert_fields_to_entities(
@@ -47,6 +53,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         threshold = request.analyzeTemplate.resultsScoreThreshold
         all_fields = request.analyzeTemplate.allFields
 
+        # A unique identifier for a request, to be returned in the response
         correlation_id = str(uuid.uuid4())
         results = self.analyze(correlation_id, request.text,
                                entities, language,
@@ -159,10 +166,12 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             if current_results:
                 results.extend(current_results)
 
-        results = AnalyzerEngine.__remove_duplicates(results)
-        results = AnalyzerEngine.__remove_low_scores(results, score_threshold)
         self.app_tracer.trace(correlation_id, json.dumps(
             [result.to_json() for result in results]))
+
+        #Remove duplicates or low score results
+        results = AnalyzerEngine.__remove_duplicates(results)
+        results = AnalyzerEngine.__remove_low_scores(results, score_threshold)
 
         return results
 
@@ -177,12 +186,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     @staticmethod
     def __convert_fields_to_entities(fields):
-        # Convert fields to entities - will be changed once the API
-        # will be changed
-        entities = []
-        for field in fields:
-            entities.append(field.name)
-        return entities
+        # Converts the Field object to the name of the entity
+        return [field.name for field in fields]
 
     @staticmethod
     def __convert_results_to_proto(results):
