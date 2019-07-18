@@ -83,15 +83,6 @@ class MockRecognizerRegistry(RecognizerRegistry):
                                  UsPhoneRecognizer(),
                                  DomainRecognizer()])
 
-
-ip_recognizer = IpRecognizer()
-us_ssn_recognizer = UsSsnRecognizer()
-phone_recognizer = UsPhoneRecognizer()
-us_itin_recognizer = UsItinRecognizer()
-us_license_recognizer = UsLicenseRecognizer()
-us_bank_recognizer = UsBankRecognizer()
-us_passport_recognizer = UsPassportRecognizer()
-
 loaded_spacy_nlp_engine = SpacyNlpEngine()
 
 class TestAnalyzerEngine(TestCase):
@@ -191,6 +182,26 @@ class TestAnalyzerEngine(TestCase):
         assert results[0].score == 0.5
         # TODO: add more cases with bug:
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one result as a substring of the other
+
+    def test_remove_duplicates_different_entity_no_removal(self):
+        # test same result with different score will return only the highest
+        arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x",
+                                analysis_explanation=AnalysisExplanation(
+                                    recognizer='test',
+                                    original_score=0,
+                                    pattern_name='test',
+                                    pattern='test',
+                                    validation_result=None)),
+               RecognizerResult(start=0, end=5, score=0.5, entity_type="y",
+                                analysis_explanation=AnalysisExplanation(
+                                    recognizer='test',
+                                    original_score=0,
+                                    pattern_name='test',
+                                    pattern='test',
+                                    validation_result=None))]
+        results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
+        assert len(results) == 2
+
 
     def test_added_pattern_recognizer_works(self):
         pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)

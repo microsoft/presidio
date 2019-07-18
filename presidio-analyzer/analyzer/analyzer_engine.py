@@ -30,7 +30,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # prepare registry
         self.registry = registry
         # load all recognizers
-        registry.load_predefined_recognizers()
+        if len(registry.recognizers) == 0:
+            registry.load_predefined_recognizers()
+
         self.app_tracer = app_tracer
         self.enable_trace_pii = enable_trace_pii
 
@@ -88,7 +90,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                     # If result is equal to or substring of
                     # one of the other results
                     if result.start >= filtered.start \
-                            and result.end <= filtered.end:
+                            and result.end <= filtered.end \
+                            and result.entity_type == filtered.entity_type:
                         valid_result = False
                         break
 
@@ -168,7 +171,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         self.app_tracer.trace(correlation_id, json.dumps(
             [result.to_json() for result in results]))
 
-        #Remove duplicates or low score results
+        # Remove duplicates or low score results
         results = AnalyzerEngine.__remove_duplicates(results)
         results = AnalyzerEngine.__remove_low_scores(results, score_threshold)
 
