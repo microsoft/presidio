@@ -107,11 +107,11 @@
 
 [[projects]]
   branch = "analyzer_threshold_support"
-  digest = "1:2b546a67a59237d4672b038d4d5429aebb8dc8b804869cf2fc7232137405ab95"
+  digest = "1:c79ff0c1cb49b28ad509306045dd8d5e46072354c0b4dbaff75434f3e630ce8d"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
-  revision = "53ccfdef39bcf1bcbc1e444f6b2daa0aa91d502d"
+  revision = "0c1ca1066110a665c708a66d598f14b6080ab1f6"
 
 [[projects]]
   digest = "1:b449dbaada891dc97f016bc3519bb1af0e1a4296828f7a560a0ba47ea75f20bb"

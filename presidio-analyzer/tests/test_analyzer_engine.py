@@ -126,7 +126,7 @@ class TestAnalyzerEngine(TestCase):
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
 
         # This analyzer engine is different from the global one, as this one
-        # also loads SpaCy so it can detect the phone number entity
+        # also loads SpaCy so it can use the context words
 
         analyzer_engine_with_spacy = AnalyzerEngine(
             registry=self.loaded_registry, nlp_engine=SpacyNlpEngine())
@@ -202,7 +202,7 @@ class TestAnalyzerEngine(TestCase):
         analyze_engine = AnalyzerEngine(registry=
                                         MockRecognizerRegistry(
                                             recognizers_store_api_mock),
-                                        nlp_engine=SpacyNlpEngine())
+                                        nlp_engine=MockNlpEngine())
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
@@ -233,7 +233,7 @@ class TestAnalyzerEngine(TestCase):
         # Make sure the analyzer doesn't get this entity
         recognizers_store_api_mock = RecognizerStoreApiMock()
         analyze_engine = AnalyzerEngine(registry=MockRecognizerRegistry(
-            recognizers_store_api_mock), nlp_engine=SpacyNlpEngine())
+            recognizers_store_api_mock), nlp_engine=MockNlpEngine())
         text = "spaceship is my favorite transportation"
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
@@ -266,6 +266,7 @@ class TestAnalyzerEngine(TestCase):
     def test_apply_with_language_returns_correct_response(self):
         request = AnalyzeRequest()
         request.analyzeTemplate.language = 'en'
+        request.analyzeTemplate.resultsScoreThreshold = 0
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
@@ -277,6 +278,7 @@ class TestAnalyzerEngine(TestCase):
     def test_apply_with_no_language_returns_default(self):
         request = AnalyzeRequest()
         request.analyzeTemplate.language = ''
+        request.analyzeTemplate.resultsScoreThreshold = 0
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
@@ -286,9 +288,10 @@ class TestAnalyzerEngine(TestCase):
 
     def test_when_allFields_is_true_return_all_fields(self):
         analyze_engine = AnalyzerEngine(registry=MockRecognizerRegistry(),
-                                        nlp_engine=SpacyNlpEngine())
+                                        nlp_engine=MockNlpEngine())
         request = AnalyzeRequest()
         request.analyzeTemplate.allFields = True
+        request.analyzeTemplate.resultsScoreThreshold = 0
         request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
                        "Domain: microsoft.com"
         response = analyze_engine.Apply(request, None)
@@ -318,7 +321,7 @@ class TestAnalyzerEngine(TestCase):
 
     def test_when_allFields_is_true_and_entities_not_empty_exception(self):
         analyze_engine = AnalyzerEngine(registry=RecognizerRegistry(),
-                                        nlp_engine=SpacyNlpEngine())
+                                        nlp_engine=MockNlpEngine())
         request = AnalyzeRequest()
         request.text = "My name is David and I live in Seattle." \
                        "Domain: microsoft.com "
@@ -362,7 +365,7 @@ class TestAnalyzerEngine(TestCase):
 
         assert len(results) == 2
 
-    def test_when_threshold_is_half_only_credit_card_passes(self):
+    def test_when_threshold_is_more_than_half_only_credit_card_passes(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
@@ -375,7 +378,7 @@ class TestAnalyzerEngine(TestCase):
         results = analyzer_engine.analyze(self.unit_test_guid, text,
                                           entities, language,
                                           all_fields=False,
-                                          score_threshold=0.6)
+                                          score_threshold=0.51)
 
         assert len(results) == 1
 

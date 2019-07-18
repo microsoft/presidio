@@ -43,11 +43,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         language = AnalyzerEngine.get_language_from_request(request)
 
         # correlation is used to group all traces related to on request
+
+        threshold = request.analyzeTemplate.resultsScoreThreshold
+        all_fields = request.analyzeTemplate.allFields
+
         correlation_id = str(uuid.uuid4())
         results = self.analyze(correlation_id, request.text,
                                entities, language,
-                               request.analyzeTemplate.allFields,
-                               request.resultsScoreThreshold)
+                               all_fields,
+                               threshold)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
@@ -91,7 +95,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __remove_low_scores(results, score_threshold):
         new_results = []
         for result in results:
-            if result.score > score_threshold:
+            if result.score >= score_threshold:
                 new_results.append(result)
 
         return new_results
