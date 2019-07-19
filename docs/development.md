@@ -109,12 +109,12 @@ To:
 
 ```yaml
 [[constraint]]
-  branch = "master"
+  branch = "YOUR_GENPROTO_BRANCH"
   name = "github.com/YOUR_ORG/presidio-genproto"
 
 ```
   7. Update `Gopkg.lock` by calling `dep ensure` or `dep ensure --update github.com/YOUR_ORG/presidio-genproto`
-  8. Push all the changes (`pb2.py` files, `Gopkg.toml` and `Gopkg.lock` into your presidio repo
+  8. Push all the changes (generated python files, `Gopkg.toml` and `Gopkg.lock` into your presidio repo
 
 For more info, see https://grpc.io/docs/tutorials/basic/python.html
 
