@@ -30,7 +30,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # prepare registry
         self.registry = registry
         # load all recognizers
-        if len(registry.recognizers) == 0:
+        if not registry.recognizers:
             registry.load_predefined_recognizers()
 
         self.app_tracer = app_tracer
