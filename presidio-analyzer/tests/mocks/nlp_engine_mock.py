@@ -1,12 +1,15 @@
-from analyzer.nlp_engine import NlpEngine
+from analyzer.nlp_engine import NlpEngine, NlpArtifacts
 
 
 class MockNlpEngine(NlpEngine):
 
-    def __init__(self, stopwords, punct_words, nlp_artifacts):
+    def __init__(self, stopwords=[], punct_words=[], nlp_artifacts=None):
         self.stopwords = stopwords
         self.punct_words = punct_words
-        self.nlp_artifacts = nlp_artifacts
+        if nlp_artifacts is None:
+            self.nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
+        else:
+            self.nlp_artifacts = nlp_artifacts
 
     def is_stopword(self, word, language):
         return word in self.stopwords
