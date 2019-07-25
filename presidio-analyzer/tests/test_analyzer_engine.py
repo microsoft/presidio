@@ -83,7 +83,9 @@ class MockRecognizerRegistry(RecognizerRegistry):
                                  UsPhoneRecognizer(),
                                  DomainRecognizer()])
 
+
 loaded_spacy_nlp_engine = SpacyNlpEngine()
+
 
 class TestAnalyzerEngine(TestCase):
 
@@ -202,7 +204,6 @@ class TestAnalyzerEngine(TestCase):
         results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
         assert len(results) == 2
 
-
     def test_added_pattern_recognizer_works(self):
         pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
         pattern_recognizer = PatternRecognizer("ROCKET",
@@ -212,9 +213,9 @@ class TestAnalyzerEngine(TestCase):
         # Make sure the analyzer doesn't get this entity
         recognizers_store_api_mock = RecognizerStoreApiMock()
         analyze_engine = AnalyzerEngine(registry=
-                                        MockRecognizerRegistry(
-                                            recognizers_store_api_mock),
-                                        nlp_engine=MockNlpEngine())
+        MockRecognizerRegistry(
+            recognizers_store_api_mock),
+            nlp_engine=MockNlpEngine())
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
@@ -394,4 +395,35 @@ class TestAnalyzerEngine(TestCase):
 
         assert len(results) == 1
 
+    def test_when_default_threshold_is_more_than_half_only_one_passes(self):
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
 
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+
+        analyzer_engine = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=MockNlpEngine(),
+            default_score_threshold=0.7)
+        results = analyzer_engine.analyze(self.unit_test_guid, text,
+                                          entities, language,
+                                          all_fields=False)
+
+        assert len(results) == 1
+
+    def test_when_default_threshold_is_zero_all_results_pass(self):
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+
+        analyzer_engine = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=MockNlpEngine())
+        results = analyzer_engine.analyze(self.unit_test_guid, text,
+                                          entities, language,
+                                          all_fields=False)
+
+        assert len(results) == 2
