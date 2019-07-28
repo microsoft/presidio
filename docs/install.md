@@ -121,30 +121,31 @@ Note that if you skip this step, the Spacy model would install lazily during the
   pip install https://github.com/torosent/pyre2/archive/release/0.2.23.zip
   ```
   
-Note: If you don't install `re2`, Presidio will use the `regex` package for regular expressions handling
+  Note: If you don't install `re2`, Presidio will use the `regex` package for regular expressions handling
 
 5. Test the installation
-To test, run Python on the virtual env you've installed the presidio-analyzer in.
-Then, make sure this code returns an answer:
 
-```python
-from analyzer import AnalyzerEngine
+  To test, run Python on the virtual env you've installed the presidio-analyzer in.
+  Then, make sure this code returns an answer:
 
-engine = AnalyzerEngine()
+  ```python
+  from analyzer import AnalyzerEngine
 
-text = "My name is David and I live in Miami"
+  engine = AnalyzerEngine()
 
-response = engine.analyze(correlation_id=0, 
-                          text = text, 
-                          entities=[], 
-                          language='en', 
-                          all_fields=True,
-                          score_threshold=0.5)
+  text = "My name is David and I live in Miami"
 
-for item in response:
-    print("Start = {}, end = {}, entity = {}, confidence = {}".format(item.start,
-                                                                      item.end,
-                                                                      item.entity_type,
-                                                                      item.score))
+  response = engine.analyze(correlation_id=0, 
+                            text = text, 
+                            entities=[], 
+                            language='en', 
+                            all_fields=True,
+                            score_threshold=0.5)
 
-```
+  for item in response:
+      print("Start = {}, end = {}, entity = {}, confidence = {}".format(item.start,
+                                                                        item.end,
+                                                                        item.entity_type,
+                                                                        item.score))
+
+  ```
