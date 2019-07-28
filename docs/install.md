@@ -66,3 +66,85 @@ Follow the installation guide at the [Readme page](https://github.com/Microsoft/
     ```
 
 6. For more options over the deployment, follow the [Development guide](https://github.com/Microsoft/presidio/blob/master/docs/development.md)
+
+## Install presidio-analyzer as a Python package
+If you're interested in running the analyzer alone, you can install it as a standalone python package by packaging it into a `wheel` file.
+
+#### Creating the wheel file:
+In the presidio-analyzer folder, run:
+
+```sh
+python setup.py bdist_wheel
+```
+
+#### Installing the wheel file
+1. Copy the created wheel file (from the `dist` folder of presidio-analyzer) into a clean virtual environment
+
+2. install `wheel` package
+
+```sh
+pip install wheel
+```
+
+2. Install the presidio-analyzer wheel file
+
+```sh
+pip install WHEEL_FILE
+```
+
+Where `WHEEL_FILE` is the path to the created wheel file
+
+3. Install the Spacy model from Github (not installed during the standard installation)
+
+```sh
+pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.1.0/en_core_web_lg-2.1.0.tar.gz
+```
+
+Note that if you skip this step, the Spacy model would install lazily during the first call to the `AnalyzerEngine`
+
+
+4. *Optional* : install `re2` and `pyre2`:
+
+- Install [re2](https://github.com/google/re2):
+
+    ```sh
+    re2_version="2018-12-01"
+    wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
+    mkdir re2 
+    tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
+    cd re2 && make install
+    ```
+
+- Install `pyre2`'s fork:
+
+  ```
+  pip install https://github.com/torosent/pyre2/archive/release/0.2.23.zip
+  ```
+  
+Note: If you don't install `re2`, Presidio will use the `regex` package for regular expressions handling
+
+5. Test the installation
+To test, run Python on the virtual env you've installed the presidio-analyzer in.
+Then, make sure this code returns an answer:
+
+```python
+from analyzer import AnalyzerEngine
+
+engine = AnalyzerEngine()
+
+text = "My name is David and I live in Miami"
+
+response = engine.analyze(correlation_id=0, 
+                          text = text, 
+                          entities=[], 
+                          language='en', 
+                          all_fields=True,
+                          score_threshold=0.5)
+
+for item in response:
+    print("Start = {}, end = {}, entity = {}, confidence = {}".format(item.start,
+                                                                      item.end,
+                                                                      item.entity_type,
+                                                                      item.score))
+
+```

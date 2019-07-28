@@ -352,9 +352,12 @@ class TestAnalyzerEngine(TestCase):
         analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry,
                                                     app_tracer=self.app_tracer,
                                                     enable_trace_pii=True)
-        results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text,
-                                                     entities, language,
-                                                     all_fields=False)
+        results = analyzer_engine_with_spacy.analyze(correlation_id=self.unit_test_guid,
+                                                     text=text,
+                                                     entities=entities,
+                                                     language=language,
+                                                     all_fields=False,
+                                                     trace=True)
         assert len(results) == 3
         for result in results:
             assert result.analysis_explanation is not None
