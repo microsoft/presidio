@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='template.proto',
   package='types',
   syntax='proto3',
-  serialized_pb=_b('\n\x0etemplate.proto\x12\x05types\x1a\x0c\x63ommon.proto\"\x98\x01\n\x0f\x41nalyzeTemplate\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12\x11\n\tallFields\x18\x02 \x01(\x08\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x12\n\ncreateTime\x18\x04 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x05 \x01(\t\x12\x10\n\x08language\x18\x06 \x01(\t\"\xca\x01\n\x11\x41nonymizeTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12@\n\x18\x66ieldTypeTransformations\x18\x04 \x03(\x0b\x32\x1e.types.FieldTypeTransformation\x12\x34\n\x15\x64\x65\x66\x61ultTransformation\x18\x05 \x01(\x0b\x32\x15.types.Transformation\"g\n\x12JsonSchemaTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12\x12\n\njsonSchema\x18\x04 \x01(\t\"k\n\x17\x46ieldTypeTransformation\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12-\n\x0etransformation\x18\x02 \x01(\x0b\x32\x15.types.Transformation\"\xd1\x01\n\x0eTransformation\x12)\n\x0creplaceValue\x18\x02 \x01(\x0b\x32\x13.types.ReplaceValue\x12\'\n\x0bredactValue\x18\x03 \x01(\x0b\x32\x12.types.RedactValue\x12#\n\thashValue\x18\x04 \x01(\x0b\x32\x10.types.HashValue\x12#\n\tmaskValue\x18\x05 \x01(\x0b\x32\x10.types.MaskValue\x12!\n\x08\x66PEValue\x18\x06 \x01(\x0b\x32\x0f.types.FPEValue\" \n\x0cReplaceValue\x12\x10\n\x08newValue\x18\x01 \x01(\t\"\r\n\x0bRedactValue\"\x0b\n\tHashValue\"K\n\tMaskValue\x12\x18\n\x10maskingCharacter\x18\x01 \x01(\t\x12\x13\n\x0b\x63harsToMask\x18\x02 \x01(\x05\x12\x0f\n\x07\x66romEnd\x18\x03 \x01(\x08\"7\n\x08\x46PEValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05tweak\x18\x02 \x01(\t\x12\x0f\n\x07\x64\x65\x63rypt\x18\x03 \x01(\x08\"E\n\x08\x44\x42\x43onfig\x12\x18\n\x10\x63onnectionString\x18\x01 \x01(\t\x12\x11\n\ttableName\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\"\x8f\x01\n\x08\x44\x61tasink\x12!\n\x08\x64\x62\x43onfig\x18\x01 \x01(\x0b\x32\x0f.types.DBConfig\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\x12)\n\x0cstreamConfig\x18\x03 \x01(\x0b\x32\x13.types.StreamConfig\"}\n\x10\x44\x61tasinkTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12(\n\x0f\x61nalyzeDatasink\x18\x02 \x03(\x0b\x32\x0f.types.Datasink\x12*\n\x11\x61nonymizeDatasink\x18\x03 \x03(\x0b\x32\x0f.types.Datasink\"S\n\x11\x42lobStorageConfig\x12\x13\n\x0b\x61\x63\x63ountName\x18\x01 \x01(\t\x12\x12\n\naccountKey\x18\x02 \x01(\t\x12\x15\n\rcontainerName\x18\x03 \x01(\t\"e\n\x08S3Config\x12\x10\n\x08\x61\x63\x63\x65ssId\x18\x01 \x01(\t\x12\x11\n\taccessKey\x18\x02 \x01(\t\x12\x0e\n\x06region\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\x12\x10\n\x08\x65ndpoint\x18\x05 \x01(\t\"Z\n\x13GoogleStorageConfig\x12\x0c\n\x04json\x18\x01 \x01(\t\x12\x11\n\tprojectId\x18\x02 \x01(\t\x12\x0e\n\x06scopes\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\"\xa5\x01\n\x12\x43loudStorageConfig\x12\x33\n\x11\x62lobStorageConfig\x18\x01 \x01(\x0b\x32\x18.types.BlobStorageConfig\x12!\n\x08s3Config\x18\x02 \x01(\x0b\x32\x0f.types.S3Config\x12\x37\n\x13GoogleStorageConfig\x18\x03 \x01(\x0b\x32\x1a.types.GoogleStorageConfig\"r\n\x0cStreamConfig\x12\'\n\x0bkafkaConfig\x18\x01 \x01(\x0b\x32\x12.types.KafkaConfig\x12!\n\x08\x65hConfig\x18\x02 \x01(\x0b\x32\x0f.types.EHConfig\x12\x16\n\x0epartitionCount\x18\x03 \x01(\x05\"Y\n\x0bKafkaConfig\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\x12\r\n\x05topic\x18\x02 \x01(\t\x12\x14\n\x0csaslUsername\x18\x03 \x01(\t\x12\x14\n\x0csaslPassword\x18\x04 \x01(\t\"\xcb\x01\n\x08\x45HConfig\x12\x13\n\x0b\x65hNamespace\x18\x01 \x01(\t\x12\x0e\n\x06\x65hName\x18\x02 \x01(\t\x12\x1a\n\x12\x65hConnectionString\x18\x03 \x01(\t\x12\x11\n\tehKeyName\x18\x04 \x01(\t\x12\x12\n\nehKeyValue\x18\x05 \x01(\t\x12\x1f\n\x17storageAccountNameValue\x18\x06 \x01(\t\x12\x1e\n\x16storageAccountKeyValue\x18\x07 \x01(\t\x12\x16\n\x0e\x63ontainerValue\x18\x08 \x01(\t\"\xb2\x01\n\x0eStreamTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12)\n\x0cstreamConfig\x18\x03 \x01(\x0b\x32\x13.types.StreamConfig\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\"Z\n\x0cScanTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\"\xc8\x01\n\x16ScannerCronJobTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x1f\n\x07trigger\x18\x03 \x01(\x0b\x32\x0e.types.Trigger\x12\x16\n\x0escanTemplateId\x18\x04 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x05 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x06 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x07 \x01(\t\"\xa6\x01\n\x12StreamsJobTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x19\n\x11streamsTemplateId\x18\x03 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\",\n\x07Trigger\x12!\n\x08schedule\x18\x01 \x01(\x0b\x32\x0f.types.Schedule\"$\n\x08Schedule\x12\x18\n\x10recurrencePeriod\x18\x01 \x01(\t\"\x8b\x01\n\x16\x41nonymizeImageTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12\x32\n\x11\x66ieldTypeGraphics\x18\x04 \x03(\x0b\x32\x17.types.FieldTypeGraphic\"V\n\x10\x46ieldTypeGraphic\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12\x1f\n\x07graphic\x18\x02 \x01(\x0b\x32\x0e.types.Graphic\"8\n\x07Graphic\x12-\n\x0e\x66illColorValue\x18\x01 \x01(\x0b\x32\x15.types.FillColorValue\":\n\x0e\x46illColorValue\x12\x0b\n\x03red\x18\x01 \x01(\x01\x12\r\n\x05green\x18\x02 \x01(\x01\x12\x0c\n\x04\x62lue\x18\x03 \x01(\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0etemplate.proto\x12\x05types\x1a\x0c\x63ommon.proto\"\xb7\x01\n\x0f\x41nalyzeTemplate\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12\x11\n\tallFields\x18\x02 \x01(\x08\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x12\n\ncreateTime\x18\x04 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x05 \x01(\t\x12\x10\n\x08language\x18\x06 \x01(\t\x12\x1d\n\x15resultsScoreThreshold\x18\x07 \x01(\x02\"\xca\x01\n\x11\x41nonymizeTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12@\n\x18\x66ieldTypeTransformations\x18\x04 \x03(\x0b\x32\x1e.types.FieldTypeTransformation\x12\x34\n\x15\x64\x65\x66\x61ultTransformation\x18\x05 \x01(\x0b\x32\x15.types.Transformation\"g\n\x12JsonSchemaTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12\x12\n\njsonSchema\x18\x04 \x01(\t\"k\n\x17\x46ieldTypeTransformation\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12-\n\x0etransformation\x18\x02 \x01(\x0b\x32\x15.types.Transformation\"\xd1\x01\n\x0eTransformation\x12)\n\x0creplaceValue\x18\x02 \x01(\x0b\x32\x13.types.ReplaceValue\x12\'\n\x0bredactValue\x18\x03 \x01(\x0b\x32\x12.types.RedactValue\x12#\n\thashValue\x18\x04 \x01(\x0b\x32\x10.types.HashValue\x12#\n\tmaskValue\x18\x05 \x01(\x0b\x32\x10.types.MaskValue\x12!\n\x08\x66PEValue\x18\x06 \x01(\x0b\x32\x0f.types.FPEValue\" \n\x0cReplaceValue\x12\x10\n\x08newValue\x18\x01 \x01(\t\"\r\n\x0bRedactValue\"\x0b\n\tHashValue\"K\n\tMaskValue\x12\x18\n\x10maskingCharacter\x18\x01 \x01(\t\x12\x13\n\x0b\x63harsToMask\x18\x02 \x01(\x05\x12\x0f\n\x07\x66romEnd\x18\x03 \x01(\x08\"7\n\x08\x46PEValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05tweak\x18\x02 \x01(\t\x12\x0f\n\x07\x64\x65\x63rypt\x18\x03 \x01(\x08\"E\n\x08\x44\x42\x43onfig\x12\x18\n\x10\x63onnectionString\x18\x01 \x01(\t\x12\x11\n\ttableName\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\"\x8f\x01\n\x08\x44\x61tasink\x12!\n\x08\x64\x62\x43onfig\x18\x01 \x01(\x0b\x32\x0f.types.DBConfig\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\x12)\n\x0cstreamConfig\x18\x03 \x01(\x0b\x32\x13.types.StreamConfig\"}\n\x10\x44\x61tasinkTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12(\n\x0f\x61nalyzeDatasink\x18\x02 \x03(\x0b\x32\x0f.types.Datasink\x12*\n\x11\x61nonymizeDatasink\x18\x03 \x03(\x0b\x32\x0f.types.Datasink\"S\n\x11\x42lobStorageConfig\x12\x13\n\x0b\x61\x63\x63ountName\x18\x01 \x01(\t\x12\x12\n\naccountKey\x18\x02 \x01(\t\x12\x15\n\rcontainerName\x18\x03 \x01(\t\"e\n\x08S3Config\x12\x10\n\x08\x61\x63\x63\x65ssId\x18\x01 \x01(\t\x12\x11\n\taccessKey\x18\x02 \x01(\t\x12\x0e\n\x06region\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\x12\x10\n\x08\x65ndpoint\x18\x05 \x01(\t\"Z\n\x13GoogleStorageConfig\x12\x0c\n\x04json\x18\x01 \x01(\t\x12\x11\n\tprojectId\x18\x02 \x01(\t\x12\x0e\n\x06scopes\x18\x03 \x01(\t\x12\x12\n\nbucketName\x18\x04 \x01(\t\"\xa5\x01\n\x12\x43loudStorageConfig\x12\x33\n\x11\x62lobStorageConfig\x18\x01 \x01(\x0b\x32\x18.types.BlobStorageConfig\x12!\n\x08s3Config\x18\x02 \x01(\x0b\x32\x0f.types.S3Config\x12\x37\n\x13GoogleStorageConfig\x18\x03 \x01(\x0b\x32\x1a.types.GoogleStorageConfig\"r\n\x0cStreamConfig\x12\'\n\x0bkafkaConfig\x18\x01 \x01(\x0b\x32\x12.types.KafkaConfig\x12!\n\x08\x65hConfig\x18\x02 \x01(\x0b\x32\x0f.types.EHConfig\x12\x16\n\x0epartitionCount\x18\x03 \x01(\x05\"Y\n\x0bKafkaConfig\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\x12\r\n\x05topic\x18\x02 \x01(\t\x12\x14\n\x0csaslUsername\x18\x03 \x01(\t\x12\x14\n\x0csaslPassword\x18\x04 \x01(\t\"\xcb\x01\n\x08\x45HConfig\x12\x13\n\x0b\x65hNamespace\x18\x01 \x01(\t\x12\x0e\n\x06\x65hName\x18\x02 \x01(\t\x12\x1a\n\x12\x65hConnectionString\x18\x03 \x01(\t\x12\x11\n\tehKeyName\x18\x04 \x01(\t\x12\x12\n\nehKeyValue\x18\x05 \x01(\t\x12\x1f\n\x17storageAccountNameValue\x18\x06 \x01(\t\x12\x1e\n\x16storageAccountKeyValue\x18\x07 \x01(\t\x12\x16\n\x0e\x63ontainerValue\x18\x08 \x01(\t\"\xb2\x01\n\x0eStreamTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12)\n\x0cstreamConfig\x18\x03 \x01(\x0b\x32\x13.types.StreamConfig\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\"Z\n\x0cScanTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x35\n\x12\x63loudStorageConfig\x18\x02 \x01(\x0b\x32\x19.types.CloudStorageConfig\"\xc8\x01\n\x16ScannerCronJobTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x1f\n\x07trigger\x18\x03 \x01(\x0b\x32\x0e.types.Trigger\x12\x16\n\x0escanTemplateId\x18\x04 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x05 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x06 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x07 \x01(\t\"\xa6\x01\n\x12StreamsJobTemplate\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x19\n\x11streamsTemplateId\x18\x03 \x01(\t\x12\x19\n\x11\x61nalyzeTemplateId\x18\x04 \x01(\t\x12\x1b\n\x13\x61nonymizeTemplateId\x18\x05 \x01(\t\x12\x1a\n\x12\x64\x61tasinkTemplateId\x18\x06 \x01(\t\",\n\x07Trigger\x12!\n\x08schedule\x18\x01 \x01(\x0b\x32\x0f.types.Schedule\"$\n\x08Schedule\x12\x18\n\x10recurrencePeriod\x18\x01 \x01(\t\"\x8b\x01\n\x16\x41nonymizeImageTemplate\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x12\n\ncreateTime\x18\x02 \x01(\t\x12\x14\n\x0cmodifiedTime\x18\x03 \x01(\t\x12\x32\n\x11\x66ieldTypeGraphics\x18\x04 \x03(\x0b\x32\x17.types.FieldTypeGraphic\"V\n\x10\x46ieldTypeGraphic\x12!\n\x06\x66ields\x18\x01 \x03(\x0b\x32\x11.types.FieldTypes\x12\x1f\n\x07graphic\x18\x02 \x01(\x0b\x32\x0e.types.Graphic\"8\n\x07Graphic\x12-\n\x0e\x66illColorValue\x18\x01 \x01(\x0b\x32\x15.types.FillColorValue\":\n\x0e\x46illColorValue\x12\x0b\n\x03red\x18\x01 \x01(\x01\x12\r\n\x05green\x18\x02 \x01(\x01\x12\x0c\n\x04\x62lue\x18\x03 \x01(\x01\x62\x06proto3')
   ,
   dependencies=[common__pb2.DESCRIPTOR,])
 
@@ -76,6 +76,13 @@ _ANALYZETEMPLATE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='resultsScoreThreshold', full_name='types.AnalyzeTemplate.resultsScoreThreshold', index=6,
+      number=7, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -89,7 +96,7 @@ _ANALYZETEMPLATE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=40,
-  serialized_end=192,
+  serialized_end=223,
 )
 
 
@@ -147,8 +154,8 @@ _ANONYMIZETEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=195,
-  serialized_end=397,
+  serialized_start=226,
+  serialized_end=428,
 )
 
 
@@ -199,8 +206,8 @@ _JSONSCHEMATEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=399,
-  serialized_end=502,
+  serialized_start=430,
+  serialized_end=533,
 )
 
 
@@ -237,8 +244,8 @@ _FIELDTYPETRANSFORMATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=504,
-  serialized_end=611,
+  serialized_start=535,
+  serialized_end=642,
 )
 
 
@@ -296,8 +303,8 @@ _TRANSFORMATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=614,
-  serialized_end=823,
+  serialized_start=645,
+  serialized_end=854,
 )
 
 
@@ -327,8 +334,8 @@ _REPLACEVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=825,
-  serialized_end=857,
+  serialized_start=856,
+  serialized_end=888,
 )
 
 
@@ -351,8 +358,8 @@ _REDACTVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=859,
-  serialized_end=872,
+  serialized_start=890,
+  serialized_end=903,
 )
 
 
@@ -375,8 +382,8 @@ _HASHVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=874,
-  serialized_end=885,
+  serialized_start=905,
+  serialized_end=916,
 )
 
 
@@ -420,8 +427,8 @@ _MASKVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=887,
-  serialized_end=962,
+  serialized_start=918,
+  serialized_end=993,
 )
 
 
@@ -465,8 +472,8 @@ _FPEVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=964,
-  serialized_end=1019,
+  serialized_start=995,
+  serialized_end=1050,
 )
 
 
@@ -510,8 +517,8 @@ _DBCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1021,
-  serialized_end=1090,
+  serialized_start=1052,
+  serialized_end=1121,
 )
 
 
@@ -555,8 +562,8 @@ _DATASINK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1093,
-  serialized_end=1236,
+  serialized_start=1124,
+  serialized_end=1267,
 )
 
 
@@ -600,8 +607,8 @@ _DATASINKTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1238,
-  serialized_end=1363,
+  serialized_start=1269,
+  serialized_end=1394,
 )
 
 
@@ -645,8 +652,8 @@ _BLOBSTORAGECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1365,
-  serialized_end=1448,
+  serialized_start=1396,
+  serialized_end=1479,
 )
 
 
@@ -704,8 +711,8 @@ _S3CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1450,
-  serialized_end=1551,
+  serialized_start=1481,
+  serialized_end=1582,
 )
 
 
@@ -756,8 +763,8 @@ _GOOGLESTORAGECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1553,
-  serialized_end=1643,
+  serialized_start=1584,
+  serialized_end=1674,
 )
 
 
@@ -801,8 +808,8 @@ _CLOUDSTORAGECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1646,
-  serialized_end=1811,
+  serialized_start=1677,
+  serialized_end=1842,
 )
 
 
@@ -846,8 +853,8 @@ _STREAMCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1813,
-  serialized_end=1927,
+  serialized_start=1844,
+  serialized_end=1958,
 )
 
 
@@ -898,8 +905,8 @@ _KAFKACONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1929,
-  serialized_end=2018,
+  serialized_start=1960,
+  serialized_end=2049,
 )
 
 
@@ -978,8 +985,8 @@ _EHCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2021,
-  serialized_end=2224,
+  serialized_start=2052,
+  serialized_end=2255,
 )
 
 
@@ -1044,8 +1051,8 @@ _STREAMTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2227,
-  serialized_end=2405,
+  serialized_start=2258,
+  serialized_end=2436,
 )
 
 
@@ -1082,8 +1089,8 @@ _SCANTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2407,
-  serialized_end=2497,
+  serialized_start=2438,
+  serialized_end=2528,
 )
 
 
@@ -1155,8 +1162,8 @@ _SCANNERCRONJOBTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2500,
-  serialized_end=2700,
+  serialized_start=2531,
+  serialized_end=2731,
 )
 
 
@@ -1221,8 +1228,8 @@ _STREAMSJOBTEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2703,
-  serialized_end=2869,
+  serialized_start=2734,
+  serialized_end=2900,
 )
 
 
@@ -1252,8 +1259,8 @@ _TRIGGER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2871,
-  serialized_end=2915,
+  serialized_start=2902,
+  serialized_end=2946,
 )
 
 
@@ -1283,8 +1290,8 @@ _SCHEDULE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2917,
-  serialized_end=2953,
+  serialized_start=2948,
+  serialized_end=2984,
 )
 
 
@@ -1335,8 +1342,8 @@ _ANONYMIZEIMAGETEMPLATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2956,
-  serialized_end=3095,
+  serialized_start=2987,
+  serialized_end=3126,
 )
 
 
@@ -1373,8 +1380,8 @@ _FIELDTYPEGRAPHIC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3097,
-  serialized_end=3183,
+  serialized_start=3128,
+  serialized_end=3214,
 )
 
 
@@ -1404,8 +1411,8 @@ _GRAPHIC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3185,
-  serialized_end=3241,
+  serialized_start=3216,
+  serialized_end=3272,
 )
 
 
@@ -1449,8 +1456,8 @@ _FILLCOLORVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3243,
-  serialized_end=3301,
+  serialized_start=3274,
+  serialized_end=3332,
 )
 
 _ANALYZETEMPLATE.fields_by_name['fields'].message_type = common__pb2._FIELDTYPES
