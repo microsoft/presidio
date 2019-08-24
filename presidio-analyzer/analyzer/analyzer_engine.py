@@ -75,10 +75,13 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # correlation is used to group all traces related to on request
 
         correlation_id = str(uuid.uuid4())
-        results = self.analyze(correlation_id, request.text,
-                               entities, language,
-                               all_fields,
-                               threshold)
+        results = self.analyze(correlation_id=correlation_id,
+                               text=request.text,
+                               entities=entities,
+                               language=language,
+                               all_fields=all_fields,
+                               score_threshold=threshold,
+                               trace=True)
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
@@ -150,7 +153,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         return language
 
     def analyze(self, correlation_id, text, entities, language, all_fields,
-                score_threshold=None):
+                score_threshold=None, trace=False):
         """
         analyzes the requested text, searching for the given entities
          in the given language
@@ -162,6 +165,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         of the requested language
         :param score_threshold: A minimum value for which
         to return an identified entity
+        :param trace: Should tracing of the response occur or not
         :return: an array of the found entities in the text
         """
 
@@ -185,7 +189,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
-        if self.enable_trace_pii:
+        if self.enable_trace_pii and trace:
             self.app_tracer.trace(correlation_id, "nlp artifacts:"
                                   + nlp_artifacts.to_json())
 
@@ -201,8 +205,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             if current_results:
                 results.extend(current_results)
 
-        self.app_tracer.trace(correlation_id, json.dumps(
-            [result.to_json() for result in results]))
+        if trace:
+            self.app_tracer.trace(correlation_id, json.dumps(
+                [result.to_json() for result in results]))
 
         # Remove duplicates or low score results
         results = AnalyzerEngine.__remove_duplicates(results)
