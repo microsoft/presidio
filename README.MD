@@ -26,7 +26,7 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 ## Features
 
-***Unstsructured text anonymization***
+***Unstructured text anonymization***
 
 Presidio automatically detects Personal-Identifiable Information (PII) in unstructured text, annonymizes it based on one or more anonymization mechanisms, and returns a string with no personal identifiable data.
 For example:
