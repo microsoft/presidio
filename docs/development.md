@@ -47,7 +47,7 @@
     wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
     mkdir re2 
     tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
-    cd re2 && make install
+    cd re2 && sudo make install
     ```
 
 2. Install pipenv
