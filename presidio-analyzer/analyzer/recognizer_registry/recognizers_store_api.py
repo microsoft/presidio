@@ -1,13 +1,12 @@
 import logging
 import os
-
 import grpc
-import recognizers_store_pb2
-import recognizers_store_pb2_grpc
 
+from analyzer.recognizers_store_pb2 import RecognizerGetHashRequest
+from analyzer.recognizers_store_pb2 import RecognizersGetAllRequest
+from analyzer.recognizers_store_pb2_grpc import RecognizersStoreServiceStub
 from analyzer import PatternRecognizer
 from analyzer import Pattern
-
 
 class RecognizerStoreApi:
     """ The RecognizerStoreApi is the object that talks to the remote
@@ -22,16 +21,14 @@ class RecognizerStoreApi:
             recognizers_store_svc_url = "localhost:3004"
 
         channel = grpc.insecure_channel(recognizers_store_svc_url)
-        self.rs_stub = recognizers_store_pb2_grpc.RecognizersStoreServiceStub(
-            channel)
+        self.rs_stub = RecognizersStoreServiceStub(channel)
 
     def get_latest_hash(self):
         """
         Returns the hash of all the stored custom recognizers. Returns empty
         string in case of an error (e.g. the store is completly empty)
         """
-        hash_request = \
-            recognizers_store_pb2.RecognizerGetHashRequest()
+        hash_request = RecognizerGetHashRequest()
 
         last_hash = ""
         try:
@@ -53,7 +50,7 @@ class RecognizerStoreApi:
         Returns a list of CustomRecognizer which were created from the
         recognizers stored in the underlying store
         """
-        req = recognizers_store_pb2.RecognizersGetAllRequest()
+        req = RecognizersGetAllRequest()
         raw_recognizers = []
 
         try:
