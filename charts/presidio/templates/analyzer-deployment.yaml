@@ -26,10 +26,10 @@ spec:
         - containerPort: {{ .Values.analyzer.service.internalPort }}
         resources:
           requests:
-            memory: "2000Mi"
+            memory: "1500Mi"
             cpu: "1500m"
           limits:
-            memory: "5000Mi"
+            memory: "3000Mi"
             cpu: "2000m"
         env:
           - name: PRESIDIO_NAMESPACE
