@@ -24,7 +24,7 @@ sleep 30 # Wait for the analyzer model to load
 docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=presidio-anonymizer:3001 -e RECOGNIZERS_STORE_SVC_ADDRESS=presidio-recognizers-store:3004 ${DOCKER_REGISTRY}/presidio-api:${PRESIDIO_LABEL}
 ```
 
-**NOTE: Building the deps images currently a lot of time**. We are working on improving the build time through improving the build and providing pre-built dependencies.
+**NOTE: Building the deps images currently takes a lot of time** (~70 minutes, depending on the build machine). We are working on improving the build time through improving the build and providing pre-built dependencies.
 
 ---
 
