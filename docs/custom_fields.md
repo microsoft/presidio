@@ -132,5 +132,4 @@ Presidio supports custom fields using either online via a simple REST API or by 
 
     b. Reference and add the new class to the `RecognizerRegistry` module, in the `load_predefined_recognizers` method, which registers all code based recognizers.
 
-
-    
+    c. Note that if by adding the new recognizer, the memory or CPU consumption of the analyzer is expected to grow (such as in the case of adding a new model based recognizer), you should consider updating the pod's resources allocation in [analyzer-deployment.yaml](../charts/presidio/templates/analyzer-deployment.yaml)

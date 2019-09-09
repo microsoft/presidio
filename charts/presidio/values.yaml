@@ -30,8 +30,9 @@ api:
   #readinessProbe:
   #  initialDelaySeconds: 20
 
+  # supported types are nginx, traefik and istio
   ingress:
-    enabled: true
+    enabled: false
     class: nginx
 
 analyzer:

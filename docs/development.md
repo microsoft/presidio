@@ -22,25 +22,9 @@
 
 5. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
 
-6. Protobuf generator tools (Optional)
-
-    - `https://github.com/golang/protobuf`
-
-    - `https://grpc.io/docs/tutorials/basic/python.html`
-
-    To generate proto files, clone [presidio-genproto](https://github.com/Microsoft/presidio-genproto) and run the following commands in `$GOPATH/src/github.com/Microsoft/presidio-genproto/src` folder
-
-    ```sh
-    python -m grpc_tools.protoc -I . --python_out=../python --grpc_python_out=../python ./*.proto
-    ```
-
-    ```sh
-    protoc -I . --go_out=plugins=grpc:../golang ./*.proto
-    ```
-
 ## Setting up the environment - Python
 
-1. Build and install [re2](https://github.com/google/re2)
+1. Build and install [re2](https://github.com/google/re2) (Optional. Presidio will use `regex` instead of `pyre2` if `re2` is not installed)
 
     ```sh
     re2_version="2018-12-01"
@@ -94,6 +78,46 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
     pylint analyzer
     pip freeze
     ```
+    
+## Changing Presidio's API
+Presidio leverages [protobuf](https://github.com/golang/protobuf) to create API classes and services across multiple environments. The proto files are stored on a different [Github repo](https://github.com/Microsoft/presidio-genproto)
+
+Follow these steps to change Presidio's API:
+1. Fork the [presidio-genproto](https://github.com/Microsoft/presidio-genproto) repo into `YOUR_ORG/presidio-genproto`
+2. Clone the repo into the `$GOPATH/src/github.com/YOUR_ORG/presidio-genproto` folder
+3. Make the desired changes to the .proto files in /src
+4. Make sure you have [protobuf](https://github.com/golang/protobuf) installed
+5. Generate the Go and Python files. Run the following commands in the `src` folder of `presidio-genproto`:
+
+    ```sh
+    python -m grpc_tools.protoc -I . --python_out=../python --grpc_python_out=../python ./*.proto
+
+    protoc -I . --go_out=plugins=grpc:../golang ./*.proto
+    ```
+    
+ 5. Copy all the files in the `python` folder into `presidio-analyzer/analyzer`. All generated files end with `*pb2.py` or `*pb2_grpc.py`
+ 6. Change the constraint on `Gopkg.toml` which directs to the location of `presidio-genproto`
+From:
+
+```yaml
+[[constraint]]
+  branch = "master"
+  name = "github.com/Microsoft/presidio-genproto"
+```
+
+To:
+
+```yaml
+[[constraint]]
+  branch = "YOUR_GENPROTO_BRANCH"
+  name = "github.com/YOUR_ORG/presidio-genproto"
+
+```
+  7. Update `Gopkg.lock` by calling `dep ensure` or `dep ensure --update github.com/YOUR_ORG/presidio-genproto`
+  8. Push all the changes (generated python files, `Gopkg.toml` and `Gopkg.lock` into your presidio repo
+
+For more info, see https://grpc.io/docs/tutorials/basic/python.html
+
 
 ## Development notes
 

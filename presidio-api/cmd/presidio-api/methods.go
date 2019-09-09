@@ -95,7 +95,11 @@ func analyzeText(c *gin.Context) {
 			server.AbortWithError(c, http.StatusBadRequest, err)
 			return
 		}
-		server.WriteResponse(c, http.StatusOK, result)
+		server.WriteResponseWithRequestID(
+			c,
+			http.StatusOK,
+			result.RequestId,
+			result.AnalyzeResults)
 	}
 }
 
