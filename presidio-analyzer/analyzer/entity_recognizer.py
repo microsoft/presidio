@@ -9,7 +9,7 @@ class EntityRecognizer:
     MAX_SCORE = 1.0
     CONTEXT_SIMILARITY_THRESHOLD = 0.65
     CONTEXT_SIMILARITY_FACTOR = 0.35
-    MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.6
+    MIN_SCORE_WITH_CONTEXT_SIMILARITY = 0.4
     CONTEXT_PREFIX_COUNT = 5
     CONTEXT_SUFFIX_COUNT = 0
 
@@ -95,7 +95,7 @@ class EntityRecognizer:
         return cls(**entity_recognizer_dict)
 
     def enhance_using_context(self, text, raw_results,
-                              nlp_artifacts, predefined_context_words):
+                              nlp_artifacts, recognizer_context_words):
         """ using the surrounding words of the actual word matches, look
             for specific strings that if found contribute to the score
             of the result, improving the confidence that the match is
@@ -107,7 +107,7 @@ class EntityRecognizer:
             :param nlp_artifacts: The nlp artifacts contains elements
                                   such as lemmatized tokens for better
                                   accuracy of the context enhancement process
-            :param predefined_context_words: The words the current recognizer
+            :param recognizer_context_words: The words the current recognizer
                                              supports (words to lookup)
         """
         # create a deep copy of the results object so we can manipulate it
@@ -118,20 +118,23 @@ class EntityRecognizer:
             self.logger.warning('[%s]. NLP artifacts were not provided',
                                 self.name)
             return results
-        if predefined_context_words is None or predefined_context_words == []:
+        if recognizer_context_words is None or recognizer_context_words == []:
             self.logger.info("recognizer '%s' does not support context "
                              "enhancement", self.name)
             return results
 
         for result in results:
-            # extract lemmatized context from the surronding of the match
-            context = self.__extract_context(
+            # extract lemmatized context from the surrounding of the match
+
+            word = text[result.start:result.end]
+
+            surrounding_words = self.__extract_surrounding_words(
                 nlp_artifacts=nlp_artifacts,
-                word=text[result.start:result.end],
+                word=word,
                 start=result.start)
 
-            supportive_context_word = self.__find_supportive_context_word(
-                context, predefined_context_words)
+            supportive_context_word = self.__find_supportive_word_in_context(
+                surrounding_words, recognizer_context_words)
             if supportive_context_word != "":
                 result.score += \
                   self.CONTEXT_SIMILARITY_FACTOR
@@ -153,35 +156,30 @@ class EntityRecognizer:
     def __context_to_keywords(context):
         return context.split(' ')
 
-    def __find_supportive_context_word(self,
-                                       context_text,
-                                       context_list):
+    def __find_supportive_word_in_context(self,
+                                          context_list,
+                                          recognizer_context_list):
         """A word is considered a supportive context word if
            there's exact match between a keyword in
            context_text and any keyword in context_list
 
-        :param context_text words before and after the matched enitity within
+        :param context_list words before and after the matched entity within
                a specified window size
-        :param context_list a list of words considered as context keywords
-               manually specified by the recognizer's author
+        :param recognizer_context_list a list of words considered as
+                context keywords manually specified by the recognizer's author
         """
 
         word = ""
         # If the context list is empty, no need to continue
-        if context_list is None:
+        if context_list is None or recognizer_context_list is None:
             return word
 
-        # Take the context text and break it into individual keywords
-        lemmatized_keywords = self.__context_to_keywords(context_text)
-        if lemmatized_keywords is None:
-            return word
-
-        for predefined_context_word in context_list:
+        for predefined_context_word in recognizer_context_list:
             # result == true only if any of the predefined context words
             # is found exactly or as a substring in any of the collected
             # context words
             result = \
-              next((True for keyword in lemmatized_keywords
+              next((True for keyword in context_list
                     if predefined_context_word in keyword), False)
             if result:
                 self.logger.debug("Found context keyword '%s'",
@@ -196,7 +194,6 @@ class EntityRecognizer:
                       n_words,
                       lemmas,
                       lemmatized_filtered_keywords,
-                      prefix,
                       is_backward):
         """ Prepare a string of context words, which surrounds a lemma
             at a given index. The words will be collected only if exist
@@ -205,14 +202,14 @@ class EntityRecognizer:
         :param index: index of the lemma that its surrounding words we want
         :param n_words: number of words to take
         :param lemmas: array of lemmas
-        :param lemmatized_filtered_keywords: the array of filter
-                                            lemmas,
-        :param prefix: string to be attached to the results as a prefix
+        :param lemmatized_filtered_keywords: the array of filtered
+               lemmas from the original sentence,
         :param is_backward: if true take the preceeding words, if false,
                             take the successing words
         """
         i = index
-        # The entity itself is no intrest to us...however we want to
+        context_words = []
+        # The entity itself is no interest to us...however we want to
         # consider it anyway for cases were it is attached with no spaces
         # to an interesting context word, so we allow it and add 1 to
         # the number of collected words
@@ -222,38 +219,33 @@ class EntityRecognizer:
         while 0 <= i < len(lemmas) and remaining > 0:
             lower_lemma = lemmas[i].lower()
             if lower_lemma in lemmatized_filtered_keywords:
+                context_words.append(lower_lemma)
                 remaining -= 1
-                prefix += ' ' + lower_lemma
-
             i = i-1 if is_backward else i+1
-        return prefix
+        return context_words
 
     def __add_n_words_forward(self,
                               index,
                               n_words,
                               lemmas,
-                              lemmatized_filtered_keywords,
-                              prefix):
+                              lemmatized_filtered_keywords):
         return self.__add_n_words(
             index,
             n_words,
             lemmas,
             lemmatized_filtered_keywords,
-            prefix,
             False)
 
     def __add_n_words_backward(self,
                                index,
                                n_words,
                                lemmas,
-                               lemmatized_filtered_keywords,
-                               prefix):
+                               lemmatized_filtered_keywords):
         return self. __add_n_words(
             index,
             n_words,
             lemmas,
             lemmatized_filtered_keywords,
-            prefix,
             True)
 
     @staticmethod
@@ -280,11 +272,11 @@ class EntityRecognizer:
 
         if not found:
             raise ValueError("Did not find word '" + word + "' "
-                             "in the list of tokens altough it "
+                             "in the list of tokens although it "
                              "is expected to be found")
         return i
 
-    def __extract_context(self, nlp_artifacts, word, start):
+    def __extract_surrounding_words(self, nlp_artifacts, word, start):
         """ Extracts words surronding another given word.
             The text from which the context is extracted is given in the nlp
             doc
@@ -317,20 +309,22 @@ class EntityRecognizer:
             nlp_artifacts.tokens_indices)
 
         # index i belongs to the PII entity, take the preceding n words
-        # and the successing m words into a context string
-        context_str = ''
-        context_str = \
+        # and the successing m words into a context list
+
+        backward_context = \
             self.__add_n_words_backward(token_index,
                                         EntityRecognizer.CONTEXT_PREFIX_COUNT,
                                         nlp_artifacts.lemmas,
-                                        lemmatized_keywords,
-                                        context_str)
-        context_str = \
+                                        lemmatized_keywords)
+        forward_context = \
             self.__add_n_words_forward(token_index,
                                        EntityRecognizer.CONTEXT_SUFFIX_COUNT,
                                        nlp_artifacts.lemmas,
-                                       lemmatized_keywords,
-                                       context_str)
+                                       lemmatized_keywords)
 
-        self.logger.debug('Context sentence is: %s', context_str)
-        return context_str
+        context_list = []
+        context_list.extend(backward_context)
+        context_list.extend(forward_context)
+        context_list = list(set(context_list))
+        self.logger.debug('Context list is: %s', " ".join(context_list))
+        return context_list
