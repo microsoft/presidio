@@ -67,17 +67,6 @@ class TestUsLicenseRecognizer(TestCase):
         for result in results:
             assert 0 < result.score < 0.02
 
-    def test_load_from_file(self):
-        path = os.path.dirname(__file__) + '/data/demo.txt'
-        text_file = open(path, 'r')
-        text = text_file.read()
-        results = us_license_recognizer.analyze(text, entities)
-
-        assert len(results) == 23
-
-    # Driver License - Letters (very weak) - 0.00
-    # Regex: r'\b([A-Z]{7,9}\b'
-
     def test_valid_us_driver_license_very_weak_letters(self):
         num = 'ABCDEFG ABCDEFGH ABCDEFGHI'
         results = us_license_recognizer.analyze(num, entities)
