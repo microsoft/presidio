@@ -276,16 +276,16 @@ class EntityRecognizer:
 
         if not found:
             raise ValueError("Did not find word '" + word + "' "
-                             "in the list of tokens altough it "
+                             "in the list of tokens although it "
                              "is expected to be found")
         return i
 
     def __extract_context(self, nlp_artifacts, word, start):
-        """ Extracts words surronding another given word.
+        """ Extracts words surrounding another given word.
             The text from which the context is extracted is given in the nlp
             doc
             :param nlp_artifacts: An abstraction layer which holds different
-                                  items which are result of a NLP pipeline
+                                  items which are the result of a NLP pipeline
                                   execution on a given text
             :param word: The word to look for context around
             :param start: The start index of the word in the original text
@@ -330,3 +330,4 @@ class EntityRecognizer:
 
         self.logger.debug('Context sentence is: %s', context_str)
         return context_str
+
