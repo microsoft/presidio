@@ -19,7 +19,7 @@ type ServicesAPI interface {
 	SetupDatasinkService()
 	SetupRecognizerStoreService()
 	SetupCache() cache.Cache
-	AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) ([]*types.AnalyzeResult, error)
+	AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) (*types.AnalyzeResponse, error)
 	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string,
 		anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
 	AnonymizeImageItem(ctx context.Context, image *types.Image, analyzeResults []*types.AnalyzeResult,

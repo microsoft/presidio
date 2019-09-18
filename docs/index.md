@@ -16,4 +16,6 @@ New to Presidio? Read this material to quickly get up and running.
 - [Analyzer service tutorial](tutorial_analyzer.md)
 - [Calling the different services](tutorial_service.md)
 - [Adding custom fields](custom_fields.md)
-- [Presidio Build and Release](build_release.md)
+- [Presidio build and release](build_release.md)
+- [Interpretability traces](interpretability_logs.md)
+- [Presidio logging and monitoring design concepts](monitoring_logging.md)

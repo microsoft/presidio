@@ -10,8 +10,8 @@ from analyzer import PatternRecognizer
 
 
 class MockRecognizer(PatternRecognizer):
-    def validate_result(self, pattern_text, pattern_result):
-        return pattern_result
+    def validate_result(self, pattern_text):
+        return True
 
     def __init__(self, entity, patterns, black_list, name, context):
         super().__init__(supported_entity=entity,

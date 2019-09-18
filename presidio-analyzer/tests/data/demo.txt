@@ -5,7 +5,7 @@ Here are a few examples of entities we currently support:
     DateTime: September 18
     Domain: microsoft.com
     Email address: test@presidio.site
-    IBAN: IL150120690000003111111
+    IBAN code: IL150120690000003111111
     IP: 192.168.0.1
     Person name: David Johnson
 

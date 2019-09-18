@@ -14,7 +14,7 @@ RUN pipenv install --dev --sequential && \
 
 #----------------------------
 
-FROM ${REGISTRY}/presidio-python-deps
+FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}	
 
 ARG NAME=presidio-analyzer
 ADD ./${NAME}/analyzer /usr/bin/${NAME}/analyzer

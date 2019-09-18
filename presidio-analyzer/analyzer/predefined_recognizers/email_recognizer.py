@@ -2,7 +2,6 @@ import tldextract
 
 from analyzer import Pattern
 from analyzer import PatternRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
 
 # pylint: disable=line-too-long
 REGEX = r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b"  # noqa: E501
@@ -19,11 +18,6 @@ class EmailRecognizer(PatternRecognizer):
         super().__init__(supported_entity="EMAIL_ADDRESS",
                          patterns=patterns, context=CONTEXT)
 
-    def validate_result(self, pattern_text, pattern_result):
+    def validate_result(self, pattern_text):
         result = tldextract.extract(pattern_text)
-
-        if result.fqdn != '':
-            pattern_result.score = EntityRecognizer.MAX_SCORE
-        else:
-            pattern_result.score = EntityRecognizer.MIN_SCORE
-        return pattern_result
+        return result.fqdn != ''

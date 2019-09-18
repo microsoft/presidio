@@ -9,7 +9,7 @@ from assertions import assert_result
 from analyzer.analyze_pb2 import AnalyzeRequest
 
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
-    RecognizerResult, RecognizerRegistry
+    RecognizerResult, RecognizerRegistry, AnalysisExplanation
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
@@ -18,6 +18,8 @@ from analyzer.recognizer_registry.recognizers_store_api \
 from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
 from tests.mocks import MockNlpEngine
+from tests.mocks.app_tracer_mock import AppTracerMock
+
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
     """
@@ -34,11 +36,15 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
     def get_all_recognizers(self):
         return self.recognizers
 
-    def add_custom_pattern_recognizer(self, new_recognizer, skip_hash_update=False):
+    def add_custom_pattern_recognizer(self, new_recognizer,
+                                      skip_hash_update=False):
         patterns = []
         for pat in new_recognizer.patterns:
             patterns.extend([Pattern(pat.name, pat.regex, pat.score)])
-        new_custom_recognizer = PatternRecognizer(name=new_recognizer.name, supported_entity=new_recognizer.supported_entities[0],
+        new_custom_recognizer = PatternRecognizer(name=new_recognizer.name,
+                                                  supported_entity=
+                                                  new_recognizer.supported_entities[
+                                                      0],
                                                   supported_language=new_recognizer.supported_language,
                                                   black_list=new_recognizer.black_list,
                                                   context=new_recognizer.context,
@@ -63,6 +69,7 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
             m.update(recognizer.name.encode('utf-8'))
         self.latest_hash = m.digest()
 
+
 class MockRecognizerRegistry(RecognizerRegistry):
     """
     A mock that acts as a recognizers registry
@@ -77,13 +84,8 @@ class MockRecognizerRegistry(RecognizerRegistry):
                                  DomainRecognizer()])
 
 
-ip_recognizer = IpRecognizer()
-us_ssn_recognizer = UsSsnRecognizer()
-phone_recognizer = UsPhoneRecognizer()
-us_itin_recognizer = UsItinRecognizer()
-us_license_recognizer = UsLicenseRecognizer()
-us_bank_recognizer = UsBankRecognizer()
-us_passport_recognizer = UsPassportRecognizer()
+loaded_spacy_nlp_engine = SpacyNlpEngine()
+
 
 class TestAnalyzerEngine(TestCase):
 
@@ -91,13 +93,21 @@ class TestAnalyzerEngine(TestCase):
         super(TestAnalyzerEngine, self).__init__(*args, **kwargs)
         self.loaded_registry = MockRecognizerRegistry(RecognizerStoreApiMock())
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
-        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry, MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts))
+        self.app_tracer = AppTracerMock(enable_interpretability=True)
+        self.loaded_analyzer_engine = AnalyzerEngine(self.loaded_registry,
+                                                     MockNlpEngine(stopwords=[],
+                                                                   punct_words=[],
+                                                                   nlp_artifacts=mock_nlp_artifacts),
+                                                     app_tracer=self.app_tracer,
+                                                     enable_trace_pii=True)
+        self.unit_test_guid = "00000000-0000-0000-0000-000000000000"
 
     def test_analyze_with_predefined_recognizers_return_results(self):
         text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
         language = "en"
         entities = ["CREDIT_CARD"]
         results = self.loaded_analyzer_engine.analyze(
+            self.unit_test_guid,
             text, entities, language, all_fields=False)
 
         assert len(results) == 1
@@ -110,15 +120,19 @@ class TestAnalyzerEngine(TestCase):
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
 
         # This analyzer engine is different from the global one, as this one
-        # also loads SpaCy so it can detect the phone number entity
-        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry)
-        results = analyzer_engine_with_spacy.analyze(text, entities, language, all_fields=False)
+        # also loads SpaCy so it can use the context words
+
+        analyzer_engine_with_spacy = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=loaded_spacy_nlp_engine)
+        results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text,
+                                                     entities, language,
+                                                     all_fields=False)
 
         assert len(results) == 2
         assert_result(results[0], "CREDIT_CARD", 14,
                       33, EntityRecognizer.MAX_SCORE)
         expected_score = UsPhoneRecognizer.MEDIUM_REGEX_SCORE + \
-            PatternRecognizer.CONTEXT_SIMILARITY_FACTOR  # 0.5 + 0.35 = 0.85
+                         PatternRecognizer.CONTEXT_SIMILARITY_FACTOR  # 0.5 + 0.35 = 0.85
         assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
     def test_analyze_without_entities(self):
@@ -126,15 +140,17 @@ class TestAnalyzerEngine(TestCase):
             language = "en"
             text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 Domain: microsoft.com"
             entities = []
-            self.loaded_analyzer_engine.analyze(
-                text, entities, language, all_fields=False)
+            self.loaded_analyzer_engine.analyze(self.unit_test_guid,
+                                                text, entities, language,
+                                                all_fields=False)
 
     def test_analyze_with_empty_text(self):
         language = "en"
         text = ""
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = self.loaded_analyzer_engine.analyze(
-            text, entities, language, all_fields=False)
+        results = self.loaded_analyzer_engine.analyze(self.unit_test_guid,
+                                                      text, entities, language,
+                                                      all_fields=False)
 
         assert len(results) == 0
 
@@ -143,18 +159,50 @@ class TestAnalyzerEngine(TestCase):
             language = "de"
             text = ""
             entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-            self.loaded_analyzer_engine.analyze(
-                text, entities, language, all_fields=False)
+            self.loaded_analyzer_engine.analyze(self.unit_test_guid,
+                                                text, entities, language,
+                                                all_fields=False)
 
     def test_remove_duplicates(self):
         # test same result with different score will return only the highest
-        arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x"),
-               RecognizerResult(start=0, end=5, score=0.5, entity_type="x")]
+        arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x",
+                                analysis_explanation=AnalysisExplanation(
+                                    recognizer='test',
+                                    original_score=0,
+                                    pattern_name='test',
+                                    pattern='test',
+                                    validation_result=None)),
+               RecognizerResult(start=0, end=5, score=0.5, entity_type="x",
+                                analysis_explanation=AnalysisExplanation(
+                                    recognizer='test',
+                                    original_score=0,
+                                    pattern_name='test',
+                                    pattern='test',
+                                    validation_result=None))]
         results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
         assert len(results) == 1
         assert results[0].score == 0.5
         # TODO: add more cases with bug:
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one result as a substring of the other
+
+    def test_remove_duplicates_different_entity_no_removal(self):
+        # test same result with different score will return only the highest
+        arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x",
+                                analysis_explanation=AnalysisExplanation(
+                                    recognizer='test',
+                                    original_score=0,
+                                    pattern_name='test',
+                                    pattern='test',
+                                    validation_result=None)),
+               RecognizerResult(start=0, end=5, score=0.5, entity_type="y",
+                                analysis_explanation=AnalysisExplanation(
+                                    recognizer='test',
+                                    original_score=0,
+                                    pattern_name='test',
+                                    pattern='test',
+                                    validation_result=None))]
+        results = AnalyzerEngine._AnalyzerEngine__remove_duplicates(arr)
+        assert len(results) == 2
 
     def test_added_pattern_recognizer_works(self):
         pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
@@ -164,12 +212,15 @@ class TestAnalyzerEngine(TestCase):
 
         # Make sure the analyzer doesn't get this entity
         recognizers_store_api_mock = RecognizerStoreApiMock()
-        analyze_engine = AnalyzerEngine(
-            MockRecognizerRegistry(recognizers_store_api_mock))
+        analyze_engine = AnalyzerEngine(registry=
+        MockRecognizerRegistry(
+            recognizers_store_api_mock),
+            nlp_engine=MockNlpEngine())
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
-        results = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+                                         entities=entities,
                                          language='en', all_fields=False)
 
         assert len(results) == 0
@@ -179,7 +230,8 @@ class TestAnalyzerEngine(TestCase):
             pattern_recognizer)
 
         # Check that the entity is recognized:
-        results = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+                                         entities=entities,
                                          language='en', all_fields=False)
 
         assert len(results) == 1
@@ -193,12 +245,13 @@ class TestAnalyzerEngine(TestCase):
 
         # Make sure the analyzer doesn't get this entity
         recognizers_store_api_mock = RecognizerStoreApiMock()
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry(
-            recognizers_store_api_mock))
+        analyze_engine = AnalyzerEngine(registry=MockRecognizerRegistry(
+            recognizers_store_api_mock), nlp_engine=MockNlpEngine())
         text = "spaceship is my favorite transportation"
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
-        results = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+                                         entities=entities,
                                          language='en', all_fields=False)
 
         assert len(results) == 0
@@ -207,7 +260,8 @@ class TestAnalyzerEngine(TestCase):
         recognizers_store_api_mock.add_custom_pattern_recognizer(
             pattern_recognizer)
         # Check that the entity is recognized:
-        results = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+                                         entities=entities,
                                          language='en', all_fields=False)
         assert len(results) == 1
         assert_result(results[0], "SPACESHIP", 0, 10, 0.8)
@@ -216,7 +270,8 @@ class TestAnalyzerEngine(TestCase):
         recognizers_store_api_mock.remove_recognizer(
             "Spaceship recognizer")
         # Test again to see we didn't get any results
-        results = analyze_engine.analyze(text=text, entities=entities,
+        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+                                         entities=entities,
                                          language='en', all_fields=False)
 
         assert len(results) == 0
@@ -224,6 +279,7 @@ class TestAnalyzerEngine(TestCase):
     def test_apply_with_language_returns_correct_response(self):
         request = AnalyzeRequest()
         request.analyzeTemplate.language = 'en'
+        request.analyzeTemplate.resultsScoreThreshold = 0
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
@@ -235,6 +291,7 @@ class TestAnalyzerEngine(TestCase):
     def test_apply_with_no_language_returns_default(self):
         request = AnalyzeRequest()
         request.analyzeTemplate.language = ''
+        request.analyzeTemplate.resultsScoreThreshold = 0
         new_field = request.analyzeTemplate.fields.add()
         new_field.name = 'CREDIT_CARD'
         new_field.minScore = '0.5'
@@ -243,11 +300,13 @@ class TestAnalyzerEngine(TestCase):
         assert response.analyzeResults is not None
 
     def test_when_allFields_is_true_return_all_fields(self):
-        analyze_engine = AnalyzerEngine(MockRecognizerRegistry())
+        analyze_engine = AnalyzerEngine(registry=MockRecognizerRegistry(),
+                                        nlp_engine=MockNlpEngine())
         request = AnalyzeRequest()
         request.analyzeTemplate.allFields = True
+        request.analyzeTemplate.resultsScoreThreshold = 0
         request.text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090 " \
-            "Domain: microsoft.com"
+                       "Domain: microsoft.com"
         response = analyze_engine.Apply(request, None)
         returned_entities = [
             field.field.name for field in response.analyzeResults]
@@ -257,12 +316,14 @@ class TestAnalyzerEngine(TestCase):
         assert "PHONE_NUMBER" in returned_entities
         assert "DOMAIN_NAME" in returned_entities
 
-    def test_when_allFields_is_true_full_recognizers_list_return_all_fields(self):
-        analyze_engine = AnalyzerEngine(RecognizerRegistry())
+    def test_when_allFields_is_true_full_recognizers_list_return_all_fields(
+        self):
+        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry(),
+                                        nlp_engine=loaded_spacy_nlp_engine)
         request = AnalyzeRequest()
         request.analyzeTemplate.allFields = True
         request.text = "My name is David and I live in Seattle." \
-            "Domain: microsoft.com "
+                       "Domain: microsoft.com "
         response = analyze_engine.Apply(request, None)
         returned_entities = [
             field.field.name for field in response.analyzeResults]
@@ -272,7 +333,8 @@ class TestAnalyzerEngine(TestCase):
         assert "DOMAIN_NAME" in returned_entities
 
     def test_when_allFields_is_true_and_entities_not_empty_exception(self):
-        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry())
+        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry(),
+                                        nlp_engine=MockNlpEngine())
         request = AnalyzeRequest()
         request.text = "My name is David and I live in Seattle." \
                        "Domain: microsoft.com "
@@ -282,4 +344,122 @@ class TestAnalyzerEngine(TestCase):
         new_field.minScore = '0.5'
         with pytest.raises(ValueError):
             analyze_engine.Apply(request, None)
-    
+
+    def test_when_analyze_then_apptracer_has_value(self):
+        text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
+        analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry,
+                                                    app_tracer=self.app_tracer,
+                                                    enable_trace_pii=True)
+        results = analyzer_engine_with_spacy.analyze(correlation_id=self.unit_test_guid,
+                                                     text=text,
+                                                     entities=entities,
+                                                     language=language,
+                                                     all_fields=False,
+                                                     trace=True)
+        assert len(results) == 3
+        for result in results:
+            assert result.analysis_explanation is not None
+        assert self.app_tracer.get_msg_counter() == 2
+        assert self.app_tracer.get_last_trace() is not None
+
+    def test_when_threshold_is_zero_all_results_pass(self):
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+
+        analyzer_engine = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=MockNlpEngine())
+        results = analyzer_engine.analyze(self.unit_test_guid, text,
+                                          entities, language,
+                                          all_fields=False,
+                                          score_threshold=0)
+
+        assert len(results) == 2
+
+    def test_when_threshold_is_more_than_half_only_credit_card_passes(self):
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+
+        analyzer_engine = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=MockNlpEngine())
+        results = analyzer_engine.analyze(self.unit_test_guid, text,
+                                          entities, language,
+                                          all_fields=False,
+                                          score_threshold=0.51)
+
+        assert len(results) == 1
+
+    def test_when_default_threshold_is_more_than_half_only_one_passes(self):
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+
+        analyzer_engine = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=MockNlpEngine(),
+            default_score_threshold=0.7)
+        results = analyzer_engine.analyze(self.unit_test_guid, text,
+                                          entities, language,
+                                          all_fields=False)
+
+        assert len(results) == 1
+
+    def test_when_default_threshold_is_zero_all_results_pass(self):
+        text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
+        language = "en"
+        entities = ["CREDIT_CARD", "PHONE_NUMBER"]
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+
+        analyzer_engine = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=MockNlpEngine())
+        results = analyzer_engine.analyze(self.unit_test_guid, text,
+                                          entities, language,
+                                          all_fields=False)
+
+        assert len(results) == 2
+
+    def test_demo_text(self):
+        text = "Here are a few examples of entities we currently support: \n" \
+               "Credit card: 4095-2609-9393-4932 \n" \
+               "Crypto wallet id: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ \n" \
+               "DateTime: September 18 n" \
+               "Domain: microsoft.com \n" \
+               "Email address: test@presidio.site \n" \
+               "IBAN code: IL150120690000003111111 \n" \
+               "IP: 192.168.0.1 i\n" \
+               "Person name: David Johnson\n" \
+               "Bank account: 2854567876542\n" \
+               "Driver license number: H12234567\n" \
+               "Passport: 912803456\n" \
+               "Phone number: (212) 555-1234.\n" \
+               "Social security number: 078-05-1120\n" \
+               "" \
+               "This project welcomes contributions and suggestions. Most contributions require you to agree to a " \
+               "Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us " \
+               "the rights to use your contribution. For details, visit https://cla.microsoft.com.\n" \
+               "When you submit a pull request, a CLA-bot will automatically determine whether you need to provide " \
+               "a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions " \
+               "provided by the bot. You will only need to do this once across all repos using our CLA.\n\n" \
+               "This project has adopted the Microsoft Open Source Code of Conduct. For more information see the " \
+               "Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments."
+
+        language = "en"
+
+        analyzer_engine = AnalyzerEngine(default_score_threshold=0.6)
+        results = analyzer_engine.analyze(correlation_id=self.unit_test_guid, text=text, entities=None,
+                                          language=language, all_fields=True)
+
+        assert len(results) == 15

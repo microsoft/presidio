@@ -1,9 +1,9 @@
-import logging
-import os
-
 import spacy
+from spacy.cli import download
 
+from analyzer.logger import Logger
 from analyzer.nlp_engine import NlpArtifacts, NlpEngine
+logger = Logger()
 
 
 class SpacyNlpEngine(NlpEngine):
@@ -14,11 +14,10 @@ class SpacyNlpEngine(NlpEngine):
     """
 
     def __init__(self):
-        loglevel = os.environ.get("LOG_LEVEL", "INFO")
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(loglevel)
+        logger.info("Loading NLP model...")
 
-        self.logger.info("Loading NLP model...")
+        # Download model lazily if it wasn't previously installed
+        download('en_core_web_lg')
         self.nlp = {"en": spacy.load("en_core_web_lg",
                                      disable=['parser', 'tagger'])}
 
