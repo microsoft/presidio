@@ -95,7 +95,6 @@ func TestLanguageCode(t *testing.T) {
 	analyzeAPIRequest := &types.AnalyzeApiRequest{
 		Text:              "My number is (555) 253-0000 and email johnsnow@foo.com",
 		AnalyzeTemplateId: "test",
-		AnalyzeTemplate:   &types.AnalyzeTemplate{},
 	}
 	Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.Equal(t, "langtest", analyzeAPIRequest.AnalyzeTemplate.Language)
@@ -134,19 +133,4 @@ func TestAnalyzeWhenNoEntitiesFoundThenExpectEmptyResponse(t *testing.T) {
 	response, err := Analyze(context.Background(), api, noResultsanalyzeAPIRequest, project)
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(response.AnalyzeResults))
-}
-
-func TestSettingTemplateAndTemplateIdReturnsError(t *testing.T) {
-	api := setupMockServices()
-
-	project := "tests"
-	analyzeAPIRequest := &types.AnalyzeApiRequest{
-		Text: "My number is (555) 253-0000 and email johnsnow@foo.com",
-		AnalyzeTemplate: &types.AnalyzeTemplate{
-			Language:  "en",
-			AllFields: true},
-		AnalyzeTemplateId: "123",
-	}
-	_, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
-	assert.Error(t, err)
 }
