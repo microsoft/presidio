@@ -81,7 +81,7 @@ docker-push: $(addsuffix -push,$(IMAGES))
 docker-push-latest-dev: $(addsuffix -push-latest-dev,$(IMAGES))
 
 %-push-latest-dev:
-	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) ||:
+	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest-dev
 	docker push $(DOCKER_REGISTRY)/$*:latest-dev
 
@@ -90,7 +90,7 @@ docker-push-latest-branch: $(addsuffix -push-latest-branch,$(IMAGES))
 
 
 %-push-latest-branch:
-	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) ||:
+	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(PRESIDIO_BRANCH_LABEL)
 	docker push $(DOCKER_REGISTRY)/$*:$(PRESIDIO_BRANCH_LABEL)
 
@@ -102,7 +102,7 @@ docker-push-release: $(addsuffix -push-release,$(IMAGES))
 ifeq ($(RELEASE_VERSION),)
 	$(warning RELEASE_VERSION is not set)
 else
-	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) ||:
+	docker pull $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/public/$*:$(RELEASE_VERSION)
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/public/$*:latest
