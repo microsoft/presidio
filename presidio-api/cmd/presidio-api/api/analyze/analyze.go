@@ -10,11 +10,13 @@ import (
 )
 
 //Analyze text
-func Analyze(ctx context.Context, api *store.API, analyzeAPIRequest *types.AnalyzeApiRequest, project string) ([]*types.AnalyzeResult, error) {
-
-	if analyzeAPIRequest.AnalyzeTemplateId == "" && analyzeAPIRequest.AnalyzeTemplate == nil {
+func Analyze(ctx context.Context, api *store.API, analyzeAPIRequest *types.AnalyzeApiRequest, project string) (*types.AnalyzeResponse, error) {
+	switch {
+	case analyzeAPIRequest.AnalyzeTemplateId == "" && analyzeAPIRequest.AnalyzeTemplate == nil:
 		return nil, fmt.Errorf("Analyze template is missing or empty")
-	} else if analyzeAPIRequest.AnalyzeTemplate == nil {
+	case analyzeAPIRequest.AnalyzeTemplateId != "" && analyzeAPIRequest.AnalyzeTemplate != nil:
+		return nil, fmt.Errorf("Analyze template and Analyze template ID are mutually exclusive")
+	case analyzeAPIRequest.AnalyzeTemplate == nil:
 		analyzeAPIRequest.AnalyzeTemplate = &types.AnalyzeTemplate{}
 	}
 
@@ -28,7 +30,7 @@ func Analyze(ctx context.Context, api *store.API, analyzeAPIRequest *types.Analy
 		return nil, err
 	}
 	if res == nil {
-		return nil, fmt.Errorf("No results")
+		return &types.AnalyzeResponse{}, err
 	}
 	return res, err
 

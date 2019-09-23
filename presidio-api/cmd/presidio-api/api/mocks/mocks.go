@@ -42,6 +42,13 @@ type TemplateMockedObject struct {
 	mock.Mock
 }
 
+//GetAnalyzerMockEmptyResult get analyzer mock empty response
+func GetAnalyzerMockEmptyResult() *types.AnalyzeResponse {
+	return &types.AnalyzeResponse{
+		AnalyzeResults: nil,
+	}
+}
+
 //GetAnalyzerMockResult get analyzer mock response
 func GetAnalyzerMockResult() *types.AnalyzeResponse {
 	location := &types.Location{
@@ -62,6 +69,7 @@ func GetAnalyzerMockResult() *types.AnalyzeResponse {
 		},
 	}
 	return &types.AnalyzeResponse{
+		RequestId:      "21020352-c0bd-4af6-81e0-f1d53f34f2cb",
 		AnalyzeResults: results,
 	}
 }

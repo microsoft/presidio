@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
@@ -24,6 +25,18 @@ func setupMockServices() *store.API {
 	return api
 }
 
+func setupEmptyResponseMockServices() *store.API {
+	srv := &services.Services{
+		AnalyzerService: mocks.GetAnalyzeServiceMock(mocks.GetAnalyzerMockEmptyResult()),
+	}
+
+	api := &store.API{
+		Services:  srv,
+		Templates: mocks.GetTemplateMock(),
+	}
+	return api
+}
+
 func TestAnalyzeWithTemplateId(t *testing.T) {
 
 	api := setupMockServices()
@@ -32,11 +45,10 @@ func TestAnalyzeWithTemplateId(t *testing.T) {
 	analyzeAPIRequest := &types.AnalyzeApiRequest{
 		Text:              "My number is (555) 253-0000 and email johnsnow@foo.com",
 		AnalyzeTemplateId: "test",
-		AnalyzeTemplate:   &types.AnalyzeTemplate{},
 	}
-	results, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(results))
+	assert.Equal(t, 2, len(response.AnalyzeResults))
 }
 
 func TestAnalyzeWithTemplateStruct(t *testing.T) {
@@ -57,9 +69,9 @@ func TestAnalyzeWithTemplateStruct(t *testing.T) {
 			},
 		},
 	}
-	results, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(results))
+	assert.Equal(t, 2, len(response.AnalyzeResults))
 }
 
 func TestAnalyzeWithNoTemplate(t *testing.T) {
@@ -83,7 +95,6 @@ func TestLanguageCode(t *testing.T) {
 	analyzeAPIRequest := &types.AnalyzeApiRequest{
 		Text:              "My number is (555) 253-0000 and email johnsnow@foo.com",
 		AnalyzeTemplateId: "test",
-		AnalyzeTemplate:   &types.AnalyzeTemplate{},
 	}
 	Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.Equal(t, "langtest", analyzeAPIRequest.AnalyzeTemplate.Language)
@@ -100,7 +111,41 @@ func TestAllFields(t *testing.T) {
 			Language:  "en",
 			AllFields: true},
 	}
-	results, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
+	response, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(results))
+	assert.Equal(t, 2, len(response.AnalyzeResults))
+	assert.NotEqual(t, "", response.RequestId)
+	_, err = uuid.FromString(response.RequestId)
+	assert.NoError(t, err)
+}
+
+func TestAnalyzeWhenNoEntitiesFoundThenExpectEmptyResponse(t *testing.T) {
+
+	api := setupEmptyResponseMockServices()
+
+	project := "tests"
+	noResultsanalyzeAPIRequest := &types.AnalyzeApiRequest{
+		Text: "hello world",
+		AnalyzeTemplate: &types.AnalyzeTemplate{
+			Language:  "en",
+			AllFields: true},
+	}
+	response, err := Analyze(context.Background(), api, noResultsanalyzeAPIRequest, project)
+	assert.NoError(t, err)
+	assert.Equal(t, 0, len(response.AnalyzeResults))
+}
+
+func TestSettingTemplateAndTemplateIdReturnsError(t *testing.T) {
+	api := setupMockServices()
+
+	project := "tests"
+	analyzeAPIRequest := &types.AnalyzeApiRequest{
+		Text: "My number is (555) 253-0000 and email johnsnow@foo.com",
+		AnalyzeTemplate: &types.AnalyzeTemplate{
+			Language:  "en",
+			AllFields: true},
+		AnalyzeTemplateId: "123",
+	}
+	_, err := Analyze(context.Background(), api, analyzeAPIRequest, project)
+	assert.Error(t, err)
 }
