@@ -276,7 +276,7 @@ class EntityRecognizer:
                              "is expected to be found")
         return i
 
-    def __extract_context(self, nlp_artifacts, word, start):
+    def __extract_surrounding_words(self, nlp_artifacts, word, start):
         """ Extracts words surrounding another given word.
             The text from which the context is extracted is given in the nlp
             doc
