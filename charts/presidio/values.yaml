@@ -32,8 +32,8 @@ api:
 
   # supported types are nginx, traefik and istio
   ingress:
-    enabled: false
-    class: nginx
+    enabled: true
+    class: traefik
 
 analyzer:
   name: presidio-analyzer

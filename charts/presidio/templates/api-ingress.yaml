@@ -12,9 +12,12 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.api.ingress.class }}
+    ingress.kubernetes.io/ssl-passthrough: "true" 
+    kubernetes.io/ingress.allow-http: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
+  - host: presidio.k8s.preprod.car-labs.com
   - http:
       paths:
       - path: /
