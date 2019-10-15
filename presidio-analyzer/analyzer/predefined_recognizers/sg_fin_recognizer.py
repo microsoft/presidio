@@ -2,13 +2,13 @@ from analyzer import Pattern
 from analyzer import PatternRecognizer
 
 # pylint: disable=line-too-long,abstract-method
-# Weak pattern: all FIN number start with G or S and end with a character, e.g., G3377788L
+# Weak pattern: all FIN number start with "S", "T", "F" or "G" and end with a character, e.g., G3311100L
+# More info at https://en.wikipedia.org/wiki/National_Registration_Identity_Card
 VERY_WEAK_REGEX = r'(\b[0-9]{7}\b)'
 WEAK_REGEX = r'(\b[a-z,A-Z][0-9]{7}[a-z,A-Z]\b)'
 MEDIUM_REGEX = r'(\b[s,t,f,g][0-9]{7}[a-z,A-Z]\b)'
 
 CONTEXT = ["fin", "fin#", "nric", "nric#"]
-
 
 class SgFinRecognizer(PatternRecognizer):
     """
@@ -16,9 +16,9 @@ class SgFinRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Nric (very weak) ', VERY_WEAK_REGEX, 0.04),
-            Pattern('Nric (weak) ', WEAK_REGEX, 0.2),
-            Pattern('Nric (medium) ', MEDIUM_REGEX, 0.4),
+        patterns = [Pattern('Nric (very weak) ', VERY_WEAK_REGEX, 0.05),
+            Pattern('Nric (weak) ', WEAK_REGEX, 0.3),
+            Pattern('Nric (medium) ', MEDIUM_REGEX, 0.5),
 ]
         super().__init__(supported_entity="SG_NRIC_FIN", patterns=patterns,
                          context=CONTEXT)

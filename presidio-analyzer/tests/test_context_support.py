@@ -7,7 +7,7 @@ from analyzer import PatternRecognizer, Pattern
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer, \
-    IpRecognizer, UsSsnRecognizer
+    IpRecognizer, UsSsnRecognizer, SgFinRecognizer
 from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 
 ip_recognizer = IpRecognizer()
@@ -17,6 +17,8 @@ us_itin_recognizer = UsItinRecognizer()
 us_license_recognizer = UsLicenseRecognizer()
 us_bank_recognizer = UsBankRecognizer()
 us_passport_recognizer = UsPassportRecognizer()
+sg_fin_recognizer = SgFinRecognizer()
+
 
 @pytest.fixture(scope="class")
 def sentences_with_context(request):
@@ -56,6 +58,8 @@ def sentences_with_context(request):
             recognizer = us_bank_recognizer
         elif entity_type == "US_PASSPORT":
             recognizer = us_passport_recognizer
+        elif entity_type == "FIN":
+            recognizer = sg_fin_recognizer
         else:
             # will fail the test in its turn
             print("bad type: ", entity_type)
