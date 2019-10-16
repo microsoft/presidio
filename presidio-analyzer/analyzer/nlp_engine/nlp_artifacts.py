@@ -33,3 +33,6 @@ class NlpArtifacts():
         keywords = \
             [item for sublist in keywords for item in sublist]
         return keywords
+
+    def to_json(self):
+        return str(self.__dict__)

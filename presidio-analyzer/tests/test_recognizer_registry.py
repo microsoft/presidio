@@ -49,7 +49,7 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
         self.latest_hash = m.digest()
 
     def remove_recognizer(self, name):
-        logging.info("removing recognizer " + name)
+        logging.info("removing recognizer %s", name)
         for i in self.recognizers:
             if i.name == name:
                 self.recognizers.remove(i)
@@ -60,6 +60,10 @@ class RecognizerStoreApiMock(RecognizerStoreApi):
 
 
 class TestRecognizerRegistry(TestCase):
+    def __init__(self, *args, **kwargs):
+        super(TestRecognizerRegistry, self).__init__(*args, **kwargs)
+        self.request_id = "UT"
+
     def test_dummy(self):
         assert 1 == 1
 
@@ -111,7 +115,8 @@ class TestRecognizerRegistry(TestCase):
     def test_get_recognizers_unsupported_language(self):
         with pytest.raises(ValueError):
             registry = self.get_mock_recognizer_registry()
-            registry.get_recognizers(language='brrrr', entities=["PERSON"])
+            registry.get_recognizers(
+                language='brrrr', entities=["PERSON"])
 
     def test_get_recognizers_specific_language_and_entity(self):
         registry = self.get_mock_recognizer_registry()

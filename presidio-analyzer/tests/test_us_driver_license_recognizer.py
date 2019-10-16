@@ -58,25 +58,14 @@ class TestUsLicenseRecognizer(TestCase):
 
     # Driver License - Digits (very weak) - 0.05
     # Regex: r'\b([0-9]{1,9}|[0-9]{4,10}|[0-9]{6,10}|[0-9]{1,12}|[0-9]{12,14}|[0-9]{16})\b'
-
+    # Regex: r'\b([0-9]{6,14}|[0-9]{16})\b'
     def test_valid_us_driver_license_very_weak_digits(self):
-        num = '123456789 1234567890 12345679012 123456790123 1234567901234'
+        num = '123456789 1234567890 12345679012 123456790123 1234567901234 1234'
         results = us_license_recognizer.analyze(num, entities)
 
         assert len(results) == 5
         for result in results:
             assert 0 < result.score < 0.02
-
-    def test_load_from_file(self):
-        path = os.path.dirname(__file__) + '/data/demo.txt'
-        text_file = open(path, 'r')
-        text = text_file.read()
-        results = us_license_recognizer.analyze(text, entities)
-
-        assert len(results) == 23
-
-    # Driver License - Letters (very weak) - 0.00
-    # Regex: r'\b([A-Z]{7,9}\b'
 
     def test_valid_us_driver_license_very_weak_letters(self):
         num = 'ABCDEFG ABCDEFGH ABCDEFGHI'

@@ -58,7 +58,8 @@ class RecognizerRegistry:
             UsPhoneRecognizer(), UsSsnRecognizer(),
             SpacyRecognizer(), SgFinRecognizer()])
 
-    def get_recognizers(self, language, entities=None, all_fields=False):
+    def get_recognizers(self, language, entities=None,
+                        all_fields=False):
         """
         Returns a list of the recognizer, which supports the specified name and
         language.
@@ -94,7 +95,8 @@ class RecognizerRegistry:
                 if not subset:
                     logging.warning("Entity %s doesn't have the corresponding"
                                     " recognizer in language : %s",
-                                    entity, language)
+                                    entity,
+                                    language)
                 else:
                     to_return.extend(subset)
 
