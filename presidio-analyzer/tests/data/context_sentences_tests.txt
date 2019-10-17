@@ -83,3 +83,7 @@ my passport number is hi bye hello 912803456
 # Verify adjacent context words
 US_PASSPORT
 mypassportnumberis912803456
+
+# Verify SG NRIC/FIN context words
+FIN
+Special NRIC numbers that are numerically significant have been issued to notable people e.g. S0000001I Yusof bin Ishak, first President of Singapore
