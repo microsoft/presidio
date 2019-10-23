@@ -17,7 +17,7 @@ LDFLAGS   += -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
 CX_OSES = linux windows darwin
 CX_ARCHS = amd64
 
-# Build native binaries
+# Build native binaries test
 .PHONY: build
 build: $(BINS)
 
