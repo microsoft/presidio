@@ -13,7 +13,7 @@ from analyzer import PatternRecognizer
 # one to indicate at least one digit or one '*'
 
 # pylint: disable=line-too-long,abstract-method
-CONTEXT = ["phone", "number", "telephone", "cell", "mobile", "call"]
+CONTEXT = ["phone", "number", "nbr", "telephone", "cell", "mobile", "call"]
 
 
 class UsPhoneRecognizer(PatternRecognizer):

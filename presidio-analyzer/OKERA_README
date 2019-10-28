@@ -1,5 +1,5 @@
 To build:
-  python setup.py bdist_wheel
+  python3 setup.py bdist_wheel
 
 This creates a wheel file in dist/
   [sudo] pip3 install <path to wheel file>
@@ -7,3 +7,6 @@ This creates a wheel file in dist/
 To install locally.
 
 This can be used to our s3 dev bucket to be assembled to our docker container.
+For example:
+
+  aws s3 cp <path to sheel file> s3://cerebrodata-dev/presidio_analyzer-0.0.1-py2.py3-none-any.whl --acl public-read
