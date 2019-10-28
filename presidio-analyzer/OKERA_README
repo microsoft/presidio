@@ -1,0 +1,9 @@
+To build:
+  python setup.py bdist_wheel
+
+This creates a wheel file in dist/
+  [sudo] pip3 install <path to wheel file>
+
+To install locally.
+
+This can be used to our s3 dev bucket to be assembled to our docker container.
