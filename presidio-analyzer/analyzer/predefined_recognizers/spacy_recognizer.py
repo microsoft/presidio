@@ -1,6 +1,6 @@
 from analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 
-NER_STRENGTH = 0.85
+NER_STRENGTH = 0.15
 SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
 SPACY_DEFAULT_EXPLANATION = \
     "Identified as {} by Spacy's Named Entity Recognition"

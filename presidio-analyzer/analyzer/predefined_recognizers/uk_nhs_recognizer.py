@@ -7,14 +7,13 @@ CONTEXT = [
     "health authority"
 ]
 
-
 class NhsRecognizer(PatternRecognizer):
     """
     Recognizes NHS number using regex and checksum
     """
 
     def __init__(self):
-        patterns = [Pattern('NHS (medium)', REGEX, 0.5)]
+        patterns = [Pattern('NHS (medium)', REGEX, 0.4)]
         super().__init__(supported_entity="UK_NHS", patterns=patterns,
                          context=CONTEXT)
 

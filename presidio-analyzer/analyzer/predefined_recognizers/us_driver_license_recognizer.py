@@ -29,7 +29,7 @@ class UsLicenseRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Driver License - WA (weak) ', WA_WEAK_REGEX, 0.4),
+        patterns = [Pattern('Driver License - WA (weak) ', WA_WEAK_REGEX, 0.2),
                     Pattern('Driver License - Alphanumeric (weak) ',
                             ALPHANUMERIC_REGEX, 0.3),
                     Pattern('Driver License - Digits (very weak)',

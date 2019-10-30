@@ -1,20 +1,8 @@
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
-# List from https://ntsi.com/drivers-license-format/
-# ---------------
-
-# WA Driver License number is relatively unique as it also
-# includes '*' chars.
-# However it can also be 12 letters which makes every 12 letter'
-# word a match. Therefore we split WA driver license
-# regex: r'\b([A-Z][A-Z0-9*]{11})\b' into two regexes
-# With different weights, one to indicate letters only and
-# one to indicate at least one digit or one '*'
-
 # pylint: disable=line-too-long,abstract-method
 CONTEXT = ["phone", "number", "nbr", "telephone", "cell", "mobile", "call"]
-
 
 class UsPhoneRecognizer(PatternRecognizer):
     """

@@ -25,14 +25,13 @@ class CreditCardRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('All Credit Cards (weak)', REGEX, 0.3)]
+        patterns = [Pattern('All Credit Cards (weak)', REGEX, 0.2)]
         super().__init__(supported_entity="CREDIT_CARD", patterns=patterns,
                          context=CONTEXT)
 
     def validate_result(self, pattern_text):
         sanitized_value = CreditCardRecognizer.__sanitize_value(pattern_text)
         checksum = CreditCardRecognizer.__luhn_checksum(sanitized_value)
-
         return checksum == 0
 
     @staticmethod

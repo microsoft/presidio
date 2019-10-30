@@ -6,8 +6,7 @@ from analyzer import PatternRecognizer
 VERY_WEAK_REGEX = r'(\b[0-9]{9}\b)'
 
 CONTEXT = [
-    "us", "united", "states", "passport", "number", "passport#", "travel",
-    "document"
+    "passport", "passport#"
 ]
 
 
@@ -17,6 +16,6 @@ class UsPassportRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Passport (very weak)', VERY_WEAK_REGEX, 0.05)]
+        patterns = [Pattern('Passport (very weak)', VERY_WEAK_REGEX, 0.2)]
         super().__init__(supported_entity="US_PASSPORT", patterns=patterns,
                          context=CONTEXT)

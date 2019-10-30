@@ -10,7 +10,7 @@ except ImportError:
     import regex as re
 
 IBAN_GENERIC_REGEX = r'\b[A-Z]{2}[0-9]{2}[ ]?([a-zA-Z0-9][ ]?){11,28}\b'
-IBAN_GENERIC_SCORE = 0.5
+IBAN_GENERIC_SCORE = 0.3
 
 CONTEXT = ["iban", "bank", "transaction"]
 LETTERS = {
