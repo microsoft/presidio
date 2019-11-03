@@ -50,7 +50,7 @@ class RecognizerRegistry:
         # time consuming to load
         self.recognizers.extend([
             CreditCardRecognizer(),
-            CryptoRecognizer(), DomainRecognizer(),
+            DomainRecognizer(),
             EmailRecognizer(), IbanRecognizer(),
             IpRecognizer(), NhsRecognizer(),
             UsBankRecognizer(), UsLicenseRecognizer(),
