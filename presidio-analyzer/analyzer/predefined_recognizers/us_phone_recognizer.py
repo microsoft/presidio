@@ -15,7 +15,7 @@ class UsPhoneRecognizer(PatternRecognizer):
 
     STRONG_REGEX = \
         r'(\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|d{3}[-\.\s]\d{3}[-\.\s]\\d{4})'
-    MEDIUM_REGEX = r'\b(\d{3}[-\.\s]\d{3}[-\.\s]??\d{4})\b'
+    MEDIUM_REGEX = r'(?<!-)\b(\d{3}[-\.\s]\d{3}[-\.\s]??\d{4})\b(?!-)'
     WEAK_REGEX = r'(\b\d{10}\b)'
 
     def __init__(self):

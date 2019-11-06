@@ -14,8 +14,8 @@ from analyzer import PatternRecognizer
 # one to indicate at least one digit or one '*'
 
 VERY_WEAK_REGEX = r'\b(([0-9]{5})-([0-9]{4})|([0-9]{3})-([0-9]{6}))\b'
-WEAK_REGEX = r'\b[0-9]{9}\b'
-MEDIUM_REGEX = r'\b([0-9]{3})-([0-9]{2})-([0-9]{4})\b'
+WEAK_REGEX = r'(?<!-)\b[0-9]{9}\b(?!-)'
+MEDIUM_REGEX = r'(?<!-)\b([0-9]{3})-([0-9]{2})-([0-9]{4})\b(?!-)'
 
 CONTEXT = [
     "social",
