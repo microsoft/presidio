@@ -1,7 +1,7 @@
 from analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 
-NER_STRENGTH = 0.15
-SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
+NER_STRENGTH = 0.6
+SUPPORTED_ENTITIES = ["PERSON"]
 SPACY_DEFAULT_EXPLANATION = \
     "Identified as {} by Spacy's Named Entity Recognition"
 
@@ -53,16 +53,6 @@ class SpacyRecognizer(LocalRecognizer):
 
     @staticmethod
     def __check_label(entity, label):
-        if entity == "LOCATION" and label in ('GPE', 'LOC'):
-            return True
-
         if entity == "PERSON" and label == 'PERSON':
             return True
-
-        if entity == "DATE_TIME" and label in ('DATE', 'TIME'):
-            return True
-
-        if entity == "NRP" and label == 'NORP':
-            return True
-
         return False
