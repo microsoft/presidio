@@ -13,9 +13,9 @@ from analyzer import PatternRecognizer
 # With different weights, one to indicate letters only and
 # one to indicate at least one digit or one '*'
 
-VERY_WEAK_REGEX = r'\b(([0-9]{5})-([0-9]{4})|([0-9]{3})-([0-9]{6}))\b'
-WEAK_REGEX = r'(?<!-)\b[0-9]{9}\b(?!-)'
-MEDIUM_REGEX = r'(?<!-)\b([0-9]{3})-([0-9]{2})-([0-9]{4})\b(?!-)'
+VERY_WEAK_REGEX = r'(^|\s)(([0-9]{5})-([0-9]{4})|([0-9]{3})-([0-9]{6}))($|\s)'
+WEAK_REGEX = r'(^|\s)[0-9]{9}($|\s)'
+MEDIUM_REGEX = r'(^|\s)([0-9]{3})-([0-9]{2})-([0-9]{4})($|\s)'
 
 CONTEXT = [
     "social",
