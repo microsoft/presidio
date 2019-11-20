@@ -70,7 +70,7 @@ Follow the installation guide at the [Readme page](https://github.com/Microsoft/
 6. For more options over the deployment, follow the [Development guide](https://github.com/Microsoft/presidio/blob/master/docs/development.md)
 
 ## Install presidio-analyzer as a Python package
-If you're interested in running the analyzer alone, you can install it as a standalone python package by packaging it into a `wheel` file.
+If you're interested in running the analyzer alone, you can install it as a standalone python package by packaging it into a `wheel` file. Note that Presidio requires Python >= 3.6.
 
 #### Creating the wheel file:
 In the presidio-analyzer folder, run:
