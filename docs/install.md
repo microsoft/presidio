@@ -12,6 +12,9 @@ For convenience the script `build.sh` at the root of this repo will run the `mak
 
 **NOTE: Building the deps images currently takes some time** (~70 minutes, depending on the build machine). We are working on improving the build time through improving the build and providing pre-built dependencies.
 
+**NOTE: Error message** You may see error messages like this:
+`Error response from daemon: pull access denied for presidio/presidio-golang-deps, repository does not exist or may require 'docker login': denied: requested access to the resource is denied` when running the `make` commands. These can be ignored.
+
 If you prefer to run each step by hand instead of using the `build.sh` script these are as follows:
 
 ```sh
