@@ -4,7 +4,7 @@ You can install Presidio locally using [Docker](https://www.docker.com/), as a s
 
 ## The easy way with Docker
 
-You will need to have Docker installed and running, and [make](https://www.gnu.org/software/make/) make installed on your system.
+You will need to have Docker installed and running, and [make](https://www.gnu.org/software/make/) installed on your system.
 
 Sync this repo use `make` to build and deploy locally.
 
