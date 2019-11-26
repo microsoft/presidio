@@ -1,8 +1,21 @@
 # Install guide
 
-You can install Presidio as a service in [Kubernetes](https://kubernetes.io/) or use it as a framework
+You can install Presidio locally using [Docker](https://www.docker.com/), as a service in [Kubernetes](https://kubernetes.io/) or use it as a framework in a python application.
 
 ## The easy way with Docker
+
+You will need to have Docker installed and running, and [make](https://www.gnu.org/software/make/) installed on your system.
+
+Sync this repo use `make` to build and deploy locally.
+
+For convenience the script `build.sh` at the root of this repo will run the `make` commands for you. If you use the script remember to make it executable by running `chmod +x build.sh` after syncing the code.
+
+**NOTE: Building the deps images currently takes some time** (~70 minutes, depending on the build machine). We are working on improving the build time through improving the build and providing pre-built dependencies.
+
+**NOTE: Error message** You may see error messages like this:
+`Error response from daemon: pull access denied for presidio/presidio-golang-deps, repository does not exist or may require 'docker login': denied: requested access to the resource is denied` when running the `make` commands. These can be ignored.
+
+If you prefer to run each step by hand instead of using the `build.sh` script these are as follows:
 
 ```sh
 # Build the images
@@ -24,11 +37,19 @@ sleep 30 # Wait for the analyzer model to load
 docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=presidio-anonymizer:3001 -e RECOGNIZERS_STORE_SVC_ADDRESS=presidio-recognizers-store:3004 ${DOCKER_REGISTRY}/presidio-api:${PRESIDIO_LABEL}
 ```
 
-**NOTE: Building the deps images currently takes some time** (~70 minutes, depending on the build machine). We are working on improving the build time through improving the build and providing pre-built dependencies.
+Once the build is complete you can verify the local deployment by running `docker ps`. You should see 4 Presidio containers and one Redis container running with the following names:
+
+```sh
+presidio-api
+presidio-recognizers-store
+presidio-anonymizer
+presidio-analyzer
+redis
+```
 
 ---
 
-## Presidio As a Service
+## Presidio As a Service with Kubernetes
 
 ### Requirements
 
