@@ -15,8 +15,6 @@ class SgFinRecognizer(PatternRecognizer):
     """
 
     def __init__(self):
-        patterns = [Pattern('Nric (weak) ', WEAK_REGEX, 0.3),
-            Pattern('Nric (medium) ', MEDIUM_REGEX, 0.5),
-]
+        patterns = [Pattern('Nric (weak) ', WEAK_REGEX, 0.3), Pattern('Nric (medium) ', MEDIUM_REGEX, 0.5),]
         super().__init__(supported_entity="SG_NRIC_FIN", patterns=patterns,
                          context=CONTEXT)
