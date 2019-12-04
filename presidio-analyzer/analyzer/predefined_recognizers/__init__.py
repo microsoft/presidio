@@ -13,4 +13,4 @@ from .us_itin_recognizer import UsItinRecognizer  # noqa: F401
 from .us_passport_recognizer import UsPassportRecognizer  # noqa: F401
 from .us_phone_recognizer import UsPhoneRecognizer  # noqa: F401
 from .us_ssn_recognizer import UsSsnRecognizer  # noqa: F401
-from .sg_fin_recognizer import SgFinRecognizer # noqa: F401
+from .sg_fin_recognizer import SgFinRecognizer  # noqa: F401
