@@ -1,6 +1,16 @@
 # Setting up a development environment
+Most of Presidio's services are written in Go. The `presidio-analyzer` module, in charge of detecting entities in text, is written in Python. This document details the required parts for developing for Presidio.
 
-## Setting up the Go environment
+## Table of contents
+1. [Setting up the Go environment](#dev-go)
+2. [Setting up the Python environment](#dev-python)
+3. [Development notes](#dev-notes)
+    1. [General notes](#dev-general-notes)
+    2. [Setting up environment variables](#env-variables)
+    3. [Developing on Windows](#develop-windows)
+
+
+## Setting up the Go environment <a name='dev-go'></a>
 
 1. Install go 1.11 and Python 3.7
 
@@ -12,7 +22,7 @@
 
 3. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework. (**Optional**, only for Image anonymization)
 
-## Setting up the environment - Python
+## Setting up the Python environment <a name='dev-python'></a>
 
 1. Build and install [re2](https://github.com/google/re2) (**Optional**. Presidio will use `regex` instead of `pyre2` if `re2` is not installed)
 
@@ -69,9 +79,14 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
     pip freeze
     ```
     
+- To use presidio-analyzer as a python library, see [Installing presidio-analyzer as a standalone Python package](https://github.com/microsoft/presidio/blob/omri374/new_dev_doc/docs/deploy.md#install-presidio-analyzer-as-a-python-package)
+- To add new recognizers in order to support new entities, see [Adding new custom recognizers](https://github.com/microsoft/presidio/blob/omri374/new_dev_doc/docs/custom_fields.md)
 
-## Development notes
 
+## Development notes <a name='dev-notes'></a>
+
+### General notes <a name="dev-general-notes"></a>
+- Installing and building the entire Presidio solution is currently not supported on Windows. However, installing and building the different docker images, or the Python package for detecting entities (presidio-analyzer) is possible on Windows. See [here](#develop-windows)
 - Build the bins with `make build`
 - Build the base containers with `make docker-build-deps DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL}` (If you do not specify a valid, logged-in, registry a warning will echo to the standard output)
 - Build the the Docker image with `make docker-build DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
@@ -81,7 +96,7 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 - Run functional tests with `make test-functional`
 - Updating python dependencies [instructions](./pipenv_readme.md)
 
-### Set the following environment variables
+### Set the following environment variables <a name="env-variables"></a>
 
 #### presidio-analyzer
 
@@ -98,7 +113,9 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 - `ANALYZER_SVC_ADDRESS`: `localhost:3001`, Analyzer address
 - `ANONYMIZER_SVC_ADDRESS`: `localhost:3002`, Anonymizer address
 
-### Developing only for Presidio Analyzer under Windows environment
+### Developing only for Presidio Analyzer under Windows environment <a name="develop-windows"></a>
+Developing presidio as a whole on Windows is currently not supported. However, it is possible to run and test the presidio-analyzer module, in charge of detecting entities in text, on Windows using Docker:
+
 Run locally the core services Presidio needs to operate:
 ```
 docker run --rm --name test-redis --network testnetwork -d -p 6379:6379 redis
