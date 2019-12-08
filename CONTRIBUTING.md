@@ -67,7 +67,7 @@ See [this documentation](docs/custom_fields.md#via-code) on adding a new recogni
 
 Pattern based recognizers use regular expressions to identify entities in text. 
 This type of recognizer could be added by API or code. In case of contribution, a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
-See [this documentation](custom_fields.md#via-code) on adding a new recognizer via code. The [PatternRecognizer](presidio-analyzer/analyzer/pattern_recognizer.py) class should be extended.
+See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. The [PatternRecognizer](presidio-analyzer/analyzer/pattern_recognizer.py) class should be extended.
 See some examples here:
   - [Credit card recognizer](presidio-analyzer/analyzer/predefined_recognizers/credit_card_recognizer.py)
   - [Email recognizer](presidio-analyzer/analyzer/predefined_recognizers/email_recognizer.py)
