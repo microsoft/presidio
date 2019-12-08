@@ -84,7 +84,7 @@ There are four options for adding ML and rule based recognizers:
    - Utilize Scikit-learn or similar
    
    Scikit-learn models tend to be fast, but usually have lower accuracy than deep learning methods. However, for well defined problems with well defined features, they can provide very good results.
-   Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models ^_^. 
+   Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models... 
    When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
 
    - Use custom logic
