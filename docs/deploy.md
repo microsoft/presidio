@@ -1,4 +1,4 @@
-# Install guide
+# Install (deploy) presidio as a system
 
 You can install Presidio locally using [Docker](https://www.docker.com/), as a service in [Kubernetes](https://kubernetes.io/) or use it as a framework in a python application.
 
