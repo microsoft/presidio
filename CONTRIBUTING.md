@@ -79,27 +79,21 @@ There are four options for adding ML and rule based recognizers:
 
    - Utilize spaCy:
 
-  Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER).
-  As we prefer to use the existing tools, it would be best to contribute ML models that are based on spaCy. spaCy provides descent results compared to state-of-the-art NER models, but with much better computational performance.
-  spaCy could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities.
-  When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
-
+   Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER). As we prefer to use the existing tools, it would be best to contribute ML models that are based on spaCy. spaCy provides descent results compared to state-of-the-art NER models, but with much better computational performance. spaCy could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities. When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
+   
    - Utilize Scikit-learn or similar
-
-  Scikit-learn models tend to be fast, but usually have lower accuracy than deep learning methods. However, for well defined problems with well defined features, they can provide very good results.
-  Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models ^_^. 
-  When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
+   
+   Scikit-learn models tend to be fast, but usually have lower accuracy than deep learning methods. However, for well defined problems with well defined features, they can provide very good results.
+   Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models ^_^. 
+   When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
 
    - Use custom logic
 
-  In some cases, rule-based logic provides the best way of detecting entities. The Presidio EntityRecognizer API allows you to use spaCy extracted features like lemmas, part of speech, dependencies and more to create your logic.
-  When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
+   In some cases, rule-based logic provides the best way of detecting entities. The Presidio EntityRecognizer API allows you to use spaCy extracted features like lemmas, part of speech, dependencies and more to create your logic. When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
 
    - Deep learning based methods
 
-  Deep learning methods offer excellent detection rates for NER. They are however more complex to train, deploy and tend to be slower than traditional approaches.
-  When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. 
-  On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
+   Deep learning methods offer excellent detection rates for NER. They are however more complex to train, deploy and tend to be slower than traditional approaches. When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 
 ### Adding new connectors
 
@@ -109,15 +103,16 @@ While we're working on adding more documentation on this type of customization, 
 
    - The [scheduler documentation](docs/tutorial_scheduler.md) describes how to configure the data source and target for a periodic job
 
-2. Templates for source, target and stream configurations, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto) repo. For example: 
+2. Templates for source, target and stream configurations and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto) repo. For example: 
 
-	1. [S3 template](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/template.proto#L158)
-	2. [Kafka template](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/template.proto#L204)
+	- [data sink protocols](https://github.com/microsoft/presidio-genproto/blob/master/src/datasink.proto). Specifically, the [DatasinkTypesEnum](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/datasink.proto#L37)
+	- [S3 template](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/template.proto#L158)
+	- [Kafka template](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/template.proto#L204)
 
-2. Existing implementations
+3. Existing implementations
 
-	1. [Streams](presidio-datasink/cmd/presidio-datasink/stream/stream.go)
-	2. [SQL](presidio-datasink/cmd/presidio-datasink/database/database.go)
+	- [Streams](presidio-datasink/cmd/presidio-datasink/stream/stream.go)
+	- [SQL](presidio-datasink/cmd/presidio-datasink/database/database.go)
 	
 ### Bug fixing and general improvement
 
