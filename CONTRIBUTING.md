@@ -39,9 +39,9 @@ Adding a new recognizer is a great way to improve Presidio. A new capability to 
 #### General note on adding recognizers
 1. Accuracy:
 
-Each recognizer, regardless of its complexity, could have false positives and false negatives. When adding new recognizers, we try to balance the affect of each recognizer on the entire system.
+Each recognizer, regardless of its complexity, could have false positives and false negatives. When adding new recognizers, we try to balance the effect of each recognizer on the entire system.
 A recognizer with many false positives would affect the system's usability, while a recognizer with many false negatives might require more work before it can be integrated.
-We are working on a tool to automatically test new recognizers. In the mean time, it would be best if you clarified how you tested the recognizer's accuracy, and what datasets you used.
+We are working on a tool to automatically test new recognizers. In the mean time, it would be best if you clarified how you tested the recognizer's accuracy, and what datasets you've used.
 
 2. Performance:
 
@@ -60,7 +60,7 @@ Generally speaking, there are three types of recognizers:
 1. Black lists
 
 A black list is a list of words that should be removed during text analysis. For example, a list of titles (`["Mr.", "Mrs.", "Ms."]` etc.)
-This type of recognizer could be added by API or code. In case of contribution, a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
+This type of recognizer could be added via API or code. In case of contribution, a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
 See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. The [PatternRecognizer](presidio-analyzer/analyzer/pattern_recognizer.py) class already has support for a black-list input.
 
 2. Pattern based
