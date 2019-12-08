@@ -52,6 +52,7 @@ More information could be found in the [Presidio documentation](docs/index.md).
 - [Database and storage scanner](docs/tutorial_scheduler.md)
 - [Architecture](docs/design.md)
 - [Adding new PII recognizers](docs/custom_fields.md)
+- [Contributing to Presidio](CONTRIBUTIONG.md)
 
 ## Input and output
 
