@@ -46,11 +46,11 @@ Presidio uses OCR to detect text in images. It further allows the redaction of t
 ## Learn more
 More information could be found in the [Presidio documentation](docs/index.md).
 
-- [Installation guide](docs/install.md)
+- [How to deploy presidio](docs/install.md)
+- [Setting up a development environment](docs/development.md)
 - [Supported field types](docs/field_types.md)
 - [Database and storage scanner](docs/tutorial_scheduler.md)
 - [Architecture](docs/design.md)
-- [Setting up a development environment](docs/development.md)
 - [Adding new PII recognizers](docs/custom_fields.md)
 
 ## Input and output
