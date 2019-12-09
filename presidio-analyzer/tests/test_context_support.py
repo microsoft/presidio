@@ -93,7 +93,7 @@ class TestContextSupport(TestCase):
 
             assert(len(results_without_context) == len(results_with_context))
             for i in range(len(results_with_context)):
-                assert(results_without_context[i].score <= results_with_context[i].score)
+                assert(results_without_context[i].score < results_with_context[i].score)
 
     def test_context_custom_recognizer(self):
         nlp_engine = SpacyNlpEngine()

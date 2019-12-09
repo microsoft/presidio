@@ -86,4 +86,8 @@ mypassportnumberis912803456
 
 # Verify SG NRIC/FIN context words
 FIN
-Special NRIC numbers that are numerically significant have been issued to notable people e.g. S0000001I Yusof bin Ishak, first President of Singapore
+Special NRIC numbers e.g. S0000001I that are numerically significant have been issued to notable people Yusof bin Ishak, first President of Singapore
+
+# Verify SG NRIC/FIN mixed case (e.g. lower case )
+FIN
+my fin is g3300299L
