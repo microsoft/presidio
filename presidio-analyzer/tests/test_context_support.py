@@ -66,8 +66,8 @@ def sentences_with_context(request):
         test_items.append((lines[i+1].strip(),
                            recognizer,
                            [lines[i].strip()]))
-    # Currently we have 26 sentences, this is a sanity
-    if not len(test_items) == 26:
+    # Currently we have 27 sentences, this is a sanity
+    if not len(test_items) == 27:
         raise ValueError("context sentences not as expected")
 
     request.cls.context_sentences = test_items
