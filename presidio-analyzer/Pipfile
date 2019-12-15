@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 cython = "*"
 spacy = "*"
-en_core_web_lg = {file = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.1.0/en_core_web_lg-2.1.0.tar.gz"}
+en_core_web_lg = {file = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.2.0/en_core_web_lg-2.2.0.tar.gz"}
 regex = "*"
 pyre2 = {file = "https://github.com/torosent/pyre2/archive/release/0.2.23.zip"}
 grpcio = "*"

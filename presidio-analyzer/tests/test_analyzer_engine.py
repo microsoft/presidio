@@ -10,6 +10,7 @@ from analyzer.analyze_pb2 import AnalyzeRequest
 
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry, AnalysisExplanation
+from analyzer.logger import Logger
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
@@ -19,6 +20,8 @@ from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
 from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
 from tests.mocks import MockNlpEngine
 from tests.mocks.app_tracer_mock import AppTracerMock
+
+logger = Logger()
 
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
@@ -432,34 +435,40 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 2
 
     def test_demo_text(self):
-        text = "Here are a few examples of entities we currently support: \n" \
-               "Credit card: 4095-2609-9393-4932 \n" \
-               "Crypto wallet id: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ \n" \
-               "DateTime: September 18 n" \
-               "Domain: microsoft.com \n" \
-               "Email address: test@presidio.site \n" \
-               "IBAN code: IL150120690000003111111 \n" \
-               "IP: 192.168.0.1 i\n" \
-               "Person name: David Johnson\n" \
-               "Bank account: 2854567876542\n" \
-               "Driver license number: H12234567\n" \
-               "Passport: 912803456\n" \
-               "Phone number: (212) 555-1234.\n" \
-               "Social security number: 078-05-1120\n" \
+        text = "Here are a few examples sentences we currently support: \
+        Hello, my name is David Johnson and I live in Maine. " \
+               "My credit card number is 4095-2609-9393-4932 and " \
+               "my Crypto wallet id is 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ. " \
                "" \
-               "This project welcomes contributions and suggestions. Most contributions require you to agree to a " \
-               "Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us " \
-               "the rights to use your contribution. For details, visit https://cla.microsoft.com.\n" \
-               "When you submit a pull request, a CLA-bot will automatically determine whether you need to provide " \
-               "a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions " \
-               "provided by the bot. You will only need to do this once across all repos using our CLA.\n\n" \
-               "This project has adopted the Microsoft Open Source Code of Conduct. For more information see the " \
-               "Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments."
+               "On September 18 I visited microsoft.com and sent an email to test@microsoft.com, " \
+               "from the IP 192.168.0.1. " \
+               "My passport: 91280345 and my phone number: (212) 555-1234. " \
+               "This is a valid IBAN: IL150120690000003111111. " \
+                "Can you please check the status on bank account 2854567876542 in MyBank? " \
+               "Kate's social security number is 078-05-1120. " \
+               "If you need her driver license it is 1234567A (She's from Vermont). " \
+               "" \
+               "This project welcomes contributions and suggestions. Most contributions require you to agree " \
+               "to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, " \
+               "grant us the rights to use your contribution. For details, visit https://cla.microsoft.com " \
+               "When you submit a pull request, a CLA-bot will automatically determine whether " \
+               "you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). " \
+               "Simply follow the instructions provided by the bot. " \
+               "You will only need to do this once across all repos using our CLA. " \
+               "This project has adopted the Microsoft Open Source Code of Conduct. " \
+               "For more information see the Code of Conduct FAQ or contact opencode@microsoft.com " \
+               "with any additional questions or comments."
 
         language = "en"
 
-        analyzer_engine = AnalyzerEngine(default_score_threshold=0.6)
+        analyzer_engine = AnalyzerEngine(default_score_threshold=0.35, nlp_engine=loaded_spacy_nlp_engine)
         results = analyzer_engine.analyze(correlation_id=self.unit_test_guid, text=text, entities=None,
                                           language=language, all_fields=True)
 
-        assert len(results) == 15
+        for result in results:
+            logger.info("Entity = {}, Text = {}, Score={}, Start={}, End={}".format(result.entity_type,
+                                                                                    text[result.start:result.end],
+                                                                                    result.score,
+                                                                                    result.start, result.end))
+
+        assert len(results) == 19
