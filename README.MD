@@ -22,7 +22,7 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 ## Demo
 
-[Try Presidio with your own data](https://presidio-demo.azurewebsites.net/)
+[Try Presidio with your own data](https://presidio-demo-dev.azurewebsites.net/)
 
 ## Features
 
