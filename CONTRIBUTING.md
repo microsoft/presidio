@@ -6,7 +6,7 @@ The following is a set of guidelines for contributing to Presidio.
 
 ## What do I need to know before I get started?
 ### Project Presidio
-Presidio is a community project aimed at helping everyone handle their private data and make the world a safer place :)
+Presidio is a community project aimed at helping everyone handle their private data and make the world a safer place.
 Presidio is both a framework and a system. It's a framework in a sense that you could take code parts from it, extend, customize and plug somewhere. It's also a system you could take as a whole or in parts and deploy locally, on-prem on in the cloud, especially when leveraging Kubernetes.
 When contributing to presidio, it's important to keep this in mind, as some "framework" contributions might not be suitable for a deployment, or vice-versa.
 
