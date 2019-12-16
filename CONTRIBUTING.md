@@ -95,6 +95,10 @@ There are four options for adding ML and rule based recognizers:
 
    Deep learning methods offer excellent detection rates for NER. They are however more complex to train, deploy and tend to be slower than traditional approaches. When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 
+#### Configuring new recognizers
+
+New predefined recognizers should also be listed in the field types list Presidio supports here: https://github.com/microsoft/presidio/blob/master/docs/field_types.md and added to the [proto files here](https://github.com/microsoft/presidio-genproto/blob/1c667b8695755a4c4bbe386cedee4649f239c7c3/src/common.proto#L13)
+
 ### Adding new connectors
 
 Presidio's strength lies in its ability to be completely pluggable and customizable. Adding new types of databases, stream-analytics engines and data stores is extremely useful for many users.
