@@ -26,6 +26,13 @@ Presidio supports custom fields using either online via a simple REST API or by 
   POST <api-service-address>/api/v1/analyzer/recognizers/<new_recognizer_name>
   ```
 
+d. Updating a recoginzer
+
+  ```sh
+  PUT <api-service-address>/api/v1/analyzer/recognizers/<new_recognizer_name>
+  ```
+
+
   ### Request structure:
 
   #### Example json:
