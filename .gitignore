@@ -132,3 +132,6 @@ vendor/
 #pycharm
 .idea/*
 .idea
+
+# Do not ignore the empty database file for local version anonymizer package
+!presidio-anonymizer-package/anonymizer/db/*.db

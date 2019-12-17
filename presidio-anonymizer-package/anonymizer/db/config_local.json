@@ -1,0 +1,9 @@
+{
+    "sqlite_path": "sql.db",
+    "sqlite": {
+        "host":"localhost",
+        "user":"root",
+        "passwd":"my secret password",
+        "db":"write-math"
+    }
+}
