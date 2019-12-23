@@ -8,7 +8,7 @@ New to Presidio? Read this material to quickly get up and running.
 
 ## Table of Contents
 
-- [Installation guide](install.md)
+- [How to deploy presidio](deploy.md)
 - [Supported field types](field_types.md)
 - [Database and storage scanner](tutorial_scheduler.md)
 - [Architecture](design.md)
