@@ -19,7 +19,7 @@ RUN pip3 install pipenv
 # Updating setuptools
 RUN pip3 install --upgrade setuptools
 # Installing specified packages from Pipfile.lock
-RUN pipenv sync
+RUN pipenv sync --dev --sequential
 # Print to screen the installed packages for easy debugging
 RUN pipenv run pip freeze
 

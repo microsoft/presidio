@@ -7,8 +7,10 @@ ARG NAME=presidio-analyzer
 WORKDIR /usr/bin/${NAME}
 ADD ./${NAME} /usr/bin/${NAME}
 
-RUN pipenv sync --dev --sequential && \
-    pipenv run pylint analyzer && \
+# Print venv information
+RUN pipenv --venv
+
+RUN pipenv run pylint analyzer && \
     pipenv run flake8 analyzer --exclude "*pb2*.py" && \
 	pipenv run pytest --log-cli-level=0
 
