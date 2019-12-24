@@ -18,15 +18,6 @@ class SpacyNlpEngine(NlpEngine):
     def __init__(self):
         logger.info("Loading NLP model...")
 
-        # Download model lazily if it wasn't previously installed
-        try:
-            download('en_core_web_lg')
-        except requests.exceptions.ConnectionError as e:
-            logger.warning(
-                "Connection error: Could not download the "
-                "Spacy en-core-web-lg model. "
-                "Exception: {}".format(e))
-
         self.nlp = {"en": spacy.load("en_core_web_lg",
                                      disable=['parser', 'tagger'])}
 
