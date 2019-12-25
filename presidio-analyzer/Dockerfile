@@ -9,6 +9,7 @@ ADD ./${NAME} /usr/bin/${NAME}
 
 # Print venv information
 RUN pipenv --venv
+RUN pipenv run pip freeze
 
 RUN pipenv install pylint==2.3.1 flake8 pytest --skip-lock
 
@@ -23,7 +24,5 @@ FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
 ARG NAME=presidio-analyzer
 ADD ./${NAME}/analyzer /usr/bin/${NAME}/analyzer
 WORKDIR /usr/bin/${NAME}/analyzer
-
-RUN pipenv --venv
 
 CMD pipenv run python __main__.py serve --env-grpc-port
