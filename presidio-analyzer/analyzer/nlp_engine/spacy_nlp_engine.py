@@ -1,6 +1,4 @@
-import requests
 import spacy
-from spacy.cli import download
 
 from analyzer.logger import Logger
 from analyzer.nlp_engine import NlpArtifacts, NlpEngine
