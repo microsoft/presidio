@@ -85,5 +85,6 @@ Deep learning methods offer excellent detection rates for NER.
 They are however more complex to train, deploy and tend to be slower than traditional approaches. 
 When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 
+### General note
 
 New predefined recognizers should also be listed in the field types list Presidio supports here: https://github.com/microsoft/presidio/blob/master/docs/field_types.md and added to the proto files here
