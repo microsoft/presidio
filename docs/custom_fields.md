@@ -117,6 +117,8 @@ d. Updating a recoginzer
 
 ## Creating a custom recognizer via code <a name="via-code"></a>
 
+Related: [Best practices for developing new recognizers](developing_recognizers.md).
+
 Code based recognizers are written in Python and are a part of the [presidio-analyzer](../presidio-analyzer) module. The main modules in `presidio-analyzer` are the `AnalyzerEngine` and the `RecognizerRegistry`. The `AnalyzerEngine` is in charge of calling each requested recognizer. the `RecognizerRegistry` is in charge of providing the list of predefined and custom recognizers for analysis.
 
   In order to implement a new recognizer by code, follow these two steps:
@@ -144,3 +146,5 @@ Code based recognizers are written in Python and are a part of the [presidio-ana
   b. Reference and add the new class to the `RecognizerRegistry` module, in the `load_predefined_recognizers` method, which registers all code based recognizers.
 
   c. Note that if by adding the new recognizer, the memory or CPU consumption of the analyzer is expected to grow (such as in the case of adding a new model based recognizer), you should consider updating the pod's resources allocation in [analyzer-deployment.yaml](../charts/presidio/templates/analyzer-deployment.yaml)
+  
+  d. More information on developing custom recognizers can be found [here](developing_recognizers.md).
