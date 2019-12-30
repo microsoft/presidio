@@ -16,8 +16,6 @@ To get started, refer to the documentation for [setting up a development environ
 ### How can I contribute?
 - [General contribution guidelines](#general-contribution-guidlines)
 - [Adding new recognizers for new PII types](#adding-new-recognizers-for-new-pii-types)
-  * [General note on adding recognizers](#general-note-on-adding-recognizers)
-  * [Types of recognizers](#types-of-recognizers)
 - [Adding new connectors](#adding-new-connectors)
 - [Bug fixing and general improvement](#bug-fixing-and-general-improvement)
 
@@ -36,68 +34,7 @@ Please make sure all tests pass prior to submitting a pull request.
 ### Adding new recognizers for new PII types
 Adding a new recognizer is a great way to improve Presidio. A new capability to detect a new type of PII entity improves Presidio's coverage and makes private data less accessible.
 
-#### General note on adding recognizers
-1. Accuracy:
-
-Each recognizer, regardless of its complexity, could have false positives and false negatives. When adding new recognizers, we try to balance the effect of each recognizer on the entire system.
-A recognizer with many false positives would affect the system's usability, while a recognizer with many false negatives might require more work before it can be integrated.
-We are working on a tool to automatically test new recognizers. In the mean time, it would be best if you clarified how you tested the recognizer's accuracy, and what datasets you've used.
-
-2. Performance:
-
-Make sure your recognizer doesn't take too long to process text. Anything above 100ms per request with 100 tokens is probably not good enough.
-
-3. Environment:
-
-When adding new recognizers that have 3rd party dependencies, make sure that the new dependencies don't interfere with Presidio's dependencies.
-In the case of a conflict, one can create an isolated model environment (in a sidecar container or external endpoint) and implement a [RemoteRecognizer](presidio-analyzer/analyzer/remote_recognizer.py) on presidio's side to interact with the model's endpoint.
-In addition, make sure the license on the 3rd party dependency allows you to use it for any purpose.
-
-
-#### Types of recognizers
-Generally speaking, there are three types of recognizers:
-
-1. Black lists
-
-A black list is a list of words that should be removed during text analysis. For example, a list of titles (`["Mr.", "Mrs.", "Ms."]` etc.)
-This type of recognizer could be added via API or code. In case of contribution, a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
-See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. The [PatternRecognizer](presidio-analyzer/analyzer/pattern_recognizer.py) class already has support for a black-list input.
-
-2. Pattern based
-
-Pattern based recognizers use regular expressions to identify entities in text. 
-This type of recognizer could be added by API or code. In case of contribution, a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
-See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. The [PatternRecognizer](presidio-analyzer/analyzer/pattern_recognizer.py) class should be extended.
-See some examples here:
-  - [Credit card recognizer](presidio-analyzer/analyzer/predefined_recognizers/credit_card_recognizer.py)
-  - [Email recognizer](presidio-analyzer/analyzer/predefined_recognizers/email_recognizer.py)
-
-3. Machine Learning (ML) based or rule-based
-
-Many PII entites are undetectable using naive approaches like black-lists or regular expressions. In these cases, we would wish to utilize a Machine Learning model capabable of identifying entities in text, or a rule-based recognizer.
-There are four options for adding ML and rule based recognizers:
-
-   - Utilize spaCy:
-
-   Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER). As we prefer to use the existing tools, it would be best to contribute ML models that are based on spaCy. spaCy provides descent results compared to state-of-the-art NER models, but with much better computational performance. spaCy could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities. When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
-   
-   - Utilize Scikit-learn or similar
-   
-   Scikit-learn models tend to be fast, but usually have lower accuracy than deep learning methods. However, for well defined problems with well defined features, they can provide very good results.
-   Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models... 
-   When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
-
-   - Use custom logic
-
-   In some cases, rule-based logic provides the best way of detecting entities. The Presidio EntityRecognizer API allows you to use spaCy extracted features like lemmas, part of speech, dependencies and more to create your logic. When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
-
-   - Deep learning based methods
-
-   Deep learning methods offer excellent detection rates for NER. They are however more complex to train, deploy and tend to be slower than traditional approaches. When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
-
-#### Configuring new recognizers
-
-New predefined recognizers should also be listed in the field types list Presidio supports here: https://github.com/microsoft/presidio/blob/master/docs/field_types.md and added to the [proto files here](https://github.com/microsoft/presidio-genproto/blob/1c667b8695755a4c4bbe386cedee4649f239c7c3/src/common.proto#L13)
+Best practices for recognizers development [are described here](docs/developing_recognizers.md). Please follow these guidelines when proposing new recognizers.
 
 ### Adding new connectors
 
