@@ -45,7 +45,7 @@ class RecognizerStoreApi:
         if not last_hash:
             logging.info("Recognizers hash was not found in store")
         else:
-            logging.info("Latest hash found in store is: %s", last_hash)
+            logging.info("Latest hash found in store is: {}".format(last_hash))
         return last_hash
 
     def get_all_recognizers(self):
