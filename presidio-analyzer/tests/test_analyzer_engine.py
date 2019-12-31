@@ -476,17 +476,17 @@ class TestAnalyzerEngine(TestCase):
 
         assert len([entity for entity in detected_entities if entity == "CREDIT_CARD"]) == 1
         assert len([entity for entity in detected_entities if entity == "CRYPTO"]) == 1
+        assert len([entity for entity in detected_entities if entity == "DATE_TIME"]) == 1
         assert len([entity for entity in detected_entities if entity == "DOMAIN_NAME"]) == 4
         assert len([entity for entity in detected_entities if entity == "EMAIL_ADDRESS"]) == 2
-        assert len([entity for entity in detected_entities if entity == "PERSON"]) == 2
-        assert len([entity for entity in detected_entities if entity == "LOCATION"]) == 1
-        assert len([entity for entity in detected_entities if entity == "PHONE_NUMBER"]) == 1
+        assert len([entity for entity in detected_entities if entity == "IBAN_CODE"]) == 1
         assert len([entity for entity in detected_entities if entity == "IP_ADDRESS"]) == 1
         assert len([entity for entity in detected_entities if entity == "LOCATION"]) == 1
-        assert len([entity for entity in detected_entities if entity == "DATE_TIME"]) == 1
-        assert len([entity for entity in detected_entities if entity == "US_DRIVER_LICENSE"]) == 1
-        assert len([entity for entity in detected_entities if entity == "US_SSN"]) == 1
-        assert len([entity for entity in detected_entities if entity == "US_PASSPORT"]) == 1
+        assert len([entity for entity in detected_entities if entity == "PERSON"]) == 2
+        assert len([entity for entity in detected_entities if entity == "PHONE_NUMBER"]) == 1
         assert len([entity for entity in detected_entities if entity == "US_BANK_NUMBER"]) == 1
+        assert len([entity for entity in detected_entities if entity == "US_DRIVER_LICENSE"]) == 1
+        assert len([entity for entity in detected_entities if entity == "US_PASSPORT"]) == 1
+        assert len([entity for entity in detected_entities if entity == "US_SSN"]) == 1
 
         assert len(results) == 19
