@@ -116,30 +116,27 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 ### Developing only for Presidio Analyzer under Windows environment <a name="develop-windows"></a>
 Developing presidio as a whole on Windows is currently not supported. However, it is possible to run and test the presidio-analyzer module, in charge of detecting entities in text, on Windows using Docker:
 
-Run locally the core services Presidio needs to operate:
+1. Run locally the core services Presidio needs to operate:
+
 ```
 docker run --rm --name test-redis --network testnetwork -d -p 6379:6379 redis
 docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 mcr.microsoft.com/presidio-anonymizer:latest
 docker run --rm --name test-presidio-recognizers-store --network testnetwork -d -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=test-redis:6379 mcr.microsoft.com/presidio-recognizers-store:latest
 ```
-Naviagate to `<Presidio folder>\presidio-analyzer\`
 
-Install the python packages if didn't do so yet:
+2. Navigate to `<Presidio folder>/presidio-analyzer`
+
+3. Install the python packages if didn't do so yet:
 ```sh
 pipenv install --dev --sequential
 ```
 
-To simply run unit tests, execute:
-```
-pipenv run pytest --log-cli-level=0
-```
-
-If you want to experiment with `analyze` requests, navigate into the `analyzer` folder and start serving the analyzer service:
+3. If you want to experiment with `analyze` requests, navigate into the `analyzer` folder and start serving the analyzer service:
 ```sh
 pipenv run python __main__.py serve --grpc-port 3000
 ```
 
-In a new `pipenv shell` window you can run `analyze` requests, for example:
+4. In a new `pipenv shell` window you can run `analyze` requests, for example:
 ```
 pipenv run python __main__.py analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE" --grpc-port 3000
 ```
