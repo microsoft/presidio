@@ -24,7 +24,7 @@ RUN pip install pipenv
 # Updating setuptools
 RUN pip install --upgrade setuptools
 # Installing specified packages from Pipfile.lock
-RUN bash -c 'PIPENV_VENV_IN_PROJECT=1 pipenv install'
+RUN bash -c 'PIPENV_VENV_IN_PROJECT=1 pipenv install --sequential'
 
 # Print to screen the installed packages for easy debugging
 RUN pipenv run pip freeze

@@ -350,7 +350,8 @@ class TestAnalyzerEngine(TestCase):
         entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
         analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry,
                                                     app_tracer=self.app_tracer,
-                                                    enable_trace_pii=True)
+                                                    enable_trace_pii=True,
+                                                    nlp_engine=TESTS_NLP_ENGINE)
         results = analyzer_engine_with_spacy.analyze(correlation_id=self.unit_test_guid,
                                                      text=text,
                                                      entities=entities,
