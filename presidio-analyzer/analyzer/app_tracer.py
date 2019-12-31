@@ -1,4 +1,4 @@
-from analyzer.logger import Logger
+from analyzer import PresidioLogger
 
 
 class AppTracer:
@@ -8,7 +8,7 @@ class AppTracer:
     This can be useful for analyzing the detection accuracy of the system."""
     def __init__(self, enabled=True):
 
-        self.logger = Logger('Interpretability')
+        self.logger = PresidioLogger('Interpretability')
         self.logger.set_level("INFO")
         self.enabled = enabled
 

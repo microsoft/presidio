@@ -1,9 +1,9 @@
 import spacy
 
-from analyzer.logger import Logger
+from analyzer import PresidioLogger
 from analyzer.nlp_engine import NlpArtifacts, NlpEngine
 
-logger = Logger()
+logger = PresidioLogger()
 
 
 class SpacyNlpEngine(NlpEngine):
@@ -14,7 +14,7 @@ class SpacyNlpEngine(NlpEngine):
     """
 
     def __init__(self):
-        logger.info("Loading NLP model...")
+        logger.info("Loading NLP model: spaCy en_core_web_lg")
 
         self.nlp = {"en": spacy.load("en_core_web_lg",
                                      disable=['parser', 'tagger'])}

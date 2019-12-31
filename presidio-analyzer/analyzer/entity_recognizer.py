@@ -1,7 +1,10 @@
+import os
+import sys
 from abc import abstractmethod
 import copy
+from contextlib import contextmanager
 
-from analyzer.logger import Logger
+from analyzer import PresidioLogger
 
 
 class EntityRecognizer:
@@ -36,7 +39,7 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
 
-        self.logger = Logger()
+        self.logger = PresidioLogger()
         self.load()
         self.logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
@@ -328,3 +331,14 @@ class EntityRecognizer:
         context_list = list(set(context_list))
         self.logger.debug('Context list is: %s', " ".join(context_list))
         return context_list
+
+
+@contextmanager
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:
+            yield
+        finally:
+            sys.stdout = old_stdout

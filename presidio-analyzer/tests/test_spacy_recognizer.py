@@ -1,14 +1,12 @@
 from unittest import TestCase
 
-from assertions import assert_result, assert_result_within_score_range
+from tests import assert_result, assert_result_within_score_range, TESTS_NLP_ENGINE
 
-from analyzer.nlp_engine import SpacyNlpEngine
 from analyzer.predefined_recognizers import SpacyRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
-from analyzer.nlp_engine import NlpArtifacts
 
 NER_STRENGTH = 0.85
-nlp_engine = SpacyNlpEngine()
+nlp_engine = TESTS_NLP_ENGINE
 spacy_recognizer = SpacyRecognizer()
 entities = ["PERSON", "DATE_TIME"]
 

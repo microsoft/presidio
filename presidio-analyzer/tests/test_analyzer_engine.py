@@ -1,27 +1,23 @@
-from unittest import TestCase
-from analyzer.entity_recognizer import EntityRecognizer
-
-import os
 import hashlib
-import pytest
+from unittest import TestCase
 
-from assertions import assert_result
-from analyzer.analyze_pb2 import AnalyzeRequest
+import pytest
 
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry, AnalysisExplanation
-from analyzer.logger import Logger
+from analyzer import PresidioLogger
+from analyzer.analyze_pb2 import AnalyzeRequest
+from analyzer.entity_recognizer import EntityRecognizer
+from analyzer.nlp_engine import NlpArtifacts
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
-    UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
+    UsPhoneRecognizer, DomainRecognizer
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
-from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
-from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
+from tests import assert_result, TESTS_NLP_ENGINE
 from tests.mocks import MockNlpEngine
 from tests.mocks.app_tracer_mock import AppTracerMock
 
-logger = Logger()
+logger = PresidioLogger()
 
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
@@ -87,7 +83,7 @@ class MockRecognizerRegistry(RecognizerRegistry):
                                  DomainRecognizer()])
 
 
-loaded_spacy_nlp_engine = SpacyNlpEngine()
+loaded_spacy_nlp_engine = TESTS_NLP_ENGINE
 
 
 class TestAnalyzerEngine(TestCase):
@@ -435,36 +431,41 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 2
 
     def test_demo_text(self):
-        text = "Here are a few examples sentences we currently support: \
-        Hello, my name is David Johnson and I live in Maine. " \
-               "My credit card number is 4095-2609-9393-4932 and " \
-               "my Crypto wallet id is 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ. " \
+        text = "Here are a few examples sentences we currently support:\n\n" \
+               "Hello, my name is David Johnson and I live in Maine.\n" \
+               "My credit card number is 4095-2609-9393-4932 and my " \
+               "Crypto wallet id is 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ.\n\n" \
+               "On September 18 I visited microsoft.com and sent an " \
+               "email to test@microsoft.com,  from the IP 192.168.0.1.\n\n" \
+               "My passport: 991280345 and my phone number: (212) 555-1234.\n\n" \
+               "This is a valid IBAN: IL150120690000003111111.\n\n" \
+               "Can you please check the status on bank account 954567876544 " \
+               "in PresidiBank?\n\n" \
                "" \
-               "On September 18 I visited microsoft.com and sent an email to test@microsoft.com, " \
-               "from the IP 192.168.0.1. " \
-               "My passport: 91280345 and my phone number: (212) 555-1234. " \
-               "This is a valid IBAN: IL150120690000003111111. " \
-                "Can you please check the status on bank account 2854567876542 in MyBank? " \
-               "Kate's social security number is 078-05-1120. " \
-               "If you need her driver license it is 1234567A (She's from Vermont). " \
+               "Kate's social security number is 078-05-1120.  " \
+               "Her driver license? it is 1234567B.\n\n" \
                "" \
-               "This project welcomes contributions and suggestions. Most contributions require you to agree " \
-               "to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, " \
-               "grant us the rights to use your contribution. For details, visit https://cla.microsoft.com " \
-               "When you submit a pull request, a CLA-bot will automatically determine whether " \
-               "you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). " \
+               "This project welcomes contributions and suggestions.\n" \
+               "Most contributions require you to agree to a " \
+               "Contributor License Agreement (CLA) declaring " \
+               "that you have the right to, and actually do, " \
+               "grant us the rights to use your contribution. " \
+               "For details, visit https://cla.microsoft.com " \
+               "When you submit a pull request, " \
+               "a CLA-bot will automatically determine whether " \
+               "you need to provide a CLA and decorate the PR " \
+               "appropriately (e.g., label, comment).\n" \
                "Simply follow the instructions provided by the bot. " \
-               "You will only need to do this once across all repos using our CLA. " \
-               "This project has adopted the Microsoft Open Source Code of Conduct. " \
-               "For more information see the Code of Conduct FAQ or contact opencode@microsoft.com " \
-               "with any additional questions or comments."
+               "You will only need to do this once across all repos using our CLA.\n" \
+               "This project has adopted the Microsoft Open Source Code of Conduct.\n" \
+               "For more information see the Code of Conduct FAQ or " \
+               "contact opencode@microsoft.com with any additional questions or comments."
 
         language = "en"
 
         analyzer_engine = AnalyzerEngine(default_score_threshold=0.35, nlp_engine=loaded_spacy_nlp_engine)
         results = analyzer_engine.analyze(correlation_id=self.unit_test_guid, text=text, entities=None,
                                           language=language, all_fields=True)
-
         for result in results:
             logger.info("Entity = {}, Text = {}, Score={}, Start={}, End={}".format(result.entity_type,
                                                                                     text[result.start:result.end],

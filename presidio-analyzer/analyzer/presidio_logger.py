@@ -1,10 +1,11 @@
 import logging
 import os
+import sys
 
 
-class Logger:
+class PresidioLogger:
     """A wrapper class for logger"""
-    def __init__(self, logger_name=None):
+    def __init__(self, logger_name="presidio"):
         if logger_name:
             logger = logging.getLogger(logger_name)
         else:
@@ -12,7 +13,7 @@ class Logger:
 
         if not logger.handlers:
             loglevel = os.environ.get("LOG_LEVEL", "INFO")
-            ch = logging.StreamHandler()
+            ch = logging.StreamHandler(sys.stdout)
             formatter = logging.Formatter(
                 '[%(asctime)s][%(name)s][%(levelname)s]%(message)s')
             ch.setFormatter(formatter)

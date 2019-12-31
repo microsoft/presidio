@@ -3,6 +3,8 @@ import tldextract
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 
+from analyzer.entity_recognizer import suppress_stdout
+
 # pylint: disable=line-too-long
 REGEX = r'\b(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))\b'  # noqa: E501'  # noqa: E501
 CONTEXT = ["domain", "ip"]
@@ -19,5 +21,6 @@ class DomainRecognizer(PatternRecognizer):
                          context=CONTEXT)
 
     def validate_result(self, pattern_text):
-        result = tldextract.extract(pattern_text)
-        return result.fqdn != ''
+        with suppress_stdout():
+            result = tldextract.extract(pattern_text)
+            return result.fqdn != ''
