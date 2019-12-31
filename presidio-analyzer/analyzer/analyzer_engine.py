@@ -5,7 +5,7 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-from analyzer import PresidioLogger, RecognizerResult
+from analyzer import PresidioLogger
 from analyzer.app_tracer import AppTracer
 
 DEFAULT_LANGUAGE = "en"

@@ -29,7 +29,13 @@ class RecognizerResult:
         return str(self.__dict__)
 
     def __str__(self):
-        return "type: {}, start: {}, end: {}, score: {}".format(self.entity_type, self.start, self.end, self.score)
+        return "type: {}, " \
+               "start: {}, " \
+               "end: {}, " \
+               "score: {}".format(self.entity_type,
+                                  self.start,
+                                  self.end,
+                                  self.score)
 
     def __repr(self):
         return self.__str__()
