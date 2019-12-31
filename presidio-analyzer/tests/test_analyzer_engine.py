@@ -439,12 +439,12 @@ class TestAnalyzerEngine(TestCase):
                "On September 18 I visited microsoft.com and sent an " \
                "email to test@microsoft.com,  from the IP 192.168.0.1.\n\n" \
                "My passport: 991280345 and my phone number: (212) 555-1234.\n\n" \
-               "This is a valid IBAN: IL150120690000003111111.\n\n" \
+               "Please transfer using this IBAN IL150120690000003111111.\n\n" \
                "Can you please check the status on bank account 954567876544 " \
                "in PresidiBank?\n\n" \
                "" \
                "Kate's social security number is 078-05-1120.  " \
-               "Her driver license? it is 1234567B.\n\n" \
+               "Her driver license? it is 9234567B.\n\n" \
                "" \
                "This project welcomes contributions and suggestions.\n" \
                "Most contributions require you to agree to a " \
@@ -477,9 +477,10 @@ class TestAnalyzerEngine(TestCase):
         assert len([entity for entity in detected_entities if entity == "CREDIT_CARD"]) == 1
         assert len([entity for entity in detected_entities if entity == "CRYPTO"]) == 1
         assert len([entity for entity in detected_entities if entity == "DOMAIN_NAME"]) == 4
-        assert len([entity for entity in detected_entities if entity == "EMAIL_ADDRESS"]) == 3
+        assert len([entity for entity in detected_entities if entity == "EMAIL_ADDRESS"]) == 2
         assert len([entity for entity in detected_entities if entity == "PERSON"]) == 2
         assert len([entity for entity in detected_entities if entity == "LOCATION"]) == 1
+        assert len([entity for entity in detected_entities if entity == "PHONE_NUMBER"]) == 1
         assert len([entity for entity in detected_entities if entity == "IP_ADDRESS"]) == 1
         assert len([entity for entity in detected_entities if entity == "LOCATION"]) == 1
         assert len([entity for entity in detected_entities if entity == "DATE_TIME"]) == 1
