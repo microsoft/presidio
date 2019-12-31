@@ -19,6 +19,9 @@ class SpacyNlpEngine(NlpEngine):
         self.nlp = {"en": spacy.load("en_core_web_lg",
                                      disable=['parser', 'tagger'])}
 
+        logger.info("Printing spaCy model and package details:"
+                    "\n\n {}\n\n".format(spacy.info("en_core_web_lg")))
+
     def process_text(self, text, language):
         """ Execute the SpaCy NLP pipeline on the given text
             and language
