@@ -1,12 +1,12 @@
 # pylint: disable=wrong-import-position,wrong-import-order
+import logging
+import grpc
+import analyze_pb2
+import analyze_pb2_grpc
+from concurrent import futures
 import os
 import sys
 import time
-from concurrent import futures
-
-import analyze_pb2
-import analyze_pb2_grpc
-import grpc
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
 from knack.arguments import ArgumentsContext
@@ -14,14 +14,14 @@ from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
 
-# bug #602: Fix imports issue in python
-from presidio_logger import PresidioLogger
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from analyzer_engine import AnalyzerEngine # noqa
 from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
 from nlp_engine.spacy_nlp_engine import SpacyNlpEngine # noqa
+from presidio_logger import PresidioLogger # noqa
+
+logging.getLogger().setLevel("INFO")
 
 WELCOME_MESSAGE = r"""
 
