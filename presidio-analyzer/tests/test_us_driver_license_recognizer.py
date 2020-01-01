@@ -1,7 +1,7 @@
 from unittest import TestCase
-import os
-from assertions import assert_result, assert_result_within_score_range
+
 from analyzer.predefined_recognizers import UsLicenseRecognizer
+from tests import assert_result_within_score_range
 
 us_license_recognizer = UsLicenseRecognizer()
 entities = ["US_DRIVER_LICENSE"]

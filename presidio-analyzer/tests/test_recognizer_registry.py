@@ -1,14 +1,13 @@
+import hashlib
+import logging
 from unittest import TestCase
 
-import json
-import hashlib
 import pytest
-import logging
+
 from analyzer import RecognizerRegistry, PatternRecognizer, \
     EntityRecognizer, Pattern
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
-import time
 
 
 class RecognizerStoreApiMock(RecognizerStoreApi):

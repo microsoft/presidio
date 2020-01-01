@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from assertions import assert_result_within_score_range
 from analyzer.predefined_recognizers import UsPhoneRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
+from tests import assert_result_within_score_range
 
 phone_recognizer = UsPhoneRecognizer()
 entities = ["PHONE_NUMBER"]

@@ -28,8 +28,8 @@ $(BINS): vendor
 
 .PHONY: docker-build-deps
 docker-build-deps:
-	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) ||:
-	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) ||:
+	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) || echo "\nCould not pull base Go image from registry, building locally. If you planned to build locally, the previous error message could be ignored\n"
+	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) || echo "\nCould not pull base Python image from registry, building locally (If you planned to build images locally, the previous error message could be ignored\n"
 	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) -f Dockerfile.golang.deps .
 	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) -f Dockerfile.python.deps .
 

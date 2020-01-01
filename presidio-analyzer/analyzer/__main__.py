@@ -4,9 +4,9 @@ import grpc
 import analyze_pb2
 import analyze_pb2_grpc
 from concurrent import futures
-import time
-from os import sys, path
 import os
+import sys
+import time
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
 from knack.arguments import ArgumentsContext
@@ -14,12 +14,14 @@ from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
 
-# bug #602: Fix imports issue in python
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from analyzer_engine import AnalyzerEngine # noqa
 from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
 from nlp_engine.spacy_nlp_engine import SpacyNlpEngine # noqa
+from presidio_logger import PresidioLogger # noqa
+
+logging.getLogger().setLevel("INFO")
 
 WELCOME_MESSAGE = r"""
 
@@ -47,9 +49,7 @@ helps['analyze'] = """
                    license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE"
 """
 
-loglevel = os.environ.get("LOG_LEVEL", "INFO")
-logging.basicConfig(
-    format='%(asctime)s:%(levelname)s:%(message)s', level=loglevel)
+logger = PresidioLogger()
 
 
 class PresidioCLIHelp(CLIHelp):
@@ -63,24 +63,36 @@ class PresidioCLIHelp(CLIHelp):
 def serve_command_handler(enable_trace_pii,
                           env_grpc_port=False,
                           grpc_port=3000):
-
+    logger.info("Starting GRPC server")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    logger.info("GRPC started")
 
+    logger.info("Creating RecognizerRegistry")
     registry = RecognizerRegistry()
+    logger.info("RecognizerRegistry created")
+    logger.info("Creating SpacyNlpEngine")
     nlp_engine = SpacyNlpEngine()
+    logger.info("SpacyNlpEngine created")
+
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
         AnalyzerEngine(registry=registry,
                        nlp_engine=nlp_engine,
                        enable_trace_pii=enable_trace_pii),
         server)
 
+    logger.info("Added AnalyzeServiceServicer to server")
+
     if env_grpc_port:
+        logger.info("Getting port {}".format(env_grpc_port))
         port = os.environ.get('GRPC_PORT')
         if port is not None or port != '':
             grpc_port = int(port)
+    else:
+        logger.info("env_grpc_port not provided. "
+                    "Using grpc_port {}".format(grpc_port))
 
     server.add_insecure_port('[::]:' + str(grpc_port))
-    logging.info("Starting GRPC listener at port %d", grpc_port)
+    logger.info("Starting GRPC listener at port {}".format(grpc_port))
     server.start()
     try:
         while True:

@@ -4,7 +4,7 @@ import pytest
 
 # https://www.datatrans.ch/showcase/test-cc-numbers
 # https://www.freeformatter.com/credit-card-number-generator-validator.html
-from assertions import assert_result
+from tests import assert_result
 from analyzer import Pattern
 from analyzer import PatternRecognizer
 

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from assertions import assert_result
+from tests import assert_result
 from analyzer.predefined_recognizers import DomainRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
 
@@ -34,7 +34,7 @@ class TestDomainRecognizer(TestCase):
 
     def test_valid_domains_lemma_text(self):
         domain1 = 'microsoft.com'
-        domain2 = 'google.co.il' 
+        domain2 = 'google.co.il'
         results = domain_recognizer.analyze('my domains: {} {}'.format(domain1, domain2), entities)
 
         assert len(results) == 2

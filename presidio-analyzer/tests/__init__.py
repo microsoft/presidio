@@ -1,6 +1,12 @@
 import os
 import sys
 
-# bug #602: Fix imports issue in python
+from analyzer.nlp_engine import SpacyNlpEngine
+
 sys.path.append(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))) + "/tests")
+
+from .assertions import assert_result, assert_result_within_score_range
+
+print("Creating tests SpacyNlpEngine which starts the spaCy model")
+TESTS_NLP_ENGINE = SpacyNlpEngine()

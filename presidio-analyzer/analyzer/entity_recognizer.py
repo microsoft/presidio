@@ -1,7 +1,7 @@
-from abc import abstractmethod
 import copy
+from abc import abstractmethod
 
-from analyzer.logger import Logger
+from analyzer import PresidioLogger
 
 
 class EntityRecognizer:
@@ -36,7 +36,7 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
 
-        self.logger = Logger()
+        self.logger = PresidioLogger()
         self.load()
         self.logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
