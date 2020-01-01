@@ -2,7 +2,7 @@
 # https://www.freeformatter.com/credit-card-number-generator-validator.html
 from unittest import TestCase
 
-from assertions import assert_result
+from tests import assert_result
 from analyzer.predefined_recognizers import CreditCardRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
 
@@ -142,7 +142,7 @@ class TestCreditCardRecognizer(TestCase):
         results = credit_card_recognizer.analyze(number, entities)
 
         assert not results
-    
+
     def test_invalid_diners_card_with_context(self):
         number = '36168002586008'
         results = credit_card_recognizer.analyze('my credit card number is ' + number, entities)

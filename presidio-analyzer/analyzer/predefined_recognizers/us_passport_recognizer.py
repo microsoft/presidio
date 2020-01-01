@@ -5,8 +5,9 @@ from analyzer import PatternRecognizer
 # Weak pattern: all passport numbers are a weak match, e.g., 14019033
 VERY_WEAK_REGEX = r'(\b[0-9]{9}\b)'
 
+
 CONTEXT = [
-    "us", "united", "states", "passport", "number", "passport#", "travel",
+    "us", "united", "states", "passport", "passport#", "travel",
     "document"
 ]
 

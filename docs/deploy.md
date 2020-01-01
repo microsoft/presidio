@@ -1,4 +1,4 @@
-# Install guide
+# Install (deploy) presidio as a system
 
 You can install Presidio locally using [Docker](https://www.docker.com/), as a service in [Kubernetes](https://kubernetes.io/) or use it as a framework in a python application.
 
@@ -15,6 +15,10 @@ For convenience the script `build.sh` at the root of this repo will run the `mak
 **NOTE: Error message** You may see error messages like this:
 `Error response from daemon: pull access denied for presidio/presidio-golang-deps, repository does not exist or may require 'docker login': denied: requested access to the resource is denied` when running the `make` commands. These can be ignored.
 
+**NOTE: Memory requirements** if you get an error message like this
+ `tests/test_analyzer_engine.py ...............The command '/bin/sh -c pipenv run pytest' returned a non-zero code: 137`
+ while building you may need to increase the docker memory limit for your machine
+ 
 If you prefer to run each step by hand instead of using the `build.sh` script these are as follows:
 
 ```sh

@@ -9,11 +9,11 @@ CONTEXT = [
     "bank"
     # Task #603: Support keyphrases: change to "checking account"
     # as part of keyphrase change
-    "checking",
+    "check",
     "account",
     "account#",
     "acct",
-    "saving",
+    "save",
     "debit"
 ]
 

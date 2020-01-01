@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from assertions import assert_result
+from tests import assert_result
 from analyzer.predefined_recognizers import EmailRecognizer
 from analyzer.entity_recognizer import EntityRecognizer
 

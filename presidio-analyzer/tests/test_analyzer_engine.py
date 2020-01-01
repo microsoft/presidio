@@ -1,24 +1,23 @@
-from unittest import TestCase
-from analyzer.entity_recognizer import EntityRecognizer
-
-import os
 import hashlib
-import pytest
+from unittest import TestCase
 
-from assertions import assert_result
-from analyzer.analyze_pb2 import AnalyzeRequest
+import pytest
 
 from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry, AnalysisExplanation
+from analyzer import PresidioLogger
+from analyzer.analyze_pb2 import AnalyzeRequest
+from analyzer.entity_recognizer import EntityRecognizer
+from analyzer.nlp_engine import NlpArtifacts
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
-    UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
-    UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer
+    UsPhoneRecognizer, DomainRecognizer
 from analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
-from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
-from analyzer.predefined_recognizers import IpRecognizer, UsSsnRecognizer
+from tests import assert_result, TESTS_NLP_ENGINE
 from tests.mocks import MockNlpEngine
 from tests.mocks.app_tracer_mock import AppTracerMock
+
+logger = PresidioLogger()
 
 
 class RecognizerStoreApiMock(RecognizerStoreApi):
@@ -84,7 +83,7 @@ class MockRecognizerRegistry(RecognizerRegistry):
                                  DomainRecognizer()])
 
 
-loaded_spacy_nlp_engine = SpacyNlpEngine()
+loaded_spacy_nlp_engine = TESTS_NLP_ENGINE
 
 
 class TestAnalyzerEngine(TestCase):
@@ -351,7 +350,8 @@ class TestAnalyzerEngine(TestCase):
         entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
         analyzer_engine_with_spacy = AnalyzerEngine(self.loaded_registry,
                                                     app_tracer=self.app_tracer,
-                                                    enable_trace_pii=True)
+                                                    enable_trace_pii=True,
+                                                    nlp_engine=TESTS_NLP_ENGINE)
         results = analyzer_engine_with_spacy.analyze(correlation_id=self.unit_test_guid,
                                                      text=text,
                                                      entities=entities,
@@ -432,34 +432,61 @@ class TestAnalyzerEngine(TestCase):
         assert len(results) == 2
 
     def test_demo_text(self):
-        text = "Here are a few examples of entities we currently support: \n" \
-               "Credit card: 4095-2609-9393-4932 \n" \
-               "Crypto wallet id: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ \n" \
-               "DateTime: September 18 n" \
-               "Domain: microsoft.com \n" \
-               "Email address: test@presidio.site \n" \
-               "IBAN code: IL150120690000003111111 \n" \
-               "IP: 192.168.0.1 i\n" \
-               "Person name: David Johnson\n" \
-               "Bank account: 2854567876542\n" \
-               "Driver license number: H12234567\n" \
-               "Passport: 912803456\n" \
-               "Phone number: (212) 555-1234.\n" \
-               "Social security number: 078-05-1120\n" \
+        text = "Here are a few examples sentences we currently support:\n\n" \
+               "Hello, my name is David Johnson and I live in Maine.\n" \
+               "My credit card number is 4095-2609-9393-4932 and my " \
+               "Crypto wallet id is 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ.\n\n" \
+               "On September 18 I visited microsoft.com and sent an " \
+               "email to test@microsoft.com,  from the IP 192.168.0.1.\n\n" \
+               "My passport: 991280345 and my phone number: (212) 555-1234.\n\n" \
+               "Please transfer using this IBAN IL150120690000003111111.\n\n" \
+               "Can you please check the status on bank account 954567876544 " \
+               "in PresidiBank?\n\n" \
                "" \
-               "This project welcomes contributions and suggestions. Most contributions require you to agree to a " \
-               "Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us " \
-               "the rights to use your contribution. For details, visit https://cla.microsoft.com.\n" \
-               "When you submit a pull request, a CLA-bot will automatically determine whether you need to provide " \
-               "a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions " \
-               "provided by the bot. You will only need to do this once across all repos using our CLA.\n\n" \
-               "This project has adopted the Microsoft Open Source Code of Conduct. For more information see the " \
-               "Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments."
+               "Kate's social security number is 078-05-1120.  " \
+               "Her driver license? it is 9234567B.\n\n" \
+               "" \
+               "This project welcomes contributions and suggestions.\n" \
+               "Most contributions require you to agree to a " \
+               "Contributor License Agreement (CLA) declaring " \
+               "that you have the right to, and actually do, " \
+               "grant us the rights to use your contribution. " \
+               "For details, visit https://cla.microsoft.com " \
+               "When you submit a pull request, " \
+               "a CLA-bot will automatically determine whether " \
+               "you need to provide a CLA and decorate the PR " \
+               "appropriately (e.g., label, comment).\n" \
+               "Simply follow the instructions provided by the bot. " \
+               "You will only need to do this once across all repos using our CLA.\n" \
+               "This project has adopted the Microsoft Open Source Code of Conduct.\n" \
+               "For more information see the Code of Conduct FAQ or " \
+               "contact opencode@microsoft.com with any additional questions or comments."
 
         language = "en"
 
-        analyzer_engine = AnalyzerEngine(default_score_threshold=0.6)
+        analyzer_engine = AnalyzerEngine(default_score_threshold=0.35, nlp_engine=loaded_spacy_nlp_engine)
         results = analyzer_engine.analyze(correlation_id=self.unit_test_guid, text=text, entities=None,
                                           language=language, all_fields=True)
+        for result in results:
+            logger.info("Entity = {}, Text = {}, Score={}, Start={}, End={}".format(result.entity_type,
+                                                                                    text[result.start:result.end],
+                                                                                    result.score,
+                                                                                    result.start, result.end))
+        detected_entities = [result.entity_type for result in results]
 
-        assert len(results) == 15
+        assert len([entity for entity in detected_entities if entity == "CREDIT_CARD"]) == 1
+        assert len([entity for entity in detected_entities if entity == "CRYPTO"]) == 1
+        assert len([entity for entity in detected_entities if entity == "DATE_TIME"]) == 1
+        assert len([entity for entity in detected_entities if entity == "DOMAIN_NAME"]) == 4
+        assert len([entity for entity in detected_entities if entity == "EMAIL_ADDRESS"]) == 2
+        assert len([entity for entity in detected_entities if entity == "IBAN_CODE"]) == 1
+        assert len([entity for entity in detected_entities if entity == "IP_ADDRESS"]) == 1
+        assert len([entity for entity in detected_entities if entity == "LOCATION"]) == 1
+        assert len([entity for entity in detected_entities if entity == "PERSON"]) == 2
+        assert len([entity for entity in detected_entities if entity == "PHONE_NUMBER"]) == 1
+        assert len([entity for entity in detected_entities if entity == "US_BANK_NUMBER"]) == 1
+        assert len([entity for entity in detected_entities if entity == "US_DRIVER_LICENSE"]) == 1
+        assert len([entity for entity in detected_entities if entity == "US_PASSPORT"]) == 1
+        assert len([entity for entity in detected_entities if entity == "US_SSN"]) == 1
+
+        assert len(results) == 19

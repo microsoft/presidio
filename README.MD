@@ -4,7 +4,7 @@
 
 ---
 
-[![Build status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=74)
+[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI/Presidio-CI?branchName=master&jobName=BuildAndPushPresidioMaster)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=129&branchName=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Microsoft/presidio)](https://goreportcard.com/report/github.com/Microsoft/presidio)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
@@ -46,12 +46,13 @@ Presidio uses OCR to detect text in images. It further allows the redaction of t
 ## Learn more
 More information could be found in the [Presidio documentation](docs/index.md).
 
-- [Installation guide](docs/install.md)
+- [How to deploy presidio](docs/deploy.md)
+- [Setting up a development environment](docs/development.md)
 - [Supported field types](docs/field_types.md)
 - [Database and storage scanner](docs/tutorial_scheduler.md)
 - [Architecture](docs/design.md)
-- [Setting up a development environment](docs/development.md)
 - [Adding new PII recognizers](docs/custom_fields.md)
+- [Contributing to Presidio](CONTRIBUTING.md)
 
 ## Input and output
 
@@ -88,7 +89,7 @@ Presidio leverages:
 
 ## Quickstart
 
-1. Install [Presidio](docs/install.md)
+1. Install [Presidio](docs/deploy.md)
 2. Decide on a name for your Presidio project. In the following examples the project name is `<my-project>`.
 3. Start using the Presidio analyze and anonymize services.
 

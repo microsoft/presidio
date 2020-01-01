@@ -7,8 +7,9 @@ from analyzer import PatternRecognizer, Pattern
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer, \
-    IpRecognizer, UsSsnRecognizer, SgFinRecognizer
-from analyzer.nlp_engine import SpacyNlpEngine, NlpArtifacts
+    IpRecognizer, UsSsnRecognizer
+from analyzer.nlp_engine import NlpArtifacts
+from tests import TESTS_NLP_ENGINE
 
 ip_recognizer = IpRecognizer()
 us_ssn_recognizer = UsSsnRecognizer()
@@ -80,7 +81,7 @@ class TestContextSupport(TestCase):
 
     # Context tests
     def test_text_with_context_improves_score(self):
-        nlp_engine = SpacyNlpEngine()
+        nlp_engine = TESTS_NLP_ENGINE
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
 
         for item in self.context_sentences:
@@ -96,7 +97,7 @@ class TestContextSupport(TestCase):
                 assert(results_without_context[i].score < results_with_context[i].score)
 
     def test_context_custom_recognizer(self):
-        nlp_engine = SpacyNlpEngine()
+        nlp_engine = TESTS_NLP_ENGINE
         mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
 
         # This test checks that a custom recognizer is also enhanced by context.

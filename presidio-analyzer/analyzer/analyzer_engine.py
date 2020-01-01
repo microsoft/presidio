@@ -5,11 +5,11 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-from analyzer.logger import Logger
+from analyzer import PresidioLogger
 from analyzer.app_tracer import AppTracer
 
 DEFAULT_LANGUAGE = "en"
-logger = Logger()
+logger = PresidioLogger("presidio")
 
 
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
@@ -31,9 +31,13 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         for detected entities to be returned
         """
         if not nlp_engine:
+            logger.info("nlp_engine not provided. Creating new "
+                        "SpacyNlpEngine instance")
             from analyzer.nlp_engine import SpacyNlpEngine
             nlp_engine = SpacyNlpEngine()
         if not registry:
+            logger.info("Recognizer registry not provided. "
+                        "Creating default RecognizerRegistry instance")
             from analyzer import RecognizerRegistry
             registry = RecognizerRegistry()
         if not app_tracer:
@@ -98,7 +102,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     def __remove_duplicates(results):
         """
         Removes each result which has a span contained in a
-        result's span with ahigher score
+        result's span with a higher score
         :param results: List[RecognizerResult]
         :return: List[RecognizerResult]
         """
@@ -117,9 +121,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 for filtered in filtered_results:
                     # If result is equal to or substring of
                     # one of the other results
-                    if result.start >= filtered.start \
-                            and result.end <= filtered.end \
-                            and result.entity_type == filtered.entity_type:
+
+                    if result.contained_in(filtered) and \
+                       result.entity_type == filtered.entity_type:
                         valid_result = False
                         break
 

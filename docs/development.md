@@ -1,30 +1,30 @@
-# Development
+# Setting up a development environment
+Most of Presidio's services are written in Go. The `presidio-analyzer` module, in charge of detecting entities in text, is written in Python. This document details the required parts for developing for Presidio.
 
-## Setting up the environment - Golang
+## Table of contents
+1. [Setting up the Go environment](#dev-go)
+2. [Setting up the Python environment](#dev-python)
+3. [Development notes](#dev-notes)
+    1. [General notes](#dev-general-notes)
+    2. [Setting up environment variables](#env-variables)
+    3. [Developing on Windows](#develop-windows)
 
-1. Docker
 
-***Note that the port mapping will conflict with running `make test`***
+## Setting up the Go environment <a name='dev-go'></a>
 
-2. Redis
+1. Install go 1.11 and Python 3.7
 
-    ```sh
-    docker run --name dev-redis -d -p 6379:6379 redis
-    ```
-
-3. Install go 1.11 and Python 3.7
-
-4. Install the golang packages via [dep](https://github.com/golang/dep/releases)
+2. Install the golang packages via [dep](https://github.com/golang/dep/releases)
 
     ```sh
     dep ensure
     ```
 
-5. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework.
+3. Install [tesseract](https://github.com/tesseract-ocr/tesseract/wiki) OCR framework. (**Optional**, only for Image anonymization)
 
-## Setting up the environment - Python
+## Setting up the Python environment <a name='dev-python'></a>
 
-1. Build and install [re2](https://github.com/google/re2) (Optional. Presidio will use `regex` instead of `pyre2` if `re2` is not installed)
+1. Build and install [re2](https://github.com/google/re2) (**Optional**. Presidio will use `regex` instead of `pyre2` if `re2` is not installed)
 
     ```sh
     re2_version="2018-12-01"
@@ -79,48 +79,14 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
     pip freeze
     ```
     
-## Changing Presidio's API
-Presidio leverages [protobuf](https://github.com/golang/protobuf) to create API classes and services across multiple environments. The proto files are stored on a different [Github repo](https://github.com/Microsoft/presidio-genproto)
-
-Follow these steps to change Presidio's API:
-1. Fork the [presidio-genproto](https://github.com/Microsoft/presidio-genproto) repo into `YOUR_ORG/presidio-genproto`
-2. Clone the repo into the `$GOPATH/src/github.com/YOUR_ORG/presidio-genproto` folder
-3. Make the desired changes to the .proto files in /src
-4. Make sure you have [protobuf](https://github.com/golang/protobuf) installed
-5. Generate the Go and Python files. Run the following commands in the `src` folder of `presidio-genproto`:
-
-    ```sh
-    python -m grpc_tools.protoc -I . --python_out=../python --grpc_python_out=../python ./*.proto
-
-    protoc -I . --go_out=plugins=grpc:../golang ./*.proto
-    ```
-    
- 5. Copy all the files in the `python` folder into `presidio-analyzer/analyzer`. All generated files end with `*pb2.py` or `*pb2_grpc.py`
- 6. Change the constraint on `Gopkg.toml` which directs to the location of `presidio-genproto`
-From:
-
-```yaml
-[[constraint]]
-  branch = "master"
-  name = "github.com/Microsoft/presidio-genproto"
-```
-
-To:
-
-```yaml
-[[constraint]]
-  branch = "YOUR_GENPROTO_BRANCH"
-  name = "github.com/YOUR_ORG/presidio-genproto"
-
-```
-  7. Update `Gopkg.lock` by calling `dep ensure` or `dep ensure --update github.com/YOUR_ORG/presidio-genproto`
-  8. Push all the changes (generated python files, `Gopkg.toml` and `Gopkg.lock` into your presidio repo
-
-For more info, see https://grpc.io/docs/tutorials/basic/python.html
+- To use presidio-analyzer as a python library, see [Installing presidio-analyzer as a standalone Python package](https://github.com/microsoft/presidio/blob/omri374/new_dev_doc/docs/deploy.md#install-presidio-analyzer-as-a-python-package)
+- To add new recognizers in order to support new entities, see [Adding new custom recognizers](https://github.com/microsoft/presidio/blob/omri374/new_dev_doc/docs/custom_fields.md)
 
 
-## Development notes
+## Development notes <a name='dev-notes'></a>
 
+### General notes <a name="dev-general-notes"></a>
+- Installing and building the entire Presidio solution is currently not supported on Windows. However, installing and building the different docker images, or the Python package for detecting entities (presidio-analyzer) is possible on Windows. See [here](#develop-windows)
 - Build the bins with `make build`
 - Build the base containers with `make docker-build-deps DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL}` (If you do not specify a valid, logged-in, registry a warning will echo to the standard output)
 - Build the the Docker image with `make docker-build DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_DEPS_LABEL=${PRESIDIO_DEPS_LABEL} PRESIDIO_LABEL=${PRESIDIO_LABEL}`
@@ -130,7 +96,7 @@ For more info, see https://grpc.io/docs/tutorials/basic/python.html
 - Run functional tests with `make test-functional`
 - Updating python dependencies [instructions](./pipenv_readme.md)
 
-### Set the following environment variables
+### Set the following environment variables <a name="env-variables"></a>
 
 #### presidio-analyzer
 
@@ -147,31 +113,30 @@ For more info, see https://grpc.io/docs/tutorials/basic/python.html
 - `ANALYZER_SVC_ADDRESS`: `localhost:3001`, Analyzer address
 - `ANONYMIZER_SVC_ADDRESS`: `localhost:3002`, Anonymizer address
 
-### Developing only for Presidio Analyzer under Windows environment
-Run locally the core services Presidio needs to operate:
+### Developing only for Presidio Analyzer under Windows environment <a name="develop-windows"></a>
+Developing presidio as a whole on Windows is currently not supported. However, it is possible to run and test the presidio-analyzer module, in charge of detecting entities in text, on Windows using Docker:
+
+1. Run locally the core services Presidio needs to operate:
+
 ```
 docker run --rm --name test-redis --network testnetwork -d -p 6379:6379 redis
 docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 mcr.microsoft.com/presidio-anonymizer:latest
 docker run --rm --name test-presidio-recognizers-store --network testnetwork -d -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=test-redis:6379 mcr.microsoft.com/presidio-recognizers-store:latest
 ```
-Naviagate to `<Presidio folder>\presidio-analyzer\`
 
-Install the python packages if didn't do so yet:
+2. Navigate to `<Presidio folder>/presidio-analyzer`
+
+3. Install the python packages if didn't do so yet:
 ```sh
 pipenv install --dev --sequential
 ```
 
-To simply run unit tests, execute:
-```
-pipenv run pytest --log-cli-level=0
-```
-
-If you want to experiment with `analyze` requests, navigate into the `analyzer` folder and start serving the analyzer service:
+3. If you want to experiment with `analyze` requests, navigate into the `analyzer` folder and start serving the analyzer service:
 ```sh
 pipenv run python __main__.py serve --grpc-port 3000
 ```
 
-In a new `pipenv shell` window you can run `analyze` requests, for example:
+4. In a new `pipenv shell` window you can run `analyze` requests, for example:
 ```
 pipenv run python __main__.py analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE" --grpc-port 3000
 ```
