@@ -6,7 +6,7 @@ from analyzer import PatternRecognizer
 # and ends with a character, e.g., G3311100L
 # Ref: https://en.wikipedia.org/wiki/National_Registration_Identity_Card
 WEAK_REGEX = r'(\b[a-z,A-Z][0-9]{7}[a-z,A-Z]\b)'
-MEDIUM_REGEX = r'(\b[s,t,f,g][0-9]{7}[a-z,A-Z]\b)'
+MEDIUM_REGEX = r'(\b[stfgSTFG][0-9]{7}[a-z,A-Z]\b)'
 
 CONTEXT = ["fin", "fin#", "nric", "nric#"]
 
