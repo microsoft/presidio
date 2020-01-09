@@ -4,6 +4,7 @@ from .domain_recognizer import DomainRecognizer
 from .email_recognizer import EmailRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
+from .sg_fin_recognizer import SgFinRecognizer
 from .spacy_recognizer import SpacyRecognizer
 from .uk_nhs_recognizer import NhsRecognizer
 from .us_bank_recognizer import UsBankRecognizer
@@ -19,6 +20,7 @@ __all__ = ["CreditCardRecognizer",
            "EmailRecognizer",
            "IbanRecognizer",
            "IpRecognizer",
+           "SgFinRecognizer",
            "SpacyRecognizer",
            "NhsRecognizer",
            "UsBankRecognizer",
