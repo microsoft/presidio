@@ -7,7 +7,7 @@ from analyzer import PatternRecognizer, Pattern
 from analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer, \
-    IpRecognizer, UsSsnRecognizer
+    IpRecognizer, UsSsnRecognizer, SgFinRecognizer 
 from analyzer.nlp_engine import NlpArtifacts
 from tests import TESTS_NLP_ENGINE
 
