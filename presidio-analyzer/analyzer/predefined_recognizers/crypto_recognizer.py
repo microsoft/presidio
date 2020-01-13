@@ -21,8 +21,9 @@ class CryptoRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text):
         try:
             bcbytes = CryptoRecognizer.__decode_base58(pattern_text, 25)
-            return bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]
-        except Exception:
+            return bcbytes[-4:] == sha256(sha256(bcbytes[:-4])
+                                          .digest()).digest()[:4]
+        except ValueError:
             return False
 
     @staticmethod
