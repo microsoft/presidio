@@ -7,7 +7,7 @@ from analyzer.predefined_recognizers import CreditCardRecognizer, \
     EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, \
     UsBankRecognizer, UsLicenseRecognizer, \
     UsItinRecognizer, UsPassportRecognizer, UsPhoneRecognizer, \
-    UsSsnRecognizer
+    UsSsnRecognizer, SgFinRecognizer
 
 
 class RecognizerRegistry:
@@ -56,7 +56,7 @@ class RecognizerRegistry:
             UsBankRecognizer(), UsLicenseRecognizer(),
             UsItinRecognizer(), UsPassportRecognizer(),
             UsPhoneRecognizer(), UsSsnRecognizer(),
-            SpacyRecognizer()])
+            SpacyRecognizer(), SgFinRecognizer()])
 
     def get_recognizers(self, language, entities=None,
                         all_fields=False):
