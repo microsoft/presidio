@@ -25,3 +25,6 @@ Productization:
 - [Presidio build and release](build_release.md)
 - [Interpretability traces](interpretability_logs.md)
 - [Presidio logging and monitoring design concepts](monitoring_logging.md)
+
+Evaluation
+- [Tools for evaluating presidio and developing new recognizers](https://github.com/microsoft/presidio-research)

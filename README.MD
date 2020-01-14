@@ -53,6 +53,7 @@ More information could be found in the [Presidio documentation](https://microsof
 - [Architecture](docs/design.md)
 - [Adding new PII recognizers](docs/custom_fields.md)
 - [Contributing to Presidio](CONTRIBUTING.md)
+- [Evaluating Presidio](https://github.com/microsoft/presidio-research)
 
 ## Input and output
 
