@@ -16,6 +16,8 @@ import (
 	"github.com/Microsoft/presidio/pkg/presidio/services"
 	server "github.com/Microsoft/presidio/pkg/server"
 	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
+
+	_ "github.com/Microsoft/presidio/presidio-api/docs" // This line is necessary for go-swagger to find the docs!
 )
 
 var api *store.API
