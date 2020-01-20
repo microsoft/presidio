@@ -1,8 +1,6 @@
 package docs
 
-import (
-	"github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
-)
+import types "github.com/Microsoft/presidio-genproto/golang"
 
 // swagger:route POST /projects/{projectId}/analyze analyze analyze
 //
@@ -15,14 +13,12 @@ import (
 // swagger:response analyzeResponse
 type analyzeResponseWrapper struct {
 	// in:body
-	//
-	Body struct {
-	}
+	Body types.AnalyzeResult
 }
 
-// swagger:parameters idOfFoobarEndpoint
-type foobarParamsWrapper struct {
-	// This text will appear as description of your request body.
+// swagger:parameters analyze
+type analyzeParamsWrapper struct {
+	// The request body
 	// in:body
-	Body api.FooBarRequest
+	Body types.AnalyzeRequest
 }
