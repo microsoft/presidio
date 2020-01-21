@@ -1,0 +1,141 @@
+basePath: /api/v1
+consumes:
+- application/json
+definitions:
+  AnalyzeRequest:
+    description: AnalyzeRequest represents the request to the analyze service via
+      GRPC
+    properties:
+      analyzeTemplate:
+        $ref: '#/definitions/AnalyzeTemplate'
+      text:
+        description: The text to analyze
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnalyzeResult:
+    description: AnalyzeResult represents the Analyze service findings
+    properties:
+      field:
+        $ref: '#/definitions/FieldTypes'
+      location:
+        $ref: '#/definitions/Location'
+      score:
+        description: The score of the result
+        format: float
+        type: number
+        x-go-name: Score
+      text:
+        description: The sensitive text result
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnalyzeTemplate:
+    properties:
+      allFields:
+        description: Optional flag to request all existing fields. if true, "fields"
+          must be empty.
+        type: boolean
+        x-go-name: AllFields
+      createTime:
+        description: Template Creation date
+        type: string
+        x-go-name: CreateTime
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      fields:
+        description: Array of the fields to analyze
+        items:
+          $ref: '#/definitions/FieldTypes'
+        type: array
+        x-go-name: Fields
+      language:
+        description: Language code, in ISO-639 format, https://en.wikipedia.org/wiki/ISO_639-1
+        type: string
+        x-go-name: Language
+      modifiedTime:
+        description: Template modification date
+        type: string
+        x-go-name: ModifiedTime
+      resultsScoreThreshold:
+        description: Threshold to filter results based on their score
+        format: float
+        type: number
+        x-go-name: ResultsScoreThreshold
+    title: AnalyzeTemplate represents the template definition of the Analyze service-
+      for analyzing sensitive text.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  FieldTypes:
+    description: FieldType strucy
+    properties:
+      minScore:
+        description: The minScore will filter results which has lower certainty than
+          the provided value.
+        type: string
+        x-go-name: MinScore
+      name:
+        description: Field type name
+        type: string
+        x-go-name: Name
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Location:
+    description: The location in the text of the finding
+    properties:
+      end:
+        description: The location end
+        format: int32
+        type: integer
+        x-go-name: End
+      length:
+        description: The location length
+        format: int32
+        type: integer
+        x-go-name: Length
+      start:
+        description: The location start
+        format: int32
+        type: integer
+        x-go-name: Start
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+host: some-url.com
+info:
+  description: Documentation of our Presidio API.
+  title: Presidio.
+  version: 1.0.0
+paths:
+  /projects/{projectId}/analyze:
+    post:
+      description: Analyze text
+      operationId: analyzeRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnalyzeRequest'
+      responses:
+        "200":
+          $ref: '#/responses/analyzeResponse'
+      tags:
+      - analyze
+produces:
+- application/json
+responses:
+  analyzeResponse:
+    description: A response includes a list of recognized fields in the text to be
+      anonymized.
+    schema:
+      $ref: '#/definitions/AnalyzeResult'
+schemes:
+- http
+securityDefinitions:
+  basic:
+    type: basic
+swagger: "2.0"
