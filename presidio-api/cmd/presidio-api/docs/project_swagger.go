@@ -104,3 +104,28 @@ type scheduleScannerCronjobParamsWrapper struct {
 	// required: true
 	ProjectId int `json:"projectId"`
 }
+
+
+// swagger:route POST /projects/{projectId}/schedule-streams-job schedule streams scheduleStreamsJobRequest
+//
+// Schedule streams job
+//
+// responses:
+//   200: scheduleStreamsJobResponse
+
+// A response includes the streams result.
+// swagger:response scheduleStreamsJobResponse
+type scheduleStreamsJobResponseWrapper struct {
+	// in:body
+	Body types.StreamsJobResponse
+}
+
+// swagger:parameters scheduleStreamsJobRequest
+type scheduleStreamsJobParamsWrapper struct {
+	// in:body
+	Body types.StreamsJobRequest
+
+	// in: path
+	// required: true
+	ProjectId int `json:"projectId"`
+}

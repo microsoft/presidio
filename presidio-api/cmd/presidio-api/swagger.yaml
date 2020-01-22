@@ -651,6 +651,34 @@ definitions:
         x-go-name: PartitionCount
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamRequest:
+    description: StreamRequest represents the request to the stream service via GRPC
+    properties:
+      analyzeTemplate:
+        $ref: '#/definitions/AnalyzeTemplate'
+      anonymizeTemplate:
+        $ref: '#/definitions/AnonymizeTemplate'
+      datasinkTemplate:
+        $ref: '#/definitions/DatasinkTemplate'
+      streamConfig:
+        $ref: '#/definitions/StreamConfig'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamsJobRequest:
+    description: StreamsJobRequest represents the request to the scheduler service
+      via GRPC
+    properties:
+      name:
+        description: The streams job name
+        type: string
+        x-go-name: Name
+      streamsRequest:
+        $ref: '#/definitions/StreamRequest'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamsJobResponse:
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Transformation:
     description: Transformation represents the transformation types - how the sensitive
       text will change
@@ -766,6 +794,27 @@ paths:
       tags:
       - schedule
       - scanner
+  /projects/{projectId}/schedule-streams-job:
+    post:
+      description: Schedule streams job
+      operationId: scheduleStreamsJobRequest
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobRequest'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      responses:
+        "200":
+          $ref: '#/responses/scheduleStreamsJobResponse'
+      tags:
+      - schedule
+      - streams
 produces:
 - application/json
 responses:
@@ -788,6 +837,10 @@ responses:
     description: A response includes the scan result.
     schema:
       $ref: '#/definitions/ScannerCronJobResponse'
+  scheduleStreamsJobResponse:
+    description: A response includes the streams result.
+    schema:
+      $ref: '#/definitions/StreamsJobResponse'
 schemes:
 - http
 securityDefinitions:
