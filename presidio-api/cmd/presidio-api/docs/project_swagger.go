@@ -52,3 +52,29 @@ type anonymizeParamsWrapper struct {
 	// required: true
 	ProjectId int `json:"projectId"`
 }
+
+
+// swagger:route POST /projects/{projectId}/anonymize-image anonymize anonymizeImageRequest
+//
+// Anonymize image
+//
+// responses:
+//   200: anonymizeImageResponse
+
+// A response includes anonymized image.
+// swagger:response anonymizeImageResponse
+type anonymizeImageResponseWrapper struct {
+	// in:body
+	Body types.AnonymizeImageResponse
+}
+
+// swagger:parameters anonymizeImageRequest
+type anonymizeImageParamsWrapper struct {
+	// The request body
+	// in:body
+	Body types.AnonymizeImageRequest
+
+	// in: path
+	// required: true
+	ProjectId int `json:"projectId"`
+}

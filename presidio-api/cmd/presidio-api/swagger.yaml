@@ -70,6 +70,57 @@ definitions:
       for analyzing sensitive text.
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeImageRequest:
+    description: AnonymizeRequest represents the request to the anonymize service
+      via GRPC
+    properties:
+      analyzeResults:
+        description: The analyze result containing the field type and location of
+          the sensetive data to be anonymized.
+        items:
+          $ref: '#/definitions/AnalyzeResult'
+        type: array
+        x-go-name: AnalyzeResults
+      detectionType:
+        $ref: '#/definitions/DetectionTypeEnum'
+      image:
+        $ref: '#/definitions/Image'
+      template:
+        $ref: '#/definitions/AnonymizeImageTemplate'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeImageResponse:
+    description: AnonymizeResponse represents the anonymize service response
+    properties:
+      image:
+        $ref: '#/definitions/Image'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeImageTemplate:
+    description: AnonymizeImageTemplate represents the template definition of the
+      Anonymize image service
+    properties:
+      createTime:
+        description: Template Creation date
+        type: string
+        x-go-name: CreateTime
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      fieldTypeGraphics:
+        description: FieldTypeGraphic represents the graphics for an array of fields
+          types
+        items:
+          $ref: '#/definitions/FieldTypeGraphic'
+        type: array
+        x-go-name: FieldTypeGraphics
+      modifiedTime:
+        description: Template modification date
+        type: string
+        x-go-name: ModifiedTime
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   AnonymizeRequest:
     description: AnonymizeRequest represents the request to the anonymize service
       via GRPC
@@ -125,6 +176,50 @@ definitions:
         x-go-name: ModifiedTime
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Boundingbox:
+    description: Define an extracted bounding box text/image from images
+    properties:
+      endPosition:
+        description: End position of char in text
+        format: int32
+        type: integer
+        x-go-name: EndPosition
+      height:
+        description: Height of BBox
+        format: float
+        type: number
+        x-go-name: Height
+      startPosition:
+        description: Start position of char in text
+        format: int32
+        type: integer
+        x-go-name: StartPosition
+      text:
+        description: Text in BBox
+        type: string
+        x-go-name: Text
+      width:
+        description: Width of BBox
+        format: float
+        type: number
+        x-go-name: Width
+      xLocation:
+        description: Pixel X location of BBox
+        format: float
+        type: number
+        x-go-name: XLocation
+      yLocation:
+        description: Pixel Y location of BBox
+        format: float
+        type: number
+        x-go-name: YLocation
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  DetectionTypeEnum:
+    description: Anonymize image detection type
+    format: int32
+    type: integer
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   FPEValue:
     properties:
       decrypt:
@@ -141,6 +236,19 @@ definitions:
         x-go-name: Tweak
     title: Encrypt the given value with FFI alogrithm to presereve detected value
       size.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  FieldTypeGraphic:
+    description: FieldTypeGraphic represents the graphics for an array of fields types
+    properties:
+      fields:
+        description: The array of field types
+        items:
+          $ref: '#/definitions/FieldTypes'
+        type: array
+        x-go-name: Fields
+      graphic:
+        $ref: '#/definitions/Graphic'
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   FieldTypeTransformation:
@@ -171,8 +279,60 @@ definitions:
         x-go-name: Name
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  FillColorValue:
+    description: Fill the bbox with a color
+    properties:
+      blue:
+        description: 0 - 255
+        format: double
+        type: number
+        x-go-name: Blue
+      green:
+        description: 0 - 255
+        format: double
+        type: number
+        x-go-name: Green
+      red:
+        description: 0 - 255
+        format: double
+        type: number
+        x-go-name: Red
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Graphic:
+    description: Graphic represents how the sensitive content will be transforms
+    properties:
+      fillColorValue:
+        $ref: '#/definitions/FillColorValue'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   HashValue:
     title: Uses cryptographich hash on the given value with SHA-256 hash.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Image:
+    description: Define an image with extracted bounded boxes of text/image
+    properties:
+      Boundingboxes:
+        description: Array of Boundingbox
+        items:
+          $ref: '#/definitions/Boundingbox'
+        type: array
+      data:
+        description: The image data in bytes
+        items:
+          format: uint8
+          type: integer
+        type: array
+        x-go-name: Data
+      imageType:
+        description: The image type JPEG/PNG/TIFF
+        type: string
+        x-go-name: ImageType
+      text:
+        description: Image Text
+        type: string
+        x-go-name: Text
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Location:
@@ -299,6 +459,27 @@ paths:
           $ref: '#/responses/anonymizeResponse'
       tags:
       - anonymize
+  /projects/{projectId}/anonymize-image:
+    post:
+      description: Anonymize image
+      operationId: anonymizeImageRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageRequest'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      responses:
+        "200":
+          $ref: '#/responses/anonymizeImageResponse'
+      tags:
+      - anonymize
 produces:
 - application/json
 responses:
@@ -309,6 +490,10 @@ responses:
       items:
         $ref: '#/definitions/AnalyzeResult'
       type: array
+  anonymizeImageResponse:
+    description: A response includes anonymized image.
+    schema:
+      $ref: '#/definitions/AnonymizeImageResponse'
   anonymizeResponse:
     description: A response includes anonymized text.
     schema:
