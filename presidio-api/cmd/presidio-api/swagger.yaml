@@ -176,6 +176,23 @@ definitions:
         x-go-name: ModifiedTime
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  BlobStorageConfig:
+    description: Azure Blob Storage configuration
+    properties:
+      accountKey:
+        description: Azure account key
+        type: string
+        x-go-name: AccountKey
+      accountName:
+        description: Azure account name
+        type: string
+        x-go-name: AccountName
+      containerName:
+        description: The blob storage container Name
+        type: string
+        x-go-name: ContainerName
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Boundingbox:
     description: Define an extracted bounding box text/image from images
     properties:
@@ -215,10 +232,116 @@ definitions:
         x-go-name: YLocation
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  CloudStorageConfig:
+    description: 'Represents the cloud storage config - supported storage: Azure blob
+      storage, AWS S3, Google storage'
+    properties:
+      GoogleStorageConfig:
+        $ref: '#/definitions/GoogleStorageConfig'
+      blobStorageConfig:
+        $ref: '#/definitions/BlobStorageConfig'
+      s3Config:
+        $ref: '#/definitions/S3Config'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  DBConfig:
+    description: |-
+      DBConfig represents the Database configuration - the DB connection string and the table name
+      Supported database: mssql, mysql, sqlite3, postgreSQL, oracle
+    properties:
+      connectionString:
+        description: The database connection string
+        type: string
+        x-go-name: ConnectionString
+      tableName:
+        description: The table name
+        type: string
+        x-go-name: TableName
+      type:
+        description: The database type
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Datasink:
+    properties:
+      cloudStorageConfig:
+        $ref: '#/definitions/CloudStorageConfig'
+      dbConfig:
+        $ref: '#/definitions/DBConfig'
+      streamConfig:
+        $ref: '#/definitions/StreamConfig'
+    title: Datasink represents the configuration for storing the scanner output to
+      the selected destination such as cloud storage, database, etc.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  DatasinkTemplate:
+    properties:
+      analyzeDatasink:
+        description: |-
+          Datasink represents the configuration for storing the scanner output.
+          Datasink can output both of the analyze and anonymize results and to multiple outputs
+          Supported outputs are CloudStorage: AWS S3, Azure Blob storage, Google Storage
+          Streams: Azure EventHub, Kafka
+          Database: MySql, SqlLite3, MSSQL, PostgreSQL
+        items:
+          $ref: '#/definitions/Datasink'
+        type: array
+        x-go-name: AnalyzeDatasink
+      anonymizeDatasink:
+        items:
+          $ref: '#/definitions/Datasink'
+        type: array
+        x-go-name: AnonymizeDatasink
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+    title: DatasinkTemplate represents the scanner service outputs definition.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   DetectionTypeEnum:
     description: Anonymize image detection type
     format: int32
     type: integer
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  EHConfig:
+    description: Azure EventHub configuration
+    properties:
+      containerValue:
+        description: Storage container  value
+        type: string
+        x-go-name: ContainerValue
+      ehConnectionString:
+        description: Eventhub connection string
+        type: string
+        x-go-name: EhConnectionString
+      ehKeyName:
+        description: Eventhub key name (a key name and a key value can provided instead
+          of the full connection string)
+        type: string
+        x-go-name: EhKeyName
+      ehKeyValue:
+        description: Eventhub key value
+        type: string
+        x-go-name: EhKeyValue
+      ehName:
+        description: EventHub name
+        type: string
+        x-go-name: EhName
+      ehNamespace:
+        description: EventHub namespace
+        type: string
+        x-go-name: EhNamespace
+      storageAccountKeyValue:
+        description: Storage account key value
+        type: string
+        x-go-name: StorageAccountKeyValue
+      storageAccountNameValue:
+        description: Storage account name value
+        type: string
+        x-go-name: StorageAccountNameValue
+    type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   FPEValue:
     properties:
@@ -299,6 +422,28 @@ definitions:
         x-go-name: Red
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  GoogleStorageConfig:
+    description: Represents the Google Storage configuration
+    properties:
+      bucketName:
+        description: The bucket name
+        type: string
+        x-go-name: BucketName
+      json:
+        description: The json
+        type: string
+        x-go-name: Json
+      projectId:
+        description: The project id
+        type: string
+        x-go-name: ProjectId
+      scopes:
+        description: The scopes authentication [there are different scopes, which
+          you can find here https://cloud.google.com/storage/docs/authentication]
+        type: string
+        x-go-name: Scopes
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Graphic:
     description: Graphic represents how the sensitive content will be transforms
     properties:
@@ -333,6 +478,27 @@ definitions:
         description: Image Text
         type: string
         x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  KafkaConfig:
+    description: The Kafka configuration
+    properties:
+      address:
+        description: Kafka address
+        type: string
+        x-go-name: Address
+      saslPassword:
+        description: SASL authentication password
+        type: string
+        x-go-name: SaslPassword
+      saslUsername:
+        description: SASL authentication user name
+        type: string
+        x-go-name: SaslUsername
+      topic:
+        description: Kafka topic
+        type: string
+        x-go-name: Topic
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Location:
@@ -395,6 +561,96 @@ definitions:
     title: Replace the value with the given new value.
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  S3Config:
+    description: AWS S3 configuration
+    properties:
+      accessId:
+        description: The access id
+        type: string
+        x-go-name: AccessId
+      accessKey:
+        description: The access key
+        type: string
+        x-go-name: AccessKey
+      bucketName:
+        description: The bucket name
+        type: string
+        x-go-name: BucketName
+      endpoint:
+        description: The s3 endpoint
+        type: string
+        x-go-name: Endpoint
+      region:
+        description: The region
+        type: string
+        x-go-name: Region
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScanRequest:
+    description: ScanRequest represents the request to the scanner service via GRPC
+    properties:
+      analyzeTemplate:
+        $ref: '#/definitions/AnalyzeTemplate'
+      anonymizeTemplate:
+        $ref: '#/definitions/AnonymizeTemplate'
+      datasinkTemplate:
+        $ref: '#/definitions/DatasinkTemplate'
+      scanTemplate:
+        $ref: '#/definitions/ScanTemplate'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScanTemplate:
+    description: And sending the output to the selected destination
+    properties:
+      cloudStorageConfig:
+        $ref: '#/definitions/CloudStorageConfig'
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+    title: ScanTemplate represents the scan configuration for scanning data and analyzing/anonymizing
+      it.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScannerCronJobRequest:
+    description: ScannerCronJobRequest represents the request to the scheduler service
+      via GRPC
+    properties:
+      Name:
+        description: Scanner cronjob name
+        type: string
+      scanRequest:
+        $ref: '#/definitions/ScanRequest'
+      trigger:
+        $ref: '#/definitions/Trigger'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScannerCronJobResponse:
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Schedule:
+    description: Defines the job schedule
+    properties:
+      recurrencePeriod:
+        description: The recurrence period of the job, set as a cron expression
+        type: string
+        x-go-name: RecurrencePeriod
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamConfig:
+    description: Represents the streams configuration
+    properties:
+      ehConfig:
+        $ref: '#/definitions/EHConfig'
+      kafkaConfig:
+        $ref: '#/definitions/KafkaConfig'
+      partitionCount:
+        description: Number of partitions if applicable
+        format: int32
+        type: integer
+        x-go-name: PartitionCount
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Transformation:
     description: Transformation represents the transformation types - how the sensitive
       text will change
@@ -409,6 +665,13 @@ definitions:
         $ref: '#/definitions/RedactValue'
       replaceValue:
         $ref: '#/definitions/ReplaceValue'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Trigger:
+    description: Trigger defines the trigger for a new job to start
+    properties:
+      schedule:
+        $ref: '#/definitions/Schedule'
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
 host: some-url.com
@@ -480,6 +743,29 @@ paths:
           $ref: '#/responses/anonymizeImageResponse'
       tags:
       - anonymize
+      - image
+  /projects/{projectId}/schedule-scanner-cronjob:
+    post:
+      description: Schedule scanner cron-job
+      operationId: scheduleScannerCronjobRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobRequest'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      responses:
+        "200":
+          $ref: '#/responses/scheduleScannerCronjobResponse'
+      tags:
+      - schedule
+      - scanner
 produces:
 - application/json
 responses:
@@ -498,6 +784,10 @@ responses:
     description: A response includes anonymized text.
     schema:
       $ref: '#/definitions/AnonymizeResponse'
+  scheduleScannerCronjobResponse:
+    description: A response includes the scan result.
+    schema:
+      $ref: '#/definitions/ScannerCronJobResponse'
 schemes:
 - http
 securityDefinitions:
