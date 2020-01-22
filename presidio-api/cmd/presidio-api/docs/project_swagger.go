@@ -7,7 +7,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 // Analyze text
 //
 // responses:
-//   200: []analyzeResponse
+//   200: analyzeResponse
 
 // A response includes a list of recognized fields in the text to be anonymized.
 // swagger:response analyzeResponse
