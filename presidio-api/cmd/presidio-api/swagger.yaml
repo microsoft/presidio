@@ -132,7 +132,9 @@ responses:
     description: A response includes a list of recognized fields in the text to be
       anonymized.
     schema:
-      $ref: '#/definitions/AnalyzeResult'
+      items:
+        $ref: '#/definitions/AnalyzeResult'
+      type: array
 schemes:
 - http
 securityDefinitions:
