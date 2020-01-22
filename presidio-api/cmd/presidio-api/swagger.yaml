@@ -70,6 +70,93 @@ definitions:
       for analyzing sensitive text.
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeRequest:
+    description: AnonymizeRequest represents the request to the anonymize service
+      via GRPC
+    properties:
+      analyzeResults:
+        description: The analyze result containing the field type and location of
+          the sensetive data to be anonymized.
+        items:
+          $ref: '#/definitions/AnalyzeResult'
+        type: array
+        x-go-name: AnalyzeResults
+      template:
+        $ref: '#/definitions/AnonymizeTemplate'
+      text:
+        description: The text to anonymize
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeResponse:
+    description: AnonymizeResponse represents the anonymize service response
+    properties:
+      text:
+        description: The text with the senstive fields anonymized
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeTemplate:
+    description: AnonymizeTemplate represents the template definition of the Anonymize
+      service for anonymizying the sensitive data
+    properties:
+      createTime:
+        description: Template Creation date
+        type: string
+        x-go-name: CreateTime
+      defaultTransformation:
+        $ref: '#/definitions/Transformation'
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      fieldTypeTransformations:
+        description: FieldTypeTransformation represents the transformation for an
+          array of fields types
+        items:
+          $ref: '#/definitions/FieldTypeTransformation'
+        type: array
+        x-go-name: FieldTypeTransformations
+      modifiedTime:
+        description: Template modification date
+        type: string
+        x-go-name: ModifiedTime
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  FPEValue:
+    properties:
+      decrypt:
+        description: true to decrypt value
+        type: boolean
+        x-go-name: Decrypt
+      key:
+        description: base64 encoded 128, 192, 256 size key
+        type: string
+        x-go-name: Key
+      tweak:
+        description: base64 encoded tweak. Size must be below 8
+        type: string
+        x-go-name: Tweak
+    title: Encrypt the given value with FFI alogrithm to presereve detected value
+      size.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  FieldTypeTransformation:
+    description: FieldTypeTransformation represents the transformation for an array
+      of fields types
+    properties:
+      fields:
+        description: The array of field types
+        items:
+          $ref: '#/definitions/FieldTypes'
+        type: array
+        x-go-name: Fields
+      transformation:
+        $ref: '#/definitions/Transformation'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   FieldTypes:
     description: FieldType strucy
     properties:
@@ -82,6 +169,10 @@ definitions:
         description: Field type name
         type: string
         x-go-name: Name
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  HashValue:
+    title: Uses cryptographich hash on the given value with SHA-256 hash.
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Location:
@@ -104,6 +195,62 @@ definitions:
         x-go-name: Start
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  MaskValue:
+    description: |-
+      For example: my credit card number is 4961-2765-5327-5913
+      maskingCharacter: '*', chars to mask: 9, fromEnd: true
+      Will output:  my credit card number is 4961-2765-*********
+    properties:
+      charsToMask:
+        description: number of chars to mask
+        format: int32
+        type: integer
+        x-go-name: CharsToMask
+      fromEnd:
+        description: Should start masking from end
+        type: boolean
+        x-go-name: FromEnd
+      maskingCharacter:
+        description: the masking char
+        type: string
+        x-go-name: MaskingCharacter
+    title: Mask the given value with the selected characters.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  RedactValue:
+    title: Redacts the given value. For example We met in Seattle would change to
+      'We me in '.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  ReplaceValue:
+    description: |-
+      For example: We met in Seattle.
+      new value: <Location>
+      replace to 'We met in <Location>'
+    properties:
+      newValue:
+        description: The value to replace
+        type: string
+        x-go-name: NewValue
+    title: Replace the value with the given new value.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Transformation:
+    description: Transformation represents the transformation types - how the sensitive
+      text will change
+    properties:
+      fPEValue:
+        $ref: '#/definitions/FPEValue'
+      hashValue:
+        $ref: '#/definitions/HashValue'
+      maskValue:
+        $ref: '#/definitions/MaskValue'
+      redactValue:
+        $ref: '#/definitions/RedactValue'
+      replaceValue:
+        $ref: '#/definitions/ReplaceValue'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
 host: some-url.com
 info:
   description: Documentation of our Presidio API.
@@ -120,11 +267,38 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnalyzeRequest'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
       responses:
         "200":
           $ref: '#/responses/analyzeResponse'
       tags:
       - analyze
+  /projects/{projectId}/anonymize:
+    post:
+      description: Anonymize text
+      operationId: anonymizeRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeRequest'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      responses:
+        "200":
+          $ref: '#/responses/anonymizeResponse'
+      tags:
+      - anonymize
 produces:
 - application/json
 responses:
@@ -135,6 +309,10 @@ responses:
       items:
         $ref: '#/definitions/AnalyzeResult'
       type: array
+  anonymizeResponse:
+    description: A response includes anonymized text.
+    schema:
+      $ref: '#/definitions/AnonymizeResponse'
 schemes:
 - http
 securityDefinitions:
