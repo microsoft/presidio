@@ -543,6 +543,87 @@ definitions:
     title: Mask the given value with the selected characters.
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  Pattern:
+    description: |-
+      Pattern represents one regex (pattern) that is able to detect a certain
+      entity and how confident the result is
+    properties:
+      name:
+        description: The name of the pattern, unique
+        type: string
+        x-go-name: Name
+      regex:
+        description: The Regex used by this recognizer
+        type: string
+        x-go-name: Regex
+      score:
+        description: The confidence of the result
+        format: float
+        type: number
+        x-go-name: Score
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  PatternRecognizer:
+    description: |-
+      PatternRecognizer represents a recognizer which has the ability to detect
+      entities using one or more Patterns
+    properties:
+      blacklist:
+        description: |-
+          A list of words that are considered PII and should always be detected
+          e.g. ["Mr", "Mrs", "account"]
+        items:
+          type: string
+        type: array
+        x-go-name: Blacklist
+      contextPhrases:
+        description: |-
+          A list of strings that if found in the surroundings of the entity, increase the score of the result
+          e.g. ["name", "address", ]
+        items:
+          type: string
+        type: array
+        x-go-name: ContextPhrases
+      entity:
+        description: The entity name which this recognizer can detect
+        type: string
+        x-go-name: Entity
+      language:
+        description: The supported language code, in ISO-639 format, https://en.wikipedia.org/wiki/ISO_639-1
+        type: string
+        x-go-name: Language
+      name:
+        description: The name of the recognizer, unique
+        type: string
+        x-go-name: Name
+      patterns:
+        description: List of supported patterns by this recognizer
+        items:
+          $ref: '#/definitions/Pattern'
+        type: array
+        x-go-name: Patterns
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  RecognizerInsertOrUpdateRequest:
+    description: |-
+      RecognizerInsertOrUpdateRequest represents the request for
+      inserting a new or updating an existing pattern recognizer
+    properties:
+      value:
+        $ref: '#/definitions/PatternRecognizer'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  RecognizersGetResponse:
+    description: RecognizersGetResponse represents a response to a get request
+    properties:
+      recognizers:
+        description: An array of recognizers
+        items:
+          $ref: '#/definitions/PatternRecognizer'
+        type: array
+        x-go-name: Recognizers
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   RedactValue:
     title: Redacts the given value. For example We met in Seattle would change to
       'We me in '.
@@ -702,12 +783,57 @@ definitions:
         $ref: '#/definitions/Schedule'
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
-host: some-url.com
+host: <presidio api host>
 info:
   description: Documentation of our Presidio API.
   title: Presidio.
   version: 1.0.0
 paths:
+  /analyzer/recognizers/:
+    get:
+      description: Get all recognizers
+      operationId: getAllRecognizers
+      responses:
+        "200":
+          $ref: '#/responses/allRecognizersGetResponse'
+      tags:
+      - analyzer
+  /analyzer/recognizers/{id}:
+    get:
+      description: Get an existing recognizer
+      operationId: getRecognizer
+      parameters:
+      - description: Recognizer name
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/recognizersGetResponse'
+      tags:
+      - analyzer
+    post:
+      description: Insert a new recognizer
+      operationId: insertRecognizer
+      parameters:
+      - description: Recognizer name
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
+      - description: Recognizer properties
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/RecognizerInsertOrUpdateRequest'
+      responses:
+        "200":
+          $ref: '#/responses/insertRecognizersResponse'
+      tags:
+      - analyzer
   /projects/{projectId}/analyze:
     post:
       description: Analyze text
@@ -818,6 +944,12 @@ paths:
 produces:
 - application/json
 responses:
+  allRecognizersGetResponse:
+    description: A a list of all recognizers
+    schema:
+      items:
+        $ref: '#/definitions/RecognizersGetResponse'
+      type: array
   analyzeResponse:
     description: A response includes a list of recognized fields in the text to be
       anonymized.
@@ -833,6 +965,12 @@ responses:
     description: A response includes anonymized text.
     schema:
       $ref: '#/definitions/AnonymizeResponse'
+  insertRecognizersResponse:
+    description: Insert new recognizer response
+  recognizersGetResponse:
+    description: A Regognizer
+    schema:
+      $ref: '#/definitions/RecognizersGetResponse'
   scheduleScannerCronjobResponse:
     description: A response includes the scan result.
     schema:
