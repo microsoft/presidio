@@ -5,7 +5,7 @@
 //     Schemes: http
 //     BasePath: /api/v1
 //     Version: 1.0.0
-//     Host: <presidio api host>
+//     Host: presidio_api_host
 //
 //     Consumes:
 //     - application/json
