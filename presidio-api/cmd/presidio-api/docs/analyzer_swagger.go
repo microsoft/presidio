@@ -9,7 +9,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 // responses:
 //   200: recognizersGetResponse
 
-// A Regognizer
+// A Recognizer
 // swagger:response recognizersGetResponse
 type regognizerResponseWrapper struct {
 	// in:body

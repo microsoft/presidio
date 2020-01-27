@@ -1042,7 +1042,7 @@ paths:
   /templates/{projectId}/analyze/{templateId}:
     delete:
       description: Delete analyze template
-      operationId: analyzeTemplateRequest
+      operationId: deleteAnalyzeTemplateRequest
       parameters:
       - format: int64
         in: path
@@ -1063,8 +1063,8 @@ paths:
       tags:
       - template
     get:
-      description: Delete analyze template
-      operationId: analyzeTemplateRequest
+      description: Get analyze template
+      operationId: getAnalyzeTemplateRequest
       parameters:
       - format: int64
         in: path
@@ -1085,7 +1085,7 @@ paths:
       tags:
       - template
     post:
-      description: Update analyze template
+      description: Create analyze template
       operationId: postAnalyzeTemplateRequest
       parameters:
       - description: The request body
@@ -1113,7 +1113,7 @@ paths:
       - template
     put:
       description: Update analyze template
-      operationId: postAnalyzeTemplateRequest
+      operationId: putAnalyzeTemplateRequest
       parameters:
       - description: The request body
         in: body
@@ -1141,13 +1141,8 @@ paths:
   /templates/{projectId}/anonymize-image/{templateId}:
     delete:
       description: Delete anonymize-image template
-      operationId: postAnonymizeImageTemplateRequest
+      operationId: deleteAnonymizeImageTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/AnonymizeImageTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1167,14 +1162,9 @@ paths:
       tags:
       - template
     get:
-      description: Delete anonymize-image template
-      operationId: postAnonymizeImageTemplateRequest
+      description: Get anonymize-image template
+      operationId: getAnonymizeImageTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/AnonymizeImageTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1194,7 +1184,7 @@ paths:
       tags:
       - template
     post:
-      description: Delete anonymize-image template
+      description: Create anonymize-image template
       operationId: postAnonymizeImageTemplateRequest
       parameters:
       - description: The request body
@@ -1221,8 +1211,8 @@ paths:
       tags:
       - template
     put:
-      description: Delete anonymize-image template
-      operationId: postAnonymizeImageTemplateRequest
+      description: Update anonymize-image template
+      operationId: putAnonymizeImageTemplateRequest
       parameters:
       - description: The request body
         in: body
@@ -1250,13 +1240,8 @@ paths:
   /templates/{projectId}/anonymize/{templateId}:
     delete:
       description: Delete anonymize template
-      operationId: postAnonymizeTemplateRequest
+      operationId: deleteAnonymizeTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/AnonymizeTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1276,14 +1261,9 @@ paths:
       tags:
       - template
     get:
-      description: Delete anonymize template
-      operationId: postAnonymizeTemplateRequest
+      description: Get anonymize template
+      operationId: getAnonymizeTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/AnonymizeTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1303,7 +1283,7 @@ paths:
       tags:
       - template
     post:
-      description: Delete anonymize template
+      description: Create anonymize template
       operationId: postAnonymizeTemplateRequest
       parameters:
       - description: The request body
@@ -1330,8 +1310,8 @@ paths:
       tags:
       - template
     put:
-      description: Delete anonymize template
-      operationId: postAnonymizeTemplateRequest
+      description: Update anonymize template
+      operationId: putAnonymizeTemplateRequest
       parameters:
       - description: The request body
         in: body
@@ -1359,13 +1339,8 @@ paths:
   /templates/{projectId}/datasink/{templateId}:
     delete:
       description: Delete datasink template
-      operationId: postDatasinkTemplateRequest
+      operationId: deleteDatasinkTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/DatasinkTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1385,14 +1360,9 @@ paths:
       tags:
       - template
     get:
-      description: Delete datasink template
-      operationId: postDatasinkTemplateRequest
+      description: Get datasink template
+      operationId: getDatasinkTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/DatasinkTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1412,7 +1382,7 @@ paths:
       tags:
       - template
     post:
-      description: Delete datasink template
+      description: Create datasink template
       operationId: postDatasinkTemplateRequest
       parameters:
       - description: The request body
@@ -1439,8 +1409,8 @@ paths:
       tags:
       - template
     put:
-      description: Delete datasink template
-      operationId: postDatasinkTemplateRequest
+      description: Update datasink template
+      operationId: putDatasinkTemplateRequest
       parameters:
       - description: The request body
         in: body
@@ -1468,13 +1438,8 @@ paths:
   /templates/{projectId}/scan/{templateId}:
     delete:
       description: Delete scan template
-      operationId: postScanTemplateRequest
+      operationId: deleteScanTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/ScanTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1494,14 +1459,9 @@ paths:
       tags:
       - template
     get:
-      description: Delete scan template
-      operationId: postScanTemplateRequest
+      description: Get scan template
+      operationId: getScanTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/ScanTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1521,7 +1481,7 @@ paths:
       tags:
       - template
     post:
-      description: Delete scan template
+      description: Create scan template
       operationId: postScanTemplateRequest
       parameters:
       - description: The request body
@@ -1548,8 +1508,8 @@ paths:
       tags:
       - template
     put:
-      description: Delete scan template
-      operationId: postScanTemplateRequest
+      description: Update scan template
+      operationId: putScanTemplateRequest
       parameters:
       - description: The request body
         in: body
@@ -1577,13 +1537,8 @@ paths:
   /templates/{projectId}/schedule-scanner-cronjob/{templateId}:
     delete:
       description: Delete schedule-scanner-cronjob template
-      operationId: postScannerCronJobTemplateRequest
+      operationId: deleteScannerCronJobTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/ScannerCronJobTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1603,14 +1558,9 @@ paths:
       tags:
       - template
     get:
-      description: Delete schedule-scanner-cronjob template
-      operationId: postScannerCronJobTemplateRequest
+      description: Get schedule-scanner-cronjob template
+      operationId: getScannerCronJobTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/ScannerCronJobTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1630,7 +1580,7 @@ paths:
       tags:
       - template
     post:
-      description: Delete schedule-scanner-cronjob template
+      description: Create schedule-scanner-cronjob template
       operationId: postScannerCronJobTemplateRequest
       parameters:
       - description: The request body
@@ -1657,8 +1607,8 @@ paths:
       tags:
       - template
     put:
-      description: Delete schedule-scanner-cronjob template
-      operationId: postScannerCronJobTemplateRequest
+      description: Update schedule-scanner-cronjob template
+      operationId: putScannerCronJobTemplateRequest
       parameters:
       - description: The request body
         in: body
@@ -1686,13 +1636,8 @@ paths:
   /templates/{projectId}/schedule-streams-job/{templateId}:
     delete:
       description: Delete schedule-streams-job template
-      operationId: postStreamsJobTemplateRequest
+      operationId: deleteStreamsJobTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/StreamsJobTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1712,14 +1657,9 @@ paths:
       tags:
       - template
     get:
-      description: Delete schedule-streams-job template
-      operationId: postStreamsJobTemplateRequest
+      description: Get schedule-streams-job template
+      operationId: getStreamsJobTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/StreamsJobTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1739,7 +1679,7 @@ paths:
       tags:
       - template
     post:
-      description: Delete schedule-streams-job template
+      description: Create schedule-streams-job template
       operationId: postStreamsJobTemplateRequest
       parameters:
       - description: The request body
@@ -1766,8 +1706,8 @@ paths:
       tags:
       - template
     put:
-      description: Delete schedule-streams-job template
-      operationId: postStreamsJobTemplateRequest
+      description: Update schedule-streams-job template
+      operationId: putStreamsJobTemplateRequest
       parameters:
       - description: The request body
         in: body
@@ -1795,13 +1735,8 @@ paths:
   /templates/{projectId}/stream/{templateId}:
     delete:
       description: Delete stream template
-      operationId: postStreamTemplateRequest
+      operationId: deleteStreamTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/StreamTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1821,14 +1756,9 @@ paths:
       tags:
       - template
     get:
-      description: Delete stream template
-      operationId: postStreamTemplateRequest
+      description: Get stream template
+      operationId: getStreamTemplateRequest
       parameters:
-      - description: The request body
-        in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/StreamTemplate'
       - format: int64
         in: path
         name: projectId
@@ -1848,7 +1778,7 @@ paths:
       tags:
       - template
     post:
-      description: Delete stream template
+      description: Create stream template
       operationId: postStreamTemplateRequest
       parameters:
       - description: The request body
@@ -1875,8 +1805,8 @@ paths:
       tags:
       - template
     put:
-      description: Delete stream template
-      operationId: postStreamTemplateRequest
+      description: Update stream template
+      operationId: putStreamTemplateRequest
       parameters:
       - description: The request body
         in: body
