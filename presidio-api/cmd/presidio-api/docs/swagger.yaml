@@ -709,6 +709,41 @@ definitions:
   ScannerCronJobResponse:
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScannerCronJobTemplate:
+    description: |-
+      The kuberenetes Cronjob template. Creates a time based scanning job scheduler that runs periodcally
+      on the selected time
+    properties:
+      analyzeTemplateId:
+        description: The analyzer template id configures the fields to analyze
+        type: string
+        x-go-name: AnalyzeTemplateId
+      anonymizeTemplateId:
+        description: The anonymizer template id configures how to anonymize the sensitive
+          data [optional]
+        type: string
+        x-go-name: AnonymizeTemplateId
+      datasinkTemplateId:
+        description: The datasink template id configures the output destination of
+          the analyzer/anonymizer results
+        type: string
+        x-go-name: DatasinkTemplateId
+      description:
+        description: The job description
+        type: string
+        x-go-name: Description
+      name:
+        description: The job name
+        type: string
+        x-go-name: Name
+      scanTemplateId:
+        description: The scan template id configures job input source
+        type: string
+        x-go-name: ScanTemplateId
+      trigger:
+        $ref: '#/definitions/Trigger'
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Schedule:
     description: Defines the job schedule
     properties:
@@ -745,6 +780,37 @@ definitions:
         $ref: '#/definitions/StreamConfig'
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamTemplate:
+    description: And sending the output to the selected destination
+    properties:
+      analyzeTemplateId:
+        description: The analyzer template id configures the fields to analyze
+        type: string
+        x-go-name: AnalyzeTemplateId
+      anonymizeTemplateId:
+        description: The anonymizer template id configures how to anonymize the sensitive
+          data [optional]
+        type: string
+        x-go-name: AnonymizeTemplateId
+      datasinkTemplateId:
+        description: The datasinkTemplateId configures the output destination of the
+          analyzer/anonymizer results
+        type: string
+        x-go-name: DatasinkTemplateId
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      name:
+        description: The job name
+        type: string
+        x-go-name: Name
+      streamConfig:
+        $ref: '#/definitions/StreamConfig'
+    title: StreamTemplate represents the stream configuration for streaming data and
+      analyzing/anonymizing it.
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamsJobRequest:
     description: StreamsJobRequest represents the request to the scheduler service
       via GRPC
@@ -758,6 +824,38 @@ definitions:
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamsJobResponse:
+    type: object
+    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamsJobTemplate:
+    description: The kuberenetes job template. Creates a job that creates streams
+      containers
+    properties:
+      analyzeTemplateId:
+        description: The analyzer template id configures the fields to analyze
+        type: string
+        x-go-name: AnalyzeTemplateId
+      anonymizeTemplateId:
+        description: The anonymizer template id configures how to anonymize the sensitive
+          data [optional]
+        type: string
+        x-go-name: AnonymizeTemplateId
+      datasinkTemplateId:
+        description: The datasink template id configures the output destination of
+          the analyzer/anonymizer results
+        type: string
+        x-go-name: DatasinkTemplateId
+      description:
+        description: The job description
+        type: string
+        x-go-name: Description
+      name:
+        description: The job name
+        type: string
+        x-go-name: Name
+      streamsTemplateId:
+        description: The scan template id configures job input source
+        type: string
+        x-go-name: StreamsTemplateId
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
   Transformation:
@@ -783,7 +881,7 @@ definitions:
         $ref: '#/definitions/Schedule'
     type: object
     x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
-host: <presidio api host>
+host: presidio_api_host
 info:
   description: Documentation of our Presidio API.
   title: Presidio.
@@ -792,7 +890,7 @@ paths:
   /analyzer/recognizers/:
     get:
       description: Get all recognizers
-      operationId: getAllRecognizers
+      operationId: getAllRecognizersRequest
       responses:
         "200":
           $ref: '#/responses/allRecognizersGetResponse'
@@ -801,7 +899,7 @@ paths:
   /analyzer/recognizers/{id}:
     get:
       description: Get an existing recognizer
-      operationId: getRecognizer
+      operationId: getRecognizerRequest
       parameters:
       - description: Recognizer name
         in: path
@@ -816,7 +914,7 @@ paths:
       - analyzer
     post:
       description: Insert a new recognizer
-      operationId: insertRecognizer
+      operationId: insertRecognizerRequest
       parameters:
       - description: Recognizer name
         in: path
@@ -941,6 +1039,868 @@ paths:
       tags:
       - schedule
       - streams
+  /templates/{projectId}/analyze/{templateId}:
+    delete:
+      description: Delete analyze template
+      operationId: analyzeTemplateRequest
+      parameters:
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete analyze template
+      operationId: analyzeTemplateRequest
+      parameters:
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Update analyze template
+      operationId: postAnalyzeTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnalyzeTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Update analyze template
+      operationId: postAnalyzeTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnalyzeTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+  /templates/{projectId}/anonymize-image/{templateId}:
+    delete:
+      description: Delete anonymize-image template
+      operationId: postAnonymizeImageTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete anonymize-image template
+      operationId: postAnonymizeImageTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Delete anonymize-image template
+      operationId: postAnonymizeImageTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Delete anonymize-image template
+      operationId: postAnonymizeImageTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+  /templates/{projectId}/anonymize/{templateId}:
+    delete:
+      description: Delete anonymize template
+      operationId: postAnonymizeTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete anonymize template
+      operationId: postAnonymizeTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Delete anonymize template
+      operationId: postAnonymizeTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Delete anonymize template
+      operationId: postAnonymizeTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+  /templates/{projectId}/datasink/{templateId}:
+    delete:
+      description: Delete datasink template
+      operationId: postDatasinkTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/DatasinkTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete datasink template
+      operationId: postDatasinkTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/DatasinkTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Delete datasink template
+      operationId: postDatasinkTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/DatasinkTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Delete datasink template
+      operationId: postDatasinkTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/DatasinkTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+  /templates/{projectId}/scan/{templateId}:
+    delete:
+      description: Delete scan template
+      operationId: postScanTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScanTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete scan template
+      operationId: postScanTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScanTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Delete scan template
+      operationId: postScanTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScanTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Delete scan template
+      operationId: postScanTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScanTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+  /templates/{projectId}/schedule-scanner-cronjob/{templateId}:
+    delete:
+      description: Delete schedule-scanner-cronjob template
+      operationId: postScannerCronJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete schedule-scanner-cronjob template
+      operationId: postScannerCronJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Delete schedule-scanner-cronjob template
+      operationId: postScannerCronJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Delete schedule-scanner-cronjob template
+      operationId: postScannerCronJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+  /templates/{projectId}/schedule-streams-job/{templateId}:
+    delete:
+      description: Delete schedule-streams-job template
+      operationId: postStreamsJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete schedule-streams-job template
+      operationId: postStreamsJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Delete schedule-streams-job template
+      operationId: postStreamsJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Delete schedule-streams-job template
+      operationId: postStreamsJobTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+  /templates/{projectId}/stream/{templateId}:
+    delete:
+      description: Delete stream template
+      operationId: postStreamTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    get:
+      description: Delete stream template
+      operationId: postStreamTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    post:
+      description: Delete stream template
+      operationId: postStreamTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+    put:
+      description: Delete stream template
+      operationId: postStreamTemplateRequest
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamTemplate'
+      - format: int64
+        in: path
+        name: projectId
+        required: true
+        type: integer
+        x-go-name: ProjectId
+      - in: path
+        name: templateId
+        required: true
+        type: string
+        x-go-name: TemplateId
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
 produces:
 - application/json
 responses:
@@ -979,6 +1939,10 @@ responses:
     description: A response includes the streams result.
     schema:
       $ref: '#/definitions/StreamsJobResponse'
+  templateGeneralError:
+    description: Response error
+  templateGeneralResponse:
+    description: Response message
 schemes:
 - http
 securityDefinitions:
