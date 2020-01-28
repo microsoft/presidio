@@ -17,3 +17,9 @@ make swagger
 ```
 
 This will re-generate the `swagger.yaml` file.
+
+## Swagger Editor
+
+You can view the Swagger yaml in a user friendly online editor.
+
+To do this copy the contents of the `swagger.yaml` file, and paste them in the [Swagger Editor](http://editor.swagger.io/).
