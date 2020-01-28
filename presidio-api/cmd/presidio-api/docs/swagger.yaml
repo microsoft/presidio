@@ -13,7 +13,7 @@ definitions:
         type: string
         x-go-name: Text
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnalyzeResult:
     description: AnalyzeResult represents the Analyze service findings
     properties:
@@ -31,7 +31,7 @@ definitions:
         type: string
         x-go-name: Text
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnalyzeTemplate:
     properties:
       allFields:
@@ -69,7 +69,7 @@ definitions:
     title: AnalyzeTemplate represents the template definition of the Analyze service-
       for analyzing sensitive text.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnonymizeImageRequest:
     description: AnonymizeRequest represents the request to the anonymize service
       via GRPC
@@ -88,14 +88,14 @@ definitions:
       template:
         $ref: '#/definitions/AnonymizeImageTemplate'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnonymizeImageResponse:
     description: AnonymizeResponse represents the anonymize service response
     properties:
       image:
         $ref: '#/definitions/Image'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnonymizeImageTemplate:
     description: AnonymizeImageTemplate represents the template definition of the
       Anonymize image service
@@ -120,7 +120,7 @@ definitions:
         type: string
         x-go-name: ModifiedTime
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnonymizeRequest:
     description: AnonymizeRequest represents the request to the anonymize service
       via GRPC
@@ -139,7 +139,7 @@ definitions:
         type: string
         x-go-name: Text
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnonymizeResponse:
     description: AnonymizeResponse represents the anonymize service response
     properties:
@@ -148,7 +148,7 @@ definitions:
         type: string
         x-go-name: Text
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   AnonymizeTemplate:
     description: AnonymizeTemplate represents the template definition of the Anonymize
       service for anonymizying the sensitive data
@@ -175,7 +175,7 @@ definitions:
         type: string
         x-go-name: ModifiedTime
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   BlobStorageConfig:
     description: Azure Blob Storage configuration
     properties:
@@ -192,7 +192,7 @@ definitions:
         type: string
         x-go-name: ContainerName
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Boundingbox:
     description: Define an extracted bounding box text/image from images
     properties:
@@ -231,7 +231,7 @@ definitions:
         type: number
         x-go-name: YLocation
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   CloudStorageConfig:
     description: 'Represents the cloud storage config - supported storage: Azure blob
       storage, AWS S3, Google storage'
@@ -243,7 +243,7 @@ definitions:
       s3Config:
         $ref: '#/definitions/S3Config'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   DBConfig:
     description: |-
       DBConfig represents the Database configuration - the DB connection string and the table name
@@ -262,7 +262,7 @@ definitions:
         type: string
         x-go-name: Type
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Datasink:
     properties:
       cloudStorageConfig:
@@ -274,7 +274,7 @@ definitions:
     title: Datasink represents the configuration for storing the scanner output to
       the selected destination such as cloud storage, database, etc.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   DatasinkTemplate:
     properties:
       analyzeDatasink:
@@ -299,12 +299,12 @@ definitions:
         x-go-name: Description
     title: DatasinkTemplate represents the scanner service outputs definition.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   DetectionTypeEnum:
     description: Anonymize image detection type
     format: int32
     type: integer
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   EHConfig:
     description: Azure EventHub configuration
     properties:
@@ -342,7 +342,7 @@ definitions:
         type: string
         x-go-name: StorageAccountNameValue
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   FPEValue:
     properties:
       decrypt:
@@ -360,7 +360,7 @@ definitions:
     title: Encrypt the given value with FFI alogrithm to presereve detected value
       size.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   FieldTypeGraphic:
     description: FieldTypeGraphic represents the graphics for an array of fields types
     properties:
@@ -373,7 +373,7 @@ definitions:
       graphic:
         $ref: '#/definitions/Graphic'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   FieldTypeTransformation:
     description: FieldTypeTransformation represents the transformation for an array
       of fields types
@@ -387,7 +387,7 @@ definitions:
       transformation:
         $ref: '#/definitions/Transformation'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   FieldTypes:
     description: FieldType strucy
     properties:
@@ -401,7 +401,7 @@ definitions:
         type: string
         x-go-name: Name
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   FillColorValue:
     description: Fill the bbox with a color
     properties:
@@ -421,7 +421,7 @@ definitions:
         type: number
         x-go-name: Red
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   GoogleStorageConfig:
     description: Represents the Google Storage configuration
     properties:
@@ -443,18 +443,18 @@ definitions:
         type: string
         x-go-name: Scopes
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Graphic:
     description: Graphic represents how the sensitive content will be transforms
     properties:
       fillColorValue:
         $ref: '#/definitions/FillColorValue'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   HashValue:
     title: Uses cryptographich hash on the given value with SHA-256 hash.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Image:
     description: Define an image with extracted bounded boxes of text/image
     properties:
@@ -479,7 +479,7 @@ definitions:
         type: string
         x-go-name: Text
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   KafkaConfig:
     description: The Kafka configuration
     properties:
@@ -500,7 +500,7 @@ definitions:
         type: string
         x-go-name: Topic
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Location:
     description: The location in the text of the finding
     properties:
@@ -520,7 +520,7 @@ definitions:
         type: integer
         x-go-name: Start
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   MaskValue:
     description: |-
       For example: my credit card number is 4961-2765-5327-5913
@@ -542,7 +542,7 @@ definitions:
         x-go-name: MaskingCharacter
     title: Mask the given value with the selected characters.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Pattern:
     description: |-
       Pattern represents one regex (pattern) that is able to detect a certain
@@ -562,7 +562,7 @@ definitions:
         type: number
         x-go-name: Score
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   PatternRecognizer:
     description: |-
       PatternRecognizer represents a recognizer which has the ability to detect
@@ -603,7 +603,7 @@ definitions:
         type: array
         x-go-name: Patterns
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   RecognizerInsertOrUpdateRequest:
     description: |-
       RecognizerInsertOrUpdateRequest represents the request for
@@ -612,7 +612,7 @@ definitions:
       value:
         $ref: '#/definitions/PatternRecognizer'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   RecognizersGetResponse:
     description: RecognizersGetResponse represents a response to a get request
     properties:
@@ -623,12 +623,12 @@ definitions:
         type: array
         x-go-name: Recognizers
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   RedactValue:
     title: Redacts the given value. For example We met in Seattle would change to
       'We me in '.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   ReplaceValue:
     description: |-
       For example: We met in Seattle.
@@ -641,7 +641,7 @@ definitions:
         x-go-name: NewValue
     title: Replace the value with the given new value.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   S3Config:
     description: AWS S3 configuration
     properties:
@@ -666,7 +666,7 @@ definitions:
         type: string
         x-go-name: Region
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   ScanRequest:
     description: ScanRequest represents the request to the scanner service via GRPC
     properties:
@@ -679,7 +679,7 @@ definitions:
       scanTemplate:
         $ref: '#/definitions/ScanTemplate'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   ScanTemplate:
     description: And sending the output to the selected destination
     properties:
@@ -692,7 +692,7 @@ definitions:
     title: ScanTemplate represents the scan configuration for scanning data and analyzing/anonymizing
       it.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   ScannerCronJobRequest:
     description: ScannerCronJobRequest represents the request to the scheduler service
       via GRPC
@@ -705,10 +705,10 @@ definitions:
       trigger:
         $ref: '#/definitions/Trigger'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   ScannerCronJobResponse:
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   ScannerCronJobTemplate:
     description: |-
       The kuberenetes Cronjob template. Creates a time based scanning job scheduler that runs periodcally
@@ -743,7 +743,7 @@ definitions:
       trigger:
         $ref: '#/definitions/Trigger'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Schedule:
     description: Defines the job schedule
     properties:
@@ -752,7 +752,7 @@ definitions:
         type: string
         x-go-name: RecurrencePeriod
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamConfig:
     description: Represents the streams configuration
     properties:
@@ -766,7 +766,7 @@ definitions:
         type: integer
         x-go-name: PartitionCount
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamRequest:
     description: StreamRequest represents the request to the stream service via GRPC
     properties:
@@ -779,7 +779,7 @@ definitions:
       streamConfig:
         $ref: '#/definitions/StreamConfig'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamTemplate:
     description: And sending the output to the selected destination
     properties:
@@ -810,7 +810,7 @@ definitions:
     title: StreamTemplate represents the stream configuration for streaming data and
       analyzing/anonymizing it.
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamsJobRequest:
     description: StreamsJobRequest represents the request to the scheduler service
       via GRPC
@@ -822,10 +822,10 @@ definitions:
       streamsRequest:
         $ref: '#/definitions/StreamRequest'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamsJobResponse:
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   StreamsJobTemplate:
     description: The kuberenetes job template. Creates a job that creates streams
       containers
@@ -857,7 +857,7 @@ definitions:
         type: string
         x-go-name: StreamsTemplateId
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Transformation:
     description: Transformation represents the transformation types - how the sensitive
       text will change
@@ -873,17 +873,16 @@ definitions:
       replaceValue:
         $ref: '#/definitions/ReplaceValue'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
   Trigger:
     description: Trigger defines the trigger for a new job to start
     properties:
       schedule:
         $ref: '#/definitions/Schedule'
     type: object
-    x-go-package: github.com/microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang
-host: presidio_api_host
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
 info:
-  description: Documentation of our Presidio API.
+  description: Documentation for Presidio API Swagger.
   title: Presidio.
   version: 1.0.0
 paths:

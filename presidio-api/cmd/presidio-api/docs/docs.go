@@ -1,11 +1,10 @@
 // Package classification Presidio.
 //
-// Documentation of our Presidio API.
+// Documentation for Presidio API Swagger.
 //
 //     Schemes: http
 //     BasePath: /api/v1
 //     Version: 1.0.0
-//     Host: presidio_api_host
 //
 //     Consumes:
 //     - application/json
