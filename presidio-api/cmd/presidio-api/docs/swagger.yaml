@@ -1044,11 +1044,10 @@ paths:
       description: Delete analyze template
       operationId: deleteAnalyzeTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1066,11 +1065,10 @@ paths:
       description: Get analyze template
       operationId: getAnalyzeTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1093,11 +1091,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnalyzeTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1120,11 +1117,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnalyzeTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1143,11 +1139,10 @@ paths:
       description: Delete anonymize-image template
       operationId: deleteAnonymizeImageTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1165,11 +1160,10 @@ paths:
       description: Get anonymize-image template
       operationId: getAnonymizeImageTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1192,11 +1186,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeImageTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1219,11 +1212,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeImageTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1242,11 +1234,10 @@ paths:
       description: Delete anonymize template
       operationId: deleteAnonymizeTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1264,11 +1255,10 @@ paths:
       description: Get anonymize template
       operationId: getAnonymizeTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1291,11 +1281,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1318,11 +1307,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1341,11 +1329,10 @@ paths:
       description: Delete datasink template
       operationId: deleteDatasinkTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1363,11 +1350,10 @@ paths:
       description: Get datasink template
       operationId: getDatasinkTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1390,11 +1376,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/DatasinkTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1417,11 +1402,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/DatasinkTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1440,11 +1424,10 @@ paths:
       description: Delete scan template
       operationId: deleteScanTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1462,11 +1445,10 @@ paths:
       description: Get scan template
       operationId: getScanTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1489,11 +1471,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScanTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1516,11 +1497,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScanTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1539,11 +1519,10 @@ paths:
       description: Delete schedule-scanner-cronjob template
       operationId: deleteScannerCronJobTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1561,11 +1540,10 @@ paths:
       description: Get schedule-scanner-cronjob template
       operationId: getScannerCronJobTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1588,11 +1566,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScannerCronJobTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1615,11 +1592,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScannerCronJobTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1638,11 +1614,10 @@ paths:
       description: Delete schedule-streams-job template
       operationId: deleteStreamsJobTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1660,11 +1635,10 @@ paths:
       description: Get schedule-streams-job template
       operationId: getStreamsJobTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1687,11 +1661,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamsJobTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1714,11 +1687,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamsJobTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1737,11 +1709,10 @@ paths:
       description: Delete stream template
       operationId: deleteStreamTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1759,11 +1730,10 @@ paths:
       description: Get stream template
       operationId: getStreamTemplateRequest
       parameters:
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1786,11 +1756,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1813,11 +1782,10 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamTemplate'
-      - format: int64
-        in: path
+      - in: path
         name: projectId
         required: true
-        type: integer
+        type: string
         x-go-name: ProjectId
       - in: path
         name: templateId
@@ -1858,7 +1826,7 @@ responses:
   insertRecognizersResponse:
     description: Insert new recognizer response
   recognizersGetResponse:
-    description: A Regognizer
+    description: A Recognizer
     schema:
       $ref: '#/definitions/RecognizersGetResponse'
   scheduleScannerCronjobResponse:
