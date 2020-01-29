@@ -894,7 +894,7 @@ paths:
         "200":
           $ref: '#/responses/allRecognizersGetResponse'
       tags:
-      - analyzer
+      - analyze
   /analyzer/recognizers/{id}:
     get:
       description: Get an existing recognizer
@@ -910,7 +910,7 @@ paths:
         "200":
           $ref: '#/responses/recognizersGetResponse'
       tags:
-      - analyzer
+      - analyze
     post:
       description: Insert a new recognizer
       operationId: insertRecognizerRequest
@@ -930,7 +930,7 @@ paths:
         "200":
           $ref: '#/responses/insertRecognizersResponse'
       tags:
-      - analyzer
+      - analyze
   /projects/{projectId}/analyze:
     post:
       description: Analyze text
@@ -993,8 +993,7 @@ paths:
         "200":
           $ref: '#/responses/anonymizeImageResponse'
       tags:
-      - anonymize
-      - image
+      - anonymize-image
   /projects/{projectId}/schedule-scanner-cronjob:
     post:
       description: Schedule scanner cron-job
@@ -1015,8 +1014,7 @@ paths:
         "200":
           $ref: '#/responses/scheduleScannerCronjobResponse'
       tags:
-      - schedule
-      - scanner
+      - schedule-scanner-cronjob
   /projects/{projectId}/schedule-streams-job:
     post:
       description: Schedule streams job
@@ -1036,8 +1034,7 @@ paths:
         "200":
           $ref: '#/responses/scheduleStreamsJobResponse'
       tags:
-      - schedule
-      - streams
+      - schedule-streams-job
   /templates/{projectId}/analyze/{templateId}:
     delete:
       description: Delete analyze template
@@ -1060,6 +1057,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - analyze
     get:
       description: Get analyze template
       operationId: getAnalyzeTemplateRequest
@@ -1081,6 +1079,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - analyze
     post:
       description: Create analyze template
       operationId: postAnalyzeTemplateRequest
@@ -1107,6 +1106,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - analyze
     put:
       description: Update analyze template
       operationId: putAnalyzeTemplateRequest
@@ -1133,6 +1133,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - analyze
   /templates/{projectId}/anonymize-image/{templateId}:
     delete:
       description: Delete anonymize-image template
@@ -1155,6 +1156,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize-image
     get:
       description: Get anonymize-image template
       operationId: getAnonymizeImageTemplateRequest
@@ -1176,6 +1178,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize-image
     post:
       description: Create anonymize-image template
       operationId: postAnonymizeImageTemplateRequest
@@ -1202,6 +1205,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize-image
     put:
       description: Update anonymize-image template
       operationId: putAnonymizeImageTemplateRequest
@@ -1228,6 +1232,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize-image
   /templates/{projectId}/anonymize/{templateId}:
     delete:
       description: Delete anonymize template
@@ -1250,6 +1255,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize
     get:
       description: Get anonymize template
       operationId: getAnonymizeTemplateRequest
@@ -1271,6 +1277,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize
     post:
       description: Create anonymize template
       operationId: postAnonymizeTemplateRequest
@@ -1297,6 +1304,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize
     put:
       description: Update anonymize template
       operationId: putAnonymizeTemplateRequest
@@ -1323,6 +1331,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - anonymize
   /templates/{projectId}/datasink/{templateId}:
     delete:
       description: Delete datasink template
@@ -1345,6 +1354,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - datasink
     get:
       description: Get datasink template
       operationId: getDatasinkTemplateRequest
@@ -1366,6 +1376,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - datasink
     post:
       description: Create datasink template
       operationId: postDatasinkTemplateRequest
@@ -1392,6 +1403,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - datasink
     put:
       description: Update datasink template
       operationId: putDatasinkTemplateRequest
@@ -1418,6 +1430,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - datasink
   /templates/{projectId}/scan/{templateId}:
     delete:
       description: Delete scan template
@@ -1440,6 +1453,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - scan
     get:
       description: Get scan template
       operationId: getScanTemplateRequest
@@ -1461,6 +1475,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - scan
     post:
       description: Create scan template
       operationId: postScanTemplateRequest
@@ -1487,6 +1502,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - scan
     put:
       description: Update scan template
       operationId: putScanTemplateRequest
@@ -1513,6 +1529,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - scan
   /templates/{projectId}/schedule-scanner-cronjob/{templateId}:
     delete:
       description: Delete schedule-scanner-cronjob template
@@ -1535,6 +1552,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-scanner-cronjob
     get:
       description: Get schedule-scanner-cronjob template
       operationId: getScannerCronJobTemplateRequest
@@ -1556,6 +1574,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-scanner-cronjob
     post:
       description: Create schedule-scanner-cronjob template
       operationId: postScannerCronJobTemplateRequest
@@ -1582,6 +1601,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-scanner-cronjob
     put:
       description: Update schedule-scanner-cronjob template
       operationId: putScannerCronJobTemplateRequest
@@ -1608,6 +1628,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-scanner-cronjob
   /templates/{projectId}/schedule-streams-job/{templateId}:
     delete:
       description: Delete schedule-streams-job template
@@ -1630,6 +1651,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-streams-job
     get:
       description: Get schedule-streams-job template
       operationId: getStreamsJobTemplateRequest
@@ -1651,6 +1673,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-streams-job
     post:
       description: Create schedule-streams-job template
       operationId: postStreamsJobTemplateRequest
@@ -1677,6 +1700,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-streams-job
     put:
       description: Update schedule-streams-job template
       operationId: putStreamsJobTemplateRequest
@@ -1703,6 +1727,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - schedule-streams-job
   /templates/{projectId}/stream/{templateId}:
     delete:
       description: Delete stream template
@@ -1725,6 +1750,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - stream
     get:
       description: Get stream template
       operationId: getStreamTemplateRequest
@@ -1746,6 +1772,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - stream
     post:
       description: Create stream template
       operationId: postStreamTemplateRequest
@@ -1772,6 +1799,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - stream
     put:
       description: Update stream template
       operationId: putStreamTemplateRequest
@@ -1798,6 +1826,7 @@ paths:
           $ref: '#/responses/templateGeneralError'
       tags:
       - template
+      - stream
 produces:
 - application/json
 responses:

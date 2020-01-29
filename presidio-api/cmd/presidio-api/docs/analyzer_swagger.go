@@ -2,7 +2,7 @@ package docs
 
 import types "github.com/Microsoft/presidio-genproto/golang"
 
-// swagger:route GET /analyzer/recognizers/{id} analyzer getRecognizerRequest
+// swagger:route GET /analyzer/recognizers/{id} analyze getRecognizerRequest
 //
 // Get an existing recognizer
 //
@@ -25,7 +25,7 @@ type regognizerParamsWrapper struct {
 	Id string `json:"id"`
 }
 
-// swagger:route GET /analyzer/recognizers/ analyzer getAllRecognizersRequest
+// swagger:route GET /analyzer/recognizers/ analyze getAllRecognizersRequest
 //
 // Get all recognizers
 //
@@ -39,7 +39,7 @@ type allRegognizerResponseWrapper struct {
 	Body []types.RecognizersGetResponse
 }
 
-// swagger:route POST /analyzer/recognizers/{id} analyzer insertRecognizerRequest
+// swagger:route POST /analyzer/recognizers/{id} analyze insertRecognizerRequest
 //
 // Insert a new recognizer
 //

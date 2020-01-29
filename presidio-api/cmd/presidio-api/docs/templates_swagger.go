@@ -2,7 +2,7 @@ package docs
 
 import types "github.com/Microsoft/presidio-genproto/golang"
 
-// swagger:route POST /templates/{projectId}/analyze/{templateId} template postAnalyzeTemplateRequest
+// swagger:route POST /templates/{projectId}/analyze/{templateId} template analyze postAnalyzeTemplateRequest
 //
 // Create analyze template
 //
@@ -11,7 +11,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/analyze/{templateId} template putAnalyzeTemplateRequest
+// swagger:route PUT /templates/{projectId}/analyze/{templateId} template analyze putAnalyzeTemplateRequest
 //
 // Update analyze template
 //
@@ -20,7 +20,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/analyze/{templateId} template getAnalyzeTemplateRequest
+// swagger:route GET /templates/{projectId}/analyze/{templateId} template analyze getAnalyzeTemplateRequest
 //
 // Get analyze template
 //
@@ -29,7 +29,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/analyze/{templateId} template deleteAnalyzeTemplateRequest
+// swagger:route DELETE /templates/{projectId}/analyze/{templateId} template analyze deleteAnalyzeTemplateRequest
 //
 // Delete analyze template
 //
@@ -56,7 +56,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 
 
 
-// swagger:route POST /templates/{projectId}/anonymize/{templateId} template postAnonymizeTemplateRequest
+// swagger:route POST /templates/{projectId}/anonymize/{templateId} template anonymize postAnonymizeTemplateRequest
 //
 // Create anonymize template
 //
@@ -65,7 +65,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/anonymize/{templateId} template putAnonymizeTemplateRequest
+// swagger:route PUT /templates/{projectId}/anonymize/{templateId} template anonymize putAnonymizeTemplateRequest
 //
 // Update anonymize template
 //
@@ -74,7 +74,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/anonymize/{templateId} template getAnonymizeTemplateRequest
+// swagger:route GET /templates/{projectId}/anonymize/{templateId} template anonymize getAnonymizeTemplateRequest
 //
 // Get anonymize template
 //
@@ -83,7 +83,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/anonymize/{templateId} template deleteAnonymizeTemplateRequest
+// swagger:route DELETE /templates/{projectId}/anonymize/{templateId} template anonymize deleteAnonymizeTemplateRequest
 //
 // Delete anonymize template
 //
@@ -110,7 +110,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 
 
 
-// swagger:route POST /templates/{projectId}/anonymize-image/{templateId} template postAnonymizeImageTemplateRequest
+// swagger:route POST /templates/{projectId}/anonymize-image/{templateId} template anonymize-image postAnonymizeImageTemplateRequest
 //
 // Create anonymize-image template
 //
@@ -119,7 +119,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/anonymize-image/{templateId} template putAnonymizeImageTemplateRequest
+// swagger:route PUT /templates/{projectId}/anonymize-image/{templateId} template anonymize-image putAnonymizeImageTemplateRequest
 //
 // Update anonymize-image template
 //
@@ -128,7 +128,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/anonymize-image/{templateId} template getAnonymizeImageTemplateRequest
+// swagger:route GET /templates/{projectId}/anonymize-image/{templateId} template anonymize-image getAnonymizeImageTemplateRequest
 //
 // Get anonymize-image template
 //
@@ -137,7 +137,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/anonymize-image/{templateId} template deleteAnonymizeImageTemplateRequest
+// swagger:route DELETE /templates/{projectId}/anonymize-image/{templateId} template anonymize-image deleteAnonymizeImageTemplateRequest
 //
 // Delete anonymize-image template
 //
@@ -163,7 +163,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 
 
 
-// swagger:route POST /templates/{projectId}/scan/{templateId} template postScanTemplateRequest
+// swagger:route POST /templates/{projectId}/scan/{templateId} template scan postScanTemplateRequest
 //
 // Create scan template
 //
@@ -172,7 +172,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/scan/{templateId} template putScanTemplateRequest
+// swagger:route PUT /templates/{projectId}/scan/{templateId} template scan putScanTemplateRequest
 //
 // Update scan template
 //
@@ -181,7 +181,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/scan/{templateId} template getScanTemplateRequest
+// swagger:route GET /templates/{projectId}/scan/{templateId} template scan getScanTemplateRequest
 //
 // Get scan template
 //
@@ -190,7 +190,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/scan/{templateId} template deleteScanTemplateRequest
+// swagger:route DELETE /templates/{projectId}/scan/{templateId} template scan deleteScanTemplateRequest
 //
 // Delete scan template
 //
@@ -217,7 +217,7 @@ type postScanTemplateParamsWrapper struct {
 
 
 
-// swagger:route POST /templates/{projectId}/stream/{templateId} template postStreamTemplateRequest
+// swagger:route POST /templates/{projectId}/stream/{templateId} template stream postStreamTemplateRequest
 //
 // Create stream template
 //
@@ -226,7 +226,7 @@ type postScanTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/stream/{templateId} template putStreamTemplateRequest
+// swagger:route PUT /templates/{projectId}/stream/{templateId} template stream putStreamTemplateRequest
 //
 // Update stream template
 //
@@ -235,7 +235,7 @@ type postScanTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/stream/{templateId} template getStreamTemplateRequest
+// swagger:route GET /templates/{projectId}/stream/{templateId} template stream getStreamTemplateRequest
 //
 // Get stream template
 //
@@ -244,7 +244,7 @@ type postScanTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/stream/{templateId} template deleteStreamTemplateRequest
+// swagger:route DELETE /templates/{projectId}/stream/{templateId} template stream deleteStreamTemplateRequest
 //
 // Delete stream template
 //
@@ -271,7 +271,7 @@ type postStreamTemplateParamsWrapper struct {
 
 
 
-// swagger:route POST /templates/{projectId}/datasink/{templateId} template postDatasinkTemplateRequest
+// swagger:route POST /templates/{projectId}/datasink/{templateId} template datasink postDatasinkTemplateRequest
 //
 // Create datasink template
 //
@@ -280,7 +280,7 @@ type postStreamTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/datasink/{templateId} template putDatasinkTemplateRequest
+// swagger:route PUT /templates/{projectId}/datasink/{templateId} template datasink putDatasinkTemplateRequest
 //
 // Update datasink template
 //
@@ -289,7 +289,7 @@ type postStreamTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/datasink/{templateId} template getDatasinkTemplateRequest
+// swagger:route GET /templates/{projectId}/datasink/{templateId} template datasink getDatasinkTemplateRequest
 //
 // Get datasink template
 //
@@ -298,7 +298,7 @@ type postStreamTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/datasink/{templateId} template deleteDatasinkTemplateRequest
+// swagger:route DELETE /templates/{projectId}/datasink/{templateId} template datasink deleteDatasinkTemplateRequest
 //
 // Delete datasink template
 //
@@ -326,7 +326,7 @@ type postDatasinkTemplateParamsWrapper struct {
 
 
 
-// swagger:route POST /templates/{projectId}/schedule-scanner-cronjob/{templateId} template postScannerCronJobTemplateRequest
+// swagger:route POST /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob postScannerCronJobTemplateRequest
 //
 // Create schedule-scanner-cronjob template
 //
@@ -335,7 +335,7 @@ type postDatasinkTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/schedule-scanner-cronjob/{templateId} template putScannerCronJobTemplateRequest
+// swagger:route PUT /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob putScannerCronJobTemplateRequest
 //
 // Update schedule-scanner-cronjob template
 //
@@ -344,7 +344,7 @@ type postDatasinkTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/schedule-scanner-cronjob/{templateId} template getScannerCronJobTemplateRequest
+// swagger:route GET /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob getScannerCronJobTemplateRequest
 //
 // Get schedule-scanner-cronjob template
 //
@@ -353,7 +353,7 @@ type postDatasinkTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/schedule-scanner-cronjob/{templateId} template deleteScannerCronJobTemplateRequest
+// swagger:route DELETE /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob deleteScannerCronJobTemplateRequest
 //
 // Delete schedule-scanner-cronjob template
 //
@@ -380,7 +380,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 
 
 
-// swagger:route POST /templates/{projectId}/schedule-streams-job/{templateId} template postStreamsJobTemplateRequest
+// swagger:route POST /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job postStreamsJobTemplateRequest
 //
 // Create schedule-streams-job template
 //
@@ -389,7 +389,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/schedule-streams-job/{templateId} template putStreamsJobTemplateRequest
+// swagger:route PUT /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job putStreamsJobTemplateRequest
 //
 // Update schedule-streams-job template
 //
@@ -398,7 +398,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/schedule-streams-job/{templateId} template getStreamsJobTemplateRequest
+// swagger:route GET /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job getStreamsJobTemplateRequest
 //
 // Get schedule-streams-job template
 //
@@ -407,7 +407,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/schedule-streams-job/{templateId} template deleteStreamsJobTemplateRequest
+// swagger:route DELETE /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job deleteStreamsJobTemplateRequest
 //
 // Delete schedule-streams-job template
 //

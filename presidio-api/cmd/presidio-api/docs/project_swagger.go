@@ -54,7 +54,7 @@ type anonymizeParamsWrapper struct {
 }
 
 
-// swagger:route POST /projects/{projectId}/anonymize-image anonymize image anonymizeImageRequest
+// swagger:route POST /projects/{projectId}/anonymize-image anonymize-image anonymizeImageRequest
 //
 // Anonymize image
 //
@@ -80,7 +80,7 @@ type anonymizeImageParamsWrapper struct {
 }
 
 
-// swagger:route POST /projects/{projectId}/schedule-scanner-cronjob schedule scanner scheduleScannerCronjobRequest
+// swagger:route POST /projects/{projectId}/schedule-scanner-cronjob schedule-scanner-cronjob scheduleScannerCronjobRequest
 //
 // Schedule scanner cron-job
 //
@@ -106,7 +106,7 @@ type scheduleScannerCronjobParamsWrapper struct {
 }
 
 
-// swagger:route POST /projects/{projectId}/schedule-streams-job schedule streams scheduleStreamsJobRequest
+// swagger:route POST /projects/{projectId}/schedule-streams-job schedule-streams-job scheduleStreamsJobRequest
 //
 // Schedule streams job
 //
