@@ -1861,6 +1861,7 @@ responses:
     schema:
       $ref: '#/definitions/AnonymizeResponse'
   fieldTypesGetResponse:
+    description: The response including a list of field types
     schema:
       items:
         $ref: '#/definitions/FieldTypes'

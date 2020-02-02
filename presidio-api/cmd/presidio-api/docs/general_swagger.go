@@ -9,9 +9,9 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 // responses:
 //   200: fieldTypesGetResponse
 
+// The response including a list of field types
 // swagger:response fieldTypesGetResponse
 type fieldTypesResponseWrapper struct {
-	// The response including a list of field types
 	// in:body
 	Types []types.FieldTypes
 }
