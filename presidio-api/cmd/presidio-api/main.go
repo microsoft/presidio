@@ -75,6 +75,12 @@ func main() {
 	setupHTTPServer(settings.WebPort, settings.LogLevel)
 }
 
+/* 
+	Note:
+		When modifying the API: Like adding or removing end-points, updating parameters, or updating responses,
+		remember to make the relevant modifications in the files under the /docs package, and then re-generate
+		the /docs/swagger.yaml according to the /docs/readme.md instructions.
+*/
 func setupHTTPServer(port int, loglevel string) {
 
 	r := server.Setup(port, loglevel)
