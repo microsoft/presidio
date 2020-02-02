@@ -931,6 +931,15 @@ paths:
           $ref: '#/responses/insertRecognizersResponse'
       tags:
       - analyze
+  /fieldTypes:
+    get:
+      description: Get all available field types
+      operationId: getFieldTypes
+      responses:
+        "200":
+          $ref: '#/responses/fieldTypesGetResponse'
+      tags:
+      - fields
   /projects/{projectId}/analyze:
     post:
       description: Analyze text
@@ -1851,6 +1860,11 @@ responses:
     description: A response includes anonymized text.
     schema:
       $ref: '#/definitions/AnonymizeResponse'
+  fieldTypesGetResponse:
+    schema:
+      items:
+        $ref: '#/definitions/FieldTypes'
+      type: array
   insertRecognizersResponse:
     description: Insert new recognizer response
   recognizersGetResponse:
