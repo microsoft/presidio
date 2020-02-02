@@ -884,7 +884,7 @@ definitions:
 info:
   description: Documentation for Presidio API Swagger.
   title: Presidio.
-  version: 1.0.0
+  version: "1.0"
 paths:
   /analyzer/recognizers/:
     get:
@@ -1886,7 +1886,5 @@ responses:
     description: Response message
 schemes:
 - http
-securityDefinitions:
-  basic:
-    type: basic
+- https
 swagger: "2.0"
