@@ -20,5 +20,5 @@
     "misspell",
     "vet"
   ],
-  "Execlude": ["presidio-api/cmd/presidio-api/docs"]
+  "Exclude": ["presidio-api/cmd/presidio-api/docs"]
 }

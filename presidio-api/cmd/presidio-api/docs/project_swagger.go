@@ -2,7 +2,7 @@ package docs
 
 import types "github.com/Microsoft/presidio-genproto/golang"
 
-// swagger:route POST /projects/{projectId}/analyze analyze analyzeRequest
+// swagger:route POST /projects/{projectID}/analyze analyze analyzeRequest
 //
 // Analyze text
 //
@@ -24,11 +24,11 @@ type analyzeParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId int `json:"projectId"`
+	ProjectID int `json:"projectID"`
 }
 
 
-// swagger:route POST /projects/{projectId}/anonymize anonymize anonymizeRequest
+// swagger:route POST /projects/{projectID}/anonymize anonymize anonymizeRequest
 //
 // Anonymize text
 //
@@ -50,11 +50,11 @@ type anonymizeParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId int `json:"projectId"`
+	ProjectID int `json:"projectID"`
 }
 
 
-// swagger:route POST /projects/{projectId}/anonymize-image anonymize-image anonymizeImageRequest
+// swagger:route POST /projects/{projectID}/anonymize-image anonymize-image anonymizeImageRequest
 //
 // Anonymize image
 //
@@ -76,11 +76,11 @@ type anonymizeImageParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId int `json:"projectId"`
+	ProjectID int `json:"projectID"`
 }
 
 
-// swagger:route POST /projects/{projectId}/schedule-scanner-cronjob schedule-scanner-cronjob scheduleScannerCronjobRequest
+// swagger:route POST /projects/{projectID}/schedule-scanner-cronjob schedule-scanner-cronjob scheduleScannerCronjobRequest
 //
 // Schedule scanner cron-job
 //
@@ -102,11 +102,11 @@ type scheduleScannerCronjobParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId int `json:"projectId"`
+	ProjectID int `json:"projectID"`
 }
 
 
-// swagger:route POST /projects/{projectId}/schedule-streams-job schedule-streams-job scheduleStreamsJobRequest
+// swagger:route POST /projects/{projectID}/schedule-streams-job schedule-streams-job scheduleStreamsJobRequest
 //
 // Schedule streams job
 //
@@ -127,5 +127,5 @@ type scheduleStreamsJobParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId int `json:"projectId"`
+	ProjectID int `json:"projectID"`
 }

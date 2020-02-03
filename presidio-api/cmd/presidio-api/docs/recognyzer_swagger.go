@@ -22,7 +22,7 @@ type regognizerParamsWrapper struct {
 	//
 	// in: path
 	// required: true
-	Id string `json:"id"`
+	ID string `json:"id"`
 }
 
 // swagger:route GET /analyzer/recognizers/ analyze getAllRecognizersRequest
@@ -59,7 +59,7 @@ type insertRegognizerParamsWrapper struct {
 	//
 	// in: path
 	// required: true
-	Id string `json:"id"`
+	ID string `json:"id"`
 
 	// Recognizer properties
 	//

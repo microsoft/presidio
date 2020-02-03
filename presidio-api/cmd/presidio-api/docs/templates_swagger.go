@@ -2,7 +2,7 @@ package docs
 
 import types "github.com/Microsoft/presidio-genproto/golang"
 
-// swagger:route POST /templates/{projectId}/analyze/{templateId} template analyze postAnalyzeTemplateRequest
+// swagger:route POST /templates/{projectID}/analyze/{templateID} template analyze postAnalyzeTemplateRequest
 //
 // Create analyze template
 //
@@ -11,7 +11,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/analyze/{templateId} template analyze putAnalyzeTemplateRequest
+// swagger:route PUT /templates/{projectID}/analyze/{templateID} template analyze putAnalyzeTemplateRequest
 //
 // Update analyze template
 //
@@ -20,7 +20,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/analyze/{templateId} template analyze getAnalyzeTemplateRequest
+// swagger:route GET /templates/{projectID}/analyze/{templateID} template analyze getAnalyzeTemplateRequest
 //
 // Get analyze template
 //
@@ -29,7 +29,7 @@ import types "github.com/Microsoft/presidio-genproto/golang"
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/analyze/{templateId} template analyze deleteAnalyzeTemplateRequest
+// swagger:route DELETE /templates/{projectID}/analyze/{templateID} template analyze deleteAnalyzeTemplateRequest
 //
 // Delete analyze template
 //
@@ -46,17 +46,17 @@ type postAnalyzeTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
 
 
-// swagger:route POST /templates/{projectId}/anonymize/{templateId} template anonymize postAnonymizeTemplateRequest
+// swagger:route POST /templates/{projectID}/anonymize/{templateID} template anonymize postAnonymizeTemplateRequest
 //
 // Create anonymize template
 //
@@ -65,7 +65,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/anonymize/{templateId} template anonymize putAnonymizeTemplateRequest
+// swagger:route PUT /templates/{projectID}/anonymize/{templateID} template anonymize putAnonymizeTemplateRequest
 //
 // Update anonymize template
 //
@@ -74,7 +74,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/anonymize/{templateId} template anonymize getAnonymizeTemplateRequest
+// swagger:route GET /templates/{projectID}/anonymize/{templateID} template anonymize getAnonymizeTemplateRequest
 //
 // Get anonymize template
 //
@@ -83,7 +83,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/anonymize/{templateId} template anonymize deleteAnonymizeTemplateRequest
+// swagger:route DELETE /templates/{projectID}/anonymize/{templateID} template anonymize deleteAnonymizeTemplateRequest
 //
 // Delete anonymize template
 //
@@ -100,17 +100,17 @@ type postAnonymizeTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
 
 
-// swagger:route POST /templates/{projectId}/anonymize-image/{templateId} template anonymize-image postAnonymizeImageTemplateRequest
+// swagger:route POST /templates/{projectID}/anonymize-image/{templateID} template anonymize-image postAnonymizeImageTemplateRequest
 //
 // Create anonymize-image template
 //
@@ -119,7 +119,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/anonymize-image/{templateId} template anonymize-image putAnonymizeImageTemplateRequest
+// swagger:route PUT /templates/{projectID}/anonymize-image/{templateID} template anonymize-image putAnonymizeImageTemplateRequest
 //
 // Update anonymize-image template
 //
@@ -128,7 +128,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/anonymize-image/{templateId} template anonymize-image getAnonymizeImageTemplateRequest
+// swagger:route GET /templates/{projectID}/anonymize-image/{templateID} template anonymize-image getAnonymizeImageTemplateRequest
 //
 // Get anonymize-image template
 //
@@ -137,7 +137,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/anonymize-image/{templateId} template anonymize-image deleteAnonymizeImageTemplateRequest
+// swagger:route DELETE /templates/{projectID}/anonymize-image/{templateID} template anonymize-image deleteAnonymizeImageTemplateRequest
 //
 // Delete anonymize-image template
 //
@@ -153,17 +153,17 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
 
 
-// swagger:route POST /templates/{projectId}/scan/{templateId} template scan postScanTemplateRequest
+// swagger:route POST /templates/{projectID}/scan/{templateID} template scan postScanTemplateRequest
 //
 // Create scan template
 //
@@ -172,7 +172,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/scan/{templateId} template scan putScanTemplateRequest
+// swagger:route PUT /templates/{projectID}/scan/{templateID} template scan putScanTemplateRequest
 //
 // Update scan template
 //
@@ -181,7 +181,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/scan/{templateId} template scan getScanTemplateRequest
+// swagger:route GET /templates/{projectID}/scan/{templateID} template scan getScanTemplateRequest
 //
 // Get scan template
 //
@@ -190,7 +190,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/scan/{templateId} template scan deleteScanTemplateRequest
+// swagger:route DELETE /templates/{projectID}/scan/{templateID} template scan deleteScanTemplateRequest
 //
 // Delete scan template
 //
@@ -207,17 +207,17 @@ type postScanTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
 
 
-// swagger:route POST /templates/{projectId}/stream/{templateId} template stream postStreamTemplateRequest
+// swagger:route POST /templates/{projectID}/stream/{templateID} template stream postStreamTemplateRequest
 //
 // Create stream template
 //
@@ -226,7 +226,7 @@ type postScanTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/stream/{templateId} template stream putStreamTemplateRequest
+// swagger:route PUT /templates/{projectID}/stream/{templateID} template stream putStreamTemplateRequest
 //
 // Update stream template
 //
@@ -235,7 +235,7 @@ type postScanTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/stream/{templateId} template stream getStreamTemplateRequest
+// swagger:route GET /templates/{projectID}/stream/{templateID} template stream getStreamTemplateRequest
 //
 // Get stream template
 //
@@ -244,7 +244,7 @@ type postScanTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/stream/{templateId} template stream deleteStreamTemplateRequest
+// swagger:route DELETE /templates/{projectID}/stream/{templateID} template stream deleteStreamTemplateRequest
 //
 // Delete stream template
 //
@@ -261,17 +261,17 @@ type postStreamTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
 
 
-// swagger:route POST /templates/{projectId}/datasink/{templateId} template datasink postDatasinkTemplateRequest
+// swagger:route POST /templates/{projectID}/datasink/{templateID} template datasink postDatasinkTemplateRequest
 //
 // Create datasink template
 //
@@ -280,7 +280,7 @@ type postStreamTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/datasink/{templateId} template datasink putDatasinkTemplateRequest
+// swagger:route PUT /templates/{projectID}/datasink/{templateID} template datasink putDatasinkTemplateRequest
 //
 // Update datasink template
 //
@@ -289,7 +289,7 @@ type postStreamTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/datasink/{templateId} template datasink getDatasinkTemplateRequest
+// swagger:route GET /templates/{projectID}/datasink/{templateID} template datasink getDatasinkTemplateRequest
 //
 // Get datasink template
 //
@@ -298,7 +298,7 @@ type postStreamTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/datasink/{templateId} template datasink deleteDatasinkTemplateRequest
+// swagger:route DELETE /templates/{projectID}/datasink/{templateID} template datasink deleteDatasinkTemplateRequest
 //
 // Delete datasink template
 //
@@ -315,18 +315,18 @@ type postDatasinkTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
 
 
 
-// swagger:route POST /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob postScannerCronJobTemplateRequest
+// swagger:route POST /templates/{projectID}/schedule-scanner-cronjob/{templateID} template schedule-scanner-cronjob postScannerCronJobTemplateRequest
 //
 // Create schedule-scanner-cronjob template
 //
@@ -335,7 +335,7 @@ type postDatasinkTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob putScannerCronJobTemplateRequest
+// swagger:route PUT /templates/{projectID}/schedule-scanner-cronjob/{templateID} template schedule-scanner-cronjob putScannerCronJobTemplateRequest
 //
 // Update schedule-scanner-cronjob template
 //
@@ -344,7 +344,7 @@ type postDatasinkTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob getScannerCronJobTemplateRequest
+// swagger:route GET /templates/{projectID}/schedule-scanner-cronjob/{templateID} template schedule-scanner-cronjob getScannerCronJobTemplateRequest
 //
 // Get schedule-scanner-cronjob template
 //
@@ -353,7 +353,7 @@ type postDatasinkTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/schedule-scanner-cronjob/{templateId} template schedule-scanner-cronjob deleteScannerCronJobTemplateRequest
+// swagger:route DELETE /templates/{projectID}/schedule-scanner-cronjob/{templateID} template schedule-scanner-cronjob deleteScannerCronJobTemplateRequest
 //
 // Delete schedule-scanner-cronjob template
 //
@@ -370,17 +370,17 @@ type postScannerCronJobTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
 
 
-// swagger:route POST /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job postStreamsJobTemplateRequest
+// swagger:route POST /templates/{projectID}/schedule-streams-job/{templateID} template schedule-streams-job postStreamsJobTemplateRequest
 //
 // Create schedule-streams-job template
 //
@@ -389,7 +389,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route PUT /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job putStreamsJobTemplateRequest
+// swagger:route PUT /templates/{projectID}/schedule-streams-job/{templateID} template schedule-streams-job putStreamsJobTemplateRequest
 //
 // Update schedule-streams-job template
 //
@@ -398,7 +398,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route GET /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job getStreamsJobTemplateRequest
+// swagger:route GET /templates/{projectID}/schedule-streams-job/{templateID} template schedule-streams-job getStreamsJobTemplateRequest
 //
 // Get schedule-streams-job template
 //
@@ -407,7 +407,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 //   400: templateGeneralError
 
 
-// swagger:route DELETE /templates/{projectId}/schedule-streams-job/{templateId} template schedule-streams-job deleteStreamsJobTemplateRequest
+// swagger:route DELETE /templates/{projectID}/schedule-streams-job/{templateID} template schedule-streams-job deleteStreamsJobTemplateRequest
 //
 // Delete schedule-streams-job template
 //
@@ -424,11 +424,11 @@ type postStreamsJobTemplateParamsWrapper struct {
 
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
@@ -436,11 +436,11 @@ type postStreamsJobTemplateParamsWrapper struct {
 type templateGeneralParamsWrapper struct {
 	// in: path
 	// required: true
-	ProjectId string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 
 	// in: path
 	// required: true
-	TemplateId string `json:"templateId"`
+	TemplateID string `json:"templateID"`
 }
 
 
