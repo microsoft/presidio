@@ -2,7 +2,7 @@
 
 This folder includes the docs needed to generate Swagger files for this API.
 
-## Pre requisits
+## Prerequisits
 
 Make sure you have installed the following:
 - [go](https://golang.org/)
