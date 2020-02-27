@@ -153,12 +153,20 @@ stages:
             PathtoPublish: charts
             ArtifactName: dropchart  
         - bash: |
+            docker pull "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID)"
+            docker tag \
+              "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID)" \
+              "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)"
+            docker push "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)"
+          env:
+            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+          displayName: 'Tag golang base image'
+        - bash: |
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
-          condition: eq(variables['Build.SourceBranchName'], 'master')
         
         - bash: | 
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
@@ -166,4 +174,3 @@ stages:
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
-          condition: ne(variables['Build.SourceBranchName'], 'master')
