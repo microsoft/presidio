@@ -18,10 +18,8 @@ stages:
         - bash: |
           MASTER="remotes/origin/master"
           GIT_DIFF_SOURCEBRANCH="HEAD"
-          
           # Set build_deps Triggers to false
           BUILD_DEPS=false
-
           # we should always use master as a comparison, except in the case that this is
           # a build for master. In this case we can use HEAD~ (1 commit behind master)
           # because all merges will be squash merges
