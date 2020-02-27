@@ -15,7 +15,7 @@ stages:
       continueOnError: true
       displayName: Build Golang Base Container
       steps: 
-        - script: |
+        - bash: |
           MASTER="remotes/origin/master"
           GIT_DIFF_SOURCEBRANCH="HEAD"
           
