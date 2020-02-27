@@ -34,7 +34,6 @@ steps:
   workingDirectory: ${{ parameters.folder_name }}
   
 - bash: |
-    pipenv install pylint==2.3.1 flake8 pytest --skip-lock
     pipenv run pylint $PACKAGE_NAME && \
     pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
   displayName: 'Lint'
