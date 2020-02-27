@@ -12,7 +12,7 @@ stages:
       vmImage: 'ubuntu-latest'
     variables:
         DEPS_LABEL: 'master'
-        ${{ if eq(${{parameters.build_deps}}, 'master') }}:
+        ${{ if eq(parameters.build_deps, 'master') }}:
             DEPS_LABEL: '$(Build.BuildId)'
         ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
             BUILD_LABEL: 'master'
@@ -130,7 +130,7 @@ stages:
       vmImage: 'ubuntu-latest'
     variables:
         DEPS_LABEL: 'master'
-        ${{ if eq(${{parameters.build_deps}}, 'master') }}:
+        ${{ if eq(parameters.build_deps, 'master') }}:
             DEPS_LABEL: '$(Build.BuildId)'
         ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
             BUILD_LABEL: 'master'
