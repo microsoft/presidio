@@ -2,7 +2,7 @@ variables:
   GOBIN: '$(GOPATH)/bin'
   GOPATH: '$(system.defaultWorkingDirectory)/gopath'
   MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)'
-  GOROOT: '/usr/local/go1.11's
+  GOROOT: '/usr/local/go1.11'
 
 trigger: # CI triggers	
   batch: false 
