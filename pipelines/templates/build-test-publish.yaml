@@ -27,8 +27,8 @@ stages:
       steps:
         - template: ./build-golang-template.yaml
           parameters:
-            registry_service_connection: ${{parameters.registry_name}}
-            registry_name: ${{parameters.registry_service_principal}} 
+            registry_service_connection: ${{parameters.registry_service_principal}}
+            registry_name: ${{parameters.registry_name}} 
             dep_ensure: true
             make_command_to_run: docker-build-golang-base
             image_name: presidio-golang-base
@@ -64,8 +64,8 @@ stages:
       steps:  
       - template: ./Build-golang-template.yaml
         parameters:
-          registry_service_connection: ${{parameters.registry_name}} 
-          registry_name: ${{parameters.registry_service_principal}} 
+          registry_service_connection: ${{parameters.registry_service_principal}}
+            registry_name: ${{parameters.registry_name}}
           image_name: $(SERVICE_NAME)
           dep_ensure: false
           make_command_to_run: docker-build-golang-single
