@@ -73,17 +73,17 @@ stages:
           deps_label: $(DEPS_LABEL)
   
     - job: BuildPython
-        displayName: Build Analyzer Service
-        timeoutInMinutes: 60  
-        steps: 
-        - template: build-python-template.yaml  
-          parameters:
-            folder_name: presidio-analyzer
-            package_name: analyzer
-            lint: true
-            artifact_feed: ${{parameters.artifact_feed}}
-            registry_name_parameter: ${{parameters.registry_name}} 
-            registry_parameter: ${{parameters.registry_service_principal}}
+      displayName: Build Analyzer Service
+      timeoutInMinutes: 60  
+      steps: 
+      - template: build-python-template.yaml  
+        parameters:
+          folder_name: presidio-analyzer
+          package_name: analyzer
+          lint: true
+          artifact_feed: ${{parameters.artifact_feed}}
+          registry_name_parameter: ${{parameters.registry_name}} 
+          registry_parameter: ${{parameters.registry_service_principal}}
   
   # Integration tests
   - stage: TestFunctional
