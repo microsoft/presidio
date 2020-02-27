@@ -31,35 +31,35 @@ stages:
             registry_name: ${{parameters.registry_service_principal}} 
             dep_ensure: true
             make_command_to_run: docker-build-golang-base
-            presidio_label: presidio-golang-base
+            image_name: presidio-golang-base
             presidio_label: $(Build.BuildID)
             deps_label: $(DEPS_LABEL)
 
     - job:  GolangService
-        displayName: Build Service Containers
-        dependsOn: 
-        - Golangbase
-        strategy:
-            maxParallel: 10
-            matrix:
-            ANNONIMYZER:
-                SERVICE_NAME: presidio-anonymizer
-            OCR:
-                SERVICE_NAME: presidio-ocr
-            ANNONIMYZER_IMAGE:
-                SERVICE_NAME: presidio-anonymizer-image
-            API:
-                SERVICE_NAME: presidio-api
-            SCHDULER:
-                SERVICE_NAME: presidio-scheduler
-            DATA_SINK:
-                SERVICE_NAME: presidio-datasink
-            COLLECTOR:
-                SERVICE_NAME: presidio-collector
-            RECOGNIZER_STORE:
-                SERVICE_NAME: presidio-recognizers-store
-            TESTER:
-                SERVICE_NAME: presidio-tester
+      displayName: Build Service Containers
+      dependsOn: 
+      - Golangbase
+      strategy:
+        maxParallel: 10
+        matrix:
+          ANNONIMYZER:
+              SERVICE_NAME: presidio-anonymizer
+          OCR:
+              SERVICE_NAME: presidio-ocr
+          ANNONIMYZER_IMAGE:
+              SERVICE_NAME: presidio-anonymizer-image
+          API:
+              SERVICE_NAME: presidio-api
+          SCHDULER:
+              SERVICE_NAME: presidio-scheduler
+          DATA_SINK:
+              SERVICE_NAME: presidio-datasink
+          COLLECTOR:
+              SERVICE_NAME: presidio-collector
+          RECOGNIZER_STORE:
+              SERVICE_NAME: presidio-recognizers-store
+          TESTER:
+              SERVICE_NAME: presidio-tester
         timeoutInMinutes: 15 
         steps:  
         - template: Build-golang-template.yamls
