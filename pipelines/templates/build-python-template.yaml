@@ -28,12 +28,15 @@ steps:
 - bash: |    
     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
     pipenv install --dev --sequential
+    # Print venv information
+    pipenv --venv
   displayName: 'Install dependencies'
   workingDirectory: ${{ parameters.folder_name }}
   
 - bash: |
+    pipenv install pylint==2.3.1 flake8 pytest --skip-lock
     pipenv run pylint $PACKAGE_NAME && \
-    pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py" --ignore=E402
+    pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
   displayName: 'Lint'
   workingDirectory: ${{ parameters.folder_name }}
   env:
