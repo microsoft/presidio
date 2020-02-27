@@ -82,11 +82,12 @@ stages:
           package_name: analyzer
           lint: true
           artifact_feed: ${{parameters.artifact_feed}}
+          registry_service_connection: ${{parameters.registry_service_principal}}
           registry_name: ${{parameters.registry_name}} 
           registry_service_principal: ${{parameters.registry_service_principal}}
           presidio_label: $(Build.BuildID)
           deps_label: $(DEPS_LABEL)
-          
+
   # Integration tests
   - stage: TestFunctional
     displayName: Run Functional Tests
