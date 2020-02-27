@@ -51,8 +51,8 @@ steps:
   workingDirectory: ${{ parameters.folder_name }}
 - bash: | 
     sed -i 's@dev@'"$PYTHON_BUILD_TAG"'@' ./VERSION
-    # export FULL_PYTHON_VERSION=`cat ./VERSION`
-    # echo '##vso[task.setvariable variable=FULL_PYTHON_VERSION;isOutput=true]$(FULL_PYTHON_VERSION)'
+    export FULL_PYTHON_VERSION=`cat ./VERSION`
+    echo '##vso[task.setvariable variable=FULL_PYTHON_VERSION;isOutput=true]$(FULL_PYTHON_VERSION)'
   displayName: Set version number
 - bash: |
     pip install wheel
