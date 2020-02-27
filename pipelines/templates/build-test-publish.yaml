@@ -154,7 +154,7 @@ stages:
         - bash: |
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
-        env:
+          env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
           condition: eq(variables['Build.SourceBranchName'], 'master')
@@ -162,7 +162,7 @@ stages:
         - bash: | 
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch
-        env:
+          env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
           condition: ne(variables['Build.SourceBranchName'], 'master')
