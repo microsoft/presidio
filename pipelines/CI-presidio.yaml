@@ -39,3 +39,5 @@ stages:
       registry_service_principal: $(REGISTRY)
       registry_name: $(REGISTRY_NAME)
       artifact_feed: presidio
+      pypi_extra_index_url: https://pkgs.dev.azure.com/csedevil/_packaging/presidio/pypi/simple/
+

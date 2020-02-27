@@ -123,7 +123,7 @@ stages:
   # Push artifacts
   - stage: PublishArtifacts 
     displayName: Publish Build Artifacts
-    condition: ne(variables['Build.Reason'], 'PullRequest')
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     dependsOn: 
     - TestFunctional
     pool:

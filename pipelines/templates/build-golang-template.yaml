@@ -31,7 +31,7 @@ steps:
   displayName: 'Run dep ensure'
   condition: eq('${{ parameters.dep_ensure }}', 'true')
 - bash: |
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} PRESIDIO_DEPS_LABEL=${{parameters.depss_label}} GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} PRESIDIO_DEPS_LABEL=${{parameters.deps_label}} GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     DOCKER_COMMAND: ${{ parameters.make_command_to_run }}
