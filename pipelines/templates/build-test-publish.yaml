@@ -12,7 +12,7 @@ stages:
       vmImage: 'ubuntu-latest'
     jobs:
     - job: GitDiff
-      canFail: true
+      continueOnError: true
       displayName: Build Golang Base Container
       steps: 
         - script: |
