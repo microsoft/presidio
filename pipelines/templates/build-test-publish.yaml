@@ -16,6 +16,9 @@ stages:
       displayName: Build Golang Base Container
       steps: 
         - bash: |
+
+
+        
           MASTER="remotes/origin/master"
           GIT_DIFF_SOURCEBRANCH="HEAD"
           # Set build_deps Triggers to false
