@@ -22,6 +22,14 @@ steps:
   inputs:
     containerRegistry: ${{ parameters.registry_service_connection }}
     command: 'login'
+# Cache the docker image file
+- task: CacheBeta@0
+  inputs:
+    key: go-cache | go.sum
+    path: ".gocache"
+    restoreKeys: go-cache 
+  displayName: Cache go mod cache
+  workingDirectory: '$(MODULEPATH)'
 - bash: |
     curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
     dep ensure    
