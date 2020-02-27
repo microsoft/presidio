@@ -15,20 +15,20 @@ steps:
     python -m pip install pipenv
     pipenv --python 3
     pip install twine
-  displayName: 'install python pre'
+  displayName: 'Install python environment'
   workingDirectory: ${{ parameters.folder_name }}
 - task: TwineAuthenticate@0
   inputs:
     artifactFeeds: ${{ parameters.artifact_feed }}
-  displayName: 'authenticate RC with artifacts'
+  displayName: 'Authenticate RC with Azure Artifacts'
 - task: PipAuthenticate@0
   inputs:
     artifactFeeds: presidio
-  displayName: 'authenticate PIP with artifacts'
+  displayName: 'Authenticate PIP with Azure Artifacts'
 - bash: |    
     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
     pipenv install --dev --sequential
-  displayName: 'Install'
+  displayName: 'Install Presidio wheel'
   workingDirectory: ${{ parameters.folder_name }}
   
 - bash: |
@@ -43,25 +43,26 @@ steps:
     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
     pipenv install --skip-lock pytest-azurepipelines
     pipenv run pytest --log-cli-level=0
-  displayName: 'Test'
+  displayName: 'Run Tests'
   workingDirectory: ${{ parameters.folder_name }}
 - bash: | 
     sed -i 's@.*@'"$PYTHON_BUILD_LABEL"'@' ./VERSION
     # export FULL_PYTHON_VERSION=`cat ./VERSION`
     # echo '##vso[task.setvariable variable=FULL_PYTHON_VERSION;isOutput=true]$(FULL_PYTHON_VERSION)'
-  displayName: SED python version
+  displayName: Set version number
 - bash: |
     pip install wheel
     python setup.py bdist_wheel
   workingDirectory: ${{ parameters.folder_name }}
-  displayName: 'Package'
+  displayName: 'Package Wheel'
 - script: 'twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*'
   workingDirectory: ${{ parameters.folder_name }}
   continueOnError: 'True'
-  displayName: 'upload to artifacts'
+  displayName: 'Upload wheel to Azure Artifacts'
   env:
     FEED_NAME: ${{ parameters.artifact_feed }}
 - task: Docker@2
+  displayName: 'Docker login'
   inputs:
     containerRegistry: ${{ parameters.registry_parameter }}
     command: 'login'

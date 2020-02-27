@@ -9,8 +9,16 @@ ARG VERSION
 WORKDIR /usr/bin/${NAME}
 ENV PIP_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
 
-RUN source $(pipenv --venv)/bin/activate && pip install presidio-analyzer==${VERSION:-0.0.1}    
+ADD ./${NAME} /usr/bin/${NAME} 
+RUN pipenv --venv
+RUN pipenv run pip freeze
 
+RUN pipenv install pylint==2.3.1 flake8 pytest --skip-lock
+
+RUN pipenv run pylint analyzer && \
+    pipenv run flake8 analyzer --exclude "*pb2*.py" && \
+	pipenv run pytest --log-cli-level=0
+    
 #----------------------------
 
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}

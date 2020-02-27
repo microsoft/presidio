@@ -36,7 +36,7 @@ stages:
             deps_label: $(DEPS_LABEL)
 
     - job:  GolangService
-      displayName: Build Service Containers
+      displayName: Build Golang Service Containers
       timeoutInMinutes: 15 
       dependsOn: 
       - Golangbase

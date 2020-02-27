@@ -1,9 +1,10 @@
-import os # noqa
-import sys # noqa
+import os
+import sys
 
 # pylint: disable=unused-import,wrong-import-position
 sys.path.append(os.path.dirname(os.path.dirname(
-    os.path.abspath(__file__))) + "/analyzer") # noqa
+    os.path.abspath(__file__))) + "/analyzer")
+
 
 from analyzer.presidio_logger import PresidioLogger
 from analyzer.analysis_explanation import AnalysisExplanation
