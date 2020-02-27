@@ -62,7 +62,7 @@ stages:
           TESTER:
               SERVICE_NAME: presidio-tester
       steps:  
-      - template: ./Build-golang-template.yamls
+      - template: ./Build-golang-template.yaml
         parameters:
           registry_service_connection: ${{parameters.registry_name}} 
           registry_name: ${{parameters.registry_service_principal}} 
