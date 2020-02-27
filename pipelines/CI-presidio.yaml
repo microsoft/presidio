@@ -3,6 +3,7 @@ variables:
   GOPATH: '$(system.defaultWorkingDirectory)/gopath'
   MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)'
   GOROOT: '/usr/local/go1.11'
+  PYTHON.VERSION: '3.7'
 
 trigger: # CI triggers	
   batch: false 
