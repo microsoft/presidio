@@ -18,7 +18,7 @@ setuptools.setup(
         'analyzer', 'analyzer.predefined_recognizers', 'analyzer.nlp_engine','analyzer.recognizer_registry'
     ],
     trusted_host=['pypi.org'],
-    tests_require=['pytest', 'flake8', 'pylint==2.3.1'],
+    tests_require=['pytest', 'flake8==3.7.9', 'pylint==2.3.1'],
     install_requires=[
         'cython==0.29.10', 
         'spacy==2.2.3', 
