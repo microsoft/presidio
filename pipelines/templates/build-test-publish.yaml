@@ -37,6 +37,7 @@ stages:
 
     - job:  GolangService
       displayName: Build Service Containers
+      timeoutInMinutes: 15 
       dependsOn: 
       - Golangbase
       strategy:
@@ -60,17 +61,16 @@ stages:
               SERVICE_NAME: presidio-recognizers-store
           TESTER:
               SERVICE_NAME: presidio-tester
-        timeoutInMinutes: 15 
-        steps:  
-        - template: Build-golang-template.yamls
-            parameters:
-              registry_service_connection: ${{parameters.registry_name}} 
-              registry_name: ${{parameters.registry_service_principal}} 
-              image_name: $(SERVICE_NAME)
-              dep_ensure: false
-              make_command_to_run: docker-build-golang-single
-              presidio_label: $(Build.BuildID)
-              deps_label: $(DEPS_LABEL)
+      steps:  
+      - template: Build-golang-template.yamls
+          parameters:
+            registry_service_connection: ${{parameters.registry_name}} 
+            registry_name: ${{parameters.registry_service_principal}} 
+            image_name: $(SERVICE_NAME)
+            dep_ensure: false
+            make_command_to_run: docker-build-golang-single
+            presidio_label: $(Build.BuildID)
+            deps_label: $(DEPS_LABEL)
   
     - job: BuildPython
         displayName: Build Analyzer Service
