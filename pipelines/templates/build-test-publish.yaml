@@ -143,9 +143,9 @@ stages:
         displayName: Push Containers
         steps:  
         - task: Docker@2
-        inputs:
-          containerRegistry: ${{ parameters.registry_parameter }}
-          command: 'login'
+          inputs:
+            containerRegistry: ${{ parameters.registry_parameter }}
+            command: 'login'
         - task: PublishBuildArtifacts@1
           displayName: 'Publish Artifact: dropchart'
           inputs:
@@ -156,13 +156,13 @@ stages:
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
         env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
-        displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
-        condition: eq(variables['Build.SourceBranchName'], 'master')
+          displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
+          condition: eq(variables['Build.SourceBranchName'], 'master')
         
         - bash: | 
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch
         env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
-        displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
-        condition: ne(variables['Build.SourceBranchName'], 'master')
+          displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
+          condition: ne(variables['Build.SourceBranchName'], 'master')
