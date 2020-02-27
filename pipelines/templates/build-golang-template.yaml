@@ -1,7 +1,6 @@
 parameters:
   registry_service_connection: '' # container registry service connection name 
   registry_name: '' # container registry URI
-  dep_ensure: 'false'
   make_command_to_run: ''
   image_name: ''
   presidio_label: ''
@@ -22,14 +21,6 @@ steps:
   inputs:
     containerRegistry: ${{ parameters.registry_service_connection }}
     command: 'login'
-- bash: |
-    curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-    dep ensure    
-  env:
-    REGISTRY_NAME: ${{ parameters.registry_name }}
-  workingDirectory: '$(MODULEPATH)'
-  displayName: 'Run dep ensure'
-  condition: eq('${{ parameters.dep_ensure }}', 'true')
 - bash: |
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
   env:

@@ -37,6 +37,7 @@ docker-build-deps:
 
 .PHONY: docker-build-base
 docker-build-base:
+	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_BASE) || echo "\nCould not pull shared base Go image from registry, building locally. If you planned to build locally, the previous error message could be ignored\n"		-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)
 	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_LABEL) -f Dockerfile.golang.base .
 
 

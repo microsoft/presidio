@@ -29,7 +29,6 @@ stages:
           parameters:
             registry_service_connection: ${{parameters.registry_service_principal}}
             registry_name: ${{parameters.registry_name}} 
-            dep_ensure: true
             make_command_to_run: docker-build-golang-base
             image_name: presidio-golang-base
             presidio_label: $(Build.BuildID)
@@ -67,7 +66,6 @@ stages:
           registry_service_connection: ${{parameters.registry_service_principal}}
           registry_name: ${{parameters.registry_name}}
           image_name: $(SERVICE_NAME)
-          dep_ensure: false
           make_command_to_run: docker-build-golang-single
           presidio_label: $(Build.BuildID)
           deps_label: $(DEPS_LABEL)
