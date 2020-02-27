@@ -2,17 +2,13 @@ variables:
   GOBIN: '$(GOPATH)/bin'
   GOPATH: '$(system.defaultWorkingDirectory)/gopath'
   MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)'
-  GOROOT: '/usr/local/go1.11'
-  MASTER_BRANCH_LABEL: latest # tag name of master branch
-  DEV_BRANCH_LABEL: latest-dev # tag name of development branch
-  DEFAULT_DEPS_LABEL: latest-dev
+  GOROOT: '/usr/local/go1.11's
 
 trigger: # CI triggers	
   batch: false 
   branches:
       include: 
       - master	
-      - development	
   paths:
     exclude: 
       - Dockerfile.golang.deps	
@@ -26,7 +22,6 @@ pr: # PR triggers
   branches:
       include: 
       - development	
-      - master
   paths:
     exclude: 
       - Dockerfile.golang.deps	
@@ -36,38 +31,10 @@ pr: # PR triggers
       - presidio-analyzer/Pipfile
       - presidio-analyzer/Pipfile.lock
       - '*.md'
-
-jobs:
-- job:  BuildAndPushPresidioMaster
-  timeoutInMinutes: 90  
-  condition: eq(variables['Build.SourceBranchName'], 'master')
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:  
-  - template: templates/presidio-build-template.yaml  # Template reference
+stages:
+  - template: templates/build-test-publish.yaml
     parameters:
-      registry_name_parameter: $(REGISTRY_NAME) # input parameter
-      registry_parameter: $(REGISTRY) # input parameter
-      deps_label_parameter: $(MASTER_BRANCH_LABEL)
-- job:  BuildAndPushPresidioDevelopment
-  timeoutInMinutes: 90  
-  condition: eq(variables['Build.SourceBranchName'], 'development')
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:  
-  - template: templates/presidio-build-template.yaml  # Template reference
-    parameters:
-      registry_name_parameter: $(REGISTRY_NAME) # input parameter
-      registry_parameter: $(REGISTRY) # input parameter
-      deps_label_parameter: $(DEV_BRANCH_LABEL)
-- job:  BuildAndPushPresidioFeature
-  timeoutInMinutes: 90  
-  condition: and(ne(variables['Build.SourceBranchName'], 'development'), ne(variables['Build.SourceBranchName'], 'master'))
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:  
-  - template: templates/presidio-build-template.yaml  # Template reference
-    parameters:
-      registry_name_parameter: $(REGISTRY_NAME) # input parameter
-      registry_parameter: $(REGISTRY) # input parameter
-      deps_label_parameter: $(DEPENDENCY_DEFAULT) # input parameter
+      build_deps: false
+      registry_service_principal: $(REGISTRY)
+      registry_name: $(REGISTRY_NAME)
+      artifact_feed: presidio

@@ -1,0 +1,168 @@
+parameters:
+  build_deps: false
+  registry_service_principal: 
+  registry_name: 
+  artifact_feed:
+
+stages:
+  # Build
+  - stage: BuildPresidioServices
+    displayName: Build Presidio Services
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+        DEPS_LABEL: 'master'
+        ${{ if eq({{parameters.build_deps}}, 'master') }}:
+            DEPS_LABEL: '$(Build.BuildId)'
+        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+            BUILD_LABEL: 'master'
+            PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
+        ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+            BUILD_LABEL: '$(Build.SourceBranchName)'
+            PYTHON_BUILD_TAG: '$(Build.BuildId)'
+    jobs: 
+    - job: GolangBase
+      displayName: Build Golang Base Container
+      timeoutInMinutes: 30 
+      steps:
+        - template: build-golang-template.yaml
+          parameters:
+            registry_service_connection: ${{parameters.registry_name}}
+            registry_name: ${{parameters.registry_service_principal}} 
+            dep_ensure: true
+            make_command_to_run: docker-build-golang-base
+            presidio_label: presidio-golang-base
+            presidio_label: $(Build.BuildID)
+            deps_label: $(DEPS_LABEL)
+
+    - job:  GolangService
+        displayName: Build Service Containers
+        dependsOn: 
+        - Golangbase
+        strategy:
+            maxParallel: 10
+            matrix:
+            ANNONIMYZER:
+                SERVICE_NAME: presidio-anonymizer
+            OCR:
+                SERVICE_NAME: presidio-ocr
+            ANNONIMYZER_IMAGE:
+                SERVICE_NAME: presidio-anonymizer-image
+            API:
+                SERVICE_NAME: presidio-api
+            SCHDULER:
+                SERVICE_NAME: presidio-scheduler
+            DATA_SINK:
+                SERVICE_NAME: presidio-datasink
+            COLLECTOR:
+                SERVICE_NAME: presidio-collector
+            RECOGNIZER_STORE:
+                SERVICE_NAME: presidio-recognizers-store
+            TESTER:
+                SERVICE_NAME: presidio-tester
+        timeoutInMinutes: 15 
+        steps:  
+        - template: Build-golang-template.yamls
+            parameters:
+              registry_service_connection: ${{parameters.registry_name}} 
+              registry_name: ${{parameters.registry_service_principal}} 
+              image_name: $(SERVICE_NAME)
+              dep_ensure: false
+              make_command_to_run: docker-build-golang-single
+              presidio_label: $(Build.BuildID)
+              deps_label: $(DEPS_LABEL)
+  
+    - job: BuildPython
+        displayName: Build Analyzer Service
+        timeoutInMinutes: 60  
+        steps: 
+        - template: build-python-template.yaml  
+            parameters:
+              folder_name: presidio-analyzer
+              package_name: analyzer
+              lint: true
+              artifact_feed: ${{parameters.artifact_feed}}
+              registry_name_parameter: ${{parameters.registry_name}} 
+              registry_parameter: ${{parameters.registry_service_principal}}
+  
+  # Integration tests
+  - stage: TestFunctional
+    displayName: Run Functional Tests
+    dependsOn: 
+    - BuildPresidioServices
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs: 
+      - job: FunctionalTests
+        displayName: Presidio Functional Tests
+        steps:  
+        - bash: |
+            mkdir -p '$(GOBIN)'
+            mkdir -p '$(GOPATH)/pkg'
+            rm -rf '$(MODULEPATH)'
+            mkdir -p '$(MODULEPATH)'
+            shopt -s extglob
+            mv !(gopath) '$(MODULEPATH)' --force
+            echo '##vso[task.prependpath]$(GOBIN)'
+            echo '##vso[task.prependpath]$(GOROOT)/bin'
+          displayName: 'Setup Go Env'
+        - bash: | 
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+          displayName: 'dep ensure'
+          workingDirectory: '$(MODULEPATH)'
+        - task: Docker@2
+          inputs:
+            containerRegistry: ${{parameters.registry_service_principal}}
+            command: 'login'
+        - bash: | 
+            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional-no-build
+          displayName: 'Run functional tests'
+          workingDirectory: '$(MODULEPATH)'
+
+  # Push artifacts
+  - stage: PublishArtifacts 
+    displayName: Publish Build Artifacts
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+    dependsOn: 
+    - TestFunctional
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+        DEPS_LABEL: 'master'
+        ${{ if eq({{parameters.build_deps}}, 'master') }}:
+            DEPS_LABEL: '$(Build.BuildId)'
+        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+            BUILD_LABEL: 'master'
+            PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
+        ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+            BUILD_LABEL: '$(Build.SourceBranchName)'
+            PYTHON_BUILD_TAG: '$(Build.BuildId)'
+    jobs: 
+      - job: PublishArtifacts
+        displayName: Push Containers
+        steps:  
+        - task: Docker@2
+        inputs:
+          containerRegistry: ${{ parameters.registry_parameter }}
+          command: 'login'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: dropchart'
+          inputs:
+            PathtoPublish: charts
+            ArtifactName: dropchart  
+        - bash: |
+            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
+            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
+        env:
+            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+        displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
+        condition: eq(variables['Build.SourceBranchName'], 'master')
+        
+        - bash: | 
+            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
+            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch
+        env:
+            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+        displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
+        condition: ne(variables['Build.SourceBranchName'], 'master')
