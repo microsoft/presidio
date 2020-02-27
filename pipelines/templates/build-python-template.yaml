@@ -71,12 +71,13 @@ steps:
     containerRegistry: ${{ parameters.registry_service_principal }}
     command: 'login'
 - bash: |
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL VERSION=$FULL_PYTHON_VERSION PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
+    echo $VERSION
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL VERSION=$VERSION PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
     PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
-    VERSION: ${{ parameters.version }}
+    VERSION: $FULL_PYTHON_VERSION
   displayName: 'Build Python Container'
 - bash: | 
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python
