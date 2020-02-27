@@ -6,7 +6,6 @@ parameters:
   presidio_label: ''
   deps_label: ''
 steps:
-//python stuff here
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(PYTHON.VERSION)'
