@@ -11,11 +11,11 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     variables:
-        DEPS_LABEL: 'master'
-        ${{ if eq(parameters.build_deps, 'master') }}:
+        DEPS_LABEL: 'latest'
+        ${{ if eq(parameters.build_deps, 'true') }}:
             DEPS_LABEL: '$(Build.BuildId)'
         ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-            BUILD_LABEL: 'master'
+            BUILD_LABEL: 'latest'
             PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
         ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
             BUILD_LABEL: '$(Build.SourceBranchName)'
@@ -129,11 +129,11 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     variables:
-        DEPS_LABEL: 'master'
+        DEPS_LABEL: 'latest'
         ${{ if eq(parameters.build_deps, 'master') }}:
             DEPS_LABEL: '$(Build.BuildId)'
         ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-            BUILD_LABEL: 'master'
+            BUILD_LABEL: 'latest'
             PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
         ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
             BUILD_LABEL: '$(Build.SourceBranchName)'

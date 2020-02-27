@@ -28,12 +28,12 @@ steps:
 - bash: |    
     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
     pipenv install --dev --sequential
-  displayName: 'Install Presidio wheel'
+  displayName: 'Install dependencies'
   workingDirectory: ${{ parameters.folder_name }}
   
 - bash: |
     pipenv run pylint $PACKAGE_NAME && \
-    pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
+    pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py" --ignore=E402
   displayName: 'Lint'
   workingDirectory: ${{ parameters.folder_name }}
   env:
