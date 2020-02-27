@@ -68,7 +68,7 @@ steps:
 - task: Docker@2
   displayName: 'Docker login'
   inputs:
-    containerRegistry: ${{ parameters.registry_parameter }}
+    containerRegistry: ${{ parameters.registry_service_principal }}
     command: 'login'
 - bash: |
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL VERSION=$FULL_PYTHON_VERSION PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python

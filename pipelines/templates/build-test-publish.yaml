@@ -147,7 +147,7 @@ stages:
         steps:  
         - task: Docker@2
           inputs:
-            containerRegistry: ${{ parameters.registry_parameter }}
+            containerRegistry: ${{ parameters.registry_service_principal }}
             command: 'login'
         - task: PublishBuildArtifacts@1
           displayName: 'Publish Artifact: dropchart'
