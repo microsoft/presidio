@@ -25,7 +25,7 @@ stages:
       displayName: Build Golang Base Container
       timeoutInMinutes: 30 
       steps:
-        - template: build-golang-template.yaml
+        - template: ./build-golang-template.yaml
           parameters:
             registry_service_connection: ${{parameters.registry_name}}
             registry_name: ${{parameters.registry_service_principal}} 
@@ -62,7 +62,7 @@ stages:
           TESTER:
               SERVICE_NAME: presidio-tester
       steps:  
-      - template: Build-golang-template.yamls
+      - template: ./Build-golang-template.yamls
         parameters:
           registry_service_connection: ${{parameters.registry_name}} 
           registry_name: ${{parameters.registry_service_principal}} 
@@ -76,7 +76,7 @@ stages:
       displayName: Build Analyzer Service
       timeoutInMinutes: 60  
       steps: 
-      - template: build-python-template.yaml  
+      - template: ./build-python-template.yaml  
         parameters:
           folder_name: presidio-analyzer
           package_name: analyzer
