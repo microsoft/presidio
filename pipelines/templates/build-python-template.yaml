@@ -77,7 +77,7 @@ steps:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
     PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
-    VERSION: $FULL_PYTHON_VERSION
+    VERSION: $(FULL_PYTHON_VERSION)
   displayName: 'Build Python Container'
 - bash: | 
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python
