@@ -8,6 +8,11 @@ parameters:
   registry_name: ''
   registry_service_principal: ''
 steps:
+- task: Docker@2
+  displayName: 'Docker login'
+  inputs:
+    containerRegistry: ${{ parameters.registry_service_principal }}
+    command: 'login'
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(PYTHON.VERSION)'
@@ -34,7 +39,6 @@ steps:
     pipenv --venv
   displayName: 'Install dependencies'
   workingDirectory: ${{ parameters.folder_name }}
-  
 - bash: |
     pipenv run pylint $PACKAGE_NAME && \
     pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
@@ -66,11 +70,6 @@ steps:
   displayName: 'Upload wheel to Azure Artifacts'
   env:
     FEED_NAME: ${{ parameters.artifact_feed }}
-- task: Docker@2
-  displayName: 'Docker login'
-  inputs:
-    containerRegistry: ${{ parameters.registry_service_principal }}
-    command: 'login'
 - bash: |
     echo "$FULL_PYTHON_VERSION"
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHELL_VERSION=$FULL_PYTHON_VERSION PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python

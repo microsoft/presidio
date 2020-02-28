@@ -35,12 +35,11 @@ stages:
             echo "$FILE_CHANGE_SET"
 
             # if git diff detects commits made to the deps files we build the dep containerss
-            #|Gopkg.lock|Gopkg.toml|Dockerfile.python.deps|presidio-analyzer/Pipfiles
-            if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Dockerfile.golang.base" -e "Gopkg.lock")" ]]; then
+            if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Gopkg.lock" -e "Gopkg.toml" -e "Dockerfile.python.deps" -e "Dockerfile.golang.deps" -e "Dockerfile.python.deps" -e "presidio-analyzer/Pipfile" -e "presidio-analyzer/Pipfile.lock")" ]]; then
                 echo "Performing build deps."
                 BUILD_DEPS=true
             fi
-            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$v"
+            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
   # Build
   - stage: BuildPresidioServices
     displayName: Build Presidio Services
@@ -57,54 +56,54 @@ stages:
             BUILD_LABEL: '$(Build.SourceBranchName)'
             PYTHON_BUILD_TAG: '$(Build.BuildId)'
     jobs: 
-    # - job: GolangBase
-    #   displayName: Build Golang Base Container
-    #   timeoutInMinutes: 30 
-    #   steps:
-    #     - template: ./build-golang-template.yaml
-    #       parameters:
-    #         registry_service_connection: ${{parameters.registry_service_principal}}
-    #         registry_name: ${{parameters.registry_name}} 
-    #         make_command_to_run: docker-build-golang-base
-    #         image_name: presidio-golang-base
-    #         presidio_label: $(Build.BuildID)
-    #         deps_label: $(DEPS_LABEL)
+    - job: GolangBase
+      displayName: Build Golang Base Container
+      timeoutInMinutes: 30 
+      steps:
+        - template: ./build-golang-template.yaml
+          parameters:
+            registry_service_connection: ${{parameters.registry_service_principal}}
+            registry_name: ${{parameters.registry_name}} 
+            make_command_to_run: docker-build-golang-base
+            image_name: presidio-golang-base
+            presidio_label: $(Build.BuildID)
+            deps_label: $(DEPS_LABEL)
 
-    # - job:  GolangService
-    #   displayName: Build Golang Service Containers
-    #   timeoutInMinutes: 15 
-    #   dependsOn: 
-    #   - Golangbase
-    #   strategy:
-    #     maxParallel: 10
-    #     matrix:
-    #       ANNONIMYZER:
-    #           SERVICE_NAME: presidio-anonymizer
-    #       OCR:
-    #           SERVICE_NAME: presidio-ocr
-    #       ANNONIMYZER_IMAGE:
-    #           SERVICE_NAME: presidio-anonymizer-image
-    #       API:
-    #           SERVICE_NAME: presidio-api
-    #       SCHDULER:
-    #           SERVICE_NAME: presidio-scheduler
-    #       DATA_SINK:
-    #           SERVICE_NAME: presidio-datasink
-    #       COLLECTOR:
-    #           SERVICE_NAME: presidio-collector
-    #       RECOGNIZER_STORE:
-    #           SERVICE_NAME: presidio-recognizers-store
-    #       TESTER:
-    #           SERVICE_NAME: presidio-tester
-    #   steps:  
-    #   - template: ./Build-golang-template.yaml
-    #     parameters:
-    #       registry_service_connection: ${{parameters.registry_service_principal}}
-    #       registry_name: ${{parameters.registry_name}}
-    #       image_name: $(SERVICE_NAME)
-    #       make_command_to_run: docker-build-golang-single
-    #       presidio_label: $(Build.BuildID)
-    #       deps_label: $(DEPS_LABEL)
+    - job:  GolangService
+      displayName: Build Golang Service Containers
+      timeoutInMinutes: 15 
+      dependsOn: 
+      - Golangbase
+      strategy:
+        maxParallel: 10
+        matrix:
+          ANNONIMYZER:
+              SERVICE_NAME: presidio-anonymizer
+          OCR:
+              SERVICE_NAME: presidio-ocr
+          ANNONIMYZER_IMAGE:
+              SERVICE_NAME: presidio-anonymizer-image
+          API:
+              SERVICE_NAME: presidio-api
+          SCHDULER:
+              SERVICE_NAME: presidio-scheduler
+          DATA_SINK:
+              SERVICE_NAME: presidio-datasink
+          COLLECTOR:
+              SERVICE_NAME: presidio-collector
+          RECOGNIZER_STORE:
+              SERVICE_NAME: presidio-recognizers-store
+          TESTER:
+              SERVICE_NAME: presidio-tester
+      steps:  
+      - template: ./Build-golang-template.yaml
+        parameters:
+          registry_service_connection: ${{parameters.registry_service_principal}}
+          registry_name: ${{parameters.registry_name}}
+          image_name: $(SERVICE_NAME)
+          make_command_to_run: docker-build-golang-single
+          presidio_label: $(Build.BuildID)
+          deps_label: $(DEPS_LABEL)
   
     - job: BuildPython
       displayName: Build Analyzer Service
