@@ -40,6 +40,7 @@ stages:
                 BUILD_DEPS=true
             fi
             echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+          displayName: Diff verify deps build
   # Build
   - stage: BuildPresidioServices
     displayName: Build Presidio Services
