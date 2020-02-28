@@ -36,7 +36,7 @@ stages:
 
             # if git diff detects commits made to the deps files we build the dep containerss
             #|Gopkg.lock|Gopkg.toml|Dockerfile.python.deps|presidio-analyzer/Pipfiles
-            if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Dockerfile.golang.base")" ]]; then
+            if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Dockerfile.golang.base|Gopkg.lock")" ]]; then
                 echo "Performing build deps."
                 BUILD_DEPS=true
             fi
