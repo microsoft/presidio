@@ -10,7 +10,7 @@ GOLANG_DEPS	= presidio-golang-deps
 PYTHON_DEPS	= presidio-python-deps
 GOLANG_BASE	= presidio-golang-base
 PIP_EXTRA_INDEX_URL =
-WHELL_VERSION = 
+WHEEL_VERSION = 
 GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
 VERSION   ?= ${GIT_TAG}
 PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
@@ -69,7 +69,7 @@ docker-build-python: $(addsuffix -dpypiimage,$(PYTHON_IMAGES))
 ifndef PIP_EXTRA_INDEX_URL
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile.local .
 else
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg PIP_EXTRA_INDEX_URL=$(PIP_EXTRA_INDEX_URL) --build-arg VERSION=$(WHELL_VERSION) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg PIP_EXTRA_INDEX_URL=$(PIP_EXTRA_INDEX_URL) --build-arg VERSION=$(WHEEL_VERSION) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 endif
 
 # You must be logged into DOCKER_REGISTRY before you can push.

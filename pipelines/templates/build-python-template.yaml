@@ -57,7 +57,7 @@ steps:
     sed -i 's@dev@'"$PYTHON_BUILD_TAG"'@' ./VERSION
     FULL_PYTHON_VERSION=`cat ./VERSION`
     echo "$FULL_PYTHON_VERSION"
-    echo '##vso[task.setvariable variable=FULL_PYTHON_VERSION;isOutput=true]$FULL_PYTHON_VERSION'
+    echo '##vso[task.setvariable variable=FULL_PYTHON_VERSION]$FULL_PYTHON_VERSION'
   displayName: Set version number
 # - bash: |
 #     pip install wheel
@@ -73,7 +73,7 @@ steps:
 #     FEED_NAME: ${{ parameters.artifact_feed }}
 - bash: |
     echo "$FULL_PYTHON_VERSION"
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHELL_VERSION=$FULL_PYTHON_VERSION PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$FULL_PYTHON_VERSION PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
