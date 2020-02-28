@@ -8,69 +8,69 @@ parameters:
   registry_name: ''
   registry_service_principal: ''
 steps:
-# - task: Docker@2
-#   displayName: 'Docker login'
-#   inputs:
-#     containerRegistry: ${{ parameters.registry_service_principal }}
-#     command: 'login'
-# - task: UsePythonVersion@0
-#   inputs:
-#     versionSpec: '$(PYTHON.VERSION)'
-#   displayName: 'Use Python $(PYTHON.VERSION)'
-# - script: |
-#     python -m pip install --upgrade pip
-#     python -m pip install pipenv
-#     pipenv --python 3
-#     pip install twine
-#   displayName: 'Install python environment'
-#   workingDirectory: ${{ parameters.folder_name }}
-# - task: TwineAuthenticate@0
-#   inputs:
-#     artifactFeeds: ${{ parameters.artifact_feed }}
-#   displayName: 'Authenticate RC with Azure Artifacts'
-# - task: PipAuthenticate@0
-#   inputs:
-#     artifactFeeds: presidio
-#   displayName: 'Authenticate PIP with Azure Artifacts'
-# - bash: |    
-#     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-#     pipenv install --dev --sequential
-#     # Print venv information
-#     pipenv --venv
-#   displayName: 'Install dependencies'
-#   workingDirectory: ${{ parameters.folder_name }}
-# - bash: |
-#     pipenv run pylint $PACKAGE_NAME && \
-#     pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
-#   displayName: 'Lint'
-#   workingDirectory: ${{ parameters.folder_name }}
-#   env:
-#     PACKAGE_NAME: ${{ parameters.package_name }}
-#   condition: eq('${{ parameters.lint }}', 'true')
-# - bash: |
-#     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-#     pipenv install --skip-lock pytest-azurepipelines
-#     pipenv run pytest --log-cli-level=0
-#   displayName: 'Run Tests'
-#   workingDirectory: ${{ parameters.folder_name }}
+- task: Docker@2
+  displayName: 'Docker login'
+  inputs:
+    containerRegistry: ${{ parameters.registry_service_principal }}
+    command: 'login'
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(PYTHON.VERSION)'
+  displayName: 'Use Python $(PYTHON.VERSION)'
+- script: |
+    python -m pip install --upgrade pip
+    python -m pip install pipenv
+    pipenv --python 3
+    pip install twine
+  displayName: 'Install python environment'
+  workingDirectory: ${{ parameters.folder_name }}
+- task: TwineAuthenticate@0
+  inputs:
+    artifactFeeds: ${{ parameters.artifact_feed }}
+  displayName: 'Authenticate RC with Azure Artifacts'
+- task: PipAuthenticate@0
+  inputs:
+    artifactFeeds: presidio
+  displayName: 'Authenticate PIP with Azure Artifacts'
+- bash: |    
+    export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
+    pipenv install --dev --sequential
+    # Print venv information
+    pipenv --venv
+  displayName: 'Install dependencies'
+  workingDirectory: ${{ parameters.folder_name }}
+- bash: |
+    pipenv run pylint $PACKAGE_NAME && \
+    pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
+  displayName: 'Lint'
+  workingDirectory: ${{ parameters.folder_name }}
+  env:
+    PACKAGE_NAME: ${{ parameters.package_name }}
+  condition: eq('${{ parameters.lint }}', 'true')
+- bash: |
+    export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
+    pipenv install --skip-lock pytest-azurepipelines
+    pipenv run pytest --log-cli-level=0
+  displayName: 'Run Tests'
+  workingDirectory: ${{ parameters.folder_name }}
 - bash: | 
     sed -i 's@dev@'"$PYTHON_BUILD_TAG"'@' ./VERSION
     FULL_PYTHON_VERSION=`cat ./VERSION`
     echo "$FULL_PYTHON_VERSION"
     echo '##vso[task.setvariable variable=FULL_PYTHON_VERSION]$FULL_PYTHON_VERSION'
   displayName: Set version number
-# - bash: |
-#     pip install wheel
-#     python setup.py bdist_wheel
-#   workingDirectory: ${{ parameters.folder_name }}
-#   displayName: 'Package Wheel'
-# - bash: |
-#     'twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*'
-#   workingDirectory: ${{ parameters.folder_name }}
-#   continueOnError: 'True'
-#   displayName: 'Upload wheel to Azure Artifacts'
-#   env:
-#     FEED_NAME: ${{ parameters.artifact_feed }}
+- bash: |
+    pip install wheel
+    python setup.py bdist_wheel
+  workingDirectory: ${{ parameters.folder_name }}
+  displayName: 'Package Wheel'
+- bash: |
+    'twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*'
+  workingDirectory: ${{ parameters.folder_name }}
+  continueOnError: 'True'
+  displayName: 'Upload wheel to Azure Artifacts'
+  env:
+    FEED_NAME: ${{ parameters.artifact_feed }}
 - bash: |
     echo "$FULL_PYTHON_VERSION"
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$FULL_PYTHON_VERSION PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
