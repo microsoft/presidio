@@ -8,51 +8,51 @@ parameters:
   registry_name: ''
   registry_service_principal: ''
 steps:
-- task: Docker@2
-  displayName: 'Docker login'
-  inputs:
-    containerRegistry: ${{ parameters.registry_service_principal }}
-    command: 'login'
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(PYTHON.VERSION)'
-  displayName: 'Use Python $(PYTHON.VERSION)'
-- script: |
-    python -m pip install --upgrade pip
-    python -m pip install pipenv
-    pipenv --python 3
-    pip install twine
-  displayName: 'Install python environment'
-  workingDirectory: ${{ parameters.folder_name }}
-- task: TwineAuthenticate@0
-  inputs:
-    artifactFeeds: ${{ parameters.artifact_feed }}
-  displayName: 'Authenticate RC with Azure Artifacts'
-- task: PipAuthenticate@0
-  inputs:
-    artifactFeeds: presidio
-  displayName: 'Authenticate PIP with Azure Artifacts'
-- bash: |    
-    export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-    pipenv install --dev --sequential
-    # Print venv information
-    pipenv --venv
-  displayName: 'Install dependencies'
-  workingDirectory: ${{ parameters.folder_name }}
-- bash: |
-    pipenv run pylint $PACKAGE_NAME && \
-    pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
-  displayName: 'Lint'
-  workingDirectory: ${{ parameters.folder_name }}
-  env:
-    PACKAGE_NAME: ${{ parameters.package_name }}
-  condition: eq('${{ parameters.lint }}', 'true')
-- bash: |
-    export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-    pipenv install --skip-lock pytest-azurepipelines
-    pipenv run pytest --log-cli-level=0
-  displayName: 'Run Tests'
-  workingDirectory: ${{ parameters.folder_name }}
+# - task: Docker@2
+#   displayName: 'Docker login'
+#   inputs:
+#     containerRegistry: ${{ parameters.registry_service_principal }}
+#     command: 'login'
+# - task: UsePythonVersion@0
+#   inputs:
+#     versionSpec: '$(PYTHON.VERSION)'
+#   displayName: 'Use Python $(PYTHON.VERSION)'
+# - script: |
+#     python -m pip install --upgrade pip
+#     python -m pip install pipenv
+#     pipenv --python 3
+#     pip install twine
+#   displayName: 'Install python environment'
+#   workingDirectory: ${{ parameters.folder_name }}
+# - task: TwineAuthenticate@0
+#   inputs:
+#     artifactFeeds: ${{ parameters.artifact_feed }}
+#   displayName: 'Authenticate RC with Azure Artifacts'
+# - task: PipAuthenticate@0
+#   inputs:
+#     artifactFeeds: presidio
+#   displayName: 'Authenticate PIP with Azure Artifacts'
+# - bash: |    
+#     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
+#     pipenv install --dev --sequential
+#     # Print venv information
+#     pipenv --venv
+#   displayName: 'Install dependencies'
+#   workingDirectory: ${{ parameters.folder_name }}
+# - bash: |
+#     pipenv run pylint $PACKAGE_NAME && \
+#     pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
+#   displayName: 'Lint'
+#   workingDirectory: ${{ parameters.folder_name }}
+#   env:
+#     PACKAGE_NAME: ${{ parameters.package_name }}
+#   condition: eq('${{ parameters.lint }}', 'true')
+# - bash: |
+#     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
+#     pipenv install --skip-lock pytest-azurepipelines
+#     pipenv run pytest --log-cli-level=0
+#   displayName: 'Run Tests'
+#   workingDirectory: ${{ parameters.folder_name }}
 - bash: | 
     sed -i 's@dev@'"$PYTHON_BUILD_TAG"'@' ./VERSION
     FULL_PYTHON_VERSION=`cat ./VERSION`
