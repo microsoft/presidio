@@ -46,11 +46,11 @@ stages:
         - bash: |
             echo yes
           displayName: 'test build deps 1'
-          condition: eq($BUILD_DEPS, 'true')
+          condition: eq(variables['BUILD_DEPS'], 'true')
         - bash: |
             echo yes
           displayName: 'test build deps 1'
-          condition: eq($BUILD_DEPS, 'true')
+          condition: eq(variables['BUILD_DEPS'], 'true')
         # - task: Docker@2
         #   displayName: 'Build and Push Golang dependencies'
         #   condition: eq($(BUILD_DEPS), 'true')
@@ -174,40 +174,40 @@ stages:
           presidio_label: $(Build.BuildID)
           deps_label: $(DEPS_LABEL)
 
-  # # Integration tests
-  # - stage: TestFunctional
-  #   displayName: Run Functional Tests
-  #   dependsOn: 
-  #   - BuildPresidioServices
-  #   pool:
-  #     vmImage: 'ubuntu-latest'
-  #   jobs: 
-  #     - job: FunctionalTests
-  #       displayName: Presidio Functional Tests
-  #       steps:  
-  #       - bash: |
-  #           mkdir -p '$(GOBIN)'
-  #           mkdir -p '$(GOPATH)/pkg'
-  #           rm -rf '$(MODULEPATH)'
-  #           mkdir -p '$(MODULEPATH)'
-  #           shopt -s extglob
-  #           mv !(gopath) '$(MODULEPATH)' --force
-  #           echo '##vso[task.prependpath]$(GOBIN)'
-  #           echo '##vso[task.prependpath]$(GOROOT)/bin'
-  #         displayName: 'Setup Go Env'
-  #       - bash: | 
-  #           curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-  #           dep ensure
-  #         displayName: 'dep ensure'
-  #         workingDirectory: '$(MODULEPATH)'
-  #       - task: Docker@2
-  #         inputs:
-  #           containerRegistry: ${{parameters.registry_service_principal}}
-  #           command: 'login'
-  #       - bash: | 
-  #           make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
-  #         displayName: 'Run functional tests'
-  #         workingDirectory: '$(MODULEPATH)'
+  # Integration tests
+  - stage: TestFunctional
+    displayName: Run Functional Tests
+    dependsOn: 
+    - BuildPresidioServices
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs: 
+      - job: FunctionalTests
+        displayName: Presidio Functional Tests
+        steps:  
+        - bash: |
+            mkdir -p '$(GOBIN)'
+            mkdir -p '$(GOPATH)/pkg'
+            rm -rf '$(MODULEPATH)'
+            mkdir -p '$(MODULEPATH)'
+            shopt -s extglob
+            mv !(gopath) '$(MODULEPATH)' --force
+            echo '##vso[task.prependpath]$(GOBIN)'
+            echo '##vso[task.prependpath]$(GOROOT)/bin'
+          displayName: 'Setup Go Env'
+        - bash: | 
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+          displayName: 'dep ensure'
+          workingDirectory: '$(MODULEPATH)'
+        - task: Docker@2
+          inputs:
+            containerRegistry: ${{parameters.registry_service_principal}}
+            command: 'login'
+        - bash: | 
+            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
+          displayName: 'Run functional tests'
+          workingDirectory: '$(MODULEPATH)'
 
   # # Push artifacts
   # - stage: PublishArtifacts 
