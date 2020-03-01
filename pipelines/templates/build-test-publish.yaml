@@ -46,7 +46,7 @@ stages:
         - bash: |
             echo yes
           displayName: 'test build deps 1'
-          condition: eq($(BUILD_DEPS), 'true')
+          condition: eq($BUILD_DEPS, 'true')
         - bash: |
             echo yes
           displayName: 'test build deps 1'
