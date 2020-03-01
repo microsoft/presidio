@@ -62,15 +62,11 @@ steps:
 - bash: |
     pip install wheel
     python setup.py bdist_wheel
-  workingDirectory: ${{ parameters.folder_name }}
-  displayName: 'Package Wheel'
-- script: |
     'twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*'
   workingDirectory: ${{ parameters.folder_name }}
-  continueOnError: 'True'
-  displayName: 'Upload wheel to Azure Artifacts'
+  displayName: 'Package and Upload Wheel to Azure Artifacts'
   env:
-    FEED_NAME: ${{ parameters.artifact_feed }}
+    FEED_NAME: ${{ parameters.artifact_feed }}  
 - bash: |
     echo "$FULL_PYTHON_VERSION"
     make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$(FULL_PYTHON_VERSION) PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
