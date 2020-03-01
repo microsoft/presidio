@@ -64,7 +64,7 @@ steps:
     python setup.py bdist_wheel
   workingDirectory: ${{ parameters.folder_name }}
   displayName: 'Package Wheel'
-- bash: |
+- script: |
     'twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*'
   workingDirectory: ${{ parameters.folder_name }}
   continueOnError: 'True'
