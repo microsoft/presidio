@@ -62,7 +62,7 @@ steps:
 - bash: |
     pip install wheel
     python setup.py bdist_wheel
-    'twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*'
+    twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
   workingDirectory: ${{ parameters.folder_name }}
   displayName: 'Package and Upload Wheel to Azure Artifacts'
   env:
