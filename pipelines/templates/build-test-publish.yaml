@@ -1,5 +1,4 @@
 parameters:
-  build_deps: false
   registry_service_principal: 
   registry_name: 
   artifact_feed:
@@ -20,6 +19,7 @@ stages:
             GIT_DIFF_SOURCEBRANCH="HEAD"
             # Set build_deps Triggers to false
             BUILD_DEPS=false
+            BUILD_DEPS=latest
             # we should always use master as a comparison, except in the case that this is
             # a build for master. In this case we can use HEAD~ (1 commit behind master)
             # because all merges will be squash merges
@@ -38,28 +38,70 @@ stages:
             if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Gopkg.lock" -e "Gopkg.toml" -e "Dockerfile.python.deps" -e "Dockerfile.golang.deps" -e "Dockerfile.python.deps" -e "presidio-analyzer/Pipfile" -e "presidio-analyzer/Pipfile.lock")" ]]; then
                 echo "Performing build deps."
                 BUILD_DEPS=true
+                DEPS_LABEL='$(Build.BuildId)'
             fi
-            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+            echo "##vso[task.setvariable variable=BUILD_DEPS]$BUILD_DEPS"
+            echo "##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL"
           displayName: Diff verify deps build
+        - bash: |
+            echo yes
+          displayName: 'test build deps 1'
+          condition: eq($(BUILD_DEPS), 'true')
+        - bash: |
+            echo yes
+          displayName: 'test build deps 1'
+          condition: eq($BUILD_DEPS, 'true')
+        # - task: Docker@2
+        #   displayName: 'Build and Push Golang dependencies'
+        #   condition: eq($(BUILD_DEPS), 'true')
+        #   inputs:
+        #     containerRegistry: $(REGISTRY) # input registry name	
+        #     repository: presidio-golang-deps 
+        #     Dockerfile: Dockerfile.golang.deps 
+        #     tags: | 
+        #         $(Build.BuildId)
+        # - task: Docker@2
+        #   displayName: 'Build and Push Python dependencies'
+        #   condition: eq($BUILD_DEPS, 'true')
+        #   inputs:
+        #     containerRegistry: $(REGISTRY) # input registry name	
+        #     repository: 'presidio-python-deps'
+        #     Dockerfile: Dockerfile.python.deps 
+        #     tags: | # image tags	
+        #       $(Build.BuildId)	
+        # To pass the variable build_deps, we write it to a file
+        - bash: |
+            mkdir -p $(Pipeline.Workspace)/variables
+            echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
+        # Publish the folder as pipeline artifact
+        - publish: $(Pipeline.Workspace)/variables
+          artifact: variables
   # Build
   - stage: BuildPresidioServices
+    dependsOn: BuildDeps
     displayName: Build Presidio Services
     pool:
       vmImage: 'ubuntu-latest'
-    variables:
-        DEPS_LABEL: 'latest'
-        ${{ if eq(parameters.build_deps, 'true') }}:
-            DEPS_LABEL: '$(Build.BuildId)'
-        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-            BUILD_LABEL: 'latest'
-            PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
-        ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-            BUILD_LABEL: '$(Build.SourceBranchName)'
-            PYTHON_BUILD_TAG: '$(Build.BuildId)'
     jobs: 
+    - job: GetDepsJob
+      displayName: Get Deps State
+      steps:
+      # Download the artifacts
+      - download: current
+        displayName: Download deps artifacts
+        artifact: variables
+      # Read the variable from the file, then expose it in the job
+      - bash: |
+          DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+          echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+        displayName: Set deps env
+        name: setEnv
     - job: GolangBase
       displayName: Build Golang Base Container
       timeoutInMinutes: 30 
+      dependsOn: GetDepsJob
+      variables:
+        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
       steps:
         - template: ./build-golang-template.yaml
           parameters:
@@ -74,7 +116,10 @@ stages:
       displayName: Build Golang Service Containers
       timeoutInMinutes: 15 
       dependsOn: 
+      - GetDepsJob
       - Golangbase
+      variables:
+        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
       strategy:
         maxParallel: 10
         matrix:
@@ -109,6 +154,13 @@ stages:
     - job: BuildPython
       displayName: Build Analyzer Service
       timeoutInMinutes: 60  
+      dependsOn: GetDepsJob
+      variables:
+        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+          PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
+        ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+          PYTHON_BUILD_TAG: '$(Build.BuildId)'
       steps: 
       - template: ./build-python-template.yaml  
         parameters:
@@ -153,7 +205,7 @@ stages:
             containerRegistry: ${{parameters.registry_service_principal}}
             command: 'login'
         - bash: | 
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$DEPS_LABEL test-functional-no-build
+            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
           displayName: 'Run functional tests'
           workingDirectory: '$(MODULEPATH)'
 
@@ -166,18 +218,29 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     variables:
-        DEPS_LABEL: 'latest'
-        ${{ if eq(parameters.build_deps, 'master') }}:
-            DEPS_LABEL: '$(Build.BuildId)'
         ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
             BUILD_LABEL: 'latest'
-            PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
         ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
             BUILD_LABEL: '$(Build.SourceBranchName)'
-            PYTHON_BUILD_TAG: '$(Build.BuildId)'
     jobs: 
+      - job: GetDepsJob
+        displayName: Get Deps State
+        steps:
+        # Download the artifacts
+        - download: current
+          displayName: Download deps artifacts
+          artifact: variables
+        # Read the variable from the file, then expose it in the job
+        - bash: |
+            DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+          displayName: Set deps env
+          name: setEnv
       - job: PublishArtifacts
         displayName: Push Containers
+        dependsOn: GetDepsJob
+        variables:
+          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
         steps:  
         - task: Docker@2
           inputs:
@@ -189,24 +252,26 @@ stages:
             PathtoPublish: charts
             ArtifactName: dropchart  
         - bash: |
-            docker pull "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID)"
+            docker pull $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID)
             docker tag \
-              "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID)" \
-              "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)"
-            docker push "$REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)"
+              $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID) \
+              $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)
+            docker push $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Tag golang base image'
-        - bash: |
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION='$(RELEASE_NAME)' docker-push-release                    
-          env:
-            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
-          displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
+        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+          - bash: |
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME)s docker-push-release                    
+            env:
+              REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+            displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
         
-        - bash: | 
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch
-          env:
-            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
-          displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
+        ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+          - bash: | 
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch-deps
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(Build.SourceBranchName) docker-push-latest-branch
+            env:
+              REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+            displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch

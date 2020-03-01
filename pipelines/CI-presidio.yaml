@@ -35,7 +35,6 @@ pr: # PR triggers
 stages:
   - template: templates/build-test-publish.yaml
     parameters:
-      build_deps: false
       registry_service_principal: $(REGISTRY)
       registry_name: $(REGISTRY_NAME)
       artifact_feed: presidio
