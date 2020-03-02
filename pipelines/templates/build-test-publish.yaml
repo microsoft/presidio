@@ -11,7 +11,6 @@ stages:
       vmImage: 'ubuntu-latest'
     jobs:
     - job: GitDiff
-      continueOnError: true
       displayName: Build Golang Base Container
       steps: 
         - bash: |
@@ -19,7 +18,8 @@ stages:
             GIT_DIFF_SOURCEBRANCH="HEAD"
             # Set build_deps Triggers to false
             BUILD_DEPS=false
-            BUILD_DEPS=latest
+            DEPS_LABEL=latest
+
             # we should always use master as a comparison, except in the case that this is
             # a build for master. In this case we can use HEAD~ (1 commit behind master)
             # because all merges will be squash merges
@@ -48,39 +48,34 @@ stages:
             echo "##vso[task.setvariable variable=BUILD_DEPS]$BUILD_DEPS"
             echo "##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL"
           displayName: Diff verify deps build
-        - bash: |
-            echo yes
-          displayName: 'test build deps 1'
-          condition: eq(variables['BUILD_DEPS'], 'true')
-        - bash: |
-            echo yes
-          displayName: 'test build deps 1'
-          condition: eq(variables['BUILD_DEPS'], 'true')
-        # - task: Docker@2
-        #   displayName: 'Build and Push Golang dependencies'
-        #   condition: eq($(BUILD_DEPS), 'true')
-        #   inputs:
-        #     containerRegistry: $(REGISTRY) # input registry name	
-        #     repository: presidio-golang-deps 
-        #     Dockerfile: Dockerfile.golang.deps 
-        #     tags: | 
-        #         $(Build.BuildId)
-        # - task: Docker@2
-        #   displayName: 'Build and Push Python dependencies'
-        #   condition: eq($BUILD_DEPS, 'true')
-        #   inputs:
-        #     containerRegistry: $(REGISTRY) # input registry name	
-        #     repository: 'presidio-python-deps'
-        #     Dockerfile: Dockerfile.python.deps 
-        #     tags: | # image tags	
-        #       $(Build.BuildId)	
+        - task: Docker@2
+          displayName: 'Build and Push Golang dependencies'
+          condition: eq($(BUILD_DEPS), 'true')
+          inputs:
+            containerRegistry: $(REGISTRY) # input registry name	
+            repository: presidio-golang-deps 
+            Dockerfile: Dockerfile.golang.deps 
+            tags: | 
+                $(Build.BuildId)
+        - task: Docker@2
+          displayName: 'Build and Push Python dependencies'
+          condition: eq($BUILD_DEPS, 'true')
+          inputs:
+            containerRegistry: $(REGISTRY) # input registry name	
+            repository: 'presidio-python-deps'
+            Dockerfile: Dockerfile.python.deps 
+            tags: | 
+              $(Build.BuildId)	
         # To pass the variable build_deps, we write it to a file
         - bash: |
             mkdir -p $(Pipeline.Workspace)/variables
             echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
+            echo "$BUILD_DEPS" > $(Pipeline.Workspace)/variables/BUILD_DEPS
+          displayName: Copy Artifacts
         # Publish the folder as pipeline artifact
         - publish: $(Pipeline.Workspace)/variables
           artifact: variables
+          displayName: Publish Artifacts
   # Build
   - stage: BuildPresidioServices
     dependsOn: BuildDeps
@@ -239,6 +234,7 @@ stages:
         - bash: |
             DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
             echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
           displayName: Set deps env
           name: setEnv
       - job: PublishArtifacts
@@ -246,13 +242,14 @@ stages:
         dependsOn: GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+          BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
         steps:  
         - task: Docker@2
           inputs:
             containerRegistry: ${{ parameters.registry_service_principal }}
             command: 'login'
         - task: PublishBuildArtifacts@1
-          displayName: 'Publish Artifact: dropchart'
+          displayName: 'Publish Helm Artifact'
           inputs:
             PathtoPublish: charts
             ArtifactName: dropchart  
@@ -265,6 +262,7 @@ stages:
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Tag golang base image'
+          condition: eq($BUILD_DEPS, 'true')
 
         - bash: |
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps

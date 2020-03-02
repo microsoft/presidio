@@ -12,12 +12,6 @@ trigger: # CI triggers
       - master	
   paths:
     exclude: 
-      - Dockerfile.golang.deps	
-      - Gopkg.lock	
-      - Gopkg.toml	
-      - Dockerfile.python.deps
-      - presidio-analyzer/Pipfile
-      - presidio-analyzer/Pipfile.lock	
       - '*.md'
 pr: # PR triggers	
   branches:
@@ -25,12 +19,6 @@ pr: # PR triggers
       - development	
   paths:
     exclude: 
-      - Dockerfile.golang.deps	
-      - Gopkg.lock	
-      - Gopkg.toml	
-      - Dockerfile.python.deps	
-      - presidio-analyzer/Pipfile
-      - presidio-analyzer/Pipfile.lock
       - '*.md'
 stages:
   - template: templates/build-test-publish.yaml
