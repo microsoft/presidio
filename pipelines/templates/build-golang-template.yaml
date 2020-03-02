@@ -23,7 +23,7 @@ steps:
     containerRegistry: ${{ parameters.registry_service_connection }}
     command: 'login'
 - bash: |
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
@@ -33,7 +33,7 @@ steps:
   workingDirectory: '$(MODULEPATH)'
   displayName: 'Build image'
 - bash: | 
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
+    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
