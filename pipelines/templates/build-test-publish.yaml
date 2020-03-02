@@ -11,7 +11,7 @@ stages:
       vmImage: 'ubuntu-latest'
     jobs:
     - job: GitDiff
-      displayName: Build Golang Base Container
+      displayName: Git Diff for base container build
       steps: 
         - bash: |
             MASTER="remotes/origin/master"
@@ -254,15 +254,14 @@ stages:
             PathtoPublish: charts
             ArtifactName: dropchart  
         - bash: |
-            docker pull $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID)
+            docker pull $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID)
             docker tag \
-              $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(Build.BuildID) \
-              $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)
-            docker push $REGISTRY_NAME.azurecr.io/presidio-golang-base:$(BUILD_LABEL)
+              $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID) \
+              $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
+            docker push $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Tag golang base image'
-          condition: eq(variables['BUILD_DEPS'], 'true')
 
         - bash: |
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps

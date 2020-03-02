@@ -75,6 +75,8 @@ endif
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push-latest-deps
 docker-push-latest-deps: 
+	docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):PRESIDIO_DEPS_LABEL
+	docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):PRESIDIO_DEPS_LABEL	
 	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest	
 	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest 
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
@@ -82,6 +84,8 @@ docker-push-latest-deps:
 
 PHONY: docker-push-latest-branch-deps
 docker-push-latest-branch-deps: 
+	docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL)
+	docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_BRANCH_LABEL)	
 	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_BRANCH_LABEL)
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_BRANCH_LABEL)	
