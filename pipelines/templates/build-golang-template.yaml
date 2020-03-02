@@ -28,6 +28,7 @@ steps:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
     PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
+    BRANCH_LABEL: ${{parameters.presidio_branch_label}}
     DOCKER_COMMAND: ${{ parameters.make_command_to_run }}
     GOLANG_IMAGE: ${{ parameters.image_name }}
   workingDirectory: '$(MODULEPATH)'
@@ -37,7 +38,6 @@ steps:
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
-    BRANCH_LABEL: ${{parameters.presidio_branch_label}}
     GOLANG_IMAGE: ${{ parameters.image_name }}
   displayName: 'Push Docker Images - BuildId label'    # push with build-id label
   workingDirectory: '$(MODULEPATH)'
