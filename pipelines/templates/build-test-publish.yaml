@@ -50,7 +50,7 @@ stages:
           displayName: Diff verify deps build
         - task: Docker@2
           displayName: 'Build and Push Golang dependencies'
-          condition: eq($BUILD_DEPS, 'true')
+          condition: eq(variables['BUILD_DEPS'], 'true')
           inputs:
             containerRegistry: $(REGISTRY) # input registry name	
             repository: presidio-golang-deps 
@@ -59,7 +59,7 @@ stages:
                 $(Build.BuildId)
         - task: Docker@2
           displayName: 'Build and Push Python dependencies'
-          condition: eq($BUILD_DEPS, 'true')
+          condition: eq(variables['BUILD_DEPS'], 'true')
           inputs:
             containerRegistry: $(REGISTRY) # input registry name	
             repository: 'presidio-python-deps'
@@ -262,7 +262,7 @@ stages:
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           displayName: 'Tag golang base image'
-          condition: eq($BUILD_DEPS, 'true')
+          condition: eq(variables['BUILD_DEPS'], 'true')
 
         - bash: |
             make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
