@@ -39,7 +39,7 @@ docker-build-deps:
 .PHONY: docker-build-base
 docker-build-base:
 	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) || echo "\nCould not pull shared base Go image from registry, building locally. If you planned to build locally, the previous error message could be ignored\n"
-	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_LABEL) -f Dockerfile.golang.base .
+	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --cache-from=$(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_LABEL) -f Dockerfile.golang.base .
 
 
 # To use docker-build, you need to have Docker installed and configured. You should also set
