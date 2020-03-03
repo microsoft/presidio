@@ -40,10 +40,6 @@ stages:
                 BUILD_DEPS=true
                 DEPS_LABEL='$(Build.BuildId)'
             fi
-            ### TEMP CODE -  SET TO LATEST FOR NOW
-              BUILD_DEPS=false
-              DEPS_LABEL=latest
-            ### END TEMP CODE
 
             echo "##vso[task.setvariable variable=BUILD_DEPS]$BUILD_DEPS"
             echo "##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL"
