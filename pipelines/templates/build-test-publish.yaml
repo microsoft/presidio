@@ -10,8 +10,8 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
-    - job: GitDiff
-      displayName: Git Diff for base container build
+    - job: SetBuildDep
+      displayName: Set base container build
       steps: 
         - bash: |
             MASTER="remotes/origin/master"
@@ -43,7 +43,28 @@ stages:
 
             echo "##vso[task.setvariable variable=BUILD_DEPS]$BUILD_DEPS"
             echo "##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL"
-          displayName: Diff verify deps build
+          displayName: Git diff verify deps build
+        # To pass the variable build_deps, we write it to a file
+        - bash: |
+            mkdir -p $(Pipeline.Workspace)/variables
+            echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
+            echo "$BUILD_DEPS" > $(Pipeline.Workspace)/variables/BUILD_DEPS
+            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+          displayName: Copy Artifacts
+          name: setEnv
+        # Publish the folder as pipeline artifact
+        - publish: $(Pipeline.Workspace)/variables
+          artifact: variables
+          displayName: Publish Artifacts
+    - job: GolangDepsBuild
+      displayName: Build Golang Base Container
+      timeoutInMinutes: 30 
+      dependsOn: SetBuildDep
+      variables:
+        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+        BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
+      steps:
         - task: Docker@2
           displayName: 'Build and Push Golang dependencies'
           condition: eq(variables['BUILD_DEPS'], 'true')
@@ -53,6 +74,14 @@ stages:
             Dockerfile: Dockerfile.golang.deps 
             tags: | 
                 $(Build.BuildId)
+    - job: PythonDepsBuild
+      displayName: Build Golang Base Container
+      timeoutInMinutes: 30 
+      dependsOn: SetBuildDep
+      variables:
+        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+        BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
+      steps:
         - task: Docker@2
           displayName: 'Build and Push Python dependencies'
           condition: eq(variables['BUILD_DEPS'], 'true')
@@ -62,16 +91,6 @@ stages:
             Dockerfile: Dockerfile.python.deps 
             tags: | 
               $(Build.BuildId)	
-        # To pass the variable build_deps, we write it to a file
-        - bash: |
-            mkdir -p $(Pipeline.Workspace)/variables
-            echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
-            echo "$BUILD_DEPS" > $(Pipeline.Workspace)/variables/BUILD_DEPS
-          displayName: Copy Artifacts
-        # Publish the folder as pipeline artifact
-        - publish: $(Pipeline.Workspace)/variables
-          artifact: variables
-          displayName: Publish Artifacts
   # Build
   - stage: BuildPresidioServices
     dependsOn: BuildDeps
