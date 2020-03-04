@@ -1,6 +1,17 @@
+# This template builds a golang container and pushes it to a container registry, using presidio Makefile.
+# It is used in CI to build the base container as well as all golang based services.
+# parameters:
+#   registry_service_connection: service connection to docker registry.
+#   registry_name: full name of container registry (i.e. presidio.azurecr.io)
+#   make_command_to_run: the phony command in Makefile to execute.
+#   image_name: image name to build.
+#   presidio_label: image label.
+#   presidio_branch_label: final label the container will have (latest or branch-name)
+#   deps_label: label of deps container used when building this container.
+
 parameters:
-  registry_service_connection: '' # container registry service connection name 
-  registry_name: '' # container registry URI
+  registry_service_connection: '' 
+  registry_name: '' 
   make_command_to_run: ''
   image_name: ''
   presidio_label: ''

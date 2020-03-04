@@ -1,7 +1,17 @@
+# This template builds a python wheel and container and pushes them to Azure Artifcats 
+# and a cotainer registry, using presidio Makefile.
+# It is used in CI to build the analyzer container.
+# parameters:
+#   folder_name: where the python files are located.
+#   package_name: name of python package to build
+#   registry_service_connection: service connection to docker registry.
+#   registry_name: full name of container registry (i.e. presidio.azurecr.io)
+#   presidio_label: image label.
+#   deps_label: label of deps container used when building this container.
+#   artifact_feed: pypi artifact used to push the wheel
 parameters:
   folder_name: '' 
-  package_name: '' 
-  lint: '' 
+  package_name: ''
   artifact_feed: ''
   presidio_label: ''
   deps_label: ''
@@ -46,7 +56,6 @@ steps:
   workingDirectory: ${{ parameters.folder_name }}
   env:
     PACKAGE_NAME: ${{ parameters.package_name }}
-  condition: eq('${{ parameters.lint }}', 'true')
 - bash: |
     export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
     pipenv install --skip-lock pytest-azurepipelines

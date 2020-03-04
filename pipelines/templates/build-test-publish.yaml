@@ -1,3 +1,18 @@
+# A multi-stage template which builds, tests and pushed all presidio assets.
+# There are four stages:
+# * Build-Deps - builds the golang and python deps container. the stage first validates, using git diff, if deps
+#               containers should be rebuilt. if so, this stage builds them and later stages will use the specific
+#               deps version number for building the presidio services.
+# * Build-Presidio-Services - Builds tests and pushes, in parallel, all containers of presidio.
+# * Test-Functional - Runs local functional tests using the containers built in the previous stage.
+# * Publish Artifacts - Pulls, tags and pushes the containers which were built and tested in the previous stages,
+#                       according to the current branch (master builds "latest" label, branches build with branch-name
+#                       label)
+#
+# * parameters:
+#     registry_service_principal: service connection to docker registry
+#     registry_name: full name of container registry (i.e. presidio.azurecr.io)
+#     artifact_feed: pypi artifact used to push the wheel
 parameters:
   registry_service_principal: 
   registry_name: 
