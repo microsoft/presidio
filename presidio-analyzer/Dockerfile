@@ -9,7 +9,7 @@ ARG VERSION
 WORKDIR /usr/bin/${NAME}
 ENV PIP_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
 
-RUN source $(pipenv --venv)/bin/activate && pip install presidio-analyzer==${VERSION:-0.0.1}    
+RUN . $(pipenv --venv)/bin/activate && pip install presidio-analyzer==${VERSION:-0.0.1}    
 
 #----------------------------
 
