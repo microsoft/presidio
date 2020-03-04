@@ -75,12 +75,12 @@ stages:
             tags: | 
                 $(Build.BuildId)
     - job: PythonDepsBuild
-      displayName: Build Golang Base Container
+      displayName: Build Python Base Container
       timeoutInMinutes: 30 
       dependsOn: SetBuildDep
       variables:
-        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-        BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
+        DEPS_LABEL: $[ dependencies.SetBuildDep.outputs['setEnv.DEPS_LABEL'] ]
+        BUILD_DEPS: $[ dependencies.SetBuildDep.outputs['setEnv.BUILD_DEPS'] ]
       steps:
         - task: Docker@2
           displayName: 'Build and Push Python dependencies'
