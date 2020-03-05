@@ -164,7 +164,7 @@ stages:
         dependsOn: GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-          BUILD_DEPS: $[ dependencies.GetDepsJobs.outputs['setEnv.BUILD_DEPS'] ]
+          BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
         steps:
           - task: Docker@2
             displayName: 'Build and Push Golang dependencies'
