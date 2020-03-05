@@ -52,4 +52,3 @@ steps:
     GOLANG_IMAGE: ${{ parameters.image_name }}
   displayName: 'Push Docker Images - BuildId label'    # push with build-id label
   workingDirectory: '$(MODULEPATH)'
-  
