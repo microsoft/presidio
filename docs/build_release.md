@@ -27,7 +27,6 @@ Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipeli
 * ***REGISTRY_NAME*** - full name of container registry (i.e. presidio.azurecr.io).
 * ***DEPENDENCY_DEFAULT*** - presidio release version.
 
-
 ### import a pipeline to Azure Devops
 
 * Sign in to your Azure DevOps organization and navigate to your project.

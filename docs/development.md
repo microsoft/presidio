@@ -1,4 +1,5 @@
 # Setting up a development environment
+
 Most of Presidio's services are written in Go. The `presidio-analyzer` module, in charge of detecting entities in text, is written in Python. This document details the required parts for developing for Presidio.
 
 ## Table of contents
