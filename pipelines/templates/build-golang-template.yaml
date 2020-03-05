@@ -19,7 +19,7 @@ parameters:
   deps_label: ''
 steps:
 - bash: |
-    mkdir -p '$(GOBIN)'
+    mkdir -p '$(GOBIN)' 
     mkdir -p '$(GOPATH)/pkg'
     rm -rf '$(MODULEPATH)'
     mkdir -p '$(MODULEPATH)'
