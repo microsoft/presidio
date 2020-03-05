@@ -1,9 +1,10 @@
 # A multi-stage template which builds, tests and pushed all presidio assets.
-# There are four stages:
-# * Build-Deps - builds the golang and python deps container. the stage first validates, using git diff, if deps
-#               containers should be rebuilt. if so, this stage builds them and later stages will use the specific
-#               deps version number for building the presidio services.
-# * Build-Presidio-Services - Builds tests and pushes, in parallel, all containers of presidio.
+# There are five stages:
+# * Setup - validates, using git diff, if deps containers should be rebuilt. 
+# * Python - Builds tests and pushes python service. if deps build is required the base container is rebuilt 
+#            and later stages will use the specific deps version number for building the presidio services.
+# * Golang - Builds tests and pushes, in parallel, golang service. if deps build is required the base container is rebuilt 
+#            and later stages will use the specific deps version number for building the presidio services.
 # * Test-Functional - Runs local functional tests using the containers built in the previous stage.
 # * Publish Artifacts - Pulls, tags and pushes the containers which were built and tested in the previous stages,
 #                       according to the current branch (master builds "latest" label, branches build with branch-name
@@ -19,9 +20,9 @@ parameters:
   artifact_feed:
 
 stages:
-  # Deps
-  - stage: BuildDeps
-    displayName: Build Presidio Dependency Containers
+  # Env
+  - stage: Setup
+    displayName: Set Pipeline globals
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -72,149 +73,171 @@ stages:
         - publish: $(Pipeline.Workspace)/variables
           artifact: variables
           displayName: Publish Artifacts
-    - job: GolangDepsBuild
-      displayName: Build Golang Base Container
-      timeoutInMinutes: 30 
-      dependsOn: SetBuildDep
-      variables:
-        DEPS_LABEL: $[ dependencies.SetBuildDep.outputs['setEnv.DEPS_LABEL'] ]
-        BUILD_DEPS: $[ dependencies.SetBuildDep.outputs['setEnv.BUILD_DEPS'] ]
-      steps:
-        - task: Docker@2
-          displayName: 'Build and Push Golang dependencies'
-          condition: eq(variables['BUILD_DEPS'], 'true')
-          inputs:
-            containerRegistry: $(REGISTRY) # input registry name	
-            repository: presidio-golang-deps 
-            Dockerfile: Dockerfile.golang.deps 
-            tags: | 
-                $(Build.BuildId)
-    - job: PythonDepsBuild
-      displayName: Build Python Base Container
-      timeoutInMinutes: 30 
-      dependsOn: SetBuildDep
-      variables:
-        DEPS_LABEL: $[ dependencies.SetBuildDep.outputs['setEnv.DEPS_LABEL'] ]
-        BUILD_DEPS: $[ dependencies.SetBuildDep.outputs['setEnv.BUILD_DEPS'] ]
-      steps:
-        - task: Docker@2
-          displayName: 'Build and Push Python dependencies'
-          condition: eq(variables['BUILD_DEPS'], 'true')
-          inputs:
-            containerRegistry: $(REGISTRY) # input registry name	
-            repository: 'presidio-python-deps'
-            Dockerfile: Dockerfile.python.deps 
-            tags: | 
-              $(Build.BuildId)	
-  # Build
-  - stage: BuildPresidioServices
-    dependsOn: BuildDeps
-    displayName: Build Presidio Services
+
+  # Python Stage
+  - stage: PythonStage
+    displayName: Build Presidio Dependency Containers
+    dependsOn: Setup
     pool:
       vmImage: 'ubuntu-latest'
-    jobs: 
-    - job: GetDepsJob
-      displayName: Get Deps State
-      steps:
-      # Download the artifacts
-      - download: current
-        displayName: Download deps artifacts
-        artifact: variables
-      # Read the variable from the file, then expose it in the job
-      - bash: |
-          DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
-          echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-        displayName: Set deps env
-        name: setEnv
-    - job: GolangBase
-      displayName: Build Golang Base Container
-      timeoutInMinutes: 30 
-      dependsOn: GetDepsJob
-      variables:
-        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-            BUILD_LABEL: 'latest'
-        ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-            BUILD_LABEL: '$(Build.SourceBranchName)'
-      steps:
-        - template: ./build-golang-template.yaml
+    jobs:
+      - job: GetDepsJob
+        displayName: Get Deps State
+        steps:
+        # Download the artifacts
+        - download: current
+          displayName: Download deps artifacts
+          artifact: variables
+        # Read the variable from the file, then expose it in the job
+        - bash: |
+            DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+          displayName: Set deps env
+          name: setEnv
+      - job: PythonDepsBuild
+        displayName: Build Python Base Container
+        timeoutInMinutes: 30 
+        dependsOn: GetDepsJob
+        variables:
+          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+          BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
+        steps:
+          - task: Docker@2
+            displayName: 'Build and Push Python dependencies'
+            condition: eq(variables['BUILD_DEPS'], 'true')
+            inputs:
+              containerRegistry: $(REGISTRY) # input registry name	
+              repository: 'presidio-python-deps'
+              Dockerfile: Dockerfile.python.deps 
+              tags: | 
+                $(Build.BuildId)	
+      - job: BuildPython
+        displayName: Build Analyzer Service
+        timeoutInMinutes: 60  
+        dependsOn: PythonDepsBuild
+        variables:
+          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+          ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+            PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
+          ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+            PYTHON_BUILD_TAG: '$(Build.BuildId)'
+        steps: 
+        - template: ./build-python-template.yaml  
           parameters:
+            folder_name: presidio-analyzer
+            package_name: analyzer
+            lint: true
+            artifact_feed: ${{parameters.artifact_feed}}
             registry_service_connection: ${{parameters.registry_service_principal}}
             registry_name: ${{parameters.registry_name}} 
-            make_command_to_run: docker-build-golang-base
-            image_name: presidio-golang-base
+            registry_service_principal: ${{parameters.registry_service_principal}}
+            presidio_label: $(Build.BuildID)
+            deps_label: $(DEPS_LABEL)
+  
+  # Golang Stage
+  - stage: GolangStage
+    displayName: Build Presidio Dependency Containers
+    dependsOn: Setup
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: GetDepsJob
+        displayName: Get Deps State
+        steps:
+        # Download the artifacts
+        - download: current
+          displayName: Download deps artifacts
+          artifact: variables
+        # Read the variable from the file, then expose it in the job
+        - bash: |
+            DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+          displayName: Set deps env
+          name: setEnv
+      - job: GolangDepsBuild
+        displayName: Build Golang Base Container
+        timeoutInMinutes: 30 
+        dependsOn: SetBuildDep
+        variables:
+          DEPS_LABEL: $[ dependencies.SetBuildDep.outputs['setEnv.DEPS_LABEL'] ]
+          BUILD_DEPS: $[ dependencies.SetBuildDep.outputs['setEnv.BUILD_DEPS'] ]
+        steps:
+          - task: Docker@2
+            displayName: 'Build and Push Golang dependencies'
+            condition: eq(variables['BUILD_DEPS'], 'true')
+            inputs:
+              containerRegistry: $(REGISTRY) # input registry name	
+              repository: presidio-golang-deps 
+              Dockerfile: Dockerfile.golang.deps 
+              tags: | 
+                  $(Build.BuildId)
+      - job: GolangBase
+        displayName: Build Golang Base Container
+        timeoutInMinutes: 30 
+        dependsOn: GetDepsJob
+        variables:
+          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+          ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+              BUILD_LABEL: 'latest'
+          ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+              BUILD_LABEL: '$(Build.SourceBranchName)'
+        steps:
+          - template: ./build-golang-template.yaml
+            parameters:
+              registry_service_connection: ${{parameters.registry_service_principal}}
+              registry_name: ${{parameters.registry_name}} 
+              make_command_to_run: docker-build-golang-base
+              image_name: presidio-golang-base
+              presidio_label: $(Build.BuildID)
+              presidio_branch_label: $(BUILD_LABEL)
+              deps_label: $(DEPS_LABEL)
+
+      - job:  GolangService
+        displayName: Build Golang Service Containers
+        timeoutInMinutes: 15 
+        dependsOn: 
+        - GetDepsJob
+        - Golangbase
+        variables:
+          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+        strategy:
+          maxParallel: 10
+          matrix:
+            ANNONIMYZER:
+                SERVICE_NAME: presidio-anonymizer
+            OCR:
+                SERVICE_NAME: presidio-ocr
+            ANNONIMYZER_IMAGE:
+                SERVICE_NAME: presidio-anonymizer-image
+            API:
+                SERVICE_NAME: presidio-api
+            SCHDULER:
+                SERVICE_NAME: presidio-scheduler
+            DATA_SINK:
+                SERVICE_NAME: presidio-datasink
+            COLLECTOR:
+                SERVICE_NAME: presidio-collector
+            RECOGNIZER_STORE:
+                SERVICE_NAME: presidio-recognizers-store
+            TESTER:
+                SERVICE_NAME: presidio-tester
+        steps:  
+        - template: ./Build-golang-template.yaml
+          parameters:
+            registry_service_connection: ${{parameters.registry_service_principal}}
+            registry_name: ${{parameters.registry_name}}
+            image_name: $(SERVICE_NAME  )
+            make_command_to_run: docker-build-golang-single
             presidio_label: $(Build.BuildID)
             presidio_branch_label: $(BUILD_LABEL)
             deps_label: $(DEPS_LABEL)
-
-    - job:  GolangService
-      displayName: Build Golang Service Containers
-      timeoutInMinutes: 15 
-      dependsOn: 
-      - GetDepsJob
-      - Golangbase
-      variables:
-        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-      strategy:
-        maxParallel: 10
-        matrix:
-          ANNONIMYZER:
-              SERVICE_NAME: presidio-anonymizer
-          OCR:
-              SERVICE_NAME: presidio-ocr
-          ANNONIMYZER_IMAGE:
-              SERVICE_NAME: presidio-anonymizer-image
-          API:
-              SERVICE_NAME: presidio-api
-          SCHDULER:
-              SERVICE_NAME: presidio-scheduler
-          DATA_SINK:
-              SERVICE_NAME: presidio-datasink
-          COLLECTOR:
-              SERVICE_NAME: presidio-collector
-          RECOGNIZER_STORE:
-              SERVICE_NAME: presidio-recognizers-store
-          TESTER:
-              SERVICE_NAME: presidio-tester
-      steps:  
-      - template: ./Build-golang-template.yaml
-        parameters:
-          registry_service_connection: ${{parameters.registry_service_principal}}
-          registry_name: ${{parameters.registry_name}}
-          image_name: $(SERVICE_NAME)
-          make_command_to_run: docker-build-golang-single
-          presidio_label: $(Build.BuildID)
-          presidio_branch_label: $(BUILD_LABEL)
-          deps_label: $(DEPS_LABEL)
-  
-    - job: BuildPython
-      displayName: Build Analyzer Service
-      timeoutInMinutes: 60  
-      dependsOn: GetDepsJob
-      variables:
-        DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-          PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
-        ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-          PYTHON_BUILD_TAG: '$(Build.BuildId)'
-      steps: 
-      - template: ./build-python-template.yaml  
-        parameters:
-          folder_name: presidio-analyzer
-          package_name: analyzer
-          lint: true
-          artifact_feed: ${{parameters.artifact_feed}}
-          registry_service_connection: ${{parameters.registry_service_principal}}
-          registry_name: ${{parameters.registry_name}} 
-          registry_service_principal: ${{parameters.registry_service_principal}}
-          presidio_label: $(Build.BuildID)
-          deps_label: $(DEPS_LABEL)
 
   # Integration tests
   - stage: TestFunctional
     displayName: Run Functional Tests
     dependsOn: 
-    - BuildPresidioServices
+    - PythonStage
+    - GolangStage
     pool:
       vmImage: 'ubuntu-latest'
     jobs: 
