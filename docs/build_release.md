@@ -11,10 +11,11 @@ Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipeli
 
 ***[Presidio Build and Push template](../pipelines/templates/build-test-publish.yaml)*** - is the stages-template which contains the build, test and push logic of presidio. There are four stages for the build:
 
-- *Build dependency containers* - This stage verifies if a dependency container stage is required (based on a set of known files). If one of the triggering files are changed, the python and golang deps containers are rebuilt in parallel using different [pipeline jobs](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml)
-    It the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the presidio services.
+- *Setup* - This stage verifies if a dependency container stage is required (based on a set of known files). If one of the triggering files are changed, the python and golang deps containers will be rebuilt in the following stages.
 
-- *Build presidio services* - Build and test all presidio servics. this stage tags all containers with the build id. For nonnon-PR builds the containers are also pushed to a registry.
+- *Python* - Build, test and publish python service. If the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the python service. this stage tags all containers with the build id. For CI triggered builds the containers are also pushed to a registry.
+
+- *Golang* - Build, test and publish, in parallel, golang service. If the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the golang services. this stage tags all containers with the build id. For CI triggered builds the containers are also pushed to a registry.
 
 - *Functional Tests* - pull and run presidio services and run functional tests on the presidio api.
 
