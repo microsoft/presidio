@@ -20,7 +20,7 @@ Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipeli
 
 - *Publish Artifacts* - For non PR builds, this stage will pull, tag and push all the generated conatiners. for master branch the containers will be tagged as 'latest'. for other branches the tag will hold the branch name.
 
-### Variables used by the pipeline
+### Variables used by the pipeline  
 
 * ***PYPI_INDEX_URL*** - pypi artifact used to push the wheel.
 * ***REGISTRY*** - service connection to docker registry.
