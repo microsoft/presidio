@@ -97,7 +97,7 @@ stages:
           displayName: Set deps env
           name: setEnv
       - job: PythonDepsBuild
-        displayName: Build Python Base Container
+        displayName: Build Python Deps Container
         timeoutInMinutes: 30 
         dependsOn: GetDepsJob
         variables:
@@ -159,7 +159,7 @@ stages:
           displayName: Set deps env
           name: setEnv
       - job: GolangDepsBuild
-        displayName: Build Golang Base Container
+        displayName: Build Golang Deps Container
         timeoutInMinutes: 30 
         dependsOn: GetDepsJob
         variables:
@@ -178,7 +178,7 @@ stages:
       - job: GolangBase
         displayName: Build Golang Base Container
         timeoutInMinutes: 30 
-        dependsOn: GetDepsJob
+        dependsOn: GolangDepsBuild
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
           ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
