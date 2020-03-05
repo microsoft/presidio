@@ -157,10 +157,10 @@ stages:
       - job: GolangDepsBuild
         displayName: Build Golang Base Container
         timeoutInMinutes: 30 
-        dependsOn: SetBuildDep
+        dependsOn: GetDepsJob
         variables:
-          DEPS_LABEL: $[ dependencies.SetBuildDep.outputs['setEnv.DEPS_LABEL'] ]
-          BUILD_DEPS: $[ dependencies.SetBuildDep.outputs['setEnv.BUILD_DEPS'] ]
+          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+          BUILD_DEPS: $[ dependencies.GetDepsJobs.outputs['setEnv.BUILD_DEPS'] ]
         steps:
           - task: Docker@2
             displayName: 'Build and Push Golang dependencies'
