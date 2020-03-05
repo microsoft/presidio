@@ -180,7 +180,9 @@ stages:
       - job: GolangBase
         displayName: Build Golang Base Container
         timeoutInMinutes: 30 
-        dependsOn: GolangDepsBuild
+        dependsOn: 
+        - GolangDepsBuild
+        - GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
           ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
