@@ -183,6 +183,10 @@ stages:
         dependsOn: GolangDepsBuild
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+          ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+              BUILD_LABEL: 'latest'
+          ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+              BUILD_LABEL: '$(Build.SourceBranchName)'
         steps:
           - template: ./build-golang-template.yaml
             parameters:
