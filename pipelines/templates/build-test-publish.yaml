@@ -91,7 +91,9 @@ stages:
         # Read the variable from the file, then expose it in the job
         - bash: |
             DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+            BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
             echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
           displayName: Set deps env
           name: setEnv
       - job: PythonDepsBuild
@@ -151,7 +153,9 @@ stages:
         # Read the variable from the file, then expose it in the job
         - bash: |
             DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+            BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
             echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"s
           displayName: Set deps env
           name: setEnv
       - job: GolangDepsBuild
@@ -292,6 +296,7 @@ stages:
         # Read the variable from the file, then expose it in the job
         - bash: |
             DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+            BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
             echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
             echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
           displayName: Set deps env
