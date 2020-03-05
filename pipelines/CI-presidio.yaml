@@ -23,7 +23,7 @@ trigger: # CI triggers
 pr: # PR triggers	
   branches:
       include: 
-      - development	
+      - master
   paths:
     exclude: 
       - '*.md'
