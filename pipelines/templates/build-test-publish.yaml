@@ -238,7 +238,7 @@ stages:
           parameters:
             registry_service_connection: ${{parameters.registry_service_principal}}
             registry_name: ${{parameters.registry_name}}
-            image_name: $(SERVICE_NAME  )
+            image_name: $(SERVICE_NAME)
             make_command_to_run: docker-build-golang-single
             presidio_label: $(Build.BuildID)
             presidio_branch_label: $(BUILD_LABEL)
