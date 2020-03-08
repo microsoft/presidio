@@ -2,23 +2,24 @@ DOCKER_REGISTRY    ?= presidio.azurecr.io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
 
-BINS        = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
-GOLANG_IMAGES      = presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
-PYTHON_IMAGES      = presidio-analyzer
-IMAGES      = $(GOLANG_IMAGES)  $(PYTHON_IMAGES)
-GOLANG_DEPS	= presidio-golang-deps
-PYTHON_DEPS	= presidio-python-deps
-GOLANG_BASE	= presidio-golang-base
-PIP_EXTRA_INDEX_URL =
-WHEEL_VERSION = 
-GIT_TAG   = $(shell git describe --tags --always 2>/dev/null)
-VERSION   ?= ${GIT_TAG}
-PRESIDIO_LABEL := $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
+BINS        		= presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
+GOLANG_IMAGES      	= presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
+PYTHON_IMAGES      	= presidio-analyzer
+IMAGES      		= $(GOLANG_IMAGES)  $(PYTHON_IMAGES)
+GOLANG_DEPS			= presidio-golang-deps
+PYTHON_DEPS			= presidio-python-deps
+GOLANG_BASE			= presidio-golang-base
+# Python vars used to build wheel
+PIP_EXTRA_INDEX_URL = # PIP endpoint url (Azure Artifacts)
+WHEEL_VERSION 		= # Presidio python wheel versioning
+GIT_TAG   			= $(shell git describe --tags --always 2>/dev/null)
+VERSION   			?= ${GIT_TAG}
+PRESIDIO_LABEL 		:= $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
 PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')	
-LDFLAGS   += -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
+LDFLAGS   			+= -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
 
-CX_OSES = linux windows darwin
-CX_ARCHS = amd64
+CX_OSES 			= linux windows darwin
+CX_ARCHS 			= amd64
 
 # Build native binaries
 .PHONY: build
@@ -31,14 +32,14 @@ $(BINS): vendor
 
 .PHONY: docker-build-deps
 docker-build-deps:
-	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) || echo "\nCould not pull base Go image from registry, building locally. If you planned to build locally, the previous error message could be ignored\n"
-	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) || echo "\nCould not pull base Python image from registry, building locally (If you planned to build images locally, the previous error message could be ignored\n"
+	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) || echo "\nCould not pull base Go image from registry, building locally. If you planned to build locally, the previous error message can be ignored\n"
+	-docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) || echo "\nCould not pull base Python image from registry, building locally (If you planned to build images locally, the previous error message can be ignored\n"
 	docker build -t $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) -f Dockerfile.golang.deps .
 	docker build -t $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) -f Dockerfile.python.deps .
 
 .PHONY: docker-build-base
 docker-build-base:
-	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) || echo "\nCould not pull shared base Go image from registry, building locally. If you planned to build locally, the previous error message could be ignored\n"
+	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) || echo "\nCould not pull shared base Go image from registry, building locally. If you planned to build locally, the previous error message can be ignored\n"
 	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --cache-from=$(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_LABEL) -f Dockerfile.golang.base .
 
 
@@ -66,6 +67,9 @@ docker-build-python: $(addsuffix -dpypiimage,$(PYTHON_IMAGES))
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) --build-arg PRESIDIO_BASE_LABEL=$(PRESIDIO_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile .
 
 %-dpypiimage:
+# Switching between build of python container for local/dev and the one used in presidio automated CI.
+# in local/dev environment the container is built with Dockerfile.local which uses the local dev environment and code.
+# in the automated CI process, PIP_EXTRA_INDEX_URL is defined and Dockerfile is built which uses the published wheel.
 ifndef PIP_EXTRA_INDEX_URL
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg REGISTRY=$(DOCKER_REGISTRY) --build-arg VERSION=$(VERSION) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) -f $*/Dockerfile.local .
 else

@@ -18,23 +18,19 @@ parameters:
   presidio_branch_label: ''
   deps_label: ''
 steps:
-- bash: |
-    mkdir -p '$(GOBIN)'
-    mkdir -p '$(GOPATH)/pkg'
-    rm -rf '$(MODULEPATH)'
-    mkdir -p '$(MODULEPATH)'
-    shopt -s extglob
-    mv !(gopath) '$(MODULEPATH)' --force
-    echo '##vso[task.prependpath]$(GOBIN)'
-    echo '##vso[task.prependpath]$(GOROOT)/bin'
-  displayName: 'Setup Go Env'
+- template: ./golang-environment.yaml
 - task: Docker@2
   displayName: 'Docker Login'
   inputs:
     containerRegistry: ${{ parameters.registry_service_connection }}
     command: 'login'
-- bash: |
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
+- task: Bash@3
+  displayName: 'Build image'
+  inputs:
+    targetType: 'inline'
+    script: |
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
+    workingDirectory: '$(MODULEPATH)'
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
@@ -42,13 +38,14 @@ steps:
     BRANCH_LABEL: ${{parameters.presidio_branch_label}}
     DOCKER_COMMAND: ${{ parameters.make_command_to_run }}
     GOLANG_IMAGE: ${{ parameters.image_name }}
-  workingDirectory: '$(MODULEPATH)'
-  displayName: 'Build image'
-- bash: | 
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
+- task: Bash@3
+  displayName: 'Push Docker Images - BuildId label'    # push with build-id labeldisplayName: 
+  inputs:
+    targetType: 'inline'
+    script: | 
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
+    workingDirectory: '$(MODULEPATH)'
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
     PRESIDIO_LABEL: ${{parameters.presidio_label}}
     GOLANG_IMAGE: ${{ parameters.image_name }}
-  displayName: 'Push Docker Images - BuildId label'    # push with build-id label
-  workingDirectory: '$(MODULEPATH)'
