@@ -129,7 +129,7 @@ stages:
         - template: ./build-python-template.yaml  
           parameters:
             folder_name: presidio-analyzer
-            package_name: analyzer
+            package_name: presidio_analyzer
             lint: true
             artifact_feed: ${{parameters.artifact_feed}}
             registry_service_connection: ${{parameters.registry_service_principal}}
