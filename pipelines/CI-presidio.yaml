@@ -6,7 +6,7 @@
 #   * REGISTRY_NAME - full name of container registry (i.e. presidio.azurecr.io).
 #   * RELEASE_NAME - presidio release version.
 variables:
-- group: K2Bridge CI-CD pipeline - Dev
+- group: Presidio - CI Pipeline
 - name: GOBIN
   value: '$(GOPATH)/bin'
 - name: GOPATH
