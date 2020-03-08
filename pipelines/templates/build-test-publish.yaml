@@ -351,15 +351,6 @@ stages:
       - job: FunctionalTests
         displayName: Presidio Functional Tests
         steps:  
-        # - template: ./golang-environment.yaml
-        - task: Bash@3
-          displayName: 'Run dep ensure'
-          inputs:
-            targetType: 'inline'
-            script: |
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-            workingDirectory: '$(MODULEPATH)'
         - task: Docker@2
           displayName: Docker login
           inputs:
