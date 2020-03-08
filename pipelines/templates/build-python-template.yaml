@@ -86,22 +86,22 @@ steps:
       python setup.py bdist_wheel
       twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
     workingDirectory: ${{ parameters.folder_name }}
-    env:
-      FEED_NAME: ${{ parameters.artifact_feed }}  
+  env:
+    FEED_NAME: ${{ parameters.artifact_feed }}  
 - task: Bash@3
   displayName: 'Build Python Container'
   inputs:
     script: |
       echo "$FULL_PYTHON_VERSION"
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$(FULL_PYTHON_VERSION) PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
-    env:
-      REGISTRY_NAME: ${{ parameters.registry_name }}
-      PRESIDIO_LABEL: ${{parameters.presidio_label}}
-      PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    PRESIDIO_LABEL: ${{parameters.presidio_label}}
+    PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
 - task: Bash@3
   displayName: 'Push Docker Images - BuildId label'    # push with build-id label
   inputs:
     script: |
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python
-    env:
-      REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
