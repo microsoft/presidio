@@ -1,4 +1,4 @@
-from analyzer import EntityRecognizer
+from presidio_analyzer import EntityRecognizer
 
 # pylint: disable=abstract-method, unused-argument
 # User Sroty: #498: Adding a new external recognizer

@@ -15,7 +15,7 @@ setuptools.setup(
     # long_description_content_type="text/markdown",
     url="https://github.com/Microsoft/presidio",
     packages=[
-        'analyzer', 'analyzer.predefined_recognizers', 'analyzer.nlp_engine','analyzer.recognizer_registry'
+        'presidio_analyzer', 'presidio_analyzer.predefined_recognizers', 'presidio_analyzer.nlp_engine','presidio_analyzer.recognizer_registry'
     ],
     trusted_host=['pypi.org'],
     tests_require=['pytest', 'flake8==3.7.9', 'pylint==2.3.1'],

@@ -6,11 +6,17 @@
 #   * REGISTRY_NAME - full name of container registry (i.e. presidio.azurecr.io).
 #   * RELEASE_NAME - presidio release version.
 variables:
-  GOBIN: '$(GOPATH)/bin'
-  GOPATH: '$(system.defaultWorkingDirectory)/gopath'
-  MODULEPATH: '$(GOPATH)/src/github.com/$(build.repository.name)'
-  GOROOT: '/usr/local/go1.11'
-  PYTHON.VERSION: '3.7'
+- group: K2Bridge CI-CD pipeline - Dev
+- name: GOBIN
+  value: '$(GOPATH)/bin'
+- name: GOPATH
+  value: '$(system.defaultWorkingDirectory)/gopath'
+- name: MODULEPATH
+  value: '$(GOPATH)/src/github.com/$(build.repository.name)'
+- name: GOROOT
+  value: '/usr/local/go1.11'
+- name: PYTHON.VERSION
+  value: '3.7'
 
 trigger: # CI triggers	
   batch: false 

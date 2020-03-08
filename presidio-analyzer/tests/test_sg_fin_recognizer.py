@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from assertions import assert_result
-from analyzer.predefined_recognizers import SgFinRecognizer
+from presidio_analyzer.predefined_recognizers import SgFinRecognizer
 
 sg_fin_recognizer = SgFinRecognizer()
 entities = ["FIN","NRIC"]

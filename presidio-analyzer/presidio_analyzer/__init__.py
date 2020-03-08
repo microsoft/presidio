@@ -5,16 +5,16 @@ import sys # noqa
 sys.path.append(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))) + "/analyzer") # noqa
 
-from analyzer.presidio_logger import PresidioLogger
-from analyzer.analysis_explanation import AnalysisExplanation
-from analyzer.pattern import Pattern
-from analyzer.entity_recognizer import EntityRecognizer
-from analyzer.local_recognizer import LocalRecognizer
-from analyzer.recognizer_result import RecognizerResult
-from analyzer.pattern_recognizer import PatternRecognizer
-from analyzer.remote_recognizer import RemoteRecognizer
-from analyzer.recognizer_registry.recognizer_registry import RecognizerRegistry
-from analyzer.analyzer_engine import AnalyzerEngine
+from presidio_analyzer.presidio_logger import PresidioLogger
+from presidio_analyzer.analysis_explanation import AnalysisExplanation
+from presidio_analyzer.pattern import Pattern
+from presidio_analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.local_recognizer import LocalRecognizer
+from presidio_analyzer.recognizer_result import RecognizerResult
+from presidio_analyzer.pattern_recognizer import PatternRecognizer
+from presidio_analyzer.remote_recognizer import RemoteRecognizer
+from presidio_analyzer.recognizer_registry.recognizer_registry import RecognizerRegistry
+from presidio_analyzer.analyzer_engine import AnalyzerEngine
 
 
 __all__ = ['PresidioLogger', 'AnalysisExplanation', 'Pattern',

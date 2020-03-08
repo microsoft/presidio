@@ -5,8 +5,8 @@ import grpc
 import recognizers_store_pb2
 import recognizers_store_pb2_grpc
 
-from analyzer import PatternRecognizer
-from analyzer import Pattern
+from presidio_analyzer import PatternRecognizer
+from presidio_analyzer import Pattern
 
 
 class RecognizerStoreApi:

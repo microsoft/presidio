@@ -1,8 +1,8 @@
 import time
 import logging
 
-from analyzer.recognizer_registry import RecognizerStoreApi
-from analyzer.predefined_recognizers import CreditCardRecognizer, \
+from presidio_analyzer.recognizer_registry import RecognizerStoreApi
+from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     SpacyRecognizer, CryptoRecognizer, DomainRecognizer, \
     EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, \
     UsBankRecognizer, UsLicenseRecognizer, \

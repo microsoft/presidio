@@ -1,4 +1,4 @@
-from analyzer import PresidioLogger
+from presidio_analyzer import PresidioLogger
 
 
 class AppTracer:

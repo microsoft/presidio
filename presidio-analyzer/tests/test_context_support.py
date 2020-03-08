@@ -3,12 +3,12 @@ from unittest import TestCase
 import os
 import pytest
 
-from analyzer import PatternRecognizer, Pattern
-from analyzer.predefined_recognizers import CreditCardRecognizer, \
+from presidio_analyzer import PatternRecognizer, Pattern
+from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer, \
     IpRecognizer, UsSsnRecognizer, SgFinRecognizer 
-from analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.nlp_engine import NlpArtifacts
 from tests import TESTS_NLP_ENGINE
 
 ip_recognizer = IpRecognizer()

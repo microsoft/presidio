@@ -1,6 +1,6 @@
 import datetime
 
-from analyzer import LocalRecognizer, \
+from presidio_analyzer import LocalRecognizer, \
     Pattern, \
     RecognizerResult, \
     EntityRecognizer, \

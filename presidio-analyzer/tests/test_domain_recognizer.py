@@ -1,8 +1,8 @@
 from unittest import TestCase
 
 from tests import assert_result
-from analyzer.predefined_recognizers import DomainRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.predefined_recognizers import DomainRecognizer
+from presidio_analyzer.entity_recognizer import EntityRecognizer
 
 domain_recognizer = DomainRecognizer()
 entities = ["DOMAIN_NAME"]

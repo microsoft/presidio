@@ -32,7 +32,7 @@ Currently the traces are written automatically. It means that when you add a new
 
 However, it's possible to write custom data to the traces if you wish to.
 
-For exmple, the [spacy_recognizer.py](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/analyzer/predefined_recognizers/spacy_recognizer.py) implemented a custom trace as follows:
+For exmple, the [spacy_recognizer.py](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/presidio_analyzer/predefined_recognizers/spacy_recognizer.py) implemented a custom trace as follows:
 ```python
 SPACY_DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
 

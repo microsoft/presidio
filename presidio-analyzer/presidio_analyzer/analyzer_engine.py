@@ -5,8 +5,8 @@ import analyze_pb2
 import analyze_pb2_grpc
 import common_pb2
 
-from analyzer import PresidioLogger
-from analyzer.app_tracer import AppTracer
+from presidio_analyzer import PresidioLogger
+from presidio_analyzer.app_tracer import AppTracer
 
 DEFAULT_LANGUAGE = "en"
 logger = PresidioLogger("presidio")
@@ -33,12 +33,12 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         if not nlp_engine:
             logger.info("nlp_engine not provided. Creating new "
                         "SpacyNlpEngine instance")
-            from analyzer.nlp_engine import SpacyNlpEngine
+            from presidio_analyzer.nlp_engine import SpacyNlpEngine
             nlp_engine = SpacyNlpEngine()
         if not registry:
             logger.info("Recognizer registry not provided. "
                         "Creating default RecognizerRegistry instance")
-            from analyzer import RecognizerRegistry
+            from presidio_analyzer import RecognizerRegistry
             registry = RecognizerRegistry()
         if not app_tracer:
             app_tracer = AppTracer()
