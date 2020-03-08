@@ -7,7 +7,6 @@ kind create cluster
 kubectl create namespace presidio
 
 cd ..
-ls
-source ./deploy-helm.sh
-source ./deploy-presidio.sh
+./deploy-helm.sh
+./deploy-presidio.sh
 
