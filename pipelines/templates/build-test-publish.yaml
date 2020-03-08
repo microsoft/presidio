@@ -283,7 +283,6 @@ stages:
           ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
               BUILD_LABEL: '$(Build.SourceBranchName)'
         steps:
-          - template: ./golang-environment.yaml
           - template: ./build-golang-template.yaml
             parameters:
               registry_service_connection: ${{parameters.registry_service_principal}}

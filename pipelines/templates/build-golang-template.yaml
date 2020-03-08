@@ -18,6 +18,7 @@ parameters:
   presidio_branch_label: ''
   deps_label: ''
 steps:
+- template: ./golang-environment.yaml
 - task: Docker@2
   displayName: 'Docker Login'
   inputs:
