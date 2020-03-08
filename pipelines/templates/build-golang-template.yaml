@@ -25,8 +25,8 @@ steps:
     command: 'login'
 - task: Bash@3
   displayName: 'Build image'
-  targetType: 'inline'
   inputs:
+    targetType: 'inline'
     script: |
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
     workingDirectory: '$(MODULEPATH)'
@@ -39,8 +39,8 @@ steps:
     GOLANG_IMAGE: ${{ parameters.image_name }}
 - task: Bash@3
   displayName: 'Push Docker Images - BuildId label'    # push with build-id labeldisplayName: 
-  targetType: 'inline'
   inputs:
+    targetType: 'inline'
     script: | 
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
     workingDirectory: '$(MODULEPATH)'

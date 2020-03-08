@@ -111,9 +111,9 @@ stages:
       displayName: Set base container build
       steps:
         - task: Bash@3
-          displayName: Git diff verify deps build
-          targetType: 'inline'
+          displayName: 'Git diff verify deps build'
           inputs:
+            targetType: 'inline'
             script: |
               MASTER="remotes/origin/master"
               GIT_DIFF_SOURCEBRANCH="HEAD"
@@ -148,8 +148,8 @@ stages:
         - task: Bash@3
           displayName: Copy Artifacts
           name: setEnv
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               mkdir -p $(Pipeline.Workspace)/variables
               echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
@@ -179,8 +179,8 @@ stages:
        - task: Bash@3
           displayName: Set deps env
           name: setEnv
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
               BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
@@ -247,8 +247,8 @@ stages:
         - task: Bash@3
           displayName: Set deps env
           name: setEnv
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
               BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
@@ -354,8 +354,8 @@ stages:
         - template: ./golang-environment.yaml
         - task: Bash@3
           displayName: 'Run dep ensure'
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
               dep ensure
@@ -367,8 +367,8 @@ stages:
             command: 'login'
         - task: Bash@3
           displayName: 'Run functional tests'
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
             workingDirectory: '$(MODULEPATH)'
@@ -398,8 +398,8 @@ stages:
         - task: Bash@3
           displayName: Set deps env
           name: setEnv
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
               BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
@@ -424,8 +424,8 @@ stages:
             ArtifactName: dropchart  
         - task: Bash@3
           displayName: 'Tag golang base image'
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               docker pull $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID)
               docker tag \
@@ -437,8 +437,8 @@ stages:
         - task: Bash@3
           displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
           condition: eq(variables['Build.SourceBranchName'], 'master')
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME)s docker-push-release                    
@@ -447,8 +447,8 @@ stages:
         - task: Bash@3
           displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
           condition: ne(variables['Build.SourceBranchName'], 'master')
-          targetType: 'inline'
           inputs:
+            targetType: 'inline'
             script: |
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch-deps
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch
