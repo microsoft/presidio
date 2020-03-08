@@ -256,6 +256,7 @@ stages:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
           BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
         steps:
+          - template: ./golang-environment.yaml
           - task: Docker@2
             displayName: 'Build and Push Golang dependencies'
             condition: eq(variables['BUILD_DEPS'], 'true')
@@ -278,6 +279,7 @@ stages:
           ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
               BUILD_LABEL: '$(Build.SourceBranchName)'
         steps:
+          - template: ./golang-environment.yaml
           - template: ./build-golang-template.yaml
             parameters:
               registry_service_connection: ${{parameters.registry_service_principal}}
@@ -344,16 +346,7 @@ stages:
       - job: FunctionalTests
         displayName: Presidio Functional Tests
         steps:  
-        - bash: |
-            mkdir -p '$(GOBIN)'
-            mkdir -p '$(GOPATH)/pkg'
-            rm -rf '$(MODULEPATH)'
-            mkdir -p '$(MODULEPATH)'
-            shopt -s extglob
-            mv !(gopath) '$(MODULEPATH)' --force
-            echo '##vso[task.prependpath]$(GOBIN)'
-            echo '##vso[task.prependpath]$(GOROOT)/bin'
-          displayName: 'Setup Go Env'
+        - template: ./golang-environment.yaml
         - bash: | 
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
