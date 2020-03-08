@@ -1,6 +1,7 @@
 import string
 
-from presidio_analyzer.predefined_recognizers.iban_patterns import regex_per_country
+from presidio_analyzer.predefined_recognizers.iban_patterns \
+    import regex_per_country
 from presidio_analyzer import Pattern, PatternRecognizer
 
 # Import 're2' regex engine if installed, if not- import 'regex'
