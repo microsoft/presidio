@@ -31,8 +31,8 @@ setuptools.setup(
     include_package_data=True,
     license='MIT',
     scripts=[
-        'analyzer/presidio-analyzer',
-        'analyzer/presidio-analyzer.bat',
+        'presidio_analyzer/presidio-analyzer',
+        'presidio_analyzer/presidio-analyzer.bat',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
