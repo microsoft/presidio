@@ -6,24 +6,24 @@ parameters:
   artifact_feed: ''
 steps:
     - task: Bash@3
-    displayName: 'Install twines'
-    inputs:
+      displayName: 'Install twines'
+      inputs:
         targetType: 'inline'
         script: |
-        pip install twine
-        workingDirectory: ${{ parameters.folder_name }}
+            pip install twine
+            workingDirectory: ${{ parameters.folder_name }}
     - task: TwineAuthenticate@0
-    displayName: 'Authenticate RC with Azure Artifacts'
-    inputs:
+      displayName: 'Authenticate RC with Azure Artifacts'
+      inputs:
         artifactFeeds: ${{ parameters.artifact_feed }}
     - task: Bash@3
-    displayName: 'Package and Upload Wheel to Azure Artifacts'
-    inputs:
+      displayName: 'Package and Upload Wheel to Azure Artifacts'
+      inputs:
         targetType: 'inline'
         script: |
-        pip install wheel
-        python setup.py bdist_wheel
-        twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
-        workingDirectory: ${{ parameters.folder_name }}
-    env:
+            pip install wheel
+            python setup.py bdist_wheel
+            twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
+            workingDirectory: ${{ parameters.folder_name }}
+      env:
         FEED_NAME: ${{ parameters.artifact_feed }}
