@@ -2,7 +2,9 @@
 # dep ensure. It is required for go <1.11, as noted in ADO golang docs:
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/gso?view=azure-devops&tabs=go-older
 steps:
-- bash: |
+- bash:
+  displayName: 'Setup Go Env'
+  script: |
     mkdir -p '$(GOBIN)'
     mkdir -p '$(GOPATH)/pkg'
     rm -rf '$(MODULEPATH)'
@@ -11,4 +13,3 @@ steps:
     mv !(gopath) '$(MODULEPATH)' --force
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
-  displayName: 'Setup Go Env'
