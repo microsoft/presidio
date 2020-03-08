@@ -11,7 +11,7 @@ steps:
         targetType: 'inline'
         script: |
             pip install twine
-            workingDirectory: ${{ parameters.folder_name }}
+        workingDirectory: ${{ parameters.folder_name }}
     - task: TwineAuthenticate@0
       displayName: 'Authenticate RC with Azure Artifacts'
       inputs:
@@ -24,6 +24,6 @@ steps:
             pip install wheel
             python setup.py bdist_wheel
             twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
-            workingDirectory: ${{ parameters.folder_name }}
+        workingDirectory: ${{ parameters.folder_name }}
       env:
         FEED_NAME: ${{ parameters.artifact_feed }}
