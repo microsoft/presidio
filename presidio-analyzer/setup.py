@@ -26,7 +26,6 @@ setuptools.setup(
         'grpcio==1.21.1', 
         'protobuf==3.8.0', 
         'tldextract==2.2.1', 
-        'regex==2019.4.14',
         'knack==0.6.2'],
     include_package_data=True,
     license='MIT',

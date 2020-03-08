@@ -1,7 +1,9 @@
 # CI pipeline for presidio. This pipeline triggers the build-test-publish template for every PR
 # and merge to master on https://github.com/microsoft/presidio.
 # Pipeline parameters:
-#   * PYPI_INDEX_URL - pypi artifact used to push the wheel.
+#   * PYPI_INDEX_URL - pypi endpoint used to push the presidio analyzer wheel during CI.
+#                   presidio uses internally an Azure Artifacts feed to store the built wheels.
+#                   https://docs.microsoft.com/en-us/azure/devops/artifacts/quickstarts/python-packages?view=azure-devops
 #   * REGISTRY - service connection to docker registry.
 #   * REGISTRY_NAME - full name of container registry (i.e. presidio.azurecr.io).
 #   * RELEASE_NAME - presidio release version.

@@ -1,3 +1,6 @@
+# Presidio Analyzer Local Development Dockerfile. 
+# This dockerfile copies from the local environment and uses pipenv
+# to install presidio analyzer.
 ARG REGISTRY=presidio.azurecr.io
 ARG PRESIDIO_DEPS_LABEL=latest
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}

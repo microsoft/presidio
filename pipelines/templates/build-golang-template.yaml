@@ -18,16 +18,6 @@ parameters:
   presidio_branch_label: ''
   deps_label: ''
 steps:
-- bash: |
-    mkdir -p '$(GOBIN)'
-    mkdir -p '$(GOPATH)/pkg'
-    rm -rf '$(MODULEPATH)'
-    mkdir -p '$(MODULEPATH)'
-    shopt -s extglob
-    mv !(gopath) '$(MODULEPATH)' --force
-    echo '##vso[task.prependpath]$(GOBIN)'
-    echo '##vso[task.prependpath]$(GOROOT)/bin'
-  displayName: 'Setup Go Env'
 - task: Docker@2
   displayName: 'Docker Login'
   inputs:

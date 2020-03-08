@@ -1,3 +1,5 @@
+# Presidio Analyzer Dockerfile. 
+# This dockerfile installs presidio analyzer wheel from a pypi endpoint.
 ARG REGISTRY=presidio.azurecr.io
 ARG PRESIDIO_DEPS_LABEL=latest
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}

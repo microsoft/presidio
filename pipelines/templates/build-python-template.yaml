@@ -1,4 +1,4 @@
-# This template builds a python wheel and container and pushes them to Azure Artifcats 
+# This template builds a python wheel and container and pushes them to Azure Artifcats using Twine https://pypi.org/project/twine/
 # and a cotainer registry, using presidio Makefile.
 # It is used in CI to build the analyzer container.
 # parameters:

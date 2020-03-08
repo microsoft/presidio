@@ -369,7 +369,7 @@ stages:
           displayName: 'Run functional tests'
           workingDirectory: '$(MODULEPATH)'
 
-  # # Push artifacts
+  # # Publish artifacts
   - stage: PublishArtifacts 
     displayName: Publish Build Artifacts
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
@@ -399,7 +399,7 @@ stages:
           displayName: Set deps env
           name: setEnv
       - job: PublishArtifacts
-        displayName: Push Containers
+        displayName: Publish Containers
         dependsOn: GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
