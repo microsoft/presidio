@@ -60,8 +60,8 @@ steps:
       pipenv run pylint $PACKAGE_NAME && \
       pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
     workingDirectory: ${{ parameters.folder_name }}
-    env:
-      PACKAGE_NAME: ${{ parameters.package_name }}
+  env:
+    PACKAGE_NAME: ${{ parameters.package_name }}
 - task: Bash@3
   displayName: 'Run Tests'
   inputs:
