@@ -11,6 +11,8 @@ Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipeli
 
 ***[Presidio Build and Push template](../pipelines/templates/build-test-publish.yaml)*** - is the stages-template which contains the build, test and push logic of presidio. There are four stages for the build:
 
+- *Security Analysis* - Detect security vulnerabilities in code by running Credscan.
+
 - *Setup* - This stage verifies if a dependency container stage is required (based on a set of known files). If one of the triggering files are changed, the python and golang deps containers will be rebuilt in the following stages.
 
 - *Python* - Build, test and publish python service. If the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the python service. this stage tags all containers with the build id. For CI triggered builds the containers are also pushed to a registry.

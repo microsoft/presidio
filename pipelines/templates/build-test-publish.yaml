@@ -1,5 +1,6 @@
 # A multi-stage template which builds, tests and pushed all presidio assets.
-# There are five stages:
+# The following stages make up the pipelines:
+# * Security-Analysis - Detect security vulnerabilities in code.
 # * Setup - validates, using git diff, if deps containers should be rebuilt. 
 # * Python - Builds tests and pushes python service. if deps build is required the base container is rebuilt 
 #            and later stages will use the specific deps version number for building the presidio services.
