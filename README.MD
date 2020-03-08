@@ -88,6 +88,28 @@ Presidio leverages:
 * [GRPC](https://grpc.io)
 * [re2](https://github.com/google/re2)
 
+## Give it a try - Run locally with KIND
+Presidio is built for Kubernetes, however you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
+
+1. Install [Docker](https://docs.docker.com/install/).
+2. Clone Presidio.
+3. Run
+
+    ```sh
+    cd deployment/
+    ./run-with-kind.sh
+    ```
+
+4. Wait and verify all pods are running:
+    ```sh
+    kubectl get pod -n presidio
+    ```
+
+5. Port forward HTTP requests to the API micro-service and start using Presidio:
+    ```sh
+    kubectl port-forward <presidio-api-pod-name> 8080:8080 -n presidio
+    ```
+
 ## Quickstart
 
 1. Install [Presidio](docs/deploy.md)
