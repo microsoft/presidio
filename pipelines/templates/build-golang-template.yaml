@@ -23,22 +23,26 @@ steps:
   inputs:
     containerRegistry: ${{ parameters.registry_service_connection }}
     command: 'login'
-- bash: |
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
-  env:
-    REGISTRY_NAME: ${{ parameters.registry_name }}
-    PRESIDIO_LABEL: ${{parameters.presidio_label}}
-    PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
-    BRANCH_LABEL: ${{parameters.presidio_branch_label}}
-    DOCKER_COMMAND: ${{ parameters.make_command_to_run }}
-    GOLANG_IMAGE: ${{ parameters.image_name }}
-  workingDirectory: '$(MODULEPATH)'
+- task: Bash@3
   displayName: 'Build image'
-- bash: | 
-    make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
-  env:
-    REGISTRY_NAME: ${{ parameters.registry_name }}
-    PRESIDIO_LABEL: ${{parameters.presidio_label}}
-    GOLANG_IMAGE: ${{ parameters.image_name }}
-  displayName: 'Push Docker Images - BuildId label'    # push with build-id label
-  workingDirectory: '$(MODULEPATH)'
+  inputs:
+    script: |
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
+    env:
+      REGISTRY_NAME: ${{ parameters.registry_name }}
+      PRESIDIO_LABEL: ${{parameters.presidio_label}}
+      PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
+      BRANCH_LABEL: ${{parameters.presidio_branch_label}}
+      DOCKER_COMMAND: ${{ parameters.make_command_to_run }}
+      GOLANG_IMAGE: ${{ parameters.image_name }}
+    workingDirectory: '$(MODULEPATH)'
+- task: Bash@3
+  displayName: 'Push Docker Images - BuildId label'    # push with build-id labeldisplayName: 
+  inputs:
+    script: | 
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
+    env:
+      REGISTRY_NAME: ${{ parameters.registry_name }}
+      PRESIDIO_LABEL: ${{parameters.presidio_label}}
+      GOLANG_IMAGE: ${{ parameters.image_name }}
+    workingDirectory: '$(MODULEPATH)'
