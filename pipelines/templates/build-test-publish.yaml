@@ -308,11 +308,11 @@ stages:
         strategy:
           maxParallel: 10
           matrix:
-            ANNONIMYZER:
+            ANONYMIZER:
                 SERVICE_NAME: presidio-anonymizer
             OCR:
                 SERVICE_NAME: presidio-ocr
-            ANNONIMYZER_IMAGE:
+            ANONYMIZER_IMAGE:
                 SERVICE_NAME: presidio-anonymizer-image
             API:
                 SERVICE_NAME: presidio-api
