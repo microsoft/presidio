@@ -7,6 +7,6 @@ ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
 
 WORKDIR ${PRESIDIOPATH}
 
-COPY ./tests ./tests
+COPY ./functional-tests ./functional-tests
 
-CMD ["sh", "-x", "-c", "go test ./tests --tags functional -count=1 -v"]
+CMD ["sh", "-x", "-c", "go test ./functional-tests --tags functional -count=1 -v"]
