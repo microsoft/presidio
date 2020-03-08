@@ -29,6 +29,7 @@ steps:
     versionSpec: '$(PYTHON.VERSION)'
 - task: Bash@3
   displayName: 'Install python environment'
+  targetType: 'inline'
   inputs:
     script: |
       python -m pip install --upgrade pip
@@ -46,6 +47,7 @@ steps:
     artifactFeeds: presidio
 - task: Bash@3
   displayName: 'Install dependencies'
+  targetType: 'inline'
   inputs:
     script: |
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
@@ -55,6 +57,7 @@ steps:
     workingDirectory: ${{ parameters.folder_name }}
 - task: Bash@3
   displayName: 'Lint'
+  targetType: 'inline'
   inputs:
     script: |
       pipenv run pylint $PACKAGE_NAME && \
@@ -64,6 +67,7 @@ steps:
     PACKAGE_NAME: ${{ parameters.package_name }}
 - task: Bash@3
   displayName: 'Run Tests'
+  targetType: 'inline'
   inputs:
     script: |
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
@@ -72,6 +76,7 @@ steps:
     workingDirectory: ${{ parameters.folder_name }}
 - task: Bash@3
   displayName: Set version number
+  targetType: 'inline'
   inputs:
     script: |
       sed -i 's@dev@'"$PYTHON_BUILD_TAG"'@' ./VERSION
@@ -80,6 +85,7 @@ steps:
       echo "##vso[task.setvariable variable=FULL_PYTHON_VERSION]$FULL_PYTHON_VERSION"
 - task: Bash@3
   displayName: 'Package and Upload Wheel to Azure Artifacts'
+  targetType: 'inline'
   inputs:
     script: |
       pip install wheel
@@ -90,6 +96,7 @@ steps:
     FEED_NAME: ${{ parameters.artifact_feed }}  
 - task: Bash@3
   displayName: 'Build Python Container'
+  targetType: 'inline'
   inputs:
     script: |
       echo "$FULL_PYTHON_VERSION"
@@ -100,6 +107,7 @@ steps:
     PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
 - task: Bash@3
   displayName: 'Push Docker Images - BuildId label'    # push with build-id label
+  targetType: 'inline'
   inputs:
     script: |
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python

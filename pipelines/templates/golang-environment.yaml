@@ -4,6 +4,7 @@
 steps:
 - task: Bash@3
   displayName: 'Setup Go Env'
+  targetType: 'inline'
   inputs:
     script: |
       mkdir -p '$(GOBIN)'
