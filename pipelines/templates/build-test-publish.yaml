@@ -1,5 +1,6 @@
 # A multi-stage template which builds, tests and pushed all presidio assets.
-# There are five stages:
+# The following stages make up the pipelines:
+# * Security-Analysis - Detect security vulnerabilities in code.
 # * Setup - validates, using git diff, if deps containers should be rebuilt. 
 # * Python - Builds tests and pushes python service. if deps build is required the base container is rebuilt 
 #            and later stages will use the specific deps version number for building the presidio services.
@@ -20,59 +21,145 @@ parameters:
   artifact_feed:
 
 stages:
+  - stage: SecurityAnalysis
+    displayName: Security Analysis
+    dependsOn: []
+    jobs:
+    - job: RunAnalysis
+      displayName: Run Analysis
+      pool:
+        # CredScan only runs on Windows
+        vmImage: 'windows-latest'
+      steps:
+      - task: CredScan@2
+        displayName: 'Find credentials in source code'
+        inputs:
+          toolMajorVersion: 'V2'
+      - task: SdtReport@1
+        displayName: 'Security analysis report'
+        inputs:
+          AllTools: false
+          APIScan: false
+          BinSkim: false
+          CodesignValidation: false
+          CredScan: true
+          FortifySCA: false
+          FxCop: false
+          ModernCop: false
+          MSRD: false
+          PoliCheck: false
+          RoslynAnalyzers: false
+          SDLNativeRules: false
+          Semmle: false
+          TSLint: false
+          ToolLogsNotFoundAction: 'Standard'
+      - task: PublishSecurityAnalysisLogs@2
+        displayName: 'Publish security analysis logs'
+        inputs:
+          ArtifactName: 'CodeAnalysisLogs'
+          ArtifactType: 'Container'
+          AllTools: false
+          AntiMalware: false
+          APIScan: false
+          BinSkim: false
+          CodesignValidation: false
+          CredScan: true
+          FortifySCA: false
+          FxCop: false
+          ModernCop: false
+          MSRD: false
+          PoliCheck: false
+          RoslynAnalyzers: false
+          SDLNativeRules: false
+          Semmle: false
+          TSLint: false
+          WebScout: false
+          ToolLogsNotFoundAction: 'Standard'
+      - task: PostAnalysis@1
+        displayName: 'Post security analysis'
+        inputs:
+          AllTools: false
+          APIScan: false
+          BinSkim: false
+          CodesignValidation: false
+          CredScan: true
+          FortifySCA: false
+          FxCop: false
+          ModernCop: false
+          PoliCheck: false
+          RoslynAnalyzers: false
+          SDLNativeRules: false
+          Semmle: false
+          TSLint: false
+          VstsConsole: false
+          ToolLogsNotFoundAction: 'Standard'
+      - task: ComponentGovernanceComponentDetection@0
+        inputs:
+          scanType: 'Register'
+          verbosity: 'Verbose'
+          alertWarningLevel: 'Medium'
+          failOnAlert: true
+        
   # Env
   - stage: Setup
     displayName: Set Pipeline globals
+    dependsOn: SecurityAnalysis
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
     - job: SetBuildDep
       displayName: Set base container build
-      steps: 
-        - bash: |
-            MASTER="remotes/origin/master"
-            GIT_DIFF_SOURCEBRANCH="HEAD"
-            # Set build_deps Triggers to false
-            BUILD_DEPS=false
-            DEPS_LABEL=latest
+      steps:
+        - task: Bash@3
+          displayName: 'Git diff verify deps build'
+          inputs:
+            targetType: 'inline'
+            script: |
+              MASTER="remotes/origin/master"
+              GIT_DIFF_SOURCEBRANCH="HEAD"
+              # Set build_deps Triggers to false
+              BUILD_DEPS=false
+              DEPS_LABEL=latest
 
-            # we should always use master as a comparison, except in the case that this is
-            # a build for master. In this case we can use HEAD~ (1 commit behind master)
-            # because all merges will be squash merges
-            if [[ $(git diff "$MASTER") ]]; then
-                GIT_DIFF_UPSTREAMBRANCH="$MASTER"
-            else
-                GIT_DIFF_UPSTREAMBRANCH="$MASTER~"
-            fi
-            echo "GIT_DIFF_UPSTREAMBRANCH: $GIT_DIFF_UPSTREAMBRANCH"
-            echo "GIT_DIFF_SOURCEBRANCH: $GIT_DIFF_SOURCEBRANCH"
-            FILE_CHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only)
-            echo "Files changed since last commit..."
-            echo "$FILE_CHANGE_SET"
+              # we should always use master as a comparison, except in the case that this is
+              # a build for master. In this case we can use HEAD~ (1 commit behind master)
+              # because all merges will be squash merges
+              if [[ $(git diff "$MASTER") ]]; then
+                  GIT_DIFF_UPSTREAMBRANCH="$MASTER"
+              else
+                  GIT_DIFF_UPSTREAMBRANCH="$MASTER~"
+              fi
+              echo "GIT_DIFF_UPSTREAMBRANCH: $GIT_DIFF_UPSTREAMBRANCH"
+              echo "GIT_DIFF_SOURCEBRANCH: $GIT_DIFF_SOURCEBRANCH"
+              FILE_CHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only)
+              echo "Files changed since last commit..."
+              echo "$FILE_CHANGE_SET"
 
-            # if git diff detects commits made to the deps files we build the dep containerss
-            if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Gopkg.lock" -e "Gopkg.toml" -e "Dockerfile.python.deps" -e "Dockerfile.golang.deps" -e "Dockerfile.python.deps" -e "presidio-analyzer/Pipfile" -e "presidio-analyzer/Pipfile.lock")" ]]; then
-                echo "Performing build deps."
-                BUILD_DEPS=true
-                DEPS_LABEL='$(Build.BuildId)'
-            fi
+              # if git diff detects commits made to the deps files we build the dep containerss
+              if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Gopkg.lock" -e "Gopkg.toml" -e "Dockerfile.python.deps" -e "Dockerfile.golang.deps" -e "Dockerfile.python.deps" -e "presidio-analyzer/Pipfile" -e "presidio-analyzer/Pipfile.lock")" ]]; then
+                  echo "Performing build deps."
+                  BUILD_DEPS=true
+                  DEPS_LABEL='$(Build.BuildId)'
+              fi
 
-            echo "##vso[task.setvariable variable=BUILD_DEPS]$BUILD_DEPS"
-            echo "##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL"
-          displayName: Git diff verify deps build
+              echo "##vso[task.setvariable variable=BUILD_DEPS]$BUILD_DEPS"
+              echo "##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL"
         # To pass the variable build_deps, we write it to a file
-        - bash: |
-            mkdir -p $(Pipeline.Workspace)/variables
-            echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
-            echo "$BUILD_DEPS" > $(Pipeline.Workspace)/variables/BUILD_DEPS
-            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+        - task: Bash@3
           displayName: Copy Artifacts
           name: setEnv
+          inputs:
+            targetType: 'inline'
+            script: |
+              mkdir -p $(Pipeline.Workspace)/variables
+              echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
+              echo "$BUILD_DEPS" > $(Pipeline.Workspace)/variables/BUILD_DEPS
+              echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+              echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
         # Publish the folder as pipeline artifact
         - publish: $(Pipeline.Workspace)/variables
-          artifact: variables
           displayName: Publish Artifacts
+          artifact: variables
 
   # Python Stage
   - stage: PythonStage
@@ -89,13 +176,16 @@ stages:
           displayName: Download deps artifacts
           artifact: variables
         # Read the variable from the file, then expose it in the job
-        - bash: |
-            DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
-            BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
-            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+        - task: Bash@3
           displayName: Set deps env
           name: setEnv
+          inputs:
+            targetType: 'inline'
+            script: |
+              DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+              BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
+              echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+              echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
       - job: PythonDepsBuild
         displayName: Build Python Deps Container
         timeoutInMinutes: 30 
@@ -153,13 +243,16 @@ stages:
           displayName: Download deps artifacts
           artifact: variables
         # Read the variable from the file, then expose it in the job
-        - bash: |
-            DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
-            BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
-            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+        - task: Bash@3
           displayName: Set deps env
           name: setEnv
+          inputs:
+            targetType: 'inline'
+            script: |
+              DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+              BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
+              echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+              echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
       - job: GolangDepsBuild
         displayName: Build Golang Deps Container
         timeoutInMinutes: 30 
@@ -215,11 +308,11 @@ stages:
         strategy:
           maxParallel: 10
           matrix:
-            ANNONIMYZER:
+            ANONYMIZER:
                 SERVICE_NAME: presidio-anonymizer
             OCR:
                 SERVICE_NAME: presidio-ocr
-            ANNONIMYZER_IMAGE:
+            ANONYMIZER_IMAGE:
                 SERVICE_NAME: presidio-anonymizer-image
             API:
                 SERVICE_NAME: presidio-api
@@ -256,32 +349,29 @@ stages:
       - job: FunctionalTests
         displayName: Presidio Functional Tests
         steps:  
-        - bash: |
-            mkdir -p '$(GOBIN)'
-            mkdir -p '$(GOPATH)/pkg'
-            rm -rf '$(MODULEPATH)'
-            mkdir -p '$(MODULEPATH)'
-            shopt -s extglob
-            mv !(gopath) '$(MODULEPATH)' --force
-            echo '##vso[task.prependpath]$(GOBIN)'
-            echo '##vso[task.prependpath]$(GOROOT)/bin'
-          displayName: 'Setup Go Env'
-        - bash: | 
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-          displayName: 'dep ensure'
-          workingDirectory: '$(MODULEPATH)'
+        - template: ./golang-environment.yaml
+        - task: Bash@3
+          displayName: 'Run dep ensure'
+          inputs:
+            targetType: 'inline'
+            script: |
+              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+              dep ensure
+            workingDirectory: '$(MODULEPATH)'
         - task: Docker@2
           displayName: Docker login
           inputs:
             containerRegistry: ${{parameters.registry_service_principal}}
             command: 'login'
-        - bash: | 
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
+        - task: Bash@3
           displayName: 'Run functional tests'
-          workingDirectory: '$(MODULEPATH)'
+          inputs:
+            targetType: 'inline'
+            script: |
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
+            workingDirectory: '$(MODULEPATH)'
 
-  # # Push artifacts
+  # # Publish artifacts
   - stage: PublishArtifacts 
     displayName: Publish Build Artifacts
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
@@ -303,21 +393,25 @@ stages:
           displayName: Download deps artifacts
           artifact: variables
         # Read the variable from the file, then expose it in the job
-        - bash: |
-            DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
-            BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
-            echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-            echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+        - task: Bash@3
           displayName: Set deps env
           name: setEnv
+          inputs:
+            targetType: 'inline'
+            script: |
+              DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
+              BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
+              echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
+              echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
       - job: PublishArtifacts
-        displayName: Push Containers
+        displayName: Publish Containers
         dependsOn: GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
           BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
         steps:  
         - task: Docker@2
+          displayName: Login to docker registry
           inputs:
             containerRegistry: ${{ parameters.registry_service_principal }}
             command: 'login'
@@ -326,28 +420,35 @@ stages:
           inputs:
             PathtoPublish: charts
             ArtifactName: dropchart  
-        - bash: |
-            docker pull $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID)
-            docker tag \
-              $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID) \
-              $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
-            docker push $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
-          env:
-            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+        - task: Bash@3
           displayName: 'Tag golang base image'
-
-        - bash: |
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME)s docker-push-release                    
+          inputs:
+            targetType: 'inline'
+            script: |
+              docker pull $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID)
+              docker tag \
+                $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID) \
+                $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
+              docker push $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+        - task: Bash@3
           displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
           condition: eq(variables['Build.SourceBranchName'], 'master')
-
-        - bash: | 
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch-deps
-            make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch
+          inputs:
+            targetType: 'inline'
+            script: |
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME)s docker-push-release                    
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+        - task: Bash@3
           displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
           condition: ne(variables['Build.SourceBranchName'], 'master')
+          inputs:
+            targetType: 'inline'
+            script: |
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch-deps
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch
+          env:
+            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}

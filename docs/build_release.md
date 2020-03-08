@@ -7,9 +7,11 @@ The project currently supports [Azure Pipelines](https://azure.microsoft.com/en-
 
 Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops) allows for code reuse using [YAML Schema](https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema).
 
-***[Presidio CI Pipeline](../pipelines/CI-presidio.yaml)*** - is the pipeline which is used to buil, test and  publish persidio services images.
+***[Presidio CI Pipeline](../pipelines/CI-presidio.yaml)*** - is the pipeline which is used to build, test and  publish persidio services images.
 
-***[Presidio Build and Push template](../pipelines/templates/build-test-publish.yaml)*** - is the stages-template which contains the build, test and push logic of presidio. There are four stages for the build:
+***[Presidio Build and Publish template](../pipelines/templates/build-test-publish.yaml)*** - is the stages-template which contains the build, test and publish logic of presidio. There are four stages for the build:
+
+- *Security Analysis* - Detect security vulnerabilities in code by running Credscan.
 
 - *Setup* - This stage verifies if a dependency container stage is required (based on a set of known files). If one of the triggering files are changed, the python and golang deps containers will be rebuilt in the following stages.
 
@@ -23,12 +25,12 @@ Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipeli
 
 ### Variables used by the pipeline
 
-* ***PYPI_INDEX_URL*** - pypi artifact used to push the wheel.
+* ***PYPI_INDEX_URL*** - pypi artifact used to publish the wheel.
 * ***REGISTRY*** - service connection to docker registry.
 * ***REGISTRY_NAME*** - full name of container registry (i.e. presidio.azurecr.io).
 * ***DEPENDENCY_DEFAULT*** - presidio release version.
 
-### import a pipeline to Azure Devops
+### Import a pipeline to Azure Devops
 
 * Sign in to your Azure DevOps organization and navigate to your project.
 
