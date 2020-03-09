@@ -9,18 +9,18 @@ parameters:
   artifact_is_ado: 'true'
 steps:
     - task: Bash@3
-      displayName: 'Install twines'
+      displayName: 'Install twine'
       inputs:
         targetType: 'inline'
         script: |
             pip install twine
         workingDirectory: ${{ parameters.folder_name }}
-    ${{ if eq(parameters.artifact_is_ado, 'true') }}:
+    - ${{ if eq(parameters.artifact_is_ado, 'true') }}:
       - task: TwineAuthenticate@0
         displayName: 'Authenticate RC with Azure Artifacts'
         inputs:
           artifactFeeds: ${{ parameters.artifact_feed }}
-    ${{ if eq(parameters.artifact_is_ado, 'false') }}:
+    - s${{ if eq(parameters.artifact_is_ado, 'false') }}:
       - task: TwineAuthenticate@0
         displayName: 'Authenticate RC with Azure Artifacts'
         inputs:
