@@ -4,7 +4,7 @@
 # if artifact_is_ado is true, artifact_feed is the feed URL.
 # if artifact_is_ado is false, artifact_feed is a python service connection name.
 parameters:
-  name: ''
+  feed_name: ''
   folder_name: '' 
   artifact_feed: ''
   artifact_is_ado: 'true'
@@ -27,7 +27,7 @@ steps:
         inputs:
           pythonUploadServiceConnection: ${{ parameters.artifact_feed }}
     - task: Bash@3
-      displayName: 'Upload Wheel to ${{ parameters.name}}'
+      displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
       inputs:
         targetType: 'inline'
         script: |
