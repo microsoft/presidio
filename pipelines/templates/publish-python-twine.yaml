@@ -20,7 +20,7 @@ steps:
       - task: TwineAuthenticate@1
         displayName: 'Authenticate with Azure Artifacts'
         inputs:
-          artifactFeeds: ${{ parameters.artifact_feed }}
+          artifactFeed: ${{ parameters.artifact_feed }}
     - ${{ if ne(parameters.artifact_is_ado, 'true') }}:
       - task: TwineAuthenticate@1
         displayName: 'Authenticate with Pypi'
