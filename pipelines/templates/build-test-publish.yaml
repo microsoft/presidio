@@ -447,53 +447,53 @@ stages:
             feed_name: 'Azure Artifacts'
             folder_name: ${{ parameters.folder_name }}
             artifact_feed: ${{ parameters.artifact_feed }}
-
-      - job: PublishContainers
-        displayName: Publish Containers
-        dependsOn: GetDepsJob
-        variables:
-          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-          BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
-        steps:  
-        - task: Docker@2
-          displayName: Login to docker registry
-          inputs:
-            containerRegistry: ${{ parameters.registry_service_principal }}
-            command: 'login'
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish Helm Artifact'
-          inputs:
-            PathtoPublish: charts
-            ArtifactName: dropchart  
-        - task: Bash@3
-          displayName: 'Tag golang base image'
-          inputs:
-            targetType: 'inline'
-            script: |
-              docker pull $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID)
-              docker tag \
-                $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID) \
-                $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
-              docker push $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
-          env:
-            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
-        - task: Bash@3
-          displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
-          condition: eq(variables['Build.SourceBranchName'], 'master')
-          inputs:
-            targetType: 'inline'
-            script: |
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME) docker-push-release                    
-          env:
-            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
-        - task: Bash@3
-          displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
-          condition: ne(variables['Build.SourceBranchName'], 'master')
-          inputs:
-            targetType: 'inline'
-            script: |
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch
-          env:
-            REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+      # TODO: BRING BACK
+      # - job: PublishContainers
+      #   displayName: Publish Containers
+      #   dependsOn: GetDepsJob
+      #   variables:
+      #     DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+      #     BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
+      #   steps:  
+      #   - task: Docker@2
+      #     displayName: Login to docker registry
+      #     inputs:
+      #       containerRegistry: ${{ parameters.registry_service_principal }}
+      #       command: 'login'
+      #   - task: PublishBuildArtifacts@1
+      #     displayName: 'Publish Helm Artifact'
+      #     inputs:
+      #       PathtoPublish: charts
+      #       ArtifactName: dropchart  
+      #   - task: Bash@3
+      #     displayName: 'Tag golang base image'
+      #     inputs:
+      #       targetType: 'inline'
+      #       script: |
+      #         docker pull $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID)
+      #         docker tag \
+      #           $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID) \
+      #           $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
+      #         docker push $REGISTRY_NAME/presidio-golang-base:$(BUILD_LABEL)
+      #     env:
+      #       REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+      #   - task: Bash@3
+      #     displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
+      #     condition: eq(variables['Build.SourceBranchName'], 'master')
+      #     inputs:
+      #       targetType: 'inline'
+      #       script: |
+      #         make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
+      #         make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME) docker-push-release                    
+      #     env:
+      #       REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+      #   - task: Bash@3
+      #     displayName: 'Push Docker Images - Feature Branch'    # push with branch-name label - feature branch
+      #     condition: ne(variables['Build.SourceBranchName'], 'master')
+      #     inputs:
+      #       targetType: 'inline'
+      #       script: |
+      #         make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch-deps
+      #         make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch
+      #     env:
+      #       REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
