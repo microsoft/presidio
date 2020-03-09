@@ -181,15 +181,24 @@ test-functional-no-build:
 
 	-docker network create testnetwork
 	docker run --rm --name test-azure-emulator --network testnetwork -e executable=blob  -d -t -p 10000:10000 -p 10001:10001 -v ${HOME}/emulator:/opt/azurite/folder arafato/azurite &
+	test-azure-emulator=$!
 	docker run --rm --name test-kafka -d -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=127.0.0.1 --env ADVERTISED_PORT=9092 spotify/kafka &
+	test-kafka=$!
 	docker run --rm --name test-redis --network testnetwork -d -p 6379:6379 redis &
+	test-redis=$!
 	docker run --rm --name test-s3-emulator --network testnetwork -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock &
+	test-s3-emulator=$!
 	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 -e RECOGNIZERS_STORE_SVC_ADDRESS=test-presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-analyzer:$(PRESIDIO_LABEL) &
+	test-presidio-analyzer=$!
 	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(PRESIDIO_LABEL) &
+	test-presidio-anonymizer=$!
 	docker run --rm --name test-presidio-anonymizer-image --network testnetwork -d -p 3002:3002 -e GRPC_PORT=3002 $(DOCKER_REGISTRY)/presidio-anonymizer-image:$(PRESIDIO_LABEL) &
+	presidio-anonymizer-image=$!
 	docker run --rm --name test-presidio-ocr --network testnetwork -d -p 3003:3003 -e GRPC_PORT=3003 $(DOCKER_REGISTRY)/presidio-ocr:$(PRESIDIO_LABEL) &
+	test-presidio-ocr=$!
 	docker run --rm --name test-presidio-recognizers-store --network testnetwork -d -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=test-redis:6379 $(DOCKER_REGISTRY)/presidio-recognizers-store:$(PRESIDIO_LABEL) &
-	wait
+	test-presidio-recognizers-store=$!
+	wait $test-azure-emulator $test-kafka $test-redis $test-s3-emulator $test-presidio-analyzer $test-presidio-anonymizer $presidio-anonymizer-image $test-presidio-ocr $test-presidio-recognizers-store
 	# wait for containers to start
 	sleep 30
 	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=test-presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=test-presidio-anonymizer:3001 -e ANONYMIZER_IMAGE_SVC_ADDRESS=test-presidio-anonymizer-image:3002 -e OCR_SVC_ADDRESS=test-presidio-ocr:3003 -e RECOGNIZERS_STORE_SVC_ADDRESS=test-presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
