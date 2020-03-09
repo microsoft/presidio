@@ -439,7 +439,7 @@ stages:
             targetType: 'inline'
             script: |
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME)s docker-push-release                    
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME) docker-push-release                    
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
         - task: Bash@3
