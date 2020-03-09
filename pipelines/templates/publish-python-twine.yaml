@@ -20,7 +20,7 @@ steps:
         displayName: 'Authenticate RC with Azure Artifacts'
         inputs:
           artifactFeeds: ${{ parameters.artifact_feed }}
-    - s${{ if eq(parameters.artifact_is_ado, 'false') }}:
+    - ${{ if eq(parameters.artifact_is_ado, 'false') }}:
       - task: TwineAuthenticate@0
         displayName: 'Authenticate RC with Azure Artifacts'
         inputs:
