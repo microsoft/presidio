@@ -162,13 +162,13 @@ stages:
   #         displayName: Publish Artifacts
   #         artifact: variables
 
-  # # Python Stage
-  # - stage: PythonStage
-  #   displayName: Build Python
-  #   dependsOn: Setup
-  #   pool:
-  #     vmImage: 'ubuntu-latest'
-  #   jobs:
+  # Python Stage
+  - stage: PythonStage
+    displayName: Build Python
+    dependsOn: Setup
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
   #     - job: GetDepsJob
   #       displayName: Get Deps State
   #       steps:
@@ -204,30 +204,43 @@ stages:
   #             Dockerfile: Dockerfile.python.deps 
   #             tags: | 
   #               $(Build.BuildId)	
-  #     - job: BuildPython
-  #       displayName: Build Analyzer Service
-  #       timeoutInMinutes: 60  
-  #       dependsOn: 
-  #       - PythonDepsBuild
-  #       - GetDepsJob
-  #       variables:
-  #         DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-  #         ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-  #           PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
-  #         ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-  #           PYTHON_BUILD_TAG: '$(Build.BuildId)'
-  #       steps: 
-  #       - template: ./build-python-template.yaml  
-  #         parameters:
-  #           folder_name: presidio-analyzer
-  #           package_name: presidio_analyzer
-  #           lint: true
-  #           artifact_feed: ${{parameters.artifact_feed}}
-  #           registry_service_connection: ${{parameters.registry_service_principal}}
-  #           registry_name: ${{parameters.registry_name}} 
-  #           registry_service_principal: ${{parameters.registry_service_principal}}
-  #           presidio_label: $(Build.BuildID)
-  #           deps_label: $(DEPS_LABEL)
+      - job: BuildPython
+        displayName: Build Analyzer Service
+        timeoutInMinutes: 60  
+        dependsOn: 
+        - PythonDepsBuild
+        - GetDepsJob
+        variables:
+          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+          ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+            PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
+          ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+            PYTHON_BUILD_TAG: '$(Build.BuildId)'
+        steps: 
+        - template: ./build-python-template.yaml  
+          parameters:
+            folder_name: presidio-analyzer
+            package_name: presidio_analyzer
+            lint: true
+            artifact_feed: ${{parameters.artifact_feed}}
+            registry_service_connection: ${{parameters.registry_service_principal}}
+            registry_name: ${{parameters.registry_name}} 
+            registry_service_principal: ${{parameters.registry_service_principal}}
+            presidio_label: $(Build.BuildID)
+            deps_label: $(DEPS_LABEL)
+        # To pass the wheel to later stages we write it to a file
+        - task: Bash@3
+          displayName: Copy wheel Artifacts
+          name: setEnv
+          inputs:
+            targetType: 'inline'
+            script: |
+              mkdir -p $(Pipeline.Workspace)/variables
+              mv $(System.DefaultWorkingDirectory)/presidio-analyzer/dist/ > $(Pipeline.Workspace)/
+        # Publish the folder as pipeline artifact
+        - publish: $(Pipeline.Workspace)/dist
+          displayName: Publish wheel Artifacts
+          artifact: dist
   
   # # Golang Stage
   # - stage: GolangStage
@@ -407,7 +420,21 @@ stages:
       #         BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
       #         echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
       #         echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-
+      - job: GetDepsJob
+        displayName: Get Deps State
+        steps:
+        # Download the artifacts
+        - download: current
+          displayName: Download wheel artifacts
+          artifact: dist
+        # Read the variable from the file, then expose it in the job
+        - task: Bash@3
+          displayName: Set deps env
+          name: setEnv
+          inputs:
+            targetType: 'inline'
+            script: |
+              mv $(Pipeline.Workspace)/ $(System.DefaultWorkingDirectory)/dist/
       - job: PublishPypi
         displayName: Publish Analyzer to Pypi
         # TODO: BRING BACK
