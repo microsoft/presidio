@@ -17,12 +17,12 @@ steps:
             pip install twine
         workingDirectory: ${{ parameters.folder_name }}
     - ${{ if eq(parameters.artifact_is_ado, 'true') }}:
-      - task: TwineAuthenticate@0
+      - task: TwineAuthenticate@1
         displayName: 'Authenticate with Azure Artifacts'
         inputs:
           artifactFeeds: ${{ parameters.artifact_feed }}
     - ${{ if ne(parameters.artifact_is_ado, 'true') }}:
-      - task: TwineAuthenticate@0
+      - task: TwineAuthenticate@1
         displayName: 'Authenticate with Pypi'
         inputs:
           pythonUploadServiceConnection: ${{ parameters.artifact_feed }}
