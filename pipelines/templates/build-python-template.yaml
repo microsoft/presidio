@@ -92,7 +92,7 @@ steps:
 - template: ./publish-python-twine.yaml
   parameters: 
     feed_name: 'Azure Artifacts'
-    folder_name: ${{ parameters.folder_name }}
+    folder_name: ${{ parameters.folder_name }}/dist
     artifact_feed: ${{ parameters.artifact_feed }}
 - task: Bash@3
   displayName: 'Build Python Container'

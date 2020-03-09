@@ -440,7 +440,7 @@ stages:
             targetType: 'inline'
             script: |
               export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-              pip install presidio-analyzer==$PYTHON_BUILD_TAG -d ./dist
+              pip install presidio-analyzer==$PYTHON_BUILD_TAG
         # Publish Wheel to Pypi
         - template: ./publish-python-twine.yaml
           parameters: 
