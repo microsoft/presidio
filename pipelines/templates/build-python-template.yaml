@@ -94,23 +94,22 @@ steps:
     feed_name: 'Azure Artifacts'
     folder_name: ${{ parameters.folder_name }}/dist
     artifact_feed: ${{ parameters.artifact_feed }}
-# TODO: BRING BACK
-# - task: Bash@3
-#   displayName: 'Build Python Container'
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       echo "$FULL_PYTHON_VERSION"
-#       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$(FULL_PYTHON_VERSION) PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
-#   env:
-#     REGISTRY_NAME: ${{ parameters.registry_name }}
-#     PRESIDIO_LABEL: ${{parameters.presidio_label}}
-#     PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
-# - task: Bash@3
-#   displayName: 'Push Docker Images - BuildId label'    # push with build-id label
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python
-#   env:
-#     REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
+- task: Bash@3
+  displayName: 'Build Python Container'
+  inputs:
+    targetType: 'inline'
+    script: |
+      echo "$FULL_PYTHON_VERSION"
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$(FULL_PYTHON_VERSION) PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    PRESIDIO_LABEL: ${{parameters.presidio_label}}
+    PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
+- task: Bash@3
+  displayName: 'Push Docker Images - BuildId label'    # push with build-id label
+  inputs:
+    targetType: 'inline'
+    script: |
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name_parameter }}

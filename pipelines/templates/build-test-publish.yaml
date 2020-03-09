@@ -433,7 +433,6 @@ stages:
             PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
           ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
             PYTHON_BUILD_TAG: '$(Build.BuildId).dev'
-        variables:
         steps:  
         - download: current
           displayName: Download wheel artifacts
