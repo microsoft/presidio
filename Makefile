@@ -195,7 +195,6 @@ test-functional-no-build:
 	# wait for api to start
 	mkdir test-results
 	current_dir = $(shell pwd)
-	$(info $$current_dir is [${current_dir}])
 	docker run --rm -v $current_dir/test-results:/test-result-pipe  --name presidio-tests  --network host $(DOCKER_REGISTRY)/functional-tests:$(PRESIDIO_LABEL)
 	docker rm test-presidio-api -f
 	docker rm test-presidio-analyzer -f
