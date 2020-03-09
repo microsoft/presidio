@@ -26,15 +26,15 @@ steps:
         displayName: 'Authenticate with Pypi'
         inputs:
           pythonUploadServiceConnection: Pypi-Presidio
-      - task: Bash@3
-        displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
-        inputs:
-          targetType: 'inline'
-          script: |
-              twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing dist/*
-          workingDirectory: ${{ parameters.folder_name }}
-        env:
-          FEED_NAME: "presidio"
+      # - task: Bash@3
+      #   displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
+      #   inputs:
+      #     targetType: 'inline'
+      #     script: |
+      #         twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing dist/*
+      #     workingDirectory: ${{ parameters.folder_name }}
+      #   env:
+      #     FEED_NAME: "Pypi-Presidio"
     - task: Bash@3
       displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
       inputs:
