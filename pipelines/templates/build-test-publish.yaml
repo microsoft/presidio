@@ -208,8 +208,8 @@ stages:
         displayName: Build Analyzer Service
         timeoutInMinutes: 60  
         dependsOn: 
-        - PythonDepsBuild
-        - GetDepsJob
+        # - PythonDepsBuild
+        # - GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
           ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
