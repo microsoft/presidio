@@ -36,7 +36,6 @@ steps:
       python -m pip install pipenv
       pipenv --python 3
     workingDirectory: ${{ parameters.folder_name }}
-
 - task: PipAuthenticate@0
   displayName: 'Authenticate PIP with Azure Artifacts'
   inputs:
@@ -61,15 +60,16 @@ steps:
     workingDirectory: ${{ parameters.folder_name }}
   env:
     PACKAGE_NAME: ${{ parameters.package_name }}
-- task: Bash@3
-  displayName: 'Run Tests'
-  inputs:
-    targetType: 'inline'
-    script: |
-      export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-      pipenv install --skip-lock pytest-azurepipelines
-      pipenv run pytest --log-cli-level=0
-    workingDirectory: ${{ parameters.folder_name }}
+# TODO: BRING BACK
+# - task: Bash@3
+#   displayName: 'Run Tests'
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
+#       pipenv install --skip-lock pytest-azurepipelines
+#       pipenv run pytest --log-cli-level=0
+#     workingDirectory: ${{ parameters.folder_name }}
 - task: Bash@3
   displayName: Set version number
   inputs:
