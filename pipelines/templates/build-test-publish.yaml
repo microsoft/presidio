@@ -436,14 +436,6 @@ stages:
         - download: current
           displayName: Download wheel artifacts
           artifact: dist
-        # Read the variable from the file, then expose it in the job
-        - task: Bash@3
-          displayName: Set deps env
-          name: setEnv
-          inputs:
-            targetType: 'inline'
-            script: |
-              mv $(Pipeline.Workspace)/ $(System.DefaultWorkingDirectory)/dist/
         - task: UsePythonVersion@0
           displayName: 'Use Python $(PYTHON.VERSION)'
           inputs:
