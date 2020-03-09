@@ -100,7 +100,7 @@ steps:
   parameters: 
     feed_name: 'Pypi'
     folder_name: ${{ parameters.folder_name }}
-    artifact_feed: Pypi-Presidio
+    artifact_feed: 'Pypi-Presidio'
     artifact_is_ado: 'false'
 - task: Bash@3
   displayName: 'Build Python Container'
