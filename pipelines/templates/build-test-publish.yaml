@@ -420,21 +420,7 @@ stages:
       #         BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
       #         echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
       #         echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-      - job: GetDepsJob
-        displayName: Get Deps State
-        steps:
-        # Download the artifacts
-        - download: current
-          displayName: Download wheel artifacts
-          artifact: dist
-        # Read the variable from the file, then expose it in the job
-        - task: Bash@3
-          displayName: Set deps env
-          name: setEnv
-          inputs:
-            targetType: 'inline'
-            script: |
-              mv $(Pipeline.Workspace)/ $(System.DefaultWorkingDirectory)/dist/
+      
       - job: PublishPypi
         displayName: Publish Analyzer to Pypi
         # TODO: BRING BACK
@@ -447,6 +433,17 @@ stages:
         variables:
           PYTHON_BUILD_TAG: 0.3.8247
         steps:  
+        - download: current
+          displayName: Download wheel artifacts
+          artifact: dist
+        # Read the variable from the file, then expose it in the job
+        - task: Bash@3
+          displayName: Set deps env
+          name: setEnv
+          inputs:
+            targetType: 'inline'
+            script: |
+              mv $(Pipeline.Workspace)/ $(System.DefaultWorkingDirectory)/dist/
         - task: UsePythonVersion@0
           displayName: 'Use Python $(PYTHON.VERSION)'
           inputs:
