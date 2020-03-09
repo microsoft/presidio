@@ -22,4 +22,4 @@ RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh
 RUN  go get github.com/jstemmer/go-junit-report
 
-CMD ["sh", "-x", "-c", "go test ./functional-tests --tags functional -count=1 -v 2>&1 | go-junit-report > report.xml ; cat ./report.xml ; mv ./report.xml /test-result-pipe/report.xml"]
+CMD ["sh", "-x", "-c", "go test ./functional-tests --tags functional -count=1 -v 2>&1 | go-junit-report > /test-result-pipe/report.xml "]
