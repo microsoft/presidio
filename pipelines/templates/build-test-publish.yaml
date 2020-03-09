@@ -363,6 +363,7 @@ stages:
             script: |
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
         - task: PublishTestResults@2
+          displayName: Publish test results
           inputs:
             testRunner: JUnit
             testResultsFiles: $(System.DefaultWorkingDirectory)/**/report.xml
