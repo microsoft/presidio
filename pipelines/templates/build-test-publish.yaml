@@ -209,7 +209,8 @@ stages:
         displayName: Build Analyzer Service
         timeoutInMinutes: 60  
         dependsOn: 
-        - PythonDepsBuild
+        # TODO: BRING BACK
+        # - PythonDepsBuild
         - GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
@@ -235,7 +236,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              mv $(System.DefaultWorkingDirectory)/presidio-analyzer/dist > $(Pipeline.Workspace)
+              mv $(System.DefaultWorkingDirectory)/presidio-analyzer/dist $(Pipeline.Workspace)
         # Publish the folder as pipeline artifact
         - publish: $(Pipeline.Workspace)/dist
           displayName: Publish wheel Artifacts
