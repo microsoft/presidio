@@ -231,12 +231,10 @@ stages:
         # To pass the wheel to later stages we write it to a file
         - task: Bash@3
           displayName: Copy wheel Artifacts
-          name: setEnv
           inputs:
             targetType: 'inline'
             script: |
-              mkdir -p $(Pipeline.Workspace)/variables
-              mv $(System.DefaultWorkingDirectory)/presidio-analyzer/dist/ > $(Pipeline.Workspace)/
+              mv $(System.DefaultWorkingDirectory)/presidio-analyzer/dist > $(Pipeline.Workspace)
         # Publish the folder as pipeline artifact
         - publish: $(Pipeline.Workspace)/dist
           displayName: Publish wheel Artifacts
