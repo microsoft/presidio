@@ -208,7 +208,8 @@ stages:
         displayName: Build Analyzer Service
         timeoutInMinutes: 60  
         dependsOn: 
-        - PythonDepsBuild
+        # TODO: BRING BACK
+        # - PythonDepsBuild
         - GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
