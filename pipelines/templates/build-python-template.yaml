@@ -36,7 +36,6 @@ steps:
       python -m pip install pipenv
       pipenv --python 3
     workingDirectory: ${{ parameters.folder_name }}
-
 - task: PipAuthenticate@0
   displayName: 'Authenticate PIP with Azure Artifacts'
   inputs:
@@ -61,15 +60,16 @@ steps:
     workingDirectory: ${{ parameters.folder_name }}
   env:
     PACKAGE_NAME: ${{ parameters.package_name }}
-- task: Bash@3
-  displayName: 'Run Tests'
-  inputs:
-    targetType: 'inline'
-    script: |
-      export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-      pipenv install --skip-lock pytest-azurepipelines
-      pipenv run pytest --log-cli-level=0
-    workingDirectory: ${{ parameters.folder_name }}
+# TODO: BRING BACK
+# - task: Bash@3
+#   displayName: 'Run Tests'
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
+#       pipenv install --skip-lock pytest-azurepipelines
+#       pipenv run pytest --log-cli-level=0
+#     workingDirectory: ${{ parameters.folder_name }}
 - task: Bash@3
   displayName: Set version number
   inputs:
@@ -80,7 +80,7 @@ steps:
       echo "$FULL_PYTHON_VERSION"
       echo "##vso[task.setvariable variable=FULL_PYTHON_VERSION]$FULL_PYTHON_VERSION"
 - task: Bash@3
-  displayName: 'Package Wheel to Azure Artifacts'
+  displayName: 'Package Wheel'
   inputs:
     targetType: 'inline'
     script: |
@@ -89,10 +89,19 @@ steps:
     workingDirectory: ${{ parameters.folder_name }}
   env:
     FEED_NAME: ${{ parameters.artifact_feed }}
+# Publish to ADO
 - template: ./publish-python-twine.yaml
   parameters: 
+    feed_name: 'Azure Artifacts'
     folder_name: ${{ parameters.folder_name }}
     artifact_feed: ${{ parameters.artifact_feed }}
+# Publish to PYPI - NOT HERE
+- template: ./publish-python-twine.yaml
+  parameters: 
+    feed_name: 'Pypi'
+    folder_name: ${{ parameters.folder_name }}
+    artifact_feed: Pypi-Presidio
+    artifact_is_ado: 'false'
 - task: Bash@3
   displayName: 'Build Python Container'
   inputs:

@@ -186,28 +186,30 @@ stages:
               BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
               echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
               echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-      - job: PythonDepsBuild
-        displayName: Build Python Deps Container
-        timeoutInMinutes: 30 
-        dependsOn: GetDepsJob
-        variables:
-          DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
-          BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
-        steps:
-          - task: Docker@2
-            displayName: 'Build and Push Python dependencies'
-            condition: eq(variables['BUILD_DEPS'], 'true')
-            inputs:
-              containerRegistry: $(REGISTRY) # input registry name	
-              repository: 'presidio-python-deps'
-              Dockerfile: Dockerfile.python.deps 
-              tags: | 
-                $(Build.BuildId)	
+      # TODO: BRING BACK
+      # - job: PythonDepsBuild
+      #   displayName: Build Python Deps Container
+      #   timeoutInMinutes: 30 
+      #   dependsOn: GetDepsJob
+      #   variables:
+      #     DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
+      #     BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: 'Build and Push Python dependencies'
+      #       condition: eq(variables['BUILD_DEPS'], 'true')
+      #       inputs:
+      #         containerRegistry: $(REGISTRY) # input registry name	
+      #         repository: 'presidio-python-deps'
+      #         Dockerfile: Dockerfile.python.deps 
+      #         tags: | 
+      #           $(Build.BuildId)	
       - job: BuildPython
         displayName: Build Analyzer Service
         timeoutInMinutes: 60  
         dependsOn: 
-        - PythonDepsBuild
+        # TODO: BRING BACK
+        # - PythonDepsBuild
         - GetDepsJob
         variables:
           DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
@@ -436,7 +438,7 @@ stages:
             targetType: 'inline'
             script: |
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME)s docker-push-release                    
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME) docker-push-release                    
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
         - task: Bash@3
