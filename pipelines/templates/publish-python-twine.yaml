@@ -31,7 +31,7 @@ steps:
         inputs:
           targetType: 'inline'
           script: |
-              twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
+              twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing dist/*
           workingDirectory: ${{ parameters.folder_name }}
         env:
           FEED_NAME: "presidio"
