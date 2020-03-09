@@ -88,19 +88,12 @@ steps:
     workingDirectory: ${{ parameters.folder_name }}
   env:
     FEED_NAME: ${{ parameters.artifact_feed }}
-# Publish to ADO
+# Publish Wheel to ADO Artifacts
 - template: ./publish-python-twine.yaml
   parameters: 
     feed_name: 'Azure Artifacts'
     folder_name: ${{ parameters.folder_name }}
     artifact_feed: ${{ parameters.artifact_feed }}
-# Publish to PYPI - NOT HERE
-- template: ./publish-python-twine.yaml
-  parameters: 
-    feed_name: 'Pypi'
-    folder_name: ${{ parameters.folder_name }}
-    artifact_feed: Pypi-Presidio
-    artifact_is_ado: 'false'
 - task: Bash@3
   displayName: 'Build Python Container'
   inputs:
