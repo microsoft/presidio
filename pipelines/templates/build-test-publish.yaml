@@ -447,6 +447,7 @@ stages:
             feed_name: 'Pypi'
             folder_name: ''
             artifact_feed: Pypi-Presidio
+            artifact_is_ado: 'false'
       # TODO: BRING BACK
       # - job: PublishContainers
       #   displayName: Publish Containers
