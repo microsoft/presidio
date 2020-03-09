@@ -41,7 +41,7 @@ steps:
         inputs:
           targetType: 'inline'
           script: |
-              twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing ./presidio-analyzer*
+              twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing ./*
           workingDirectory: ${{ parameters.folder_name }}
         env:
           FEED_NAME: 'presidio'
