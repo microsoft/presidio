@@ -438,7 +438,7 @@ stages:
           artifact: dist
         # Read the variable from the file, then expose it in the job
         - task: Bash@3
-          displayName: Set deps env
+          displayName: Copy wheel
           name: setEnv
           inputs:
             targetType: 'inline'
