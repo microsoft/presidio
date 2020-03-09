@@ -34,7 +34,7 @@ steps:
       - task: TwineAuthenticate@1
         displayName: 'Authenticate with Pypi'
         inputs:
-          pythonUploadServiceConnection: ${{ parameters.folder_name }}
+          pythonUploadServiceConnection: ${{ parameters.artifact_feed }}
       - task: Bash@3
         displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
         inputs:
