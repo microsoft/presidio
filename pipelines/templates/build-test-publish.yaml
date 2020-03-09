@@ -165,7 +165,7 @@ stages:
   # Python Stage
   - stage: PythonStage
     displayName: Build Python
-    dependsOn: Setup
+    # dependsOn: Setup
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
