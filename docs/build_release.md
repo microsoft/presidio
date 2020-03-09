@@ -25,7 +25,8 @@ Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipeli
 
 ### Variables used by the pipeline
 
-* ***PYPI_INDEX_URL*** - pypi artifact used to publish the wheel.
+* ***ARTIFACTS_PYPI_INDEX_URL*** - pypi artifact used to publish the wheel.
+* ***PYPI_SERVICE_CONNECTION*** - service connection with pypi credentials.
 * ***REGISTRY*** - service connection to docker registry.
 * ***REGISTRY_NAME*** - full name of container registry (i.e. presidio.azurecr.io).
 * ***DEPENDENCY_DEFAULT*** - presidio release version.

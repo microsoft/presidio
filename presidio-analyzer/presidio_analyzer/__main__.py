@@ -16,7 +16,7 @@ from knack.help_files import helps
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from presidio_analyzer_engine import AnalyzerEngine # noqa
+from analyzer_engine import AnalyzerEngine # noqa
 from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
 from nlp_engine.spacy_nlp_engine import SpacyNlpEngine # noqa
 from presidio_logger import PresidioLogger # noqa
