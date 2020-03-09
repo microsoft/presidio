@@ -31,13 +31,13 @@ func UpdateRecognizer(httpClient httpClient, name string, fileContentStr string)
 }
 
 // DeleteRecognizer deletes an existing recognizer
-func DeleteRecognizer(httpClient httpClient, projectName string, actionName string, name string) {
+func DeleteRecognizer(httpClient httpClient, name string) {
 	url := constructRecognizerURL(name)
 	restCommand(httpClient, delete, url, "", "")
 }
 
 // GetRecognizer retrieved an existing recognizer, can be logged or saved to a file
-func GetRecognizer(httpClient httpClient, projectName string, actionName string, name string, outputFilePath string) {
+func GetRecognizer(httpClient httpClient, name string, outputFilePath string) {
 	url := constructRecognizerURL(name)
 	restCommand(httpClient, get, url, "", outputFilePath)
 }

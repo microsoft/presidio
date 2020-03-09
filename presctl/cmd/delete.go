@@ -29,11 +29,24 @@ var delTemplateCmd = &cobra.Command{
 	},
 }
 
+// delRecognizerCmd represents the recognizer command
+var delRecognizerCmd = &cobra.Command{
+	Use:   "recognizer",
+	Short: "delete an existing recognizer resource",
+	Long:  `Use this command to delete a recognizer.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		recognizerName := getFlagValue(cmd, recognizerFlag)
+
+		// Send a REST command to presidio instance to get the requested template
+		entities.DeleteRecognizer(&http.Client{}, recognizerName)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(deleteCmd)
 	deleteCmd.AddCommand(delTemplateCmd)
 
-	// define supported flags for the add command
+	// define supported flags for the del command
 	delTemplateCmd.Flags().String(templateFlag, "", "template's name")
 	delTemplateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
 	delTemplateCmd.Flags().String(projectFlag, "", "project's name")
@@ -42,4 +55,12 @@ func init() {
 	delTemplateCmd.MarkFlagRequired(templateFlag)
 	delTemplateCmd.MarkFlagRequired(actionFlag)
 	delTemplateCmd.MarkFlagRequired(projectFlag)
+
+	deleteCmd.AddCommand(delRecognizerCmd)
+
+	// define supported flags for the del command
+	delRecognizerCmd.Flags().String(recognizerFlag, "", "recognizer's name")
+
+	// mark flags as required
+	delRecognizerCmd.MarkFlagRequired(recognizerFlag)
 }

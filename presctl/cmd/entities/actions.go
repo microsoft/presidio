@@ -36,8 +36,10 @@ func restCommand(httpClient httpClient, op restOp, url string, fileContentStr st
 	switch op {
 	case create:
 		req, err = http.NewRequest("POST", url, strings.NewReader(fileContentStr))
+		req.Header.Set("Content-Type", "application/json")
 	case update:
 		req, err = http.NewRequest("PUT", url, strings.NewReader(fileContentStr))
+		req.Header.Set("Content-Type", "application/json")
 	case delete:
 		req, err = http.NewRequest("DELETE", url, nil)
 	case get:
@@ -59,6 +61,8 @@ func restCommand(httpClient httpClient, op restOp, url string, fileContentStr st
 		fmt.Println("Success")
 		return
 	}
+
+	fmt.Println(getBodyString(response))
 
 	unquotedStr, err := strconv.Unquote(getBodyString(response))
 	check(err)

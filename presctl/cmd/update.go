@@ -33,6 +33,23 @@ var updateTemplateCmd = &cobra.Command{
 	},
 }
 
+// updateRecognizerCmd represents the custom analysis recognizer update
+var updateRecognizerCmd = &cobra.Command{
+	Use:   "recognizer",
+	Short: "update an existing custom recognizer resource",
+	Long:  `Use this command to update an existing custom recognizer resource.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		path := getFlagValue(cmd, fileFlag)
+		recognizerName := getFlagValue(cmd, recognizerFlag)
+
+		fileContentStr, err := getJSONFileContent(path)
+		check(err)
+
+		// Send a REST command to presidio instance to create the requested template
+		entities.UpdateRecognizer(&http.Client{}, recognizerName, fileContentStr)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	updateCmd.AddCommand(updateTemplateCmd)
@@ -48,4 +65,14 @@ func init() {
 	updateTemplateCmd.MarkFlagRequired(templateFlag)
 	updateTemplateCmd.MarkFlagRequired(actionFlag)
 	updateTemplateCmd.MarkFlagRequired(projectFlag)
+
+	updateCmd.AddCommand(updateRecognizerCmd)
+
+	// define supported flags for the add command
+	updateRecognizerCmd.Flags().StringP(fileFlag, "f", "", "path to a recognizer json file")
+	updateRecognizerCmd.Flags().String(recognizerFlag, "", "recognizer's name")
+
+	// mark flags as required
+	updateRecognizerCmd.MarkFlagRequired(fileFlag)
+	updateRecognizerCmd.MarkFlagRequired(recognizerFlag)
 }
