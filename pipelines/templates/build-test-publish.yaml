@@ -103,7 +103,7 @@ stages:
   # Env
   - stage: Setup
     displayName: Set Pipeline globals
-    dependsOn: SecurityAnalysis
+    dependsOn: []
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -343,6 +343,7 @@ stages:
     dependsOn: 
     - PythonStage
     - GolangStage
+    - SecurityAnalysis
     pool:
       vmImage: 'ubuntu-latest'
     jobs: 

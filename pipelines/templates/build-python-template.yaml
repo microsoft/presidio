@@ -88,7 +88,7 @@ steps:
     workingDirectory: ${{ parameters.folder_name }}
   env:
     FEED_NAME: ${{ parameters.artifact_feed }}
-# Publish to ADO
+# Publish Wheel to ADO Artifacts
 - template: ./publish-python-twine.yaml
   parameters: 
     feed_name: 'Azure Artifacts'
