@@ -441,12 +441,12 @@ stages:
             script: |
               export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
               pip install presidio-analyzer==$PYTHON_BUILD_TAG 
-        # Publish Wheel to ADO Artifacts
+        # Publish Wheel to Pypi
         - template: ./publish-python-twine.yaml
           parameters: 
-            feed_name: 'Azure Artifacts'
-            folder_name: ${{ parameters.folder_name }}
-            artifact_feed: ${{ parameters.artifact_feed }}
+            feed_name: 'Pypi'
+            folder_name: $(Agent.DefaultWorkingDirectory)
+            artifact_feed: Pypi-Presidio
       # TODO: BRING BACK
       # - job: PublishContainers
       #   displayName: Publish Containers
