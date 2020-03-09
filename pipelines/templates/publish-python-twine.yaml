@@ -14,6 +14,7 @@ steps:
       inputs:
         targetType: 'inline'
         script: |
+            pip install wheel
             pip install twine
         workingDirectory: ${{ parameters.folder_name }}
     - ${{ if eq(parameters.artifact_is_ado, 'true') }}:
