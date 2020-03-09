@@ -4,6 +4,7 @@
 # if artifact_is_ado is true, artifact_feed is the feed URL.
 # if artifact_is_ado is false, artifact_feed is a python service connection name.
 parameters:
+  name: ''
   folder_name: '' 
   artifact_feed: ''
   artifact_is_ado: 'true'
@@ -17,16 +18,16 @@ steps:
         workingDirectory: ${{ parameters.folder_name }}
     - ${{ if eq(parameters.artifact_is_ado, 'true') }}:
       - task: TwineAuthenticate@0
-        displayName: 'Authenticate RC with Azure Artifacts'
+        displayName: 'Authenticate with Azure Artifacts'
         inputs:
           artifactFeeds: ${{ parameters.artifact_feed }}
     - ${{ if eq(parameters.artifact_is_ado, 'false') }}:
       - task: TwineAuthenticate@0
-        displayName: 'Authenticate RC with Azure Artifacts'
+        displayName: 'Authenticate with Pypi'
         inputs:
           pythonUploadServiceConnection: ${{ parameters.artifact_feed }}
     - task: Bash@3
-      displayName: 'Package and Upload Wheel to Azure Artifacts'
+      displayName: 'Upload Wheel to ${{ parameters.name}}'
       inputs:
         targetType: 'inline'
         script: |
