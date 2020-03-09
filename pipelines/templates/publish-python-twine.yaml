@@ -21,26 +21,27 @@ steps:
         displayName: 'Authenticate with Azure Artifacts'
         inputs:
           artifactFeed: ${{ parameters.artifact_feed }}
+      - task: Bash@3
+        displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
+        inputs:
+          targetType: 'inline'
+          script: |
+              twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
+          workingDirectory: ${{ parameters.folder_name }}
+        env:
+          FEED_NAME: ${{ parameters.artifact_feed }}
     - ${{ if ne(parameters.artifact_is_ado, 'true') }}:
       - task: TwineAuthenticate@1
         displayName: 'Authenticate with Pypi'
         inputs:
-          pythonUploadServiceConnection: Pypi-Presidio
-      # - task: Bash@3
-      #   displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
-      #   inputs:
-      #     targetType: 'inline'
-      #     script: |
-      #         twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing dist/*
-      #     workingDirectory: ${{ parameters.folder_name }}
-      #   env:
-      #     FEED_NAME: "Pypi-Presidio"
-    - task: Bash@3
-      displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
-      inputs:
-        targetType: 'inline'
-        script: |
-            twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing dist/*
-        workingDirectory: ${{ parameters.folder_name }}
-      env:
-        FEED_NAME: ${{ parameters.artifact_feed }}
+          pythonUploadServiceConnection: ${{ parameters.folder_name }}
+      - task: Bash@3
+        displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
+        inputs:
+          targetType: 'inline'
+          script: |
+              twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing dist/*
+          workingDirectory: ${{ parameters.folder_name }}
+        env:
+          FEED_NAME: 'presidio'
+    
