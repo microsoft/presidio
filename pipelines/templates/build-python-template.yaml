@@ -91,7 +91,8 @@ steps:
 # Publish Wheel to ADO Artifacts
 - template: ./publish-python-twine.yaml
   parameters: 
-    feed_name: 'Azure Artifacts'
+    feed_display_name: 'Azure Artifacts'
+    feed_name: ${{ parameters.artifact_feed }}
     folder_name: ${{ parameters.folder_name }}/dist
     artifact_feed: ${{ parameters.artifact_feed }}
 - task: Bash@3
