@@ -14,11 +14,17 @@
 # * parameters:
 #     registry_service_principal: service connection to docker registry
 #     registry_name: full name of container registry (i.e. presidio.azurecr.io)
-#     artifact_feed: pypi artifact used to push the wheel
+#     internal_pypi_feed_name: name of internal pypi feed used to push the wheel during CI
+#     internal_pypi_extra_index_url: url of internal pypi feed used to push the wheel during CI
+#     external_pypi_service_conection: service connetion to external pypi feed (pypi.org)
+#     external_pypi_feed_name: name of external pypi feed
 parameters:
   registry_service_principal: 
   registry_name: 
-  artifact_feed:
+  internal_pypi_feed_name:
+  internal_pypi_extra_index_url:
+  external_pypi_service_conection:
+  external_pypi_feed_name:
 
 stages:
 
@@ -225,8 +231,7 @@ stages:
           parameters:
             folder_name: presidio-analyzer
             package_name: presidio_analyzer
-            lint: true
-            artifact_feed: ${{parameters.artifact_feed}}
+            artifact_feed: ${{parameters.internal_pypi_feed_name}}
             registry_service_connection: ${{parameters.registry_service_principal}}
             registry_name: ${{parameters.registry_name}} 
             registry_service_principal: ${{parameters.registry_service_principal}}
@@ -434,28 +439,29 @@ stages:
           ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
             PYTHON_BUILD_TAG: '$(Build.BuildId).dev'
         steps:  
+        # download wheel from temp artifact
         - download: current
           displayName: Download wheel artifacts
           artifact: dist
-        # Read the variable from the file, then expose it in the job
         - task: Bash@3
           displayName: Copy wheel
-          name: setEnv
           inputs:
             targetType: 'inline'
             script: |
               mv $(Pipeline.Workspace)/dist/ $(System.DefaultWorkingDirectory)/
+        # Publish Wheel to Pypi
         - task: UsePythonVersion@0
           displayName: 'Use Python $(PYTHON.VERSION)'
           inputs:
             versionSpec: '$(PYTHON.VERSION)'
-        # Publish Wheel to Pypi
         - template: ./publish-python-twine.yaml
           parameters: 
-            feed_name: 'Pypi'
+            feed_display_name: 'Pypi'
+            feed_name: ${{ parameters.external_pypi_feed_name }}
             folder_name: 'dist'
-            artifact_feed: Pypi-Presidio
+            artifact_feed: ${{ parameters.external_pypi_service_conection }}
             artifact_is_ado: 'false'
+
       - job: PublishContainers
         displayName: Publish Containers
         dependsOn: GetDepsJob

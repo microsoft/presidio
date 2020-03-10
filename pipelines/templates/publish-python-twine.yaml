@@ -4,6 +4,7 @@
 # if artifact_is_ado is true, artifact_feed is the feed URL.
 # if artifact_is_ado is false, artifact_feed is a python service connection name.
 parameters:
+  feed_display_name: ''
   feed_name: ''
   folder_name: '' 
   artifact_feed: ''
@@ -37,12 +38,12 @@ steps:
         inputs:
           pythonUploadServiceConnection: ${{ parameters.artifact_feed }}
       - task: Bash@3
-        displayName: 'Upload Wheel to ${{ parameters.feed_name}}'
+        displayName: 'Upload Wheel to ${{ parameters.feed_display_name}}'
         inputs:
           targetType: 'inline'
           script: |
               twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing ./*
           workingDirectory: ${{ parameters.folder_name }}
         env:
-          FEED_NAME: 'presidio'
+          FEED_NAME: ${{ parameters.feed_name }}
     
