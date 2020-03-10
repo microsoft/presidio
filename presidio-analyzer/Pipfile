@@ -16,5 +16,5 @@ knack = "*"
 
 [dev-packages]
 pytest = "*"
-flake8= "*"
+flake8= {version = "==3.7.9"}
 pylint = {version = "==2.3.1"}

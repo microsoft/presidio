@@ -1,4 +1,5 @@
 # Setting up a development environment
+
 Most of Presidio's services are written in Go. The `presidio-analyzer` module, in charge of detecting entities in text, is written in Python. This document details the required parts for developing for Presidio.
 
 ## Table of contents
@@ -79,8 +80,8 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
     pip freeze
     ```
     
-- To use presidio-analyzer as a python library, see [Installing presidio-analyzer as a standalone Python package](https://github.com/microsoft/presidio/blob/omri374/new_dev_doc/docs/deploy.md#install-presidio-analyzer-as-a-python-package)
-- To add new recognizers in order to support new entities, see [Adding new custom recognizers](https://github.com/microsoft/presidio/blob/omri374/new_dev_doc/docs/custom_fields.md)
+- To use presidio-analyzer as a python library, see [Installing presidio-analyzer as a standalone Python package](https://github.com/microsoft/presidio/blob/master/docs/deploy.md#install-presidio-analyzer-as-a-python-package)
+- To add new recognizers in order to support new entities, see [Adding new custom recognizers](https://github.com/microsoft/presidio/blob/master/docs/custom_fields.md)
 
 
 ## Development notes <a name='dev-notes'></a>
