@@ -22,6 +22,7 @@ type analyzeParamsWrapper struct {
 	// in:body
 	Body types.AnalyzeRequest
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID int `json:"projectID"`
@@ -48,6 +49,7 @@ type anonymizeParamsWrapper struct {
 	// in:body
 	Body types.AnonymizeRequest
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID int `json:"projectID"`
@@ -74,6 +76,7 @@ type anonymizeImageParamsWrapper struct {
 	// in:body
 	Body types.AnonymizeImageRequest
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID int `json:"projectID"`
@@ -100,6 +103,7 @@ type scheduleScannerCronjobParamsWrapper struct {
 	// in:body
 	Body types.ScannerCronJobRequest
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID int `json:"projectID"`
@@ -125,6 +129,7 @@ type scheduleStreamsJobParamsWrapper struct {
 	// in:body
 	Body types.StreamsJobRequest
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID int `json:"projectID"`

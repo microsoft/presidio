@@ -44,6 +44,7 @@ type postAnalyzeTemplateParamsWrapper struct {
 	// in:body
 	Body types.AnalyzeTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -98,6 +99,7 @@ type postAnonymizeTemplateParamsWrapper struct {
 	// in:body
 	Body types.AnonymizeTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -151,6 +153,7 @@ type postAnonymizeImageTemplateParamsWrapper struct {
 	// in:body
 	Body types.AnonymizeImageTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -205,6 +208,7 @@ type postScanTemplateParamsWrapper struct {
 	// in:body
 	Body types.ScanTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -259,6 +263,7 @@ type postStreamTemplateParamsWrapper struct {
 	// in:body
 	Body types.StreamTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -313,6 +318,7 @@ type postDatasinkTemplateParamsWrapper struct {
 	// in:body
 	Body types.DatasinkTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -368,6 +374,7 @@ type postScannerCronJobTemplateParamsWrapper struct {
 	// in:body
 	Body types.ScannerCronJobTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -422,6 +429,7 @@ type postStreamsJobTemplateParamsWrapper struct {
 	// in:body
 	Body types.StreamsJobTemplate
 
+	// Used to store different configurations for different projectIDs
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`
@@ -434,6 +442,7 @@ type postStreamsJobTemplateParamsWrapper struct {
 
 // swagger:parameters getStreamsJobTemplateRequest deleteStreamsJobTemplateRequest getScannerCronJobTemplateRequest deleteScannerCronJobTemplateRequest getDatasinkTemplateRequest deleteDatasinkTemplateRequest getStreamTemplateRequest deleteStreamTemplateRequest getScanTemplateRequest deleteScanTemplateRequest getAnonymizeImageTemplateRequest deleteAnonymizeImageTemplateRequest getAnonymizeTemplateRequest deleteAnonymizeTemplateRequest getAnalyzeTemplateRequest deleteAnalyzeTemplateRequest
 type templateGeneralParamsWrapper struct {
+	// Used to store different configurations for different projectIDs	// in: path
 	// in: path
 	// required: true
 	ProjectID string `json:"projectID"`

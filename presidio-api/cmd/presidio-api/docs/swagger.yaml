@@ -905,7 +905,7 @@ paths:
         name: id
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: ID
       responses:
         "200":
           $ref: '#/responses/recognizersGetResponse'
@@ -920,7 +920,7 @@ paths:
         name: id
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: ID
       - description: Recognizer properties
         in: body
         name: Body
@@ -940,7 +940,7 @@ paths:
           $ref: '#/responses/fieldTypesGetResponse'
       tags:
       - fields
-  /projects/{projectId}/analyze:
+  /projects/{projectID}/analyze:
     post:
       description: Analyze text
       operationId: analyzeRequest
@@ -950,18 +950,19 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnalyzeRequest'
-      - format: int64
+      - description: Used to store different configurations for different projectIDs
+        format: int64
         in: path
-        name: projectId
+        name: projectID
         required: true
         type: integer
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       responses:
         "200":
           $ref: '#/responses/analyzeResponse'
       tags:
       - analyze
-  /projects/{projectId}/anonymize:
+  /projects/{projectID}/anonymize:
     post:
       description: Anonymize text
       operationId: anonymizeRequest
@@ -971,18 +972,19 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeRequest'
-      - format: int64
+      - description: Used to store different configurations for different projectIDs
+        format: int64
         in: path
-        name: projectId
+        name: projectID
         required: true
         type: integer
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       responses:
         "200":
           $ref: '#/responses/anonymizeResponse'
       tags:
       - anonymize
-  /projects/{projectId}/anonymize-image:
+  /projects/{projectID}/anonymize-image:
     post:
       description: Anonymize image
       operationId: anonymizeImageRequest
@@ -992,18 +994,19 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeImageRequest'
-      - format: int64
+      - description: Used to store different configurations for different projectIDs
+        format: int64
         in: path
-        name: projectId
+        name: projectID
         required: true
         type: integer
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       responses:
         "200":
           $ref: '#/responses/anonymizeImageResponse'
       tags:
       - anonymize-image
-  /projects/{projectId}/schedule-scanner-cronjob:
+  /projects/{projectID}/schedule-scanner-cronjob:
     post:
       description: Schedule scanner cron-job
       operationId: scheduleScannerCronjobRequest
@@ -1013,18 +1016,19 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScannerCronJobRequest'
-      - format: int64
+      - description: Used to store different configurations for different projectIDs
+        format: int64
         in: path
-        name: projectId
+        name: projectID
         required: true
         type: integer
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       responses:
         "200":
           $ref: '#/responses/scheduleScannerCronjobResponse'
       tags:
       - schedule-scanner-cronjob
-  /projects/{projectId}/schedule-streams-job:
+  /projects/{projectID}/schedule-streams-job:
     post:
       description: Schedule streams job
       operationId: scheduleStreamsJobRequest
@@ -1033,32 +1037,33 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamsJobRequest'
-      - format: int64
+      - description: Used to store different configurations for different projectIDs
+        format: int64
         in: path
-        name: projectId
+        name: projectID
         required: true
         type: integer
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       responses:
         "200":
           $ref: '#/responses/scheduleStreamsJobResponse'
       tags:
       - schedule-streams-job
-  /templates/{projectId}/analyze/{templateId}:
+  /templates/{projectID}/analyze/{templateID}:
     delete:
       description: Delete analyze template
       operationId: deleteAnalyzeTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1072,15 +1077,15 @@ paths:
       operationId: getAnalyzeTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1098,16 +1103,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnalyzeTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1125,16 +1131,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnalyzeTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1143,21 +1150,21 @@ paths:
       tags:
       - template
       - analyze
-  /templates/{projectId}/anonymize-image/{templateId}:
+  /templates/{projectID}/anonymize-image/{templateID}:
     delete:
       description: Delete anonymize-image template
       operationId: deleteAnonymizeImageTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1171,15 +1178,15 @@ paths:
       operationId: getAnonymizeImageTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1197,16 +1204,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeImageTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1224,16 +1232,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeImageTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1242,21 +1251,21 @@ paths:
       tags:
       - template
       - anonymize-image
-  /templates/{projectId}/anonymize/{templateId}:
+  /templates/{projectID}/anonymize/{templateID}:
     delete:
       description: Delete anonymize template
       operationId: deleteAnonymizeTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1270,15 +1279,15 @@ paths:
       operationId: getAnonymizeTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1296,16 +1305,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1323,16 +1333,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/AnonymizeTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1341,21 +1352,21 @@ paths:
       tags:
       - template
       - anonymize
-  /templates/{projectId}/datasink/{templateId}:
+  /templates/{projectID}/datasink/{templateID}:
     delete:
       description: Delete datasink template
       operationId: deleteDatasinkTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1369,15 +1380,15 @@ paths:
       operationId: getDatasinkTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1395,16 +1406,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/DatasinkTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1422,16 +1434,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/DatasinkTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1440,21 +1453,21 @@ paths:
       tags:
       - template
       - datasink
-  /templates/{projectId}/scan/{templateId}:
+  /templates/{projectID}/scan/{templateID}:
     delete:
       description: Delete scan template
       operationId: deleteScanTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1468,15 +1481,15 @@ paths:
       operationId: getScanTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1494,16 +1507,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScanTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1521,16 +1535,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScanTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1539,21 +1554,21 @@ paths:
       tags:
       - template
       - scan
-  /templates/{projectId}/schedule-scanner-cronjob/{templateId}:
+  /templates/{projectID}/schedule-scanner-cronjob/{templateID}:
     delete:
       description: Delete schedule-scanner-cronjob template
       operationId: deleteScannerCronJobTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1567,15 +1582,15 @@ paths:
       operationId: getScannerCronJobTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1593,16 +1608,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScannerCronJobTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1620,16 +1636,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/ScannerCronJobTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1638,21 +1655,21 @@ paths:
       tags:
       - template
       - schedule-scanner-cronjob
-  /templates/{projectId}/schedule-streams-job/{templateId}:
+  /templates/{projectID}/schedule-streams-job/{templateID}:
     delete:
       description: Delete schedule-streams-job template
       operationId: deleteStreamsJobTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1666,15 +1683,15 @@ paths:
       operationId: getStreamsJobTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1692,16 +1709,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamsJobTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1719,16 +1737,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamsJobTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1737,21 +1756,21 @@ paths:
       tags:
       - template
       - schedule-streams-job
-  /templates/{projectId}/stream/{templateId}:
+  /templates/{projectID}/stream/{templateID}:
     delete:
       description: Delete stream template
       operationId: deleteStreamTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1765,15 +1784,15 @@ paths:
       operationId: getStreamTemplateRequest
       parameters:
       - in: path
-        name: projectId
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1791,16 +1810,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
@@ -1818,16 +1838,17 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/StreamTemplate'
-      - in: path
-        name: projectId
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
         required: true
         type: string
-        x-go-name: ProjectId
+        x-go-name: ProjectID
       - in: path
-        name: templateId
+        name: templateID
         required: true
         type: string
-        x-go-name: TemplateId
+        x-go-name: TemplateID
       responses:
         "200":
           $ref: '#/responses/templateGeneralResponse'
