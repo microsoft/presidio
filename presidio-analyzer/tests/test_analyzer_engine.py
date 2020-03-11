@@ -3,15 +3,15 @@ from unittest import TestCase
 
 import pytest
 
-from analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
+from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry, AnalysisExplanation
-from analyzer import PresidioLogger
-from analyzer.analyze_pb2 import AnalyzeRequest
-from analyzer.entity_recognizer import EntityRecognizer
-from analyzer.nlp_engine import NlpArtifacts
-from analyzer.predefined_recognizers import CreditCardRecognizer, \
+from presidio_analyzer import PresidioLogger
+from presidio_analyzer.analyze_pb2 import AnalyzeRequest
+from presidio_analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer
-from analyzer.recognizer_registry.recognizers_store_api \
+from presidio_analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
 from tests import assert_result, TESTS_NLP_ENGINE
 from tests.mocks import MockNlpEngine

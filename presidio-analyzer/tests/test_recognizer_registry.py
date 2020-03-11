@@ -4,9 +4,9 @@ from unittest import TestCase
 
 import pytest
 
-from analyzer import RecognizerRegistry, PatternRecognizer, \
+from presidio_analyzer import RecognizerRegistry, PatternRecognizer, \
     EntityRecognizer, Pattern
-from analyzer.recognizer_registry.recognizers_store_api \
+from presidio_analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
 
 

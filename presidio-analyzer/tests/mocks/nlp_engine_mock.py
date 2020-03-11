@@ -1,4 +1,4 @@
-from analyzer.nlp_engine import NlpEngine, NlpArtifacts
+from presidio_analyzer.nlp_engine import NlpEngine, NlpArtifacts
 
 
 class MockNlpEngine(NlpEngine):

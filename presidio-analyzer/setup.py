@@ -3,8 +3,8 @@ import os.path
 from os import path
 
 __version__ = ""
-this_directory = path.abspath(path.dirname(__file__))
-with open(os.path.join(this_directory, 'VERSION')) as version_file:
+parent_directory = os.path.abspath(os.path.join(path.abspath(path.dirname(__file__)), os.pardir)) 
+with open(os.path.join(parent_directory, 'VERSION')) as version_file:
     __version__ = version_file.read().strip()
 
 setuptools.setup(
@@ -15,24 +15,23 @@ setuptools.setup(
     # long_description_content_type="text/markdown",
     url="https://github.com/Microsoft/presidio",
     packages=[
-        'analyzer', 'analyzer.predefined_recognizers', 'analyzer.nlp_engine',
-        'analyzer.recognizer_registry'
+        'presidio_analyzer', 'presidio_analyzer.predefined_recognizers', 'presidio_analyzer.nlp_engine','presidio_analyzer.recognizer_registry'
     ],
     trusted_host=['pypi.org'],
-    tests_require=['pytest', 'flake8', 'pylint==2.3.1'],
+    tests_require=['pytest', 'flake8==3.7.9', 'pylint==2.3.1'],
     install_requires=[
-        'cython==0.29.10',
-        'spacy==2.2.3',
-        'regex==2019.6.8',
-        'grpcio==1.21.1',
-        'protobuf==3.8.0',
-        'tldextract==2.2.1',
+        'cython==0.29.10', 
+        'spacy==2.2.3', 
+        'regex==2019.6.8', 
+        'grpcio==1.21.1', 
+        'protobuf==3.8.0', 
+        'tldextract==2.2.1', 
         'knack==0.6.2'],
     include_package_data=True,
     license='MIT',
     scripts=[
-        'analyzer/presidio-analyzer',
-        'analyzer/presidio-analyzer.bat',
+        'presidio_analyzer/presidio-analyzer',
+        'presidio_analyzer/presidio-analyzer.bat',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
