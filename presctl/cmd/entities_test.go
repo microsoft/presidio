@@ -17,7 +17,7 @@ type clientMock struct {
 	returningCode int
 }
 
-// TestIsJson tests that the method diffrentiate between a valid to a non valid json string
+// TestIsJson tests that the method differentiate between a valid to a non valid json string
 func TestIsJson(t *testing.T) {
 	nonJSONStr := "A simple string"
 	if isJSON(nonJSONStr) {
@@ -68,7 +68,24 @@ func TestTemplatesOperations(t *testing.T) {
 
 	mockSuccess = &clientMock{returningCode: http.StatusOK}
 	entities.UpdateTemplate(mockSuccess, "myproj", "anonymize", "template1", "template text")
+
 	entities.GetTemplate(mockSuccess, "myproj", "anonymize", "template1", "")
+}
+
+// TestRecognizersOperations tests that the positive flow of the templates commands is succesfull
+func TestRecognizersOperations(t *testing.T) {
+	mockSuccess := &clientMock{returningCode: http.StatusCreated}
+
+	// verify all flows are ending with success
+	entities.CreateRecognizer(mockSuccess, "myreco", "template text")
+
+	mockSuccess = &clientMock{returningCode: http.StatusNoContent}
+	entities.DeleteRecognizer(mockSuccess, "myreco")
+
+	mockSuccess = &clientMock{returningCode: http.StatusOK}
+	entities.UpdateRecognizer(mockSuccess, "myreco", "template text")
+
+	entities.GetRecognizer(mockSuccess, "myreco", "")
 }
 
 func (c *clientMock) Do(req *http.Request) (*http.Response, error) {

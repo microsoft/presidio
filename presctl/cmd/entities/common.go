@@ -116,9 +116,9 @@ func restCommand(httpClient httpClient, op restOp, url string, fileContentStr st
 		return
 	}
 
-	fmt.Println(getBodyString(response))
-
-	unquotedStr, err := strconv.Unquote(getBodyString(response))
+	// getBodyString can be called only once, so we save it into a var
+	res := getBodyString(response)
+	unquotedStr, err := strconv.Unquote(res)
 	check(err)
 	if outputFilePath != "" {
 		saveToFile(unquotedStr, outputFilePath)
