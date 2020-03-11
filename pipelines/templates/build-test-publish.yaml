@@ -392,7 +392,7 @@ stages:
           displayName: Publish test results
           inputs:
             testRunner: JUnit
-            testResultsFiles: $(System.DefaultWorkingDirectory)/test-results/report.xml
+            testResultsFiles: $(System.DefaultWorkingDirectory)/test-results/functional-report.xml
 
   # # Publish artifacts
   - stage: PublishArtifacts 
