@@ -387,7 +387,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) TEST_IN_CONTAINER=true test-functional-no-build
         - task: PublishTestResults@2
           displayName: Publish test results
           inputs:

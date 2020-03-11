@@ -18,7 +18,7 @@ PRESIDIO_LABEL 		:= $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
 PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')	
 CURRENT_DIR		 	:= $(shell pwd)
 LDFLAGS   			+= -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
-
+TEST_IN_CONTAINER	:= 
 CX_OSES 			= linux windows darwin
 CX_ARCHS 			= amd64
 
@@ -194,9 +194,14 @@ test-functional-no-build:
 	sleep 30
 	docker run --rm --name test-presidio-api --network testnetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=test-presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=test-presidio-anonymizer:3001 -e ANONYMIZER_IMAGE_SVC_ADDRESS=test-presidio-anonymizer-image:3002 -e OCR_SVC_ADDRESS=test-presidio-ocr:3003 -e RECOGNIZERS_STORE_SVC_ADDRESS=test-presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
 	# wait for api to start
+	sleep 10
+
+ifeq ($(TEST_IN_CONTAINER),)
+	go test --tags functional ./tests -count=1
+else
 	-mkdir test-results
-	
 	docker run --rm -v "$(CURRENT_DIR)/test-results":/test-result-pipe  --name presidio-tests  --network host $(DOCKER_REGISTRY)/functional-tests:$(PRESIDIO_LABEL)
+endif
 	docker rm test-presidio-api -f
 	docker rm test-presidio-analyzer -f
 	docker rm test-presidio-anonymizer -f

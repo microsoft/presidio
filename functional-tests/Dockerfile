@@ -1,3 +1,6 @@
+# This dockerfile is used in CI to run golang based functional tests and
+# output results as a junit report to a mounted volume where it can
+# be read and published to ADO.
 ARG REGISTRY=presidio.azurecr.io
 
 FROM ${REGISTRY}/presidio-golang-base AS build-env
