@@ -1,6 +1,6 @@
 import tldextract
 
-from analyzer import Pattern, PatternRecognizer
+from presidio_analyzer import Pattern, PatternRecognizer
 
 # pylint: disable=line-too-long
 REGEX = r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b"  # noqa: E501

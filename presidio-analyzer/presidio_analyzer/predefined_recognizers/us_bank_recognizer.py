@@ -1,5 +1,5 @@
-from analyzer import Pattern
-from analyzer import PatternRecognizer
+from presidio_analyzer import Pattern
+from presidio_analyzer import PatternRecognizer
 
 # pylint: disable=line-too-long,abstract-method
 # Weak pattern: all passport numbers are a weak match, e.g., 14019033

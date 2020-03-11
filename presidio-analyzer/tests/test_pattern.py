@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from analyzer import Pattern
+from presidio_analyzer import Pattern
 my_pattern = Pattern(name="my pattern", score=0.9, regex="[re]")
 my_pattern_dict = {"name": "my pattern", "regex": "[re]", "score": 0.9}
 

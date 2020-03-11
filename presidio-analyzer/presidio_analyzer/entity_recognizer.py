@@ -1,7 +1,7 @@
 import copy
 from abc import abstractmethod
 
-from analyzer import PresidioLogger
+from presidio_analyzer import PresidioLogger
 
 
 class EntityRecognizer:

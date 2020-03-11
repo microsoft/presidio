@@ -125,7 +125,7 @@ Code based recognizers are written in Python and are a part of the [presidio-ana
 
   a. Implement the abstract recognizer class:
 
-  Create a new Python class which implements [LocalRecognizer](../presidio-analyzer/analyzer/local_recognizer.py). `LocalRecognizer` implements the base [EntityRecognizer](../presidio-analyzer/analyzer/entity_recognizer.py) class. All local recognizers run locally together with all other predefined recognizers as a part of the `presidio-analyzer` Python process. In contrast, `RemoteRecognizer` is a placeholder for recognizers that are external to the `presidio-analyzer` service, for example on a different microservice.
+  Create a new Python class which implements [LocalRecognizer](../presidio-analyzer/presidio_analyzer/local_recognizer.py). `LocalRecognizer` implements the base [EntityRecognizer](../presidio-analyzer/presidio_analyzer/entity_recognizer.py) class. All local recognizers run locally together with all other predefined recognizers as a part of the `presidio-analyzer` Python process. In contrast, `RemoteRecognizer` is a placeholder for recognizers that are external to the `presidio-analyzer` service, for example on a different microservice.
 
   The `EntityRecognizer` abstract class requires the implementation the following methods:
 
@@ -141,7 +141,7 @@ Code based recognizers are written in Python and are a part of the [presidio-ana
   def analyze(self, text, entities, nlp_artifacts):
   ```
 
-  The `analyze` method should return a list of [RecognizerResult](../presidio-analyzer/analyzer/recognizer_result.py). Refer to the [code documentation](../presidio-analyzer/analyzer/entity_recognizer.py) for more information.
+  The `analyze` method should return a list of [RecognizerResult](../presidio-analyzer/presidio_analyzer/recognizer_result.py). Refer to the [code documentation](../presidio-analyzer/presidio_analyzer/entity_recognizer.py) for more information.
 
   b. Reference and add the new class to the `RecognizerRegistry` module, in the `load_predefined_recognizers` method, which registers all code based recognizers.
 

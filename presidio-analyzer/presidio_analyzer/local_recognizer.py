@@ -1,4 +1,4 @@
-from analyzer import EntityRecognizer
+from presidio_analyzer import EntityRecognizer
 
 
 class LocalRecognizer(EntityRecognizer):

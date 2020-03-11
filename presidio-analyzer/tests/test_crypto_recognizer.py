@@ -1,8 +1,8 @@
 from unittest import TestCase
 
 from tests import assert_result
-from analyzer.predefined_recognizers import CryptoRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.predefined_recognizers import CryptoRecognizer
+from presidio_analyzer.entity_recognizer import EntityRecognizer
 
 crypto_recognizer = CryptoRecognizer()
 entities = ["CRYPTO"]

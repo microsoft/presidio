@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from analyzer import EntityRecognizer
+from presidio_analyzer import EntityRecognizer
 
 LANGUAGE = "en"
 

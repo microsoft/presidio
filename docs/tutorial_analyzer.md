@@ -59,10 +59,10 @@ The expected result is:
 
 ### Method 2
 
-Use the analyzer Python code by importing `analyzer_engine.py` from `presidio-analyzer/analyzer`
+Use the analyzer Python code by importing `analyzer_engine.py` from `presidio-analyzer/presidio_analyzer`
 
 ```python
-from analyzer import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine
 
 analyzer = AnalyzerEngine()
 results = analyzer.analyze(text="My phone number is 212-555-5555",

@@ -1,5 +1,5 @@
-from analyzer import Pattern
-from analyzer import PatternRecognizer
+from presidio_analyzer import Pattern
+from presidio_analyzer import PatternRecognizer
 
 # pylint: disable=line-too-long,abstract-method
 IP_V4_REGEX = r'\b(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'  # noqa: E501

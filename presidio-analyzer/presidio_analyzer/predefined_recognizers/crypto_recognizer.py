@@ -1,6 +1,6 @@
 from hashlib import sha256
-from analyzer import Pattern
-from analyzer import PatternRecognizer
+from presidio_analyzer import Pattern
+from presidio_analyzer import PatternRecognizer
 
 # Copied from:
 # http://rosettacode.org/wiki/Bitcoin/address_validation#Python

@@ -1,5 +1,5 @@
-from analyzer import Pattern
-from analyzer import PatternRecognizer
+from presidio_analyzer import Pattern
+from presidio_analyzer import PatternRecognizer
 # pylint: disable=line-too-long,abstract-method
 
 # List from https://ntsi.com/drivers-license-format/

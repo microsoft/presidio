@@ -18,8 +18,8 @@ RUN pipenv run pip freeze
 
 RUN pipenv install pylint==2.3.1 flake8==3.7.9 pytest --skip-lock
 
-RUN pipenv run pylint analyzer && \
-    pipenv run flake8 analyzer --exclude "*pb2*.py" && \
+RUN pipenv run pylint presidio_analyzer && \
+    pipenv run flake8 presidio_analyzer --exclude "*pb2*.py" && \
 	pipenv run pytest --log-cli-level=0
     
 #----------------------------
@@ -27,7 +27,7 @@ RUN pipenv run pylint analyzer && \
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
 
 ARG NAME=presidio-analyzer
-ADD ./${NAME}/analyzer /usr/bin/${NAME}/analyzer
-WORKDIR /usr/bin/${NAME}/analyzer
+ADD ./${NAME}/presidio_analyzer /usr/bin/${NAME}/presidio_analyzer
+WORKDIR /usr/bin/${NAME}/presidio_analyzer
 
 CMD pipenv run python __main__.py serve --env-grpc-port

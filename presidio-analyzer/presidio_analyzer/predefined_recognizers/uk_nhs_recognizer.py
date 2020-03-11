@@ -1,5 +1,5 @@
-from analyzer import Pattern
-from analyzer import PatternRecognizer
+from presidio_analyzer import Pattern
+from presidio_analyzer import PatternRecognizer
 
 REGEX = r'\b([0-9]{3})[- ]?([0-9]{3})[- ]?([0-9]{4})\b'
 CONTEXT = [

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from tests import assert_result_within_score_range
-from analyzer.predefined_recognizers import UsPassportRecognizer
+from presidio_analyzer.predefined_recognizers import UsPassportRecognizer
 
 us_passport_recognizer = UsPassportRecognizer()
 entities = ["US_PASSPORT"]

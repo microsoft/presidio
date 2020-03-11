@@ -1,7 +1,7 @@
 import spacy
 
-from analyzer import PresidioLogger
-from analyzer.nlp_engine import NlpArtifacts, NlpEngine
+from presidio_analyzer import PresidioLogger
+from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine
 
 logger = PresidioLogger()
 

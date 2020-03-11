@@ -1,4 +1,5 @@
-from analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
+from presidio_analyzer import RecognizerResult, \
+    LocalRecognizer, AnalysisExplanation
 
 NER_STRENGTH = 0.85
 SUPPORTED_ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]

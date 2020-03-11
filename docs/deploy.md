@@ -159,7 +159,7 @@ To test, run Python on the virtual env you've installed the presidio-analyzer in
 Then, make sure this code returns an answer:
 
 ```python
-from analyzer import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine
 
 engine = AnalyzerEngine()
 
