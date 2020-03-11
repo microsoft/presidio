@@ -98,6 +98,10 @@ func restCommand(httpClient httpClient, op restOp, url string, fileContentStr st
 		req, err = http.NewRequest("DELETE", url, nil)
 	case get:
 		req, err = http.NewRequest("GET", url, nil)
+	default:
+		errMsg := fmt.Sprintf("Unknown operation code %d", op)
+		fmt.Println(errMsg)
+		os.Exit(1)
 	}
 	check(err)
 
