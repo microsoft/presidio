@@ -23,7 +23,10 @@ class NhsRecognizer(PatternRecognizer):
         multiplier = 10
         total = 0
         for c in text:
-            val = int(c)
+            try:
+                val = int(c)
+            except ValueError:
+                return False
             total = total + val * multiplier
             multiplier = multiplier - 1
 
