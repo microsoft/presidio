@@ -17,13 +17,14 @@ var updateCmd = &cobra.Command{
 
 var updateTemplateCmd = &cobra.Command{
 	Use:   "template",
+	Args:  cobra.MinimumNArgs(1),
 	Short: "update a template resource",
 	Long:  `Use this command to update presidio template.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		actionName := getFlagValue(cmd, actionFlag)
 		path := getFlagValue(cmd, fileFlag)
 		projectName := getFlagValue(cmd, projectFlag)
-		templateName := getFlagValue(cmd, templateFlag)
+		templateName := args[0]
 
 		fileContentStr, err := getJSONFileContent(path)
 		check(err)
@@ -36,11 +37,12 @@ var updateTemplateCmd = &cobra.Command{
 // updateRecognizerCmd represents the custom analysis recognizer update
 var updateRecognizerCmd = &cobra.Command{
 	Use:   "recognizer",
+	Args:  cobra.MinimumNArgs(1),
 	Short: "update an existing custom recognizer resource",
 	Long:  `Use this command to update an existing custom recognizer resource.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		path := getFlagValue(cmd, fileFlag)
-		recognizerName := getFlagValue(cmd, recognizerFlag)
+		recognizerName := args[0]
 
 		fileContentStr, err := getJSONFileContent(path)
 		check(err)
@@ -56,13 +58,11 @@ func init() {
 
 	// define supported flags for the add command
 	updateTemplateCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
-	updateTemplateCmd.Flags().String(templateFlag, "", "template's name")
 	updateTemplateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
 	updateTemplateCmd.Flags().String(projectFlag, "", "project's name")
 
 	// mark flags as required
 	templateCmd.MarkFlagRequired(fileFlag)
-	updateTemplateCmd.MarkFlagRequired(templateFlag)
 	updateTemplateCmd.MarkFlagRequired(actionFlag)
 	updateTemplateCmd.MarkFlagRequired(projectFlag)
 
@@ -70,9 +70,7 @@ func init() {
 
 	// define supported flags for the add command
 	updateRecognizerCmd.Flags().StringP(fileFlag, "f", "", "path to a recognizer json file")
-	updateRecognizerCmd.Flags().String(recognizerFlag, "", "recognizer's name")
 
 	// mark flags as required
 	updateRecognizerCmd.MarkFlagRequired(fileFlag)
-	updateRecognizerCmd.MarkFlagRequired(recognizerFlag)
 }

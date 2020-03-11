@@ -14,8 +14,8 @@ import (
 // analyzeCmd represents the analyze command
 var analyzeCmd = &cobra.Command{
 	Use:   "analyze",
-	Short: "Analyze the given object",
-	Long:  `Send the object to Presidio for analysis as described in the templates.`,
+	Short: "Analyze the given text",
+	Long:  `Send the text to Presidio for analysis according to the specified template.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		analyzeTemplateID := getFlagValue(cmd, analyzeTemplateIDFlag)
@@ -52,7 +52,7 @@ func init() {
 
 	// define supported flags for the analyze command
 	analyzeCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
-	analyzeCmd.Flags().String(projectFlag, "", "project's name")
+	analyzeCmd.Flags().StringP(projectFlag, "n", "", "project's name")
 	analyzeCmd.Flags().StringP(outputFlag, "o", "", "output file path")
 	analyzeCmd.Flags().StringP(stringFlag, "s", "", "string to analyze")
 	analyzeCmd.Flags().String(analyzeTemplateIDFlag, "", "the analyze templateId")

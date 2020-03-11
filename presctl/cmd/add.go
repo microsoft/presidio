@@ -12,19 +12,20 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "adds a new resource type",
-	Long:  `Use this command to add to presidio a new resource of the specified type.`,
+	Long:  `Use this command to add to Presidio a new resource of the specified type.`,
 }
 
 // templateCmd represents the template command
 var templateCmd = &cobra.Command{
-	Use:   "template",
+	Use:   "template [name]",
+	Args:  cobra.MinimumNArgs(1),
 	Short: "adds a new template resource",
 	Long:  `Use this command to add to presidio a new template.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		actionName := getFlagValue(cmd, actionFlag)
 		path := getFlagValue(cmd, fileFlag)
 		projectName := getFlagValue(cmd, projectFlag)
-		templateName := getFlagValue(cmd, templateFlag)
+		templateName := args[0]
 
 		fileContentStr, err := getJSONFileContent(path)
 		check(err)
@@ -36,12 +37,13 @@ var templateCmd = &cobra.Command{
 
 // recognizerCmd represents a custom analysis recognizer
 var recognizerCmd = &cobra.Command{
-	Use:   "recognizer",
+	Use:   "recognizer [name]",
+	Args:  cobra.MinimumNArgs(1),
 	Short: "adds a new custom recognizer resource",
-	Long:  `Use this command to add to presidio a new custom recognizer.`,
+	Long:  `Use this command to add to Presidio a new custom recognizer.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		path := getFlagValue(cmd, fileFlag)
-		recognizerName := getFlagValue(cmd, recognizerFlag)
+		recognizerName := args[0]
 
 		fileContentStr, err := getJSONFileContent(path)
 		check(err)
@@ -57,13 +59,11 @@ func init() {
 
 	// define supported flags for the add command
 	templateCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
-	templateCmd.Flags().String(templateFlag, "", "new template's name")
 	templateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
 	templateCmd.Flags().String(projectFlag, "", "project's name")
 
 	// mark flags as required
 	templateCmd.MarkFlagRequired(fileFlag)
-	templateCmd.MarkFlagRequired(templateFlag)
 	templateCmd.MarkFlagRequired(actionFlag)
 	templateCmd.MarkFlagRequired(projectFlag)
 
@@ -71,9 +71,7 @@ func init() {
 
 	// define supported flags for the add command
 	recognizerCmd.Flags().StringP(fileFlag, "f", "", "path to a recognizer json file")
-	recognizerCmd.Flags().String(recognizerFlag, "", "new recognizer's name")
 
 	// mark flags as required
 	recognizerCmd.MarkFlagRequired(fileFlag)
-	recognizerCmd.MarkFlagRequired(recognizerFlag)
 }

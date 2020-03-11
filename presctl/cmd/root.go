@@ -10,14 +10,24 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/Microsoft/presidio/pkg/presidio"
 )
+
+const (
+	analyze                = "analyze"
+	anonymize              = "anonymize"
+	scan                   = "scan"
+	stream                 = "stream"
+	datasink               = "datasink"
+	scheduleScannerCronJob = "schedule-scanner-cronjob"
+	scheduleStreamsJob     = "schedule-streams-job"
+)
+
+// allowedActions all of the allowed action that Presidio is offering
+var allowedActions = []string{analyze, anonymize, scan, stream, datasink, scheduleScannerCronJob, scheduleStreamsJob}
 
 // constants
 const (
 	fileFlag                  = "file"
-	templateFlag              = "template"
 	actionFlag                = "action"
 	stringFlag                = "string"
 	projectFlag               = "project"
@@ -25,11 +35,10 @@ const (
 	analyzeTemplateIDFlag     = "analyzeTemplateId"
 	anonymizeTemplateIDFlag   = "anonymizeTemplateId"
 	scheduleJobTemplateIDFlag = "jobTemplateId"
-	recognizerFlag            = "recognizer"
 )
 
 func getSupportedActions() string {
-	return strings.Join(presidio.AllowedActions, ", ")
+	return strings.Join(allowedActions, ", ")
 }
 
 func check(err error) {

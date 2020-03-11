@@ -14,8 +14,8 @@ import (
 // anonymizeCmd represents the anonymize command
 var anonymizeCmd = &cobra.Command{
 	Use:   "anonymize",
-	Short: "Anonymize the given object",
-	Long:  `Send the object to Presidio for anonymization as described in the templates.`,
+	Short: "Anonymize the given text",
+	Long:  `Send the text to Presidio for anonymization according to the specified template.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		analyzeTemplateID := getFlagValue(cmd, analyzeTemplateIDFlag)
 		anonymizeTemplateID := getFlagValue(cmd, anonymizeTemplateIDFlag)
@@ -53,11 +53,11 @@ func init() {
 	// define supported flags for the analyze command
 	anonymizeCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
 	anonymizeCmd.Flags().StringP(stringFlag, "s", "", "string to analyze")
-	anonymizeCmd.Flags().String(projectFlag, "", "project's name")
+	anonymizeCmd.Flags().StringP(projectFlag, "n", "", "project's name")
 	anonymizeCmd.Flags().StringP(outputFlag, "o", "", "output file path")
 	anonymizeCmd.Flags().String(analyzeTemplateIDFlag, "", "the analyze templateId")
 	anonymizeCmd.Flags().String(anonymizeTemplateIDFlag, "", "the anonymize templateId")
 
-	// mark flags as required
+	// mark flag as required
 	anonymizeCmd.MarkFlagRequired(projectFlag)
 }
