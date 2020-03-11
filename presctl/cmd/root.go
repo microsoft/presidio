@@ -32,8 +32,8 @@ const (
 	stringFlag                = "string"
 	projectFlag               = "project"
 	outputFlag                = "output"
-	analyzeTemplateIDFlag     = "analyzeTemplateId"
-	anonymizeTemplateIDFlag   = "anonymizeTemplateId"
+	analyzeTemplateIDFlag     = "analyze-template-id"
+	anonymizeTemplateIDFlag   = "anonymize-template-id"
 	scheduleJobTemplateIDFlag = "jobTemplateId"
 )
 

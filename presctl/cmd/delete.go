@@ -50,7 +50,7 @@ func init() {
 
 	// define supported flags for the del command
 	delTemplateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
-	delTemplateCmd.Flags().String(projectFlag, "", "project's name")
+	delTemplateCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 
 	// mark flags as required
 	delTemplateCmd.MarkFlagRequired(actionFlag)

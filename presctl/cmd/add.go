@@ -60,7 +60,7 @@ func init() {
 	// define supported flags for the add command
 	templateCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
 	templateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
-	templateCmd.Flags().String(projectFlag, "", "project's name")
+	templateCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 
 	// mark flags as required
 	templateCmd.MarkFlagRequired(fileFlag)

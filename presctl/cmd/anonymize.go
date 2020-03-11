@@ -53,10 +53,10 @@ func init() {
 	// define supported flags for the analyze command
 	anonymizeCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
 	anonymizeCmd.Flags().StringP(stringFlag, "s", "", "string to analyze")
-	anonymizeCmd.Flags().StringP(projectFlag, "n", "", "project's name")
+	anonymizeCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 	anonymizeCmd.Flags().StringP(outputFlag, "o", "", "output file path")
-	anonymizeCmd.Flags().String(analyzeTemplateIDFlag, "", "the analyze templateId")
-	anonymizeCmd.Flags().String(anonymizeTemplateIDFlag, "", "the anonymize templateId")
+	anonymizeCmd.Flags().StringP(analyzeTemplateIDFlag, "l", "", "the analyze templateId")
+	anonymizeCmd.Flags().StringP(anonymizeTemplateIDFlag, "m", "", "the anonymize templateId")
 
 	// mark flag as required
 	anonymizeCmd.MarkFlagRequired(projectFlag)

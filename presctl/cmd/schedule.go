@@ -95,10 +95,10 @@ func init() {
 
 	// define supported flags
 	scannerCmd.Flags().StringP(fileFlag, "f", "", "path to a job definition json file")
-	scannerCmd.Flags().String(projectFlag, "", "project's name")
+	scannerCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 
 	streamCmd.Flags().StringP(fileFlag, "f", "", "path to a job definition json file")
-	streamCmd.Flags().String(projectFlag, "", "project's name")
+	streamCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 
 	scannerCmd.Flags().String(scheduleJobTemplateIDFlag, "", "the templateId")
 	streamCmd.Flags().String(scheduleJobTemplateIDFlag, "", "the templateId")

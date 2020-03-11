@@ -54,7 +54,7 @@ func init() {
 	// define supported flags for the get command
 	getTemplateCmd.Flags().StringP(outputFlag, "o", "", "path to the output file")
 	getTemplateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
-	getTemplateCmd.Flags().String(projectFlag, "", "project's name")
+	getTemplateCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 
 	// mark flags as required
 	getTemplateCmd.MarkFlagRequired(actionFlag)

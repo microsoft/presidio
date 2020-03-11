@@ -52,10 +52,10 @@ func init() {
 
 	// define supported flags for the analyze command
 	analyzeCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
-	analyzeCmd.Flags().StringP(projectFlag, "n", "", "project's name")
+	analyzeCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 	analyzeCmd.Flags().StringP(outputFlag, "o", "", "output file path")
 	analyzeCmd.Flags().StringP(stringFlag, "s", "", "string to analyze")
-	analyzeCmd.Flags().String(analyzeTemplateIDFlag, "", "the analyze templateId")
+	analyzeCmd.Flags().StringP(analyzeTemplateIDFlag, "l", "", "the analyze templateId")
 
 	// mark flags as required
 	analyzeCmd.MarkFlagRequired(projectFlag)
