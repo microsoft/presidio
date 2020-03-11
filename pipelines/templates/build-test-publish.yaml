@@ -30,6 +30,7 @@ stages:
 
   - stage: SecurityAnalysis
     displayName: Security Analysis
+    # condition: eq(variables['Build.Reason'], 'PullRequest')
     dependsOn: []
     jobs:
 
@@ -107,7 +108,32 @@ stages:
           verbosity: 'Verbose'
           alertWarningLevel: 'Medium'
           failOnAlert: true
-        
+  
+  - stage: PR
+    displayName: Pull Request Validation
+    # condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    dependsOn: []
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+    - job: BuildTest
+      displayName: Build and Test
+      steps:
+        - task: UsePythonVersion@0
+          displayName: 'Use Python $(PYTHON.VERSION)'
+          inputs:
+            versionSpec: '$(PYTHON.VERSION)'
+        - template: ./golang-environment.yaml
+        - task: Bash@3
+          displayName: 'Run presidio makefile'
+          inputs:
+            targetType: 'inline'
+            script: |
+              make build
+              make docker-build-deps DOCKER_REGISTRY=presidio PRESIDIO_DEPS_LABEL=pr
+              make docker-build DOCKER_REGISTRY=presidio PRESIDIO_DEPS_LABEL=pr PRESIDIO_LABEL=pr
+              make test DOCKER_REGISTRY=presidio PRESIDIO_LABEL=pr
+              make test-functional DOCKER_REGISTRY=presidio PRESIDIO_LABEL=pr
   # Env
   - stage: Setup
     displayName: Set Pipeline globals
