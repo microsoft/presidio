@@ -128,6 +128,7 @@ stages:
           displayName: 'Run presidio makefile'
           inputs:
             targetType: 'inline'
+            workingDirectory: '$(MODULEPATH)'
             script: |
               make build
               make docker-build-deps DOCKER_REGISTRY=presidio PRESIDIO_DEPS_LABEL=pr
