@@ -131,10 +131,10 @@ stages:
             workingDirectory: '$(MODULEPATH)'
             script: |
               make build
-              make docker-build-deps DOCKER_REGISTRY=presidio PRESIDIO_DEPS_LABEL=pr
-              make docker-build DOCKER_REGISTRY=presidio PRESIDIO_DEPS_LABEL=pr PRESIDIO_LABEL=pr
-              make test DOCKER_REGISTRY=presidio PRESIDIO_LABEL=pr
-              make test-functional DOCKER_REGISTRY=presidio PRESIDIO_LABEL=pr
+              make docker-build-deps PRESIDIO_DEPS_LABEL=pr
+              make docker-build PRESIDIO_DEPS_LABEL=pr PRESIDIO_LABEL=pr
+              make test PRESIDIO_LABEL=pr
+              make test-functional PRESIDIO_LABEL=pr
   # Env
   - stage: Setup
     displayName: Set Pipeline globals
