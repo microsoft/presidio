@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
-	"github.com/Microsoft/presidio/tests/common"
+	"github.com/Microsoft/presidio/functional-tests/common"
 )
 
 // TestAddRecognizerAndAnalyze tests the custom recognizers logic.

@@ -349,6 +349,8 @@ stages:
                 SERVICE_NAME: presidio-recognizers-store
             TESTER:
                 SERVICE_NAME: presidio-tester
+            FUNCTIONAL_TESTS:
+                SERVICE_NAME: functional-tests
         steps:  
         - template: ./Build-golang-template.yaml
           parameters:
@@ -374,15 +376,6 @@ stages:
       - job: FunctionalTests
         displayName: Presidio Functional Tests
         steps:  
-        - template: ./golang-environment.yaml
-        - task: Bash@3
-          displayName: 'Run dep ensure'
-          inputs:
-            targetType: 'inline'
-            script: |
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-            workingDirectory: '$(MODULEPATH)'
         - task: Docker@2
           displayName: Docker login
           inputs:
@@ -393,8 +386,12 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
-            workingDirectory: '$(MODULEPATH)'
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) TEST_IN_CONTAINER=true test-functional-no-build
+        - task: PublishTestResults@2
+          displayName: Publish test results
+          inputs:
+            testRunner: JUnit
+            testResultsFiles: $(System.DefaultWorkingDirectory)/test-results/functional-report.xml
 
   # # Publish artifacts
   - stage: PublishArtifacts 

@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/functional-tests/common"
 	"github.com/Microsoft/presidio/presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer"
-	"github.com/Microsoft/presidio/tests/common"
 
 	"testing"
 )
