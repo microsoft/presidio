@@ -1088,7 +1088,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getAnalyzeTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1189,7 +1189,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getAnonymizeImageTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1290,7 +1290,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getAnonymizeTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1391,7 +1391,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getDatasinkTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1492,7 +1492,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getScanTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1593,7 +1593,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getScannerCronJobTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1694,7 +1694,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getStreamsJobTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1795,7 +1795,7 @@ paths:
         x-go-name: TemplateID
       responses:
         "200":
-          $ref: '#/responses/templateGeneralResponse'
+          $ref: '#/responses/getStreamTemplateResponse'
         "400":
           $ref: '#/responses/templateGeneralError'
       tags:
@@ -1881,6 +1881,22 @@ responses:
       items:
         $ref: '#/definitions/RecognizersGetResponse'
       type: array
+  getAnalyzeTemplateResponse:
+    description: An analyze template
+    schema:
+      $ref: '#/definitions/AnalyzeTemplate'
+  getAnonymizeImageTemplateResponse:
+    description: An anonymize image template
+    schema:
+      $ref: '#/definitions/AnonymizeImageTemplate'
+  getAnonymizeTemplateResponse:
+    description: An anonymize template
+    schema:
+      $ref: '#/definitions/AnonymizeTemplate'
+  getDatasinkTemplateResponse:
+    description: A Datasink template
+    schema:
+      $ref: '#/definitions/DatasinkTemplate'
   getFieldTypesResponse:
     description: The response including a list of field types
     schema:
@@ -1891,6 +1907,22 @@ responses:
     description: A Recognizer
     schema:
       $ref: '#/definitions/RecognizersGetResponse'
+  getScanTemplateResponse:
+    description: A scan template
+    schema:
+      $ref: '#/definitions/ScanTemplate'
+  getScannerCronJobTemplateResponse:
+    description: A ScannerCronJob template
+    schema:
+      $ref: '#/definitions/ScannerCronJobTemplate'
+  getStreamTemplateResponse:
+    description: A stream template
+    schema:
+      $ref: '#/definitions/StreamTemplate'
+  getStreamsJobTemplateResponse:
+    description: A Streams Job template
+    schema:
+      $ref: '#/definitions/StreamsJobTemplate'
   insertRecognizerResponse:
     description: Insert new recognizer response
   scheduleScannerCronjobResponse:
