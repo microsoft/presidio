@@ -1,8 +1,8 @@
 from unittest import TestCase
 
 from tests import assert_result
-from analyzer.predefined_recognizers import EmailRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.predefined_recognizers import EmailRecognizer
+from presidio_analyzer.entity_recognizer import EntityRecognizer
 
 email_recognizer = EmailRecognizer()
 entities = ["EMAIL_ADDRESS"]

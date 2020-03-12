@@ -16,8 +16,8 @@ In order to implement a new recognizer by code, follow these two steps:
 
 a. Implement the abstract recognizer class:
 
-Create a new Python class which implements [LocalRecognizer](analyzer/local_recognizer.py). 
-`LocalRecognizer` implements the base [EntityRecognizer](analyzer/entity_recognizer.py) class. 
+Create a new Python class which implements [LocalRecognizer](presidio_analyzer/local_recognizer.py). 
+`LocalRecognizer` implements the base [EntityRecognizer](presidio_analyzer/entity_recognizer.py) class. 
 All local recognizers run locally together with all other predefined recognizers as a part of the `presidio-analyzer` Python process. In contrast, `RemoteRecognizer` is a placeholder for recognizers that are external to the `presidio-analyzer` service, for example on a different microservice.
 
 The `EntityRecognizer` abstract class requires the implementation the following methods:
@@ -34,6 +34,6 @@ ii. analyze: The main function to be called for getting entities out of the new 
 def analyze(self, text, entities, nlp_artifacts):
 ```
 
-The `analyze` method should return a list of [RecognizerResult](analyzer/recognizer_result.py). Refer to the [code documentation](analyzer/entity_recognizer.py) for more information.
+The `analyze` method should return a list of [RecognizerResult](presidio_analyzer/recognizer_result.py). Refer to the [code documentation](presidio_analyzer/entity_recognizer.py) for more information.
 
 b. Reference and add the new class to the `RecognizerRegistry` module, in the `load_predefined_recognizers` method, which registers all code based recognizers.

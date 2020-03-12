@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from tests import assert_result
-from analyzer.predefined_recognizers import UsBankRecognizer
+from presidio_analyzer.predefined_recognizers import UsBankRecognizer
 
 us_bank_recognizer = UsBankRecognizer()
 entities = ["US_BANK_NUMBER"]
