@@ -889,16 +889,16 @@ paths:
   /analyzer/recognizers/:
     get:
       description: Get all recognizers
-      operationId: getAllRecognizersRequest
+      operationId: getAllRecognizers
       responses:
         "200":
-          $ref: '#/responses/allRecognizersGetResponse'
+          $ref: '#/responses/getAllRecognizersResponse'
       tags:
       - analyze
   /analyzer/recognizers/{id}:
     get:
       description: Get an existing recognizer
-      operationId: getRecognizerRequest
+      operationId: getRecognizer
       parameters:
       - description: Recognizer name
         in: path
@@ -908,12 +908,12 @@ paths:
         x-go-name: ID
       responses:
         "200":
-          $ref: '#/responses/recognizersGetResponse'
+          $ref: '#/responses/getRecognizerResponse'
       tags:
       - analyze
     post:
       description: Insert a new recognizer
-      operationId: insertRecognizerRequest
+      operationId: insertRecognizer
       parameters:
       - description: Recognizer name
         in: path
@@ -928,7 +928,7 @@ paths:
           $ref: '#/definitions/RecognizerInsertOrUpdateRequest'
       responses:
         "200":
-          $ref: '#/responses/insertRecognizersResponse'
+          $ref: '#/responses/insertRecognizerResponse'
       tags:
       - analyze
   /fieldTypes:
@@ -937,13 +937,13 @@ paths:
       operationId: getFieldTypes
       responses:
         "200":
-          $ref: '#/responses/fieldTypesGetResponse'
+          $ref: '#/responses/getFieldTypesResponse'
       tags:
       - fields
   /projects/{projectID}/analyze:
     post:
       description: Analyze text
-      operationId: analyzeRequest
+      operationId: analyze
       parameters:
       - description: The request body
         in: body
@@ -965,7 +965,7 @@ paths:
   /projects/{projectID}/anonymize:
     post:
       description: Anonymize text
-      operationId: anonymizeRequest
+      operationId: anonymize
       parameters:
       - description: The request body
         in: body
@@ -987,7 +987,7 @@ paths:
   /projects/{projectID}/anonymize-image:
     post:
       description: Anonymize image
-      operationId: anonymizeImageRequest
+      operationId: anonymizeImage
       parameters:
       - description: The request body
         in: body
@@ -1009,7 +1009,7 @@ paths:
   /projects/{projectID}/schedule-scanner-cronjob:
     post:
       description: Schedule scanner cron-job
-      operationId: scheduleScannerCronjobRequest
+      operationId: scheduleScannerCronjob
       parameters:
       - description: The request body
         in: body
@@ -1031,7 +1031,7 @@ paths:
   /projects/{projectID}/schedule-streams-job:
     post:
       description: Schedule streams job
-      operationId: scheduleStreamsJobRequest
+      operationId: scheduleStreamsJob
       parameters:
       - in: body
         name: Body
@@ -1052,7 +1052,7 @@ paths:
   /templates/{projectID}/analyze/{templateID}:
     delete:
       description: Delete analyze template
-      operationId: deleteAnalyzeTemplateRequest
+      operationId: deleteAnalyzeTemplate
       parameters:
       - in: path
         name: projectID
@@ -1074,7 +1074,7 @@ paths:
       - analyze
     get:
       description: Get analyze template
-      operationId: getAnalyzeTemplateRequest
+      operationId: getAnalyzeTemplate
       parameters:
       - in: path
         name: projectID
@@ -1096,7 +1096,7 @@ paths:
       - analyze
     post:
       description: Create analyze template
-      operationId: postAnalyzeTemplateRequest
+      operationId: postAnalyzeTemplate
       parameters:
       - description: The request body
         in: body
@@ -1124,7 +1124,7 @@ paths:
       - analyze
     put:
       description: Update analyze template
-      operationId: putAnalyzeTemplateRequest
+      operationId: putAnalyzeTemplate
       parameters:
       - description: The request body
         in: body
@@ -1153,7 +1153,7 @@ paths:
   /templates/{projectID}/anonymize-image/{templateID}:
     delete:
       description: Delete anonymize-image template
-      operationId: deleteAnonymizeImageTemplateRequest
+      operationId: deleteAnonymizeImageTemplate
       parameters:
       - in: path
         name: projectID
@@ -1175,7 +1175,7 @@ paths:
       - anonymize-image
     get:
       description: Get anonymize-image template
-      operationId: getAnonymizeImageTemplateRequest
+      operationId: getAnonymizeImageTemplate
       parameters:
       - in: path
         name: projectID
@@ -1197,7 +1197,7 @@ paths:
       - anonymize-image
     post:
       description: Create anonymize-image template
-      operationId: postAnonymizeImageTemplateRequest
+      operationId: postAnonymizeImageTemplate
       parameters:
       - description: The request body
         in: body
@@ -1225,7 +1225,7 @@ paths:
       - anonymize-image
     put:
       description: Update anonymize-image template
-      operationId: putAnonymizeImageTemplateRequest
+      operationId: putAnonymizeImageTemplate
       parameters:
       - description: The request body
         in: body
@@ -1254,7 +1254,7 @@ paths:
   /templates/{projectID}/anonymize/{templateID}:
     delete:
       description: Delete anonymize template
-      operationId: deleteAnonymizeTemplateRequest
+      operationId: deleteAnonymizeTemplate
       parameters:
       - in: path
         name: projectID
@@ -1276,7 +1276,7 @@ paths:
       - anonymize
     get:
       description: Get anonymize template
-      operationId: getAnonymizeTemplateRequest
+      operationId: getAnonymizeTemplate
       parameters:
       - in: path
         name: projectID
@@ -1298,7 +1298,7 @@ paths:
       - anonymize
     post:
       description: Create anonymize template
-      operationId: postAnonymizeTemplateRequest
+      operationId: postAnonymizeTemplate
       parameters:
       - description: The request body
         in: body
@@ -1326,7 +1326,7 @@ paths:
       - anonymize
     put:
       description: Update anonymize template
-      operationId: putAnonymizeTemplateRequest
+      operationId: putAnonymizeTemplate
       parameters:
       - description: The request body
         in: body
@@ -1355,7 +1355,7 @@ paths:
   /templates/{projectID}/datasink/{templateID}:
     delete:
       description: Delete datasink template
-      operationId: deleteDatasinkTemplateRequest
+      operationId: deleteDatasinkTemplate
       parameters:
       - in: path
         name: projectID
@@ -1377,7 +1377,7 @@ paths:
       - datasink
     get:
       description: Get datasink template
-      operationId: getDatasinkTemplateRequest
+      operationId: getDatasinkTemplate
       parameters:
       - in: path
         name: projectID
@@ -1399,7 +1399,7 @@ paths:
       - datasink
     post:
       description: Create datasink template
-      operationId: postDatasinkTemplateRequest
+      operationId: postDatasinkTemplate
       parameters:
       - description: The request body
         in: body
@@ -1427,7 +1427,7 @@ paths:
       - datasink
     put:
       description: Update datasink template
-      operationId: putDatasinkTemplateRequest
+      operationId: putDatasinkTemplate
       parameters:
       - description: The request body
         in: body
@@ -1456,7 +1456,7 @@ paths:
   /templates/{projectID}/scan/{templateID}:
     delete:
       description: Delete scan template
-      operationId: deleteScanTemplateRequest
+      operationId: deleteScanTemplate
       parameters:
       - in: path
         name: projectID
@@ -1478,7 +1478,7 @@ paths:
       - scan
     get:
       description: Get scan template
-      operationId: getScanTemplateRequest
+      operationId: getScanTemplate
       parameters:
       - in: path
         name: projectID
@@ -1500,7 +1500,7 @@ paths:
       - scan
     post:
       description: Create scan template
-      operationId: postScanTemplateRequest
+      operationId: postScanTemplate
       parameters:
       - description: The request body
         in: body
@@ -1528,7 +1528,7 @@ paths:
       - scan
     put:
       description: Update scan template
-      operationId: putScanTemplateRequest
+      operationId: putScanTemplate
       parameters:
       - description: The request body
         in: body
@@ -1557,7 +1557,7 @@ paths:
   /templates/{projectID}/schedule-scanner-cronjob/{templateID}:
     delete:
       description: Delete schedule-scanner-cronjob template
-      operationId: deleteScannerCronJobTemplateRequest
+      operationId: deleteScannerCronJobTemplate
       parameters:
       - in: path
         name: projectID
@@ -1579,7 +1579,7 @@ paths:
       - schedule-scanner-cronjob
     get:
       description: Get schedule-scanner-cronjob template
-      operationId: getScannerCronJobTemplateRequest
+      operationId: getScannerCronJobTemplate
       parameters:
       - in: path
         name: projectID
@@ -1601,7 +1601,7 @@ paths:
       - schedule-scanner-cronjob
     post:
       description: Create schedule-scanner-cronjob template
-      operationId: postScannerCronJobTemplateRequest
+      operationId: postScannerCronJobTemplate
       parameters:
       - description: The request body
         in: body
@@ -1629,7 +1629,7 @@ paths:
       - schedule-scanner-cronjob
     put:
       description: Update schedule-scanner-cronjob template
-      operationId: putScannerCronJobTemplateRequest
+      operationId: putScannerCronJobTemplate
       parameters:
       - description: The request body
         in: body
@@ -1658,7 +1658,7 @@ paths:
   /templates/{projectID}/schedule-streams-job/{templateID}:
     delete:
       description: Delete schedule-streams-job template
-      operationId: deleteStreamsJobTemplateRequest
+      operationId: deleteStreamsJobTemplate
       parameters:
       - in: path
         name: projectID
@@ -1680,7 +1680,7 @@ paths:
       - schedule-streams-job
     get:
       description: Get schedule-streams-job template
-      operationId: getStreamsJobTemplateRequest
+      operationId: getStreamsJobTemplate
       parameters:
       - in: path
         name: projectID
@@ -1702,7 +1702,7 @@ paths:
       - schedule-streams-job
     post:
       description: Create schedule-streams-job template
-      operationId: postStreamsJobTemplateRequest
+      operationId: postStreamsJobTemplate
       parameters:
       - description: The request body
         in: body
@@ -1730,7 +1730,7 @@ paths:
       - schedule-streams-job
     put:
       description: Update schedule-streams-job template
-      operationId: putStreamsJobTemplateRequest
+      operationId: putStreamsJobTemplate
       parameters:
       - description: The request body
         in: body
@@ -1759,7 +1759,7 @@ paths:
   /templates/{projectID}/stream/{templateID}:
     delete:
       description: Delete stream template
-      operationId: deleteStreamTemplateRequest
+      operationId: deleteStreamTemplate
       parameters:
       - in: path
         name: projectID
@@ -1781,7 +1781,7 @@ paths:
       - stream
     get:
       description: Get stream template
-      operationId: getStreamTemplateRequest
+      operationId: getStreamTemplate
       parameters:
       - in: path
         name: projectID
@@ -1803,7 +1803,7 @@ paths:
       - stream
     post:
       description: Create stream template
-      operationId: postStreamTemplateRequest
+      operationId: postStreamTemplate
       parameters:
       - description: The request body
         in: body
@@ -1831,7 +1831,7 @@ paths:
       - stream
     put:
       description: Update stream template
-      operationId: putStreamTemplateRequest
+      operationId: putStreamTemplate
       parameters:
       - description: The request body
         in: body
@@ -1860,12 +1860,6 @@ paths:
 produces:
 - application/json
 responses:
-  allRecognizersGetResponse:
-    description: A a list of all recognizers
-    schema:
-      items:
-        $ref: '#/definitions/RecognizersGetResponse'
-      type: array
   analyzeResponse:
     description: A response includes a list of recognized fields in the text to be
       anonymized.
@@ -1881,18 +1875,24 @@ responses:
     description: A response includes anonymized text.
     schema:
       $ref: '#/definitions/AnonymizeResponse'
-  fieldTypesGetResponse:
+  getAllRecognizersResponse:
+    description: A a list of all recognizers
+    schema:
+      items:
+        $ref: '#/definitions/RecognizersGetResponse'
+      type: array
+  getFieldTypesResponse:
     description: The response including a list of field types
     schema:
       items:
         $ref: '#/definitions/FieldTypes'
       type: array
-  insertRecognizersResponse:
-    description: Insert new recognizer response
-  recognizersGetResponse:
+  getRecognizerResponse:
     description: A Recognizer
     schema:
       $ref: '#/definitions/RecognizersGetResponse'
+  insertRecognizerResponse:
+    description: Insert new recognizer response
   scheduleScannerCronjobResponse:
     description: A response includes the scan result.
     schema:

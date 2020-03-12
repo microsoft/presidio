@@ -2,7 +2,7 @@ package docs
 
 import types "github.com/Microsoft/presidio-genproto/golang"
 
-// swagger:route POST /projects/{projectID}/analyze analyze analyzeRequest
+// swagger:route POST /projects/{projectID}/analyze analyze analyze
 //
 // Analyze text
 //
@@ -16,7 +16,7 @@ type analyzeResponseWrapper struct {
 	Body []types.AnalyzeResult
 }
 
-// swagger:parameters analyzeRequest
+// swagger:parameters analyze
 type analyzeParamsWrapper struct {
 	// The request body
 	// in:body
@@ -29,7 +29,7 @@ type analyzeParamsWrapper struct {
 }
 
 
-// swagger:route POST /projects/{projectID}/anonymize anonymize anonymizeRequest
+// swagger:route POST /projects/{projectID}/anonymize anonymize anonymize
 //
 // Anonymize text
 //
@@ -43,7 +43,7 @@ type anonymizeResponseWrapper struct {
 	Body types.AnonymizeResponse
 }
 
-// swagger:parameters anonymizeRequest
+// swagger:parameters anonymize
 type anonymizeParamsWrapper struct {
 	// The request body
 	// in:body
@@ -56,7 +56,7 @@ type anonymizeParamsWrapper struct {
 }
 
 
-// swagger:route POST /projects/{projectID}/anonymize-image anonymize-image anonymizeImageRequest
+// swagger:route POST /projects/{projectID}/anonymize-image anonymize-image anonymizeImage
 //
 // Anonymize image
 //
@@ -70,7 +70,7 @@ type anonymizeImageResponseWrapper struct {
 	Body types.AnonymizeImageResponse
 }
 
-// swagger:parameters anonymizeImageRequest
+// swagger:parameters anonymizeImage
 type anonymizeImageParamsWrapper struct {
 	// The request body
 	// in:body
@@ -83,7 +83,7 @@ type anonymizeImageParamsWrapper struct {
 }
 
 
-// swagger:route POST /projects/{projectID}/schedule-scanner-cronjob schedule-scanner-cronjob scheduleScannerCronjobRequest
+// swagger:route POST /projects/{projectID}/schedule-scanner-cronjob schedule-scanner-cronjob scheduleScannerCronjob
 //
 // Schedule scanner cron-job
 //
@@ -97,7 +97,7 @@ type scheduleScannerCronjobResponseWrapper struct {
 	Body types.ScannerCronJobResponse
 }
 
-// swagger:parameters scheduleScannerCronjobRequest
+// swagger:parameters scheduleScannerCronjob
 type scheduleScannerCronjobParamsWrapper struct {
 	// The request body
 	// in:body
@@ -110,7 +110,7 @@ type scheduleScannerCronjobParamsWrapper struct {
 }
 
 
-// swagger:route POST /projects/{projectID}/schedule-streams-job schedule-streams-job scheduleStreamsJobRequest
+// swagger:route POST /projects/{projectID}/schedule-streams-job schedule-streams-job scheduleStreamsJob
 //
 // Schedule streams job
 //
@@ -124,7 +124,7 @@ type scheduleStreamsJobResponseWrapper struct {
 	Body types.StreamsJobResponse
 }
 
-// swagger:parameters scheduleStreamsJobRequest
+// swagger:parameters scheduleStreamsJob
 type scheduleStreamsJobParamsWrapper struct {
 	// in:body
 	Body types.StreamsJobRequest

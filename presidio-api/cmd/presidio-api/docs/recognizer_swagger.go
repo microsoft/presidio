@@ -2,21 +2,21 @@ package docs
 
 import types "github.com/Microsoft/presidio-genproto/golang"
 
-// swagger:route GET /analyzer/recognizers/{id} analyze getRecognizerRequest
+// swagger:route GET /analyzer/recognizers/{id} analyze getRecognizer
 //
 // Get an existing recognizer
 //
 // responses:
-//   200: recognizersGetResponse
+//   200: getRecognizerResponse
 
 // A Recognizer
-// swagger:response recognizersGetResponse
+// swagger:response getRecognizerResponse
 type regognizerResponseWrapper struct {
 	// in:body
 	Body types.RecognizersGetResponse
 }
 
-// swagger:parameters getRecognizerRequest
+// swagger:parameters getRecognizer
 type regognizerParamsWrapper struct {
 	// Recognizer name
 	//
@@ -25,35 +25,35 @@ type regognizerParamsWrapper struct {
 	ID string `json:"id"`
 }
 
-// swagger:route GET /analyzer/recognizers/ analyze getAllRecognizersRequest
+// swagger:route GET /analyzer/recognizers/ analyze getAllRecognizers
 //
 // Get all recognizers
 //
 // responses:
-//   200: []allRecognizersGetResponse
+//   200: []getAllRecognizersResponse
 
 // A a list of all recognizers
-// swagger:response allRecognizersGetResponse
+// swagger:response getAllRecognizersResponse
 type allRegognizerResponseWrapper struct {
 	// in:body
 	Body []types.RecognizersGetResponse
 }
 
-// swagger:route POST /analyzer/recognizers/{id} analyze insertRecognizerRequest
+// swagger:route POST /analyzer/recognizers/{id} analyze insertRecognizer
 //
 // Insert a new recognizer
 //
 // responses:
-//   200: insertRecognizersResponse
+//   200: insertRecognizerResponse
 
 // Insert new recognizer response
-// swagger:response insertRecognizersResponse
+// swagger:response insertRecognizerResponse
 type insertRegognizerResponseWrapper struct {
 	// in: body
 	Body string
 }
 
-// swagger:parameters insertRecognizerRequest
+// swagger:parameters insertRecognizer
 type insertRegognizerParamsWrapper struct {
 	// Recognizer name
 	//
