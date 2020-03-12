@@ -5,6 +5,9 @@
 # This script is intended to get Presidio up and running in no time, so you can play with it.
 # However it is NOT intended to be installed in this manner for any workload (dev or prod).
 
+# This script should be ran ONCE. if for anyreason a retry is needed.
+# cleanup of the local environment is needed (kind delete cluster)
+
 # Clone KIND and build it (this way we eliminate the need to have GO installed)
 git clone https://github.com/kubernetes-sigs/kind.git
 cd kind
