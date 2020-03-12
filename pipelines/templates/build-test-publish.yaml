@@ -212,8 +212,7 @@ stages:
               repository: 'presidio-python-deps'
               Dockerfile: Dockerfile.python.deps 
               tags: | 
-                $(Build.BuildId)	
-                s
+                $(Build.BuildId)
       - job: BuildPython
         displayName: Build Analyzer Service
         timeoutInMinutes: 60  
@@ -293,7 +292,6 @@ stages:
               Dockerfile: Dockerfile.golang.deps 
               tags: | 
                   $(Build.BuildId)
-
       - job: GolangBase
         displayName: Build Golang Base Container
         timeoutInMinutes: 30 
