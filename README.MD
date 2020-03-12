@@ -92,7 +92,7 @@ Presidio leverages:
 Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
 
 1. Install [Docker](https://docs.docker.com/install/).
-    * [Optional] - the following command will install all prerequisites (Docker, Helm, make, kubetl).
+    * **Optional (Linux)** - the following command will install all prerequisites (Docker, Helm, make, kubetl).
 
         ```sh
         cd deployment/
