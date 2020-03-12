@@ -89,7 +89,7 @@ Presidio leverages:
 * [re2](https://github.com/google/re2)
 
 ## Give it a try - Run locally with KIND
-Presidio is built for Kubernetes, however you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
+Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
 
 1. Install [Docker](https://docs.docker.com/install/).
 2. Clone Presidio.
