@@ -21,3 +21,6 @@ cd ..
 ./deploy-helm.sh
 ./deploy-presidio.sh
 
+kubectl wait --for=condition=ready pod -l app=presidio-demo-presidio-api -n presidio
+
+kubectl port-forward presidio-demo-presidio-api 8080:8080 -n presidio

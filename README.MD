@@ -114,7 +114,7 @@ Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes 
     kubectl get pod -n presidio
     ```
 
-5. Port forward HTTP requests to the API micro-service and start using Presidio:
+5. Port forwarding of HTTP requests to the API micro-service will be done automatically. In order to run manual:
     ```sh
     kubectl port-forward <presidio-api-pod-name> 8080:8080 -n presidio
     ```
