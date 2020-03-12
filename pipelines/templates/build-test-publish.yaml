@@ -212,8 +212,7 @@ stages:
               repository: 'presidio-python-deps'
               Dockerfile: Dockerfile.python.deps 
               tags: | 
-                $(Build.BuildId)	
-                s
+                $(Build.BuildId)
       - job: BuildPython
         displayName: Build Analyzer Service
         timeoutInMinutes: 60  
