@@ -88,7 +88,13 @@ Presidio leverages:
 * [GRPC](https://grpc.io)
 * [re2](https://github.com/google/re2)
 
-## Give it a try - Run locally with KIND
+## Give it a try
+
+* [Run locally with KIND (Kubernetes in Docker)](#run-locally-with-KIND)
+* [Deploy and run on Kubernetes](#single-click-deployment-using-the-default-values)
+* [Install the presidio-analyzer python package](/docs/deploy.md#Install-presidio-analyzer-as-a-Python-package)
+
+### Run locally with KIND
 Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
 
 1. Install [Docker](https://docs.docker.com/install/).
@@ -102,7 +108,8 @@ Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes 
         depending on your environment, sudo might be needed
 
 2. Clone Presidio.
-3. Run
+|
+3. Run the following script, which will use KIND (Kubernetes emulation in Docker)
 
     ```sh
     cd deployment/
