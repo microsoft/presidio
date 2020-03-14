@@ -292,7 +292,6 @@ stages:
               Dockerfile: Dockerfile.golang.deps 
               tags: | 
                   $(Build.BuildId)
-
       - job: GolangBase
         displayName: Build Golang Base Container
         timeoutInMinutes: 30 
