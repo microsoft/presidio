@@ -2,8 +2,8 @@ from unittest import TestCase
 import string
 
 from tests import assert_result
-from analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer, IBAN_GENERIC_SCORE, LETTERS
-from analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer, IBAN_GENERIC_SCORE, LETTERS
+from presidio_analyzer.entity_recognizer import EntityRecognizer
 
 iban_recognizer = IbanRecognizer()
 entities = ["IBAN_CODE"]

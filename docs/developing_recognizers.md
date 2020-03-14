@@ -41,7 +41,7 @@ Generally speaking, there are three types of recognizers:
 
 A black list is a list of words that should be removed during text analysis. For example, a list of titles (`["Mr.", "Mrs.", "Ms."]` etc.)
 This type of recognizer could be added via API or code. In case of contribution, a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
-See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. The [PatternRecognizer](presidio-analyzer/analyzer/pattern_recognizer.py) class already has support for a black-list input.
+See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. The [PatternRecognizer](presidio-analyzer/presidio_analyzer/pattern_recognizer.py) class already has support for a black-list input.
 
 ### b. Pattern based
 
@@ -49,10 +49,10 @@ Pattern based recognizers use regular expressions to identify entities in text.
 This type of recognizer could be added by API or code. In case of contribution, 
 a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
 See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. 
-The [PatternRecognizer](presidio-analyzer/analyzer/pattern_recognizer.py) class should be extended.
+The [PatternRecognizer](presidio-analyzer/presidio_analyzer/pattern_recognizer.py) class should be extended.
 See some examples here:
-  - [Credit card recognizer](presidio-analyzer/analyzer/predefined_recognizers/credit_card_recognizer.py)
-  - [Email recognizer](presidio-analyzer/analyzer/predefined_recognizers/email_recognizer.py)
+  - [Credit card recognizer](presidio-analyzer/presidio_analyzer/predefined_recognizers/credit_card_recognizer.py)
+  - [Email recognizer](presidio-analyzer/presidio_analyzer/predefined_recognizers/email_recognizer.py)
 
 ### c. Machine Learning (ML) based or rule-based
 
@@ -66,24 +66,24 @@ Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analy
 As to not introduce new tools for no reason, it is recommended to first try to use spaCy over other tools. 
 spaCy provides descent results compared to state-of-the-art NER models, but with much better computational performance. 
 spaCy could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities. 
-When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
+When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/presidio_analyzer/entity_recognizer.py) class.
 
 #### Utilize Scikit-learn or similar
 
 Scikit-learn models tend to be fast, but usually have lower accuracy than deep learning methods. However, for well defined problems with well defined features, they can provide very good results. 
 Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models... 
-When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
+When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/presidio_analyzer/entity_recognizer.py) class.
    
 #### Apply custom logic
 
 In some cases, rule-based logic provides the best way of detecting entities. 
-The Presidio EntityRecognizer API allows you to use spaCy extracted features like lemmas, part of speech, dependencies and more to create your logic. When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/analyzer/entity_recognizer.py) class.
+The Presidio EntityRecognizer API allows you to use spaCy extracted features like lemmas, part of speech, dependencies and more to create your logic. When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/presidio_analyzer/entity_recognizer.py) class.
 
 #### Deep learning based methods
 
 Deep learning methods offer excellent detection rates for NER. 
 They are however more complex to train, deploy and tend to be slower than traditional approaches. 
-When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
+When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/presidio_analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 
 ### General note
 

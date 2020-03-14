@@ -14,17 +14,25 @@
 # * parameters:
 #     registry_service_principal: service connection to docker registry
 #     registry_name: full name of container registry (i.e. presidio.azurecr.io)
-#     artifact_feed: pypi artifact used to push the wheel
+#     internal_pypi_feed_name: name of internal pypi feed used to push the wheel during CI
+#     internal_pypi_extra_index_url: url of internal pypi feed used to push the wheel during CI
+#     external_pypi_service_conection: service connetion to external pypi feed (pypi.org)
+#     external_pypi_feed_name: name of external pypi feed
 parameters:
   registry_service_principal: 
   registry_name: 
-  artifact_feed:
+  internal_pypi_feed_name:
+  internal_pypi_extra_index_url:
+  external_pypi_service_conection:
+  external_pypi_feed_name:
 
 stages:
+
   - stage: SecurityAnalysis
     displayName: Security Analysis
     dependsOn: []
     jobs:
+
     - job: RunAnalysis
       displayName: Run Analysis
       pool:
@@ -103,10 +111,11 @@ stages:
   # Env
   - stage: Setup
     displayName: Set Pipeline globals
-    dependsOn: SecurityAnalysis
+    dependsOn: []
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
+
     - job: SetBuildDep
       displayName: Set base container build
       steps:
@@ -163,7 +172,7 @@ stages:
 
   # Python Stage
   - stage: PythonStage
-    displayName: Build Presidio Dependency Containers
+    displayName: Build Python
     dependsOn: Setup
     pool:
       vmImage: 'ubuntu-latest'
@@ -186,6 +195,7 @@ stages:
               BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
               echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
               echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+      
       - job: PythonDepsBuild
         displayName: Build Python Deps Container
         timeoutInMinutes: 30 
@@ -202,7 +212,7 @@ stages:
               repository: 'presidio-python-deps'
               Dockerfile: Dockerfile.python.deps 
               tags: | 
-                $(Build.BuildId)	
+                $(Build.BuildId)
       - job: BuildPython
         displayName: Build Analyzer Service
         timeoutInMinutes: 60  
@@ -214,27 +224,38 @@ stages:
           ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
             PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
           ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-            PYTHON_BUILD_TAG: '$(Build.BuildId)'
+            PYTHON_BUILD_TAG: '$(Build.BuildId).dev'
         steps: 
         - template: ./build-python-template.yaml  
           parameters:
             folder_name: presidio-analyzer
-            package_name: analyzer
-            lint: true
-            artifact_feed: ${{parameters.artifact_feed}}
+            package_name: presidio_analyzer
+            artifact_feed: ${{parameters.internal_pypi_feed_name}}
             registry_service_connection: ${{parameters.registry_service_principal}}
             registry_name: ${{parameters.registry_name}} 
             registry_service_principal: ${{parameters.registry_service_principal}}
             presidio_label: $(Build.BuildID)
             deps_label: $(DEPS_LABEL)
+        # To pass the wheel to later stages we write it to a file
+        - task: Bash@3
+          displayName: Copy wheel Artifacts
+          inputs:
+            targetType: 'inline'
+            script: |
+              mv $(System.DefaultWorkingDirectory)/presidio-analyzer/dist $(Pipeline.Workspace)
+        # Publish the folder as pipeline artifact
+        - publish: $(Pipeline.Workspace)/dist
+          displayName: Publish wheel Artifacts
+          artifact: dist
   
   # Golang Stage
   - stage: GolangStage
-    displayName: Build Presidio Dependency Containers
+    displayName: Build Golang
     dependsOn: Setup
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
+
       - job: GetDepsJob
         displayName: Get Deps State
         steps:
@@ -253,6 +274,7 @@ stages:
               BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
               echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
               echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+
       - job: GolangDepsBuild
         displayName: Build Golang Deps Container
         timeoutInMinutes: 30 
@@ -326,6 +348,8 @@ stages:
                 SERVICE_NAME: presidio-recognizers-store
             TESTER:
                 SERVICE_NAME: presidio-tester
+            FUNCTIONAL_TESTS:
+                SERVICE_NAME: functional-tests
         steps:  
         - template: ./Build-golang-template.yaml
           parameters:
@@ -343,21 +367,14 @@ stages:
     dependsOn: 
     - PythonStage
     - GolangStage
+    - SecurityAnalysis
     pool:
       vmImage: 'ubuntu-latest'
     jobs: 
+
       - job: FunctionalTests
         displayName: Presidio Functional Tests
         steps:  
-        - template: ./golang-environment.yaml
-        - task: Bash@3
-          displayName: 'Run dep ensure'
-          inputs:
-            targetType: 'inline'
-            script: |
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-            workingDirectory: '$(MODULEPATH)'
         - task: Docker@2
           displayName: Docker login
           inputs:
@@ -368,8 +385,12 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) test-functional-no-build
-            workingDirectory: '$(MODULEPATH)'
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) TEST_IN_CONTAINER=true test-functional-no-build
+        - task: PublishTestResults@2
+          displayName: Publish test results
+          inputs:
+            testRunner: JUnit
+            testResultsFiles: $(System.DefaultWorkingDirectory)/test-results/functional-report.xml
 
   # # Publish artifacts
   - stage: PublishArtifacts 
@@ -385,6 +406,7 @@ stages:
         ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
             BUILD_LABEL: '$(Build.SourceBranchName)'
     jobs: 
+      
       - job: GetDepsJob
         displayName: Get Deps State
         steps:
@@ -403,7 +425,39 @@ stages:
               BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
               echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
               echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-      - job: PublishArtifacts
+      
+      - job: PublishPypi
+        displayName: Publish Analyzer to Pypi
+        variables:
+          ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+            PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
+          ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+            PYTHON_BUILD_TAG: '$(Build.BuildId).dev'
+        steps:  
+        # download wheel from temp artifact
+        - download: current
+          displayName: Download wheel artifacts
+          artifact: dist
+        - task: Bash@3
+          displayName: Copy wheel
+          inputs:
+            targetType: 'inline'
+            script: |
+              mv $(Pipeline.Workspace)/dist/ $(System.DefaultWorkingDirectory)/
+        # Publish Wheel to Pypi
+        - task: UsePythonVersion@0
+          displayName: 'Use Python $(PYTHON.VERSION)'
+          inputs:
+            versionSpec: '$(PYTHON.VERSION)'
+        - template: ./publish-python-twine.yaml
+          parameters: 
+            feed_display_name: 'Pypi'
+            feed_name: ${{ parameters.external_pypi_feed_name }}
+            folder_name: 'dist'
+            artifact_feed: ${{ parameters.external_pypi_service_conection }}
+            artifact_is_ado: 'false'
+
+      - job: PublishContainers
         displayName: Publish Containers
         dependsOn: GetDepsJob
         variables:
@@ -439,7 +493,7 @@ stages:
             targetType: 'inline'
             script: |
               make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME)s docker-push-release                    
+              make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME) docker-push-release                    
           env:
             REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
         - task: Bash@3
