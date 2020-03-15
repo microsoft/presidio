@@ -37,7 +37,7 @@ stages:
   # and is run locally on a single build agent. it runs security analysis on
   # the code and the makefile commands to build, unit test and run local functional tests
   # on a docker network. it requires no service principals or logins to run.
-  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
 
     - stage: SecurityAnalysis
       displayName: Security Analysis
@@ -169,7 +169,7 @@ stages:
   # It runs on parallel builds and full tests of presidio services
   # and publishes artifacts to target and with labels that depend on the 
   # built branch.
-  ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
 
     # Env
     - stage: Setup
