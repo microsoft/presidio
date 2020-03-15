@@ -11,7 +11,7 @@
 
 ### Instructions
 Simply running presctl will output the usage instructions
-```bash
+```sh
 $ ./presctl
 ```
 
@@ -20,13 +20,18 @@ $ ./presctl
 #### Examples
 
 1. Adding a new template
-    ```bash
-    $ ./presctl add template --action analyze --project myprojectname --template mynewtemplatename --file template_def.json
+    ```sh
+    $ ./presctl add template mytemplate --action analyze --project myproject -f template_def.json
     ```
 
 2. Analyze using the new template
-    ```bash
-    ./presctl analyze --project myprojectname --analyzeTemplateId mynewtemplatename --string "see you tomorrow"
+    ```sh
+    ./presctl analyze --project myproject -l mytemplate -s "see you tomorrow"
+    ```
+
+3. Uploading a custom analyze recognizer
+    ```sh
+    ./presctl add recognizer myrecognizer -f recognizer.json
     ```
 
 multiple examples (json files) can be found [here](../presidio-tester/cmd/presidio-tester/testdata/) (templates / recognizers / analyze and anonymize requests)
