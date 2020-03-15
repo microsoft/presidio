@@ -198,7 +198,7 @@ test-functional-no-build:
 	sleep 10
 
 ifeq ($(TEST_IN_CONTAINER),)
-	go test --tags functional ./tests -count=1
+	go test --tags functional ./functional-tests -count=1
 else
 	-mkdir test-results
 	docker run --rm -v "$(CURRENT_DIR)/test-results":/test-result-pipe  --name presidio-tests  --network host $(DOCKER_REGISTRY)/functional-tests:$(PRESIDIO_LABEL)

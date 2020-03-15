@@ -125,6 +125,14 @@ stages:
             versionSpec: '$(PYTHON.VERSION)'
         - template: ./golang-environment.yaml
         - task: Bash@3
+          displayName: 'Install python pre reqs'
+          inputs:
+            targetType: 'inline'
+            workingDirectory: '$(MODULEPATH)'
+            script: |
+              pipenv install --skip-lock pytest
+              pipenv install --skip-lock pytest-azurepipelines
+        - task: Bash@3
           displayName: 'Run presidio makefile'
           inputs:
             targetType: 'inline'
