@@ -1,13 +1,16 @@
 # A multi-stage template which builds, tests and pushed all presidio assets.
 # The following stages make up the pipelines:
-# * Security-Analysis - Detect security vulnerabilities in code.
-# * Setup - validates, using git diff, if deps containers should be rebuilt. 
-# * Python - Builds tests and pushes python service. if deps build is required the base container is rebuilt 
+# * Pull Request Section - Runs only during PR validation. does not require any service principals
+#   * Security-Analysis - Detect security vulnerabilities in code.
+#   * PR - Runs Makefile locally to validate all services build and unit tests.s
+# * CI Section - Runs on CI (to master or feature branch) and can be run manually.s
+#   * Setup - validates, using git diff, if deps containers should be rebuilt. 
+#   * Python - Builds tests and pushes python service. if deps build is required the base container is rebuilt 
 #            and later stages will use the specific deps version number for building the presidio services.
-# * Golang - Builds tests and pushes, in parallel, golang service. if deps build is required the base container is rebuilt 
+#   * Golang - Builds tests and pushes, in parallel, golang service. if deps build is required the base container is rebuilt 
 #            and later stages will use the specific deps version number for building the presidio services.
-# * Test-Functional - Runs local functional tests using the containers built in the previous stage.
-# * Publish Artifacts - Pulls, tags and pushes the containers which were built and tested in the previous stages,
+#   * Test-Functional - Runs local functional tests using the containers built in the previous stage.
+#   * Publish Artifacts - Pulls, tags and pushes the containers which were built and tested in the previous stages,
 #                       according to the current branch (master builds "latest" label, branches build with branch-name
 #                       label)
 #
@@ -135,6 +138,8 @@ stages:
               pipenv --python 3
               pipenv install --skip-lock pytest
               pipenv install --skip-lock pytest-azurepipelines
+              # install dep
+              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
               dep ensure
         - task: Bash@3
           displayName: 'Run presidio makefile'
