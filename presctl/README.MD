@@ -19,7 +19,7 @@ $ ./presctl
 
 #### Examples
 
-1. Adding a new template 
+1. Adding a new template
     ```bash
     $ ./presctl add template --action analyze --project myprojectname --template mynewtemplatename --file template_def.json
     ```
@@ -28,3 +28,5 @@ $ ./presctl
     ```bash
     ./presctl analyze --project myprojectname --analyzeTemplateId mynewtemplatename --string "see you tomorrow"
     ```
+
+multiple examples (json files) can be found [here](../presidio-tester/cmd/presidio-tester/testdata/) (templates / recognizers / analyze and anonymize requests)

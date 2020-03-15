@@ -2,15 +2,12 @@ package entities
 
 import (
 	"fmt"
-
-	"github.com/spf13/viper"
 )
 
 const recognizerURLFormat = "http://%s:%s/api/v1/analyzer/recognizers/%s"
 
 func constructRecognizerURL(recognizerName string) string {
-	var ip = viper.GetString("presidio_ip")
-	var port = viper.GetString("presidio_port")
+	var ip, port = GetIPPort()
 
 	return fmt.Sprintf(recognizerURLFormat,
 		ip,

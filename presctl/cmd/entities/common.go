@@ -9,6 +9,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 type httpClient interface {
@@ -37,6 +39,13 @@ type ActionMsg struct {
 	Text                string
 	AnalyzeTemplateID   string
 	AnonymizeTemplateID string
+}
+
+// GetIPPort returns both the Presidio IP and Port from the viper configuration
+func GetIPPort() (string, string) {
+	var ip = viper.GetString("presidio_ip")
+	var port = viper.GetString("presidio_port")
+	return ip, port
 }
 
 // if error is not null print it and exit the program

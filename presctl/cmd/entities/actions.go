@@ -2,16 +2,13 @@ package entities
 
 import (
 	"fmt"
-
-	"github.com/spf13/viper"
 )
 
 const actionURLFormat = "http://%s:%s/api/v1/projects/%s/%s"
 
 // actionRestCommand issues an action related REST command to presidio and validates the returned status code
 func constructActionURL(action string, contentStr string, projectName string) string {
-	var ip = viper.GetString("presidio_ip")
-	var port = viper.GetString("presidio_port")
+	var ip, port = GetIPPort()
 
 	return fmt.Sprintf(actionURLFormat,
 		ip,

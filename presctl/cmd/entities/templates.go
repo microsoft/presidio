@@ -2,15 +2,12 @@ package entities
 
 import (
 	"fmt"
-
-	"github.com/spf13/viper"
 )
 
 const templateURLFormat = "http://%s:%s/api/v1/templates/%s/%s/%s"
 
 func constructTemplateURL(projectName string, actionName string, templateName string) string {
-	var ip = viper.GetString("presidio_ip")
-	var port = viper.GetString("presidio_port")
+	var ip, port = GetIPPort()
 
 	return fmt.Sprintf(templateURLFormat,
 		ip,
