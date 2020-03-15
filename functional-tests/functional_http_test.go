@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/Microsoft/presidio/tests/common"
+	"github.com/Microsoft/presidio/functional-tests/common"
 )
 
 func TestAddTemplate(t *testing.T) {

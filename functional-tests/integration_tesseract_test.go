@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
+	"github.com/Microsoft/presidio/functional-tests/common"
 	"github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr"
-	"github.com/Microsoft/presidio/tests/common"
 )
 
 func TestOCR(t *testing.T) {
