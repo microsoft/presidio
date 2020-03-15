@@ -432,7 +432,6 @@ stages:
       dependsOn: 
       - PythonStage
       - GolangStage
-      - SecurityAnalysis
       pool:
         vmImage: 'ubuntu-latest'
       jobs: 
