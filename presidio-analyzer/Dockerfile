@@ -18,7 +18,7 @@ RUN . $(pipenv --venv)/bin/activate && pip install presidio-analyzer==${VERSION:
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
 
 ARG NAME=presidio-analyzer
-ADD ./${NAME}/analyzer /usr/bin/${NAME}/analyzer
-WORKDIR /usr/bin/${NAME}/analyzer
+ADD ./${NAME}/presidio_analyzer /usr/bin/${NAME}/presidio_analyzer
+WORKDIR /usr/bin/${NAME}/presidio_analyzer
 
 CMD pipenv run python __main__.py serve --env-grpc-port

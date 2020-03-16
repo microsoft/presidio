@@ -2,8 +2,8 @@ from unittest import TestCase
 
 from tests import assert_result, assert_result_within_score_range, TESTS_NLP_ENGINE
 
-from analyzer.predefined_recognizers import SpacyRecognizer
-from analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.predefined_recognizers import SpacyRecognizer
+from presidio_analyzer.entity_recognizer import EntityRecognizer
 
 NER_STRENGTH = 0.85
 nlp_engine = TESTS_NLP_ENGINE
