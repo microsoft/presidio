@@ -1,9 +1,9 @@
 DOCKER_REGISTRY    ?= presidio.azurecr.io
 DOCKER_BUILD_FLAGS :=
 LDFLAGS            :=
-
-BINS        		= presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
-GOLANG_IMAGES      	= presidio-anonymizer presidio-ocr presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
+IGNORE_OCR			:=
+BINS        		= presidio-anonymizer $(if $(IGNORE_OCR),,presidio-ocr) presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
+GOLANG_IMAGES      	= presidio-anonymizer $(if $(IGNORE_OCR),,presidio-ocr) presidio-anonymizer-image presidio-api presidio-scheduler presidio-datasink presidio-collector presidio-recognizers-store presidio-tester
 PYTHON_IMAGES      	= presidio-analyzer
 IMAGES      		= $(GOLANG_IMAGES)  $(PYTHON_IMAGES)
 GOLANG_DEPS			= presidio-golang-deps
@@ -17,7 +17,7 @@ VERSION   			?= ${GIT_TAG}
 PRESIDIO_LABEL 		:= $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
 PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')	
 CURRENT_DIR		 	:= $(shell pwd)
-LDFLAGS   			+= -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
+LDFLAGS   			+= -X github.com/microsoft/presidio/pkg/version.Version=$(VERSION)
 TEST_IN_CONTAINER	:= 
 CX_OSES 			= linux windows darwin
 CX_ARCHS 			= amd64
@@ -161,7 +161,7 @@ go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
 go-test-unit: vendor
-	go test -v ./...
+	$(if $(IGNORE_OCR),go test -v `go list ./... | grep -v /presidio-ocr/`,go test -v ./...)
 	
 .PHONY: test-functional
 test-functional: docker-build
@@ -177,7 +177,7 @@ test-functional-no-build:
 	-docker rm test-presidio-analyzer -f
 	-docker rm test-presidio-anonymizer -f
 	-docker rm test-presidio-anonymizer-image -f
-	-docker rm test-presidio-ocr -f
+	$(if $(IGNORE_OCR),,-docker rm test-presidio-ocr -f)
 	-docker rm test-presidio-recognizers-store -f
 
 	-docker network create testnetwork
@@ -187,7 +187,7 @@ test-functional-no-build:
 	docker run --rm --name test-s3-emulator --network testnetwork -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock &
 	docker run --rm --name test-presidio-anonymizer --network testnetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(PRESIDIO_LABEL) &
 	docker run --rm --name test-presidio-anonymizer-image --network testnetwork -d -p 3002:3002 -e GRPC_PORT=3002 $(DOCKER_REGISTRY)/presidio-anonymizer-image:$(PRESIDIO_LABEL) &
-	docker run --rm --name test-presidio-ocr --network testnetwork -d -p 3003:3003 -e GRPC_PORT=3003 $(DOCKER_REGISTRY)/presidio-ocr:$(PRESIDIO_LABEL) &
+	$(if $(IGNORE_OCR),,docker run --rm --name test-presidio-ocr --network testnetwork -d -p 3003:3003 -e GRPC_PORT=3003 $(DOCKER_REGISTRY)/presidio-ocr:$(PRESIDIO_LABEL)) &
 	docker run --rm --name test-presidio-recognizers-store --network testnetwork -d -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=test-redis:6379 $(DOCKER_REGISTRY)/presidio-recognizers-store:$(PRESIDIO_LABEL) &
 	docker run --rm --name test-presidio-analyzer --network testnetwork -d -p 3000:3000 -e GRPC_PORT=3000 -e RECOGNIZERS_STORE_SVC_ADDRESS=test-presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-analyzer:$(PRESIDIO_LABEL)
 	# wait for containers to start
@@ -206,7 +206,7 @@ endif
 	docker rm test-presidio-analyzer -f
 	docker rm test-presidio-anonymizer -f
 	docker rm test-presidio-anonymizer-image -f
-	docker rm test-presidio-ocr -f
+	$(if $(IGNORE_OCR),,docker rm test-presidio-ocr -f)
 	docker rm test-azure-emulator -f
 	docker rm test-kafka -f
 	docker rm test-redis -f
@@ -221,7 +221,7 @@ go-test-style:
 
 .PHONY: go-format
 go-format:
-	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/Microsoft/presidio
+	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/microsoft/presidio
 
 HAS_GOMETALINTER := $(shell command -v gometalinter 2>/dev/null)
 HAS_GIT          := $(shell command -v git 2>/dev/null)
