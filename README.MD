@@ -56,6 +56,13 @@ More information could be found in the [Presidio documentation](https://microsof
 - [Contributing to Presidio](CONTRIBUTING.md)
 - [Evaluating Presidio](https://github.com/microsoft/presidio-research)
 
+
+## Give it a try
+
+* [Run locally with KIND (Kubernetes in Docker)](#run-locally-with-KIND)
+* [Deploy and run on Kubernetes](#single-click-deployment-using-the-default-values)
+* [Install the presidio-analyzer python package](/docs/deploy.md#Install-presidio-analyzer-as-a-Python-package)
+
 ## Input and output
 
 Presidio accepts multiple sources and targets for data annonymization. Specifically:
@@ -183,6 +190,39 @@ This simple recognizer identifies the word "rocket" in a text and tags it as a "
     http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
     ```
 
+---
+
+## Run locally with KIND
+Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
+
+1. Install [Docker](https://docs.docker.com/install/).
+    * **Optional (Linux)** - the following command will install all prerequisites (Docker, Helm, make, kubetl).
+
+        ```sh
+        cd deployment/
+        ./prerequisites.sh
+        ```
+
+        depending on your environment, sudo might be needed
+
+2. Clone Presidio.
+
+3. Run the following script, which will use KIND (Kubernetes emulation in Docker)
+
+    ```sh
+    cd deployment/
+    ./run-with-kind.sh
+    ```
+
+4. Wait and verify all pods are running:
+    ```sh
+    kubectl get pod -n presidio
+    ```
+
+5. Port forwarding of HTTP requests to the API micro-service will be done automatically. In order to run manual:
+    ```sh
+    kubectl port-forward <presidio-api-pod-name> 8080:8080 -n presidio
+    ```
 ---
 
 ## Single click deployment using the default values
