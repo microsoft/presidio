@@ -31,22 +31,29 @@ class CreditCardRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text):
         sanitized_value = CreditCardRecognizer.__sanitize_value(pattern_text)
-        checksum = CreditCardRecognizer.__luhn_checksum(sanitized_value)
+        checksum = self.__luhn_checksum(sanitized_value)
 
         return checksum == 0
 
-    @staticmethod
-    def __luhn_checksum(sanitized_value):
+    def __luhn_checksum(self, sanitized_value):
         def digits_of(n):
             return [int(d) for d in str(n)]
 
-        digits = digits_of(sanitized_value)
+        try:
+            digits = digits_of(sanitized_value)
+        except ValueError:
+            self.logger.exception(f'int conversion failed for sanitized_value: {sanitized_value}')
+            return False
         odd_digits = digits[-1::-2]
         even_digits = digits[-2::-2]
         checksum = 0
         checksum += sum(odd_digits)
         for d in even_digits:
-            checksum += sum(digits_of(d * 2))
+            try:
+                checksum += sum(digits_of(d * 2))
+            except ValueError:
+                self.logger.exception(f'int conversion failed for sanitized_value: {sanitized_value} digits: {digits} even_digits: {even_digits}')
+                return False
         return checksum % 10
 
     @staticmethod

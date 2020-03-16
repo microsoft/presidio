@@ -26,6 +26,7 @@ class NhsRecognizer(PatternRecognizer):
             try:
                 val = int(c)
             except ValueError:
+                self.logger.exception(f'int conversion failed for pattern_text: {pattern_text} text: {text}')
                 return False
             total = total + val * multiplier
             multiplier = multiplier - 1

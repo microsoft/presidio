@@ -79,3 +79,11 @@ class PresidioLogger:
         logger.critical("Houston, we have a %s", "major disaster", exc_info=1)
         """
         self.__logger.critical(msg, *args, **kwargs)
+
+    def exception(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'ERROR'.
+        Exception info is added to the logging message. 
+        This method should only be called from an exception handler.
+        """
+        self.__logger.exception(msg, *args, **kwargs)

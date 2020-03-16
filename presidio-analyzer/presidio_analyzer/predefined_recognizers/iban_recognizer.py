@@ -35,7 +35,7 @@ class IbanRecognizer(PatternRecognizer):
 
     def validate_result(self, pattern_text):
         pattern_text = pattern_text.replace(' ', '')
-        is_valid_checksum = (IbanRecognizer.__generate_iban_check_digits(
+        is_valid_checksum = (self.__generate_iban_check_digits(
             pattern_text) == pattern_text[2:4])
         # score = EntityRecognizer.MIN_SCORE
         result = False
@@ -50,11 +50,15 @@ class IbanRecognizer(PatternRecognizer):
     def __number_iban(iban):
         return (iban[4:] + iban[:4]).translate(LETTERS)
 
-    @staticmethod
-    def __generate_iban_check_digits(iban):
+    # @staticmethod
+    def __generate_iban_check_digits(self,iban):
         transformed_iban = (iban[:2] + '00' + iban[4:]).upper()
         number_iban = IbanRecognizer.__number_iban(transformed_iban)
-        return '{:0>2}'.format(98 - (int(number_iban) % 97))
+        try: 
+            return '{:0>2}'.format(98 - (int(number_iban) % 97))
+        except ValueError:
+            self.logger.exception(f'int conversion failed for iban: {iban} transformed_iban: {transformed_iban} number_iban: {number_iban}')
+            return False
 
     @staticmethod
     def __is_valid_format(iban):
