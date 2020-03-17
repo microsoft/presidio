@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -124,19 +123,14 @@ func restCommand(httpClient httpClient, op restOp, url string, fileContentStr st
 		os.Exit(1)
 	}
 
-	if op != get {
-		fmt.Println("Success")
-		return
-	}
-
 	// getBodyString can be called only once, so we save it into a var
 	res := getBodyString(response)
-	unquotedStr, err := strconv.Unquote(res)
-	check(err)
-	if outputFilePath != "" {
-		saveToFile(unquotedStr, outputFilePath)
-	} else {
-		prettyPrintJSON(unquotedStr)
+	if res != "" {
+		if outputFilePath != "" {
+			saveToFile(res, outputFilePath)
+		} else {
+			prettyPrintJSON(res)
+		}
 	}
 
 	fmt.Println("Success")

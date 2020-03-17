@@ -20,7 +20,7 @@ func constructActionURL(action string, contentStr string, projectName string) st
 // AnalyzeOrAnonymize sends a POST REST command to the Presidio instance, to analyze or anonymize text
 func AnalyzeOrAnonymize(httpClient httpClient, action string, contentStr string, outputFile string, projectName string) {
 	url := constructActionURL(action, contentStr, projectName)
-	restCommand(httpClient, create, url, contentStr, "")
+	restCommand(httpClient, create, url, contentStr, outputFile)
 }
 
 // ScheduleJob schedules the different job types
