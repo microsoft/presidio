@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -35,6 +36,8 @@ const (
 	analyzeTemplateIDFlag     = "analyze-template-id"
 	anonymizeTemplateIDFlag   = "anonymize-template-id"
 	scheduleJobTemplateIDFlag = "jobTemplateId"
+	templateFlag              = "template"
+	recognizerFlag            = "recognizer"
 )
 
 func getSupportedActions() string {
@@ -61,15 +64,36 @@ func getJSONFileContent(path string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("Failed reading file %s", path)
 	}
+
 	fileContentStr := string(fileContentBytes)
-	isValidJSON := isJSON(fileContentStr)
+	return fileContentStr, nil
+}
+
+// getContentString gets the object content from the given path or thhe inline argument.
+// Exits with 1 if an illegal situation occurs (no value provided or two values were provided)
+func getContentString(path string, inlineValue string, objectType string) string {
+	var contentStr string
+	var err error
+
+	if path == "" && inlineValue == "" {
+		err = errors.New(objectType + " file or " + strings.ToLower(objectType) + " content must be provided")
+	} else if path != "" && inlineValue != "" {
+		err = errors.New("Can't supply both " + strings.ToLower(objectType) + " file and inline " + strings.ToLower(objectType) + " content")
+	} else if inlineValue == "" {
+		contentStr, err = getJSONFileContent(path)
+	} else {
+		contentStr = inlineValue
+	}
+	check(err)
+
+	isValidJSON := isJSON(contentStr)
 
 	if !isValidJSON {
-		errMsg := "The given template file is not a valid json file or does not exists"
-		fmt.Println(errMsg)
-		return "", fmt.Errorf(errMsg)
+		err = errors.New("The given " + strings.ToLower(objectType) + " file is not a valid json")
 	}
-	return fileContentStr, nil
+	check(err)
+
+	return contentStr
 }
 
 func getFlagValue(cmd *cobra.Command, flagName string) string {

@@ -24,14 +24,23 @@ $ ./presctl
     $ ./presctl add template mytemplate --action analyze --project myproject -f template_def.json
     ```
 
+    Inline option
+    ```sh
+    $ ./presctl add template mytemplate --action analyze -p myproject -s '{"allFields":true}'
+
+    ```
 2. Analyze using the new template
     ```sh
-    ./presctl analyze --project myproject -l mytemplate -s "see you tomorrow"
+    $ ./presctl analyze --project myproject -l mytemplate -s "see you tomorrow"
     ```
 
 3. Uploading a custom analyze recognizer
     ```sh
-    ./presctl add recognizer myrecognizer -f recognizer.json
+    $ ./presctl add recognizer myrecognizer -f recognizer.json
+    ```
+    Inline option
+    ```sh
+    $ ./presctl add recognizer myrecognizer -s '{ "value": { "entity": "ROCKET", "language": "en", "patterns": [ { "name": "rocket-recognizer", "regex": "\\W*(rocket)\\W*", "score": 1 } ], "contextPhrases": ["launch", "fire"] } }'
     ```
 
 multiple examples (json files) can be found [here](../presidio-tester/cmd/presidio-tester/testdata/) (templates / recognizers / analyze and anonymize requests)

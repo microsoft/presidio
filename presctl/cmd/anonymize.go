@@ -24,7 +24,9 @@ var anonymizeCmd = &cobra.Command{
 		projectName := getFlagValue(cmd, projectFlag)
 		queryStr := getFlagValue(cmd, stringFlag)
 
-		// currently there is no way to define a 'group' if required params in cobra
+		// currently there is no way to define a 'group' of required params in cobra
+		// we want to either have a valid anonymize request payload OR an anonymize template
+		// id, analyze template id and inline text for anonymization
 		if path == "" && (queryStr == "" || analyzeTemplateID == "" || anonymizeTemplateID == "") {
 			fmt.Printf("must supply the '%s' flag or the '%s', %s' and '%s' flags", fileFlag, stringFlag, analyzeTemplateIDFlag, anonymizeTemplateIDFlag)
 			os.Exit(1)
@@ -51,7 +53,7 @@ func init() {
 	rootCmd.AddCommand(anonymizeCmd)
 
 	// define supported flags for the analyze command
-	anonymizeCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
+	anonymizeCmd.Flags().StringP(fileFlag, "f", "", "path to an anonymize request json file")
 	anonymizeCmd.Flags().StringP(stringFlag, "s", "", "string to analyze")
 	anonymizeCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 	anonymizeCmd.Flags().StringP(outputFlag, "o", "", "output file path")

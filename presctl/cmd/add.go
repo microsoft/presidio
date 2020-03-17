@@ -24,14 +24,15 @@ var templateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		actionName := getFlagValue(cmd, actionFlag)
 		path := getFlagValue(cmd, fileFlag)
+		templateString := getFlagValue(cmd, templateFlag)
 		projectName := getFlagValue(cmd, projectFlag)
 		templateName := args[0]
 
-		fileContentStr, err := getJSONFileContent(path)
-		check(err)
+		// Get the template content either by reading a file or inline, exit if encounter an error
+		contentStr := getContentString(path, templateString, "Template")
 
 		// Send a REST command to presidio instance to create the requested template
-		entities.CreateTemplate(&http.Client{}, projectName, actionName, templateName, fileContentStr)
+		entities.CreateTemplate(&http.Client{}, projectName, actionName, templateName, contentStr)
 	},
 }
 
@@ -44,12 +45,13 @@ var recognizerCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		path := getFlagValue(cmd, fileFlag)
 		recognizerName := args[0]
+		recognizerString := getFlagValue(cmd, recognizerFlag)
 
-		fileContentStr, err := getJSONFileContent(path)
-		check(err)
+		// Get the recognizer content either by reading a file or inline, exit if encounter an error
+		contentStr := getContentString(path, recognizerString, "Recognizer")
 
 		// Send a REST command to presidio instance to create the requested template
-		entities.CreateRecognizer(&http.Client{}, recognizerName, fileContentStr)
+		entities.CreateRecognizer(&http.Client{}, recognizerName, contentStr)
 	},
 }
 
@@ -61,9 +63,9 @@ func init() {
 	templateCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
 	templateCmd.Flags().String(actionFlag, "", "the requested action. Supported actions: ["+getSupportedActions()+"]")
 	templateCmd.Flags().StringP(projectFlag, "p", "", "project's name")
+	templateCmd.Flags().StringP(templateFlag, "s", "", "inline template content")
 
 	// mark flags as required
-	templateCmd.MarkFlagRequired(fileFlag)
 	templateCmd.MarkFlagRequired(actionFlag)
 	templateCmd.MarkFlagRequired(projectFlag)
 
@@ -71,7 +73,5 @@ func init() {
 
 	// define supported flags for the add command
 	recognizerCmd.Flags().StringP(fileFlag, "f", "", "path to a recognizer json file")
-
-	// mark flags as required
-	recognizerCmd.MarkFlagRequired(fileFlag)
+	recognizerCmd.Flags().StringP(recognizerFlag, "s", "", "inline recognizer content")
 }

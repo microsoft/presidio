@@ -62,7 +62,7 @@ func init() {
 	updateTemplateCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 
 	// mark flags as required
-	templateCmd.MarkFlagRequired(fileFlag)
+	updateTemplateCmd.MarkFlagRequired(fileFlag)
 	updateTemplateCmd.MarkFlagRequired(actionFlag)
 	updateTemplateCmd.MarkFlagRequired(projectFlag)
 

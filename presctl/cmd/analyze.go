@@ -25,6 +25,8 @@ var analyzeCmd = &cobra.Command{
 		queryStr := getFlagValue(cmd, stringFlag)
 
 		// currently there is no way to define a 'group' of required params in cobra
+		// we want to either have a valid analyze request payload or an analyze template
+		// id and inline text for analysis
 		if path == "" && (queryStr == "" || analyzeTemplateID == "") {
 			fmt.Printf("must supply the '%s' flag or the '%s' and '%s' flags", fileFlag, stringFlag, analyzeTemplateIDFlag)
 			os.Exit(1)
@@ -51,7 +53,7 @@ func init() {
 	rootCmd.AddCommand(analyzeCmd)
 
 	// define supported flags for the analyze command
-	analyzeCmd.Flags().StringP(fileFlag, "f", "", "path to a template json file")
+	analyzeCmd.Flags().StringP(fileFlag, "f", "", "path to an analyze request json file")
 	analyzeCmd.Flags().StringP(projectFlag, "p", "", "project's name")
 	analyzeCmd.Flags().StringP(outputFlag, "o", "", "output file path")
 	analyzeCmd.Flags().StringP(stringFlag, "s", "", "string to analyze")
