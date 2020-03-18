@@ -161,7 +161,7 @@ go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
 go-test-unit: vendor
-	go test -v ./...
+	go test -v `go list ./... | grep -v /presctl`
 
 .PHONY: test-functional
 test-functional: docker-build
