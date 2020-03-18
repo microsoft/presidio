@@ -2,7 +2,7 @@
 
 :tada: Thanks for taking the time to contribute! :tada:
 
-The following is a set of guidelines for contributing to Presidio. 
+The following is a set of guidelines for contributing to Presidio.
 
 ## What do I need to know before I get started?
 ### Project Presidio
@@ -20,7 +20,7 @@ To get started, refer to the documentation for [setting up a development environ
 - [Bug fixing and general improvement](#bug-fixing-and-general-improvement)
 
 ### General contribution guidelines
-All contributions should be documented, tested and linted. All unit and functional tests must succeed prior to an acception of a contribution. 
+All contributions should be documented, tested and linted. All unit and functional tests must succeed prior to an acception of a contribution.
 In order for a pull request to be accepted, the CI (containing unit tests, functional tests and linting) needs to succeed, in addition to approvals from two core contributors.
 ### How to test?
 
@@ -39,22 +39,8 @@ Best practices for recognizers development [are described here](docs/developing_
 ### Adding new connectors
 
 Presidio's strength lies in its ability to be completely pluggable and customizable. Adding new types of databases, stream-analytics engines and data stores is extremely useful for many users.
-While we're working on adding more documentation on this type of customization, you can refer to these documents and resources:
-1. Scheduler
+Use the following [developer guide](docs/tutorial_connector.md) for adding new connectors.
 
-   - The [scheduler documentation](docs/tutorial_scheduler.md) describes how to configure the data source and target for a periodic job
-
-2. Templates for source, target and stream configurations and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto) repo. For example: 
-
-	- [data sink protocols](https://github.com/microsoft/presidio-genproto/blob/master/src/datasink.proto). Specifically, the [DatasinkTypesEnum](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/datasink.proto#L37)
-	- [S3 template](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/template.proto#L158)
-	- [Kafka template](https://github.com/microsoft/presidio-genproto/blob/1734e2635c253f79e4c44398315d92fe9d084601/src/template.proto#L204)
-
-3. Existing implementations
-
-	- [Streams](presidio-datasink/cmd/presidio-datasink/stream/stream.go)
-	- [SQL](presidio-datasink/cmd/presidio-datasink/database/database.go)
-	
 ### Bug fixing and general improvement
 
 Please review the open [issues on Github](https://github.com/microsoft/presidio/issues) for known bugs and feature requests. We sometimes add 'good first issue' labels on those we believe are simpler, and 'advanced' labels on those which require more work or multiple changes across the solution.

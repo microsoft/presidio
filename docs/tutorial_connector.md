@@ -112,7 +112,7 @@ To support additional databases:
    For example see: [database](../presidio-datasink/cmd/presidio-datasink/database/database.go)
 1. **Add to Factory** - Add your newly created DB sink under [datasink-factory](../presidio-datasink/cmd/presidio-datasink/datasink-factory.go)
 
-#### New Sink Connector
+### New Sink Connector
 
 Creation of additional types of sink connector are more than welcome.
 To implement a new type of data Sink Connector follow the next steps:
