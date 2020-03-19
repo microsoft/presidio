@@ -69,6 +69,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         logger.info("Starting Analyzer's Get All Recognizers")
         language = request.language
+        if language is None or language == "":
+            language = DEFAULT_LANGUAGE
         results = []
         recognizers = self.registry.get_recognizers(language=language, all_fields=True)
         for recognizer in recognizers:
@@ -283,11 +285,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
     @staticmethod
     def __convert_recognizer_to_proto(result):
         """
-        Converts a List[???] to List[Recognizer]
-        :param results: List[???]
+        Converts a List of recognizers to a list of protobuf List[Recognizer]
+        :param results: List[recognizer]
         :return: List[Recognizer]
         """
-        logger.info("make recognizer pb {}".format(result))
         res = analyze_pb2.Recognizer()
         res.name = result.name
         for entity in result.supported_entities:
