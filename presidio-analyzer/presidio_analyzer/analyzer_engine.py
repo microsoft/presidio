@@ -60,9 +60,25 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             self.default_score_threshold = default_score_threshold
 
     # pylint: disable=unused-argument
+    def GetAllRecognizers(self, request, context):
+        """
+        GRPC entry point to Presidio-Analyzer Get all Recognizers method
+        :param request: Presidio Analyzer resuest of type RecognizersAllRequest
+        :param context:
+        :return: List of [Recognizer] as a RecognizersAllResponse
+        """
+        logger.info("Starting Analyzer's Get All Recognizers")
+        language = request.language
+        results = []
+        recognizers = self.registry.get_recognizers(language=language, all_fields=True)
+        for recognizer in recognizers:
+            results.append(AnalyzerEngine.__convert_recognizer_to_proto(recognizer))
+        return results
+
+    # pylint: disable=unused-argument
     def Apply(self, request, context):
         """
-        GRPC entry point to Presidio-Analyzer
+        GRPC entry point to Presidio-Analyzer Apply method
         :param request: Presidio Analyzer resuest of type AnalyzeRequest
         :param context:
         :return: List of [AnalyzeResult]
@@ -263,3 +279,18 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             proto_results.append(res)
 
         return proto_results
+
+    @staticmethod
+    def __convert_recognizer_to_proto(result):
+        """
+        Converts a List[???] to List[Recognizer]
+        :param results: List[???]
+        :return: List[Recognizer]
+        """
+        logger.info("make recognizer pb {}".format(result))
+        res = analyze_pb2.Recognizer()
+        res.name = result.name
+        for entity in result.supported_entities:
+            res.entities.append(entity)
+        res.language = result.supported_language
+        return res

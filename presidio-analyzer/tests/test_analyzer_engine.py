@@ -7,6 +7,7 @@ from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry, AnalysisExplanation
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.analyze_pb2 import AnalyzeRequest
+from presidio_analyzer.analyze_pb2 import RecognizersAllRequest
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
@@ -490,3 +491,74 @@ class TestAnalyzerEngine(TestCase):
         assert len([entity for entity in detected_entities if entity == "US_SSN"]) == 1
 
         assert len(results) == 19
+
+    def test_get_recognizers_returns_predefined(self):
+        analyze_engine = AnalyzerEngine(registry=RecognizerRegistry(),
+                                        nlp_engine=loaded_spacy_nlp_engine)
+        request = RecognizersAllRequest(language="en")
+        response = analyze_engine.GetAllRecognizers(request, None)
+        # there are 15 predefined recognizers that detect the 17 entities
+        assert len(response) == 15
+
+    def test_get_recognizers_returns_custom(self):
+        pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
+        pattern_recognizer = PatternRecognizer("ROCKET",
+                                               name="Rocket recognizer",
+                                               patterns=[pattern])
+
+        recognizers_store_api_mock = RecognizerStoreApiMock()
+        recognizers_store_api_mock.add_custom_pattern_recognizer(
+            pattern_recognizer)
+        analyze_engine = AnalyzerEngine(registry=
+            MockRecognizerRegistry(
+                recognizers_store_api_mock),
+                nlp_engine=MockNlpEngine())
+        request = RecognizersAllRequest(language="en")
+        response = analyze_engine.GetAllRecognizers(request, None)
+        # there are 15 predefined recognizers and one custom
+        assert len(response) == 16
+        rocket_recognizer = [x for x in response if x.name == "Rocket recognizer" 
+            and x.entities == ["ROCKET"] 
+            and x.language == "en"]
+        assert len(rocket_recognizer) == 1
+
+    def test_get_recognizers_returns_added_custom(self):
+        pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
+        pattern_recognizer = PatternRecognizer("ROCKET",
+                                               name="Rocket recognizer",
+                                               patterns=[pattern])
+
+        recognizers_store_api_mock = RecognizerStoreApiMock()
+        
+        analyze_engine = AnalyzerEngine(registry=
+            MockRecognizerRegistry(
+                recognizers_store_api_mock),
+                nlp_engine=MockNlpEngine())
+        request = RecognizersAllRequest(language="en")
+        response = analyze_engine.GetAllRecognizers(request, None)
+        # there are 15 predefined recognizers
+        assert len(response) == 15
+        recognizers_store_api_mock.add_custom_pattern_recognizer(
+            pattern_recognizer)
+        response = analyze_engine.GetAllRecognizers(request, None)
+        # there are 15 predefined recognizers and one custom
+        assert len(response) == 16
+
+    def test_get_recognizers_returns_supported_language(self):
+        pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
+        pattern_recognizer = PatternRecognizer("ROCKET",
+                                               name="Rocket recognizer RU",
+                                               patterns=[pattern],
+                                               supported_language="ru")
+
+        recognizers_store_api_mock = RecognizerStoreApiMock()
+        recognizers_store_api_mock.add_custom_pattern_recognizer(
+            pattern_recognizer)
+        analyze_engine = AnalyzerEngine(registry=
+            MockRecognizerRegistry(
+                recognizers_store_api_mock),
+                nlp_engine=MockNlpEngine())
+        request = RecognizersAllRequest(language="ru")
+        response = analyze_engine.GetAllRecognizers(request, None)
+        # there is only 1 mocked russian recognizer
+        assert len(response) == 1
