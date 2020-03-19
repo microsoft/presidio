@@ -72,9 +72,12 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         if language is None or language == "":
             language = DEFAULT_LANGUAGE
         results = []
-        recognizers = self.registry.get_recognizers(language=language, all_fields=True)
+        recognizers = self.registry.get_recognizers(
+            language=language, 
+            all_fields=True)
         for recognizer in recognizers:
-            results.append(AnalyzerEngine.__convert_recognizer_to_proto(recognizer))
+            results.append(
+                AnalyzerEngine.__convert_recognizer_to_proto(recognizer))
         return results
 
     # pylint: disable=unused-argument
