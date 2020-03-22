@@ -25,7 +25,7 @@ For similar sources and code reuse, or creating a new source follow the steps in
 ### Object Storage Source Connector
 
 Object storage is a computer data storage architecture that manages data as objects.
-Currently the following object storage are supported:
+Currently the following object storage services are supported:
     - AWS S3
     - Azure Blob Storage
     - Azure Data Lake Storage Gen2
