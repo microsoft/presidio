@@ -148,6 +148,7 @@ stages:
                 # install dep
                 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
                 dep ensure -v
+                shopt -s extglob
                 mv !(gopath) '$(MODULEPATH)' --force
                 # install libraries
                 sudo apt update 
