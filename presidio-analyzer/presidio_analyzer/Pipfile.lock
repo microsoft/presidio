@@ -1,0 +1,22 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "adfa046b7e6a688309746314cd25f1602d65f8ff5dcd4dde6b16a8a46ef53328"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "googleapis-common-protos": "1.5.0",
+            "grpcio": "1.11.0",
+            "python_version": "3.7"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {},
+    "develop": {}
+}
