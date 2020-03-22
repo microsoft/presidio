@@ -52,6 +52,7 @@ More information could be found in the [Presidio documentation](https://microsof
 - [Database and storage scanner](docs/tutorial_scheduler.md)
 - [Architecture](docs/design.md)
 - [Adding new PII recognizers](docs/custom_fields.md)
+- [Generating Swagger file](presidio-api/cmd/presidio-api/docs/readme.md)
 - [Contributing to Presidio](CONTRIBUTING.md)
 - [Evaluating Presidio](https://github.com/microsoft/presidio-research)
 
