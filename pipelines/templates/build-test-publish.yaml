@@ -149,8 +149,7 @@ stages:
                 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
                 dep ensure
                 # install libraries
-                sudo apt update 
-                sudo apt install tesseract-ocr
+                apt install tesseract-ocr
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
             displayName: 'Run presidio makefile'
