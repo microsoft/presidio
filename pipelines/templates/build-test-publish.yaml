@@ -156,6 +156,7 @@ stages:
                 pipenv --python 3
                 pipenv install --skip-lock pytest
                 pipenv install --skip-lock pytest-azurepipelines
+          - template: ./golang-environment.yaml
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
