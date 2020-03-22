@@ -15,10 +15,10 @@ WHEEL_VERSION 		= # Presidio python wheel versioning
 GIT_TAG   			= $(shell git describe --tags --always 2>/dev/null)
 VERSION   			?= ${GIT_TAG}
 PRESIDIO_LABEL 		:= $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
-PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')	
+PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')
 CURRENT_DIR		 	:= $(shell pwd)
 LDFLAGS   			+= -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
-TEST_IN_CONTAINER	:= 
+TEST_IN_CONTAINER	:=
 CX_OSES 			= linux windows darwin
 CX_ARCHS 			= amd64
 
@@ -79,22 +79,22 @@ endif
 
 # You must be logged into DOCKER_REGISTRY before you can push.
 .PHONY: docker-push-latest-deps
-docker-push-latest-deps: 
+docker-push-latest-deps:
 	docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL)
 	docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)
-	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest	
-	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest 
+	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
+	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
 	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):latest
-	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest	
+	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):latest
 
 PHONY: docker-push-latest-branch-deps
-docker-push-latest-branch-deps: 
+docker-push-latest-branch-deps:
 	docker pull $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL)
 	docker pull $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL)
-	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_BRANCH_LABEL)	
+	docker image tag $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_BRANCH_LABEL)
 	docker image tag $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_DEPS_LABEL) $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_BRANCH_LABEL)
-	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_BRANCH_LABEL)	
-	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_BRANCH_LABEL)	
+	docker push $(DOCKER_REGISTRY)/$(PYTHON_DEPS):$(PRESIDIO_BRANCH_LABEL)
+	docker push $(DOCKER_REGISTRY)/$(GOLANG_DEPS):$(PRESIDIO_BRANCH_LABEL)
 
 # push with the given label
 .PHONY: docker-push
@@ -135,11 +135,11 @@ else
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/public/$*:latest
 	docker image tag $(DOCKER_REGISTRY)/$*:$(PRESIDIO_LABEL) $(DOCKER_REGISTRY)/$*:latest
 	docker push $(DOCKER_REGISTRY)/$*:$(RELEASE_VERSION)
-	docker push $(DOCKER_REGISTRY)/public/$*:$(RELEASE_VERSION)	
+	docker push $(DOCKER_REGISTRY)/public/$*:$(RELEASE_VERSION)
 	docker push $(DOCKER_REGISTRY)/$*:latest
 	docker push $(DOCKER_REGISTRY)/public/$*:latest
 endif
-	
+
 # All non-functional tests
 .PHONY: test
 test: python-test
@@ -150,9 +150,9 @@ test: go-test
 python-test: python-test-unit
 # Unit tests. Local only.
 .PHONY: python-test-unit
-python-test-unit: 
+python-test-unit:
 	cd presidio-analyzer
-	pytest --log-cli-level=0 
+	pytest --log-cli-level=0
 
 # All non-functional go tests
 .PHONY: go-test
@@ -161,8 +161,8 @@ go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
 go-test-unit: vendor
-	go test -v ./...
-	
+	go test -v `go list ./... | grep -v /presctl`
+
 .PHONY: test-functional
 test-functional: docker-build
 test-functional:test-functional-no-build
@@ -217,7 +217,7 @@ endif
 
 .PHONY: go-test-style
 go-test-style:
-	gometalinter --config ./gometalinter.json ./...
+	gometalinter --config ./gometalinter.json `go list ./... | grep -v /presctl`
 
 .PHONY: go-format
 go-format:
@@ -237,6 +237,6 @@ endif
 ifndef HAS_GOMETALINTER
 	curl -L https://git.io/vp6lP | sh
 endif
-	
+
 .PHONY: bootstrap
 bootstrap: vendor
