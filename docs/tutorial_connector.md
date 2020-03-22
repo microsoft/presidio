@@ -76,7 +76,7 @@ It requires implementation of following methods:
     - `WriteAnalyzeResults` - write the analyzer results to the specified datasink.
     - `WriteAnonymizeResults` - write the anonymized response to the specified datasink.
 
-The project already has support for sinks like object storage, database and streams.
+The project already supports sinks like object storage, database and streams.
 For similar sinks and code reuse, or creating a new sink follow the steps in how to create:
 * [Object Storage Sink Connector](#object-storage-sink-connector)
 * [Stream Sink Connector](#stream-sink-connector)
