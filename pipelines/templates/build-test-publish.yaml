@@ -133,6 +133,7 @@ stages:
             displayName: 'Use Python $(PYTHON.VERSION)'
             inputs:
               versionSpec: '$(PYTHON.VERSION)'
+          - template: ./golang-environment.yaml
           - task: Bash@3  
             displayName: 'Install python pre requisites'
             inputs:
@@ -144,7 +145,17 @@ stages:
                 pipenv --python 3
                 pipenv install --skip-lock pytest
                 pipenv install --skip-lock pytest-azurepipelines
-          - template: ./golang-environment.yaml
+          - task: Bash@3  
+            displayName: 'Install python pre requisites'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                python -m pip install --upgrade pip
+                python -m pip install pipenv
+                pipenv --python 3
+                pipenv install --skip-lock pytest
+                pipenv install --skip-lock pytest-azurepipelines
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
@@ -165,7 +176,7 @@ stages:
                 # install libraries
                 sudo apt update 
                 sudo apt install tesseract-ocr
-                
+
                 sudo make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
