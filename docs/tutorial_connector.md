@@ -16,7 +16,7 @@ The Scheduler allows you to read your data periodically from the Source Connecto
 
 ## How to Create New Data Source Connector
 
-The project already has support for sources like object storage and streams.
+The project already supports sources like object storage and streams.
 For similar sources and code reuse, or creating a new source follow the steps in how to create:
 * [Object Storage Source Connector](#object-storage-source-connector)
 * [Stream Source Connector](#stream-source-connector)
