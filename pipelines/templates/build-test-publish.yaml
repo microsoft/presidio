@@ -149,7 +149,8 @@ stages:
                 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
                 dep ensure
                 # install libraries
-                apt install tesseract-ocr
+                sudo apt update 
+                sudo apt install tesseract-ocr
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
             displayName: 'Run presidio makefile'
@@ -158,7 +159,7 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
-                make build
+                sudo make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
