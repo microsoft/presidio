@@ -165,10 +165,9 @@ stages:
               script: |
                 set -eux  # fail on error
                 # install libraries
-                ls
-                ls ../
-                ls ../../
-                ls ../../../
+                ls $GOPATH
+                ls $GOPATH/bin
+                ls $GOPATH/pkg
                 sudo apt update 
                 sudo apt install tesseract-ocr
 
