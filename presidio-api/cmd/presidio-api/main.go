@@ -16,6 +16,9 @@ import (
 	"github.com/Microsoft/presidio/pkg/presidio/services"
 	server "github.com/Microsoft/presidio/pkg/server"
 	store "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api"
+
+	// This line is necessary for go-swagger to find the docs!
+	_ "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/docs"
 )
 
 var api *store.API
@@ -72,6 +75,11 @@ func main() {
 	api.SetupGRPCServices()
 	setupHTTPServer(settings.WebPort, settings.LogLevel)
 }
+
+// Note:
+// 	 When modifying the API: Like adding or removing end-points, updating parameters, or updating responses,
+// 	 remember to make the relevant modifications in the files under the /docs package, and then re-generate
+// 	 the /docs/swagger.yaml according to the /docs/readme.md instructions.
 
 func setupHTTPServer(port int, loglevel string) {
 

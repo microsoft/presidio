@@ -1,0 +1,1943 @@
+basePath: /api/v1
+consumes:
+- application/json
+definitions:
+  AnalyzeRequest:
+    description: AnalyzeRequest represents the request to the analyze service via
+      GRPC
+    properties:
+      analyzeTemplate:
+        $ref: '#/definitions/AnalyzeTemplate'
+      text:
+        description: The text to analyze
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnalyzeResult:
+    description: AnalyzeResult represents the Analyze service findings
+    properties:
+      field:
+        $ref: '#/definitions/FieldTypes'
+      location:
+        $ref: '#/definitions/Location'
+      score:
+        description: The score of the result
+        format: float
+        type: number
+        x-go-name: Score
+      text:
+        description: The sensitive text result
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnalyzeTemplate:
+    properties:
+      allFields:
+        description: Optional flag to request all existing fields. if true, "fields"
+          must be empty.
+        type: boolean
+        x-go-name: AllFields
+      createTime:
+        description: Template Creation date
+        type: string
+        x-go-name: CreateTime
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      fields:
+        description: Array of the fields to analyze
+        items:
+          $ref: '#/definitions/FieldTypes'
+        type: array
+        x-go-name: Fields
+      language:
+        description: Language code, in ISO-639 format, https://en.wikipedia.org/wiki/ISO_639-1
+        type: string
+        x-go-name: Language
+      modifiedTime:
+        description: Template modification date
+        type: string
+        x-go-name: ModifiedTime
+      resultsScoreThreshold:
+        description: Threshold to filter results based on their score
+        format: float
+        type: number
+        x-go-name: ResultsScoreThreshold
+    title: AnalyzeTemplate represents the template definition of the Analyze service-
+      for analyzing sensitive text.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeImageRequest:
+    description: AnonymizeRequest represents the request to the anonymize service
+      via GRPC
+    properties:
+      analyzeResults:
+        description: The analyze result containing the field type and location of
+          the sensetive data to be anonymized.
+        items:
+          $ref: '#/definitions/AnalyzeResult'
+        type: array
+        x-go-name: AnalyzeResults
+      detectionType:
+        $ref: '#/definitions/DetectionTypeEnum'
+      image:
+        $ref: '#/definitions/Image'
+      template:
+        $ref: '#/definitions/AnonymizeImageTemplate'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeImageResponse:
+    description: AnonymizeResponse represents the anonymize service response
+    properties:
+      image:
+        $ref: '#/definitions/Image'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeImageTemplate:
+    description: AnonymizeImageTemplate represents the template definition of the
+      Anonymize image service
+    properties:
+      createTime:
+        description: Template Creation date
+        type: string
+        x-go-name: CreateTime
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      fieldTypeGraphics:
+        description: FieldTypeGraphic represents the graphics for an array of fields
+          types
+        items:
+          $ref: '#/definitions/FieldTypeGraphic'
+        type: array
+        x-go-name: FieldTypeGraphics
+      modifiedTime:
+        description: Template modification date
+        type: string
+        x-go-name: ModifiedTime
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeRequest:
+    description: AnonymizeRequest represents the request to the anonymize service
+      via GRPC
+    properties:
+      analyzeResults:
+        description: The analyze result containing the field type and location of
+          the sensetive data to be anonymized.
+        items:
+          $ref: '#/definitions/AnalyzeResult'
+        type: array
+        x-go-name: AnalyzeResults
+      template:
+        $ref: '#/definitions/AnonymizeTemplate'
+      text:
+        description: The text to anonymize
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeResponse:
+    description: AnonymizeResponse represents the anonymize service response
+    properties:
+      text:
+        description: The text with the senstive fields anonymized
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  AnonymizeTemplate:
+    description: AnonymizeTemplate represents the template definition of the Anonymize
+      service for anonymizying the sensitive data
+    properties:
+      createTime:
+        description: Template Creation date
+        type: string
+        x-go-name: CreateTime
+      defaultTransformation:
+        $ref: '#/definitions/Transformation'
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      fieldTypeTransformations:
+        description: FieldTypeTransformation represents the transformation for an
+          array of fields types
+        items:
+          $ref: '#/definitions/FieldTypeTransformation'
+        type: array
+        x-go-name: FieldTypeTransformations
+      modifiedTime:
+        description: Template modification date
+        type: string
+        x-go-name: ModifiedTime
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  BlobStorageConfig:
+    description: Azure Blob Storage configuration
+    properties:
+      accountKey:
+        description: Azure account key
+        type: string
+        x-go-name: AccountKey
+      accountName:
+        description: Azure account name
+        type: string
+        x-go-name: AccountName
+      containerName:
+        description: The blob storage container Name
+        type: string
+        x-go-name: ContainerName
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Boundingbox:
+    description: Define an extracted bounding box text/image from images
+    properties:
+      endPosition:
+        description: End position of char in text
+        format: int32
+        type: integer
+        x-go-name: EndPosition
+      height:
+        description: Height of BBox
+        format: float
+        type: number
+        x-go-name: Height
+      startPosition:
+        description: Start position of char in text
+        format: int32
+        type: integer
+        x-go-name: StartPosition
+      text:
+        description: Text in BBox
+        type: string
+        x-go-name: Text
+      width:
+        description: Width of BBox
+        format: float
+        type: number
+        x-go-name: Width
+      xLocation:
+        description: Pixel X location of BBox
+        format: float
+        type: number
+        x-go-name: XLocation
+      yLocation:
+        description: Pixel Y location of BBox
+        format: float
+        type: number
+        x-go-name: YLocation
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  CloudStorageConfig:
+    description: 'Represents the cloud storage config - supported storage: Azure blob
+      storage, AWS S3, Google storage'
+    properties:
+      GoogleStorageConfig:
+        $ref: '#/definitions/GoogleStorageConfig'
+      blobStorageConfig:
+        $ref: '#/definitions/BlobStorageConfig'
+      s3Config:
+        $ref: '#/definitions/S3Config'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  DBConfig:
+    description: |-
+      DBConfig represents the Database configuration - the DB connection string and the table name
+      Supported database: mssql, mysql, sqlite3, postgreSQL, oracle
+    properties:
+      connectionString:
+        description: The database connection string
+        type: string
+        x-go-name: ConnectionString
+      tableName:
+        description: The table name
+        type: string
+        x-go-name: TableName
+      type:
+        description: The database type
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Datasink:
+    properties:
+      cloudStorageConfig:
+        $ref: '#/definitions/CloudStorageConfig'
+      dbConfig:
+        $ref: '#/definitions/DBConfig'
+      streamConfig:
+        $ref: '#/definitions/StreamConfig'
+    title: Datasink represents the configuration for storing the scanner output to
+      the selected destination such as cloud storage, database, etc.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  DatasinkTemplate:
+    properties:
+      analyzeDatasink:
+        description: |-
+          Datasink represents the configuration for storing the scanner output.
+          Datasink can output both of the analyze and anonymize results and to multiple outputs
+          Supported outputs are CloudStorage: AWS S3, Azure Blob storage, Google Storage
+          Streams: Azure EventHub, Kafka
+          Database: MySql, SqlLite3, MSSQL, PostgreSQL
+        items:
+          $ref: '#/definitions/Datasink'
+        type: array
+        x-go-name: AnalyzeDatasink
+      anonymizeDatasink:
+        items:
+          $ref: '#/definitions/Datasink'
+        type: array
+        x-go-name: AnonymizeDatasink
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+    title: DatasinkTemplate represents the scanner service outputs definition.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  DetectionTypeEnum:
+    description: Anonymize image detection type
+    format: int32
+    type: integer
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  EHConfig:
+    description: Azure EventHub configuration
+    properties:
+      containerValue:
+        description: Storage container  value
+        type: string
+        x-go-name: ContainerValue
+      ehConnectionString:
+        description: Eventhub connection string
+        type: string
+        x-go-name: EhConnectionString
+      ehKeyName:
+        description: Eventhub key name (a key name and a key value can provided instead
+          of the full connection string)
+        type: string
+        x-go-name: EhKeyName
+      ehKeyValue:
+        description: Eventhub key value
+        type: string
+        x-go-name: EhKeyValue
+      ehName:
+        description: EventHub name
+        type: string
+        x-go-name: EhName
+      ehNamespace:
+        description: EventHub namespace
+        type: string
+        x-go-name: EhNamespace
+      storageAccountKeyValue:
+        description: Storage account key value
+        type: string
+        x-go-name: StorageAccountKeyValue
+      storageAccountNameValue:
+        description: Storage account name value
+        type: string
+        x-go-name: StorageAccountNameValue
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  FPEValue:
+    properties:
+      decrypt:
+        description: true to decrypt value
+        type: boolean
+        x-go-name: Decrypt
+      key:
+        description: base64 encoded 128, 192, 256 size key
+        type: string
+        x-go-name: Key
+      tweak:
+        description: base64 encoded tweak. Size must be below 8
+        type: string
+        x-go-name: Tweak
+    title: Encrypt the given value with FFI alogrithm to presereve detected value
+      size.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  FieldTypeGraphic:
+    description: FieldTypeGraphic represents the graphics for an array of fields types
+    properties:
+      fields:
+        description: The array of field types
+        items:
+          $ref: '#/definitions/FieldTypes'
+        type: array
+        x-go-name: Fields
+      graphic:
+        $ref: '#/definitions/Graphic'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  FieldTypeTransformation:
+    description: FieldTypeTransformation represents the transformation for an array
+      of fields types
+    properties:
+      fields:
+        description: The array of field types
+        items:
+          $ref: '#/definitions/FieldTypes'
+        type: array
+        x-go-name: Fields
+      transformation:
+        $ref: '#/definitions/Transformation'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  FieldTypes:
+    description: FieldType strucy
+    properties:
+      minScore:
+        description: The minScore will filter results which has lower certainty than
+          the provided value.
+        type: string
+        x-go-name: MinScore
+      name:
+        description: Field type name
+        type: string
+        x-go-name: Name
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  FillColorValue:
+    description: Fill the bbox with a color
+    properties:
+      blue:
+        description: 0 - 255
+        format: double
+        type: number
+        x-go-name: Blue
+      green:
+        description: 0 - 255
+        format: double
+        type: number
+        x-go-name: Green
+      red:
+        description: 0 - 255
+        format: double
+        type: number
+        x-go-name: Red
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  GoogleStorageConfig:
+    description: Represents the Google Storage configuration
+    properties:
+      bucketName:
+        description: The bucket name
+        type: string
+        x-go-name: BucketName
+      json:
+        description: The json
+        type: string
+        x-go-name: Json
+      projectId:
+        description: The project id
+        type: string
+        x-go-name: ProjectId
+      scopes:
+        description: The scopes authentication [there are different scopes, which
+          you can find here https://cloud.google.com/storage/docs/authentication]
+        type: string
+        x-go-name: Scopes
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Graphic:
+    description: Graphic represents how the sensitive content will be transforms
+    properties:
+      fillColorValue:
+        $ref: '#/definitions/FillColorValue'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  HashValue:
+    title: Uses cryptographich hash on the given value with SHA-256 hash.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Image:
+    description: Define an image with extracted bounded boxes of text/image
+    properties:
+      Boundingboxes:
+        description: Array of Boundingbox
+        items:
+          $ref: '#/definitions/Boundingbox'
+        type: array
+      data:
+        description: The image data in bytes
+        items:
+          format: uint8
+          type: integer
+        type: array
+        x-go-name: Data
+      imageType:
+        description: The image type JPEG/PNG/TIFF
+        type: string
+        x-go-name: ImageType
+      text:
+        description: Image Text
+        type: string
+        x-go-name: Text
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  KafkaConfig:
+    description: The Kafka configuration
+    properties:
+      address:
+        description: Kafka address
+        type: string
+        x-go-name: Address
+      saslPassword:
+        description: SASL authentication password
+        type: string
+        x-go-name: SaslPassword
+      saslUsername:
+        description: SASL authentication user name
+        type: string
+        x-go-name: SaslUsername
+      topic:
+        description: Kafka topic
+        type: string
+        x-go-name: Topic
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Location:
+    description: The location in the text of the finding
+    properties:
+      end:
+        description: The location end
+        format: int32
+        type: integer
+        x-go-name: End
+      length:
+        description: The location length
+        format: int32
+        type: integer
+        x-go-name: Length
+      start:
+        description: The location start
+        format: int32
+        type: integer
+        x-go-name: Start
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  MaskValue:
+    description: |-
+      For example: my credit card number is 4961-2765-5327-5913
+      maskingCharacter: '*', chars to mask: 9, fromEnd: true
+      Will output:  my credit card number is 4961-2765-*********
+    properties:
+      charsToMask:
+        description: number of chars to mask
+        format: int32
+        type: integer
+        x-go-name: CharsToMask
+      fromEnd:
+        description: Should start masking from end
+        type: boolean
+        x-go-name: FromEnd
+      maskingCharacter:
+        description: the masking char
+        type: string
+        x-go-name: MaskingCharacter
+    title: Mask the given value with the selected characters.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Pattern:
+    description: |-
+      Pattern represents one regex (pattern) that is able to detect a certain
+      entity and how confident the result is
+    properties:
+      name:
+        description: The name of the pattern, unique
+        type: string
+        x-go-name: Name
+      regex:
+        description: The Regex used by this recognizer
+        type: string
+        x-go-name: Regex
+      score:
+        description: The confidence of the result
+        format: float
+        type: number
+        x-go-name: Score
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  PatternRecognizer:
+    description: |-
+      PatternRecognizer represents a recognizer which has the ability to detect
+      entities using one or more Patterns
+    properties:
+      blacklist:
+        description: |-
+          A list of words that are considered PII and should always be detected
+          e.g. ["Mr", "Mrs", "account"]
+        items:
+          type: string
+        type: array
+        x-go-name: Blacklist
+      contextPhrases:
+        description: |-
+          A list of strings that if found in the surroundings of the entity, increase the score of the result
+          e.g. ["name", "address", ]
+        items:
+          type: string
+        type: array
+        x-go-name: ContextPhrases
+      entity:
+        description: The entity name which this recognizer can detect
+        type: string
+        x-go-name: Entity
+      language:
+        description: The supported language code, in ISO-639 format, https://en.wikipedia.org/wiki/ISO_639-1
+        type: string
+        x-go-name: Language
+      name:
+        description: The name of the recognizer, unique
+        type: string
+        x-go-name: Name
+      patterns:
+        description: List of supported patterns by this recognizer
+        items:
+          $ref: '#/definitions/Pattern'
+        type: array
+        x-go-name: Patterns
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  RecognizerInsertOrUpdateRequest:
+    description: |-
+      RecognizerInsertOrUpdateRequest represents the request for
+      inserting a new or updating an existing pattern recognizer
+    properties:
+      value:
+        $ref: '#/definitions/PatternRecognizer'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  RecognizersGetResponse:
+    description: RecognizersGetResponse represents a response to a get request
+    properties:
+      recognizers:
+        description: An array of recognizers
+        items:
+          $ref: '#/definitions/PatternRecognizer'
+        type: array
+        x-go-name: Recognizers
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  RedactValue:
+    title: Redacts the given value. For example We met in Seattle would change to
+      'We me in '.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  ReplaceValue:
+    description: |-
+      For example: We met in Seattle.
+      new value: <Location>
+      replace to 'We met in <Location>'
+    properties:
+      newValue:
+        description: The value to replace
+        type: string
+        x-go-name: NewValue
+    title: Replace the value with the given new value.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  S3Config:
+    description: AWS S3 configuration
+    properties:
+      accessId:
+        description: The access id
+        type: string
+        x-go-name: AccessId
+      accessKey:
+        description: The access key
+        type: string
+        x-go-name: AccessKey
+      bucketName:
+        description: The bucket name
+        type: string
+        x-go-name: BucketName
+      endpoint:
+        description: The s3 endpoint
+        type: string
+        x-go-name: Endpoint
+      region:
+        description: The region
+        type: string
+        x-go-name: Region
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScanRequest:
+    description: ScanRequest represents the request to the scanner service via GRPC
+    properties:
+      analyzeTemplate:
+        $ref: '#/definitions/AnalyzeTemplate'
+      anonymizeTemplate:
+        $ref: '#/definitions/AnonymizeTemplate'
+      datasinkTemplate:
+        $ref: '#/definitions/DatasinkTemplate'
+      scanTemplate:
+        $ref: '#/definitions/ScanTemplate'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScanTemplate:
+    description: And sending the output to the selected destination
+    properties:
+      cloudStorageConfig:
+        $ref: '#/definitions/CloudStorageConfig'
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+    title: ScanTemplate represents the scan configuration for scanning data and analyzing/anonymizing
+      it.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScannerCronJobRequest:
+    description: ScannerCronJobRequest represents the request to the scheduler service
+      via GRPC
+    properties:
+      Name:
+        description: Scanner cronjob name
+        type: string
+      scanRequest:
+        $ref: '#/definitions/ScanRequest'
+      trigger:
+        $ref: '#/definitions/Trigger'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScannerCronJobResponse:
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  ScannerCronJobTemplate:
+    description: |-
+      The kuberenetes Cronjob template. Creates a time based scanning job scheduler that runs periodcally
+      on the selected time
+    properties:
+      analyzeTemplateId:
+        description: The analyzer template id configures the fields to analyze
+        type: string
+        x-go-name: AnalyzeTemplateId
+      anonymizeTemplateId:
+        description: The anonymizer template id configures how to anonymize the sensitive
+          data [optional]
+        type: string
+        x-go-name: AnonymizeTemplateId
+      datasinkTemplateId:
+        description: The datasink template id configures the output destination of
+          the analyzer/anonymizer results
+        type: string
+        x-go-name: DatasinkTemplateId
+      description:
+        description: The job description
+        type: string
+        x-go-name: Description
+      name:
+        description: The job name
+        type: string
+        x-go-name: Name
+      scanTemplateId:
+        description: The scan template id configures job input source
+        type: string
+        x-go-name: ScanTemplateId
+      trigger:
+        $ref: '#/definitions/Trigger'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Schedule:
+    description: Defines the job schedule
+    properties:
+      recurrencePeriod:
+        description: The recurrence period of the job, set as a cron expression
+        type: string
+        x-go-name: RecurrencePeriod
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamConfig:
+    description: Represents the streams configuration
+    properties:
+      ehConfig:
+        $ref: '#/definitions/EHConfig'
+      kafkaConfig:
+        $ref: '#/definitions/KafkaConfig'
+      partitionCount:
+        description: Number of partitions if applicable
+        format: int32
+        type: integer
+        x-go-name: PartitionCount
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamRequest:
+    description: StreamRequest represents the request to the stream service via GRPC
+    properties:
+      analyzeTemplate:
+        $ref: '#/definitions/AnalyzeTemplate'
+      anonymizeTemplate:
+        $ref: '#/definitions/AnonymizeTemplate'
+      datasinkTemplate:
+        $ref: '#/definitions/DatasinkTemplate'
+      streamConfig:
+        $ref: '#/definitions/StreamConfig'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamTemplate:
+    description: And sending the output to the selected destination
+    properties:
+      analyzeTemplateId:
+        description: The analyzer template id configures the fields to analyze
+        type: string
+        x-go-name: AnalyzeTemplateId
+      anonymizeTemplateId:
+        description: The anonymizer template id configures how to anonymize the sensitive
+          data [optional]
+        type: string
+        x-go-name: AnonymizeTemplateId
+      datasinkTemplateId:
+        description: The datasinkTemplateId configures the output destination of the
+          analyzer/anonymizer results
+        type: string
+        x-go-name: DatasinkTemplateId
+      description:
+        description: Template description
+        type: string
+        x-go-name: Description
+      name:
+        description: The job name
+        type: string
+        x-go-name: Name
+      streamConfig:
+        $ref: '#/definitions/StreamConfig'
+    title: StreamTemplate represents the stream configuration for streaming data and
+      analyzing/anonymizing it.
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamsJobRequest:
+    description: StreamsJobRequest represents the request to the scheduler service
+      via GRPC
+    properties:
+      name:
+        description: The streams job name
+        type: string
+        x-go-name: Name
+      streamsRequest:
+        $ref: '#/definitions/StreamRequest'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamsJobResponse:
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  StreamsJobTemplate:
+    description: The kuberenetes job template. Creates a job that creates streams
+      containers
+    properties:
+      analyzeTemplateId:
+        description: The analyzer template id configures the fields to analyze
+        type: string
+        x-go-name: AnalyzeTemplateId
+      anonymizeTemplateId:
+        description: The anonymizer template id configures how to anonymize the sensitive
+          data [optional]
+        type: string
+        x-go-name: AnonymizeTemplateId
+      datasinkTemplateId:
+        description: The datasink template id configures the output destination of
+          the analyzer/anonymizer results
+        type: string
+        x-go-name: DatasinkTemplateId
+      description:
+        description: The job description
+        type: string
+        x-go-name: Description
+      name:
+        description: The job name
+        type: string
+        x-go-name: Name
+      streamsTemplateId:
+        description: The scan template id configures job input source
+        type: string
+        x-go-name: StreamsTemplateId
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Transformation:
+    description: Transformation represents the transformation types - how the sensitive
+      text will change
+    properties:
+      fPEValue:
+        $ref: '#/definitions/FPEValue'
+      hashValue:
+        $ref: '#/definitions/HashValue'
+      maskValue:
+        $ref: '#/definitions/MaskValue'
+      redactValue:
+        $ref: '#/definitions/RedactValue'
+      replaceValue:
+        $ref: '#/definitions/ReplaceValue'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+  Trigger:
+    description: Trigger defines the trigger for a new job to start
+    properties:
+      schedule:
+        $ref: '#/definitions/Schedule'
+    type: object
+    x-go-package: github.com/microsoft/presidio/presidio-api/cmd/presidio-api/docs/vendor/github.com/Microsoft/presidio-genproto/golang
+info:
+  description: Documentation for Presidio API Swagger.
+  title: Presidio.
+  version: "1.0"
+paths:
+  /analyzer/recognizers/:
+    get:
+      description: Get all recognizers
+      operationId: getAllRecognizers
+      responses:
+        "200":
+          $ref: '#/responses/getAllRecognizersResponse'
+      tags:
+      - analyze
+  /analyzer/recognizers/{id}:
+    get:
+      description: Get an existing recognizer
+      operationId: getRecognizer
+      parameters:
+      - description: Recognizer name
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/getRecognizerResponse'
+      tags:
+      - analyze
+    post:
+      description: Insert a new recognizer
+      operationId: insertRecognizer
+      parameters:
+      - description: Recognizer name
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      - description: Recognizer properties
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/RecognizerInsertOrUpdateRequest'
+      responses:
+        "200":
+          $ref: '#/responses/insertRecognizerResponse'
+      tags:
+      - analyze
+  /fieldTypes:
+    get:
+      description: Get all available field types
+      operationId: getFieldTypes
+      responses:
+        "200":
+          $ref: '#/responses/getFieldTypesResponse'
+      tags:
+      - fields
+  /projects/{projectID}/analyze:
+    post:
+      description: Analyze text
+      operationId: analyze
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnalyzeRequest'
+      - description: Used to store different configurations for different projectIDs
+        format: int64
+        in: path
+        name: projectID
+        required: true
+        type: integer
+        x-go-name: ProjectID
+      responses:
+        "200":
+          $ref: '#/responses/analyzeResponse'
+      tags:
+      - analyze
+  /projects/{projectID}/anonymize:
+    post:
+      description: Anonymize text
+      operationId: anonymize
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeRequest'
+      - description: Used to store different configurations for different projectIDs
+        format: int64
+        in: path
+        name: projectID
+        required: true
+        type: integer
+        x-go-name: ProjectID
+      responses:
+        "200":
+          $ref: '#/responses/anonymizeResponse'
+      tags:
+      - anonymize
+  /projects/{projectID}/anonymize-image:
+    post:
+      description: Anonymize image
+      operationId: anonymizeImage
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageRequest'
+      - description: Used to store different configurations for different projectIDs
+        format: int64
+        in: path
+        name: projectID
+        required: true
+        type: integer
+        x-go-name: ProjectID
+      responses:
+        "200":
+          $ref: '#/responses/anonymizeImageResponse'
+      tags:
+      - anonymize-image
+  /projects/{projectID}/schedule-scanner-cronjob:
+    post:
+      description: Schedule scanner cron-job
+      operationId: scheduleScannerCronjob
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobRequest'
+      - description: Used to store different configurations for different projectIDs
+        format: int64
+        in: path
+        name: projectID
+        required: true
+        type: integer
+        x-go-name: ProjectID
+      responses:
+        "200":
+          $ref: '#/responses/scheduleScannerCronjobResponse'
+      tags:
+      - schedule-scanner-cronjob
+  /projects/{projectID}/schedule-streams-job:
+    post:
+      description: Schedule streams job
+      operationId: scheduleStreamsJob
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobRequest'
+      - description: Used to store different configurations for different projectIDs
+        format: int64
+        in: path
+        name: projectID
+        required: true
+        type: integer
+        x-go-name: ProjectID
+      responses:
+        "200":
+          $ref: '#/responses/scheduleStreamsJobResponse'
+      tags:
+      - schedule-streams-job
+  /templates/{projectID}/analyze/{templateID}:
+    delete:
+      description: Delete analyze template
+      operationId: deleteAnalyzeTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - analyze
+    get:
+      description: Get analyze template
+      operationId: getAnalyzeTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getAnalyzeTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - analyze
+    post:
+      description: Create analyze template
+      operationId: createAnalyzeTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnalyzeTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - analyze
+    put:
+      description: Update analyze template
+      operationId: updateAnalyzeTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnalyzeTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - analyze
+  /templates/{projectID}/anonymize-image/{templateID}:
+    delete:
+      description: Delete anonymize-image template
+      operationId: deleteAnonymizeImageTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize-image
+    get:
+      description: Get anonymize-image template
+      operationId: getAnonymizeImageTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getAnonymizeImageTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize-image
+    post:
+      description: Create anonymize-image template
+      operationId: createAnonymizeImageTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize-image
+    put:
+      description: Update anonymize-image template
+      operationId: updateAnonymizeImageTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeImageTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize-image
+  /templates/{projectID}/anonymize/{templateID}:
+    delete:
+      description: Delete anonymize template
+      operationId: deleteAnonymizeTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize
+    get:
+      description: Get anonymize template
+      operationId: getAnonymizeTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getAnonymizeTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize
+    post:
+      description: Create anonymize template
+      operationId: createAnonymizeTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize
+    put:
+      description: Update anonymize template
+      operationId: updateAnonymizeTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/AnonymizeTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - anonymize
+  /templates/{projectID}/datasink/{templateID}:
+    delete:
+      description: Delete datasink template
+      operationId: deleteDatasinkTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - datasink
+    get:
+      description: Get datasink template
+      operationId: getDatasinkTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getDatasinkTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - datasink
+    post:
+      description: Create datasink template
+      operationId: createDatasinkTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/DatasinkTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - datasink
+    put:
+      description: Update datasink template
+      operationId: updateDatasinkTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/DatasinkTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - datasink
+  /templates/{projectID}/scan/{templateID}:
+    delete:
+      description: Delete scan template
+      operationId: deleteScanTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - scan
+    get:
+      description: Get scan template
+      operationId: getScanTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getScanTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - scan
+    post:
+      description: Create scan template
+      operationId: createScanTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScanTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - scan
+    put:
+      description: Update scan template
+      operationId: updateScanTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScanTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - scan
+  /templates/{projectID}/schedule-scanner-cronjob/{templateID}:
+    delete:
+      description: Delete schedule-scanner-cronjob template
+      operationId: deleteScannerCronJobTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-scanner-cronjob
+    get:
+      description: Get schedule-scanner-cronjob template
+      operationId: getScannerCronJobTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getScannerCronJobTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-scanner-cronjob
+    post:
+      description: Create schedule-scanner-cronjob template
+      operationId: createScannerCronJobTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-scanner-cronjob
+    put:
+      description: Update schedule-scanner-cronjob template
+      operationId: updateScannerCronJobTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/ScannerCronJobTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-scanner-cronjob
+  /templates/{projectID}/schedule-streams-job/{templateID}:
+    delete:
+      description: Delete schedule-streams-job template
+      operationId: deleteStreamsJobTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-streams-job
+    get:
+      description: Get schedule-streams-job template
+      operationId: getStreamsJobTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getStreamsJobTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-streams-job
+    post:
+      description: Create schedule-streams-job template
+      operationId: createStreamsJobTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-streams-job
+    put:
+      description: Update schedule-streams-job template
+      operationId: updateStreamsJobTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamsJobTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - schedule-streams-job
+  /templates/{projectID}/stream/{templateID}:
+    delete:
+      description: Delete stream template
+      operationId: deleteStreamTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - stream
+    get:
+      description: Get stream template
+      operationId: getStreamTemplate
+      parameters:
+      - in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/getStreamTemplateResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - stream
+    post:
+      description: Create stream template
+      operationId: createStreamTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - stream
+    put:
+      description: Update stream template
+      operationId: updateStreamTemplate
+      parameters:
+      - description: The request body
+        in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/StreamTemplate'
+      - description: Used to store different configurations for different projectIDs
+        in: path
+        name: projectID
+        required: true
+        type: string
+        x-go-name: ProjectID
+      - in: path
+        name: templateID
+        required: true
+        type: string
+        x-go-name: TemplateID
+      responses:
+        "200":
+          $ref: '#/responses/templateGeneralResponse'
+        "400":
+          $ref: '#/responses/templateGeneralError'
+      tags:
+      - template
+      - stream
+produces:
+- application/json
+responses:
+  analyzeResponse:
+    description: A response includes a list of recognized fields in the text to be
+      anonymized.
+    schema:
+      items:
+        $ref: '#/definitions/AnalyzeResult'
+      type: array
+  anonymizeImageResponse:
+    description: A response includes anonymized image.
+    schema:
+      $ref: '#/definitions/AnonymizeImageResponse'
+  anonymizeResponse:
+    description: A response includes anonymized text.
+    schema:
+      $ref: '#/definitions/AnonymizeResponse'
+  getAllRecognizersResponse:
+    description: A a list of all recognizers
+    schema:
+      items:
+        $ref: '#/definitions/RecognizersGetResponse'
+      type: array
+  getAnalyzeTemplateResponse:
+    description: An analyze template
+    schema:
+      $ref: '#/definitions/AnalyzeTemplate'
+  getAnonymizeImageTemplateResponse:
+    description: An anonymize image template
+    schema:
+      $ref: '#/definitions/AnonymizeImageTemplate'
+  getAnonymizeTemplateResponse:
+    description: An anonymize template
+    schema:
+      $ref: '#/definitions/AnonymizeTemplate'
+  getDatasinkTemplateResponse:
+    description: A Datasink template
+    schema:
+      $ref: '#/definitions/DatasinkTemplate'
+  getFieldTypesResponse:
+    description: The response including a list of field types
+    schema:
+      items:
+        $ref: '#/definitions/FieldTypes'
+      type: array
+  getRecognizerResponse:
+    description: A Recognizer
+    schema:
+      $ref: '#/definitions/RecognizersGetResponse'
+  getScanTemplateResponse:
+    description: A scan template
+    schema:
+      $ref: '#/definitions/ScanTemplate'
+  getScannerCronJobTemplateResponse:
+    description: A ScannerCronJob template
+    schema:
+      $ref: '#/definitions/ScannerCronJobTemplate'
+  getStreamTemplateResponse:
+    description: A stream template
+    schema:
+      $ref: '#/definitions/StreamTemplate'
+  getStreamsJobTemplateResponse:
+    description: A Streams Job template
+    schema:
+      $ref: '#/definitions/StreamsJobTemplate'
+  insertRecognizerResponse:
+    description: Insert new recognizer response
+  scheduleScannerCronjobResponse:
+    description: A response includes the scan result.
+    schema:
+      $ref: '#/definitions/ScannerCronJobResponse'
+  scheduleStreamsJobResponse:
+    description: A response includes the streams result.
+    schema:
+      $ref: '#/definitions/StreamsJobResponse'
+  templateGeneralError:
+    description: Response error
+  templateGeneralResponse:
+    description: Response message
+schemes:
+- http
+- https
+swagger: "2.0"

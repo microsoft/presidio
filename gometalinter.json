@@ -19,5 +19,6 @@
     "ineffassign",
     "misspell",
     "vet"
-  ]
+  ],
+  "Exclude": ["presidio-api/cmd/presidio-api/docs"]
 }
