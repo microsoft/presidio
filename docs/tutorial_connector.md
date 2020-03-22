@@ -102,7 +102,7 @@ In addition to steps listed in stream source connector:
 
 ### DB Sink Connector
 
-In our project we support the following DBs:
+Presidio supports the following DBs:
 - MSSQL
 - MySQL
 - PostgreSQL
