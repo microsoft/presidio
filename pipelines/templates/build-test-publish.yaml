@@ -155,6 +155,7 @@ stages:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
+                set -eux  # fail on error
                 make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
