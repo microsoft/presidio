@@ -42,11 +42,16 @@ func TestIsJson(t *testing.T) {
 // TestFailingCreateTemplate tests that when presidio returns an invalid status code the cli exists with an error
 func TestFailingCreateTemplate(t *testing.T) {
 	// we expect the exit code to be 1, if the returned status code is not as expected (not 201)
+	// This is a workaround, the idea is to start again the presctl but this time since we started
+	// it we can check its exit code, hence verified the process got terminated with exception
+	// (as expected)
 	if os.Getenv("BE_CRASHER") == "1" {
 		mockFail := &clientMock{returningCode: 400}
 		entities.CreateTemplate(mockFail, "myproj", "anonymize", "template1", "template text")
 		return
 	}
+
+	// re-run the presctl and expect to find an error exit code
 	cmd := exec.Command(os.Args[0], "-test.run=TestFailingCreateTemplate")
 	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
 	err := cmd.Run()
