@@ -73,7 +73,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         results = []
         recognizers = self.registry.get_recognizers(
-            language=language, 
+            language=language,
             all_fields=True)
         for recognizer in recognizers:
             results.append(
@@ -295,6 +295,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         res = analyze_pb2.Recognizer()
         res.name = result.name
         for entity in result.supported_entities:
+            # pylint: disable=no-member
             res.entities.append(entity)
         res.language = result.supported_language
         return res
