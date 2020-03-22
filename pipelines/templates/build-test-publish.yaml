@@ -147,7 +147,7 @@ stages:
                 pipenv install --skip-lock pytest-azurepipelines
                 # install dep
                 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-                dep ensure
+                dep ensure -v
                 # install libraries
                 sudo apt update 
                 sudo apt install tesseract-ocr

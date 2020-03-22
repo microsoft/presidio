@@ -17,7 +17,7 @@ VERSION   			?= ${GIT_TAG}
 PRESIDIO_LABEL 		:= $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
 PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')
 CURRENT_DIR		 	:= $(shell pwd)
-LDFLAGS   			+= -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
+LDFLAGS   			+= -X github.com/microsoft/presidio/pkg/version.Version=$(VERSION)
 TEST_IN_CONTAINER	:=
 CX_OSES 			= linux windows darwin
 CX_ARCHS 			= amd64
@@ -222,7 +222,7 @@ go-test-style:
 
 .PHONY: go-format
 go-format:
-	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/Microsoft/presidio
+	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/microsoft/presidio
 
 HAS_GOMETALINTER := $(shell command -v gometalinter 2>/dev/null)
 HAS_GIT          := $(shell command -v git 2>/dev/null)
