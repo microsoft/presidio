@@ -167,6 +167,7 @@ stages:
                 # install libraries
                 sudo apt update 
                 sudo apt install tesseract-ocr
+                echo $GOROOT
 
                 sudo make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
