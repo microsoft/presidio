@@ -124,7 +124,7 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        vmImage: 'ubuntu-latest'
+        name: 'CSE'
       jobs:
       - job: BuildTest
         displayName: Build and Test
@@ -165,9 +165,6 @@ stages:
               script: |
                 set -eux  # fail on error
                 # install libraries
-                ls $GOPATH
-                ls $GOPATH/bin
-                ls $GOPATH/pkg
                 sudo apt update 
                 sudo apt install tesseract-ocr
 
