@@ -130,7 +130,7 @@ stages:
         displayName: Build and Test
         steps:
           - task: UsePythonVersion@0
-            displayName: 'Use Python $(PYTHON.VERSION)'
+            displayName: 'Use Python $(PYTHON.VERSION) DEBUG'
             inputs:
               versionSpec: '$(PYTHON.VERSION)'
           # - template: ./golang-environment.yaml
