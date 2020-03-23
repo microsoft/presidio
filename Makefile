@@ -28,7 +28,7 @@ build: $(BINS)
 
 .PHONY: $(BINS)
 $(BINS): vendor
-	go build -ldflags '$(LDFLAGS)' -o bin/$@ ./$@/cmd/$@
+	go build -mod=vendor -ldflags '$(LDFLAGS)' -o bin/$@ ./$@/cmd/$@
 
 
 .PHONY: docker-build-deps
