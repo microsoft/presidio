@@ -517,9 +517,9 @@ class TestAnalyzerEngine(TestCase):
         response = analyze_engine.GetAllRecognizers(request, None)
         # there are 15 predefined recognizers and one custom
         assert len(response) == 16
-        rocket_recognizer = [x for x in response if x.name == "Rocket recognizer" 
-            and x.entities == ["ROCKET"] 
-            and x.language == "en"]
+        rocket_recognizer = [recognizer for recognizer in response if recognizer.name == "Rocket recognizer" 
+            and recognizer.entities == ["ROCKET"] 
+            and recognizer.language == "en"]
         assert len(rocket_recognizer) == 1
 
     def test_get_recognizers_returns_added_custom(self):
