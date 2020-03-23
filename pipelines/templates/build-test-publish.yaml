@@ -124,7 +124,7 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        name: 'CSE'
+        vmImage: 'ubuntu-latest'
       jobs:
       - job: BuildTest
         displayName: Build and Test
@@ -133,19 +133,18 @@ stages:
             displayName: 'Use Python $(PYTHON.VERSION)'
             inputs:
               versionSpec: '$(PYTHON.VERSION)'
-          # - template: ./golang-environment.yaml
-          # - task: Bash@3  
-          #   displayName: 'Install python pre requisites'
-          #   inputs:
-          #     targetType: 'inline'
-          #     workingDirectory: '$(MODULEPATH)'
-          #     script: |
-          #       python -m pip install --upgrade pip
-          #       python -m pip install pipenv
-          #       pipenv --python 3
-          #       pipenv install --skip-lock pytest
-          #       pipenv install --skip-lock pytest-azurepipelines
           - template: ./golang-environment.yaml
+          - task: Bash@3  
+            displayName: 'Install python pre requisites'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                python -m pip install --upgrade pip
+                python -m pip install pipenv
+                pipenv --python 3
+                pipenv install --skip-lock pytest
+                pipenv install --skip-lock pytest-azurepipelines
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
@@ -153,7 +152,9 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 # install dep
-                curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+                DEP_VERSION="0.5.0"
+                curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
+                chmod +x $GOPATH/bin/dep
                 dep ensure
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
