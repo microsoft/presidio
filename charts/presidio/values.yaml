@@ -38,6 +38,8 @@ api:
 analyzer:
   name: presidio-analyzer
   imagePullPolicy: Always
+  textAnalyticsKey: <key>
+  textAnalyticsEndpoint: <endpoint>
   service:
     type: ClusterIP
     externalPort: 3001

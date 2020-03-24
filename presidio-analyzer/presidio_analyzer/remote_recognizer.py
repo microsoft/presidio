@@ -10,15 +10,13 @@ class RemoteRecognizer(EntityRecognizer):
      / remote machine
     """
 
-    def __init__(self, supported_entities, supported_language, name, version,
+    def __init__(self, supported_entities, supported_language, name=None, version=None,
                  **kwargs):
-        super().__init__(supported_entities, supported_language, name, version)
+        super().__init__(supported_entities=supported_entities,
+                         supported_language=supported_language,
+                         name=name, version=version)
 
     def load(self):
-        pass
-
-    def analyze_text(self, text, entities):
-        # add code here to connect to the side car
         pass
 
     def get_supported_entities(self):
