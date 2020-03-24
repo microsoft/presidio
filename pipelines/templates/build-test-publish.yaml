@@ -168,15 +168,14 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
+                
                 # install libraries
-                sudo apt update 
-                sudo apt install tesseract-ocr
-
                 unset GOROOT
                 alias go=/usr/local/go1.11/bin/go
                 GOBIN=$GOPATH/bin
 
-                go env
+                sudo apt update 
+                sudo apt install tesseract-ocr-dev
 
                 make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
