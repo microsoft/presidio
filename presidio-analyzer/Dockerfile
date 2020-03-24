@@ -1,28 +1,24 @@
+# Presidio Analyzer Dockerfile. 
+# This dockerfile installs presidio analyzer wheel from a pypi endpoint.
 ARG REGISTRY=presidio.azurecr.io
 ARG PRESIDIO_DEPS_LABEL=latest
-
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
 
 ARG NAME=presidio-analyzer
+ARG PIP_EXTRA_INDEX_URL
+ARG VERSION
+
 WORKDIR /usr/bin/${NAME}
-ADD ./${NAME} /usr/bin/${NAME}
+ENV PIP_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
 
-# Print venv information
-RUN pipenv --venv
-RUN pipenv run pip freeze
-
-RUN pipenv install pylint==2.3.1 flake8 pytest --skip-lock
-
-RUN pipenv run pylint analyzer && \
-    pipenv run flake8 analyzer --exclude "*pb2*.py" && \
-	pipenv run pytest --log-cli-level=0
+RUN . $(pipenv --venv)/bin/activate && pip install presidio-analyzer==${VERSION:-0.0.1}    
 
 #----------------------------
 
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
 
 ARG NAME=presidio-analyzer
-ADD ./${NAME}/analyzer /usr/bin/${NAME}/analyzer
-WORKDIR /usr/bin/${NAME}/analyzer
+ADD ./${NAME}/presidio_analyzer /usr/bin/${NAME}/presidio_analyzer
+WORKDIR /usr/bin/${NAME}/presidio_analyzer
 
 CMD pipenv run python __main__.py serve --env-grpc-port

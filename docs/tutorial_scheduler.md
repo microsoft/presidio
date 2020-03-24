@@ -107,7 +107,7 @@ echo -n '{
       ]
     }
   }
-}' | http <api-service-address>/api/v1/projects/proj1/schedule-scanner-cronjob
+}' | http <api-service-address>/api/v1/projects/<my-project>/schedule-scanner-cronjob
 ```
 
 
@@ -214,10 +214,10 @@ For Azure Event Hub, use the following configuration:
 ```json
   "streamConfig": {
     "ehConfig": {
-      "ehConnectionString": "<ehConnectionString>", // EH connection string. It is recommended to generate a connection string from EH and NOT from EH namespace.
-      "storageAccountName": "<storageAccountName>", // Storage account name for Azure EH EPH pattern
-      "storageAccountKeyValue": "<storageAccountKeyValue>", // Storage account key for Azure EH EPH pattern
-      "containerValue": "<containerValue>" // Storage container name for Azure EH EPH pattern
+      "ehConnectionString": "<EHConnectionString>", // EH connection string. It is recommended to generate a connection string from EH and NOT from EH namespace.
+      "storageAccountName": "<StorageAccountName>", // Storage account name for Azure EH EPH pattern
+      "storageAccountKeyValue": "<StorageAccountKeyValue>", // Storage account key for Azure EH EPH pattern
+      "containerValue": "<ContainerValue>" // Storage container name for Azure EH EPH pattern
     }
   }
 ```
@@ -227,9 +227,10 @@ For Kafka use the following configuration:
 ```json
   "streamConfig": {
     "kafkaConfig": {
-      "address": "<address>",
-      "saslUsername": "<saslUsername>",
-      "saslPassword": "<saslPassword>"
+      "address": "<Address>",
+      "topic": "<Topic>",
+      "saslUsername": "<SASLUsername>",
+      "saslPassword": "<SASLPassword>"
     }
   }
 ```

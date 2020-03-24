@@ -1,7 +1,7 @@
 # Supported Fields
 Presidio contains predefined recognizers for PII entities (fields). This page describes the different entities Presidio can detect and the method Presidio employs to detect those.
 
-In addition, Presidio allows you to add custom fields by API or code. For more information, refer to the [custom fields documentation]("custom_fields.md").
+In addition, Presidio allows you to add custom fields by API or code. For more information, refer to the [custom fields documentation](custom_fields.md).
 
 
 
