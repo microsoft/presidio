@@ -10,13 +10,17 @@ class TextAnalyticsDal:
         self.key = os.environ.get('TEXT_ANALYTICS_KEY')
 
         if not self.endpoint:
-            self.logger.error("TextAnalyticsRecognizer cannot work without an endpoint.")
+            self.logger.error('TextAnalyticsRecognizer cannot'
+                              ' work without an endpoint.')
             if not self.tolerate_errors:
-                raise ValueError("TextAnalyticsRecognizer cannot work without an endpoint.")
+                raise ValueError('TextAnalyticsRecognizer cannot'
+                                 ' work without an endpoint.')
         if not self.key:
-            self.logger.error("TextAnalyticsRecognizer cannot work without a key.")
+            self.logger.error('TextAnalyticsRecognizer cannot'
+                              ' work without a key.')
             if not self.tolerate_errors:
-                raise ValueError("TextAnalyticsRecognizer cannot work without a key.")
+                raise ValueError('TextAnalyticsRecognizer cannot'
+                                 ' work without a key.')
 
         self.headers = {
             # Request headers
@@ -41,7 +45,8 @@ class TextAnalyticsDal:
             ]
         }
         conn = http.client.HTTPSConnection(self.endpoint)
-        conn.request("POST", url="/text/analytics/v3.0-preview.1/entities/recognition/pii",
+        conn.request("POST", url='/text/analytics/v3.0-preview.1/'
+                                 'entities/recognition/pii',
                      body=str(body), headers=self.headers)
         response = conn.getresponse()
         data = response.read()
