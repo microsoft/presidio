@@ -175,7 +175,7 @@ stages:
                 GOBIN=$GOPATH/bin
 
                 sudo apt update 
-                sudo apt install tesseract-ocr-dev
+                sudo apt install libtesseract-dev
 
                 make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
