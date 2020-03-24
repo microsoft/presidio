@@ -44,4 +44,5 @@ When you choose to use this recognizer, please set 2 environment variables requi
 ```bash
 $ TEXT_ANALYTICS_KEY=<your-text-analytics-key>
 $ TEXT_ANALYTICS_ENDPOINT=<your-text-analytics-endpoint>.cognitiveservices.azure.com
+$ TEXT_ANALYTICS_API_PATH=/text/analytics/v3.0-preview.1/entities/recognition/pii
 ```

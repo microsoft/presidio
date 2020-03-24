@@ -8,6 +8,7 @@ class TextAnalyticsDal:
         self.tolerate_errors = tolerate_errors
         self.endpoint = os.environ.get('TEXT_ANALYTICS_ENDPOINT')
         self.key = os.environ.get('TEXT_ANALYTICS_KEY')
+        self.api_path = os.environ.get('TEXT_ANALYTICS_API_PATH')
 
         if not self.endpoint:
             self.logger.error('TextAnalyticsRecognizer cannot'
@@ -21,6 +22,10 @@ class TextAnalyticsDal:
             if not self.tolerate_errors:
                 raise ValueError('TextAnalyticsRecognizer cannot'
                                  ' work without a key.')
+        if not self.api_path:
+            self.logger.info('Using default api path')
+            self.api_path = '/text/analytics/v3.0-preview.1/' \
+                            'entities/recognition/pii'
 
         self.headers = {
             # Request headers
@@ -45,8 +50,7 @@ class TextAnalyticsDal:
             ]
         }
         conn = http.client.HTTPSConnection(self.endpoint)
-        conn.request("POST", url='/text/analytics/v3.0-preview.1/'
-                                 'entities/recognition/pii',
+        conn.request("POST", url=self.api_path,
                      body=str(body), headers=self.headers)
         response = conn.getresponse()
         data = response.read()
