@@ -151,11 +151,8 @@ stages:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
-                unset GOROOT
-                alias go=/usr/local/go1.11/bin/go
-                GOBIN=$GOPATH/bin
-
-                # install dep
+                # Only dep v 0.5.0 works. 
+                # download specific version
                 DEP_VERSION="0.5.0"
                 curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
                 chmod +x $GOPATH/bin/dep
@@ -169,14 +166,18 @@ stages:
               script: |
                 set -eux  # fail on error
                 
-                # install libraries
+                # Only go V1.11 build works for presidio
+                # this is not fully supported in ADO agents 
+                # and needs the following hack to work.
                 unset GOROOT
                 alias go=/usr/local/go1.11/bin/go
                 GOBIN=$GOPATH/bin
 
+                # install dependency libraries
                 sudo apt update 
                 sudo apt install libtesseract-dev
 
+                # run make file commands
                 make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
