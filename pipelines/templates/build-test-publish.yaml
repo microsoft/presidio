@@ -151,6 +151,10 @@ stages:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
+                unset GOROOT
+                alias go=/usr/local/go1.11/bin/go
+                GOBIN=$GOPATH/bin
+
                 # install dep
                 DEP_VERSION="0.5.0"
                 curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
@@ -168,11 +172,12 @@ stages:
                 sudo apt update 
                 sudo apt install tesseract-ocr
 
-                echo GOROOT: $GOROOT
-                echo PATH: $PATH
-                echo GOBIN: $GOBIN
-                echo $(which go)
-                 
+                unset GOROOT
+                alias go=/usr/local/go1.11/bin/go
+                GOBIN=$GOPATH/bin
+
+                go env
+
                 sudo make build
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
