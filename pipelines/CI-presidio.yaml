@@ -14,7 +14,7 @@
 variables:
 - group: Presidio - CI Pipeline
 - name: GOBIN
-  value: '  '
+  value: '$(GOPATH)/bin'
 - name: GOPATH
   value: '$(system.defaultWorkingDirectory)/gopath'
 - name: MODULEPATH
