@@ -40,6 +40,7 @@ analyzer:
   imagePullPolicy: Always
   textAnalyticsKey: <key>
   textAnalyticsEndpoint: <endpoint>
+  textAnalyticsApiPath: /text/analytics/v3.0-preview.1/entities/recognition/pii
   service:
     type: ClusterIP
     externalPort: 3001

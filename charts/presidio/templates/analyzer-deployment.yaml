@@ -44,5 +44,7 @@ spec:
             value: {{ .Values.analyzer.textAnalyticsKey }}
           - name: TEXT_ANALYTICS_ENDPOINT
             value: {{ .Values.analyzer.textAnalyticsEndpoint }}
+          - name: TEXT_ANALYTICS_API_PATH
+            value: {{ .Values.analyzer.textAnalyticsApiPath }}
       {{ if .Values.privateRegistry }}imagePullSecrets:
         - name: {{.Values.privateRegistry}}{{ end }}
