@@ -12,6 +12,7 @@ steps:
       rm -rf '$(MODULEPATH)'
       mkdir -p '$(MODULEPATH)'
       shopt -s extglob
+      shopt -s dotglob
       mv !(gopath) '$(MODULEPATH)' --force
       echo '##vso[task.prependpath]$(GOBIN)'
       echo '##vso[task.prependpath]$(GOROOT)/bin'
