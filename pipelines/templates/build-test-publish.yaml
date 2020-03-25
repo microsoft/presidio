@@ -138,7 +138,7 @@ stages:
             displayName: 'Install python pre requisites'
             inputs:
               targetType: 'inline'
-              workingDirectory: '$(MODULEPATH)/presidio-analyzer'
+              workingDirectory: '$(MODULEPATH)'
               script: |
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
