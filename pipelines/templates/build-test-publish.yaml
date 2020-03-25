@@ -147,12 +147,13 @@ stages:
                 pipenv install --skip-lock pytest-azurepipelines
 
                 # install dependency libraries
-                sudo apt-get install python-regex
+                pipenv install --skip-lock regex
                 re2_version="2018-12-01"
                 wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
                 mkdir re2 
                 tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
                 cd re2 && sudo make install
+                pipenv install --skip-lock re2
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
