@@ -145,6 +145,13 @@ stages:
                 pipenv --python 3
                 pipenv install --skip-lock pytest
                 pipenv install --skip-lock pytest-azurepipelines
+
+                # install dependency libraries
+                re2_version="2018-12-01"
+                wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
+                mkdir re2 
+                tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
+                cd re2 && make install
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
@@ -157,6 +164,11 @@ stages:
                 curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
                 chmod +x $GOPATH/bin/dep
                 dep ensure
+
+                # install dependency libraries
+                sudo apt update 
+                sudo apt install libtesseract-dev
+
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
             displayName: 'Run presidio makefile'
@@ -172,10 +184,6 @@ stages:
                 unset GOROOT
                 alias go=/usr/local/go1.11/bin/go
                 GOBIN=$GOPATH/bin
-
-                # install dependency libraries
-                sudo apt update 
-                sudo apt install libtesseract-dev
 
                 # run make file commands
                 make build
