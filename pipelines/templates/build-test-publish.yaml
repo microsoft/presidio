@@ -151,6 +151,7 @@ stages:
                 mkdir re2 
                 tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
                 cd re2 && sudo make install
+                pipenv install --skip-lock regex
 
                 # Azure pipelines test publish
                 pipenv install --skip-lock pytest-azurepipelines
