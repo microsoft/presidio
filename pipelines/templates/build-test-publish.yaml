@@ -147,6 +147,7 @@ stages:
                 pipenv install --skip-lock pytest-azurepipelines
 
                 # install dependency libraries
+                sudo apt-get install python-regex
                 re2_version="2018-12-01"
                 wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
                 mkdir re2 
