@@ -143,16 +143,17 @@ stages:
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
                 pipenv --python 3
-                pipenv install --skip-lock pytest
-                pipenv install --skip-lock pytest-azurepipelines
+                pipenv install --dev --sequential
 
                 # install dependency libraries
-                pipenv install --skip-lock regex
                 re2_version="2018-12-01"
                 wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
                 mkdir re2 
                 tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
                 cd re2 && sudo make install
+
+                # Azure pipelines test publish
+                pipenv install --skip-lock pytest-azurepipelines
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
@@ -176,7 +177,7 @@ stages:
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
-              script: |
+              script: | 
                 set -eux  # fail on error
                 
                 # Only go V1.11 build works for presidio
