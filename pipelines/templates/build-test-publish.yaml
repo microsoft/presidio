@@ -153,7 +153,6 @@ stages:
                 mkdir re2 
                 tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
                 cd re2 && sudo make install
-                pipenv install --skip-lock re2
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
