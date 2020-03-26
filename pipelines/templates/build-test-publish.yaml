@@ -140,13 +140,15 @@ stages:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
+                set -eux  # fail on error
+                
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
                 pipenv --python 3
                 
                 cd presidio-analyzer
                 pipenv install --dev --sequential
-                pipenv install -skip-lock pytest
+                pipenv install pytest --dev --skip-lock
 
                 # install dependency libraries
                 re2_version="2018-12-01"
@@ -164,6 +166,8 @@ stages:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
+                set -eux  # fail on error
+                
                 # Only dep v 0.5.0 works. 
                 # download specific version
                 DEP_VERSION="0.5.0"
