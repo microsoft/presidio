@@ -144,6 +144,7 @@ stages:
                 
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
+                python -m pip install pytest
                 pipenv --python 3
                 
                 # install dev Pipfile libraries
