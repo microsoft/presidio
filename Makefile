@@ -152,7 +152,8 @@ python-test: python-test-unit
 # Unit tests. Local only.
 .PHONY: python-test-unit
 python-test-unit:
-	pytest --log-cli-level=0
+	cd presidio-analyzer
+	pipenv run pytest --log-cli-level=0
 
 # All non-functional go tests
 .PHONY: go-test

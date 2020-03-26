@@ -144,6 +144,8 @@ stages:
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
                 pipenv --python 3
+                
+                cd presidio-analyzer
                 pipenv install --dev --sequential
 
                 # install dependency libraries
