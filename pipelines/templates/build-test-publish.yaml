@@ -146,20 +146,22 @@ stages:
                 python -m pip install pipenv
                 pipenv --python 3
                 
+                # install dev Pipfile libraries
                 cd presidio-analyzer
                 pipenv install --dev --sequential
-                pipenv install pytest --dev --skip-lock
 
                 # install dependency libraries
+                # re2
                 re2_version="2018-12-01"
                 wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
                 mkdir re2 
                 tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
                 cd re2 && sudo make install
-                pipenv install --skip-lock regex
 
                 # Azure pipelines test publish
-                pipenv install --skip-lock pytest-azurepipelines
+                # pytest
+                # regex
+                pipenv install --dev --skip-lock regex pytest-azurepipelines
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
@@ -167,7 +169,7 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
-                
+
                 # Only dep v 0.5.0 works. 
                 # download specific version
                 DEP_VERSION="0.5.0"
