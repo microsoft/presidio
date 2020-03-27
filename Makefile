@@ -153,7 +153,7 @@ python-test: python-test-unit
 .PHONY: python-test-unit
 python-test-unit:
 	cd presidio-analyzer
-	python -m pytest --log-cli-level=0 -v
+	pipenv run pytest --log-cli-level=0 -v
 
 # All non-functional go tests
 .PHONY: go-test
