@@ -124,7 +124,7 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        # vmImage: 'ubuntu-latest' 
+        # vmImage: 'ubuntu-latest's
         name: 'CSE'
       jobs:
       - job: BuildTest
