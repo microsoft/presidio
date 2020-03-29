@@ -194,13 +194,6 @@ stages:
               script: |
                 set -eux  # fail on error
                 
-                # Only go V1.11 build works for presidio
-                # this is not fully supported in ADO agents 
-                # and needs the following hack to work.
-                unset GOROOT
-                alias go=/usr/local/go1.11/bin/go
-                GOBIN=$GOPATH/bin
-
                 # run make file commands
                 make build
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
