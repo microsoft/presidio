@@ -183,6 +183,7 @@ stages:
                 sudo apt update 
                 # ubuntu 16.04
                 sudo apt install tesseract-ocr
+                sudo apt install libtesseract-dev
                 # ubuntu 18.04
                 # sudo apt install libtesseract-dev
 
