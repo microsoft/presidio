@@ -181,7 +181,10 @@ stages:
 
                 # install dependency libraries
                 sudo apt update 
-                sudo apt install libtesseract-dev
+                # ubuntu 16.04
+                sudo apt update sudo apt install tesseract-ocr
+                # ubuntu 18.04
+                #sudo apt install libtesseract-dev
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
