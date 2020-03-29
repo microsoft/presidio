@@ -125,7 +125,6 @@ stages:
       dependsOn: []
       pool:
         vmImage: 'ubuntu-16.04'
-        name: 'CSE'
       jobs:
       - job: BuildTest
         displayName: Build and Test
@@ -142,7 +141,7 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
-                
+
                 sudo apt-get install python3-setuptools
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
