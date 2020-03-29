@@ -161,7 +161,6 @@ stages:
                 cd re2 && sudo make install
 
                 # Azure pipelines test publish
-                # pytest
                 # regex
                 pipenv install --dev --skip-lock regex pytest-azurepipelines
           - task: Bash@3  
