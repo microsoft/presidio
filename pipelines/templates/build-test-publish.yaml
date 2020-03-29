@@ -135,7 +135,7 @@ stages:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
           - task: Bash@3  
-            displayName: 'Install python pre-requisites'
+            displayName: 'Install python pre requisites'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
@@ -198,7 +198,9 @@ stages:
                 make build
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
 
-                # remove pipenv environment to save place on agent	
+                # remove pipenv environment to save place on agent.
+                # it is not used in the next steps and when skipping this
+                # build will fail due to agent disk capacity.
                 pipenv --rm	
                 cd presidio-analyzer	
                 pipenv --rm	
