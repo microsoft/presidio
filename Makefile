@@ -156,7 +156,7 @@ python-test-unit:
 
 # All non-functional go tests
 .PHONY: go-test
-go-test: go-test-style
+# go-test: go-test-style # opting this out until fixing bug https://github.com/microsoft/presidio/issues/262
 go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
