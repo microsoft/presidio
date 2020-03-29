@@ -124,7 +124,7 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        vmImage: 'ubuntu-16.04' # These steps work on ubuntu 16.04. see bug https://dev.azure.com/csedevil/Presidio-internal/_workitems/edit/1855
+        vmImage: 'ubuntu-latest'
       jobs:
       - job: BuildTest
         displayName: Build and Test
@@ -197,6 +197,12 @@ stages:
                 # run make file commands
                 make build
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
+
+                # remove pipenv environment to save place on agent	
+                pipenv --rm	
+                cd presidio-analyzer	
+                pipenv --rm	
+                cd ../
 
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
