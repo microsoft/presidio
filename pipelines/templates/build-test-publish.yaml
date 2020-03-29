@@ -124,7 +124,7 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        # vmImage: 'ubuntu-latest's
+        vmImage: 'ubuntu-16.04'
         name: 'CSE'
       jobs:
       - job: BuildTest
@@ -143,6 +143,7 @@ stages:
               script: |
                 set -eux  # fail on error
                 
+                sudo apt-get install python3-setuptools
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
                 python -m pip install pytest
@@ -185,8 +186,6 @@ stages:
                 sudo apt install libleptonica-dev
                 sudo apt install tesseract-ocr
                 sudo apt install libtesseract-dev
-                # ubuntu 18.04
-                # sudo apt install libtesseract-dev
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
