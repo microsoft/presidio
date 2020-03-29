@@ -136,7 +136,7 @@ stages:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
           - task: Bash@3  
-            displayName: 'Install python pre requisites'
+            displayName: 'Install python pre-requisites'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
