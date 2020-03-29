@@ -180,9 +180,10 @@ stages:
 
                 # install dependency libraries
                 sudo apt update 
-                
+
                 #gometalinter
                 curl -L https://git.io/vp6lP | sh
+                mv ./bin/* $GOBIN
                 # ubuntu 16.04
                 sudo apt install libleptonica-dev
                 sudo apt install tesseract-ocr
