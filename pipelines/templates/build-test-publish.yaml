@@ -124,7 +124,7 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-16.04' # These steps work on ubuntu 16.04. see bug https://dev.azure.com/csedevil/Presidio-internal/_workitems/edit/1855
       jobs:
       - job: BuildTest
         displayName: Build and Test
@@ -179,10 +179,8 @@ stages:
                 dep ensure
 
                 # install dependency libraries
-                sudo apt update 
+                sudo apt update
 
-                
-                # ubuntu 16.04
                 sudo apt install libleptonica-dev
                 sudo apt install tesseract-ocr
                 sudo apt install libtesseract-dev
@@ -193,7 +191,7 @@ stages:
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
-              script: | 
+              script: |
                 set -eux  # fail on error
                 
                 # Only go V1.11 build works for presidio
@@ -206,12 +204,6 @@ stages:
                 # run make file commands
                 make build
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
-
-                # remove pipenv environment to save place on agent
-                pipenv --rm
-                cd presidio-analyzer
-                pipenv --rm
-                cd ../
 
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
