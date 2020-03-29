@@ -204,9 +204,16 @@ stages:
 
                 # run make file commands
                 make build
+                make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
+
+                # remove pipenv environment to save place on agent
+                pipenv --rm
+                cd presidio-analyzer
+                pipenv --rm
+                cd ../
+
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
-                make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
                 make test-functional DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
             env:
               PRESIDIO_DEPS_LABEL: pr
