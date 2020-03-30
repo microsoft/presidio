@@ -152,12 +152,11 @@ python-test: python-test-unit
 # Unit tests. Local only.
 .PHONY: python-test-unit
 python-test-unit:
-	cd presidio-analyzer
-	pytest --log-cli-level=0
+	cd presidio-analyzer && pipenv run pytest --log-cli-level=0 -v
 
 # All non-functional go tests
 .PHONY: go-test
-go-test: go-test-style
+# go-test: go-test-style # opting this out until fixing bug https://github.com/microsoft/presidio/issues/262
 go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
