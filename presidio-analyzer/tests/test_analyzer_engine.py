@@ -153,15 +153,6 @@ class TestAnalyzerEngine(TestCase):
 
         assert len(results) == 0
 
-    def test_analyze_with_unsupported_language(self):
-        with pytest.raises(ValueError):
-            language = "de"
-            text = ""
-            entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-            self.loaded_analyzer_engine.analyze(self.unit_test_guid,
-                                                text, entities, language,
-                                                all_fields=False)
-
     def test_remove_duplicates(self):
         # test same result with different score will return only the highest
         arr = [RecognizerResult(start=0, end=5, score=0.1, entity_type="x",
@@ -430,6 +421,22 @@ class TestAnalyzerEngine(TestCase):
                                           all_fields=False)
 
         assert len(results) == 2
+
+    def test_non_latin_recognizer_pass(self):
+        text = "012345678 ת.ז"
+        language = "he"
+        entities = ["IL_ID"]
+
+        # This analyzer engine is different from the global one, as this one
+        # also loads SpaCy so it can detect the phone number entity
+
+        analyzer_engine = AnalyzerEngine(
+            registry=self.loaded_registry, nlp_engine=MockNlpEngine())
+        results = analyzer_engine.analyze(self.unit_test_guid, text,
+                                          entities, language,
+                                          all_fields=False)
+
+        assert len(results) == 1
 
     def test_demo_text(self):
         text = "Here are a few examples sentences we currently support:\n\n" \

@@ -71,7 +71,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         entities = AnalyzerEngine.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
+
+        logger.info("Getting language from request")
         language = AnalyzerEngine.get_language_from_request(request)
+        logger.info(f"Got language: '{language}'")
 
         threshold = request.analyzeTemplate.resultsScoreThreshold
         all_fields = request.analyzeTemplate.allFields
@@ -173,6 +176,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         :return: an array of the found entities in the text
         """
 
+        logger.info("Getting recognizers")
         recognizers = self.registry.get_recognizers(
             language=language,
             entities=entities,
@@ -191,6 +195,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         # run the nlp pipeline over the given text, store the results in
         # a NlpArtifacts instance
+        logger.info("Processing using nlp engine")
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
         if self.enable_trace_pii and trace:

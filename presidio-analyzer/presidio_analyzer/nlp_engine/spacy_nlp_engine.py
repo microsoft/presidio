@@ -26,8 +26,16 @@ class SpacyNlpEngine(NlpEngine):
         """ Execute the SpaCy NLP pipeline on the given text
             and language
         """
-        doc = self.nlp[language](text)
-        return self.doc_to_nlp_artifact(doc, language)
+        if language in self.nlp:
+            doc = self.nlp[language](text)
+            return self.doc_to_nlp_artifact(doc, language)
+
+        # to do tokens and lemmas should be a simple tokenize so
+        # we will get context support
+        logger.info("'%s' is not loaded for SpaCy, skipping", language)
+        return NlpArtifacts(entities=[], tokens=[],
+                            tokens_indices=[], lemmas=[],
+                            nlp_engine=self, language=language)
 
     def is_stopword(self, word, language):
         """ returns true if the given word is a stop word

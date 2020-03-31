@@ -128,6 +128,8 @@ class EntityRecognizer:
 
             word = text[result.start:result.end]
 
+            # Todo: https://dev.azure.com/csedevil/Presidio-internal/_workitems/edit/1856
+            # Context support for unsupported languages doesnt work (due to tokenization)
             surrounding_words = self.__extract_surrounding_words(
                 nlp_artifacts=nlp_artifacts,
                 word=word,
@@ -135,6 +137,7 @@ class EntityRecognizer:
 
             supportive_context_word = self.__find_supportive_word_in_context(
                 surrounding_words, recognizer_context_words)
+
             if supportive_context_word != "":
                 result.score += \
                   self.CONTEXT_SIMILARITY_FACTOR

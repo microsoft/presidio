@@ -7,7 +7,7 @@ from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, \
     UsBankRecognizer, UsLicenseRecognizer, \
     UsItinRecognizer, UsPassportRecognizer, UsPhoneRecognizer, \
-    UsSsnRecognizer, SgFinRecognizer
+    UsSsnRecognizer, SgFinRecognizer, ILIDRecognizer, ILDomainRecognizer
 
 
 class RecognizerRegistry:
@@ -56,7 +56,8 @@ class RecognizerRegistry:
             UsBankRecognizer(), UsLicenseRecognizer(),
             UsItinRecognizer(), UsPassportRecognizer(),
             UsPhoneRecognizer(), UsSsnRecognizer(),
-            SpacyRecognizer(), SgFinRecognizer()])
+            SpacyRecognizer(), SgFinRecognizer(), ILIDRecognizer(),
+            ILDomainRecognizer()])
 
     def get_recognizers(self, language, entities=None,
                         all_fields=False):
@@ -76,7 +77,9 @@ class RecognizerRegistry:
             raise ValueError("No entities provided")
 
         all_possible_recognizers = self.recognizers.copy()
+        logging.info("Getting custom recognizers")
         custom_recognizers = self.get_custom_recognizers()
+        logging.info("Done - getting custom recognizers")
         all_possible_recognizers.extend(custom_recognizers)
         logging.info("Found %d (total) custom recognizers",
                      len(custom_recognizers))
@@ -85,12 +88,14 @@ class RecognizerRegistry:
         to_return = []
         if all_fields:
             to_return = [rec for rec in all_possible_recognizers if
-                         language == rec.supported_language]
+                         language == rec.supported_language
+                         or rec.supported_language == 'all']
         else:
             for entity in entities:
                 subset = [rec for rec in all_possible_recognizers if
                           entity in rec.supported_entities
-                          and language == rec.supported_language]
+                          and (language == rec.supported_language
+                               or rec.supported_language == 'all')]
 
                 if not subset:
                     logging.warning("Entity %s doesn't have the corresponding"

@@ -17,7 +17,7 @@ def test_valid_us_ssn_very_weak_match():
     assert_result_within_score_range(
         results[0], entities[0], 0, 10, 0, 0.3)
 
-    assert results[0].score != 0
+    assert results[1].score != 0
     assert_result_within_score_range(
         results[1], entities[0], 11, 21, 0, 0.3)
 

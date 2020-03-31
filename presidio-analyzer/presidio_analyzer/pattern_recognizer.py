@@ -16,7 +16,7 @@ except ImportError:
 class PatternRecognizer(LocalRecognizer):
 
     def __init__(self, supported_entity, name=None,
-                 supported_language='en', patterns=None,
+                 supported_language='all', patterns=None,
                  black_list=None, context=None, version="0.0.1"):
         """
             :param patterns: the list of patterns to detect

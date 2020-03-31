@@ -1,6 +1,7 @@
 from .credit_card_recognizer import CreditCardRecognizer
 from .crypto_recognizer import CryptoRecognizer
 from .domain_recognizer import DomainRecognizer
+from .il_domain_recognizer import ILDomainRecognizer
 from .email_recognizer import EmailRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
@@ -13,10 +14,12 @@ from .us_itin_recognizer import UsItinRecognizer
 from .us_passport_recognizer import UsPassportRecognizer
 from .us_phone_recognizer import UsPhoneRecognizer
 from .us_ssn_recognizer import UsSsnRecognizer
+from .il_id_recognizer import ILIDRecognizer
 
 __all__ = ["CreditCardRecognizer",
            "CryptoRecognizer",
            "DomainRecognizer",
+           "ILDomainRecognizer",
            "EmailRecognizer",
            "IbanRecognizer",
            "IpRecognizer",
@@ -28,4 +31,5 @@ __all__ = ["CreditCardRecognizer",
            "UsItinRecognizer",
            "UsPassportRecognizer",
            "UsPhoneRecognizer",
-           "UsSsnRecognizer"]
+           "UsSsnRecognizer",
+           "ILIDRecognizer"]
