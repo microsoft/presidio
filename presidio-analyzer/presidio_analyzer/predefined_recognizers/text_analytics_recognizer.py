@@ -53,6 +53,11 @@ class TextAnalyticsRecognizer(RemoteRecognizer):
 
     def convert_to_analyze_response(self, json_str):
         result = []
+
+        # None means the recognizer is disabled.
+        if json_str is None:
+            return result
+
         svc_response = json.loads(json_str)
         self.logger.debug(svc_response)
         if not svc_response['documents']:

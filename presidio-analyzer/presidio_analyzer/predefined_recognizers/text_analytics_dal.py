@@ -9,14 +9,17 @@ class TextAnalyticsDal:
         self.endpoint = os.environ.get('TEXT_ANALYTICS_ENDPOINT')
         self.key = os.environ.get('TEXT_ANALYTICS_KEY')
         self.api_path = os.environ.get('TEXT_ANALYTICS_API_PATH')
+        self.failed_to_load = False
 
         if not self.endpoint:
+            self.failed_to_load = True
             self.logger.error('TextAnalyticsRecognizer cannot'
                               ' work without an endpoint.')
             if not self.tolerate_errors:
                 raise ValueError('TextAnalyticsRecognizer cannot'
                                  ' work without an endpoint.')
         if not self.key:
+            self.failed_to_load = True
             self.logger.error('TextAnalyticsRecognizer cannot'
                               ' work without a key.')
             if not self.tolerate_errors:
@@ -40,6 +43,9 @@ class TextAnalyticsDal:
         :param text: The text to be analyzed
         :return: json string
         """
+        if self.failed_to_load:
+            return None
+
         body = {
             "Documents": [
                 {
