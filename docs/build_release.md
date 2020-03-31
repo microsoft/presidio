@@ -7,21 +7,28 @@ The project currently supports [Azure Pipelines](https://azure.microsoft.com/en-
 
 Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops) allows for code reuse using [YAML Schema](https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema).
 
-***[Presidio CI Pipeline](../pipelines/CI-presidio.yaml)*** - is the pipeline which is used to build, test and  publish persidio services images.
+***[Presidio CI Pipeline](../pipelines/CI-presidio.yaml)*** - is the pipeline which is used to parameterize the template with variables.
 
-***[Presidio Build and Publish template](../pipelines/templates/build-test-publish.yaml)*** - is the stages-template which contains the build, test and publish logic of presidio. There are four stages for the build:
+***[Presidio Build and Publish template](../pipelines/templates/build-test-publish.yaml)*** - is the stages-template which contains the pull request validation, CI build, test and publish logic of presidio. The following stages are implemented:
 
-- *Security Analysis* - Detect security vulnerabilities in code by running Credscan.
+- *Pull Request*
 
-- *Setup* - This stage verifies if a dependency container stage is required (based on a set of known files). If one of the triggering files are changed, the python and golang deps containers will be rebuilt in the following stages.
+  - *Security Analysis* - Detect security vulnerabilities in code by running Credscan.
 
-- *Python* - Build, test and publish python service. If the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the python service. this stage tags all containers with the build id. For CI triggered builds the containers are also pushed to a registry.
+  - *Pull Request* - Runs the Makefile instructions which are provided in the [development](./development.md) guide on a build agent. This does not
+  require any service principal or logins which facilitates easier contributions from extneral repos as well as validates the stability of the local environment build instructions provided in the guide.
 
-- *Golang* - Build, test and publish, in parallel, golang service. If the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the golang services. this stage tags all containers with the build id. For CI triggered builds the containers are also pushed to a registry.
+- *CI*
 
-- *Functional Tests* - pull and run presidio services and run functional tests on the presidio api.
+  - *Setup* - This stage verifies if a dependency container stage is required (based on a set of known files). If one of the triggering files are changed, the python and golang deps containers will be rebuilt in the following stages.
 
-- *Publish Artifacts* - For non PR builds, this stage will pull, tag and push all the generated conatiners. for master branch the containers will be tagged as 'latest'. for other branches the tag will hold the branch name.
+  - *Python* - Build, test and publish python service. If the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the python service. this stage tags all containers with the build id. For CI triggered builds the containers are also pushed to a registry.
+
+  - *Golang* - Build, test and publish, in parallel, golang service. If the dependency containers are built in a PR/CI execution, they are labeld with the build id, and used later as base containers when building the golang services. this stage tags all containers with the build id. For CI triggered builds the containers are also pushed to a registry.
+
+  - *Functional Tests* - pull and run presidio services and run functional tests on the presidio api.
+
+  - *Publish Artifacts* - For non PR builds, this stage will pull, tag and push all the generated conatiners. for master branch the containers will be tagged as 'latest'. for other branches the tag will hold the branch name.
 
 ### Variables used by the pipeline
 
