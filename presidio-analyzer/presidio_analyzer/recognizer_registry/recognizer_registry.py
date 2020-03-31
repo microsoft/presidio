@@ -7,7 +7,7 @@ from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, \
     UsBankRecognizer, UsLicenseRecognizer, \
     UsItinRecognizer, UsPassportRecognizer, UsPhoneRecognizer, \
-    UsSsnRecognizer, SgFinRecognizer, text_analytics_recognizer
+    UsSsnRecognizer, SgFinRecognizer, TextAnalyticsRecognizer
 
 
 class RecognizerRegistry:
@@ -16,7 +16,7 @@ class RecognizerRegistry:
     """
 
     def __init__(self, recognizer_store_api=RecognizerStoreApi(),
-                 recognizers=None):
+                 recognizers=None, enable_text_analytics_recognizer=False):
         """
         :param recognizer_store_api: An instance of a class that has custom
                recognizers management functionallity (insert, update, get,
@@ -26,6 +26,7 @@ class RecognizerRegistry:
                available in addition to the predefined recognizers and the
                custom recognizers
         """
+
         if recognizers:
             self.recognizers = recognizers
         else:
@@ -40,6 +41,8 @@ class RecognizerRegistry:
         self.loaded_timestamp = None
         self.loaded_custom_recognizers = []
         self.store_api = recognizer_store_api
+        self.enable_text_analytics_recognizer = \
+            enable_text_analytics_recognizer
 
     def load_predefined_recognizers(self):
         #   TODO: Change the code to dynamic loading -
@@ -56,8 +59,10 @@ class RecognizerRegistry:
             UsBankRecognizer(), UsLicenseRecognizer(),
             UsItinRecognizer(), UsPassportRecognizer(),
             UsPhoneRecognizer(), UsSsnRecognizer(),
-            SpacyRecognizer(), SgFinRecognizer(),
-            text_analytics_recognizer.TextAnalyticsRecognizer()])
+            SpacyRecognizer(), SgFinRecognizer()])
+
+        if self.enable_text_analytics_recognizer:
+            self.recognizers.append(TextAnalyticsRecognizer())
 
     def get_recognizers(self, language, entities=None,
                         all_fields=False):

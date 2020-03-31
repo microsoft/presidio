@@ -40,6 +40,8 @@ spec:
             value:  {{ template "presidio.recognizersstore.address" . }} 
           - name: GRPC_PORT
             value: {{ .Values.analyzer.service.internalPort | quote }}
+          - name: ENABLE_TEXT_ANALYTICS_RECOGNIZER
+            value: {{ .Values.analyzer.enableTextAnalyticsRecognizer }}
           - name: TEXT_ANALYTICS_KEY
             value: {{ .Values.analyzer.textAnalyticsKey }}
           - name: TEXT_ANALYTICS_ENDPOINT

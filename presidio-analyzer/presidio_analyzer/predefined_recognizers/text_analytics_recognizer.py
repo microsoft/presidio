@@ -54,7 +54,7 @@ class TextAnalyticsRecognizer(RemoteRecognizer):
     def convert_to_analyze_response(self, json_str):
         result = []
 
-        # None means the recognizer is disabled.
+        # None means the recognizer failed to load.
         if json_str is None:
             return result
 

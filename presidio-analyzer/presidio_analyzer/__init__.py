@@ -16,9 +16,10 @@ from presidio_analyzer.remote_recognizer import RemoteRecognizer
 from presidio_analyzer.recognizer_registry.recognizer_registry \
     import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
-
+from presidio_analyzer.recognizer_registry.recognizer_registry \
+    import RecognizerStoreApi
 
 __all__ = ['PresidioLogger', 'AnalysisExplanation', 'Pattern',
            'EntityRecognizer', 'LocalRecognizer', 'RecognizerResult',
            'PatternRecognizer', 'RemoteRecognizer', 'RecognizerRegistry',
-           'AnalyzerEngine']
+           'AnalyzerEngine', 'RecognizerStoreApi']

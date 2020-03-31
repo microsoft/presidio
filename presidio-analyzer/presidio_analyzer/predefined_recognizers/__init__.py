@@ -13,6 +13,7 @@ from .us_itin_recognizer import UsItinRecognizer
 from .us_passport_recognizer import UsPassportRecognizer
 from .us_phone_recognizer import UsPhoneRecognizer
 from .us_ssn_recognizer import UsSsnRecognizer
+from .text_analytics_recognizer import TextAnalyticsRecognizer
 
 __all__ = ["CreditCardRecognizer",
            "CryptoRecognizer",
@@ -28,4 +29,5 @@ __all__ = ["CreditCardRecognizer",
            "UsItinRecognizer",
            "UsPassportRecognizer",
            "UsPhoneRecognizer",
-           "UsSsnRecognizer"]
+           "UsSsnRecognizer",
+           "TextAnalyticsRecognizer"]

@@ -16,10 +16,11 @@ from knack.help_files import helps
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from analyzer_engine import AnalyzerEngine # noqa
-from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
-from nlp_engine.spacy_nlp_engine import SpacyNlpEngine # noqa
-from presidio_logger import PresidioLogger # noqa
+from analyzer_engine import AnalyzerEngine  # noqa
+from recognizer_registry.recognizer_registry \
+    import RecognizerRegistry, RecognizerStoreApi  # noqa
+from nlp_engine.spacy_nlp_engine import SpacyNlpEngine  # noqa
+from presidio_logger import PresidioLogger  # noqa
 
 logging.getLogger().setLevel("INFO")
 
@@ -68,7 +69,15 @@ def serve_command_handler(enable_trace_pii,
     logger.info("GRPC started")
 
     logger.info("Creating RecognizerRegistry")
-    registry = RecognizerRegistry()
+    enable_text_analytics_recognizer = \
+        os.environ.get('ENABLE_TEXT_ANALYTICS_RECOGNIZER')
+    if enable_text_analytics_recognizer is not None \
+            and (enable_text_analytics_recognizer != ''
+                 or enable_text_analytics_recognizer == 'True'
+                 or enable_text_analytics_recognizer == '1'):
+        registry = RecognizerRegistry(RecognizerStoreApi(), None, True)
+    else:
+        registry = RecognizerRegistry()
     logger.info("RecognizerRegistry created")
     logger.info("Creating SpacyNlpEngine")
     nlp_engine = SpacyNlpEngine()
@@ -102,7 +111,6 @@ def serve_command_handler(enable_trace_pii,
 
 
 def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
-
     if env_grpc_port:
         port = os.environ.get('GRPC_PORT')
         if port is not None or port != '':
