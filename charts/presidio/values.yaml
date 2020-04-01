@@ -38,7 +38,7 @@ api:
 analyzer:
   name: presidio-analyzer
   imagePullPolicy: Always
-  enableTextAnalyticsRecognizer: 1 # 1=enabled, 0=disabled
+  enableTextAnalyticsRecognizer: 0 # 1=enabled, 0=disabled
   textAnalyticsKey: <key>
   textAnalyticsEndpoint: <endpoint>
   textAnalyticsApiPath: /text/analytics/v3.0-preview.1/entities/recognition/pii

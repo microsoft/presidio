@@ -22,4 +22,4 @@ from presidio_analyzer.recognizer_registry.recognizer_registry \
 __all__ = ['PresidioLogger', 'AnalysisExplanation', 'Pattern',
            'EntityRecognizer', 'LocalRecognizer', 'RecognizerResult',
            'PatternRecognizer', 'RemoteRecognizer', 'RecognizerRegistry',
-           'AnalyzerEngine', 'RecognizerStoreApi']
+           'AnalyzerEngine']

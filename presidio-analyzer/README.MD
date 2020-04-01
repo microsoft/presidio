@@ -42,7 +42,7 @@ b. Reference and add the new class to the `RecognizerRegistry` module, in the `l
 ## Using Azure Text Analytics to detect PII data
 
 The [Azure Text Analytics service](https://azure.microsoft.com/en-us/services/cognitive-services/text-analytics/)
-provides with some PII detection features in its [3.0-preview version](https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking?tabs=version-3#named-entity-recognition-versions-and-features) (as of February 2020).
+offers new PII detection features in its [3.0-preview version](https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking?tabs=version-3#named-entity-recognition-versions-and-features) (as of April 2020).
 
 Presidio comes with a built-in `TextAnalyticsRecognizer` that integrates with the Azure Text Analytics service
 if you want to leverage these capabilities.
@@ -52,7 +52,10 @@ When you choose to use this recognizer, please set the following environment var
 $ TEXT_ANALYTICS_KEY=<your-text-analytics-key>
 $ TEXT_ANALYTICS_ENDPOINT=<your-text-analytics-endpoint>.cognitiveservices.azure.com
 $ TEXT_ANALYTICS_API_PATH=/text/analytics/v3.0-preview.1/entities/recognition/pii
+$ ENABLE_TEXT_ANALYTICS_RECOGNIZER=1
 ```
+The `ENABLE_TEXT_ANALYTICS_RECOGNIZER` is optional. To disable Text Analytics you can simply not set this variable, or set it to `0`.
+
 To get the Text Analytics endpoint and key, go to your service in the Azure Portal to find them in the
 Quickstart section.
 If you don't have a Text Analytics service available, you can [create one here](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics).

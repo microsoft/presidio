@@ -4,6 +4,15 @@ import os
 
 class TextAnalyticsDal:
     def __init__(self, logger, tolerate_errors=True):
+        """
+        Create a new instance of TextAnalyticsDal.
+
+        :param logger: A logger.
+        :param tolerate_errors: When set to True (default),
+        the analyzer will complete initialization.
+        When False, exception is thrown if required data
+        is missing.
+        """
         self.logger = logger
         self.tolerate_errors = tolerate_errors
         self.endpoint = os.environ.get('TEXT_ANALYTICS_ENDPOINT')

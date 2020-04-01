@@ -68,9 +68,10 @@ def serve_command_handler(enable_trace_pii,
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     logger.info("GRPC started")
 
-    logger.info("Creating RecognizerRegistry")
     enable_text_analytics_recognizer = \
         os.environ.get('ENABLE_TEXT_ANALYTICS_RECOGNIZER')
+
+    logger.info("Creating RecognizerRegistry")
     if enable_text_analytics_recognizer is not None \
             and (enable_text_analytics_recognizer != ''
                  or enable_text_analytics_recognizer == 'True'
