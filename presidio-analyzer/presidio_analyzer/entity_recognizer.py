@@ -128,8 +128,10 @@ class EntityRecognizer:
 
             word = text[result.start:result.end]
 
-            # Todo: https://dev.azure.com/csedevil/Presidio-internal/_workitems/edit/1856
-            # Context support for unsupported languages doesnt work (due to tokenization)
+            # Todo:
+            # dev.azure.com/csedevil/Presidio-internal/_workitems/edit/1856
+            # Context support for unsupported languages doesnt work
+            # (due to tokenization)
             surrounding_words = self.__extract_surrounding_words(
                 nlp_artifacts=nlp_artifacts,
                 word=word,
