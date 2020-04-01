@@ -17,7 +17,7 @@ VERSION   			?= ${GIT_TAG}
 PRESIDIO_LABEL 		:= $(if $(PRESIDIO_LABEL),$(PRESIDIO_LABEL),$(VERSION))
 PRESIDIO_DEPS_LABEL := $(if $(PRESIDIO_DEPS_LABEL),$(PRESIDIO_DEPS_LABEL),'latest')
 CURRENT_DIR		 	:= $(shell pwd)
-LDFLAGS   			+= -X github.com/Microsoft/presidio/pkg/version.Version=$(VERSION)
+LDFLAGS   			+= -X github.com/microsoft/presidio/pkg/version.Version=$(VERSION)
 TEST_IN_CONTAINER	:=
 CX_OSES 			= linux windows darwin
 CX_ARCHS 			= amd64
@@ -41,7 +41,8 @@ docker-build-deps:
 .PHONY: docker-build-base
 docker-build-base:
 	-docker pull $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) || echo "\nCould not pull shared base Go image from registry, building locally. If you planned to build locally, the previous error message can be ignored\n"
-	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --cache-from=$(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_LABEL) -f Dockerfile.golang.base .
+	docker build --build-arg REGISTRY=$(DOCKER_REGISTRY) --cache-from=$(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_BRANCH_LABEL) --build-arg PRESIDIO_DEPS_LABEL=$(PRESIDIO_DEPS_LABEL) -t $(DOCKER_REGISTRY)/$(GOLANG_BASE) -f Dockerfile.golang.base .
+	docker tag $(DOCKER_REGISTRY)/$(GOLANG_BASE) $(DOCKER_REGISTRY)/$(GOLANG_BASE):$(PRESIDIO_LABEL)
 
 
 # To use docker-build, you need to have Docker installed and configured. You should also set
@@ -151,12 +152,11 @@ python-test: python-test-unit
 # Unit tests. Local only.
 .PHONY: python-test-unit
 python-test-unit:
-	cd presidio-analyzer
-	pytest --log-cli-level=0
+	cd presidio-analyzer && pipenv run pytest --log-cli-level=0 -v
 
 # All non-functional go tests
 .PHONY: go-test
-go-test: go-test-style
+# go-test: go-test-style # opting this out until fixing bug https://github.com/microsoft/presidio/issues/262
 go-test: go-test-unit
 # Unit tests. Local only.
 .PHONY: go-test-unit
@@ -197,7 +197,7 @@ test-functional-no-build:
 	sleep 10
 
 ifeq ($(TEST_IN_CONTAINER),)
-	go test --tags functional ./tests -count=1
+	go test --tags functional ./functional-tests -count=1
 else
 	-mkdir test-results
 	docker run --rm -v "$(CURRENT_DIR)/test-results":/test-result-pipe  --name presidio-tests  --network host $(DOCKER_REGISTRY)/functional-tests:$(PRESIDIO_LABEL)
@@ -221,7 +221,7 @@ go-test-style:
 
 .PHONY: go-format
 go-format:
-	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/Microsoft/presidio
+	go list -f '{{.Dir}}' ./... | xargs goimports -w -local github.com/microsoft/presidio
 
 HAS_GOMETALINTER := $(shell command -v gometalinter 2>/dev/null)
 HAS_GIT          := $(shell command -v git 2>/dev/null)
