@@ -14,11 +14,13 @@ from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
 
+from presidio_analyzer.recognizer_registry import RecognizerStoreApi
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from analyzer_engine import AnalyzerEngine  # noqa
 from recognizer_registry.recognizer_registry \
-    import RecognizerRegistry, RecognizerStoreApi  # noqa
+    import RecognizerRegistry  # noqa
 from nlp_engine.spacy_nlp_engine import SpacyNlpEngine  # noqa
 from presidio_logger import PresidioLogger  # noqa
 
@@ -68,17 +70,17 @@ def serve_command_handler(enable_trace_pii,
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     logger.info("GRPC started")
 
+    text_analytics_env_var = os.environ.get('ENABLE_TEXT_ANALYTICS_RECOGNIZER')
     enable_text_analytics_recognizer = \
-        os.environ.get('ENABLE_TEXT_ANALYTICS_RECOGNIZER')
+        text_analytics_env_var is not None \
+        and (text_analytics_env_var in ('True', '1'))
 
     logger.info("Creating RecognizerRegistry")
-    if enable_text_analytics_recognizer is not None \
-            and (enable_text_analytics_recognizer != ''
-                 or enable_text_analytics_recognizer == 'True'
-                 or enable_text_analytics_recognizer == '1'):
-        registry = RecognizerRegistry(RecognizerStoreApi(), None, True)
-    else:
-        registry = RecognizerRegistry()
+    registry = \
+        RecognizerRegistry(
+            recognizer_store_api=RecognizerStoreApi(),
+            recognizers=None,
+            enable_text_analytics_recognizer=enable_text_analytics_recognizer)
     logger.info("RecognizerRegistry created")
     logger.info("Creating SpacyNlpEngine")
     nlp_engine = SpacyNlpEngine()
