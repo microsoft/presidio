@@ -8,7 +8,7 @@ import (
 	// import mysql driver
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
-	// import postegrsql driver
+	// import postgresql driver
 	_ "github.com/lib/pq"
 
 	types "github.com/Microsoft/presidio-genproto/golang"
