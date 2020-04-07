@@ -201,7 +201,7 @@ stages:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
 
-      - job: BuildTest
+      - job: ContainerBuildTest
         displayName: Build Containers and Integration Test
         dependsOn: []
         steps:
