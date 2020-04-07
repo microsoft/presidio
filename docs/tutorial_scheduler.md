@@ -1,6 +1,6 @@
 # Monitor your data with periodic scans
 
-When running Presidio on a Kubernetes cluster you can set a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) to scan your data periodicly.
+When running Presidio on a Kubernetes cluster you can set a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) to scan your data periodically.
 You will need to configure the scan's input and the destination to which the analyzed and anonymized results will be stored.
 
 * A detailed design of the Ingress Control and the API Service can be found  [here](./design.md).
@@ -14,7 +14,7 @@ You will need to configure the scan's input and the destination to which the ana
 
 ## Job Configuration
 
-To schedule a periodic data scan create the following json.  
+To schedule a periodic data scan create the following json.
 **Note:** Example is given using the [HTTPie](https://httpie.org/) syntax.
 
 ```json
@@ -113,12 +113,12 @@ echo -n '{
 
 ### 1. Analyzer Template
 
-Defines which fields the input should be scanned for.  
+Defines which fields the input should be scanned for.
 A list of all the supported fields can be found [here](./field_types.md).
 
 ### 2. Anoynimzer Template
 
-Defines the anonymization method that should be executed per each field.  
+Defines the anonymization method that should be executed per each field.
 If not provided, anonymization will not be done.
 
 ### 3. Scanner Template
@@ -135,11 +135,11 @@ Use the following [configuration](#input-and-output-configurations) to define th
 
 ### 4. Datasink Template
 
-Defines the job's output destination.  
+Defines the job's output destination.
 
 #### Analyzer and Anonymizer Datasink
 
-Analyzer and anonymizer data sink arrays defines the output destination of analyze and anonymize results respectively.  
+Analyzer and anonymizer data sink arrays defines the output destination of analyze and anonymize results respectively.
 Use the following [configuration](#Input-&-Output-Configuration) defending on the desired output.
 
 #### Supported Output Destinations
@@ -185,8 +185,8 @@ For Azure Blob Storage, use the following configuration:
 
 ### Databases configuration
 
-We are using [Xorm](http://xorm.io/docs/) library for DB operations.  
-Please refer to Xorm's documentation for additional information regarding the DB configuration. 
+We are using [Xorm](http://xorm.io/docs/) library for DB operations.
+Please refer to Xorm's documentation for additional information regarding the DB configuration.
 
 #### Connection strings
 
@@ -204,7 +204,7 @@ Please refer to Xorm's documentation for additional information regarding the DB
 
 - SQL Server
 
-``` 
+```
 odbc:server=<serverName>.database.windows.net;user id=<userId>;password=<password>;port=1433;database=<databaseName>
 ```
 
@@ -237,6 +237,6 @@ For Kafka use the following configuration:
 
 ### Recurrence Configuration
 
-Set the '\<recurrencePeriod>' according to the execution [interval](https://crontab.guru/every-1-minute) you'd like.  
+Set the '\<recurrencePeriod>' according to the execution [interval](https://crontab.guru/every-1-minute) you'd like.
 **Parallelism is not supported!** A new job won't be triggered until the previous job is finished.
 

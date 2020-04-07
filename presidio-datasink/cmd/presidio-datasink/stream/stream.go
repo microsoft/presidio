@@ -18,7 +18,7 @@ type streamDatasink struct {
 	stream stream.Stream
 }
 
-// New returns new instance of DB Data writer
+// New returns new instance of stream Data writer
 func New(datasink *types.Datasink) datasink.Datasink {
 	var stream stream.Stream
 
