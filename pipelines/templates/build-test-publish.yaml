@@ -197,15 +197,53 @@ stages:
                 # run make file commands
                 make build
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
+            env:
+              PRESIDIO_DEPS_LABEL: pr
+              DOCKER_REGISTRY: presidio
 
-                # remove pipenv environment to save place on agent.
-                # it is not used in the next steps and when skipping this
-                # build will fail due to agent disk capacity.
-                pipenv --rm	
-                cd presidio-analyzer	
-                pipenv --rm	
-                cd ../
+      - job: BuildTest
+        displayName: Build Containers and Integration Test
+        dependsOn: []
+        steps:
+          - task: UsePythonVersion@0
+            displayName: 'Use Python $(PYTHON.VERSION)'
+            inputs:
+              versionSpec: '$(PYTHON.VERSION)'
+          - template: ./golang-environment.yaml
+          - task: Bash@3  
+            displayName: 'Install python pre requisites'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
 
+                # Azure pipelines test publish
+                pipenv install --dev --skip-lock pytest-azurepipelines
+          - task: Bash@3  
+            displayName: 'Install golang pre requisites'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
+
+                # Only dep v 0.5.0 works. 
+                # download specific version
+                DEP_VERSION="0.5.0"
+                curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
+                chmod +x $GOPATH/bin/dep
+                dep ensure
+
+          # Do not change the implementation of this stage without changing the steps in docs/development.md
+          - task: Bash@3
+            displayName: 'Run presidio makefile'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
+              
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
                 make docker-build DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL PRESDIO_LABEL=$PRESIDIO_DEPS_LABEL
                 make test-functional DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
