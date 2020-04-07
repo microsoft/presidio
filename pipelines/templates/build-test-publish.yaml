@@ -187,7 +187,7 @@ stages:
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
-            displayName: 'Run presidio makefile'
+            displayName: 'Presidio Makefile - Build lint and Unit tests'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
@@ -227,7 +227,7 @@ stages:
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
-            displayName: 'Run presidio makefile'
+            displayName: 'Presidio Makefile - Container build and functional tests'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
