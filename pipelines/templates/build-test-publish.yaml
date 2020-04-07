@@ -211,16 +211,6 @@ stages:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
           - task: Bash@3  
-            displayName: 'Install python pre requisites'
-            inputs:
-              targetType: 'inline'
-              workingDirectory: '$(MODULEPATH)'
-              script: |
-                set -eux  # fail on error
-
-                # Azure pipelines test publish
-                pipenv install --dev --skip-lock pytest-azurepipelines
-          - task: Bash@3  
             displayName: 'Install golang pre requisites'
             inputs:
               targetType: 'inline'
