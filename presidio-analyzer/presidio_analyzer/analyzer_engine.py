@@ -1,9 +1,9 @@
 import json
 import uuid
 
-import analyze_pb2
-import analyze_pb2_grpc
-import common_pb2
+from protobuf_models import analyze_pb2
+from protobuf_models import analyze_pb2_grpc
+from protobuf_models import common_pb2
 
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.app_tracer import AppTracer

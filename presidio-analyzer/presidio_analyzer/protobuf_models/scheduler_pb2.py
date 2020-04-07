@@ -13,9 +13,9 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import stream_pb2 as stream__pb2
-import scan_pb2 as scan__pb2
-import template_pb2 as template__pb2
+from . import stream_pb2 as stream__pb2
+from . import scan_pb2 as scan__pb2
+from . import template_pb2 as template__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

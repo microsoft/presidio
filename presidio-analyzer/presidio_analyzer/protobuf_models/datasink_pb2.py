@@ -14,9 +14,9 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import common_pb2 as common__pb2
-import template_pb2 as template__pb2
-import anonymize_pb2 as anonymize__pb2
+from . import common_pb2 as common__pb2
+from . import template_pb2 as template__pb2
+from . import anonymize_pb2 as anonymize__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
