@@ -37,7 +37,7 @@ func (datasink *cloudStorageDatasink) Init() {
 		log.Fatal(err.Error())
 	}
 
-	// Get container/bucker reference
+	// Get container/bucket reference
 	container, err := storageAPI.CreateContainer(containerName)
 	if err != nil {
 		log.Fatal(err.Error())

@@ -10,6 +10,6 @@ type Datasink interface {
 	// WriteAnalyzeResults write the analyzer results to the specified datasink
 	WriteAnalyzeResults(results []*types.AnalyzeResult, path string) error
 
-	// WriteAnonymizeResults write the analyzer results to the specified datasink
+	// WriteAnonymizeResults write the anonymized results to the specified datasink
 	WriteAnonymizeResults(result *types.AnonymizeResponse, path string) error
 }
