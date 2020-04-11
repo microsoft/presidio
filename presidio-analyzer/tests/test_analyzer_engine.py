@@ -511,6 +511,7 @@ class TestAnalyzerEngine(TestCase):
         pattern = Pattern("rocket pattern", r'\W*(rocket)\W*', 0.8)
         pattern_recognizer = PatternRecognizer("ROCKET",
                                                name="Rocket recognizer",
+                                               supported_language="en",
                                                patterns=[pattern])
 
         recognizers_store_api_mock = RecognizerStoreApiMock()
@@ -524,8 +525,8 @@ class TestAnalyzerEngine(TestCase):
         response = analyze_engine.GetAllRecognizers(request, None)
         # there are 15 predefined recognizers and one custom
         assert len(response) == 16
-        rocket_recognizer = [recognizer for recognizer in response if recognizer.name == "Rocket recognizer" 
-            and recognizer.entities == ["ROCKET"] 
+        rocket_recognizer = [recognizer for recognizer in response if recognizer.name == "Rocket recognizer"
+            and recognizer.entities == ["ROCKET"]
             and recognizer.language == "en"]
         assert len(rocket_recognizer) == 1
 
@@ -536,7 +537,7 @@ class TestAnalyzerEngine(TestCase):
                                                patterns=[pattern])
 
         recognizers_store_api_mock = RecognizerStoreApiMock()
-        
+
         analyze_engine = AnalyzerEngine(registry=
             MockRecognizerRegistry(
                 recognizers_store_api_mock),
@@ -567,5 +568,9 @@ class TestAnalyzerEngine(TestCase):
                 nlp_engine=MockNlpEngine())
         request = RecognizersAllRequest(language="ru")
         response = analyze_engine.GetAllRecognizers(request, None)
+
+        # remove all multi language recognizers
+        response = [recognizer for recognizer in response if recognizer.language == "ru"]
+
         # there is only 1 mocked russian recognizer
         assert len(response) == 1
