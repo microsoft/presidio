@@ -569,8 +569,5 @@ class TestAnalyzerEngine(TestCase):
         request = RecognizersAllRequest(language="ru")
         response = analyze_engine.GetAllRecognizers(request, None)
 
-        # remove all multi language recognizers
-        response = [recognizer for recognizer in response if recognizer.language == "ru"]
-
         # there is only 1 mocked russian recognizer
         assert len(response) == 1
