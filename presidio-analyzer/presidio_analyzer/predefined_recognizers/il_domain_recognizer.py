@@ -1,10 +1,11 @@
 import tldextract
 
 from presidio_analyzer import Pattern, PatternRecognizer
-
-# Note: this recognizer is very simple and act mainly as an example on how to add new language support
-
 # pylint: disable=line-too-long
+
+# Note: this recognizer is very simple and act mainly as an
+# example on how to add new language support
+
 IL_DOMAIN_REGEX = u'(www.)?[\u05D0-\u05EA]{2,63}.co.il'  # noqa: E501'  # noqa: E501
 CONTEXT = ["domain", "ip"]
 

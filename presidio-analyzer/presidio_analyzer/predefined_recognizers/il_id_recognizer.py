@@ -2,7 +2,8 @@ from presidio_analyzer import Pattern
 from presidio_analyzer import PatternRecognizer
 # pylint: disable=line-too-long,abstract-method
 
-# Note: this recognizer is very simple and act mainly as an example on how to add new language support
+# Note: this recognizer is very simple and act mainly as an
+# example on how to add new language support
 
 ISRAELI_ID_REGEX = r'\b[0-9]{7,10}\b'
 
