@@ -1,8 +1,8 @@
 # pylint: disable=wrong-import-position,wrong-import-order
 import logging
 import grpc
-import analyze_pb2
-import analyze_pb2_grpc
+from protobuf_models import analyze_pb2
+from protobuf_models import analyze_pb2_grpc
 from concurrent import futures
 import os
 import sys
