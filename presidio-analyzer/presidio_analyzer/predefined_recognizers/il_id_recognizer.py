@@ -7,7 +7,8 @@ from presidio_analyzer import PatternRecognizer
 
 ISRAELI_ID_REGEX = r'\b[0-9]{7,10}\b'
 
-# Known issue (https://github.com/microsoft/presidio/issues/303) fix context for unsupported languages
+# Known issue (https://github.com/microsoft/presidio/issues/303)
+# fix context for unsupported languages
 CONTEXT = [
     "תעודה",
     "זהות",
