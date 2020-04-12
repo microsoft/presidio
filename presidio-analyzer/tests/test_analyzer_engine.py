@@ -6,8 +6,8 @@ import pytest
 from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
     RecognizerResult, RecognizerRegistry, AnalysisExplanation
 from presidio_analyzer import PresidioLogger
-from presidio_analyzer.analyze_pb2 import AnalyzeRequest
-from presidio_analyzer.analyze_pb2 import RecognizersAllRequest
+from presidio_analyzer.protobuf_models.analyze_pb2 import AnalyzeRequest, \
+    RecognizersAllRequest
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
