@@ -1,6 +1,6 @@
 # Recognizers development - best practices
 
-Recognizers are the main building blocks in Presidio. Each recognizer is in charge of detecting one or more entities in one or more languages. 
+Recognizers are the main building blocks in Presidio. Each recognizer is in charge of detecting one or more entities in one or more languages.
 Recognizers define the logic for detection, as well as the confidence a prediction receives and a list of words to be used when context is leveraged.
 
 
@@ -16,6 +16,7 @@ Recognizers define the logic for detection, as well as the confidence a predicti
     - [Utilize Scikit-learn or similar](#utilize-scikit-learn-or-similar)
     - [Apply custom logic](#apply-custom-logic)
     - [Deep learning based methods](#deep-learning-based-methods)
+* [Supported Language](#Language-support)
 
 
 ## Implementation considerations
@@ -45,10 +46,10 @@ See [this documentation](docs/custom_fields.md#via-code) on adding a new recogni
 
 ### b. Pattern based
 
-Pattern based recognizers use regular expressions to identify entities in text. 
-This type of recognizer could be added by API or code. In case of contribution, 
+Pattern based recognizers use regular expressions to identify entities in text.
+This type of recognizer could be added by API or code. In case of contribution,
 a code-based recognizer is a better option as it gets added to the list of predefined recognizers already implemented in Presidio.
-See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code. 
+See [this documentation](docs/custom_fields.md#via-code) on adding a new recognizer via code.
 The [PatternRecognizer](presidio-analyzer/presidio_analyzer/pattern_recognizer.py) class should be extended.
 See some examples here:
   - [Credit card recognizer](presidio-analyzer/presidio_analyzer/predefined_recognizers/credit_card_recognizer.py)
@@ -56,34 +57,51 @@ See some examples here:
 
 ### c. Machine Learning (ML) based or rule-based
 
-Many PII entites are undetectable using naive approaches like black-lists or regular expressions. 
-In these cases, we would wish to utilize a Machine Learning model capabable of identifying entities in text, 
+Many PII entites are undetectable using naive approaches like black-lists or regular expressions.
+In these cases, we would wish to utilize a Machine Learning model capabable of identifying entities in text,
 or a rule-based recognizer. There are four options for adding ML and rule based recognizers:
 
 #### Utilize spaCy
 
-Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER). 
-As to not introduce new tools for no reason, it is recommended to first try to use spaCy over other tools. 
-spaCy provides descent results compared to state-of-the-art NER models, but with much better computational performance. 
-spaCy could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities. 
+Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER).
+As to not introduce new tools for no reason, it is recommended to first try to use spaCy over other tools.
+spaCy provides descent results compared to state-of-the-art NER models, but with much better computational performance.
+spaCy could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities.
 When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/presidio_analyzer/entity_recognizer.py) class.
 
 #### Utilize Scikit-learn or similar
 
-Scikit-learn models tend to be fast, but usually have lower accuracy than deep learning methods. However, for well defined problems with well defined features, they can provide very good results. 
-Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models... 
+Scikit-learn models tend to be fast, but usually have lower accuracy than deep learning methods. However, for well defined problems with well defined features, they can provide very good results.
+Since deep learning models tend to be complex and slow, we encourage you to first test a traditional approach (like Conditional Random Fields) before going directly into state-of-the-art *Sesame-Street* character based models...
 When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/presidio_analyzer/entity_recognizer.py) class.
-   
+
 #### Apply custom logic
 
-In some cases, rule-based logic provides the best way of detecting entities. 
+In some cases, rule-based logic provides the best way of detecting entities.
 The Presidio EntityRecognizer API allows you to use spaCy extracted features like lemmas, part of speech, dependencies and more to create your logic. When building such model, you would need to extend the [EntityRecognizer](presidio-analyzer/presidio_analyzer/entity_recognizer.py) class.
 
 #### Deep learning based methods
 
-Deep learning methods offer excellent detection rates for NER. 
-They are however more complex to train, deploy and tend to be slower than traditional approaches. 
+Deep learning methods offer excellent detection rates for NER.
+They are however more complex to train, deploy and tend to be slower than traditional approaches.
 When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/presidio_analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
+
+## Language support
+When developing a new recognizer, a supported language should be specified ('english' by default if not specified). When a request for analysis is made it includes the language as argument. Only recognizers supporting that language will be used (if any). A recognizer can support a single language only.
+
+### Supporting new languages
+To support more languages simply create a new recognizer and specify which language it supports
+
+see [Israeli web domains recognizer](../presidio-analyzer/presidio_analyzer/predefined_recognizers/il_domain_recognizer.py) as an example:
+
+```python
+def __init__(self):
+        patterns = [Pattern('IL Domain', IL_DOMAIN_REGEX, 0.5)]
+        super().__init__(supported_entity="IL_DOMAIN_NAME", patterns=patterns,
+                         context=CONTEXT, supported_language='he')
+```
+
+Important note: Presidio supports score improvment using surronding context words. However this mechanism is based on NLP tokenzier (SpaCy). In Presidio we are preloading only the English NLP model. This means that for languages other than English context support is not available.
 
 ### General note
 

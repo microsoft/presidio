@@ -30,7 +30,7 @@ Most of Presidio's services are written in Go. The `presidio-analyzer` module, i
     ```sh
     re2_version="2018-12-01"
     wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
-    mkdir re2 
+    mkdir re2
     tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
     cd re2 && make install
     ```
@@ -79,9 +79,9 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
     pylint analyzer
     pip freeze
     ```
-    
-- To use presidio-analyzer as a python library, see [Installing presidio-analyzer as a standalone Python package](https://github.com/microsoft/presidio/blob/master/docs/deploy.md#install-presidio-analyzer-as-a-python-package)
-- To add new recognizers in order to support new entities, see [Adding new custom recognizers](https://github.com/microsoft/presidio/blob/master/docs/custom_fields.md)
+
+- To use presidio-analyzer as a python library, see [Installing presidio-analyzer as a standalone Python package](./deploy.md#install-presidio-analyzer-as-a-python-package)
+- To add new recognizers in order to support new entities, see [Adding new custom recognizers](./custom_fields.md)
 
 
 ## Development notes <a name='dev-notes'></a>
