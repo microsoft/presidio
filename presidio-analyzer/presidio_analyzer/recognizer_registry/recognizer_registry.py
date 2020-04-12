@@ -88,14 +88,12 @@ class RecognizerRegistry:
         to_return = []
         if all_fields:
             to_return = [rec for rec in all_possible_recognizers if
-                         language == rec.supported_language
-                         or rec.supported_language == 'all']
+                         language == rec.supported_language]
         else:
             for entity in entities:
                 subset = [rec for rec in all_possible_recognizers if
                           entity in rec.supported_entities
-                          and (language == rec.supported_language
-                               or rec.supported_language == 'all')]
+                          and language == rec.supported_language]
 
                 if not subset:
                     logging.warning("Entity %s doesn't have the corresponding"

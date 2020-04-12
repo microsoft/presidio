@@ -97,8 +97,8 @@ class TestRecognizerRegistry(TestCase):
         registry = self.get_mock_recognizer_registry()
         registry.load_predefined_recognizers()
         recognizers = registry.get_recognizers(language='he', all_fields=True)
-        # 2 custom hebrew recognizer + 2 predefined hebrew + 14 predefined ('all')
-        assert len(recognizers) == 2 + 2 + 14
+        # 2 custom hebrew recognizer + 2 predefined hebrew
+        assert len(recognizers) == 2 + 2
 
     def test_get_recognizers_all_english(self):
         registry = self.get_mock_recognizer_registry()
