@@ -611,7 +611,7 @@ stages:
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Helm Artifact'
             inputs:
-              PathtoPublish: charts
+              targetPath: charts
               ArtifactName: dropchart  
           - task: Bash@3
             displayName: 'Tag golang base image'
