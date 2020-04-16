@@ -17,6 +17,7 @@ redis_internal:
 
 api:
   name: presidio-api
+  replicas: 1
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -35,9 +36,23 @@ api:
     enabled: false
     class: nginx
 
+# For any of the services below, a service mesh like Linkerd or Istio
+# is needed to properly balance traffic to more than 1 replica.
+# https://github.com/microsoft/presidio/issues/304
+
 analyzer:
   name: presidio-analyzer
+  replicas: 1
   imagePullPolicy: Always
+  container:
+    resources:
+      requests:
+        memory: "1500Mi"
+        cpu: "1500m"
+    resources:
+      limits:
+        memory: "3000Mi"
+        cpu: "2000m"
   service:
     type: ClusterIP
     externalPort: 3001
@@ -46,6 +61,7 @@ analyzer:
 
 anonymizer:
   name: presidio-anonymizer
+  replicas: 1
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -55,6 +71,7 @@ anonymizer:
 
 anonymizerimage:
   name: presidio-anonymizer-image
+  replicas: 1
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -64,6 +81,7 @@ anonymizerimage:
 
 ocr:
   name: presidio-ocr
+  replicas: 1
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -73,6 +91,7 @@ ocr:
 
 scheduler:
   name: presidio-scheduler
+  replicas: 1
   imagePullPolicy: Always
   service:
     type: ClusterIP
@@ -82,6 +101,11 @@ scheduler:
   
 recognizersstore:
   name: presidio-recognizers-store
+  # Currently the store uses a mutex to synchronize writes to the storage, 
+  # hence it relies on the fact that there is a single replica.
+  # Increasing the replicas count is allowed however mutual exclusion
+  # between the different replicas is not guaranteed...
+  replicas: 1
   imagePullPolicy: Always
   service:
     type: ClusterIP

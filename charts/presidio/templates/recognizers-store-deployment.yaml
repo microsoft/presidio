@@ -9,11 +9,7 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
-  # Currently the store uses a mutex to synchronize writes to the storage, 
-  # hence it relies on the fact that there is a single replica.
-  # Increasing the replicas count is allowed however mutual exclusion
-  # between the different replicas is not guaranteed...
-  replicas: 1
+  replicas: {{ .Values.recognizersstore.replicas }}
   selector:
     matchLabels:
       app: {{ $fullname }}
