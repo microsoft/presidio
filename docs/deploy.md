@@ -81,7 +81,7 @@ Follow the installation guide at the [Readme page](https://github.com/Microsoft/
    - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
    - [Istio](https://istio.io/docs/tasks/traffic-management/ingress/)
 
-   **Note** that presidio is not deployed with an ingress controller by default.  
+   **Note** that presidio is not deployed with an ingress controller by default.
    to change this behavior, deploy the helm chart with _api.ingress.enabled=true_ and specify they type of ingress controller to be used with _api.ingress.class=nginx_ (supported classes are: nginx, traefik or istio).
 
 4. Verify that Redis and Traefik/NGINX are installed correctly
@@ -94,6 +94,17 @@ Follow the installation guide at the [Readme page](https://github.com/Microsoft/
    ```
 
 6. For more options over the deployment, follow the [Development guide](https://github.com/Microsoft/presidio/blob/master/docs/development.md)
+
+### Expose Presidio publicly
+We recommend exposing Presidio using a DNS name.
+The recommended option is using nginx-ingree with TLS:
+1) Deploy presidio with [ingress set to 'enable'](https://github.com/microsoft/presidio/blob/master/charts/presidio/values.yaml#L35).
+1) Follow the steps as defined [here](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
+
+Another option is to use ['Application routing'](https://docs.microsoft.com/en-us/azure/aks/http-application-routing), which is not recommended for production use cases.
+
+### Block traffic from unknown sources
+We recommend setting [NSG inbound rules](https://docs.microsoft.com/en-us/azure/virtual-network/security-overview) to allow traffic only from known sources (if possible).
 
 ## Install presidio-analyzer as a Python package
 
