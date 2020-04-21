@@ -63,7 +63,7 @@ redis
 
 ### Default installation using pre-made scripts
 
-Follow the installation guide at the [Readme page](https://github.com/Microsoft/presidio/blob/master/README.MD)
+Follow the installation guide at the [Readme page](https://github.com/Microsoft/presidio/blob/master/README.MD#single-click-deployment-using-the-default-values)
 
 ### Step-by step installation with customizable parameters
 
