@@ -608,10 +608,10 @@ stages:
             inputs:
               containerRegistry: ${{ parameters.registry_service_principal }}
               command: 'login'
-          - task: PublishBuildArtifacts@1
+          - task: PublishPipelineArtifact@1
             displayName: 'Publish Helm Artifact'
             inputs:
-              PathtoPublish: charts
+              targetPath: charts
               ArtifactName: dropchart  
           - task: Bash@3
             displayName: 'Tag golang base image'
