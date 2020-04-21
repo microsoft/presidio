@@ -101,7 +101,8 @@ def __init__(self):
                          context=CONTEXT, supported_language='he')
 ```
 
-Important note: Presidio supports score improvment using surronding context words. However this mechanism is based on NLP tokenzier (SpaCy). In Presidio we are preloading only the English NLP model. This means that for languages other than English context support is not available.
+Important note: Presidio supports score improvement using surrounding context words. However this mechanism is based on NLP tokenzier (SpaCy). In Presidio we are preloading only the English NLP model. This means that for languages other than English context support is not available.
+One can deploy Presidio with more than one spaCy model, but this is not officially supported. [Here is a list of supported languages by spaCy](https://spacy.io/usage/models)
 
 ### General note
 
