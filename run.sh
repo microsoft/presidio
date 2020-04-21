@@ -5,21 +5,17 @@
 # network capabilities.
 
 
-# Build the images
-
-DOCKER_REGISTRY=${DOCKER_REGISTRY:-presidio}
-PRESIDIO_LABEL=${PRESIDIO_LABEL:-latest}
-make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build-deps
-make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build
 
 # Run the containers
-
-NETWORKNAME=${NETWORKNAME:-presidio-network}
+DOCKER_REGISTRY=${DOCKER_REGISTRY:-"presidio"}
+PRESIDIO_LABEL=${PRESIDIO_LABEL:-"latest"}
+NETWORKNAME=${NETWORKNAME:-"presidio-network"}
+NLP_CONF_PATH=${NLP_CONF_PATH:-"conf/spacy.yaml"}
 if [[ ! "$(docker network ls)" =~ (^|[[:space:]])"$NETWORKNAME"($|[[:space:]]) ]]; then
     docker network create $NETWORKNAME
 fi
 docker run --rm --name redis --network $NETWORKNAME -d -p 6379:6379 redis
-docker run --rm --name presidio-analyzer --network $NETWORKNAME -d -p 3000:3000 -e GRPC_PORT=3000 -e RECOGNIZERS_STORE_SVC_ADDRESS=presidio-recognizers-store:3004 ${DOCKER_REGISTRY}/presidio-analyzer:${PRESIDIO_LABEL}
+docker run --rm --name presidio-analyzer --network $NETWORKNAME -d -p 3000:3000 -e GRPC_PORT=3000 -e RECOGNIZERS_STORE_SVC_ADDRESS=presidio-recognizers-store:3004 -e NLP_CONF_PATH=${NLP_CONF_PATH} ${DOCKER_REGISTRY}/presidio-analyzer:${PRESIDIO_LABEL}
 docker run --rm --name presidio-anonymizer --network $NETWORKNAME -d -p 3001:3001 -e GRPC_PORT=3001 ${DOCKER_REGISTRY}/presidio-anonymizer:${PRESIDIO_LABEL}
 docker run --rm --name presidio-recognizers-store --network $NETWORKNAME -d -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=redis:6379 ${DOCKER_REGISTRY}/presidio-recognizers-store:${PRESIDIO_LABEL}
 

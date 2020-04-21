@@ -2,7 +2,7 @@ from unittest import TestCase
 import string
 
 from tests import assert_result
-from presidio_analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer, IBAN_GENERIC_SCORE, LETTERS
+from presidio_analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 
 iban_recognizer = IbanRecognizer()
@@ -14,7 +14,7 @@ def update_iban_checksum(iban):
     This is based on: https://www.ibantest.com/en/how-is-the-iban-check-digit-calculated
     '''
     iban_no_spaces = iban.replace(' ', '')
-    iban_digits = (iban_no_spaces[4:] +iban_no_spaces[:2] + '00').upper().translate(LETTERS)
+    iban_digits = (iban_no_spaces[4:] + iban_no_spaces[:2] + '00').upper().translate(IbanRecognizer.LETTERS)
     check_digits = '{:0>2}'.format(98 - (int(iban_digits) % 97))
     return iban[:2] + check_digits + iban[4:]
 
@@ -781,8 +781,7 @@ class TestIbanRecognizer(TestCase):
         iban = update_iban_checksum(iban)
         results = iban_recognizer.analyze(iban, entities)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 28, IBAN_GENERIC_SCORE)
+        assert len(results) == 0
 
 
     def test_GI_iban_invalid_checksum(self):
@@ -863,7 +862,7 @@ class TestIbanRecognizer(TestCase):
         assert_result(results[0], entities[0], 0, 34, EntityRecognizer.MAX_SCORE)
 
     def test_GT_iban_invalid_format_valid_checksum(self):
-        iban = 'GT82 TRAJ 0102 0000 0012 1002 9690 A'
+        iban = 'G T82 TRAJ 0102 0000 0012 1002 9690'
         iban = update_iban_checksum(iban)
         results = iban_recognizer.analyze(iban, entities)
 
@@ -1119,8 +1118,7 @@ class TestIbanRecognizer(TestCase):
         iban = update_iban_checksum(iban)
         results = iban_recognizer.analyze(iban, entities)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 37, IBAN_GENERIC_SCORE)
+        assert len(results) == 0
 
 
     def test_KW_iban_valid_checksum(self):
@@ -1149,8 +1147,7 @@ class TestIbanRecognizer(TestCase):
         iban = update_iban_checksum(iban)
         results = iban_recognizer.analyze(iban, entities)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 26, IBAN_GENERIC_SCORE)
+        assert len(results) == 0
 
     def test_LV_iban_valid_checksum(self):
         iban = 'LV80 BANK 0000 4351 9500 2'
@@ -1370,7 +1367,7 @@ class TestIbanRecognizer(TestCase):
         assert_result(results[0], entities[0], 0, 29, EntityRecognizer.MAX_SCORE)
 
     def test_MD_iban_invalid_format_valid_checksum(self):
-        iban = 'MD24 AG00 0225 1000 1310 4168 9'
+        iban = 'MD24 AG00 0225 1000 1310 416'
         iban = update_iban_checksum(iban)
         results = iban_recognizer.analyze(iban, entities)
 
@@ -2090,6 +2087,25 @@ class TestIbanRecognizer(TestCase):
         results = iban_recognizer.analyze(iban, entities)
 
         assert len(results) == 0
+    # Test IBAN in a sentince
+    def test_VG_iban_valid_in_sentence(self):
+        iban = 'this is an iban VG96 VPVG 0000 0123 4567 8901 in a sentence'
+        results = iban_recognizer.analyze(iban, entities)
+        print(f"results: {results}")
+
+        assert len(results) == 1
+
+    def test_VG_iban_valid_in_sentence_trailing_capital(self):
+        iban = 'this is an iban VG96 VPVG 0000 0123 4567 8901 X in a sentence'
+        results = iban_recognizer.analyze(iban, entities)
+        print(f"results: {results}")
+
+        assert len(results) == 1
+
+    def test_DE_valid_in_sentence(self):
+        iban = "Bitte schick mir 500 euro nach DE89 3704 0044 0532 0130 00 und meine Maestro Karte ist 5555 5555 5555 4444."
+        results = iban_recognizer.analyze(iban, entities)
+        print(f"results: {results}")
 
 # Test Invalid IBANs    
     def test_iban_invalid_country_code_invalid_checksum(self):

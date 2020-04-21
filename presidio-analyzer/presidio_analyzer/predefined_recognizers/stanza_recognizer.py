@@ -1,11 +1,11 @@
 from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 
 
-class SpacyRecognizer(LocalRecognizer):
+class StanzaRecognizer(LocalRecognizer):
 
     ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
 
-    DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
+    DEFAULT_EXPLANATION = "Identified as {} by Stanza's Named Entity Recognition"
 
     CHECK_LABEL_GROUPS = [
         ({"LOCATION"}, {"GPE", "LOC"}),
@@ -36,7 +36,7 @@ class SpacyRecognizer(LocalRecognizer):
         pass
 
     @staticmethod
-    def build_spacy_explanation(recognizer_name, original_score, explanation):
+    def build_nlpengine_explanation(recognizer_name, original_score, explanation):
         explanation = AnalysisExplanation(
             recognizer=recognizer_name,
             original_score=original_score,
@@ -44,28 +44,28 @@ class SpacyRecognizer(LocalRecognizer):
         )
         return explanation
 
+    # pylint: disable=unused-argument
     def analyze(self, text, entities, nlp_artifacts=None):
         results = []
         if not nlp_artifacts:
-            self.logger.warning("Skipping SpaCy, nlp artifacts not provided...")
+            self.logger.warning("Skipping nlp engine, nlp artifacts not provided...")
             return results
 
         ner_entities = nlp_artifacts.entities
-
         for entity in entities:
             if entity not in self.supported_entities:
                 continue
             for ent in ner_entities:
-                if not self.__check_label(entity, ent.label_, self.check_label_groups):
+                if not self.__check_label(entity, ent.type, self.check_label_groups):
                     continue
-                textual_explanation = self.DEFAULT_EXPLANATION.format(ent.label_)
-                explanation = self.build_spacy_explanation(
+                textual_explanation = self.DEFAULT_EXPLANATION.format(ent.type)
+                explanation = self.build_nlpengine_explanation(
                     self.__class__.__name__, self.ner_strength, textual_explanation
                 )
-                spacy_result = RecognizerResult(
+                nlpengine_result = RecognizerResult(
                     entity, ent.start_char, ent.end_char, self.ner_strength, explanation
                 )
-                results.append(spacy_result)
+                results.append(nlpengine_result)
 
         return results
 

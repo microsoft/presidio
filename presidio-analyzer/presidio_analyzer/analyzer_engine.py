@@ -7,7 +7,6 @@ from presidio_analyzer.protobuf_models import \
     analyze_pb2, analyze_pb2_grpc, common_pb2
 from presidio_analyzer.recognizer_registry import RecognizerStoreApi
 
-DEFAULT_LANGUAGE = "en"
 logger = PresidioLogger("presidio")
 
 
@@ -15,7 +14,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=None, nlp_engine=None,
                  app_tracer=None, enable_trace_pii=False,
-                 default_score_threshold=None, use_recognizer_store=False):
+                 default_score_threshold=None, use_recognizer_store=False,
+                 default_language="en"):
         """
         AnalyzerEngine class: Orchestrating the detection of PII entities
         and all related logic
@@ -61,10 +61,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         self.app_tracer = app_tracer
         self.enable_trace_pii = enable_trace_pii
 
-        if default_score_threshold is None:
-            self.default_score_threshold = 0
-        else:
-            self.default_score_threshold = default_score_threshold
+        self.default_score_threshold = default_score_threshold if default_score_threshold else 0
+
+        self.default_language = default_language
 
     # pylint: disable=unused-argument
     def GetAllRecognizers(self, request, context):
@@ -97,9 +96,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         logger.info("Starting Analyzer's Apply")
 
-        entities = AnalyzerEngine.__convert_fields_to_entities(
+        entities = self.__convert_fields_to_entities(
             request.analyzeTemplate.fields)
-        language = AnalyzerEngine.get_language_from_request(request)
+        language = self.get_language_from_request(request)
 
         threshold = request.analyzeTemplate.resultsScoreThreshold
         all_fields = request.analyzeTemplate.allFields
@@ -107,6 +106,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # correlation is used to group all traces related to on request
 
         correlation_id = str(uuid.uuid4())
+        logger.info(f"""text: {request.text}\nentities: {entities}\nlanguage: {language}\nall_fields: {all_fields}""")
         results = self.analyze(correlation_id=correlation_id,
                                text=request.text,
                                entities=entities,
@@ -121,7 +121,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         response.requestId = correlation_id
         # pylint: disable=no-member
         response.analyzeResults.extend(
-            AnalyzerEngine.__convert_results_to_proto(results))
+            self.__convert_results_to_proto(results))
 
         logger.info("Found %d results", len(results))
         return response
@@ -177,11 +177,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
         return new_results
 
-    @classmethod
-    def get_language_from_request(cls, request):
+    def get_language_from_request(self, request):
         language = request.analyzeTemplate.language
-        if language is None or language == "":
-            language = DEFAULT_LANGUAGE
+        if not language:
+            language = self.default_language
         return language
 
     def analyze(self, text, language, all_fields, entities=None, correlation_id=None,
@@ -247,7 +246,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 [result.to_json() for result in results]))
 
         # Remove duplicates or low score results
-        results = AnalyzerEngine.__remove_duplicates(results)
+        results = self.__remove_duplicates(results)
         results = self.__remove_low_scores(results, score_threshold)
 
         return results

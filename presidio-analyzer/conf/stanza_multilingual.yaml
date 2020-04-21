@@ -1,0 +1,9 @@
+nlp_engine_name: stanza
+models:
+  -
+    lang: en
+    name: en
+  -
+    lang: de
+    name: de
+

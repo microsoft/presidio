@@ -2,12 +2,12 @@ import time
 import logging
 
 from presidio_analyzer.recognizer_registry import RecognizerStoreApi
-from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
-    SpacyRecognizer, CryptoRecognizer, DomainRecognizer, \
+from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS, \
+    CreditCardRecognizer, CryptoRecognizer, DomainRecognizer, \
     EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, \
     UsBankRecognizer, UsLicenseRecognizer, \
     UsItinRecognizer, UsPassportRecognizer, UsPhoneRecognizer, \
-    UsSsnRecognizer, SgFinRecognizer
+    UsSsnRecognizer, SgFinRecognizer, SpacyRecognizer
 
 
 class RecognizerRegistry:
@@ -41,22 +41,26 @@ class RecognizerRegistry:
         self.loaded_custom_recognizers = []
         self.store_api = recognizer_store_api
 
-    def load_predefined_recognizers(self):
+    def load_predefined_recognizers(self, languages=["en"], nlp_engine="spacy"):
         #   TODO: Change the code to dynamic loading -
         # Task #598:  Support loading of the pre-defined recognizers
         # from the given path.
         # Currently this is not integrated into the init method to speed up
         # loading time if these are not actually needed (SpaCy for example) is
         # time consuming to load
-        self.recognizers.extend([
-            CreditCardRecognizer(),
-            CryptoRecognizer(), DomainRecognizer(),
-            EmailRecognizer(), IbanRecognizer(),
-            IpRecognizer(), NhsRecognizer(),
-            UsBankRecognizer(), UsLicenseRecognizer(),
-            UsItinRecognizer(), UsPassportRecognizer(),
-            UsPhoneRecognizer(), UsSsnRecognizer(),
-            SpacyRecognizer(), SgFinRecognizer()])
+
+        NlpRecognizer = NLP_RECOGNIZERS.get(nlp_engine, SpacyRecognizer)
+        recognizers_map = {"en": [UsBankRecognizer, UsLicenseRecognizer, UsItinRecognizer,
+                UsPassportRecognizer, UsPhoneRecognizer, UsSsnRecognizer, NhsRecognizer,
+                SgFinRecognizer],
+            "ALL": [CreditCardRecognizer, CryptoRecognizer, DomainRecognizer, EmailRecognizer,
+                IbanRecognizer, IpRecognizer, NlpRecognizer]
+        }
+        for lang in languages:
+            lang_recognizers = [rc() for rc in recognizers_map.get(lang, [])]
+            self.recognizers.extend(lang_recognizers)
+            all_recognizers = [rc(supported_language=lang) for rc in recognizers_map.get("ALL", [])]
+            self.recognizers.extend(all_recognizers)
 
     def get_recognizers(self, language, entities=None,
                         all_fields=False):

@@ -1,7 +1,9 @@
+import string
+
 try:
-    import spacy
+    import stanza
 except ImportError:
-    spacy = None
+    stanza = None
 
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine
@@ -9,55 +11,63 @@ from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine
 logger = PresidioLogger()
 
 
-class SpacyNlpEngine(NlpEngine):
-    """ SpacyNlpEngine is an abstraction layer over the nlp module.
+class StanzaNlpEngine(NlpEngine):
+    """ StanzaNlpEngine is an abstraction layer over the nlp module.
         It provides processing functionality as well as other queries
         on tokens.
-        The SpacyNlpEngine uses SpaCy as its NLP module
+        The StanzaNlpEngine uses Stanza as its NLP module
     """
 
-    engine_name = "spacy"
-    is_available = True if spacy else False
+    engine_name = "stanza"
+    is_available = True if stanza else False
 
     def __init__(self, models={"en": "en"}):
         logger.debug(f"Loading NLP models: {models.values()}")
 
         self.nlp = {
-            lang: spacy.load(model_name, disable=['parser', 'tagger']) 
+            lang: stanza.Pipeline(model_name, processors="tokenize,mwt,pos,lemma,ner")
             for lang, model_name in models.items()
         }
 
-        for model_name in models.values():
-            logger.debug("Printing spaCy model and package details:"
-                        "\n\n {}\n\n".format(spacy.info(model_name)))
+        for lang, model in self.nlp.items():
+            logger.debug(f"Stanza model {lang} details: {model}")
 
     def process_text(self, text, language):
-        """ Execute the SpaCy NLP pipeline on the given text
+        """ Execute the Stanza NLP pipeline on the given text
             and language
         """
         doc = self.nlp[language](text)
         return self.doc_to_nlp_artifact(doc, language)
 
     def is_stopword(self, word, language):
-        """ returns true if the given word is a stop word
-            (within the given language)
+        """ currenlty not used and always returns False
         """
-        return self.nlp[language].vocab[word].is_stop
+        return False
 
     def is_punct(self, word, language):
         """ returns true if the given word is a punctuation word
             (within the given language)
         """
-        return self.nlp[language].vocab[word].is_punct
+        return word in string.punctuation
 
     def get_nlp(self, language):
         return self.nlp[language]
 
     def doc_to_nlp_artifact(self, doc, language):
-        tokens = [token.text for token in doc]
-        lemmas = [token.lemma_ for token in doc]
-        tokens_indices = [token.idx for token in doc]
-        entities = doc.ents
+        tokens, lemmas, tokens_indices = zip(
+            *[
+                (w.text, w.lemma, self._process_stanza_word(w))
+                for s in doc.sentences for w in s.words
+            ]
+        )
+        entities = [e for s in doc.sentences for e in s.ents]
         return NlpArtifacts(entities=entities, tokens=tokens,
                             tokens_indices=tokens_indices, lemmas=lemmas,
                             nlp_engine=self, language=language)
+
+    @staticmethod
+    def _process_stanza_word(w):
+        x = [idx.split("=") for idx in w.misc.split("|")]
+        x = [(idx[0], int(idx[1])) for idx in x]
+        x_dict = dict(x)
+        return x_dict["start_char"]

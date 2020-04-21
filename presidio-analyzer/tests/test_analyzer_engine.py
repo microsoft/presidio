@@ -128,10 +128,11 @@ class TestAnalyzerEngine(TestCase):
                                                      all_fields=False)
 
         assert len(results) == 2
+        medium_regex_score = 0.5  # UsPhoneRecognizer.PATTERN_GROUPS[1][2]
+        context_similarity_factor = 0.35  # PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
         assert_result(results[0], "CREDIT_CARD", 14,
                       33, EntityRecognizer.MAX_SCORE)
-        expected_score = UsPhoneRecognizer.MEDIUM_REGEX_SCORE + \
-                         PatternRecognizer.CONTEXT_SIMILARITY_FACTOR  # 0.5 + 0.35 = 0.85
+        expected_score = medium_regex_score + context_similarity_factor
         assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
     def test_analyze_without_entities(self):

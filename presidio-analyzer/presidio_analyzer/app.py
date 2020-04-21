@@ -2,10 +2,9 @@
 import logging
 from concurrent import futures
 import os
-import time
 import sys
-
-import grpc
+import time
+import yaml
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
 from knack.arguments import ArgumentsContext
@@ -15,18 +14,13 @@ from knack.help_files import helps
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from presidio_analyzer.protobuf_models import analyze_pb2, analyze_pb2_grpc # noqa
-from presidio_analyzer import AnalyzerEngine, PresidioLogger, RecognizerRegistry # noqa
-from presidio_analyzer.nlp_engine import SpacyNlpEngine # noqa
+from analyzer_engine import AnalyzerEngine # noqa
+from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
+from predefined_recognizers.spacy_recognizer import SpacyRecognizer
+from nlp_engine import NLP_ENGINES # noqa
+from presidio_logger import PresidioLogger # noqa
 
-log_level_name = os.environ.get('LOG_LEVEL', 'INFO')
-log_level = logging.INFO
-if log_level_name == 'WARNING':
-    log_level = logging.WARNING
-if log_level_name == 'ERROR':
-    log_level = logging.ERROR
-logger = PresidioLogger("presidio")
-logger.set_level(log_level)
+logging.getLogger().setLevel(os.environ.get("LOGLEVEL", "INFO"))
 
 WELCOME_MESSAGE = r"""
 
@@ -65,18 +59,28 @@ class PresidioCLIHelp(CLIHelp):
 
 def serve_command_handler(enable_trace_pii,
                           env_grpc_port=False,
-                          grpc_port=3000):
+                          grpc_port=3000,
+                          nlp_conf_path="conf/spacy.yaml",
+                          max_workers=10):
     logger.info("Starting GRPC server")
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     logger.info("GRPC started")
 
+    # load nlp engine with yaml config
+    nlp_conf_path = os.environ.get("NLP_CONF_PATH", nlp_conf_path)
+    nlp_conf = yaml.safe_load(open(nlp_conf_path))
+    nlp_engine_name = nlp_conf["nlp_engine_name"]
+    nlp_engine_class = NLP_ENGINES[nlp_engine_name]
+    nlp_engine_opts = {m["lang"]: m["name"] for m in nlp_conf["models"]}
+    nlp_engine = nlp_engine_class(nlp_engine_opts)
+    logger.info(f"{nlp_engine_class.__name__} created")
+
+    # create recognizers given languages in nlp engine
     logger.info("Creating RecognizerRegistry")
     registry = RecognizerRegistry()
-    logger.info("RecognizerRegistry created")
-    logger.info("Creating SpacyNlpEngine")
-    nlp_engine = SpacyNlpEngine()
-    logger.info("SpacyNlpEngine created")
-
+    logger.debug(f"Loading predefined recognizers: {list(nlp_engine_opts.keys())} | {nlp_engine_name}")
+    registry.load_predefined_recognizers(list(nlp_engine_opts.keys()), nlp_engine_name)
+    logger.debug(f"RecognizerRegistry: {registry.recognizers}")
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
         AnalyzerEngine(registry=registry,
                        nlp_engine=nlp_engine,
@@ -143,19 +147,31 @@ class CommandsLoader(CLICommandsLoader):
                         default=enable_trace_pii,
                         required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
+            ac.argument('nlp_conf_path', default="conf/spacy_multilingual.yaml", type=str, required=False)
+            ac.argument('max_workers', default=10, type=int, required=False)
         with ArgumentsContext(self, 'analyze') as ac:
             ac.argument('env_grpc_port', default=False, required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
             ac.argument('text', required=True)
             ac.argument('fields', nargs='*', required=True)
+        logger.info(f"cli commands: {command}")
         super(CommandsLoader, self).load_arguments(command)
 
 
-presidio_cli = CLI(
-    cli_name=CLI_NAME,
-    config_dir=os.path.join('~', '.{}'.format(CLI_NAME)),
-    config_env_var_prefix=CLI_NAME,
-    commands_loader_cls=CommandsLoader,
-    help_cls=PresidioCLIHelp)
-exit_code = presidio_cli.invoke(sys.argv[1:])
-sys.exit(exit_code)
+def get_config_dir(cli_name):
+    basedir = os.environ.get("XDG_CONFIG_HOME", "~")
+    if basedir == "~":
+        cli_name = "." + cli_name
+    basedir = os.path.expanduser(basedir)
+    return os.path.join(basedir, cli_name)
+
+
+if __name__ == "__main__":
+    presidio_cli = CLI(
+        cli_name=CLI_NAME,
+        config_dir=get_config_dir(CLI_NAME),
+        config_env_var_prefix=CLI_NAME,
+        commands_loader_cls=CommandsLoader,
+        help_cls=PresidioCLIHelp)
+    exit_code = presidio_cli.invoke(sys.argv[1:])
+    sys.exit(exit_code)
