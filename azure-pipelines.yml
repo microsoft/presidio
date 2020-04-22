@@ -1,10 +1,5 @@
 resources:
   - repo: self
-trigger:
-  paths:
-    exclude:
-      - docs/*
-      - ./*.MD
 queue:
   name: Hosted Ubuntu 1604
   timeoutInMinutes: 60
