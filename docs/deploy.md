@@ -2,46 +2,42 @@
 
 You can install Presidio locally using [Docker](https://www.docker.com/), as a service in [Kubernetes](https://kubernetes.io/) or use it as a framework in a python application.
 
+Decide on a name for your Presidio project. In the [examples](samples.md) the project name is `<my-project>`.
+
+- [Install locally using Docker](#the-easy-way-with-docker)
+- [Presidio As a Service with Kubernetes](#presidio-as-a-service-with-kubernetes)
+- [presidio-analyzer as a standalone python package](#install-presidio-analyzer-as-a-python-package)
+
 ## The easy way with Docker
 
 You will need to have Docker installed and running, and [make](https://www.gnu.org/software/make/) installed on your system.
 
 Sync this repo use `make` to build and deploy locally.
 
-For convenience the script `build.sh` at the root of this repo will run the `make` commands for you. If you use the script remember to make it executable by running `chmod +x build.sh` after syncing the code.
+For convenience the script [build.sh](../build.sh) at the root of this repo will run the `make` commands for you. If you use the script remember to make it executable by running `chmod +x build.sh` after syncing the code.
 
 **NOTE: Building the deps images currently takes some time** (~70 minutes, depending on the build machine). We are working on improving the build time through improving the build and providing pre-built dependencies.
 
 **NOTE: Error message** You may see error messages like this:
-`Error response from daemon: pull access denied for presidio/presidio-golang-deps, repository does not exist or may require 'docker login': denied: requested access to the resource is denied` when running the `make` commands. These can be ignored.
+
+`Error response from daemon: pull access denied for presidio/presidio-golang-deps, repository does not exist or may require 'docker login': denied: requested access to the resource is denied`
+when running the `make` commands. These can be ignored.
 
 **NOTE: Memory requirements** if you get an error message like this
+
 `tests/test_analyzer_engine.py ...............The command '/bin/sh -c pipenv run pytest' returned a non-zero code: 137`
+
 while building you may need to increase the docker memory limit for your machine
 
-If you prefer to run each step by hand instead of using the `build.sh` script these are as follows:
+### Validation
+
+Once the build is complete you can verify the local deployment by running:
 
 ```sh
-# Build the images
-
-export DOCKER_REGISTRY=presidio
-export PRESIDIO_LABEL=latest
-make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build-deps
-make DOCKER_REGISTRY=${DOCKER_REGISTRY} PRESIDIO_LABEL=${PRESIDIO_LABEL} docker-build
-
-# Run the containers
-
-docker network create mynetwork
-docker run --rm --name redis --network mynetwork -d -p 6379:6379 redis
-docker run --rm --name presidio-analyzer --network mynetwork -d -p 3000:3000 -e GRPC_PORT=3000 -e RECOGNIZERS_STORE_SVC_ADDRESS=presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-analyzer:$(PRESIDIO_LABEL)
-docker run --rm --name presidio-anonymizer --network mynetwork -d -p 3001:3001 -e GRPC_PORT=3001 $(DOCKER_REGISTRY)/presidio-anonymizer:$(PRESIDIO_LABEL)
-docker run --rm --name presidio-recognizers-store --network mynetwork -d -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=redis:6379 $(DOCKER_REGISTRY)/presidio-recognizers-store:$(PRESIDIO_LABEL)
-
-sleep 30 # Wait for the analyzer model to load
-docker run --rm --name presidio-api --network mynetwork -d -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=presidio-anonymizer:3001 -e RECOGNIZERS_STORE_SVC_ADDRESS=presidio-recognizers-store:3004 $(DOCKER_REGISTRY)/presidio-api:$(PRESIDIO_LABEL)
+docker ps
 ```
 
-Once the build is complete you can verify the local deployment by running `docker ps`. You should see 4 Presidio containers and one Redis container running with the following names:
+You should see 4 Presidio containers and one Redis container running with the following names:
 
 ```sh
 presidio-api
@@ -57,13 +53,40 @@ redis
 
 ### Requirements
 
-- Kubernetes 1.9+ with RBAC enabled.
-  - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
-- Helm
+1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled.
 
-### Default installation using pre-made scripts
+   - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
 
-Follow the installation guide at the [Readme page](https://github.com/Microsoft/presidio/blob/master/README.MD#single-click-deployment-using-the-default-values)
+2. [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) installed
+
+   - verify you can communicate with the cluster by running:
+
+     ```sh
+     kubectl version
+     ```
+
+3. Local [helm](https://helm.sh/) client.
+4. Recent presidio repo is cloned on your local machine.
+
+### Single click deployment using the default values
+
+1. Navigate into `<root>\deployment` from command line.
+
+2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](../deployment/deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions.
+
+3. Grant the Kubernetes cluster access to the container registry
+
+   - If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
+
+4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](../deployment/deploy-presidio.sh) in the command line as follows:
+
+```sh
+deploy-presidio.sh
+```
+
+The script will install Presidio on your cluster using the default values.
+
+> Note: You can edit the file to use your own container registry and image.
 
 ### Step-by step installation with customizable parameters
 
