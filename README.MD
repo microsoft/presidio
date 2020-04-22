@@ -28,7 +28,7 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 ## Learn more
 
-More information can uld be found in the [Presidio documentation](https://microsoft.github.io/presidio/).
+More information can be found in the [Presidio documentation](https://microsoft.github.io/presidio/).
 
 - [Architecture](docs/design.md)
 - [API Samples](docs/samples.md)
