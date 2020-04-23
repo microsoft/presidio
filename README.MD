@@ -40,7 +40,7 @@ More information can be found in the [Presidio documentation](https://microsoft.
 
 ## Deploying Presidio
 
-[Deploy Presidio as a system](docs/deploy.md):
+[Deploy Presidio as a system](docs/deploy.md#deploy-presidio-as-a-system):
 
 - [Install locally using Docker](docs/deploy.md#the-easy-way-with-docker)
 - [Presidio As a Service with Kubernetes](docs/deploy.md#presidio-as-a-service-with-kubernetes)

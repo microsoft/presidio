@@ -1,6 +1,6 @@
-# Install (deploy) presidio as a system
+# Deploy presidio as a system
 
-You can install Presidio locally using [Docker](https://www.docker.com/), as a service in [Kubernetes](https://kubernetes.io/) or use it as a framework in a python application.
+You can install Presidio locally using [Docker](https://www.docker.com/), as a service in [Kubernetes](https://kubernetes.io/) or [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) or use it as a framework in a python application.
 
 Decide on a name for your Presidio project. In the [examples](samples.md) the project name is `<my-project>`.
 
@@ -66,7 +66,8 @@ redis
      ```
 
 3. Local [helm](https://helm.sh/) client.
-4. Recent presidio repo is cloned on your local machine.
+4. Optional - Container Registry - such as [ACR](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-intro).
+5. Recent presidio repo is cloned on your local machine.
 
 ### Single click deployment using the default values
 
@@ -74,7 +75,11 @@ redis
 
 2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](../deployment/deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions.
 
-3. Grant the Kubernetes cluster access to the container registry
+```sh
+deploy-helm.sh
+```
+
+3. Optional - Grant the Kubernetes cluster access to the container registry. This step can be skipped and the script will pull the container images from [Microsoft syndicates container catalog](https://azure.microsoft.com/en-in/blog/microsoft-syndicates-container-catalog/)
 
    - If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
 
