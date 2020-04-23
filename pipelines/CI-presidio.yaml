@@ -32,7 +32,8 @@ trigger: # CI triggers
   paths:
     exclude:
       - "*.md"
-      - "*.MD"
+      - docs/*
+      - README.MD
 pr: # PR triggers
   branches:
     include:
@@ -40,7 +41,8 @@ pr: # PR triggers
   paths:
     exclude:
       - "*.md"
-      - "*.MD"
+      - docs/*
+      - README.MD
 stages:
   - template: templates/build-test-publish.yaml
     parameters:
