@@ -2,7 +2,14 @@
 
 **Note:** All samples where created with [HTTPie](https://httpie.org/)
 
-## Simple text analysis
+- [Simple Text Analysis](#simple-text-analysis)
+- [Create Reusable Templates](#create-reusable-templates)
+- [Detect Specific Entities](#detect-specific-entities)
+- [Custom Anonymization](#custom-anonymization)
+- [Add Custom PII Entity Recognizer](#add-custom-pii-entity-recognizer)
+- [Image Anonymization](#image-anonymization)
+
+## Simple Text Analysis
 
 ```sh
 echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC333991", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
@@ -10,7 +17,7 @@ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seat
 
 ---
 
-## Create reusable templates
+## Create Reusable Templates
 
 1. Create an analyzer template:
 
@@ -26,7 +33,7 @@ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seat
 
 ---
 
-## Detect specific entities
+## Detect Specific Entities
 
 1. Create an analyzer project with a specific set of entities:
 
@@ -42,7 +49,7 @@ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seat
 
 ---
 
-## Custom anonymization
+## Custom Anonymization
 
 1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD):
 
@@ -58,7 +65,7 @@ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seat
 
 ---
 
-## Add custom PII entity recognizer
+## Add Custom PII Entity Recognizer
 
 This sample shows how to add an new regex recognizer via API.
 This simple recognizer identifies the word "rocket" in a text and tags it as a "ROCKET entity.
@@ -77,7 +84,7 @@ This simple recognizer identifies the word "rocket" in a text and tags it as a "
 
 ---
 
-## Image anonymization
+## Image Anonymization
 
 1. Create an anonymizer image template (This template redacts values with black color):
 

@@ -1,12 +1,16 @@
 # Deploy presidio as a system
 
-You can install Presidio locally using [Docker](https://www.docker.com/), as a service in [Kubernetes](https://kubernetes.io/) or [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) or use it as a framework in a python application.
+You can install Presidio locally using [Docker](https://www.docker.com/) or [KIND](https://github.com/kubernetes-sigs/kind), as a service in [Kubernetes](https://kubernetes.io/) or [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) or use it as a framework in a python application.
 
 Decide on a name for your Presidio project. In the [examples](samples.md) the project name is `<my-project>`.
 
-- [Install locally using Docker](#the-easy-way-with-docker)
-- [Presidio As a Service with Kubernetes](#presidio-as-a-service-with-kubernetes)
-- [presidio-analyzer as a standalone python package](#install-presidio-analyzer-as-a-python-package)
+- Development and Testing
+  - [Deploy locally using Docker](#the-easy-way-with-docker)
+  - [Deploy locally using KIND](#deploy-locally-with-kind)
+  - [Presidio-Analyzer as a standalone python package](#install-presidio-analyzer-as-a-python-package)
+- [Production - Deploy with Kubernetes](#presidio-as-a-service-with-kubernetes)
+  - [Single click deployment](#single-click-deployment)
+  - [Step by Step Deployment with customizable parameters](#step-by-step-deployment-with-customizable-parameters)
 
 ## The easy way with Docker
 
@@ -47,81 +51,40 @@ presidio-analyzer
 redis
 ```
 
----
+## Deploy locally with KIND
 
-## Presidio As a Service with Kubernetes
+Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
 
-### Requirements
+1. Install [Docker](https://docs.docker.com/install/).
 
-1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled.
-
-   - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
-
-2. [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) installed
-
-   - verify you can communicate with the cluster by running:
+   - **Optional (Linux)** - the following command will install all prerequisites (Docker, Helm, make, kubetl).
 
      ```sh
-     kubectl version
+     cd deployment/
+     ./prerequisites.sh
      ```
 
-3. Local [helm](https://helm.sh/) client.
-4. Optional - Container Registry - such as [ACR](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-intro).
-5. Recent presidio repo is cloned on your local machine.
+     depending on your environment, sudo might be needed
 
-### Single click deployment using the default values
+2. Clone Presidio.
 
-1. Navigate into `<root>\deployment` from command line.
-
-2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](../deployment/deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions.
-
-```sh
-deploy-helm.sh
-```
-
-3. Optional - Grant the Kubernetes cluster access to the container registry. This step can be skipped and the script will pull the container images from [Microsoft syndicates container catalog](https://azure.microsoft.com/en-in/blog/microsoft-syndicates-container-catalog/)
-
-   - If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
-
-4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](../deployment/deploy-presidio.sh) in the command line as follows:
-
-```sh
-deploy-presidio.sh
-```
-
-The script will install Presidio on your cluster using the default values.
-
-> Note: You can edit the file to use your own container registry and image.
-
-### Step-by step installation with customizable parameters
-
-1. Install [Helm](https://github.com/kubernetes/helm) with [RBAC](https://github.com/kubernetes/helm/blob/master/docs/rbac.md#tiller-and-role-based-access-control)
-
-2. Install [Redis](https://hub.kubeapps.com/charts/stable/redis) (Cache for storage and database scanners)
+3. Run the following script, which will use KIND (Kubernetes emulation in Docker)
 
    ```sh
-   helm install --name redis stable/redis --set usePassword=false,rbac.create=true --namespace presidio-system
+   cd deployment/
+   ./run-with-kind.sh
    ```
 
-3. Optional - Ingress controller for presidio API.
-
-   - [Traefik](https://docs.traefik.io/user-guide/kubernetes/)
-   - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
-   - [Istio](https://istio.io/docs/tasks/traffic-management/ingress/)
-
-   **Note** that presidio is not deployed with an ingress controller by default.  
-   to change this behavior, deploy the helm chart with _api.ingress.enabled=true_ and specify they type of ingress controller to be used with _api.ingress.class=nginx_ (supported classes are: nginx, traefik or istio).
-
-4. Verify that Redis and Traefik/NGINX are installed correctly
-
-5. Deploy from `/charts/presidio`
+4. Wait and verify all pods are running:
 
    ```sh
-   # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-   helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
+   kubectl get pod -n presidio
    ```
 
-6. For more options over the deployment, follow the [Development guide](https://github.com/Microsoft/presidio/blob/master/docs/development.md)
+5. Port forwarding of HTTP requests to the API micro-service will be done automatically. In order to run manual:
+   ```sh
+   kubectl port-forward <presidio-api-pod-name> 8080:8080 -n presidio
+   ```
 
 ## Install presidio-analyzer as a Python package
 
@@ -207,3 +170,77 @@ for item in response:
                                                                       item.score))
 
 ```
+
+## Presidio As a Service with Kubernetes
+
+### Requirements
+
+1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled.
+
+   - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
+
+2. [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) installed
+
+   - verify you can communicate with the cluster by running:
+
+     ```sh
+     kubectl version
+     ```
+
+3. Local [helm](https://helm.sh/) client.
+4. Optional - Container Registry - such as [ACR](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-intro).
+5. Recent presidio repo is cloned on your local machine.
+
+### Single click deployment
+
+1. Navigate into `<root>\deployment` from command line.
+
+2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](../deployment/deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions.
+
+```sh
+deploy-helm.sh
+```
+
+3. Optional - Grant the Kubernetes cluster access to the container registry. This step can be skipped and the script will pull the container images from [Microsoft syndicates container catalog](https://azure.microsoft.com/en-in/blog/microsoft-syndicates-container-catalog/)
+
+   - If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
+
+4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](../deployment/deploy-presidio.sh) in the command line as follows:
+
+```sh
+deploy-presidio.sh
+```
+
+The script will install Presidio on your cluster using the default values.
+
+> Note: You can edit the file to use your own container registry and image.
+
+### Step by step deployment with customizable parameters
+
+1. Install [Helm](https://github.com/kubernetes/helm) with [RBAC](https://github.com/kubernetes/helm/blob/master/docs/rbac.md#tiller-and-role-based-access-control)
+
+2. Install [Redis](https://hub.kubeapps.com/charts/stable/redis) (Cache for storage and database scanners)
+
+   ```sh
+   helm install --name redis stable/redis --set usePassword=false,rbac.create=true --namespace presidio-system
+   ```
+
+3. Optional - Ingress controller for presidio API.
+
+   - [Traefik](https://docs.traefik.io/user-guide/kubernetes/)
+   - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
+   - [Istio](https://istio.io/docs/tasks/traffic-management/ingress/)
+
+   **Note** that presidio is not deployed with an ingress controller by default.  
+   to change this behavior, deploy the helm chart with _api.ingress.enabled=true_ and specify they type of ingress controller to be used with _api.ingress.class=nginx_ (supported classes are: nginx, traefik or istio).
+
+4. Verify that Redis and Traefik/NGINX are installed correctly
+
+5. Deploy from `/charts/presidio`
+
+   ```sh
+   # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
+   helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
+   ```
+
+6. For more deployment options, follow the [Development guide](https://github.com/Microsoft/presidio/blob/master/docs/development.md)

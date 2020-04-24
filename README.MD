@@ -18,48 +18,52 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-[Presidio Features](docs/overview.md#features)
-
-[Presidio Input and output](docs/overview.md#input-and-output)
-
 ## Demo
 
 [Try Presidio with your own data](https://aka.ms/presidio-demo)
 
+[![Image1](docs/assets/presidio_demo.JPG)](docs/assets/presidio_demo.JPG)
+
+## Overview
+
+- [Presidio Features](docs/overview.md#features)
+- [Presidio Input and Output](docs/overview.md#input-and-output)
+- [The Technology Stack](docs/overview.md#the-technology-stack)
+
+## API Samples
+
+- [Simple Text Analysis](docs/samples.md/#simple-text-analysis)
+- [Create Reusable Templates](docs/samples.md/#create-reusable-templates)
+- [Detect Specific Entities](docs/samples.md/#detect-specific-entities)
+- [Custom Anonymization](docs/samples.md/#custom-anonymization)
+- [Add Custom PII Entity Recognizer](docs/samples.md/#add-custom-pii-entity-recognizer)
+- [Image Anonymization](docs/samples.md/#image-anonymization)
+
 ## Learn more
 
-More information can be found in the [Presidio documentation](https://microsoft.github.io/presidio/).
+More information can be found in [Presidio Documentation](https://microsoft.github.io/presidio/)
 
 - [Architecture](docs/design.md)
-- [API Samples](docs/samples.md)
 - [Supported field types](docs/field_types.md)
 - [Database and storage scanner](docs/tutorial_scheduler.md)
 - [Adding new PII recognizers](docs/custom_fields.md)
 - [Generating Swagger file](presidio-api/cmd/presidio-api/docs/readme.md)
 - [Evaluating Presidio](https://github.com/microsoft/presidio-research)
 
-## Deploying Presidio
+## Deploying Presidio on a Kubernetes Cluster
 
-[Deploy Presidio as a system](docs/deploy.md#deploy-presidio-as-a-system):
+Follow the [Deployment Guidelines](docs/deploy.md) for details:
 
-- [Install locally using Docker](docs/deploy.md#the-easy-way-with-docker)
-- [Presidio As a Service with Kubernetes](docs/deploy.md#presidio-as-a-service-with-kubernetes)
-- [presidio-analyzer as a standalone python package](docs/deploy.md#install-presidio-analyzer-as-a-python-package)
+- [Single click deployment on a Kubernetes Cluster](docs/deploy.md#single-click-deployment)
+- [Step by Step Deployment with customizable parameters on a Kubernetes Cluster](docs/deploy.md#step-by-step-deployment-with-customizable-parameters)
 
 ## Developing Presidio
 
 - [Setting up a development environment](docs/development.md)
-- [Run locally with KIND (Kubernetes in Docker)](docs/KIND.md)
-
-## Technology Stack
-
-Presidio leverages:
-
-- [Kubernetes](https://kubernetes.io/)
-- [spaCy](https://spacy.io/)
-- [Redis](https://redis.io/)
-- [GRPC](https://grpc.io)
-- [re2](https://github.com/google/re2)
+- Deploy Presidio for Test and Dev:
+  - [Deploy locally using Docker](docs/deploy.md#the-easy-way-with-docker)
+  - [Deploy locally using KIND](docs/deploy.md#deploy-locally-with-kind)
+  - [Presidio-Analyzer as a standalone python package](docs/deploy.md#install-presidio-analyzer-as-a-python-package)
 
 ## Current input/output components status
 
