@@ -1,7 +1,4 @@
-try:
-    import spacy
-except ImportError:
-    spacy = None
+import spacy
 
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine

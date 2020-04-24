@@ -1,5 +1,3 @@
-from unittest import TestCase
-
 import os
 import pytest
 
@@ -9,7 +7,6 @@ from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer, \
     IpRecognizer, UsSsnRecognizer, SgFinRecognizer 
 from presidio_analyzer.nlp_engine import NlpArtifacts
-from tests import TESTS_NLP_ENGINE
 
 ip_recognizer = IpRecognizer()
 us_ssn_recognizer = UsSsnRecognizer()
@@ -71,52 +68,45 @@ def sentences_with_context(request):
     if not len(test_items) == 27:
         raise ValueError("context sentences not as expected")
 
-    request.cls.context_sentences = test_items
+    yield test_items
 
-@pytest.mark.usefixtures("sentences_with_context")
-class TestContextSupport(TestCase):
+def test_text_with_context_improves_score(sentences_with_context, nlp_engines):
+    nlp_engine = nlp_engines["spacy_en"]
+    mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
 
-    def __init__(self, *args, **kwargs):
-        super(TestContextSupport, self).__init__(*args, **kwargs)
-
-    # Context tests
-    def test_text_with_context_improves_score(self):
-        nlp_engine = TESTS_NLP_ENGINE
-        mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
-
-        for item in self.context_sentences:
-            text = item[0]
-            recognizer = item[1]
-            entities = item[2]
-            nlp_artifacts = nlp_engine.process_text(text, "en")
-            results_without_context = recognizer.analyze(text, entities, mock_nlp_artifacts)
-            results_with_context = recognizer.analyze(text, entities, nlp_artifacts)
-
-            assert(len(results_without_context) == len(results_with_context))
-            for i in range(len(results_with_context)):
-                assert(results_without_context[i].score < results_with_context[i].score)
-
-    def test_context_custom_recognizer(self):
-        nlp_engine = TESTS_NLP_ENGINE
-        mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
-
-        # This test checks that a custom recognizer is also enhanced by context.
-        # However this test also verifies a specific case in which the pattern also
-        # includes a preceeding space (' rocket'). This in turn cause for a misalignment
-        # between the tokens and the regex match (the token will be just 'rocket').
-        # This misalignment is handled in order to find the correct context window.
-        rocket_recognizer = PatternRecognizer(supported_entity="ROCKET",
-                                              name="rocketrecognizer",
-                                              context=["cool"],
-                                              patterns=[Pattern("rocketpattern",
-                                                                "\\s+(rocket)",
-                                                                0.3)])
-        text = "hi, this is a cool ROCKET"
-        recognizer = rocket_recognizer
-        entities = ["ROCKET"]
+    for item in sentences_with_context:
+        text = item[0]
+        recognizer = item[1]
+        entities = item[2]
         nlp_artifacts = nlp_engine.process_text(text, "en")
         results_without_context = recognizer.analyze(text, entities, mock_nlp_artifacts)
         results_with_context = recognizer.analyze(text, entities, nlp_artifacts)
+
         assert(len(results_without_context) == len(results_with_context))
         for i in range(len(results_with_context)):
             assert(results_without_context[i].score < results_with_context[i].score)
+
+def test_context_custom_recognizer(nlp_engines):
+    nlp_engine = nlp_engines["spacy_en"]
+    mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
+
+    # This test checks that a custom recognizer is also enhanced by context.
+    # However this test also verifies a specific case in which the pattern also
+    # includes a preceeding space (' rocket'). This in turn cause for a misalignment
+    # between the tokens and the regex match (the token will be just 'rocket').
+    # This misalignment is handled in order to find the correct context window.
+    rocket_recognizer = PatternRecognizer(supported_entity="ROCKET",
+                                          name="rocketrecognizer",
+                                          context=["cool"],
+                                          patterns=[Pattern("rocketpattern",
+                                                            "\\s+(rocket)",
+                                                            0.3)])
+    text = "hi, this is a cool ROCKET"
+    recognizer = rocket_recognizer
+    entities = ["ROCKET"]
+    nlp_artifacts = nlp_engine.process_text(text, "en")
+    results_without_context = recognizer.analyze(text, entities, mock_nlp_artifacts)
+    results_with_context = recognizer.analyze(text, entities, nlp_artifacts)
+    assert(len(results_without_context) == len(results_with_context))
+    for i in range(len(results_with_context)):
+        assert(results_without_context[i].score < results_with_context[i].score)

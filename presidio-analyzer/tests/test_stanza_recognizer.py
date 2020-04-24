@@ -3,196 +3,220 @@ from unittest import TestCase
 
 from tests import assert_result, assert_result_within_score_range
 
-from presidio_analyzer.nlp_engine import NLP_ENGINES
-from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 
 NER_STRENGTH = 0.85
-nlp_is_available = "stanza" in NLP_ENGINES and "stanza" in NLP_RECOGNIZERS
-if nlp_is_available:
-    nlp_engine = NLP_ENGINES["stanza"]()
-    test_recognizer = NLP_RECOGNIZERS["stanza"]()
 entities = ["PERSON", "DATE_TIME"]
 
 
-class TestStanzaRecognizer(TestCase):
+def prepare_and_analyze(nlp, recognizer, text, entities=entities):
+    nlp_artifacts = nlp.process_text(text, "en")
+    results = recognizer.analyze(
+        text, entities, nlp_artifacts)
+    return results
 
-    # Test Name Entity
-    # Bug #617 : Spacy Recognizer doesn't recognize Dan as PERSON even though online spacy demo indicates that it does
-    # See http://textanalysisonline.com/spacy-named-entity-recognition-ner
-    # def test_person_first_name(self):
-    #     name = 'Dan'
-    #     results = nlpengine_recognizer.analyze(name, entities)
+# Test Name Entity
+# Bug #617 : Spacy Recognizer doesn't recognize Dan as PERSON even though online stanza demo indicates that it does
+# See http://textanalysisonline.com/stanza-named-entity-recognition-ner
+# def test_person_first_name(self):
+#     name = 'Dan'
+#     results = stanza_recognizer.analyze(name, entities)
 
-    #     assert len(results) == 1
-    #     assert_result(results[0], entity[0], NER_STRENGTH)
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_first_name_with_context(self):
-        name = 'Dan'
-        context = 'my name is'
-        text = '{} {}'.format(context, name)
+#     assert len(results) == 1
+#     assert_result(results[0], entity[0], NER_STRENGTH)
 
-        results = self.prepare_and_analyze(nlp_engine, text)
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[0], 11, 14, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+@pytest.mark.skip_engine("stanza_en")
+def test_person_first_name_with_context(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
+    name = 'Dan'
+    context = 'my name is'
+    text = '{} {}'.format(context, name)
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_full_name(self):
-        text = 'Dan Tailor'
-        results = self.prepare_and_analyze(nlp_engine, text)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
+    assert len(results) == 1
+    assert_result_within_score_range(
+        results[0], entities[0], 11, 14, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 10, NER_STRENGTH)
+@pytest.mark.skip_engine("stanza_en")
+def test_person_full_name(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_full_name_with_context(self):
-        name = 'John Oliver'
-        context = ' is the funniest comedian'
-        text = '{}{}'.format(name, context)
-        results = self.prepare_and_analyze(nlp_engine, text)
+    text = 'Dan Tailor'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[0], 0, 11, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    assert len(results) == 1
+    assert_result(results[0], entities[0], 0, 10, NER_STRENGTH)
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_full_middle_name(self):
-        text = 'Richard Milhous Nixon'
-        results = self.prepare_and_analyze(nlp_engine, text)
+@pytest.mark.skip_engine("stanza_en")
+def test_person_full_name_with_context(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 21, NER_STRENGTH)
+    name = 'John Oliver'
+    context = ' is the funniest comedian'
+    text = '{}{}'.format(name, context)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_full_name_with_middle_letter(self):
-        text = 'Richard M. Nixon'
-        results = self.prepare_and_analyze(nlp_engine, text)
+    assert len(results) == 1
+    assert_result_within_score_range(
+        results[0], entities[0], 0, 11, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 16, NER_STRENGTH)
+@pytest.mark.skip_engine("stanza_en")
+def test_person_full_middle_name(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_full_name_complex(self):
-        text = 'Richard (Rick) C. Henderson'
-        results = self.prepare_and_analyze(nlp_engine, text)
+    text = 'Richard Milhous Nixon'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-        assert len(results) > 0
+    assert len(results) == 1
+    assert_result(results[0], entities[0], 0, 21, NER_STRENGTH)
 
-        # check that most of the text is covered
-        covered_text = ""
-        for result in results:
-            covered_text += text[result.start:result.end]
+@pytest.mark.skip_engine("stanza_en")
+def test_person_full_name_with_middle_letter(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
+
+    text = 'Richard M. Nixon'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
+
+    assert len(results) == 1
+    assert_result(results[0], entities[0], 0, 16, NER_STRENGTH)
+
+@pytest.mark.skip_engine("stanza_en")
+def test_person_full_name_complex(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
+
+    text = 'Richard (Rick) C. Henderson'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
+
+    assert len(results) > 0
+
+    # check that most of the text is covered
+    covered_text = ""
+    for result in results:
+        covered_text+=text[result.start:result.end]
 
         assert len(text) - len(covered_text) < 5
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_last_name_is_also_a_date_with_context_expected_person_only(self):
-        name = 'Dan May'
-        context = "has a bank account"
-        text = '{} {}'.format(name, context)
-        results = self.prepare_and_analyze(nlp_engine, text)
+@pytest.mark.skip_engine("stanza_en")
+def test_person_last_name_is_also_a_date_with_context_expected_person_only(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[0], 0, 7, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    name = 'Dan May'
+    context = "has a bank account"
+    text = '{} {}'.format(name, context)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_title_and_last_name_is_also_a_date_expected_person_only(self):
-        text = 'Mr. May'
-        results = self.prepare_and_analyze(nlp_engine, text)
+    assert len(results) == 1
+    print(results[0].score)
+    print(results[0].entity_type)
+    print(text[results[0].start:results[0].end])
+    assert_result_within_score_range(
+        results[0], entities[0], 0, 7, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 4, 7, NER_STRENGTH)
+@pytest.mark.skip_engine("stanza_en")
+def test_person_title_and_last_name_is_also_a_date_expected_person_only(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_person_title_and_last_name_is_also_a_date_with_context_expected_person_only(self):
-        name = 'Mr. May'
-        context = "They call me"
-        text = '{} {}'.format(context, name)
-        results = self.prepare_and_analyze(nlp_engine, text)
-        assert len(results) == 1
-        assert_result_within_score_range(results[0], entities[0], 17, 20, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    text = 'Mr. May'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-    # Test DATE_TIME Entity
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_date_time_year(self):
-        text = '1972'
-        results = self.prepare_and_analyze(nlp_engine, text)
+    assert len(results) == 1
+    assert_result(results[0], entities[0], 4, 7, NER_STRENGTH)
 
-        assert len(results) == 1
-        assert_result(results[0], entities[1], 0, 4, NER_STRENGTH)
+@pytest.mark.skip_engine("stanza_en")
+def test_person_title_and_last_name_is_also_a_date_with_context_expected_person_only(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_date_time_year_with_context(self):
-        date = '1972'
-        context = 'I bought my car in'
-        text = '{} {}'.format(context, date)
-        results = self.prepare_and_analyze(nlp_engine, text)
+    name = 'Mr. May'
+    context = "They call me"
+    text = '{} {}'.format(context, name)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
+    assert len(results) == 1
+    assert_result_within_score_range(results[0], entities[0], 17, 20, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[1], 19, 23, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+# Test DATE_TIME Entity
+@pytest.mark.skip_engine("stanza_en")
+def test_date_time_year(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_date_time_month_with_context(self):
-        date = 'May'
-        context = 'I bought my car in'
-        text = '{} {}'.format(context, date)
-        results = self.prepare_and_analyze(nlp_engine, text)
+    text = '1972'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[1], 19, 22, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    assert len(results) == 1
+    assert_result(results[0], entities[1], 0, 4, NER_STRENGTH)
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_date_time_day_in_month(self):
-        text = 'May 1st'
-        results = self.prepare_and_analyze(nlp_engine, text)
+@pytest.mark.skip_engine("stanza_en")
+def test_date_time_year_with_context(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[1], 0, 7, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    date = '1972'
+    context = 'I bought my car in'
+    text = '{} {}'.format(context, date)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_date_time_full_date(self):
-        text = 'May 1st, 1977'
-        results = self.prepare_and_analyze(nlp_engine, text)
+    assert len(results) == 1
+    assert_result_within_score_range(
+        results[0], entities[1], 19, 23, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[1], 0, 13, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+@pytest.mark.skip_engine("stanza_en")
+def test_date_time_month_with_context(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def test_date_time_day_in_month_with_year_with_context(self):
-        date = 'May 1st, 1977'
-        context = 'I bought my car on'
-        text = '{} {}'.format(context, date)
-        results = self.prepare_and_analyze(nlp_engine, text)
+    date = 'May'
+    context = 'I bought my car in'
+    text = '{} {}'.format(context, date)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
 
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[1], 19, 32, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+    assert len(results) == 1
+    assert_result_within_score_range(
+        results[0], entities[1], 19, 22, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
 
-    @pytest.mark.skipif(not nlp_is_available,
-                        reason="requires stanza and 'en' model")
-    def prepare_and_analyze(self, nlp, text):
-        nlp_artifacts = nlp.process_text(text, "en")
-        results = test_recognizer.analyze(
-            text, entities, nlp_artifacts)
-        return results
+@pytest.mark.skip_engine("stanza_en")
+def test_date_time_day_in_month(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
+
+    text = 'May 1st'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
+
+    assert len(results) == 1
+    assert_result_within_score_range(
+        results[0], entities[1], 0, 7, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+
+@pytest.mark.skip_engine("stanza_en")
+def test_date_time_full_date(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
+
+    text = 'May 1st, 1977'
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
+
+    assert len(results) == 1
+    assert_result_within_score_range(
+        results[0], entities[1], 0, 13, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+
+@pytest.mark.skip_engine("stanza_en")
+def test_date_time_day_in_month_with_year_with_context(nlp_engines, nlp_recognizers):
+    nlp_engine = nlp_engines["stanza_en"]
+    nlp_recognizer = nlp_recognizers["stanza"]
+
+    date = 'May 1st, 1977'
+    context = 'I bought my car on'
+    text = '{} {}'.format(context, date)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text)
+
+    assert len(results) == 1
+    assert_result_within_score_range(
+        results[0], entities[1], 19, 32, NER_STRENGTH, EntityRecognizer.MAX_SCORE)
+
