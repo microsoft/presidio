@@ -9,6 +9,7 @@ Decide on a name for your Presidio project. In the [examples](samples.md) the pr
   - [Deploy locally using KIND](#deploy-locally-with-kind)
   - [Presidio-Analyzer as a standalone python package](#install-presidio-analyzer-as-a-python-package)
 - [Production - Deploy with Kubernetes](#presidio-as-a-service-with-kubernetes)
+  - [Prerequisites](#prerequisites)
   - [Single click deployment](#single-click-deployment)
   - [Step by Step Deployment with customizable parameters](#step-by-step-deployment-with-customizable-parameters)
 
@@ -173,9 +174,9 @@ for item in response:
 
 ## Presidio As a Service with Kubernetes
 
-### Requirements
+### Prerequisites
 
-1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled.
+1. A Kubernetes 1.9+ cluster/[AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes)
 
    - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
 
