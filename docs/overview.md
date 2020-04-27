@@ -41,6 +41,7 @@ Presidio accepts multiple sources and targets for data annonymization. Specifica
 1. Storage solutions
 
    - Azure Blob Storage
+   - Azure Data Lake Gen 2
    - S3
    - Google Cloud Storage
 

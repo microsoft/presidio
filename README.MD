@@ -60,10 +60,17 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 ## Developing Presidio
 
 - [Setting up a development environment](docs/development.md)
-- Deploy Presidio for Test and Dev:
-  - [Deploy locally using Docker](docs/deploy.md#the-easy-way-with-docker)
-  - [Deploy locally using KIND](docs/deploy.md#deploy-locally-with-kind)
-  - [Presidio-Analyzer as a standalone python package](docs/deploy.md#install-presidio-analyzer-as-a-python-package)
+- [Adding custom fields](custom_fields.md)
+- [Best practices for developing new recognizers](developing_recognizers.md)
+- [Analyzer service tutorial](tutorial_analyzer.md)
+- [Calling the different services](tutorial_service.md)
+- [Connector developer guide](tutorial_connector.md)
+
+### Deploy Presidio for Test and Dev
+
+- [Deploy locally using Docker](docs/deploy.md#the-easy-way-with-docker)
+- [Deploy locally using KIND](docs/deploy.md#deploy-locally-with-kind)
+- [Presidio-Analyzer as a standalone python package](docs/deploy.md#install-presidio-analyzer-as-a-python-package)
 
 ## Current input/output components status
 
