@@ -176,7 +176,7 @@ for item in response:
 
 ### Prerequisites
 
-1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled. If you are suing [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) it is enabled by default.
+1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled. If you are using [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) it is enabled by default.
 
    - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
 
