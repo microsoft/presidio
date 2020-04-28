@@ -25,8 +25,7 @@ from presidio_analyzer.recognizer_registry.recognizers_store_api import (
     RecognizerStoreApi,
 )  # noqa: F401
 from tests import assert_result
-from tests.mocks import MockNlpEngine
-from tests.mocks.app_tracer_mock import AppTracerMock
+from tests.mocks import NlpEngineMock, AppTracerMock
 
 logger = PresidioLogger()
 
@@ -108,7 +107,7 @@ def loaded_analyzer_engine(loaded_registry, app_tracer):
     mock_nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
     analyzer_engine = AnalyzerEngine(
         loaded_registry,
-        MockNlpEngine(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts),
+        NlpEngineMock(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts),
         app_tracer=app_tracer,
         enable_trace_pii=True,
     )
@@ -371,7 +370,7 @@ def test_added_pattern_recognizer_works(unit_test_guid):
     recognizers_store_api_mock = RecognizerStoreApiMock()
     analyze_engine = AnalyzerEngine(
         registry=MockRecognizerRegistry(recognizers_store_api_mock),
-        nlp_engine=MockNlpEngine(),
+        nlp_engine=NlpEngineMock(),
     )
     text = "rocket is my favorite transportation"
     entities = ["CREDIT_CARD", "ROCKET"]
@@ -404,7 +403,7 @@ def test_removed_pattern_recognizer_doesnt_work(unit_test_guid):
     recognizers_store_api_mock = RecognizerStoreApiMock()
     analyze_engine = AnalyzerEngine(
         registry=MockRecognizerRegistry(recognizers_store_api_mock),
-        nlp_engine=MockNlpEngine(),
+        nlp_engine=NlpEngineMock(),
     )
     text = "spaceship is my favorite transportation"
     entities = ["CREDIT_CARD", "SPACESHIP"]
@@ -461,7 +460,7 @@ def test_apply_with_no_language_returns_default(loaded_analyzer_engine):
 
 def test_when_allFields_is_true_return_all_fields():
     analyze_engine = AnalyzerEngine(
-        registry=MockRecognizerRegistry(), nlp_engine=MockNlpEngine()
+        registry=MockRecognizerRegistry(), nlp_engine=NlpEngineMock()
     )
     request = AnalyzeRequest()
     request.analyzeTemplate.allFields = True
@@ -496,7 +495,7 @@ def test_when_allFields_is_true_full_recognizers_list_return_all_fields(nlp_engi
 
 def test_when_allFields_is_true_and_entities_not_empty_exception():
     analyze_engine = AnalyzerEngine(
-        registry=RecognizerRegistry(), nlp_engine=MockNlpEngine()
+        registry=RecognizerRegistry(), nlp_engine=NlpEngineMock()
     )
     request = AnalyzeRequest()
     request.text = "My name is David and I live in Seattle." "Domain: microsoft.com "
@@ -545,7 +544,7 @@ def test_when_threshold_is_zero_all_results_pass(loaded_registry, unit_test_guid
     # also loads SpaCy so it can detect the phone number entity
 
     analyzer_engine = AnalyzerEngine(
-        registry=loaded_registry, nlp_engine=MockNlpEngine()
+        registry=loaded_registry, nlp_engine=NlpEngineMock()
     )
     results = analyzer_engine.analyze(
         unit_test_guid, text, entities, language, all_fields=False, score_threshold=0
@@ -565,7 +564,7 @@ def test_when_threshold_is_more_than_half_only_credit_card_passes(
     # also loads SpaCy so it can detect the phone number entity
 
     analyzer_engine = AnalyzerEngine(
-        registry=loaded_registry, nlp_engine=MockNlpEngine()
+        registry=loaded_registry, nlp_engine=NlpEngineMock()
     )
     results = analyzer_engine.analyze(
         unit_test_guid, text, entities, language, all_fields=False, score_threshold=0.51
@@ -586,7 +585,7 @@ def test_when_default_threshold_is_more_than_half_only_one_passes(
 
     analyzer_engine = AnalyzerEngine(
         registry=loaded_registry,
-        nlp_engine=MockNlpEngine(),
+        nlp_engine=NlpEngineMock(),
         default_score_threshold=0.7,
     )
     results = analyzer_engine.analyze(
@@ -607,7 +606,7 @@ def test_when_default_threshold_is_zero_all_results_pass(
     # also loads SpaCy so it can detect the phone number entity
 
     analyzer_engine = AnalyzerEngine(
-        registry=loaded_registry, nlp_engine=MockNlpEngine()
+        registry=loaded_registry, nlp_engine=NlpEngineMock()
     )
     results = analyzer_engine.analyze(
         unit_test_guid, text, entities, language, all_fields=False
@@ -722,7 +721,7 @@ def test_get_recognizers_returns_custom():
     recognizers_store_api_mock.add_custom_pattern_recognizer(pattern_recognizer)
     analyze_engine = AnalyzerEngine(
         registry=MockRecognizerRegistry(recognizers_store_api_mock),
-        nlp_engine=MockNlpEngine(),
+        nlp_engine=NlpEngineMock(),
     )
     request = RecognizersAllRequest(language="en")
     response = analyze_engine.GetAllRecognizers(request, None)
@@ -748,7 +747,7 @@ def test_get_recognizers_returns_added_custom():
 
     analyze_engine = AnalyzerEngine(
         registry=MockRecognizerRegistry(recognizers_store_api_mock),
-        nlp_engine=MockNlpEngine(),
+        nlp_engine=NlpEngineMock(),
     )
     request = RecognizersAllRequest(language="en")
     response = analyze_engine.GetAllRecognizers(request, None)
@@ -773,7 +772,7 @@ def test_get_recognizers_returns_supported_language():
     recognizers_store_api_mock.add_custom_pattern_recognizer(pattern_recognizer)
     analyze_engine = AnalyzerEngine(
         registry=MockRecognizerRegistry(recognizers_store_api_mock),
-        nlp_engine=MockNlpEngine(),
+        nlp_engine=NlpEngineMock(),
     )
     request = RecognizersAllRequest(language="ru")
     response = analyze_engine.GetAllRecognizers(request, None)

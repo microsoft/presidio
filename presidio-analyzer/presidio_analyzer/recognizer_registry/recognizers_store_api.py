@@ -1,13 +1,9 @@
 import os
 
 import grpc
-from presidio_analyzer.protobuf_models import recognizers_store_pb2
-from presidio_analyzer.protobuf_models import recognizers_store_pb2_grpc
+from presidio_analyzer.protobuf_models import recognizers_store_pb2, recognizers_store_pb2_grpc
 
-from presidio_analyzer import PatternRecognizer, PresidioLogger
-from presidio_analyzer import Pattern
-
-logger = PresidioLogger("presidio")
+from presidio_analyzer import PatternRecognizer, Pattern
 
 
 class RecognizerStoreApi:

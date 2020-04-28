@@ -1,6 +1,6 @@
 import pytest
 
-from assertions import assert_result
+from tests import assert_result
 from presidio_analyzer.predefined_recognizers import SgFinRecognizer
 
 

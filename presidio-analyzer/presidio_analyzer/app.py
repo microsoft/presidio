@@ -1,5 +1,6 @@
 # pylint: disable=wrong-import-position,wrong-import-order
 import logging
+import grpc
 from concurrent import futures
 import os
 import sys
@@ -12,12 +13,11 @@ from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from analyzer_engine import AnalyzerEngine # noqa
 from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
 from nlp_engine import NLP_ENGINES # noqa
 from presidio_logger import PresidioLogger # noqa
+from protobuf_models import analyze_pb2, analyze_pb2_grpc
 
 logging.getLogger().setLevel(os.environ.get("LOGLEVEL", "INFO"))
 
@@ -67,7 +67,13 @@ def serve_command_handler(enable_trace_pii,
 
     # load nlp engine with yaml config
     nlp_conf_path = os.environ.get("NLP_CONF_PATH", nlp_conf_path)
-    nlp_conf = yaml.safe_load(open(nlp_conf_path))
+    if os.path.exists(nlp_conf_path):
+        nlp_conf = yaml.safe_load(open(nlp_conf_path))
+    else:
+        logger.warn(
+            f"configuration at {nlp_conf_path} not found.  Using default config."
+        )
+        nlp_conf = {"nlp_engine_name": "spacy", "models": [{"lang": "en", "name": "en_core_web_lg"}]}
     nlp_engine_name = nlp_conf["nlp_engine_name"]
     nlp_engine_class = NLP_ENGINES[nlp_engine_name]
     nlp_engine_opts = {m["lang"]: m["name"] for m in nlp_conf["models"]}

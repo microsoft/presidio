@@ -3,9 +3,7 @@ import uuid
 
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.protobuf_models import \
-    analyze_pb2, analyze_pb2_grpc, common_pb2
-from presidio_analyzer.recognizer_registry import RecognizerStoreApi
+from presidio_analyzer.protobuf_models import analyze_pb2, analyze_pb2_grpc, common_pb2
 
 logger = PresidioLogger("presidio")
 
@@ -76,7 +74,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         logger.info("Starting Analyzer's Get All Recognizers")
         language = request.language
         if language is None or language == "":
-            language = DEFAULT_LANGUAGE
+            language = self.default_langauge
         results = []
         recognizers = self.registry.get_recognizers(
             language=language,
