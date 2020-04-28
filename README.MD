@@ -24,7 +24,7 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 <p align="center">
   <kbd>  
-  <img width="400" height="200" src="docs/assets/presidio_gif.gif">
+  <img width="-100" height="-50" src="docs/assets/presidio_gif.gif">
   </kbd>
 </p>
 
