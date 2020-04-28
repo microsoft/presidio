@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 cython = "*"
-spacy = ">=2.2.4"
+spacy = "==2.2.4"
 regex = "*"
 pyre2 = {file = "https://github.com/torosent/pyre2/archive/release/0.2.23.zip"}
 grpcio = "*"

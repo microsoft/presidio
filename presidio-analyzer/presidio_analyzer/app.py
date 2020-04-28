@@ -16,7 +16,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from analyzer_engine import AnalyzerEngine # noqa
 from recognizer_registry.recognizer_registry import RecognizerRegistry # noqa
-from predefined_recognizers.spacy_recognizer import SpacyRecognizer
 from nlp_engine import NLP_ENGINES # noqa
 from presidio_logger import PresidioLogger # noqa
 
@@ -60,7 +59,7 @@ class PresidioCLIHelp(CLIHelp):
 def serve_command_handler(enable_trace_pii,
                           env_grpc_port=False,
                           grpc_port=3000,
-                          nlp_conf_path="conf/spacy.yaml",
+                          nlp_conf_path="conf/default.yaml",
                           max_workers=10):
     logger.info("Starting GRPC server")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
@@ -147,7 +146,7 @@ class CommandsLoader(CLICommandsLoader):
                         default=enable_trace_pii,
                         required=False)
             ac.argument('grpc_port', default=3001, type=int, required=False)
-            ac.argument('nlp_conf_path', default="conf/spacy_multilingual.yaml", type=str, required=False)
+            ac.argument('nlp_conf_path', default="conf/default.yaml", type=str, required=False)
             ac.argument('max_workers', default=10, type=int, required=False)
         with ArgumentsContext(self, 'analyze') as ac:
             ac.argument('env_grpc_port', default=False, required=False)

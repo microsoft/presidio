@@ -21,4 +21,4 @@ ARG NAME=presidio-analyzer
 ADD ./${NAME}/presidio_analyzer /usr/bin/${NAME}/presidio_analyzer
 WORKDIR /usr/bin/${NAME}/presidio_analyzer
 
-CMD pipenv run python __main__.py serve --env-grpc-port
+CMD pipenv run python app.py serve --env-grpc-port
