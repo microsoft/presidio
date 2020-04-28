@@ -9,4 +9,4 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 export PYTHONPATH="${DIR}/presidio_analyzer:${PYTHONPATH}"
-python3 -m presidio_analyzer "$@"
+python3 -m presidio_analyzer.app "$@"
