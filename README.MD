@@ -22,8 +22,9 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 [Try Presidio with your own data](https://aka.ms/presidio-demo)
 
-<a href="gif"><img src="docs/assets/presidio_gif.gif" height="150" width="250" ></a>
-
+<p align="center">
+  <img width="250" height="150" src="docs/assets/presidio_gif.gif">
+</p>
 ## Overview
 
 - [Presidio Features](docs/overview.md#features)
