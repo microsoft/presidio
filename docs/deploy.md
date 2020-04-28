@@ -176,7 +176,7 @@ for item in response:
 
 ### Prerequisites
 
-1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled. If you are using [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) it is enabled by default.
+1. A Kubernetes 1.9+ cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled. If you are using [AKS](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes) RBAC is enabled by default.
 
    - Note the pod's resources requirements (CPU and memory) and plan the cluster accordingly.
 
@@ -189,7 +189,7 @@ for item in response:
      ```
 
 3. Local [helm](https://helm.sh/) client.
-4. **Optional** - Container Registry - such as [ACR](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-intro). Only needed if you will build you own presidio images and not used the default ones from from [Microsoft syndicates container catalog](https://azure.microsoft.com/en-in/blog/microsoft-syndicates-container-catalog/)
+4. **Optional** - Container Registry - such as [ACR](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-intro). Only needed if you are using your own presidio images and not the default ones from from [Microsoft syndicates container catalog](https://azure.microsoft.com/en-in/blog/microsoft-syndicates-container-catalog/)
 5. Recent presidio repo is cloned on your local machine.
 
 ### Single click deployment
@@ -202,7 +202,7 @@ for item in response:
 deploy-helm.sh
 ```
 
-3. Optional - Grant the Kubernetes cluster access to the container registry. Only needed if you will build you own presidio images. This step can be skipped and the script will pull the container images from [Microsoft syndicates container catalog](https://azure.microsoft.com/en-in/blog/microsoft-syndicates-container-catalog/)
+3. Optional - Grant the Kubernetes cluster access to the container registry. Only needed if you will use your own presidio images. This step can be skipped and the script will pull the container images from [Microsoft syndicates container catalog](https://azure.microsoft.com/en-in/blog/microsoft-syndicates-container-catalog/)
 
    - If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
 
