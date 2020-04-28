@@ -22,7 +22,7 @@ class SgFinRecognizer(PatternRecognizer):
         pattern_groups=None,
         context=None,
         supported_language="en",
-        supported_entity="US_SSN",
+        supported_entity="SG_NRIC_FIN",
     ):
         pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
         context = context if context else self.CONTEXT

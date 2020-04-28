@@ -1,17 +1,20 @@
 error = 0.00001
 
 
-def __assert_result_without_score(result, expected_entity_type,
-                                  expected_start, expected_end):
+def __assert_result_without_score(
+    result, expected_entity_type, expected_start, expected_end
+):
     assert result.entity_type == expected_entity_type
     assert result.start == expected_start
     assert result.end == expected_end
 
 
-def assert_result(result, expected_entity_type, expected_start,
-                  expected_end, expected_score):
-    __assert_result_without_score(result, expected_entity_type,
-                                  expected_start, expected_end)
+def assert_result(
+    result, expected_entity_type, expected_start, expected_end, expected_score
+):
+    __assert_result_without_score(
+        result, expected_entity_type, expected_start, expected_end
+    )
     assert result.score == expected_score
 
 

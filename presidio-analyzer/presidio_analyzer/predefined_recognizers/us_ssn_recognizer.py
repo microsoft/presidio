@@ -8,7 +8,7 @@ class UsSsnRecognizer(PatternRecognizer):
     """
 
     PATTERN_GROUPS = [
-        ("SSN (very weak)", r"\b(([0-9]{5})-([0-9]{4})|([0-9]{3})-([0-9]{6}))\b", 0.05),
+        ("SSN (very weak)", r"\b(([0-9]{5})-([0-9]{4})|([0-9]{3})-([0-9]{6}))\b", 0.05),  # noqa E501
         ("SSN (weak)", r"\b[0-9]{9}\b", 0.3),
         ("SSN (medium)", r"\b([0-9]{3})-([0-9]{2})-([0-9]{4})\b", 0.5),
     ]

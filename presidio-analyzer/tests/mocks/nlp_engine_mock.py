@@ -2,7 +2,6 @@ from presidio_analyzer.nlp_engine import NlpEngine, NlpArtifacts
 
 
 class MockNlpEngine(NlpEngine):
-
     def __init__(self, stopwords=[], punct_words=[], nlp_artifacts=None):
         self.stopwords = stopwords
         self.punct_words = punct_words

@@ -2,14 +2,14 @@ import logging
 
 
 class AppTracerMock:
-
     def __init__(self, enable_interpretability=True):
 
-        logger = logging.getLogger('InterpretabilityMock')
+        logger = logging.getLogger("InterpretabilityMock")
         if not logger.handlers:
             ch = logging.StreamHandler()
             formatter = logging.Formatter(
-                '[%(asctime)s][%(name)s][%(levelname)s]%(message)s')
+                "[%(asctime)s][%(name)s][%(levelname)s]%(message)s"
+            )
             ch.setFormatter(formatter)
             logger.addHandler(ch)
             logger.setLevel(logging.INFO)

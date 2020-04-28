@@ -1,12 +1,17 @@
 import pytest
-import string
 
 from tests import assert_result
 from presidio_analyzer.predefined_recognizers.iban_recognizer import IbanRecognizer
-from presidio_analyzer.entity_recognizer import EntityRecognizer
 
-iban_recognizer = IbanRecognizer()
-entities = ["IBAN_CODE"]
+
+@pytest.fixture(scope="module")
+def recognizer():
+    return IbanRecognizer()
+
+
+@pytest.fixture(scope="module")
+def entities():
+    return ["IBAN_CODE"]
 
 
 def update_iban_checksum(iban):
@@ -346,10 +351,8 @@ def update_iban_checksum(iban):
         ),
     ],
 )
-def test_all_ibans(
-    iban, expected_len, expected_res, recognizer=iban_recognizer, entities=entities
-):
+def test_all_ibans(iban, expected_len, expected_res, recognizer, entities, max_score):
     results = recognizer.analyze(iban, entities)
     assert len(results) == expected_len
     for res, (start, end) in zip(results, expected_res):
-        assert_result(res, entities[0], start, end, EntityRecognizer.MAX_SCORE)
+        assert_result(res, entities[0], start, end, max_score)
