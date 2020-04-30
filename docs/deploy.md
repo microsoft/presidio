@@ -196,7 +196,7 @@ for item in response:
 
 1. Navigate into `<root>\deployment` from command line.
 
-2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](../deployment/deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions.
+2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](../deployment/deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions. Note that this script uses Helm 2 version.
 
 ```sh
 deploy-helm.sh
