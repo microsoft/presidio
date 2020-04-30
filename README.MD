@@ -32,6 +32,7 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 - [Presidio Features](docs/overview.md#features)
 - [Presidio Input and Output](docs/overview.md#input-and-output)
+- [API Spec](presidio-api/cmd/presidio-api/docs/readme.md)
 - [The Technology Stack](docs/overview.md#the-technology-stack)
 
 ## API Samples
