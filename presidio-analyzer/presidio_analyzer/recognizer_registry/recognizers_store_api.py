@@ -41,7 +41,7 @@ class RecognizerStoreApi:
             last_hash = self.rs_stub.ApplyGetHash(
                 hash_request).recognizersHash
         except grpc.RpcError:
-            logger.warning("Failed to get recognizers hash. If you are running the analyzer in a standalone mode, you can ignore this warning")
+            logger.error("Failed to get recognizers hash")
             return None
 
         if not last_hash:
@@ -62,7 +62,7 @@ class RecognizerStoreApi:
             raw_recognizers = self.rs_stub.ApplyGetAll(req).recognizers
 
         except grpc.RpcError:
-            logging.info("Failed getting recognizers from the remote store. \
+            logger.info("Failed getting recognizers from the remote store. \
             Returning an empty list")
             return raw_recognizers
 

@@ -28,8 +28,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         defines whether PII values should be traced or not.
         :param default_score_threshold: Minimum confidence value
         for detected entities to be returned
-        :param use_recognizer_store Whether to call the Presidio Recognizer Store
-        on every request to gather responses from custom recognizers as well
+        :param use_recognizer_store Whether to call the
+        Presidio Recognizer Store on every request to gather
+        responses from custom recognizers as well
         (only applicable for the full Presidio service)
         """
         if not nlp_engine:
@@ -41,7 +42,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             logger.info("Recognizer registry not provided. "
                         "Creating default RecognizerRegistry instance")
             from presidio_analyzer import RecognizerRegistry
-            recognizer_store_api = RecognizerStoreApi() if use_recognizer_store else None
+            if use_recognizer_store:
+                recognizer_store_api = RecognizerStoreApi()
+            else:
+                recognizer_store_api = None
             registry = RecognizerRegistry(recognizer_store_api=recognizer_store_api)
         if not app_tracer:
             app_tracer = AppTracer()
@@ -232,7 +236,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.is_loaded = True
 
             # analyze using the current recognizer and append the results
-            current_results = recognizer.analyze(text=text, entities=entities, nlp_artifacts=nlp_artifacts)
+            current_results = recognizer.analyze(text=text,
+                                                 entities=entities,
+                                                 nlp_artifacts=nlp_artifacts)
             if current_results:
                 results.extend(current_results)
 

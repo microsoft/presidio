@@ -1,12 +1,11 @@
 # pylint: disable=wrong-import-position,wrong-import-order
 import logging
-import grpc
-from presidio_analyzer.protobuf_models import analyze_pb2
-from presidio_analyzer.protobuf_models import analyze_pb2_grpc
 from concurrent import futures
 import os
-import sys
 import time
+import sys
+
+import grpc
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
 from knack.arguments import ArgumentsContext
@@ -16,13 +15,12 @@ from knack.help_files import helps
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from analyzer_engine import AnalyzerEngine
-from recognizer_registry import RecognizerRegistry
-from nlp_engine import SpacyNlpEngine
-from presidio_analyzer import PresidioLogger
+from presidio_analyzer.protobuf_models import analyze_pb2, analyze_pb2_grpc # noqa
+from presidio_analyzer import AnalyzerEngine, PresidioLogger, RecognizerRegistry # noqa
+from presidio_analyzer.nlp_engine import SpacyNlpEngine # noqa
 
 log_level_name = os.environ.get('LOG_LEVEL', 'INFO')
-log_level = logging.DEBUG
+log_level = logging.INFO
 if log_level_name == 'INFO':
     log_level = logging.INFO
 if log_level_name == 'WARNING':
@@ -153,7 +151,6 @@ class CommandsLoader(CLICommandsLoader):
             ac.argument('text', required=True)
             ac.argument('fields', nargs='*', required=True)
         super(CommandsLoader, self).load_arguments(command)
-
 
 
 presidio_cli = CLI(
