@@ -1,12 +1,13 @@
-import logging
 import os
 
 import grpc
-from protobuf_models import recognizers_store_pb2
-from protobuf_models import recognizers_store_pb2_grpc
+from presidio_analyzer.protobuf_models import recognizers_store_pb2
+from presidio_analyzer.protobuf_models import recognizers_store_pb2_grpc
 
-from presidio_analyzer import PatternRecognizer
+from presidio_analyzer import PatternRecognizer, PresidioLogger
 from presidio_analyzer import Pattern
+
+logger = PresidioLogger("presidio")
 
 
 class RecognizerStoreApi:
@@ -30,6 +31,7 @@ class RecognizerStoreApi:
         Returns the hash of all the stored custom recognizers. Returns empty
         string in case of an error (e.g. the store is completly empty)
         """
+
         hash_request = \
             recognizers_store_pb2.RecognizerGetHashRequest()
 
@@ -39,13 +41,13 @@ class RecognizerStoreApi:
             last_hash = self.rs_stub.ApplyGetHash(
                 hash_request).recognizersHash
         except grpc.RpcError:
-            logging.error("Failed to get recognizers hash")
+            logger.warning("Failed to get recognizers hash. If you are running the analyzer in a standalone mode, you can ignore this warning")
             return None
 
         if not last_hash:
-            logging.info("Recognizers hash was not found in store")
+            logger.info("Recognizers hash was not found in store")
         else:
-            logging.info("Latest hash found in store is: %s", str(last_hash))
+            logger.info("Latest hash found in store is: %s", str(last_hash))
         return last_hash
 
     def get_all_recognizers(self):

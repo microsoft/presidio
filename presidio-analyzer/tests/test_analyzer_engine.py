@@ -3,15 +3,14 @@ from unittest import TestCase
 
 import pytest
 
-from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern, \
-    RecognizerResult, RecognizerRegistry, AnalysisExplanation
-from presidio_analyzer import PresidioLogger
-from presidio_analyzer.protobuf_models.analyze_pb2 import AnalyzeRequest, \
-    RecognizersAllRequest
+from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern, RecognizerResult, RecognizerRegistry, \
+    AnalysisExplanation, PresidioLogger
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer
+from presidio_analyzer.protobuf_models.analyze_pb2 import AnalyzeRequest, \
+    RecognizersAllRequest
 from presidio_analyzer.recognizer_registry.recognizers_store_api \
     import RecognizerStoreApi  # noqa: F401
 from tests import assert_result, TESTS_NLP_ENGINE
@@ -107,8 +106,8 @@ class TestAnalyzerEngine(TestCase):
         language = "en"
         entities = ["CREDIT_CARD"]
         results = self.loaded_analyzer_engine.analyze(
-            self.unit_test_guid,
-            text, entities, language, all_fields=False)
+            correlation_id=self.unit_test_guid,
+            text=text, entities=entities, language=language, all_fields=False)
 
         assert len(results) == 1
         assert_result(results[0], "CREDIT_CARD", 14,
@@ -124,8 +123,8 @@ class TestAnalyzerEngine(TestCase):
 
         analyzer_engine_with_spacy = AnalyzerEngine(
             registry=self.loaded_registry, nlp_engine=loaded_spacy_nlp_engine)
-        results = analyzer_engine_with_spacy.analyze(self.unit_test_guid, text,
-                                                     entities, language,
+        results = analyzer_engine_with_spacy.analyze(correlation_id=self.unit_test_guid, text=text,
+                                                     entities=entities, language=language,
                                                      all_fields=False)
 
         assert len(results) == 2
@@ -140,16 +139,18 @@ class TestAnalyzerEngine(TestCase):
             language = "en"
             text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 Domain: microsoft.com"
             entities = []
-            self.loaded_analyzer_engine.analyze(self.unit_test_guid,
-                                                text, entities, language,
+            self.loaded_analyzer_engine.analyze(correlation_id=self.unit_test_guid,
+                                                text=text, entities=entities, language=language,
                                                 all_fields=False)
 
     def test_analyze_with_empty_text(self):
         language = "en"
         text = ""
         entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-        results = self.loaded_analyzer_engine.analyze(self.unit_test_guid,
-                                                      text, entities, language,
+        results = self.loaded_analyzer_engine.analyze(correlation_id=self.unit_test_guid,
+                                                      text=text,
+                                                      entities=entities,
+                                                      language=language,
                                                       all_fields=False)
 
         assert len(results) == 0
@@ -159,8 +160,8 @@ class TestAnalyzerEngine(TestCase):
             language = "de"
             text = ""
             entities = ["CREDIT_CARD", "PHONE_NUMBER"]
-            self.loaded_analyzer_engine.analyze(self.unit_test_guid,
-                                                text, entities, language,
+            self.loaded_analyzer_engine.analyze(correlation_id=self.unit_test_guid,
+                                                text=text, entities=entities, language=language,
                                                 all_fields=False)
 
     def test_remove_duplicates(self):
@@ -219,7 +220,7 @@ class TestAnalyzerEngine(TestCase):
         text = "rocket is my favorite transportation"
         entities = ["CREDIT_CARD", "ROCKET"]
 
-        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+        results = analyze_engine.analyze(correlation_id=self.unit_test_guid, text=text,
                                          entities=entities,
                                          language='en', all_fields=False)
 
@@ -230,7 +231,7 @@ class TestAnalyzerEngine(TestCase):
             pattern_recognizer)
 
         # Check that the entity is recognized:
-        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+        results = analyze_engine.analyze(correlation_id=self.unit_test_guid, text=text,
                                          entities=entities,
                                          language='en', all_fields=False)
 
@@ -250,9 +251,9 @@ class TestAnalyzerEngine(TestCase):
         text = "spaceship is my favorite transportation"
         entities = ["CREDIT_CARD", "SPACESHIP"]
 
-        results = analyze_engine.analyze(self.unit_test_guid, text=text,
-                                         entities=entities,
-                                         language='en', all_fields=False)
+        results = analyze_engine.analyze(correlation_id=self.unit_test_guid,
+                                         text=text, entities=entities, language='en',
+                                         all_fields=False)
 
         assert len(results) == 0
 
@@ -260,7 +261,7 @@ class TestAnalyzerEngine(TestCase):
         recognizers_store_api_mock.add_custom_pattern_recognizer(
             pattern_recognizer)
         # Check that the entity is recognized:
-        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+        results = analyze_engine.analyze(correlation_id=self.unit_test_guid, text=text,
                                          entities=entities,
                                          language='en', all_fields=False)
         assert len(results) == 1
@@ -270,7 +271,7 @@ class TestAnalyzerEngine(TestCase):
         recognizers_store_api_mock.remove_recognizer(
             "Spaceship recognizer")
         # Test again to see we didn't get any results
-        results = analyze_engine.analyze(self.unit_test_guid, text=text,
+        results = analyze_engine.analyze(correlation_id=self.unit_test_guid, text=text,
                                          entities=entities,
                                          language='en', all_fields=False)
 
@@ -375,8 +376,8 @@ class TestAnalyzerEngine(TestCase):
 
         analyzer_engine = AnalyzerEngine(
             registry=self.loaded_registry, nlp_engine=MockNlpEngine())
-        results = analyzer_engine.analyze(self.unit_test_guid, text,
-                                          entities, language,
+        results = analyzer_engine.analyze(correlation_id=self.unit_test_guid, text=text,
+                                          entities=entities, language=language,
                                           all_fields=False,
                                           score_threshold=0)
 
@@ -392,8 +393,8 @@ class TestAnalyzerEngine(TestCase):
 
         analyzer_engine = AnalyzerEngine(
             registry=self.loaded_registry, nlp_engine=MockNlpEngine())
-        results = analyzer_engine.analyze(self.unit_test_guid, text,
-                                          entities, language,
+        results = analyzer_engine.analyze(correlation_id=self.unit_test_guid, text=text,
+                                          entities=entities, language=language,
                                           all_fields=False,
                                           score_threshold=0.51)
 
@@ -410,8 +411,8 @@ class TestAnalyzerEngine(TestCase):
         analyzer_engine = AnalyzerEngine(
             registry=self.loaded_registry, nlp_engine=MockNlpEngine(),
             default_score_threshold=0.7)
-        results = analyzer_engine.analyze(self.unit_test_guid, text,
-                                          entities, language,
+        results = analyzer_engine.analyze(correlation_id=self.unit_test_guid,
+                                          text=text, entities=entities, language=language,
                                           all_fields=False)
 
         assert len(results) == 1
@@ -426,8 +427,8 @@ class TestAnalyzerEngine(TestCase):
 
         analyzer_engine = AnalyzerEngine(
             registry=self.loaded_registry, nlp_engine=MockNlpEngine())
-        results = analyzer_engine.analyze(self.unit_test_guid, text,
-                                          entities, language,
+        results = analyzer_engine.analyze(correlation_id=self.unit_test_guid,
+                                          text=text, entities=entities, language=language,
                                           all_fields=False)
 
         assert len(results) == 2
@@ -510,16 +511,16 @@ class TestAnalyzerEngine(TestCase):
         recognizers_store_api_mock.add_custom_pattern_recognizer(
             pattern_recognizer)
         analyze_engine = AnalyzerEngine(registry=
-            MockRecognizerRegistry(
-                recognizers_store_api_mock),
-                nlp_engine=MockNlpEngine())
+        MockRecognizerRegistry(
+            recognizers_store_api_mock),
+            nlp_engine=MockNlpEngine())
         request = RecognizersAllRequest(language="en")
         response = analyze_engine.GetAllRecognizers(request, None)
         # there are 15 predefined recognizers and one custom
         assert len(response) == 16
-        rocket_recognizer = [recognizer for recognizer in response if recognizer.name == "Rocket recognizer" 
-            and recognizer.entities == ["ROCKET"] 
-            and recognizer.language == "en"]
+        rocket_recognizer = [recognizer for recognizer in response if recognizer.name == "Rocket recognizer"
+                             and recognizer.entities == ["ROCKET"]
+                             and recognizer.language == "en"]
         assert len(rocket_recognizer) == 1
 
     def test_get_recognizers_returns_added_custom(self):
@@ -529,11 +530,11 @@ class TestAnalyzerEngine(TestCase):
                                                patterns=[pattern])
 
         recognizers_store_api_mock = RecognizerStoreApiMock()
-        
+
         analyze_engine = AnalyzerEngine(registry=
-            MockRecognizerRegistry(
-                recognizers_store_api_mock),
-                nlp_engine=MockNlpEngine())
+        MockRecognizerRegistry(
+            recognizers_store_api_mock),
+            nlp_engine=MockNlpEngine())
         request = RecognizersAllRequest(language="en")
         response = analyze_engine.GetAllRecognizers(request, None)
         # there are 15 predefined recognizers
@@ -555,10 +556,18 @@ class TestAnalyzerEngine(TestCase):
         recognizers_store_api_mock.add_custom_pattern_recognizer(
             pattern_recognizer)
         analyze_engine = AnalyzerEngine(registry=
-            MockRecognizerRegistry(
-                recognizers_store_api_mock),
-                nlp_engine=MockNlpEngine())
+        MockRecognizerRegistry(
+            recognizers_store_api_mock),
+            nlp_engine=MockNlpEngine())
         request = RecognizersAllRequest(language="ru")
         response = analyze_engine.GetAllRecognizers(request, None)
         # there is only 1 mocked russian recognizer
         assert len(response) == 1
+
+    def test_recognizer_store_off(self):
+        analyze_engine = AnalyzerEngine(use_recognizer_store=False)
+        assert analyze_engine.registry.store_api is None
+
+    def test_recognizer_store_on(self):
+        analyze_engine = AnalyzerEngine(use_recognizer_store=True)
+        assert analyze_engine.registry.store_api is not None

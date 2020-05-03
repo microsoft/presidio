@@ -1,12 +1,11 @@
 import json
 import uuid
 
-from protobuf_models import analyze_pb2
-from protobuf_models import analyze_pb2_grpc
-from protobuf_models import common_pb2
-
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.app_tracer import AppTracer
+from presidio_analyzer.protobuf_models import \
+    analyze_pb2, analyze_pb2_grpc, common_pb2
+from presidio_analyzer.recognizer_registry import RecognizerStoreApi
 
 DEFAULT_LANGUAGE = "en"
 logger = PresidioLogger("presidio")
@@ -16,7 +15,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=None, nlp_engine=None,
                  app_tracer=None, enable_trace_pii=False,
-                 default_score_threshold=None):
+                 default_score_threshold=None, use_recognizer_store=False):
         """
         AnalyzerEngine class: Orchestrating the detection of PII entities
         and all related logic
@@ -29,6 +28,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         defines whether PII values should be traced or not.
         :param default_score_threshold: Minimum confidence value
         for detected entities to be returned
+        :param use_recognizer_store Whether to call the Presidio Recognizer Store
+        on every request to gather responses from custom recognizers as well
+        (only applicable for the full Presidio service)
         """
         if not nlp_engine:
             logger.info("nlp_engine not provided. Creating new "
@@ -39,7 +41,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             logger.info("Recognizer registry not provided. "
                         "Creating default RecognizerRegistry instance")
             from presidio_analyzer import RecognizerRegistry
-            registry = RecognizerRegistry()
+            recognizer_store_api = RecognizerStoreApi() if use_recognizer_store else None
+            registry = RecognizerRegistry(recognizer_store_api=recognizer_store_api)
         if not app_tracer:
             app_tracer = AppTracer()
 
@@ -177,22 +180,25 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = DEFAULT_LANGUAGE
         return language
 
-    def analyze(self, correlation_id, text, entities, language, all_fields,
+    def analyze(self, text, language, all_fields, entities=None, correlation_id=None,
                 score_threshold=None, trace=False):
         """
         analyzes the requested text, searching for the given entities
          in the given language
-        :param correlation_id: cross call ID for this request
         :param text: the text to analyze
         :param entities: the text to search
         :param language: the language of the text
         :param all_fields: a Flag to return all fields
+        :param correlation_id: cross call ID for this request
         of the requested language
         :param score_threshold: A minimum value for which
         to return an identified entity
         :param trace: Should tracing of the response occur or not
         :return: an array of the found entities in the text
         """
+
+        if not entities:
+            entities = []
 
         recognizers = self.registry.get_recognizers(
             language=language,
@@ -226,7 +232,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.is_loaded = True
 
             # analyze using the current recognizer and append the results
-            current_results = recognizer.analyze(text, entities, nlp_artifacts)
+            current_results = recognizer.analyze(text=text, entities=entities, nlp_artifacts=nlp_artifacts)
             if current_results:
                 results.extend(current_results)
 
