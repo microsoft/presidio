@@ -21,8 +21,6 @@ from presidio_analyzer.nlp_engine import SpacyNlpEngine # noqa
 
 log_level_name = os.environ.get('LOG_LEVEL', 'INFO')
 log_level = logging.INFO
-if log_level_name == 'INFO':
-    log_level = logging.INFO
 if log_level_name == 'WARNING':
     log_level = logging.WARNING
 if log_level_name == 'ERROR':
