@@ -24,22 +24,20 @@ func ReceiveEventsFromStream(st stream.Stream, services presidio.ServicesAPI, st
 			return err
 		}
 
-		if len(analyzerResponse.AnalyzeResults) > 0 {
-			anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResponse.AnalyzeResults, text, streamRequest.AnonymizeTemplate)
+		anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResponse.AnalyzeResults, text, streamRequest.AnonymizeTemplate)
 
-			if err != nil {
-				err = fmt.Errorf("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error())
-				return err
-			}
-
-			err = services.SendResultToDatasink(ctx, analyzerResponse.AnalyzeResults, anonymizerResult, fmt.Sprintf("%s/%s", partition, sequence))
-			if err != nil {
-				err = fmt.Errorf("error sending message to datasink: %s/%s, error: %q", partition, sequence, err.Error())
-				return err
-			}
-			log.Debug("%d results were sent to the datasink successfully", len(analyzerResponse.AnalyzeResults))
-
+		if err != nil {
+			err = fmt.Errorf("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error())
+			return err
 		}
+
+		err = services.SendResultToDatasink(ctx, analyzerResponse.AnalyzeResults, anonymizerResult, fmt.Sprintf("%s/%s", partition, sequence))
+		if err != nil {
+			err = fmt.Errorf("error sending message to datasink: %s/%s, error: %q", partition, sequence, err.Error())
+			return err
+		}
+		log.Debug("%d results were sent to the datasink successfully", len(analyzerResponse.AnalyzeResults))
+
 		return nil
 	})
 }
