@@ -87,7 +87,7 @@ They are however more complex to train, deploy and tend to be slower than tradit
 When contributing a DL based method, the best option would be to create a sidecar container which is isolated from the presidio-analyzer container. On the `presidio-analyzer` side, one would extend the [RemoteRecognizer](presidio-analyzer/presidio_analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 
 ## Language support
-When developing a new recognizer, a supported language should be specified ('english' by default if not specified). When a request for analysis is made it includes the language as argument. Only recognizers supporting that language will be used (if any). A recognizer can support a single language only.
+When developing a new recognizer, a supported language should be specified ('en' by default if not specified). When a request for analysis is made it includes the language as argument. Only recognizers supporting that language will be used (if any). A recognizer can support a single language only.
 
 ### Supporting new languages
 To support more languages simply create a new recognizer and specify which language it supports
