@@ -1,9 +1,9 @@
 import json
 import uuid
 
-import analyze_pb2
-import analyze_pb2_grpc
-import common_pb2
+from protobuf_models import analyze_pb2
+from protobuf_models import analyze_pb2_grpc
+from protobuf_models import common_pb2
 
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.app_tracer import AppTracer
@@ -60,9 +60,30 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             self.default_score_threshold = default_score_threshold
 
     # pylint: disable=unused-argument
+    def GetAllRecognizers(self, request, context):
+        """
+        GRPC entry point to Presidio-Analyzer Get all Recognizers method
+        :param request: Presidio Analyzer resuest of type RecognizersAllRequest
+        :param context:
+        :return: List of [Recognizer] as a RecognizersAllResponse
+        """
+        logger.info("Starting Analyzer's Get All Recognizers")
+        language = request.language
+        if language is None or language == "":
+            language = DEFAULT_LANGUAGE
+        results = []
+        recognizers = self.registry.get_recognizers(
+            language=language,
+            all_fields=True)
+        for recognizer in recognizers:
+            results.append(
+                AnalyzerEngine.__convert_recognizer_to_proto(recognizer))
+        return results
+
+    # pylint: disable=unused-argument
     def Apply(self, request, context):
         """
-        GRPC entry point to Presidio-Analyzer
+        GRPC entry point to Presidio-Analyzer Apply method
         :param request: Presidio Analyzer resuest of type AnalyzeRequest
         :param context:
         :return: List of [AnalyzeResult]
@@ -263,3 +284,18 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             proto_results.append(res)
 
         return proto_results
+
+    @staticmethod
+    def __convert_recognizer_to_proto(result):
+        """
+        Converts a List of recognizers to a list of protobuf List[Recognizer]
+        :param results: List[recognizer]
+        :return: List[Recognizer]
+        """
+        res = analyze_pb2.Recognizer()
+        res.name = result.name
+        for entity in result.supported_entities:
+            # pylint: disable=no-member
+            res.entities.append(entity)
+        res.language = result.supported_language
+        return res

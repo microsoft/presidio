@@ -2,8 +2,8 @@ import logging
 import os
 
 import grpc
-import recognizers_store_pb2
-import recognizers_store_pb2_grpc
+from protobuf_models import recognizers_store_pb2
+from protobuf_models import recognizers_store_pb2_grpc
 
 from presidio_analyzer import PatternRecognizer
 from presidio_analyzer import Pattern

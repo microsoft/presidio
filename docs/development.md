@@ -96,6 +96,7 @@ Install the Python packages for the analyzer in the `presidio-analyzer` folder, 
 - Adding a file in go requires the `make go-format` command before running and building the service.
 - Run functional tests with `make test-functional`
 - Updating python dependencies [instructions](./pipenv_readme.md)
+- These steps are verified on every pull request validation to a presidio branch. do not alter this document without referring to the implemented steps in the [pipeline](../pipelines/templates/build-test-publish.yaml)
 
 ### Set the following environment variables <a name="env-variables"></a>
 
