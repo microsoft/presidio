@@ -6,7 +6,7 @@ from presidio_analyzer import PatternRecognizer
 REGEX = r'\b[0-9]{8,17}\b'
 
 CONTEXT = [
-    "bank"
+    "bank",
     # Task #603: Support keyphrases: change to "checking account"
     # as part of keyphrase change
     "check",

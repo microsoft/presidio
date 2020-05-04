@@ -20,6 +20,11 @@ class AnalyzeServiceStub(object):
         request_serializer=analyze__pb2.AnalyzeRequest.SerializeToString,
         response_deserializer=analyze__pb2.AnalyzeResponse.FromString,
         )
+    self.GetAllRecognizers = channel.unary_unary(
+        '/types.AnalyzeService/GetAllRecognizers',
+        request_serializer=analyze__pb2.RecognizersAllRequest.SerializeToString,
+        response_deserializer=analyze__pb2.RecognizersAllResponse.FromString,
+        )
 
 
 class AnalyzeServiceServicer(object):
@@ -34,6 +39,13 @@ class AnalyzeServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetAllRecognizers(self, request, context):
+    """Gets the list of known recognizers.
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_AnalyzeServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -41,6 +53,11 @@ def add_AnalyzeServiceServicer_to_server(servicer, server):
           servicer.Apply,
           request_deserializer=analyze__pb2.AnalyzeRequest.FromString,
           response_serializer=analyze__pb2.AnalyzeResponse.SerializeToString,
+      ),
+      'GetAllRecognizers': grpc.unary_unary_rpc_method_handler(
+          servicer.GetAllRecognizers,
+          request_deserializer=analyze__pb2.RecognizersAllRequest.FromString,
+          response_serializer=analyze__pb2.RecognizersAllResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
