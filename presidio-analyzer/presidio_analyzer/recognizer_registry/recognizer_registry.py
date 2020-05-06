@@ -75,11 +75,14 @@ class RecognizerRegistry:
         if entities is None and all_fields is False:
             raise ValueError("No entities provided")
 
-        all_possible_recognizers = self.recognizers.copy()
-        custom_recognizers = self.get_custom_recognizers()
-        all_possible_recognizers.extend(custom_recognizers)
-        logging.info("Found %d (total) custom recognizers",
-                     len(custom_recognizers))
+        if self.store_api:
+            all_possible_recognizers = self.recognizers.copy()
+            custom_recognizers = self.get_custom_recognizers()
+            all_possible_recognizers.extend(custom_recognizers)
+            logging.info("Found %d (total) custom recognizers",
+                         len(custom_recognizers))
+        else:
+            all_possible_recognizers = self.recognizers
 
         # filter out unwanted recognizers
         to_return = []
@@ -114,6 +117,8 @@ class RecognizerRegistry:
         """
         Returns a list of custom recognizers retrieved from the store object
         """
+        if not self.store_api:
+            return []
 
         if self.loaded_hash is not None:
             logging.info(
