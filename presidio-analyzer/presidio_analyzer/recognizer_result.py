@@ -37,7 +37,7 @@ class RecognizerResult:
                                   self.end,
                                   self.score)
 
-    def __repr(self):
+    def __repr__(self):
         return self.__str__()
 
     def intersects(self, other):

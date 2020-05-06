@@ -10,7 +10,7 @@ reports=no
 disable=import-error,too-few-public-methods,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code
 
 [FORMAT]
-max-line-length=80
+max-line-length=89
 
 [VARIABLES]
 # Tells whether we should check for unused import in __init__ files.
