@@ -1,4 +1,4 @@
-# pylint: disable=unused-import,line-too-long
-from presidio_analyzer.recognizer_registry.recognizers_store_api import (  # noqa: F401, E501
-        RecognizerStoreApi
-    )
+from .recognizers_store_api import RecognizerStoreApi
+from .recognizer_registry import RecognizerRegistry
+
+__all__ = ["RecognizerStoreApi", "RecognizerRegistry"]
