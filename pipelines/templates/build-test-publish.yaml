@@ -124,7 +124,8 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        vmImage: 'ubuntu-latest'
+        name: 'presidio-docker-agent'
+        #vmImage: 'ubuntu-latest'
       jobs:
       - job: BuildTest
         displayName: Build and Test
@@ -252,7 +253,8 @@ stages:
       displayName: Set Pipeline globals
       dependsOn: []
       pool:
-        vmImage: 'ubuntu-latest'
+        name: 'presidio-docker-agent'
+        #vmImage: 'ubuntu-latest'
       jobs:
 
       - job: SetBuildDep
@@ -314,7 +316,8 @@ stages:
       displayName: Build Python
       dependsOn: Setup
       pool:
-        vmImage: 'ubuntu-latest'
+        name: 'presidio-docker-agent'
+        #vmImage: 'ubuntu-latest'
       jobs:
         - job: GetDepsJob
           displayName: Get Deps State
@@ -393,7 +396,8 @@ stages:
       displayName: Build Golang
       dependsOn: Setup
       pool:
-        vmImage: 'ubuntu-latest'
+        name: 'presidio-docker-agent'
+        #vmImage: 'ubuntu-latest'
       jobs:
 
         - job: GetDepsJob
@@ -509,7 +513,8 @@ stages:
       - PythonStage
       - GolangStage
       pool:
-        vmImage: 'ubuntu-latest'
+        name: 'presidio-docker-agent'
+        #vmImage: 'ubuntu-latest'
       jobs: 
 
         - job: FunctionalTests
@@ -538,7 +543,8 @@ stages:
       dependsOn: 
       - TestFunctional
       pool:
-        vmImage: 'ubuntu-latest'
+        name: 'presidio-docker-agent'
+        #vmImage: 'ubuntu-latest'
       variables:
           ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
               BUILD_LABEL: 'latest'
