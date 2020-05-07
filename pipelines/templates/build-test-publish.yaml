@@ -143,6 +143,7 @@ stages:
               script: |
                 set -eux  # fail on error
 
+                sudo apt-get update
                 sudo apt-get install python3-setuptools
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
@@ -180,11 +181,8 @@ stages:
                 dep ensure
 
                 # install dependency libraries
-                sudo apt update
-
-                sudo apt install libleptonica-dev
-                sudo apt install tesseract-ocr
-                sudo apt install libtesseract-dev
+                sudo apt-get update
+                sudo apt-get install libleptonica-dev tesseract-ocr libtesseract-dev
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
