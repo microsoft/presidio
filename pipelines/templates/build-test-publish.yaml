@@ -194,7 +194,9 @@ stages:
                 set -eux  # fail on error
                 
                 # run make file commands
+                df -h
                 make build
+                df -h
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
@@ -208,7 +210,9 @@ stages:
                 set -eux  # fail on error
                 
                 # run make file commands
+                df -h
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
+                df -h
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
@@ -246,7 +250,10 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
+
+                df -h
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
+                df -h
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
@@ -258,7 +265,10 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
+
+                df -h
                 make test-functional DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
+                df -h
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
