@@ -124,8 +124,8 @@ stages:
       displayName: Pull Request Validation
       dependsOn: []
       pool:
-        name: 'presidio-docker-agent'
-        #vmImage: 'ubuntu-latest'
+        #name: 'presidio-docker-agent'
+        vmImage: 'ubuntu-latest'
       jobs:
       - job: BuildTest
         displayName: Build and Test
@@ -186,7 +186,7 @@ stages:
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
-            displayName: 'Presidio Makefile - Build lint and Unit tests'
+            displayName: 'Presidio Makefile - Build lint'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
@@ -195,10 +195,24 @@ stages:
                 
                 # run make file commands
                 make build
+            env:
+              PRESIDIO_DEPS_LABEL: pr
+              DOCKER_REGISTRY: presidio
+          # Do not change the implementation of this stage without changing the steps in docs/development.md
+          - task: Bash@3
+            displayName: 'Presidio Makefile - Unit tests'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
+                
+                # run make file commands
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
+
 
       - job: ContainerBuildTest
         displayName: Build Containers and Integration Test
@@ -226,14 +240,24 @@ stages:
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
-            displayName: 'Presidio Makefile - Container build and functional tests'
+            displayName: 'Presidio Makefile - Container build'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
-              
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
+            env:
+              PRESIDIO_DEPS_LABEL: pr
+              DOCKER_REGISTRY: presidio
+          # Do not change the implementation of this stage without changing the steps in docs/development.md
+          - task: Bash@3
+            displayName: 'Presidio Makefile - functional tests'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
                 make test-functional DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
             env:
               PRESIDIO_DEPS_LABEL: pr
@@ -251,8 +275,8 @@ stages:
       displayName: Set Pipeline globals
       dependsOn: []
       pool:
-        name: 'presidio-docker-agent'
-        #vmImage: 'ubuntu-latest'
+        #name: 'presidio-docker-agent'
+        vmImage: 'ubuntu-latest'
       jobs:
 
       - job: SetBuildDep
@@ -314,8 +338,8 @@ stages:
       displayName: Build Python
       dependsOn: Setup
       pool:
-        name: 'presidio-docker-agent'
-        #vmImage: 'ubuntu-latest'
+        #name: 'presidio-docker-agent'
+        vmImage: 'ubuntu-latest'
       jobs:
         - job: GetDepsJob
           displayName: Get Deps State
@@ -394,8 +418,8 @@ stages:
       displayName: Build Golang
       dependsOn: Setup
       pool:
-        name: 'presidio-docker-agent'
-        #vmImage: 'ubuntu-latest'
+        #name: 'presidio-docker-agent'
+        vmImage: 'ubuntu-latest'
       jobs:
 
         - job: GetDepsJob
@@ -511,8 +535,8 @@ stages:
       - PythonStage
       - GolangStage
       pool:
-        name: 'presidio-docker-agent'
-        #vmImage: 'ubuntu-latest'
+        #name: 'presidio-docker-agent'
+        vmImage: 'ubuntu-latest'
       jobs: 
 
         - job: FunctionalTests
@@ -541,8 +565,8 @@ stages:
       dependsOn: 
       - TestFunctional
       pool:
-        name: 'presidio-docker-agent'
-        #vmImage: 'ubuntu-latest'
+        #name: 'presidio-docker-agent'
+        vmImage: 'ubuntu-latest'
       variables:
           ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
               BUILD_LABEL: 'latest'
