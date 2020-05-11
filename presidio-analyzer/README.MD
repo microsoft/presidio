@@ -1,7 +1,6 @@
 # Presidio analyzer
 
 ## Description
-
 The presidio-analyzer is a Python based service which does the actual detection of PII entities.
 
 The main modules in presidio-analyzer are the AnalyzerEngine and the RecognizerRegistry. The AnalyzerEngine is in charge of calling each requested recognizer. the RecognizerRegistry is in charge of providing the list of predefined and custom recognizers for analysis.
@@ -19,7 +18,7 @@ a. Implement the abstract recognizer class:
 
 Create a new Python class which implements [LocalRecognizer](presidio_analyzer/local_recognizer.py).
 `LocalRecognizer` implements the base [EntityRecognizer](presidio_analyzer/entity_recognizer.py) class.
-All local recognizers run locally together with all other predefined recognizers as a part of the `presidio-analyzer` Python process. In contrast, `RemoteRecognizer` is a placeholder for recognizers that are external to the `presidio-analyzer` service, for example on a different microservice.
+All local recognizers run locally together with all other predefined recognizers as a part of the `presidio-analyzer` Python process. In contrast, `RemoteRecognizer` is an abstract class for recognizers that are external to the `presidio-analyzer` service, for example on a different microservice.
 
 The `EntityRecognizer` abstract class requires the implementation the following methods:
 

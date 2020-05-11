@@ -1,12 +1,11 @@
 # pylint: disable=wrong-import-position,wrong-import-order
 import logging
-import grpc
-from protobuf_models import analyze_pb2
-from protobuf_models import analyze_pb2_grpc
 from concurrent import futures
 import os
-import sys
 import time
+import sys
+
+import grpc
 from google.protobuf.json_format import MessageToJson
 from knack import CLI
 from knack.arguments import ArgumentsContext
@@ -18,13 +17,18 @@ from presidio_analyzer.recognizer_registry import RecognizerStoreApi
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from analyzer_engine import AnalyzerEngine  # noqa
-from recognizer_registry.recognizer_registry \
-    import RecognizerRegistry  # noqa
-from nlp_engine.spacy_nlp_engine import SpacyNlpEngine  # noqa
-from presidio_logger import PresidioLogger  # noqa
+from presidio_analyzer.protobuf_models import analyze_pb2, analyze_pb2_grpc # noqa
+from presidio_analyzer import AnalyzerEngine, PresidioLogger, RecognizerRegistry # noqa
+from presidio_analyzer.nlp_engine import SpacyNlpEngine # noqa
 
-logging.getLogger().setLevel("INFO")
+log_level_name = os.environ.get('LOG_LEVEL', 'INFO')
+log_level = logging.INFO
+if log_level_name == 'WARNING':
+    log_level = logging.WARNING
+if log_level_name == 'ERROR':
+    log_level = logging.ERROR
+logger = PresidioLogger("presidio")
+logger.set_level(log_level)
 
 WELCOME_MESSAGE = r"""
 
@@ -51,8 +55,6 @@ helps['analyze'] = """
                    - presidio-analyzer analyze --text "John Smith drivers
                    license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE"
 """
-
-logger = PresidioLogger()
 
 
 class PresidioCLIHelp(CLIHelp):
@@ -89,7 +91,8 @@ def serve_command_handler(enable_trace_pii,
     analyze_pb2_grpc.add_AnalyzeServiceServicer_to_server(
         AnalyzerEngine(registry=registry,
                        nlp_engine=nlp_engine,
-                       enable_trace_pii=enable_trace_pii),
+                       enable_trace_pii=enable_trace_pii,
+                       use_recognizer_store=True),
         server)
 
     logger.info("Added AnalyzeServiceServicer to server")

@@ -20,6 +20,6 @@ def assert_result_within_score_range(result, expected_entity_type,
                                      expected_score_min, expected_score_max):
     __assert_result_without_score(result, expected_entity_type,
                                   expected_start, expected_end)
-    min_score = min(0, expected_score_min - error)
-    max_score = max(1, expected_score_max + error)
+    min_score = max(0, expected_score_min - error)
+    max_score = min(1, expected_score_max + error)
     assert result.score >= min_score and result.score <= max_score
