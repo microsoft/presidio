@@ -19,7 +19,7 @@ from nlp_engine import NLP_ENGINES # noqa
 from presidio_logger import PresidioLogger # noqa
 from protobuf_models import analyze_pb2, analyze_pb2_grpc
 
-logging.getLogger().setLevel(os.environ.get("LOGLEVEL", "INFO"))
+logger = PresidioLogger("presidio")
 
 WELCOME_MESSAGE = r"""
 
