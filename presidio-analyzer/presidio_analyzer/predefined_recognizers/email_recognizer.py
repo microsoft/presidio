@@ -9,8 +9,8 @@ class EmailRecognizer(PatternRecognizer):
     Recognizes email addresses using regex
     """
 
-    PATTERN_GROUPS = [
-        (
+    PATTERNS = [
+        Pattern(
             "Email (Medium)",
             r"\b((([!#$%&'*+\-/=?^_`{|}~\w])|([!#$%&'*+\-/=?^_`{|}~\w][!#$%&'*+\-/=?^_`{|}~\.\w]{0,}[!#$%&'*+\-/=?^_`{|}~\w]))[@]\w+([-.]\w+)*\.\w+([-.]\w+)*)\b",  # noqa: E501
             0.5,
@@ -21,14 +21,13 @@ class EmailRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        pattern_groups=None,
+        patterns=None,
         context=None,
         supported_language="en",
         supported_entity="EMAIL_ADDRESS",
     ):
-        pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
+        patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
-        patterns = [Pattern(*pattern_group) for pattern_group in pattern_groups]
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

@@ -7,13 +7,13 @@ class IpRecognizer(PatternRecognizer):
     Recognizes IP address using regex
     """
 
-    PATTERN_GROUPS = [
-        (
+    PATTERNS = [
+        Pattern(
             "IPv4",
             r"\b(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b",  # noqa: E501
             0.6,
         ),
-        (
+        Pattern(
             "IPv6",
             r"\s*(?!.*::.*::)(?:(?!:)|:(?=:))(?:[0-9a-f]{0,4}(?:(?<=::)|(?<!::):)){6}(?:[0-9a-f]{0,4}(?:(?<=::)|(?<!::):)[0-9a-f]{0,4}(?:(?<=::)|(?<!:)|(?<=:)(?<!::):)|(?:25[0-4]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-4]|2[0-4]\d|1\d\d|[1-9]?\d)){3})\s*",  # noqa: E501
             0.6,
@@ -24,14 +24,13 @@ class IpRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        pattern_groups=None,
+        patterns=None,
         context=None,
         supported_language="en",
         supported_entity="IP_ADDRESS",
     ):
-        pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
+        patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
-        patterns = [Pattern(*pattern_group) for pattern_group in pattern_groups]
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

@@ -10,22 +10,21 @@ class CryptoRecognizer(PatternRecognizer):
     Recognizes common crypto account numbers using regex + checksum
     """
 
-    PATTERN_GROUPS = [
-        ("Crypto (Medium)", r"\b[13][a-km-zA-HJ-NP-Z1-9]{26,33}\b", 0.5),
+    PATTERNS = [
+        Pattern("Crypto (Medium)", r"\b[13][a-km-zA-HJ-NP-Z1-9]{26,33}\b", 0.5),
     ]
 
     CONTEXT = ["wallet", "btc", "bitcoin", "crypto"]
 
     def __init__(
         self,
-        pattern_groups=None,
+        patterns=None,
         context=None,
         supported_language="en",
         supported_entity="CRYPTO",
     ):
-        pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
+        patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
-        patterns = [Pattern(*pattern_group) for pattern_group in pattern_groups]
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

@@ -7,8 +7,8 @@ class CreditCardRecognizer(PatternRecognizer):
     """
 
     # pylint: disable=line-too-long
-    PATTERN_GROUPS = [
-        (
+    PATTERNS = [
+        Pattern(
             "All Credit Cards (weak)",
             r"\b((4\d{3})|(5[0-5]\d{2})|(6\d{3})|(1\d{3})|(3\d{3}))[- ]?(\d{3,4})[- ]?(\d{3,4})[- ]?(\d{3,5})\b",  # noqa: E501
             0.3,
@@ -32,7 +32,7 @@ class CreditCardRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        pattern_groups=None,
+        patterns=None,
         context=None,
         supported_language="en",
         supported_entity="CREDIT_CARD",
@@ -40,8 +40,7 @@ class CreditCardRecognizer(PatternRecognizer):
     ):
         self.replacement_pairs = replacement_pairs
         context = context if context else self.CONTEXT
-        pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
-        patterns = [Pattern(*pattern_group) for pattern_group in pattern_groups]
+        patterns = patterns if patterns else self.PATTERNS
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

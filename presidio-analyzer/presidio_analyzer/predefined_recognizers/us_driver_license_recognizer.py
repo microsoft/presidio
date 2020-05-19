@@ -17,18 +17,18 @@ class UsLicenseRecognizer(PatternRecognizer):
     Recognizes US driver license using regex
     """
 
-    PATTERN_GROUPS = [
-        (
+    PATTERNS = [
+        Pattern(
             "Driver License - WA (weak)",
             r"\b((?=.*\d)([A-Z][A-Z0-9*]{11})|(?=.*\*)([A-Z][A-Z0-9*]{11}))\b",  # noqa: E501
             0.4,
         ),
-        (
+        Pattern(
             "Driver License - Alphanumeric (weak)",
             r"\b([A-Z][0-9]{3,6}|[A-Z][0-9]{5,9}|[A-Z][0-9]{6,8}|[A-Z][0-9]{4,8}|[A-Z][0-9]{9,11}|[A-Z]{1,2}[0-9]{5,6}|H[0-9]{8}|V[0-9]{6}|X[0-9]{8}|A-Z]{2}[0-9]{2,5}|[A-Z]{2}[0-9]{3,7}|[0-9]{2}[A-Z]{3}[0-9]{5,6}|[A-Z][0-9]{13,14}|[A-Z][0-9]{18}|[A-Z][0-9]{6}R|[A-Z][0-9]{9}|[A-Z][0-9]{1,12}|[0-9]{9}[A-Z]|[A-Z]{2}[0-9]{6}[A-Z]|[0-9]{8}[A-Z]{2}|[0-9]{3}[A-Z]{2}[0-9]{4}|[A-Z][0-9][A-Z][0-9][A-Z]|[0-9]{7,8}[A-Z])\b",  # noqa: E502
             0.3,
         ),
-        (
+        Pattern(
             "Driver License - Digits (very weak)",
             r"\b([0-9]{6,14}|[0-9]{16})\b",  # noqa: E501
             0.01,
@@ -51,14 +51,13 @@ class UsLicenseRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        pattern_groups=None,
+        patterns=None,
         context=None,
         supported_language="en",
         supported_entity="US_DRIVER_LICENSE",
     ):
-        pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
+        patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
-        patterns = [Pattern(*pattern_group) for pattern_group in pattern_groups]
         super().__init__(
             supported_entity=supported_entity,
             supported_language=supported_language,

@@ -25,8 +25,8 @@ class IbanRecognizer(PatternRecognizer):
     Recognizes IBAN code using regex and checksum
     """
 
-    PATTERN_GROUPS = [
-        (
+    PATTERNS = [
+        Pattern(
             "IBAN Generic",
             r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?\b",
             0.5,
@@ -41,7 +41,7 @@ class IbanRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        pattern_groups=None,
+        patterns=None,
         context=None,
         supported_language="en",
         supported_entity="IBAN_CODE",
@@ -52,9 +52,8 @@ class IbanRecognizer(PatternRecognizer):
         self.exact_match = exact_match
         self.BOSEOS = BOSEOS if exact_match else ()
         self.flags = regex_flags
-        pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
+        patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
-        patterns = [Pattern(*pattern_group) for pattern_group in pattern_groups]
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

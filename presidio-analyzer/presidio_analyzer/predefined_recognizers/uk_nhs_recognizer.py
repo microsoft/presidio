@@ -6,8 +6,8 @@ class NhsRecognizer(PatternRecognizer):
     Recognizes NHS number using regex and checksum
     """
 
-    PATTERN_GROUPS = [
-        ("NHS (medium)", r"\b([0-9]{3})[- ]?([0-9]{3})[- ]?([0-9]{4})\b", 0.5,),
+    PATTERNS = [
+        Pattern("NHS (medium)", r"\b([0-9]{3})[- ]?([0-9]{3})[- ]?([0-9]{4})\b", 0.5,),
     ]
 
     CONTEXT = [
@@ -19,7 +19,7 @@ class NhsRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        pattern_groups=None,
+        patterns=None,
         context=None,
         supported_language="en",
         supported_entity="UK_NHS",
@@ -27,8 +27,7 @@ class NhsRecognizer(PatternRecognizer):
     ):
         self.replacement_pairs = replacement_pairs
         context = context if context else self.CONTEXT
-        pattern_groups = pattern_groups if pattern_groups else self.PATTERN_GROUPS
-        patterns = [Pattern(*pattern_group) for pattern_group in pattern_groups]
+        patterns = patterns if patterns else self.PATTERNS
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,
