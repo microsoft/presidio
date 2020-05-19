@@ -50,7 +50,7 @@ The `textual_explanation` field in `AnalysisExplanation` class allows you to add
 Interpretability traces are enabled by default. Disable App Tracing by setting the `enabled` constructor parameter to `False`.
 PII entities are not stored in the Traces by default. Enable it by either set an evironment variable `ENABLE_TRACE_PII` to `True`, or you can set it directly in the command line, using the `enable-trace-pii` argument as follows:
 ```bash
-pipenv run python __main__.py serve --grpc-port 3001 --enable-trace-pii True
+pipenv run python app.py serve --grpc-port 3001 --enable-trace-pii True
 ```
 
 ## Notes
