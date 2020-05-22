@@ -4,10 +4,13 @@ import uuid
 from presidio_analyzer import PresidioLogger
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.protobuf_models import analyze_pb2, analyze_pb2_grpc, common_pb2
+from presidio_analyzer.recognizer_registry import RecognizerStoreApi
+
 
 logger = PresidioLogger("presidio")
 
 
+# pylint: disable=import-outside-toplevel,no-member
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=None, nlp_engine=None,
@@ -59,7 +62,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         self.app_tracer = app_tracer
         self.enable_trace_pii = enable_trace_pii
 
-        self.default_score_threshold = default_score_threshold if default_score_threshold else 0
+        self.default_score_threshold = default_score_threshold \
+            if default_score_threshold \
+            else 0.0
 
         self.default_language = default_language
 
@@ -104,7 +109,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # correlation is used to group all traces related to on request
 
         correlation_id = str(uuid.uuid4())
-        logger.info(f"""text: {request.text}\nentities: {entities}\nlanguage: {language}\nall_fields: {all_fields}""")
+        logger.info(f"""text: {request.text}\n
+                        entities: {entities}\n
+                        language: {language}\n
+                        all_fields: {all_fields}""")
         results = self.analyze(correlation_id=correlation_id,
                                text=request.text,
                                entities=entities,
@@ -259,8 +267,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         entities = []
         for recognizer in recognizers:
-            ents = [entity for entity in recognizer.supported_entities]
-            entities.extend(ents)
+            entities.extend(recognizer.supported_entities)
 
         return list(set(entities))
 

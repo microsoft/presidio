@@ -10,6 +10,7 @@ from presidio_analyzer.nlp_engine import SpacyNlpEngine
 logger = PresidioLogger()
 
 
+# pylint: disable=super-init-not-called
 class StanzaNlpEngine(SpacyNlpEngine):
     """ StanzaNlpEngine is an abstraction layer over the nlp module.
         It provides processing functionality as well as other queries
@@ -18,13 +19,19 @@ class StanzaNlpEngine(SpacyNlpEngine):
     """
 
     engine_name = "stanza"
-    is_available = True if stanza else False
+    is_available = bool(stanza)
 
-    def __init__(self, models={"en": "en"}):
+    def __init__(self, models=None):
+        if not models:
+            models = {"en": "en"}
         logger.debug(f"Loading NLP models: {models.values()}")
 
         self.nlp = {
-            lang: StanzaLanguage(stanza.Pipeline(model_name, processors="tokenize,mwt,pos,lemma,ner")) 
+            lang: StanzaLanguage(
+                stanza.Pipeline(
+                    model_name,
+                    processors="tokenize,mwt,pos,lemma,ner",
+                )
+            )
             for lang, model_name in models.items()
         }
-

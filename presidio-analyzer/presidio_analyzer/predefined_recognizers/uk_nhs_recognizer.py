@@ -23,9 +23,11 @@ class NhsRecognizer(PatternRecognizer):
         context=None,
         supported_language="en",
         supported_entity="UK_NHS",
-        replacement_pairs=[("-", ""), (" ", "")],
+        replacement_pairs=None,
     ):
-        self.replacement_pairs = replacement_pairs
+        self.replacement_pairs = replacement_pairs \
+            if replacement_pairs \
+            else [("-", ""), (" ", "")]
         context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
         super().__init__(

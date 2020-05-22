@@ -28,7 +28,8 @@ class IbanRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "IBAN Generic",
-            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?\b",
+            # pylint: disable=line-too-long
+            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?\b", # noqa
             0.5,
         ),
     ]
@@ -76,7 +77,7 @@ class IbanRecognizer(PatternRecognizer):
                 result = None
         return result
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,arguments-differ
     def analyze(self, text, entities, nlp_artifacts=None):
         results = []
 
@@ -100,11 +101,11 @@ class IbanRecognizer(PatternRecognizer):
         Evaluates all patterns in the provided text, including words in
          the provided blacklist
 
-        In a sentence we could get a false positive at the end of our regex, were we 
+        In a sentence we could get a false positive at the end of our regex, were we
         want to find the IBAN but not the false positive at the end of the match.
 
         i.e. "I want my deposit in DE89370400440532013000 2 days from today."
-        
+
         :param text: text to analyze
         :param flags: regex flags
         :return: A list of RecognizerResult

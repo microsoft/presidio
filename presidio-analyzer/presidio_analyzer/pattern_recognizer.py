@@ -53,7 +53,7 @@ class PatternRecognizer(LocalRecognizer):
     def load(self):
         pass
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,arguments-differ
     def analyze(self, text, entities, nlp_artifacts=None, regex_flags=None):
         results = []
 

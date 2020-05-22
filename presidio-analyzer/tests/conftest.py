@@ -27,6 +27,7 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_slow)
 
 
+# pylint: disable=redefined-outer-name
 @pytest.fixture(scope="session")
 def nlp_engines(request):
     available_engines = {}

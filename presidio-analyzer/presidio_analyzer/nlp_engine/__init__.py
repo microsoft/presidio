@@ -6,4 +6,8 @@ from .stanza_nlp_engine import StanzaNlpEngine  # noqa: F401
 
 _all_engines = [SpacyNlpEngine, StanzaNlpEngine]
 
-NLP_ENGINES = {engine.engine_name: engine for engine in _all_engines if engine.is_available}
+NLP_ENGINES = {
+    engine.engine_name: engine
+    for engine in _all_engines
+    if engine.is_available
+}

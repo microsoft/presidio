@@ -14,7 +14,6 @@ class SgFinRecognizer(PatternRecognizer):
         Pattern("Nric (weak)", r"(?i)(\b[A-Z][0-9]{7}[A-Z]\b)", 0.3),
         Pattern("Nric (medium)", r"(?i)(\b[STFG][0-9]{7}[A-Z]\b)", 0.5),
     ]
-    
 
     CONTEXT = ["fin", "fin#", "nric", "nric#"]
 

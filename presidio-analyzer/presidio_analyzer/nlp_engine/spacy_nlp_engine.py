@@ -14,19 +14,21 @@ class SpacyNlpEngine(NlpEngine):
     """
 
     engine_name = "spacy"
-    is_available = True if spacy else False
+    is_available = bool(spacy)
 
-    def __init__(self, models={"en": "en"}):
+    def __init__(self, models=None):
+        if not models:
+            models = {"en": "en"}
         logger.debug(f"Loading NLP models: {models.values()}")
 
         self.nlp = {
-            lang: spacy.load(model_name, disable=['parser', 'tagger']) 
+            lang: spacy.load(model_name, disable=['parser', 'tagger'])
             for lang, model_name in models.items()
         }
 
         for model_name in models.values():
             logger.debug("Printing spaCy model and package details:"
-                        "\n\n {}\n\n".format(spacy.info(model_name)))
+                         "\n\n {}\n\n".format(spacy.info(model_name)))
 
     def process_text(self, text, language):
         """ Execute the SpaCy NLP pipeline on the given text

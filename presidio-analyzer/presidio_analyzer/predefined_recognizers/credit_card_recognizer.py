@@ -36,9 +36,11 @@ class CreditCardRecognizer(PatternRecognizer):
         context=None,
         supported_language="en",
         supported_entity="CREDIT_CARD",
-        replacement_pairs=[("-", ""), (" ", "")],
+        replacement_pairs=None,
     ):
-        self.replacement_pairs = replacement_pairs
+        self.replacement_pairs = replacement_pairs \
+            if replacement_pairs \
+            else [("-", ""), (" ", "")]
         context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
         super().__init__(
@@ -68,7 +70,7 @@ class CreditCardRecognizer(PatternRecognizer):
         return checksum % 10 == 0
 
     @staticmethod
-    def __sanitize_value(text, replacement_pairs=[("-", ""), (" ", "")]):
+    def __sanitize_value(text, replacement_pairs):
         for search_string, replacement_string in replacement_pairs:
             text = text.replace(search_string, replacement_string)
         return text

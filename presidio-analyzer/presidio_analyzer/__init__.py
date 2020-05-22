@@ -1,6 +1,3 @@
-import os # noqa
-import sys # noqa
-
 from presidio_analyzer.presidio_logger import PresidioLogger
 from presidio_analyzer.analysis_explanation import AnalysisExplanation
 from presidio_analyzer.pattern import Pattern
