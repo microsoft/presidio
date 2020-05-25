@@ -1,16 +1,17 @@
 import json
 import uuid
 
-from presidio_analyzer import PresidioLogger
+from presidio_analyzer import PresidioLogger, RecognizerRegistry
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.protobuf_models import analyze_pb2, analyze_pb2_grpc, common_pb2
 from presidio_analyzer.recognizer_registry import RecognizerStoreApi
+from presidio_analyzer.nlp_engine import NLP_ENGINES
 
 
 logger = PresidioLogger("presidio")
 
 
-# pylint: disable=import-outside-toplevel,no-member
+# pylint: disable=no-member
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
 
     def __init__(self, registry=None, nlp_engine=None,
@@ -37,12 +38,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         if not nlp_engine:
             logger.info("nlp_engine not provided. Creating new "
                         "SpacyNlpEngine instance")
-            from presidio_analyzer.nlp_engine import SpacyNlpEngine
-            nlp_engine = SpacyNlpEngine()
+            nlp_engine = NLP_ENGINES["spacy"]()
         if not registry:
             logger.info("Recognizer registry not provided. "
                         "Creating default RecognizerRegistry instance")
-            from presidio_analyzer import RecognizerRegistry
             if use_recognizer_store:
                 recognizer_store_api = RecognizerStoreApi()
             else:
@@ -78,7 +77,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         logger.info("Starting Analyzer's Get All Recognizers")
         language = request.language
-        if language is None or language == "":
+        if not language:
             language = self.default_langauge
         results = []
         recognizers = self.registry.get_recognizers(
