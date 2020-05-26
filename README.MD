@@ -105,6 +105,11 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 - :large_orange_diamond: - Partially supported (alpha)
 - :x: - Not supported yet
 
+## How to contact us?
+If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
+For other matters, please email presidio@microsoft.com
+
+
 ## Contributing
 
 For details on contributing to this repository, see the [contributing guide](CONTRIBUTING.md).
