@@ -65,11 +65,11 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 ## Developing Presidio
 
 - [Setting up a development environment](docs/development.md)
-- [Adding custom fields](custom_fields.md)
-- [Best practices for developing new recognizers](developing_recognizers.md)
-- [Analyzer service tutorial](tutorial_analyzer.md)
-- [Calling the different services](tutorial_service.md)
-- [Connector developer guide](tutorial_connector.md)
+- [Adding custom fields](docs/custom_fields.md)
+- [Best practices for developing new recognizers](docs/developing_recognizers.md)
+- [Analyzer service tutorial](docs/tutorial_analyzer.md)
+- [Calling the different services](docs/tutorial_service.md)
+- [Connector developer guide](docs/tutorial_connector.md)
 
 ### Deploy Presidio for Test and Dev
 
