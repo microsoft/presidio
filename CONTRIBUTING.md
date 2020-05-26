@@ -31,7 +31,6 @@ To get started, refer to the documentation for [setting up a development environ
 
 ### How can I contribute?
 
-- [General contribution guidelines](#general-contribution-guidlines)
 - [Testing](#how-to-test)
 - [Adding new recognizers for new PII types](#adding-new-recognizers-for-new-pii-types)
 - [Adding new connectors](#adding-new-connectors)
