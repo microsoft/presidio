@@ -21,25 +21,26 @@ For more details follow the [Build and Release documentation](docs/build_release
 
 To get started, refer to the documentation for [setting up a development environment](docs/development.md).
 
+### General contribution guidelines
+
+- A Github issue suggesting the change should be opened prior to a PR.
+- All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.
+- In order for a pull request to be accepted, the CI (containing unit tests, functional tests and linting) needs to succeed, in addition to approvals from two maintainers.
+- PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
+
+
 ### How can I contribute?
 
-- [General contribution guidelines](#general-contribution-guidlines)
 - [Testing](#how-to-test)
 - [Adding new recognizers for new PII types](#adding-new-recognizers-for-new-pii-types)
 - [Adding new connectors](#adding-new-connectors)
 - [Bug fixing and general improvement](#bug-fixing-and-general-improvement)
 
-### General contribution guidelines
-
-All contributions should be documented, tested and linted. All unit and functional tests must succeed prior to approving of a contribution.
-In order for a pull request to be accepted, the CI (containing unit tests, functional tests and linting) needs to succeed, in addition to approvals from two core contributors.
 
 ### How to test?
 
 - For Go, the official methods for testing are used. see https://golang.org/pkg/testing/
 - For Python, Presidio leverages `pytest`, `pylint` and `flake8`. See [this tutorial](docs/development.md#dev-python) on more information on testing the presidio-analyzer module.
-
-Please make sure all tests pass prior to submitting a pull request.
 
 ### Adding new recognizers for new PII types
 
