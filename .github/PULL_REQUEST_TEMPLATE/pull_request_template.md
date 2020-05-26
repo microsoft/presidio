@@ -1,5 +1,5 @@
 ## Change Description
-<!-- Describe your changes and reference issues or pull requests where possible (use '#XX' where XX is the PR or issue number). -->
+Describe your changes
 
 ## Issue reference
 This PR fixes issue #XX
