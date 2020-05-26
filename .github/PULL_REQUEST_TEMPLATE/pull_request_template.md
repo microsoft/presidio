@@ -10,4 +10,4 @@ This PR fixes issue #XX
 - [ ] My code includes unit tests
 - [ ] All unit tests and lint checks pass locally
 - [ ] My PR contains documentation updates / additions if required
-- [ ] My code doesn't require a change in the project's Protobuf definition (github.com/microsoft/presidio-genproto) or if they do, I have submitted a PR for a protobuf change.
+- [ ] My code doesn't require a change in the project's Protobuf definition (github.com/microsoft/presidio-genproto) or if they do, I have submitted a PR for a protobuf change. Link to presidio-genproto PR: 
