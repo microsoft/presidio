@@ -19,92 +19,94 @@ To schedule a periodic data scan create the following json.
 
 ```json
 echo -n '{
-  "Name": "scan-job",
-  "trigger": {
-    "schedule": {
-      "recurrencePeriod": "* * * * *"
-    }
-  },
-  "scanRequest": {
-    "analyzeTemplate": {
-      "fields": [
-        {
-          "name": "PHONE_NUMBER"
-        },
-        {
-          "name": "LOCATION"
-        },
-        {
-          "name": "EMAIL_ADDRESS"
-        }
-      ]
-    },
-    "anonymizeTemplate": {
-      "fieldTypeTransformations": [
-        {
-          "fields": [
-            {
-              "name": "PHONE_NUMBER"
-            }
-          ],
-          "transformation": {
-            "replaceValue": {
-              "newValue": "<PHONE_NUMBER>"
-            }
-          }
-        },
-        {
-          "fields": [
-            {
-              "name": "LOCATION"
-            }
-          ],
-          "transformation": {
-            "redactValue": {}
-          }
-        },
-        {
-          "fields": [
-            {
-              "name": "EMAIL_ADDRESS"
-            }
-          ],
-          "transformation": {
-            "hashValue": {}
-          }
-        }
-      ]
-    },
-    "scanTemplate": {
-      "cloudStorageConfig": {
-        "blobStorageConfig": {
-          "accountName": "<ACCOUNT_NAME>",
-          "accountKey": "<ACCOUNT_KEY>",
-          "containerName": "<CONTAINER_NAME>"
-        }
+  "scannerCronJobRequest": {
+    "Name": "scan-job",
+    "trigger": {
+      "schedule": {
+        "recurrencePeriod": "* * * * *"
       }
     },
-    "datasinkTemplate": {
-      "analyzeDatasink": [
-        {
-          "dbConfig": {
-            "connectionString": "<CONNECTION_STRING>",
-            "tableName": "<TABLE_NAME>",
-            "type": "<DB_TYPE>"
+    "scanRequest": {
+      "analyzeTemplate": {
+        "fields": [
+          {
+            "name": "PHONE_NUMBER"
+          },
+          {
+            "name": "LOCATION"
+          },
+          {
+            "name": "EMAIL_ADDRESS"
           }
-        }
-      ],
-      "anonymizeDatasink": [
-        {
-          "cloudStorageConfig": {
-            "blobStorageConfig": {
-              "accountName": "<ACCOUNT_NAME>",
-              "accountKey": "<ACCOUNT_KEY",
-              "containerName": "<CONTAINER_NAME>"
+        ]
+      },
+      "anonymizeTemplate": {
+        "fieldTypeTransformations": [
+          {
+            "fields": [
+              {
+                "name": "PHONE_NUMBER"
+              }
+            ],
+            "transformation": {
+              "replaceValue": {
+                "newValue": "<PHONE_NUMBER>"
+              }
+            }
+          },
+          {
+            "fields": [
+              {
+                "name": "LOCATION"
+              }
+            ],
+            "transformation": {
+              "redactValue": {}
+            }
+          },
+          {
+            "fields": [
+              {
+                "name": "EMAIL_ADDRESS"
+              }
+            ],
+            "transformation": {
+              "hashValue": {}
             }
           }
+        ]
+      },
+      "scanTemplate": {
+        "cloudStorageConfig": {
+          "blobStorageConfig": {
+            "accountName": "<ACCOUNT_NAME>",
+            "accountKey": "<ACCOUNT_KEY>",
+            "containerName": "<CONTAINER_NAME>"
+          }
         }
-      ]
+      },
+      "datasinkTemplate": {
+        "analyzeDatasink": [
+          {
+            "dbConfig": {
+              "connectionString": "<CONNECTION_STRING>",
+              "tableName": "<TABLE_NAME>",
+              "type": "<DB_TYPE>"
+            }
+          }
+        ],
+        "anonymizeDatasink": [
+          {
+            "cloudStorageConfig": {
+              "blobStorageConfig": {
+                "accountName": "<ACCOUNT_NAME>",
+                "accountKey": "<ACCOUNT_KEY",
+                "containerName": "<CONTAINER_NAME>"
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }' | http <api-service-address>/api/v1/projects/<my-project>/schedule-scanner-cronjob
