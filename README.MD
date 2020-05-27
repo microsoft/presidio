@@ -65,11 +65,11 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 ## Developing Presidio
 
 - [Setting up a development environment](docs/development.md)
-- [Adding custom fields](custom_fields.md)
-- [Best practices for developing new recognizers](developing_recognizers.md)
-- [Analyzer service tutorial](tutorial_analyzer.md)
-- [Calling the different services](tutorial_service.md)
-- [Connector developer guide](tutorial_connector.md)
+- [Adding custom fields](docs/custom_fields.md)
+- [Best practices for developing new recognizers](docs/developing_recognizers.md)
+- [Analyzer service tutorial](docs/tutorial_analyzer.md)
+- [Calling the different services](docs/tutorial_service.md)
+- [Connector developer guide](docs/tutorial_connector.md)
 
 ### Deploy Presidio for Test and Dev
 
@@ -104,6 +104,11 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 - :white_check_mark: - Working
 - :large_orange_diamond: - Partially supported (alpha)
 - :x: - Not supported yet
+
+## How to contact us?
+If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
+For other matters, please email presidio@microsoft.com
+
 
 ## Contributing
 
