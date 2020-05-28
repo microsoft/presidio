@@ -2,7 +2,7 @@
 
 Throughout this tutorial, we’ll walk you through the creation of a basic request to the analyzer and anonymizer components.
 
-See [Install Presidio](install.md#L5) for a tutorial on how to install Presidio.
+See [Install Presidio](./deploy.md) for a tutorial on how to install Presidio.
 
 ## Analyze your textual data
 
@@ -16,7 +16,7 @@ First, we need to serve our model. We can do that very easily with (Takes about 
   ./presidio-analyzer serve
   ```
 
-Now that our model is up and running, we can send PII text to it. 
+Now that our model is up and running, we can send PII text to it.
 
 *From another shell*
 
