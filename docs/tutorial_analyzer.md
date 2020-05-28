@@ -2,7 +2,7 @@
 
 Throughout this tutorial, we’ll walk you through the creation of a basic request to the analyzer and anonymizer components.
 
-See [Install Presidio](./deploy.md) for a tutorial on how to install Presidio.
+See [Install Presidio](deploy.md) for a tutorial on how to install Presidio.
 
 ## Analyze your textual data
 
