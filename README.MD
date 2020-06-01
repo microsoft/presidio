@@ -34,8 +34,17 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 - [Presidio Input and Output](docs/overview.md#input-and-output)
 - [API Spec](presidio-api/cmd/presidio-api/docs/readme.md)
 - [The Technology Stack](docs/overview.md#the-technology-stack)
+- [Architecture](docs/design.md)
 
-## API Samples
+## Presidio API
+
+Presidio API is served using the [presidio-api](presidio-api) golang service.
+Once Presidio is deployed, all APIs are exposed under the `/api/v1` group.
+An[API Spec](presidio-api/cmd/presidio-api/docs/readme.md) yaml file outlines the available APIs, request and response formats.
+
+[Presidio REST API Spec](presidio-api/cmd/presidio-api/docs/swagger.yaml)
+
+### API Samples
 
 - [Simple Text Analysis](docs/samples.md/#simple-text-analysis)
 - [Create Reusable Templates](docs/samples.md/#create-reusable-templates)
@@ -48,12 +57,12 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 More information can be found in [Presidio Documentation](https://microsoft.github.io/presidio/)
 
-- [Architecture](docs/design.md)
 - [Supported field types](docs/field_types.md)
 - [Database and storage scanner](docs/tutorial_scheduler.md)
 - [Adding new PII recognizers](docs/custom_fields.md)
 - [Generating Swagger file](presidio-api/cmd/presidio-api/docs/readme.md)
 - [Evaluating Presidio](https://github.com/microsoft/presidio-research)
+- [Proto packages for Presidio API](https://github.com/microsoft/presidio-genproto)
 
 ## Deploying Presidio on a Kubernetes Cluster
 
@@ -64,12 +73,12 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 
 ## Developing Presidio
 
-- [Setting up a development environment](docs/development.md)
-- [Adding custom fields](docs/custom_fields.md)
-- [Best practices for developing new recognizers](docs/developing_recognizers.md)
-- [Analyzer service tutorial](docs/tutorial_analyzer.md)
+- [Setting Up a Development Environment](docs/development.md)
+- [Adding Custom Fields](docs/custom_fields.md)
+- [Recognizers Development - Best Practices and Considerations](docs/developing_recognizers.md)
+- [Using the Analyzer Service](docs/tutorial_analyzer.md)
 - [Calling the different services](docs/tutorial_service.md)
-- [Connector developer guide](docs/tutorial_connector.md)
+- [Connector Developer Guide](docs/tutorial_connector.md)
 
 ### Deploy Presidio for Test and Dev
 
@@ -106,9 +115,9 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 - :x: - Not supported yet
 
 ## How to contact us?
+
 If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
 For other matters, please email presidio@microsoft.com
-
 
 ## Contributing
 
