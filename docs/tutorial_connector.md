@@ -32,11 +32,17 @@ Currently the following object storage services are supported: - AWS S3 - Azure 
 To implement a new object storage source connector and reuse existing code follow the next steps:
 
 1.  **Implement the scanner interface** - The [scanner](../presidio-collector/cmd/presidio-collector/scanner/scanner.go) interface is representing a storage data source.
-    It requires implementation of three methods: 1. `Init` - initialize connection to the storage data source. 1. `ScanFunc` - the function executed on the scanned item 1. `Scan(fn ScanFunc)` - function that walks over the items to scan and executes ScanFunc on each item
+    It requires implementation of three methods:
+
+    1. `Init` - initialize connection to the storage data source.
+    2. `ScanFunc` - the function executed on the scanned item
+    3. `Scan(fn ScanFunc)` - function that walks over the items to scan and executes ScanFunc on each item
+
     Implement the scanner interface using a struct under `presidio-collector/cmd/presidio-collector/scanner`.
     For example see: [storage scanner](../presidio-collector/cmd/presidio-collector/scanner/storage-scanner.go)
-1.  **Add configuration** - create templates for source and object storage configurations and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto/blob/master/golang/template.pb.go) repo.
-1.  **Add to Factory** - Add your newly created scanner in the [storage factory](../presidio-collector/cmd/presidio-collector/scanner/factory.go) `CreateScanner` method.
+
+2.  **Add configuration** - create templates for source and object storage configurations and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto/blob/master/golang/template.pb.go) repo.
+3.  **Add to Factory** - Add your newly created scanner in the [storage factory](../presidio-collector/cmd/presidio-collector/scanner/factory.go) `CreateScanner` method.
 
 ### Stream Source Connector
 
@@ -67,7 +73,11 @@ To implement a new type of data Source Connector follow the next steps:
 
 All data sinks need to implement the [Datasink](../presidio-datasink/cmd/presidio-datasink/datasink/datasink.go) interface.
 The Datasink interface represents the different data output types.
-It requires implementation of following methods: - `Init` - how to initialize the datasink. - `WriteAnalyzeResults` - write the analyzer results to the specified datasink. - `WriteAnonymizeResults` - write the anonymized response to the specified datasink.
+It requires implementation of following methods:
+
+- `Init` - how to initialize the datasink.
+- `WriteAnalyzeResults` - write the analyzer results to the specified datasink.
+- `WriteAnonymizeResults` - write the anonymized response to the specified datasink.
 
 The project already supports sinks like object storage, database and streams.
 For similar sinks and code reuse, or creating a new sink follow the steps in how to create:
@@ -81,8 +91,12 @@ For similar sinks and code reuse, or creating a new sink follow the steps in how
 
 Creating an object storage sink connector is similar to object storage source connector.
 In addition to steps listed in storage source connector,
-implement the following functions in you storage scanner class: 1. `CreateContainer(name string)` - create container/bucket reference 1. `New(kind string, config stow.Config, concurrencyLimit int)` - initialize a new storage instance. 1. `PutItem(name string, content string, container stow.Container)` - write a new item to the container
-For example see: [storage](../pkg/storage/storage.go)
+implement the following functions in you storage scanner class:
+
+1. `CreateContainer(name string)` - create container/bucket reference
+2. `New(kind string, config stow.Config, concurrencyLimit int)` - initialize a new storage instance.
+3. `PutItem(name string, content string, container stow.Container)` - write a new item to the container
+   For example see: [storage](../pkg/storage/storage.go)
 
 ### Stream Sink Connector
 

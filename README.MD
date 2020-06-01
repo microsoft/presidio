@@ -38,9 +38,7 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 ## Presidio API
 
-Presidio API is served using the [presidio-api](presidio-api) golang service.
-Once Presidio is deployed, all APIs are exposed under the `/api/v1` group.
-An [API Spec](presidio-api/cmd/presidio-api/docs/readme.md) yaml file outlines the available APIs, request and response formats.
+[API Spec](presidio-api/cmd/presidio-api/docs/readme.md) - available APIs, request and response formats.
 
 [Presidio REST API Open API Spec](http://editor.swagger.io/#/?import=https://raw.githubusercontent.com/microsoft/presidio/nava/docs-minor-update/presidio-api/cmd/presidio-api/docs/swagger.yaml#/)
 

@@ -5,9 +5,7 @@ This folder includes the docs needed to generate Swagger files for this API.
 ## API Spec
 
 Presidio API spec is outlined in a yaml file [swagger.yaml](swagger.yaml).
-You can view the Swagger yaml in a user friendly online editor.
-
-To do this copy the contents of the `swagger.yaml` file, and paste them in the [Swagger Editor](http://editor.swagger.io/).
+You can view the Swagger yaml in a user friendly [Swagger Editor](http://editor.swagger.io/#/?import=https://raw.githubusercontent.com/microsoft/presidio/nava/docs-minor-update/presidio-api/cmd/presidio-api/docs/swagger.yaml#/)
 
 ## Prerequisits
 
