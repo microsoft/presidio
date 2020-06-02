@@ -135,7 +135,7 @@ stages:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
           - task: Bash@3  
-            displayName: 'Prepare python envinronment'
+            displayName: 'Prepare python environment'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
