@@ -135,19 +135,29 @@ stages:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
           - task: Bash@3  
-            displayName: 'Install python pre requisites'
+            displayName: 'Prepare python environment'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
 
+                df -h
+                sudo apt-get update
                 sudo apt-get install python3-setuptools
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
                 python -m pip install pytest
                 pipenv --python 3
-                
+          - task: Bash@3  
+            displayName: 'Install python dependencies'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
+
+                df -h
                 # install dev Pipfile libraries
                 cd presidio-analyzer
                 pipenv install --dev --sequential
@@ -179,15 +189,12 @@ stages:
                 dep ensure
 
                 # install dependency libraries
-                sudo apt update
-
-                sudo apt install libleptonica-dev
-                sudo apt install tesseract-ocr
-                sudo apt install libtesseract-dev
+                sudo apt-get update
+                sudo apt-get install libleptonica-dev tesseract-ocr libtesseract-dev
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
-            displayName: 'Presidio Makefile - Build lint and Unit tests'
+            displayName: 'Presidio Makefile - Build lint'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
@@ -195,8 +202,25 @@ stages:
                 set -eux  # fail on error
                 
                 # run make file commands
+                df -h
                 make build
+                df -h
+            env:
+              PRESIDIO_DEPS_LABEL: pr
+              DOCKER_REGISTRY: presidio
+          # Do not change the implementation of this stage without changing the steps in docs/development.md
+          - task: Bash@3
+            displayName: 'Presidio Makefile - Unit tests'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
+                
+                # run make file commands
+                df -h
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
+                df -h
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
@@ -227,15 +251,32 @@ stages:
 
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
-            displayName: 'Presidio Makefile - Container build and functional tests'
+            displayName: 'Presidio Makefile - Container build'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
-              
+
+                df -h
                 make docker-build-deps DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL
+                df -h
+            env:
+              PRESIDIO_DEPS_LABEL: pr
+              DOCKER_REGISTRY: presidio
+          
+          # Do not change the implementation of this stage without changing the steps in docs/development.md
+          - task: Bash@3
+            displayName: 'Presidio Makefile - Functional tests'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
+
+                df -h
                 make test-functional DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
+                df -h
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
@@ -532,7 +573,7 @@ stages:
               testRunner: JUnit
               testResultsFiles: $(System.DefaultWorkingDirectory)/test-results/functional-report.xml
 
-    # # Publish artifacts
+    # Publish artifacts
     - stage: PublishArtifacts 
       displayName: Publish Build Artifacts
       dependsOn: 
