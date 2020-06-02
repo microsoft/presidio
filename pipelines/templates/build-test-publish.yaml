@@ -135,20 +135,29 @@ stages:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
           - task: Bash@3  
-            displayName: 'Install python pre requisites'
+            displayName: 'Prepare python envinronment'
             inputs:
               targetType: 'inline'
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
 
+                du -h
                 sudo apt-get update
                 sudo apt-get install python3-setuptools
                 python -m pip install --upgrade pip
                 python -m pip install pipenv
                 python -m pip install pytest
                 pipenv --python 3
-                
+          - task: Bash@3  
+            displayName: 'Install python dependencies'
+            inputs:
+              targetType: 'inline'
+              workingDirectory: '$(MODULEPATH)'
+              script: |
+                set -eux  # fail on error
+
+                du -h
                 # install dev Pipfile libraries
                 cd presidio-analyzer
                 pipenv install --dev --sequential
