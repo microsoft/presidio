@@ -128,8 +128,6 @@ stages:
       jobs:
       - job: BuildTest
         displayName: Build and Test
-        pool:
-          vmImage: 'ubuntu-16.04'
         steps:
           - task: UsePythonVersion@0
             displayName: 'Use Python $(PYTHON.VERSION)'
