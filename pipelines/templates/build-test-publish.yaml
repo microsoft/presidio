@@ -142,7 +142,7 @@ stages:
               script: |
                 set -eux  # fail on error
 
-                du -h
+                df -h
                 sudo apt-get update
                 sudo apt-get install python3-setuptools
                 python -m pip install --upgrade pip
@@ -157,7 +157,7 @@ stages:
               script: |
                 set -eux  # fail on error
 
-                du -h
+                df -h
                 # install dev Pipfile libraries
                 cd presidio-analyzer
                 pipenv install --dev --sequential
