@@ -8,7 +8,7 @@ Recognizers define the logic for detection, as well as the confidence a predicti
   - [Performance](#performance)
   - [Environment](#environment)
 - [Adding Predefined Recognizers](#adding-predefined-recognizers)
-- [Recognizers Types](#recognizers-types)
+- [Recognizer Types](#recognizers-types)
   - [Black Lists](#a-black-lists)
   - [Pattern Based](#b-pattern-based)
   - [Machine Learning (ML) Based or Rule-Based](#c-machine-learning--ml--based-or-rule-based)
@@ -39,7 +39,7 @@ New predefined recognizers should be added to the [filed types list](./field_typ
 1. Add the new recognizer to the field types list Presidio supports [Presidio Field Types](./field_types.md)
 2. Add the new recognizer to the Proto Packages [Proto packages for Presidio API](https://github.com/microsoft/presidio-genproto)
 
-## Recognizers Types
+## Recognizer Types
 
 Generally speaking, there are three types of recognizers:
 

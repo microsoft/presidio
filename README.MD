@@ -40,7 +40,7 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
 
 [API Spec](presidio-api/cmd/presidio-api/docs/readme.md) - available APIs, request and response formats.
 
-[Presidio REST API Open API Spec](http://editor.swagger.io/#/?import=https://raw.githubusercontent.com/microsoft/presidio/nava/docs-minor-update/presidio-api/cmd/presidio-api/docs/swagger.yaml#/)
+[Presidio REST API Open API Spec](https://editor.swagger.io/?url=https://raw.githubusercontent.com/microsoft/presidio/master/presidio-api/cmd/presidio-api/docs/swagger.yaml)
 
 ### API Samples
 
