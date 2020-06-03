@@ -129,6 +129,7 @@ stages:
       - job: BuildTest
         displayName: Build and Test
         steps:
+          # - template: ./free-agent-disk.yaml
           - task: UsePythonVersion@0
             displayName: 'Use Python $(PYTHON.VERSION)'
             inputs:
@@ -160,7 +161,7 @@ stages:
                 df -h
                 # install dev Pipfile libraries
                 cd presidio-analyzer
-                pipenv install --dev --sequential
+                # pipenv sync --dev --sequential
 
                 # install dependency libraries
                 # re2
@@ -172,6 +173,7 @@ stages:
 
                 # Azure pipelines test publish
                 # regex
+                pipenv sync --dev --sequential
                 pipenv install --dev --skip-lock regex pytest-azurepipelines
           - task: Bash@3  
             displayName: 'Install golang pre requisites'
@@ -229,6 +231,7 @@ stages:
         displayName: Build Containers and Integration Test
         dependsOn: []
         steps:
+          # - template: ./free-agent-disk.yaml
           - task: UsePythonVersion@0
             displayName: 'Use Python $(PYTHON.VERSION)'
             inputs:
@@ -299,6 +302,7 @@ stages:
       - job: SetBuildDep
         displayName: Set base container build
         steps:
+          # - template: ./free-agent-disk.yaml
           - task: Bash@3
             displayName: 'Git diff verify deps build'
             inputs:
