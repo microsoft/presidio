@@ -6,9 +6,3 @@ steps:
   inputs:
     version: '1.13.5'
   displayName: "Setup Go Env - Go Tool"
-- task: Go@0
-  inputs:
-    command: 'get'
-    arguments: '-d'
-    workingDirectory: '$(System.DefaultWorkingDirectory)'
-  displayName: "Setup Go Env - Get go"
