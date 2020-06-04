@@ -11,4 +11,4 @@ steps:
     command: 'get'
     arguments: '-d'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
-    displayName: "Setup Go Env - Get go"
+  displayName: "Setup Go Env - Get go"
