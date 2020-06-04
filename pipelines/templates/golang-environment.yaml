@@ -2,8 +2,12 @@
 # dep ensure. It is required for go <1.11, as noted in ADO golang docs:
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/gso?view=azure-devops&tabs=go-older
 steps:
+- task: GoTool@0
+  inputs:
+    version: '1.13.5'
+  displayName: "Setup Go Env - Go Tool"
 - task: Bash@3
-  displayName: 'Setup Go Env'
+  displayName: 'Prepare directories'
   inputs:
     targetType: 'inline'
     script: |
