@@ -7,7 +7,7 @@ steps:
     version: '1.13.5'
   displayName: "Setup Go Env - Go Tool"
 - task: Bash@3
-  displayName: 'Create needed Directories'
+  displayName: 'Prepare directories'
   inputs:
     targetType: 'inline'
     script: |
