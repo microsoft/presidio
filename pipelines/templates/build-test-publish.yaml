@@ -5,10 +5,10 @@
 #   * PR - Runs Makefile locally to validate all services build and unit tests.
 #          Do not change the implementation of this stage without changing the steps in docs/development.md
 # * CI Section - Runs on CI (to master or feature branch) and can be run manually.
-#   * Setup - validates, using git diff, if deps containers should be rebuilt. 
-#   * Python - Builds tests and pushes python service. if deps build is required the base container is rebuilt 
+#   * Setup - validates, using git diff, if deps containers should be rebuilt.
+#   * Python - Builds tests and pushes python service. if deps build is required the base container is rebuilt
 #            and later stages will use the specific deps version number for building the presidio services.
-#   * Golang - Builds tests and pushes, in parallel, golang service. if deps build is required the base container is rebuilt 
+#   * Golang - Builds tests and pushes, in parallel, golang service. if deps build is required the base container is rebuilt
 #            and later stages will use the specific deps version number for building the presidio services.
 #   * Test-Functional - Runs local functional tests using the containers built in the previous stage.
 #   * Publish Artifacts - Pulls, tags and pushes the containers which were built and tested in the previous stages,
@@ -23,8 +23,8 @@
 #     external_pypi_service_conection: service connetion to external pypi feed (pypi.org)
 #     external_pypi_feed_name: name of external pypi feed
 parameters:
-  registry_service_principal: 
-  registry_name: 
+  registry_service_principal:
+  registry_name:
   internal_pypi_feed_name:
   internal_pypi_extra_index_url:
   external_pypi_service_conection:
@@ -119,7 +119,7 @@ stages:
             verbosity: 'Verbose'
             alertWarningLevel: 'Medium'
             failOnAlert: true
-    
+
     - stage: PR
       displayName: Pull Request Validation
       dependsOn: []
@@ -135,7 +135,7 @@ stages:
             inputs:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
-          - task: Bash@3  
+          - task: Bash@3
             displayName: 'Prepare python environment'
             inputs:
               targetType: 'inline'
@@ -150,7 +150,7 @@ stages:
                 python -m pip install pipenv
                 python -m pip install pytest
                 pipenv --python 3
-          - task: Bash@3  
+          - task: Bash@3
             displayName: 'Install python dependencies'
             inputs:
               targetType: 'inline'
@@ -165,15 +165,15 @@ stages:
                 # install re2 dependency
                 re2_version="2018-12-01"
                 wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
-                mkdir re2 
+                mkdir re2
                 tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
                 cd re2 && sudo make install
 
-                # sync current env python deps 
+                # sync current env python deps
                 pipenv sync --dev --sequential
                 # install Azure pipelines test publish, regex
                 pipenv install --dev --skip-lock regex pytest-azurepipelines
-          - task: Bash@3  
+          - task: Bash@3
             displayName: 'Install golang pre requisites'
             inputs:
               targetType: 'inline'
@@ -181,7 +181,7 @@ stages:
               script: |
                 set -eux  # fail on error
 
-                # Only dep v 0.5.0 works. 
+                # Only dep v 0.5.0 works.
                 # download specific version
                 DEP_VERSION="0.5.0"
                 curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
@@ -200,7 +200,7 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
-                
+
                 # run make file commands
                 df -h
                 make build
@@ -216,7 +216,7 @@ stages:
               workingDirectory: '$(MODULEPATH)'
               script: |
                 set -eux  # fail on error
-                
+
                 # run make file commands
                 df -h
                 make test DOCKER_REGISTRY=$DOCKER_REGISTRY PRESIDIO_LABEL=$PRESIDIO_DEPS_LABEL
@@ -235,7 +235,7 @@ stages:
             inputs:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./golang-environment.yaml
-          - task: Bash@3  
+          - task: Bash@3
             displayName: 'Install golang pre requisites'
             inputs:
               targetType: 'inline'
@@ -243,7 +243,7 @@ stages:
               script: |
                 set -eux  # fail on error
 
-                # Only dep v 0.5.0 works. 
+                # Only dep v 0.5.0 works.
                 # download specific version
                 DEP_VERSION="0.5.0"
                 curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
@@ -265,7 +265,7 @@ stages:
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
-          
+
           # Do not change the implementation of this stage without changing the steps in docs/development.md
           - task: Bash@3
             displayName: 'Presidio Makefile - Functional tests'
@@ -281,11 +281,11 @@ stages:
             env:
               PRESIDIO_DEPS_LABEL: pr
               DOCKER_REGISTRY: presidio
-  
+
   # CI Section
   # The following section is used during git merge or manual runs.
   # It runs on parallel builds and full tests of presidio services
-  # and publishes artifacts to target and with labels that depend on the 
+  # and publishes artifacts to target and with labels that depend on the
   # built branch.
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
 
@@ -306,6 +306,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 MASTER="remotes/origin/master"
                 GIT_DIFF_SOURCEBRANCH="HEAD"
                 # Set build_deps Triggers to false
@@ -342,6 +344,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 mkdir -p $(Pipeline.Workspace)/variables
                 echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
                 echo "$BUILD_DEPS" > $(Pipeline.Workspace)/variables/BUILD_DEPS
@@ -373,14 +377,16 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
                 BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
                 echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
                 echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-        
+
         - job: PythonDepsBuild
           displayName: Build Python Deps Container
-          timeoutInMinutes: 30 
+          timeoutInMinutes: 30
           dependsOn: GetDepsJob
           variables:
             DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
@@ -390,16 +396,16 @@ stages:
               displayName: 'Build and Push Python dependencies'
               condition: eq(variables['BUILD_DEPS'], 'true')
               inputs:
-                containerRegistry: $(REGISTRY) # input registry name	
+                containerRegistry: $(REGISTRY) # input registry name
                 repository: 'presidio-python-deps'
-                Dockerfile: Dockerfile.python.deps 
-                tags: | 
-                  $(Build.BuildId)	
+                Dockerfile: Dockerfile.python.deps
+                tags: |
+                  $(Build.BuildId)
                   s
         - job: BuildPython
           displayName: Build Analyzer Service
-          timeoutInMinutes: 60  
-          dependsOn: 
+          timeoutInMinutes: 60
+          dependsOn:
           - PythonDepsBuild
           - GetDepsJob
           variables:
@@ -408,14 +414,14 @@ stages:
               PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
             ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
               PYTHON_BUILD_TAG: '$(Build.BuildId).dev'
-          steps: 
-          - template: ./build-python-template.yaml  
+          steps:
+          - template: ./build-python-template.yaml
             parameters:
               folder_name: presidio-analyzer
               package_name: presidio_analyzer
               artifact_feed: ${{parameters.internal_pypi_feed_name}}
               registry_service_connection: ${{parameters.registry_service_principal}}
-              registry_name: ${{parameters.registry_name}} 
+              registry_name: ${{parameters.registry_name}}
               registry_service_principal: ${{parameters.registry_service_principal}}
               presidio_label: $(Build.BuildID)
               deps_label: $(DEPS_LABEL)
@@ -425,12 +431,14 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 mv $(System.DefaultWorkingDirectory)/presidio-analyzer/dist $(Pipeline.Workspace)
           # Publish the folder as pipeline artifact
           - publish: $(Pipeline.Workspace)/dist
             displayName: Publish wheel Artifacts
             artifact: dist
-    
+
     # Golang Stage
     - stage: GolangStage
       displayName: Build Golang
@@ -453,6 +461,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
                 BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
                 echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
@@ -460,7 +470,7 @@ stages:
 
         - job: GolangDepsBuild
           displayName: Build Golang Deps Container
-          timeoutInMinutes: 30 
+          timeoutInMinutes: 30
           dependsOn: GetDepsJob
           variables:
             DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
@@ -470,16 +480,16 @@ stages:
               displayName: 'Build and Push Golang dependencies'
               condition: eq(variables['BUILD_DEPS'], 'true')
               inputs:
-                containerRegistry: $(REGISTRY) # input registry name	
-                repository: presidio-golang-deps 
-                Dockerfile: Dockerfile.golang.deps 
-                tags: | 
+                containerRegistry: $(REGISTRY) # input registry name
+                repository: presidio-golang-deps
+                Dockerfile: Dockerfile.golang.deps
+                tags: |
                     $(Build.BuildId)
 
         - job: GolangBase
           displayName: Build Golang Base Container
-          timeoutInMinutes: 30 
-          dependsOn: 
+          timeoutInMinutes: 30
+          dependsOn:
           - GolangDepsBuild
           - GetDepsJob
           variables:
@@ -492,7 +502,7 @@ stages:
             - template: ./build-golang-template.yaml
               parameters:
                 registry_service_connection: ${{parameters.registry_service_principal}}
-                registry_name: ${{parameters.registry_name}} 
+                registry_name: ${{parameters.registry_name}}
                 make_command_to_run: docker-build-golang-base
                 image_name: presidio-golang-base
                 presidio_label: $(Build.BuildID)
@@ -501,8 +511,8 @@ stages:
 
         - job:  GolangService
           displayName: Build Golang Service Containers
-          timeoutInMinutes: 15 
-          dependsOn: 
+          timeoutInMinutes: 15
+          dependsOn:
           - GetDepsJob
           - Golangbase
           variables:
@@ -534,7 +544,7 @@ stages:
                   SERVICE_NAME: presidio-tester
               FUNCTIONAL_TESTS:
                   SERVICE_NAME: functional-tests
-          steps:  
+          steps:
           - template: ./Build-golang-template.yaml
             parameters:
               registry_service_connection: ${{parameters.registry_service_principal}}
@@ -548,16 +558,16 @@ stages:
     # Integration tests
     - stage: TestFunctional
       displayName: Run Functional Tests
-      dependsOn: 
+      dependsOn:
       - PythonStage
       - GolangStage
       pool:
         vmImage: 'ubuntu-latest'
-      jobs: 
+      jobs:
 
         - job: FunctionalTests
           displayName: Presidio Functional Tests
-          steps:  
+          steps:
           - task: Docker@2
             displayName: Docker login
             inputs:
@@ -568,6 +578,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) TEST_IN_CONTAINER=true test-functional-no-build
           - task: PublishTestResults@2
             displayName: Publish test results
@@ -576,9 +588,9 @@ stages:
               testResultsFiles: $(System.DefaultWorkingDirectory)/test-results/functional-report.xml
 
     # Publish artifacts
-    - stage: PublishArtifacts 
+    - stage: PublishArtifacts
       displayName: Publish Build Artifacts
-      dependsOn: 
+      dependsOn:
       - TestFunctional
       pool:
         vmImage: 'ubuntu-latest'
@@ -587,8 +599,8 @@ stages:
               BUILD_LABEL: 'latest'
           ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
               BUILD_LABEL: '$(Build.SourceBranchName)'
-      jobs: 
-        
+      jobs:
+
         - job: GetDepsJob
           displayName: Get Deps State
           steps:
@@ -603,11 +615,13 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
                 BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
                 echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
                 echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-        
+
         - job: PublishPypi
           displayName: Publish Analyzer to Pypi
           variables:
@@ -615,7 +629,7 @@ stages:
               PYTHON_BUILD_TAG: '$(Build.BuildId).rc'
             ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
               PYTHON_BUILD_TAG: '$(Build.BuildId).dev'
-          steps:  
+          steps:
           # download wheel from temp artifact
           - download: current
             displayName: Download wheel artifacts
@@ -625,6 +639,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 mv $(Pipeline.Workspace)/dist/ $(System.DefaultWorkingDirectory)/
           # Publish Wheel to Pypi
           - task: UsePythonVersion@0
@@ -632,7 +648,7 @@ stages:
             inputs:
               versionSpec: '$(PYTHON.VERSION)'
           - template: ./publish-python-twine.yaml
-            parameters: 
+            parameters:
               feed_display_name: 'Pypi'
               feed_name: ${{ parameters.external_pypi_feed_name }}
               folder_name: 'dist'
@@ -645,7 +661,7 @@ stages:
           variables:
             DEPS_LABEL: $[ dependencies.GetDepsJob.outputs['setEnv.DEPS_LABEL'] ]
             BUILD_DEPS: $[ dependencies.GetDepsJob.outputs['setEnv.BUILD_DEPS'] ]
-          steps:  
+          steps:
           - task: Docker@2
             displayName: Login to docker registry
             inputs:
@@ -655,12 +671,14 @@ stages:
             displayName: 'Publish Helm Artifact'
             inputs:
               targetPath: charts
-              ArtifactName: dropchart  
+              ArtifactName: dropchart
           - task: Bash@3
             displayName: 'Tag golang base image'
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 docker pull $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID)
                 docker tag \
                   $REGISTRY_NAME/presidio-golang-base:$(Build.BuildID) \
@@ -669,13 +687,15 @@ stages:
             env:
               REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           - task: Bash@3
-            displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch 
+            displayName: 'Push Docker Images - Master Branch'    # push with latest label - master branch
             condition: eq(variables['Build.SourceBranchName'], 'master')
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) docker-push-latest-deps
-                make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME) docker-push-release                    
+                make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildId) RELEASE_VERSION=$(RELEASE_NAME) docker-push-release
             env:
               REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
           - task: Bash@3
@@ -684,6 +704,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                set -eux  # fail on error
+
                 make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch-deps
                 make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$(Build.BuildID) PRESIDIO_DEPS_LABEL=$(DEPS_LABEL) PRESIDIO_BRANCH_LABEL=$(BUILD_LABEL) docker-push-latest-branch
             env:

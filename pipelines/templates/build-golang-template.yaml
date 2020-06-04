@@ -10,8 +10,8 @@
 #   deps_label: label of deps container used when building this container.
 
 parameters:
-  registry_service_connection: '' 
-  registry_name: '' 
+  registry_service_connection: ''
+  registry_name: ''
   make_command_to_run: ''
   image_name: ''
   presidio_label: ''
@@ -29,6 +29,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
     workingDirectory: '$(MODULEPATH)'
   env:
@@ -39,10 +41,12 @@ steps:
     DOCKER_COMMAND: ${{ parameters.make_command_to_run }}
     GOLANG_IMAGE: ${{ parameters.image_name }}
 - task: Bash@3
-  displayName: 'Push Docker Images - BuildId label'    # push with build-id labeldisplayName: 
+  displayName: 'Push Docker Images - BuildId label'    # push with build-id labeldisplayName:
   inputs:
     targetType: 'inline'
-    script: | 
+    script: |
+      set -eux  # fail on error
+
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
     workingDirectory: '$(MODULEPATH)'
   env:
