@@ -46,7 +46,7 @@ steps:
   displayName: 'Install python dependencies'
   inputs:
     targetType: 'inline'
-    workingDirectory: '$(MODULEPATH)'
+    workingDirectory: ${{ parameters.folder_name }}
     script: |
       set -eux  # fail on error
 
