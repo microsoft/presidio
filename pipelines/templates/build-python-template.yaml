@@ -34,7 +34,6 @@ steps:
     script: |
       python -m pip install --upgrade pip
       python -m pip install pipenv
-      pipenv --python 3
     workingDirectory: ${{ parameters.folder_name }}
 - task: PipAuthenticate@0
   displayName: 'Authenticate PIP with Azure Artifacts'
@@ -47,7 +46,7 @@ steps:
     script: |
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
       export PIPENV_VENV_IN_PROJECT=1
-      pipenv sync
+      pipenv sync --dev
       # Print venv information
       pipenv --venv
     workingDirectory: ${{ parameters.folder_name }}
@@ -57,7 +56,6 @@ steps:
     targetType: 'inline'
     script: |
       export PIPENV_VENV_IN_PROJECT=1
-      pipenv install pylint==2.3.1 flake8==3.7.9 --skip-lock
       pipenv run pylint $PACKAGE_NAME && \
       pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
     workingDirectory: ${{ parameters.folder_name }}
@@ -70,7 +68,7 @@ steps:
     script: |
       export PIPENV_VENV_IN_PROJECT=1
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-      pipenv install pytest pytest-azurepipelines --skip-lock
+      #pipenv install pytest-azurepipelines --skip-lock
       pipenv run pytest --log-cli-level=0
     workingDirectory: ${{ parameters.folder_name }}
 - task: Bash@3
