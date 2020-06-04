@@ -46,7 +46,8 @@ steps:
     targetType: 'inline'
     script: |
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-      pipenv install --dev --sequential
+      export PIPENV_VENV_IN_PROJECT=1
+      pipenv sync
       # Print venv information
       pipenv --venv
     workingDirectory: ${{ parameters.folder_name }}
@@ -55,6 +56,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      export PIPENV_VENV_IN_PROJECT=1
+      pipenv install pylint==2.3.1 flake8==3.7.9 pytest --skip-lock
       pipenv run pylint $PACKAGE_NAME && \
       pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
     workingDirectory: ${{ parameters.folder_name }}
@@ -65,8 +68,9 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      export PIPENV_VENV_IN_PROJECT=1
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-      pipenv install --skip-lock pytest-azurepipelines
+      pipenv install pytest pytest-azurepipelines --skip-lock
       pipenv run pytest --log-cli-level=0
     workingDirectory: ${{ parameters.folder_name }}
 - task: Bash@3
