@@ -57,7 +57,7 @@ steps:
     targetType: 'inline'
     script: |
       export PIPENV_VENV_IN_PROJECT=1
-      pipenv install pylint==2.3.1 flake8==3.7.9 pytest --skip-lock
+      pipenv install pylint==2.3.1 flake8==3.7.9 --skip-lock
       pipenv run pylint $PACKAGE_NAME && \
       pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
     workingDirectory: ${{ parameters.folder_name }}
