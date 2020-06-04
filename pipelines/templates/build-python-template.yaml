@@ -46,6 +46,7 @@ steps:
     script: |
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
       export PIPENV_VENV_IN_PROJECT=1
+      export PIPENV_SKIP_LOCK=1
       pipenv sync --dev
       # Print venv information
       pipenv --venv
@@ -67,6 +68,7 @@ steps:
     targetType: 'inline'
     script: |
       export PIPENV_VENV_IN_PROJECT=1
+      export PIPENV_SKIP_LOCK=1
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
       #pipenv install pytest-azurepipelines --skip-lock
       pipenv run pytest --log-cli-level=0
