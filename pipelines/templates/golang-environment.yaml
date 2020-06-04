@@ -18,7 +18,5 @@ steps:
       shopt -s extglob
       shopt -s dotglob
       mv !(gopath) '$(MODULEPATH)' --force
-
-
-    # echo '##vso[task.prependpath]$(GOBIN)'
-    # echo '##vso[task.prependpath]$(GOROOT)/bin'
+      echo '##vso[task.prependpath]$(GOBIN)'
+      echo '##vso[task.prependpath]$(GOROOT)/bin'
