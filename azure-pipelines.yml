@@ -15,6 +15,10 @@ steps:
       containerregistrytype: "Container Registry"
       dockerRegistryEndpoint: presidio
       command: login
+  - task: GoTool@0
+    inputs:
+      version: '1.13.5'
+    displayName: "Setup Go Env - Go Tool"
   - bash: |
       mkdir -p '$(GOBIN)'
       mkdir -p '$(GOPATH)/pkg'
@@ -23,7 +27,7 @@ steps:
       mv !(gopath) '$(modulePath)'
       echo '##vso[task.prependpath]$(GOBIN)'
       echo '##vso[task.prependpath]$(GOROOT)/bin'
-    displayName: "Setup Go Env"
+    displayName: "Prepare directories"
   - bash: |
       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       dep ensure
