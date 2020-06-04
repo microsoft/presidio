@@ -51,9 +51,6 @@ steps:
       set -eux  # fail on error
 
       df -h
-      # install dev Pipfile libraries
-      cd presidio-analyzer
-      # pipenv sync --dev --sequential
 
       # install dependency libraries
       # re2
