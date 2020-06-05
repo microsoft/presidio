@@ -47,6 +47,8 @@ steps:
     script: |
       set -eux  # fail on error
 
+      # The following line is a fix for a weird problem with the label (works despite being commented) 
+      # echo $PRESIDIO_LABEL
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
     workingDirectory: '$(MODULEPATH)'
   env:
