@@ -10,7 +10,7 @@
 #   deps_label: label of deps container used when building this container.
 #   artifact_feed: pypi artifact used to push the wheel
 parameters:
-  folder_name: '' 
+  folder_name: ''
   package_name: ''
   artifact_feed: ''
   presidio_label: ''
@@ -32,6 +32,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       python -m pip install --upgrade pip
       python -m pip install pipenv
       pipenv --python 3
@@ -41,20 +43,34 @@ steps:
   inputs:
     artifactFeeds: presidio
 - task: Bash@3
-  displayName: 'Install dependencies'
+  displayName: 'Install python dependencies'
   inputs:
     targetType: 'inline'
-    script: |
-      export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-      pipenv install --dev --sequential
-      # Print venv information
-      pipenv --venv
     workingDirectory: ${{ parameters.folder_name }}
+    script: |
+      set -eux  # fail on error
+
+      df -h
+
+      # install dependency libraries
+      # re2
+      re2_version="2018-12-01"
+      wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
+      mkdir re2
+      tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
+      cd re2 && sudo make install
+
+      # Azure pipelines test publish
+      # regex
+      pipenv sync --dev --sequential
+      pipenv install --dev --skip-lock regex pytest-azurepipelines
 - task: Bash@3
   displayName: 'Lint'
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       pipenv run pylint $PACKAGE_NAME && \
       pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
     workingDirectory: ${{ parameters.folder_name }}
@@ -65,6 +81,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
       pipenv install --skip-lock pytest-azurepipelines
       pipenv run pytest --log-cli-level=0
@@ -74,6 +92,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       sed -i 's@dev@'"$PYTHON_BUILD_TAG"'@' ./VERSION
       FULL_PYTHON_VERSION=$(cat ./VERSION)
       echo "$FULL_PYTHON_VERSION"
@@ -83,6 +103,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       pip install wheel
       python setup.py bdist_wheel
     workingDirectory: ${{ parameters.folder_name }}
@@ -90,7 +112,7 @@ steps:
     FEED_NAME: ${{ parameters.artifact_feed }}
 # Publish Wheel to ADO Artifacts
 - template: ./publish-python-twine.yaml
-  parameters: 
+  parameters:
     feed_display_name: 'Azure Artifacts'
     feed_name: ${{ parameters.artifact_feed }}
     folder_name: ${{ parameters.folder_name }}/dist
@@ -100,7 +122,11 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       echo "$FULL_PYTHON_VERSION"
+      # The following line is a fix for a weird problem with the label
+      echo $PRESIDIO_DEPS_LABEL
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$(FULL_PYTHON_VERSION) PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
   env:
     REGISTRY_NAME: ${{ parameters.registry_name }}
@@ -111,6 +137,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python
   env:
     REGISTRY_NAME: ${{ parameters.registry_name_parameter }}
