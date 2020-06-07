@@ -6,7 +6,7 @@
 parameters:
   feed_display_name: ''
   feed_name: ''
-  folder_name: '' 
+  folder_name: ''
   artifact_feed: ''
   artifact_is_ado: 'true'
 steps:
@@ -15,6 +15,8 @@ steps:
       inputs:
         targetType: 'inline'
         script: |
+            set -eux  # fail on error
+
             pip install wheel
             pip install twine
         workingDirectory: ${{ parameters.folder_name }}
@@ -28,6 +30,8 @@ steps:
         inputs:
           targetType: 'inline'
           script: |
+              set -eux  # fail on error
+
               twine upload -r $FEED_NAME --config-file $(PYPIRC_PATH) --skip-existing ./*
           workingDirectory: ${{ parameters.folder_name }}
         env:
@@ -42,8 +46,9 @@ steps:
         inputs:
           targetType: 'inline'
           script: |
+              set -eux  # fail on error
+
               twine upload -r $FEED_NAME --verbose --config-file $(PYPIRC_PATH) --skip-existing ./*
           workingDirectory: ${{ parameters.folder_name }}
         env:
           FEED_NAME: ${{ parameters.feed_name }}
-    
