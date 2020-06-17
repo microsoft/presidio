@@ -16,8 +16,13 @@ class SpacyNlpEngine(NlpEngine):
     def __init__(self):
         logger.info("Loading NLP model...")
 
+        # Okera note: we've commented out the download call as even though
+        # we have the model downloaded already, Spacy makes a call to download
+        # a "shortcuts" file which fails in airgapped environments.
+        # This call is removed in future versions of Presidio so just removing
+        # it here, as it is unnecessary.
         # Download model lazily if it wasn't previously installed
-        download('en_core_web_lg')
+        #download('en_core_web_lg', direct=True)
         self.nlp = {"en": spacy.load("en_core_web_lg",
                                      disable=['parser', 'tagger'])}
 
