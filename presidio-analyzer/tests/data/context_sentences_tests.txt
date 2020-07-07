@@ -91,3 +91,26 @@ Special NRIC numbers e.g. S0000001I that are numerically significant have been i
 # Verify SG NRIC/FIN mixed case (e.g. lower case )
 FIN
 my fin is g3300299L
+
+IND_AADHAR_CARD
+my aadhar card number is 1234 5678 9123
+
+IND_DRIVER_LICENSE
+my driving license number is KA12 20201234567
+
+IND_PAN_CARD
+my PAN card number is ABCBF1234F
+
+IND_PASSPORT
+my passport is F1234567
+
+#Indian Mobile number
+IND_PHONE_NUMBER
+my phone number is (+91)9123456789
+
+#Indian Landline Number
+IND_PHONE_NUMBER
+my phone number is +91-011-1234-5678
+
+IND_VOTER_CARD
+my voter card id is ABC1234567
