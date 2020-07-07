@@ -7,7 +7,8 @@ from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     EmailRecognizer, IbanRecognizer, IpRecognizer, NhsRecognizer, \
     UsBankRecognizer, UsLicenseRecognizer, \
     UsItinRecognizer, UsPassportRecognizer, UsPhoneRecognizer, \
-    UsSsnRecognizer, SgFinRecognizer
+    UsSsnRecognizer, SgFinRecognizer, INDLicenseRecognizer,INDPhoneRecognizer, \
+    INDAadharRecognizer,INDPANRecognizer, INDEPICRecognizer, INDPassportRecognizer
 
 
 class RecognizerRegistry:
@@ -56,7 +57,9 @@ class RecognizerRegistry:
             UsBankRecognizer(), UsLicenseRecognizer(),
             UsItinRecognizer(), UsPassportRecognizer(),
             UsPhoneRecognizer(), UsSsnRecognizer(),
-            SpacyRecognizer(), SgFinRecognizer()])
+            SpacyRecognizer(), SgFinRecognizer(),INDLicenseRecognizer()
+            INDPhoneRecognizer(),INDAadharRecognizer(), INDPANRecognizer(),
+            INDEPICRecognizer(), INDPassportRecognizer()])
 
     def get_recognizers(self, language, entities=None,
                         all_fields=False):
