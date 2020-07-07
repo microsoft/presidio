@@ -10,7 +10,7 @@ entities = ["phone"]
 class TestINDPhoneRecognizer(TestCase):
 
     def test_valid_phone(self):
-        num = '(+91)9845787456'
+        num = '(+91)9123456789'
         results = ind_phone_recognizer.analyze(num, entities)
         assert len(results) == 1
 
