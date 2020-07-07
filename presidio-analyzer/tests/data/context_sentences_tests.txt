@@ -96,10 +96,10 @@ IND_AADHAR_CARD
 my aadhar card number is 1234 5678 9123
 
 IND_DRIVER_LICENSE
-my driving license number is KA12 20201234567
+my driving license number is KA11 20201111111
 
 IND_PAN_CARD
-my PAN card number is ABCBF1234F
+my PAN card number is AAAPA111A
 
 IND_PASSPORT
 my passport is F1234567
@@ -113,4 +113,4 @@ IND_PHONE_NUMBER
 my phone number is +91-011-1234-5678
 
 IND_VOTER_CARD
-my voter card id is ABC1234567
+my voter card id is AAA1111111
