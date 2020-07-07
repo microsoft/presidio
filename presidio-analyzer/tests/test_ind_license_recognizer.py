@@ -10,7 +10,7 @@ entities = ["license"]
 class TestINDLicenseRecognizer(TestCase):
 
     def test_valid_license(self):
-        num = 'KA32 20191234567'
+        num = 'KA11 20201234567'
         results = ind_license_recognizer.analyze(num, entities)
         assert len(results) == 1
 
