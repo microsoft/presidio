@@ -10,7 +10,7 @@ entities = ["aadhar"]
 class TestINDAadharRecognizer(TestCase):
 
     def test_valid_aadhar(self):
-        num = '8547 5897 5874'
+        num = '1111 2222 3333'
         results = ind_aadhar_recognizer.analyze(num, entities)
         assert len(results) == 1
 
