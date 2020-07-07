@@ -7,7 +7,10 @@ from presidio_analyzer import PatternRecognizer, Pattern
 from presidio_analyzer.predefined_recognizers import CreditCardRecognizer, \
     UsPhoneRecognizer, DomainRecognizer, UsItinRecognizer, \
     UsLicenseRecognizer, UsBankRecognizer, UsPassportRecognizer, \
-    IpRecognizer, UsSsnRecognizer, SgFinRecognizer 
+    IpRecognizer, UsSsnRecognizer, SgFinRecognizer,
+    INDAadharRecognizer, INDLicenseRecognizer, INDPANRecognizer, \
+    INDPassportRecognizer, INDPhoneRecognizer, INDEPICRecognizer
+    
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from tests import TESTS_NLP_ENGINE
 
@@ -19,6 +22,12 @@ us_license_recognizer = UsLicenseRecognizer()
 us_bank_recognizer = UsBankRecognizer()
 us_passport_recognizer = UsPassportRecognizer()
 sg_fin_recognizer = SgFinRecognizer()
+ind_aadhar_recognizer = INDAadharRecognizer()
+ind_license_recognizer = INDLicenseRecognizer()
+ind_pan_recognizer = INDPANRecognizer()
+ind_passport_recognizer = INDPassportRecognizer()
+ind_phone_recognizer = INDPhoneRecognizer()
+ind_epic_recognizer = INDEPICRecognizer()
 
 @pytest.fixture(scope="class")
 def sentences_with_context(request):
@@ -60,6 +69,18 @@ def sentences_with_context(request):
             recognizer = us_passport_recognizer
         elif entity_type == "FIN":
             recognizer = sg_fin_recognizer
+        elif entity_type == "IND_AADHAR_CARD":
+            recognizer = ind_aadhar_recognizer
+        elif entity_type == "IND_DRIVER_LICENSE":
+            recognizer = ind_license_recognizer
+        elif entity_type == "IND_PAN_CARD":
+            recognizer = ind_pan_recognizer
+        elif entity_type == "IND_PASSPORT":
+            recognizer = ind_passport_recognizer
+        elif entity_type == "IND_PHONE_NUMBER":
+            recognizer = ind_phone_recognizer
+        elif entity_type == "IND_VOTER_CARD":
+            recognizer = ind_epic_recognizer
         else:
             # will fail the test in its turn
             print("bad type: ", entity_type)
@@ -67,8 +88,8 @@ def sentences_with_context(request):
         test_items.append((lines[i+1].strip(),
                            recognizer,
                            [lines[i].strip()]))
-    # Currently we have 27 sentences, this is a sanity
-    if not len(test_items) == 27:
+    # Currently we have 34 sentences, this is a sanity
+    if not len(test_items) == 34:
         raise ValueError("context sentences not as expected")
 
     request.cls.context_sentences = test_items
