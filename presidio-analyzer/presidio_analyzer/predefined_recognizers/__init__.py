@@ -13,12 +13,24 @@ from .us_itin_recognizer import UsItinRecognizer
 from .us_passport_recognizer import UsPassportRecognizer
 from .us_phone_recognizer import UsPhoneRecognizer
 from .us_ssn_recognizer import UsSsnRecognizer
+from .ind_driver_license_recognizer import INDLicenseRecognizer
+from .ind_phone_recognizer import INDPhoneRecognizer
+from .ind_aadhar_recognizer import INDAadharRecognizer
+from .ind_pan_recognizer import INDPANRecognizer
+from .ind_voter_card_recognizer import INDEPICRecognizer
+from .ind_passport_recognizer import INDPassportRecognizer
 
 __all__ = ["CreditCardRecognizer",
            "CryptoRecognizer",
            "DomainRecognizer",
            "EmailRecognizer",
            "IbanRecognizer",
+           "INDAadharRecognizer",
+           "INDLicenseRecognizer",
+           "INDPhoneRecognizer",
+           "INDPANRecognizer",
+           "INDEPICRecognizer",
+           "INDPassportRecognizer",
            "IpRecognizer",
            "SgFinRecognizer",
            "SpacyRecognizer",
