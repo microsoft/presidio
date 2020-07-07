@@ -11,6 +11,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      set -eux  # fail on error
+
       mkdir -p '$(GOBIN)'
       mkdir -p '$(GOPATH)/pkg'
       rm -rf '$(MODULEPATH)'
