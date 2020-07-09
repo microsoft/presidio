@@ -1,4 +1,4 @@
-# Connector developer guide
+# Connector Developer Guide
 
 This guide describes how developers can write new connectors for Presidio.
 Connectors allow users to anonymize their data between different data sources.
@@ -8,6 +8,7 @@ This guide will review a few key Connector concepts and then describe how to cre
 
 To anonymize data between one system and another, define Connectors for the systems to pull the data from or push data to.
 There are two types of Connectors:
+
 1. Source - data source from which data is read.
 2. Sink - anonymized data output target.
 
@@ -18,29 +19,30 @@ The Scheduler allows you to read your data periodically from the Source Connecto
 
 The project already supports sources like object storage and streams.
 For similar sources and code reuse, or creating a new source follow the steps in how to create:
-* [Object Storage Source Connector](#object-storage-source-connector)
-* [Stream Source Connector](#stream-source-connector)
-* [New Source Connector](#new-source-connector)
+
+- [Object Storage Source Connector](#object-storage-source-connector)
+- [Stream Source Connector](#stream-source-connector)
+- [New Source Connector](#new-source-connector)
 
 ### Object Storage Source Connector
 
 Object storage is a computer data storage architecture that manages data as objects.
-Currently the following object storage services are supported:
-    - AWS S3
-    - Azure Blob Storage
-    - Azure Data Lake Storage Gen2
+Currently the following object storage services are supported: - AWS S3 - Azure Blob Storage - Azure Data Lake Storage Gen2
 
 To implement a new object storage source connector and reuse existing code follow the next steps:
 
 1.  **Implement the scanner interface** - The [scanner](../presidio-collector/cmd/presidio-collector/scanner/scanner.go) interface is representing a storage data source.
     It requires implementation of three methods:
-        1. `Init` - initialize connection to the storage data source.
-        1. `ScanFunc` - the function executed on the scanned item
-        1. `Scan(fn ScanFunc)` - function that walks over the items to scan and executes ScanFunc on each item
+
+    1. `Init` - initialize connection to the storage data source.
+    2. `ScanFunc` - the function executed on the scanned item
+    3. `Scan(fn ScanFunc)` - function that walks over the items to scan and executes ScanFunc on each item
+
     Implement the scanner interface using a struct under `presidio-collector/cmd/presidio-collector/scanner`.
     For example see: [storage scanner](../presidio-collector/cmd/presidio-collector/scanner/storage-scanner.go)
-1. **Add configuration** - create templates for source and object storage configurations and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto/blob/master/golang/template.pb.go) repo.
-1. **Add to Factory** - Add your newly created scanner in the [storage factory](../presidio-collector/cmd/presidio-collector/scanner/factory.go) `CreateScanner` method.
+
+2.  **Add configuration** - create templates for source and object storage configurations and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto/blob/master/golang/template.pb.go) repo.
+3.  **Add to Factory** - Add your newly created scanner in the [storage factory](../presidio-collector/cmd/presidio-collector/scanner/factory.go) `CreateScanner` method.
 
 ### Stream Source Connector
 
@@ -50,11 +52,11 @@ To implement a new stream source connector and reuse existing code follow the ne
 
 1. **Implement the stream interface** - The [stream](../pkg/stream/stream.go) interface is representing a stream data source.
    It requires implementation of three methods:
-    1. `ReceiveFunc` - define how received event should be processed
-    1. `Receive` - read event from stream.
-    1. `Send` - send event to stream.
-    Implement the stream interface using a struct under `pkg/stream`.
-    For example see: [kafka](../pkg/stream/kafka/kafka.go)
+   1. `ReceiveFunc` - define how received event should be processed
+   1. `Receive` - read event from stream.
+   1. `Send` - send event to stream.
+      Implement the stream interface using a struct under `pkg/stream`.
+      For example see: [kafka](../pkg/stream/kafka/kafka.go)
 1. **Add configuration** - create templates for source and stream configurations and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto/blob/master/golang/template.pb.go) repo.
 1. **Add to Factory** - Add your newly created stream under [streams factory](../presidio-collector/cmd/presidio-collector/streams/streams.go) `CreateStream` method.
 
@@ -72,42 +74,48 @@ To implement a new type of data Source Connector follow the next steps:
 All data sinks need to implement the [Datasink](../presidio-datasink/cmd/presidio-datasink/datasink/datasink.go) interface.
 The Datasink interface represents the different data output types.
 It requires implementation of following methods:
-    - `Init`  - how to initialize the datasink.
-    - `WriteAnalyzeResults` - write the analyzer results to the specified datasink.
-    - `WriteAnonymizeResults` - write the anonymized response to the specified datasink.
+
+- `Init` - how to initialize the datasink.
+- `WriteAnalyzeResults` - write the analyzer results to the specified datasink.
+- `WriteAnonymizeResults` - write the anonymized response to the specified datasink.
 
 The project already supports sinks like object storage, database and streams.
 For similar sinks and code reuse, or creating a new sink follow the steps in how to create:
-* [Object Storage Sink Connector](#object-storage-sink-connector)
-* [Stream Sink Connector](#stream-sink-connector)
-* [DB Sink Connector](#db-sink-connector)
-* [New Sink Connector](#new-sink-connector)
+
+- [Object Storage Sink Connector](#object-storage-sink-connector)
+- [Stream Sink Connector](#stream-sink-connector)
+- [DB Sink Connector](#db-sink-connector)
+- [New Sink Connector](#new-sink-connector)
 
 ### Object Storage Sink Connector
 
 Creating an object storage sink connector is similar to object storage source connector.
 In addition to steps listed in storage source connector,
 implement the following functions in you storage scanner class:
-    1. `CreateContainer(name string)` - create container/bucket reference
-    1. `New(kind string, config stow.Config, concurrencyLimit int)` - initialize a new storage instance.
-    1. `PutItem(name string, content string, container stow.Container)`  - write a new item to the container
-    For example see: [storage](../pkg/storage/storage.go)
+
+1. `CreateContainer(name string)` - create container/bucket reference
+2. `New(kind string, config stow.Config, concurrencyLimit int)` - initialize a new storage instance.
+3. `PutItem(name string, content string, container stow.Container)` - write a new item to the container
+   For example see: [storage](../pkg/storage/storage.go)
 
 ### Stream Sink Connector
 
 Creating a stream sink connector is similar to stream source connector.
 In addition to steps listed in stream source connector:
+
 1. **Implement producer** - To allow message to be written to the stream define `NewProducer` method in your stream struct.
 1. **Add to Factory** - Add your newly created stream sink under [stream](../presidio-datasink/cmd/presidio-datasink/stream/stream.go) `New` method.
 
 ### DB Sink Connector
 
 Presidio supports the following DBs:
+
 - MSSQL
 - MySQL
 - PostgreSQL
 
 To support additional databases:
+
 1. **Implement datasink interface** - by creating a new struct under `presidio-datasink/cmd/presidio-datasink/database`.
    For example see: [database](../presidio-datasink/cmd/presidio-datasink/database/database.go)
 1. **Add to Factory** - Add your newly created DB sink under [datasink-factory](../presidio-datasink/cmd/presidio-datasink/datasink-factory.go)
@@ -131,15 +139,16 @@ For more information about scheduler usage: [scheduler readme](tutorial_schedule
 Currently we support object storage and streams scheduling.
 
 To support additional source and sinks in scheduler follow the next steps:
+
 1. **Create configuration** - create any additional configurations, templates and service definitions, on the [presidio-genproto](https://github.com/microsoft/presidio-genproto/blob/master/golang/scheduler.pb.go) repo as follows:
-    - `CronJobApiRequest` - represents the request to the API HTTP service
-    - `CronJobRequest` - represents the request to the scheduler service via GRPC.
-    - `CronJobResponse`- represents the response from the scheduler service.
-    - Support the new job in the `init()` method.
-    - Add `Apply` method to `SchedulerServiceClient` to trigger a new scanning cron job and return if it was triggered successfully.
-    - Create a `Handler` for to handle job request.
-    - Add the newly added `Apply` method and the `Handler` to `_SchedulerService_serviceDesc`.
-    Use existing storage scanner/stream as an example.
+   - `CronJobApiRequest` - represents the request to the API HTTP service
+   - `CronJobRequest` - represents the request to the scheduler service via GRPC.
+   - `CronJobResponse`- represents the response from the scheduler service.
+   - Support the new job in the `init()` method.
+   - Add `Apply` method to `SchedulerServiceClient` to trigger a new scanning cron job and return if it was triggered successfully.
+   - Create a `Handler` for to handle job request.
+   - Add the newly added `Apply` method and the `Handler` to `_SchedulerService_serviceDesc`.
+     Use existing storage scanner/stream as an example.
 1. **Create job** - Create new job directory under `presidio-api/cmd/presidio-api/api` and create job implementation, how it should be scheduled and etc.
-    For example see: [scanner-job](../presidio-api/cmd/presidio-api/api/scanner-cron-job/scanner-cron-job.go)
+   For example see: [scanner-job](../presidio-api/cmd/presidio-api/api/scanner-cron-job/scanner-cron-job.go)
 1. **Support new cron job creation to existing API** - Add newly created job in [methods](../presidio-api/cmd/presidio-api/methods.go) `validateTemplate` method.

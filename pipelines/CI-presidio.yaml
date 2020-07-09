@@ -14,15 +14,15 @@
 variables:
   - group: Presidio - CI Pipeline
   - name: GOBIN
-    value: "$(GOPATH)/bin"
+    value: '$(GOPATH)/bin'
   - name: GOPATH
-    value: "$(system.defaultWorkingDirectory)/gopath"
+    value: '$(system.defaultWorkingDirectory)/gopath'
   - name: MODULEPATH
-    value: "$(GOPATH)/src/github.com/$(build.repository.name)"
+    value: '$(GOPATH)/src/github.com/$(build.repository.name)'
   - name: GOROOT
-    value: "/usr/local/go1.11"
+    value: '/usr/local/go1.11'
   - name: PYTHON.VERSION
-    value: "3.7"
+    value: '3.7'
 
 trigger: # CI triggers
   batch: false
@@ -31,18 +31,16 @@ trigger: # CI triggers
       - master
   paths:
     exclude:
-      - "*.md"
-      - docs/*
-      - README.MD
+      - 'docs/'
+      - 'README.MD'
 pr: # PR triggers
   branches:
     include:
       - master
   paths:
     exclude:
-      - "*.md"
-      - docs/*
-      - README.MD
+      - 'docs/'
+      - 'README.MD'
 stages:
   - template: templates/build-test-publish.yaml
     parameters:
