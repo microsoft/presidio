@@ -179,3 +179,35 @@ Edit [charts/presidio/values.yaml](../charts/presidio/values.yaml) to:
 - Setup secret name (for private registries)
 - Change presidio services version
 - Change default scale
+
+
+## NLP Engine Configuration
+
+1. The nlp engines deployed are set on start up based on the yaml configuration files in `presidio-analyzer/conf/`.  The default nlp engine is the large English SpaCy model (`en_core_web_lg`) set in `default.yaml`.
+
+2. The format of the yaml file is as follows:
+
+```yaml
+nlp_engine_name: spacy  # {spacy, stanza}
+models:
+  -
+    lang_code: en  # code corresponds to `supported_language` in any custom recognizers
+    model_name: en_core_web_lg  # the name of the SpaCy or Stanza model
+  -
+    lang_code: de  # more than one model is optional, just add more items
+    model_name: de
+```
+
+3. By default, we call the method `load_predefined_recognizers` of the `RecognizerRegistry` class to load language specific and language agnostic recognizers.
+
+4. Downloading additional engines.
+  * SpaCy NLP Models: [models download page](https://spacy.io/usage/models)
+  * Stanza NLP Models: [models download page](https://stanfordnlp.github.io/stanza/available_models.html)
+
+  ```sh
+  # download models - tldr
+  # spacy
+  python -m spacy download en_core_web_lg
+  # stanza
+  python -c 'import stanza; stanza.download("en");'
+  ```

@@ -24,14 +24,14 @@ class StanzaNlpEngine(SpacyNlpEngine):
     def __init__(self, models=None):
         if not models:
             models = {"en": "en"}
-        logger.debug(f"Loading NLP models: {models.values()}")
+        logger.debug(f"Loading Stanza models: {models.values()}")
 
         self.nlp = {
-            lang: StanzaLanguage(
+            lang_code: StanzaLanguage(
                 stanza.Pipeline(
                     model_name,
-                    processors="tokenize,mwt,pos,lemma,ner",
+                    processors="tokenize,pos,lemma,ner",
                 )
             )
-            for lang, model_name in models.items()
+            for lang_code, model_name in models.items()
         }

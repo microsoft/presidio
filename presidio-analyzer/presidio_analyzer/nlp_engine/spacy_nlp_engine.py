@@ -18,12 +18,12 @@ class SpacyNlpEngine(NlpEngine):
 
     def __init__(self, models=None):
         if not models:
-            models = {"en": "en"}
-        logger.debug(f"Loading NLP models: {models.values()}")
+            models = {"en": "en_core_web_lg"}
+        logger.debug(f"Loading SpaCy models: {models.values()}")
 
         self.nlp = {
-            lang: spacy.load(model_name, disable=['parser', 'tagger'])
-            for lang, model_name in models.items()
+            lang_code: spacy.load(model_name, disable=['parser', 'tagger'])
+            for lang_code, model_name in models.items()
         }
 
         for model_name in models.values():

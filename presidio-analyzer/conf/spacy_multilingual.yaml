@@ -1,8 +1,8 @@
 nlp_engine_name: spacy
 models:
   -
-    name: en
-    lang: en
+    lang_code: en
+    model_name: en
   -
-    name: de
-    lang: de
+    lang_code: de
+    model_name: de

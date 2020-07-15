@@ -38,6 +38,11 @@ class CreditCardRecognizer(PatternRecognizer):
         supported_entity="CREDIT_CARD",
         replacement_pairs=None,
     ):
+        """
+            :param replacement_pairs: list of tuples to replace in the string.
+                ( default: [("-", ""), (" ", "")] )
+                i.e. remove dashes and spaces from the string during recognition.
+        """
         self.replacement_pairs = replacement_pairs \
             if replacement_pairs \
             else [("-", ""), (" ", "")]

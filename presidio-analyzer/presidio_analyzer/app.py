@@ -65,6 +65,15 @@ def serve_command_handler(
     nlp_conf_path="conf/default.yaml",
     max_workers=10,
 ):
+    """
+        :param enable_trace_pii: boolean to enable trace pii
+        :param env_grpc_port: boolean to use environmental variables
+            for grpc ports (default: False)
+        :param grpc_port: port for grpc server (default: 3000)
+        :param nlp_conf_path: str to path of nlp engine configuration
+            (default: 'conf/default.yaml')
+        :param max_workers: int for number of workers of grpc server (default: 10)
+    """
     logger.info("Starting GRPC server")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     logger.info("GRPC started")
@@ -79,11 +88,11 @@ def serve_command_handler(
         )
         nlp_conf = {
             "nlp_engine_name": "spacy",
-            "models": [{"lang": "en", "name": "en_core_web_lg"}],
+            "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
         }
     nlp_engine_name = nlp_conf["nlp_engine_name"]
     nlp_engine_class = NLP_ENGINES[nlp_engine_name]
-    nlp_engine_opts = {m["lang"]: m["name"] for m in nlp_conf["models"]}
+    nlp_engine_opts = {m["lang_code"]: m["model_name"] for m in nlp_conf["models"]}
     nlp_engine = nlp_engine_class(nlp_engine_opts)
     logger.info(f"{nlp_engine_class.__name__} created")
 
