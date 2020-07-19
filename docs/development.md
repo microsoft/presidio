@@ -56,7 +56,7 @@ Most of Presidio's services are written in Go. The `presidio-analyzer` module, i
 3. Create virtualenv for the project and install all requirements in the Pipfile, including dev requirements. In the `presidio-analyzer` folder, run:
 
     ```
-    pipenv install --dev --sequential
+    pipenv install --dev --sequential --skip-lock
     ```
 
 4. Run all tests
