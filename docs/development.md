@@ -53,10 +53,9 @@ Most of Presidio's services are written in Go. The `presidio-analyzer` module, i
 
    Additional installation instructions: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
 
-3. Create virtualenv for the project & Install all requirements in the Pipfile, including dev requirements
-Install the Python packages for the analyzer in the `presidio-analyzer` folder, run:
+3. Create virtualenv for the project and install all requirements in the Pipfile, including dev requirements. In the `presidio-analyzer` folder, run:
     ```
-    pipenv install --dev --sequential
+    pipenv install --dev --sequential --skip-lock
     ```
 
 4. Download spacy model
