@@ -46,12 +46,6 @@ steps:
   displayName: 'Install python dependencies'
   inputs:
     targetType: 'inline'
-    script: |
-      export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
-      pipenv install --dev --sequential
-      pipenv run python -m spacy download en_core_web_lg
-      # Print venv information
-      pipenv --venv
     workingDirectory: ${{ parameters.folder_name }}
     script: |
       set -eux  # fail on error
@@ -70,6 +64,7 @@ steps:
       # regex
       pipenv sync --dev --sequential
       pipenv install --dev --skip-lock regex pytest-azurepipelines
+      pipenv run python -m spacy download en_core_web_lg
 - task: Bash@3
   displayName: 'Lint'
   inputs:
