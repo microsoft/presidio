@@ -54,21 +54,24 @@ Most of Presidio's services are written in Go. The `presidio-analyzer` module, i
    Additional installation instructions: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
 
 3. Create virtualenv for the project and install all requirements in the Pipfile, including dev requirements. In the `presidio-analyzer` folder, run:
-
     ```
     pipenv install --dev --sequential --skip-lock
     ```
 
-4. Run all tests
+4. Download spacy model
+    ```
+    pipenv run python -m spacy download en_core_web_lg
+    ```
 
-   ```
-   pipenv run pytest
-   ```
+5. Run all tests
+    ```
+    pipenv run pytest
+    ```
 
-5. To run arbitrary scripts within the virtual env, start the command with `pipenv run`. For example:
-   1. `pipenv run flake8 analyzer --exclude "*pb2*.py"`
-   2. `pipenv run pylint analyzer`
-   3. `pipenv run pip freeze`
+6. To run arbitrary scripts within the virtual env, start the command with `pipenv run`. For example:
+    1. `pipenv run flake8 analyzer --exclude "*pb2*.py"`
+    2. `pipenv run pylint analyzer`
+    3. `pipenv run pip freeze`
 
 #### Alternatively, activate the virtual environment and use the commands by starting a pipenv shell:
 
@@ -144,13 +147,13 @@ pipenv install --dev --sequential
 3. If you want to experiment with `analyze` requests, navigate into the `analyzer` folder and start serving the analyzer service:
 
 ```sh
-pipenv run python __main__.py serve --grpc-port 3000
+pipenv run python app.py serve --grpc-port 3000
 ```
 
 4. In a new `pipenv shell` window you can run `analyze` requests, for example:
 
 ```
-pipenv run python __main__.py analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE" --grpc-port 3000
+pipenv run python app.py analyze --text "John Smith drivers license is AC432223" --fields "PERSON" "US_DRIVER_LICENSE" --grpc-port 3000
 ```
 
 ## Load test
@@ -175,3 +178,35 @@ Edit [charts/presidio/values.yaml](../charts/presidio/values.yaml) to:
 - Setup secret name (for private registries)
 - Change presidio services version
 - Change default scale
+
+
+## NLP Engine Configuration
+
+1. The nlp engines deployed are set on start up based on the yaml configuration files in `presidio-analyzer/conf/`.  The default nlp engine is the large English SpaCy model (`en_core_web_lg`) set in `default.yaml`.
+
+2. The format of the yaml file is as follows:
+
+```yaml
+nlp_engine_name: spacy  # {spacy, stanza}
+models:
+  -
+    lang_code: en  # code corresponds to `supported_language` in any custom recognizers
+    model_name: en_core_web_lg  # the name of the SpaCy or Stanza model
+  -
+    lang_code: de  # more than one model is optional, just add more items
+    model_name: de
+```
+
+3. By default, we call the method `load_predefined_recognizers` of the `RecognizerRegistry` class to load language specific and language agnostic recognizers.
+
+4. Downloading additional engines.
+  * SpaCy NLP Models: [models download page](https://spacy.io/usage/models)
+  * Stanza NLP Models: [models download page](https://stanfordnlp.github.io/stanza/available_models.html)
+
+  ```sh
+  # download models - tldr
+  # spacy
+  python -m spacy download en_core_web_lg
+  # stanza
+  python -c 'import stanza; stanza.download("en");'
+  ```

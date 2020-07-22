@@ -10,9 +10,9 @@ class RemoteRecognizer(EntityRecognizer):
      / remote machine
     """
 
-    def __init__(self, supported_entities, supported_language, name, version,
+    def __init__(self, supported_entities, name, supported_language, version,
                  **kwargs):
-        super().__init__(supported_entities, supported_language, name, version)
+        super().__init__(supported_entities, name, supported_language, version)
 
     def load(self):
         pass

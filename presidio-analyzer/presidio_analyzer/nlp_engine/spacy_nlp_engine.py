@@ -13,14 +13,22 @@ class SpacyNlpEngine(NlpEngine):
         The SpacyNlpEngine uses SpaCy as its NLP module
     """
 
-    def __init__(self):
-        logger.info("Loading NLP model: spaCy en_core_web_lg")
+    engine_name = "spacy"
+    is_available = bool(spacy)
 
-        self.nlp = {"en": spacy.load("en_core_web_lg",
-                                     disable=['parser', 'tagger'])}
+    def __init__(self, models=None):
+        if not models:
+            models = {"en": "en_core_web_lg"}
+        logger.debug(f"Loading SpaCy models: {models.values()}")
 
-        logger.info("Printing spaCy model and package details:"
-                    "\n\n {}\n\n".format(spacy.info("en_core_web_lg")))
+        self.nlp = {
+            lang_code: spacy.load(model_name, disable=['parser', 'tagger'])
+            for lang_code, model_name in models.items()
+        }
+
+        for model_name in models.values():
+            logger.debug("Printing spaCy model and package details:"
+                         "\n\n {}\n\n".format(spacy.info(model_name)))
 
     def process_text(self, text, language):
         """ Execute the SpaCy NLP pipeline on the given text

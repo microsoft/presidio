@@ -43,7 +43,7 @@ class PatternRecognizer(LocalRecognizer):
         self.context = context
 
         if black_list:
-            black_list_pattern = PatternRecognizer.__black_list_to_regex(
+            black_list_pattern = self.__black_list_to_regex(
                 black_list)
             self.patterns.append(black_list_pattern)
             self.black_list = black_list
@@ -53,12 +53,12 @@ class PatternRecognizer(LocalRecognizer):
     def load(self):
         pass
 
-    # pylint: disable=unused-argument
-    def analyze(self, text, entities, nlp_artifacts=None):
+    # pylint: disable=unused-argument,arguments-differ
+    def analyze(self, text, entities, nlp_artifacts=None, regex_flags=None):
         results = []
 
         if self.patterns:
-            pattern_result = self.__analyze_patterns(text)
+            pattern_result = self.__analyze_patterns(text, regex_flags)
 
             if pattern_result and self.context:
                 # try to improve the results score using the surrounding
@@ -110,21 +110,23 @@ class PatternRecognizer(LocalRecognizer):
                                           validation_result=validation_result)
         return explanation
 
-    def __analyze_patterns(self, text):
+    def __analyze_patterns(self, text, flags=None):
         """
         Evaluates all patterns in the provided text, including words in
          the provided blacklist
 
         :param text: text to analyze
+        :param flags: regex flags
         :return: A list of RecognizerResult
         """
+        flags = flags if flags else re.DOTALL | re.MULTILINE
         results = []
         for pattern in self.patterns:
             match_start_time = datetime.datetime.now()
             matches = re.finditer(
                 pattern.regex,
                 text,
-                flags=re.IGNORECASE | re.DOTALL | re.MULTILINE)
+                flags=flags)
             match_time = datetime.datetime.now() - match_start_time
             self.logger.debug('--- match_time[%s]: %s.%s seconds',
                               pattern.name,
@@ -142,7 +144,7 @@ class PatternRecognizer(LocalRecognizer):
                 score = pattern.score
 
                 validation_result = self.validate_result(current_match)
-                description = PatternRecognizer.build_regex_explanation(
+                description = self.build_regex_explanation(
                     self.name,
                     pattern.name,
                     pattern.regex,

@@ -1,42 +1,34 @@
-from unittest import TestCase
+import pytest
 
 from tests import assert_result
 from presidio_analyzer.predefined_recognizers import DomainRecognizer
-from presidio_analyzer.entity_recognizer import EntityRecognizer
-
-domain_recognizer = DomainRecognizer()
-entities = ["DOMAIN_NAME"]
 
 
-class TestDomainRecognizer(TestCase):
-
-    def test_invalid_domain(self):
-        domain = 'microsoft.'
-        results = domain_recognizer.analyze(domain, entities)
-
-        assert len(results) == 0
+@pytest.fixture(scope="module")
+def recognizer():
+    return DomainRecognizer()
 
 
-    def test_invalid_domain_with_exact_context(self):
-        domain = 'microsoft.'
-        context = 'my domain is '
-        results = domain_recognizer.analyze(context + domain, entities)
-
-        assert len(results) == 0
+@pytest.fixture(scope="module")
+def entities():
+    return ["DOMAIN_NAME"]
 
 
-    def test_valid_domain(self):
-        domain = 'microsoft.com'
-        results = domain_recognizer.analyze(domain, entities)
-
-        assert len(results) == 1
-        assert_result(results[0], entities[0], 0, 13, EntityRecognizer.MAX_SCORE)
-
-    def test_valid_domains_lemma_text(self):
-        domain1 = 'microsoft.com'
-        domain2 = 'google.co.il'
-        results = domain_recognizer.analyze('my domains: {} {}'.format(domain1, domain2), entities)
-
-        assert len(results) == 2
-        assert_result(results[0], entities[0], 12, 25, EntityRecognizer.MAX_SCORE)
-        assert_result(results[1], entities[0], 26, 38, EntityRecognizer.MAX_SCORE)
+@pytest.mark.parametrize(
+    "text, expected_len, expected_positions",
+    [
+        # valid domain names
+        ("microsoft.com", 1, ((0, 13),),),
+        ("my domains: microsoft.com google.co.il", 2, ((12, 25), (26, 38),),),
+        # invalid domain names
+        ("microsoft.", 0, ()),
+        ("my domain is microsoft.", 0, ()),
+    ],
+)
+def test_all_domain_names(
+    text, expected_len, expected_positions, recognizer, entities, max_score
+):
+    results = recognizer.analyze(text, entities)
+    assert len(results) == expected_len
+    for res, (st_pos, fn_pos) in zip(results, expected_positions):
+        assert_result(res, entities[0], st_pos, fn_pos, max_score)

@@ -2,7 +2,8 @@ from presidio_analyzer import RecognizerResult
 from tests import assert_result_within_score_range
 import pytest
 
-ENTITY_TYPE = 'ANY_ENTITY'
+ENTITY_TYPE = "ANY_ENTITY"
+
 
 def test_assert_result_within_score_range_uses_given_range():
     result = RecognizerResult(ENTITY_TYPE, 0, 10, 0.3)
@@ -28,5 +29,3 @@ def test_assert_result_within_score_range_uses_given_range_fails():
     with pytest.raises(AssertionError):
         result = RecognizerResult(ENTITY_TYPE, 0, 10, 1)
         assert_result_within_score_range(result, ENTITY_TYPE, 0, 10, 0, 0.5)
-
-

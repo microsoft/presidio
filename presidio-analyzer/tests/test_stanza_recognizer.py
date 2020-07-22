@@ -8,14 +8,16 @@ def entities():
     return ["PERSON", "DATE_TIME"]
 
 
+@pytest.mark.skip_engine("stanza_en")
 @pytest.fixture(scope="module")
 def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
+    return nlp_engines.get("stanza_en", None)
 
 
+@pytest.mark.skip_engine("stanza_en")
 @pytest.fixture(scope="module")
 def nlp_recognizer(nlp_recognizers):
-    return nlp_recognizers["spacy"]
+    return nlp_recognizers.get("stanza", None)
 
 
 def prepare_and_analyze(nlp, recognizer, text, ents):
@@ -24,6 +26,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
     return results
 
 
+@pytest.mark.skip_engine("stanza_en")
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
     [
@@ -45,7 +48,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
     ],
 )
-def test_all_spacy(
+def test_all_stanza(
     text,
     expected_len,
     expected_positions,
@@ -65,6 +68,7 @@ def test_all_spacy(
         )
 
 
+@pytest.mark.skip_engine("stanza_en")
 def test_person_full_name_complex(nlp_engine, nlp_recognizer, entities):
     text = "Richard (Rick) C. Henderson"
     results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)

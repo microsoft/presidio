@@ -64,6 +64,7 @@ steps:
       # regex
       pipenv sync --dev --sequential
       pipenv install --dev --skip-lock regex pytest-azurepipelines
+      pipenv run python -m spacy download en_core_web_lg
 - task: Bash@3
   displayName: 'Lint'
   inputs:

@@ -17,7 +17,6 @@ class NlpArtifacts():
     def set_keywords(nlp_engine, lemmas, language):
         if not nlp_engine:
             return []
-
         keywords = [k.lower() for k in lemmas if
                     not nlp_engine.is_stopword(k, language) and
                     not nlp_engine.is_punct(k, language) and
