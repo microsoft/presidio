@@ -57,7 +57,11 @@ class UsSsnRecognizer(PatternRecognizer):
             # cannot be all same digit
             return True
 
-        for sample_ssn in ('666', '123456789', '98765432', '078051120'):
+        if only_digits[3:5] == '00' or only_digits[5:] == '0000':
+            # groups cannot be all zeros
+            return True
+
+        for sample_ssn in ('000', '666', '123456789', '98765432', '078051120'):
             if only_digits.startswith(sample_ssn):
                 return True
 
