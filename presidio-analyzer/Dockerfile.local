@@ -1,0 +1,34 @@
+# Presidio Analyzer Local Development Dockerfile. 
+# This dockerfile copies from the local environment and uses pipenv
+# to install presidio analyzer.
+ARG REGISTRY=presidio.azurecr.io
+ARG PRESIDIO_DEPS_LABEL=latest
+FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
+
+ARG NAME=presidio-analyzer
+ARG PIP_EXTRA_INDEX_URL
+ARG VERSION
+
+WORKDIR /usr/bin/${NAME}
+ENV PIP_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
+
+ADD ./${NAME} /usr/bin/${NAME} 
+RUN pipenv --venv
+RUN pipenv run pip freeze
+
+RUN pipenv install pylint==2.3.1 flake8==3.7.9 pytest --skip-lock
+
+RUN pipenv run pylint presidio_analyzer && \
+    pipenv run flake8 presidio_analyzer --exclude "*pb2*.py" && \
+	pipenv run pytest --log-cli-level=0
+    
+#----------------------------
+
+FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
+
+ARG NAME=presidio-analyzer
+ADD ./${NAME}/presidio_analyzer /usr/bin/${NAME}/presidio_analyzer
+ADD ./${NAME}/conf /usr/bin/${NAME}/presidio_analyzer/conf
+WORKDIR /usr/bin/${NAME}/presidio_analyzer
+
+CMD pipenv run python app.py serve --env-grpc-port

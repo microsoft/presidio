@@ -1,30 +1,43 @@
-from unittest import TestCase
+import pytest
 
 from tests import assert_result_within_score_range
-from analyzer.predefined_recognizers import UsPassportRecognizer
-
-us_passport_recognizer = UsPassportRecognizer()
-entities = ["US_PASSPORT"]
+from presidio_analyzer.predefined_recognizers import UsPassportRecognizer
 
 
-class TestUsPassportRecognizer(TestCase):
+@pytest.fixture(scope="module")
+def recognizer():
+    return UsPassportRecognizer()
 
-    def test_valid_us_passport_no_context(self):
-        num = '912803456'
-        results = us_passport_recognizer.analyze(num, entities)
 
-        assert len(results) == 1
-        assert results[0].score != 0
-        assert_result_within_score_range(results[0], entities[0], 0, 9, 0, 0.1)
+@pytest.fixture(scope="module")
+def entities():
+    return ["US_PASSPORT"]
 
-    #  Task #603: Support keyphrases: Should pass after handling keyphrases, e.g. "travel document" or "travel permit"
 
-    # def test_valid_us_passport_with_exact_context_phrase():
-    #     num = '912803456'
-    #     context = 'my travel document number is '
-    #     results = us_passport_recognizer.analyze(context + num, entities)
-    #
-    #     assert len(results) == 1
-    #     assert results[0].text = num
-    #     assert results[0].score
-    #
+@pytest.mark.parametrize(
+    "text, expected_len, expected_positions, expected_score_ranges",
+    [
+        ("912803456", 1, ((0, 9),), ((0.0, 0.1),),),
+        # requires multiword context
+        # ("my travel document is 912803456", 1, ((22, 31),), ((.5, 0.6),),),
+    ],
+)
+def test_all_us_passports(
+    text,
+    expected_len,
+    expected_positions,
+    expected_score_ranges,
+    recognizer,
+    entities,
+    max_score,
+):
+    results = recognizer.analyze(text, entities)
+    assert len(results) == expected_len
+    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
+        results, expected_positions, expected_score_ranges
+    ):
+        if fn_score == "max":
+            fn_score = max_score
+        assert_result_within_score_range(
+            res, entities[0], st_pos, fn_pos, st_score, fn_score
+        )

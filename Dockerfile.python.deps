@@ -25,6 +25,8 @@ RUN pip install pipenv
 RUN pip install --upgrade setuptools
 # Installing specified packages from Pipfile.lock
 RUN bash -c 'PIPENV_VENV_IN_PROJECT=1 pipenv sync'
+# Install for tests, consider making this optional
+RUN pipenv run python -m spacy download en_core_web_lg
 
 # Print to screen the installed packages for easy debugging
 RUN pipenv run pip freeze

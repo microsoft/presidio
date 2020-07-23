@@ -1,0 +1,57 @@
+# This template builds a golang container and pushes it to a container registry, using presidio Makefile.
+# It is used in CI to build the base container as well as all golang based services.
+# parameters:
+#   registry_service_connection: service connection to docker registry.
+#   registry_name: full name of container registry (i.e. presidio.azurecr.io)
+#   make_command_to_run: the phony command in Makefile to execute.
+#   image_name: image name to build.
+#   presidio_label: image label.
+#   presidio_branch_label: final label the container will have (latest or branch-name)
+#   deps_label: label of deps container used when building this container.
+
+parameters:
+  registry_service_connection: ''
+  registry_name: ''
+  make_command_to_run: ''
+  image_name: ''
+  presidio_label: ''
+  presidio_branch_label: ''
+  deps_label: ''
+steps:
+- template: ./golang-environment.yaml
+- task: Docker@2
+  displayName: 'Docker Login'
+  inputs:
+    containerRegistry: ${{ parameters.registry_service_connection }}
+    command: 'login'
+- task: Bash@3
+  displayName: 'Build image'
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_BRANCH_LABEL=$BRANCH_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL GOLANG_IMAGE=$GOLANG_IMAGE $DOCKER_COMMAND
+    workingDirectory: '$(MODULEPATH)'
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    PRESIDIO_LABEL: ${{parameters.presidio_label}}
+    PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
+    BRANCH_LABEL: ${{parameters.presidio_branch_label}}
+    DOCKER_COMMAND: ${{ parameters.make_command_to_run }}
+    GOLANG_IMAGE: ${{ parameters.image_name }}
+- task: Bash@3
+  displayName: 'Push Docker Images - BuildId label'    # push with build-id labeldisplayName:
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      # The following line is a fix for a weird problem with the label
+      echo $PRESIDIO_LABEL
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL GOLANG_IMAGE=$GOLANG_IMAGE docker-push-golang-single
+    workingDirectory: '$(MODULEPATH)'
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    PRESIDIO_LABEL: ${{parameters.presidio_label}}
+    GOLANG_IMAGE: ${{ parameters.image_name }}

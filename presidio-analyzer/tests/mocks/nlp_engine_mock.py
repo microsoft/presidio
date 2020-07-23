@@ -1,11 +1,10 @@
-from analyzer.nlp_engine import NlpEngine, NlpArtifacts
+from presidio_analyzer.nlp_engine import NlpEngine, NlpArtifacts
 
 
-class MockNlpEngine(NlpEngine):
-
-    def __init__(self, stopwords=[], punct_words=[], nlp_artifacts=None):
-        self.stopwords = stopwords
-        self.punct_words = punct_words
+class NlpEngineMock(NlpEngine):
+    def __init__(self, stopwords=None, punct_words=None, nlp_artifacts=None):
+        self.stopwords = stopwords if stopwords else []
+        self.punct_words = punct_words if punct_words else []
         if nlp_artifacts is None:
             self.nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
         else:

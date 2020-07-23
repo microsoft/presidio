@@ -1,0 +1,145 @@
+# This template builds a python wheel and container and pushes them to Azure Artifcats.
+# and a cotainer registry, using presidio Makefile.
+# It is used in CI to build the analyzer container.
+# parameters:
+#   folder_name: where the python files are located.
+#   package_name: name of python package to build
+#   registry_service_connection: service connection to docker registry.
+#   registry_name: full name of container registry (i.e. presidio.azurecr.io)
+#   presidio_label: image label.
+#   deps_label: label of deps container used when building this container.
+#   artifact_feed: pypi artifact used to push the wheel
+parameters:
+  folder_name: ''
+  package_name: ''
+  artifact_feed: ''
+  presidio_label: ''
+  deps_label: ''
+  registry_name: ''
+  registry_service_principal: ''
+steps:
+- task: Docker@2
+  displayName: 'Docker login'
+  inputs:
+    containerRegistry: ${{ parameters.registry_service_principal }}
+    command: 'login'
+- task: UsePythonVersion@0
+  displayName: 'Use Python $(PYTHON.VERSION)'
+  inputs:
+    versionSpec: '$(PYTHON.VERSION)'
+- task: Bash@3
+  displayName: 'Install python environment'
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      python -m pip install --upgrade pip
+      python -m pip install pipenv
+      pipenv --python 3
+    workingDirectory: ${{ parameters.folder_name }}
+- task: PipAuthenticate@0
+  displayName: 'Authenticate PIP with Azure Artifacts'
+  inputs:
+    artifactFeeds: presidio
+- task: Bash@3
+  displayName: 'Install python dependencies'
+  inputs:
+    targetType: 'inline'
+    workingDirectory: ${{ parameters.folder_name }}
+    script: |
+      set -eux  # fail on error
+
+      df -h
+
+      # install dependency libraries
+      # re2
+      re2_version="2018-12-01"
+      wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
+      mkdir re2
+      tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
+      cd re2 && sudo make install
+
+      # Azure pipelines test publish
+      # regex
+      pipenv sync --dev --sequential
+      pipenv install --dev --skip-lock regex pytest-azurepipelines
+      pipenv run python -m spacy download en_core_web_lg
+- task: Bash@3
+  displayName: 'Lint'
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      pipenv run pylint $PACKAGE_NAME && \
+      pipenv run flake8 $PACKAGE_NAME --exclude "*pb2*.py"
+    workingDirectory: ${{ parameters.folder_name }}
+  env:
+    PACKAGE_NAME: ${{ parameters.package_name }}
+- task: Bash@3
+  displayName: 'Run Tests'
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      export PRESIDIO_PYPI_FEED=$PIP_EXTRA_INDEX_URL
+      pipenv install --skip-lock pytest-azurepipelines
+      pipenv run pytest --log-cli-level=0
+    workingDirectory: ${{ parameters.folder_name }}
+- task: Bash@3
+  displayName: Set version number
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      sed -i 's@dev@'"$PYTHON_BUILD_TAG"'@' ./VERSION
+      FULL_PYTHON_VERSION=$(cat ./VERSION)
+      echo "$FULL_PYTHON_VERSION"
+      echo "##vso[task.setvariable variable=FULL_PYTHON_VERSION]$FULL_PYTHON_VERSION"
+- task: Bash@3
+  displayName: 'Package Wheel'
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      pip install wheel
+      python setup.py bdist_wheel
+    workingDirectory: ${{ parameters.folder_name }}
+  env:
+    FEED_NAME: ${{ parameters.artifact_feed }}
+# Publish Wheel to ADO Artifacts
+- template: ./publish-python-twine.yaml
+  parameters:
+    feed_display_name: 'Azure Artifacts'
+    feed_name: ${{ parameters.artifact_feed }}
+    folder_name: ${{ parameters.folder_name }}/dist
+    artifact_feed: ${{ parameters.artifact_feed }}
+- task: Bash@3
+  displayName: 'Build Python Container'
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      echo "$FULL_PYTHON_VERSION"
+      # The following line is a fix for a weird problem with the label
+      echo $PRESIDIO_DEPS_LABEL
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=$PRESIDIO_LABEL PRESIDIO_DEPS_LABEL=$PRESIDIO_DEPS_LABEL WHEEL_VERSION=$(FULL_PYTHON_VERSION) PIP_EXTRA_INDEX_URL="$PIP_EXTRA_INDEX_URL" docker-build-python
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name }}
+    PRESIDIO_LABEL: ${{parameters.presidio_label}}
+    PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
+- task: Bash@3
+  displayName: 'Push Docker Images - BuildId label'    # push with build-id label
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      make DOCKER_REGISTRY=$REGISTRY_NAME PRESIDIO_LABEL=${{parameters.presidio_label}} docker-push-python
+  env:
+    REGISTRY_NAME: ${{ parameters.registry_name_parameter }}

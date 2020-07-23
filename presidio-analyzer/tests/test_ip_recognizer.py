@@ -1,54 +1,47 @@
-from unittest import TestCase
+import pytest
 
 from tests import assert_result_within_score_range
-from analyzer.predefined_recognizers import IpRecognizer
-
-ip_recognizer = IpRecognizer()
-entities = ["IP_ADDRESS"]
+from presidio_analyzer.predefined_recognizers import IpRecognizer
 
 
-class TestIpRecognizer(TestCase):
+@pytest.fixture(scope="module")
+def recognizer():
+    return IpRecognizer()
 
-    def test_valid_ipv4(self):
-        ip = '192.168.0.1'
-        context = 'microsoft.com '
-        results = ip_recognizer.analyze(context + ip, entities)
 
-        assert len(results) == 1
+@pytest.fixture(scope="module")
+def entities():
+    return ["IP_ADDRESS"]
+
+
+@pytest.mark.parametrize(
+    "text, expected_len, expected_positions, expected_score_ranges",
+    [
+        # IPv4 tests
+        ("microsoft.com 192.168.0.1", 1, ((14, 25),), ((0.6, 0.81),),),
+        ("my ip: 192.168.0", 0, (), (),),
+        # IPv6 tests  TODO IPv6 regex needs to be fixed
+        # ("microsoft.com 684D:1111:222:3333:4444:5555:6:77", 1, ((14, 46),), ((0.59, 0.81),),),  # noqa: E501
+        # ("my ip: 684D:1111:222:3333:4444:5555:6:77", 1, ((7, 39),), ((0.79, "max"),),),  # noqa: E501
+        ("684D:1111:222:3333:4444:5555:77", 0, (), (),),
+    ],
+)
+def test_all_ips(
+    text,
+    expected_len,
+    expected_positions,
+    expected_score_ranges,
+    recognizer,
+    entities,
+    max_score,
+):
+    results = recognizer.analyze(text, entities)
+    assert len(results) == expected_len
+    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
+        results, expected_positions, expected_score_ranges
+    ):
+        if fn_score == "max":
+            fn_score = max_score
         assert_result_within_score_range(
-            results[0], entities[0], 14, 25, 0.6, 0.81)
-
-    def test_invalid_ipv4(self):
-        ip = '192.168.0'
-        context = 'my ip: '
-        results = ip_recognizer.analyze(context + ip, entities)
-
-        assert len(results) == 0
-
-    '''
-    TODO: fix ipv6 regex
-    def test_valid_ipv6(self):
-        ip = '684D:1111:222:3333:4444:5555:6:77'
-        context = 'microsoft.com '
-        results = ip_recognizer.analyze(context + ip, entities)
-    
-        assert len(results) == 1
-        assert results[0].text == ip
-        assert results[0].score > 0.59 and results[0].score < 0.8
-    
-    
-    def test_valid_ipv6_with_exact_context(self):
-        ip = '684D:1111:222:3333:4444:5555:6:77'
-        context = 'my ip: '
-        results = ip_recognizer.analyze(context + ip, entities)
-    
-        assert len(results) == 1
-        assert results[0].text == ip
-        assert results[0].score > 0.79 and results[0].score < 1
-    '''
-
-    def test_invalid_ipv6(self):
-        ip = '684D:1111:222:3333:4444:5555:77'
-        results = ip_recognizer.analyze('the ip is ' + ip, entities)
-
-        assert len(results) == 0
+            res, entities[0], st_pos, fn_pos, st_score, fn_score
+        )

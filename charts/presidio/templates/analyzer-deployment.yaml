@@ -9,7 +9,7 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
-  replicas: 1
+  replicas: {{ .Values.analyzer.replicas }}
   selector:
     matchLabels:
       app: {{ $fullname }}
@@ -26,11 +26,11 @@ spec:
         - containerPort: {{ .Values.analyzer.service.internalPort }}
         resources:
           requests:
-            memory: "1500Mi"
-            cpu: "1500m"
+            memory: {{ .Values.analyzer.container.resources.requests.memory }}
+            cpu: {{ .Values.analyzer.container.resources.requests.cpu }}
           limits:
-            memory: "3000Mi"
-            cpu: "2000m"
+            memory: {{ .Values.analyzer.container.resources.limits.memory }}
+            cpu: {{ .Values.analyzer.container.resources.limits.cpu }}
         env:
           - name: PRESIDIO_NAMESPACE
             valueFrom:

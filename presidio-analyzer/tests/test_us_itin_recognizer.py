@@ -1,56 +1,45 @@
-from unittest import TestCase
+import pytest
 
 from tests import assert_result_within_score_range
-from analyzer.predefined_recognizers import UsItinRecognizer
-
-us_itin_recognizer = UsItinRecognizer()
-entities = ["US_ITIN"]
+from presidio_analyzer.predefined_recognizers import UsItinRecognizer
 
 
-class TestUsItinRecognizer(TestCase):
+@pytest.fixture(scope="module")
+def recognizer():
+    return UsItinRecognizer()
 
-    def test_valid_us_itin_very_weak_match(self):
-        num1 = '911-701234'
-        num2 = '91170-1234'
-        results = us_itin_recognizer.analyze(
-            '{} {}'.format(num1, num2), entities)
 
-        assert len(results) == 2
+@pytest.fixture(scope="module")
+def entities():
+    return ["US_ITIN"]
 
-        assert results[0].score != 0
+
+@pytest.mark.parametrize(
+    "text, expected_len, expected_positions, expected_score_ranges",
+    [
+        ("911-701234 91170-1234", 2, ((0, 10), (11, 21),), ((0.0, 0.3), (0.0, 0.3),),),
+        ("911701234", 1, ((0, 9),), ((0.3, 0.4),),),
+        ("911-70-1234", 1, ((0, 11),), ((0.5, 0.6),),),
+        ("911-89-1234", 0, (), (),),
+        ("my tax id 911-89-1234", 0, (), (),),
+    ],
+)
+def test_all_us_itins(
+    text,
+    expected_len,
+    expected_positions,
+    expected_score_ranges,
+    recognizer,
+    entities,
+    max_score,
+):
+    results = recognizer.analyze(text, entities)
+    assert len(results) == expected_len
+    for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
+        results, expected_positions, expected_score_ranges
+    ):
+        if fn_score == "max":
+            fn_score = max_score
         assert_result_within_score_range(
-            results[0], entities[0], 0, 10, 0, 0.3)
-
-        assert results[1].score != 0
-        assert_result_within_score_range(
-            results[1], entities[0], 11, 21, 0, 0.3)
-
-    def test_valid_us_itin_weak_match(self):
-        num = '911701234'
-        results = us_itin_recognizer.analyze(num, entities)
-
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[0], 0, 9, 0.3, 0.4)
-
-    def test_valid_us_itin_medium_match(self):
-        num = '911-70-1234'
-        results = us_itin_recognizer.analyze(num, entities)
-
-        assert len(results) == 1
-        assert_result_within_score_range(
-            results[0], entities[0], 0, 11, 0.5, 0.6)
-
-    def test_invalid_us_itin(self):
-        num = '911-89-1234'
-        results = us_itin_recognizer.analyze(num, entities)
-
-        assert len(results) == 0
-
-    def test_invalid_us_itin_exact_context(self):
-        num = '911-89-1234'
-        context = "my taxpayer id"
-        results = us_itin_recognizer.analyze(
-            '{} {}'.format(context, num), entities)
-
-        assert len(results) == 0
+            res, entities[0], st_pos, fn_pos, st_score, fn_score
+        )
