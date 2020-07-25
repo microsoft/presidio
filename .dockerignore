@@ -78,3 +78,6 @@ venv/
 .vscode
 docs/
 charts/
+
+# ignore current venv
+presidio-analyzer/.venv/

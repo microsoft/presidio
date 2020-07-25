@@ -10,7 +10,7 @@
 DOCKER_REGISTRY=${DOCKER_REGISTRY:-"presidio"}
 PRESIDIO_LABEL=${PRESIDIO_LABEL:-"latest"}
 NETWORKNAME=${NETWORKNAME:-"presidio-network"}
-NLP_CONF_PATH=${NLP_CONF_PATH:-"conf/spacy.yaml"}
+NLP_CONF_PATH=${NLP_CONF_PATH:-"conf/default.yaml"}
 if [[ ! "$(docker network ls)" =~ (^|[[:space:]])"$NETWORKNAME"($|[[:space:]]) ]]; then
     docker network create $NETWORKNAME
 fi
