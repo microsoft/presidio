@@ -1,3 +1,4 @@
+#!/bin/bash
 # This script is a helper to run the local docker build only. This does not deploy the service.
 # There is no error checking in this script, it expects a local docker instance to be running.
 # The make commands will take a very long time to run the first time as the docker images themselves
