@@ -173,6 +173,8 @@ stages:
                 pipenv sync --dev --sequential
                 # install Azure pipelines test publish, regex
                 pipenv install --dev --skip-lock regex pytest-azurepipelines
+                # install spacy model
+                pipenv run python -m spacy download en_core_web_lg
           - task: Bash@3
             displayName: 'Install golang pre requisites'
             inputs:
