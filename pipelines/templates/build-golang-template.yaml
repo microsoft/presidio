@@ -18,6 +18,19 @@ parameters:
   presidio_branch_label: ''
   deps_label: ''
 steps:
+- task: Bash@3
+  displayName: 'ECHO'
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -eux  # fail on error
+
+      echo "$FULL_PYTHON_VERSION"
+      # The following line is a fix for a weird problem with the label
+      echo $PRESIDIO_DEPS_LABEL
+  env:
+    PRESIDIO_LABEL: ${{parameters.presidio_label}}
+    PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
 - template: ./golang-environment.yaml
 - task: Docker@2
   displayName: 'Docker Login'
