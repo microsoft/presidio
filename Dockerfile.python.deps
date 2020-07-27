@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.7-slim  
 
 ARG re2_version="2018-12-01"
 ARG NAME=presidio-analyzer
