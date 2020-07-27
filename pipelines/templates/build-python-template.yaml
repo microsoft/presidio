@@ -18,18 +18,6 @@ parameters:
   registry_name: ''
   registry_service_principal: ''
 steps:
-- task: Bash@3
-  displayName: 'ECHO'
-  inputs:
-    targetType: 'inline'
-    script: |
-      set -eux  # fail on error
-
-      # The following line is a fix for a weird problem with the label
-      echo $PRESIDIO_DEPS_LABEL
-  env:
-    PRESIDIO_LABEL: ${{parameters.presidio_label}}
-    PRESIDIO_DEPS_LABEL: ${{parameters.deps_label}}
 - task: Docker@2
   displayName: 'Docker login'
   inputs:

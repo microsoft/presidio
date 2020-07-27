@@ -202,17 +202,17 @@ else
 	-mkdir test-results
 	docker run --rm -v "$(CURRENT_DIR)/test-results":/test-result-pipe  --name presidio-tests  --network host $(DOCKER_REGISTRY)/functional-tests:$(PRESIDIO_LABEL)
 endif
-	docker rm test-presidio-api -f
-	docker rm test-presidio-analyzer -f
-	docker rm test-presidio-anonymizer -f
-	docker rm test-presidio-anonymizer-image -f
-	docker rm test-presidio-ocr -f
-	docker rm test-azure-emulator -f
-	docker rm test-kafka -f
-	docker rm test-redis -f
-	docker rm test-s3-emulator -f
-	docker rm test-presidio-recognizers-store -f
-	docker network rm testnetwork
+	-docker rm test-presidio-api -f
+	-docker rm test-presidio-analyzer -f
+	-docker rm test-presidio-anonymizer -f
+	-docker rm test-presidio-anonymizer-image -f
+	-docker rm test-presidio-ocr -f
+	-docker rm test-azure-emulator -f
+	-docker rm test-kafka -f
+	-docker rm test-redis -f
+	-docker rm test-s3-emulator -f
+	-docker rm test-presidio-recognizers-store -f
+	-docker network rm testnetwork
 
 
 .PHONY: go-test-style
