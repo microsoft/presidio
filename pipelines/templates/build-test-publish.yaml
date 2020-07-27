@@ -301,7 +301,6 @@ stages:
           displayName: Get Deps State
           steps:
           - template: ./set-base-container-build.yaml
-              parameters:
         - job: PythonDepsBuild
           displayName: Build Python Deps Container
           timeoutInMinutes: 30
@@ -369,7 +368,6 @@ stages:
           displayName: Get Deps State
           steps:
           - template: ./set-base-container-build.yaml
-              parameters:
         - job: GolangDepsBuild
           displayName: Build Golang Deps Container
           timeoutInMinutes: 30
@@ -507,8 +505,6 @@ stages:
           displayName: Get Deps State
           steps:
           - template: ./set-base-container-build.yaml
-              parameters:
-
         - job: PublishPypi
           displayName: Publish Analyzer to Pypi
           variables:
