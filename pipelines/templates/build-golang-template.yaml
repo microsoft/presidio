@@ -24,8 +24,6 @@ steps:
     targetType: 'inline'
     script: |
       set -eux  # fail on error
-
-      echo "$FULL_PYTHON_VERSION"
       # The following line is a fix for a weird problem with the label
       echo $PRESIDIO_DEPS_LABEL
   env:
