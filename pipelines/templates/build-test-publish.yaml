@@ -290,102 +290,17 @@ stages:
   # and publishes artifacts to target and with labels that depend on the
   # built branch.
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-
-    # Env
-    - stage: Setup
-      displayName: Set Pipeline globals
-      dependsOn: []
-      pool:
-        vmImage: 'ubuntu-latest'
-      jobs:
-
-      - job: SetBuildDep
-        displayName: Set base container build
-        steps:
-          # - template: ./free-agent-disk.yaml
-          - task: Bash@3
-            displayName: 'Git diff verify deps build'
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -eux  # fail on error
-
-                MASTER="remotes/origin/master"
-                GIT_DIFF_SOURCEBRANCH="HEAD"
-                # Set build_deps Triggers to false
-                BUILD_DEPS=false
-                DEPS_LABEL=latest
-
-                # we should always use master as a comparison, except in the case that this is
-                # a build for master. In this case we can use HEAD~ (1 commit behind master)
-                # because all merges will be squash merges
-                if [[ $(git diff "$MASTER") ]]; then
-                    GIT_DIFF_UPSTREAMBRANCH="$MASTER"
-                else
-                    GIT_DIFF_UPSTREAMBRANCH="$MASTER~"
-                fi
-                echo "GIT_DIFF_UPSTREAMBRANCH: $GIT_DIFF_UPSTREAMBRANCH"
-                echo "GIT_DIFF_SOURCEBRANCH: $GIT_DIFF_SOURCEBRANCH"
-                FILE_CHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only)
-                echo "Files changed since last commit..."
-                echo "$FILE_CHANGE_SET"
-
-                # if git diff detects commits made to the deps files we build the dep containerss
-                if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Gopkg.lock" -e "Gopkg.toml" -e "Dockerfile.python.deps" -e "Dockerfile.golang.deps" -e "Dockerfile.python.deps" -e "presidio-analyzer/Pipfile" -e "presidio-analyzer/Pipfile.lock")" ]]; then
-                    echo "Performing build deps."
-                    BUILD_DEPS=true
-                    DEPS_LABEL=$(Build.BuildId)
-                fi
-
-                echo "##vso[task.setvariable variable=BUILD_DEPS]$BUILD_DEPS"
-                echo "##vso[task.setvariable variable=DEPS_LABEL]$DEPS_LABEL"
-          # To pass the variable build_deps, we write it to a file
-          - task: Bash@3
-            displayName: Copy Artifacts
-            name: setEnv
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -eux  # fail on error
-
-                mkdir -p $(Pipeline.Workspace)/variables
-                echo "$DEPS_LABEL" > $(Pipeline.Workspace)/variables/DEPS_LABEL
-                echo "$BUILD_DEPS" > $(Pipeline.Workspace)/variables/BUILD_DEPS
-                echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-                echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-          # Publish the folder as pipeline artifact
-          - publish: $(Pipeline.Workspace)/variables
-            displayName: Publish Artifacts
-            artifact: variables
-
     # Python Stage
     - stage: PythonStage
       displayName: Build Python
-      dependsOn: Setup
+      dependsOn: []
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
         - job: GetDepsJob
           displayName: Get Deps State
           steps:
-          # Download the artifacts
-          - download: current
-            displayName: Download deps artifacts
-            artifact: variables
-          # Read the variable from the file, then expose it in the job
-          - task: Bash@3
-            displayName: Set deps env
-            name: setEnv
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -eux  # fail on error
-
-                DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
-                BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
-                echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-                echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-
+          - template: ./set-base-container-build.yaml
         - job: PythonDepsBuild
           displayName: Build Python Deps Container
           timeoutInMinutes: 30
@@ -444,7 +359,7 @@ stages:
     # Golang Stage
     - stage: GolangStage
       displayName: Build Golang
-      dependsOn: Setup
+      dependsOn: []
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
@@ -452,24 +367,7 @@ stages:
         - job: GetDepsJob
           displayName: Get Deps State
           steps:
-          # Download the artifacts
-          - download: current
-            displayName: Download deps artifacts
-            artifact: variables
-          # Read the variable from the file, then expose it in the job
-          - task: Bash@3
-            displayName: Set deps env
-            name: setEnv
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -eux  # fail on error
-
-                DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
-                BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
-                echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-                echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-
+          - template: ./set-base-container-build.yaml
         - job: GolangDepsBuild
           displayName: Build Golang Deps Container
           timeoutInMinutes: 30
@@ -606,24 +504,7 @@ stages:
         - job: GetDepsJob
           displayName: Get Deps State
           steps:
-          # Download the artifacts
-          - download: current
-            displayName: Download deps artifacts
-            artifact: variables
-          # Read the variable from the file, then expose it in the job
-          - task: Bash@3
-            displayName: Set deps env
-            name: setEnv
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -eux  # fail on error
-
-                DEPS_LABEL=$(cat $(Pipeline.Workspace)/variables/DEPS_LABEL)
-                BUILD_DEPS=$(cat $(Pipeline.Workspace)/variables/BUILD_DEPS)
-                echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
-                echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
-
+          - template: ./set-base-container-build.yaml
         - job: PublishPypi
           displayName: Publish Analyzer to Pypi
           variables:
