@@ -18,7 +18,6 @@ RUN apt-get update -qq \
     cd re2 && make install && cd .. && rm -rf re2 && rm re2.tar.gz && \
     apt-get clean autoclean && apt-get autoremove --yes  && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-
 # Making sure we have pipenv
 RUN pip install pipenv
 # Updating setuptools
