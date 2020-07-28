@@ -27,6 +27,7 @@ RUN pipenv run pylint presidio_analyzer && \
 FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
 
 ARG NAME=presidio-analyzer
+ENV PYTHONPATH=/usr/bin/${NAME}
 ADD ./${NAME}/presidio_analyzer /usr/bin/${NAME}/presidio_analyzer
 ADD ./${NAME}/conf /usr/bin/${NAME}/presidio_analyzer/conf
 WORKDIR /usr/bin/${NAME}/presidio_analyzer

@@ -1,3 +1,4 @@
+#!/bin/bash
 # This script is a helper to run the local docker build only. This does not deploy the service.
 # There is no error checking in this script, it expects a local docker instance to be running.
 # The make commands will take a very long time to run the first time as the docker images themselves
@@ -10,7 +11,7 @@
 DOCKER_REGISTRY=${DOCKER_REGISTRY:-"presidio"}
 PRESIDIO_LABEL=${PRESIDIO_LABEL:-"latest"}
 NETWORKNAME=${NETWORKNAME:-"presidio-network"}
-NLP_CONF_PATH=${NLP_CONF_PATH:-"conf/spacy.yaml"}
+NLP_CONF_PATH=${NLP_CONF_PATH:-"conf/default.yaml"}
 if [[ ! "$(docker network ls)" =~ (^|[[:space:]])"$NETWORKNAME"($|[[:space:]]) ]]; then
     docker network create $NETWORKNAME
 fi
