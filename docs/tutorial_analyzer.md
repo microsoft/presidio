@@ -74,3 +74,136 @@ print(
                                               score=res.score)
       for res in results])
 ```
+
+## Using multiple languages
+
+### Multiple Language: Method 1
+
+First, we need to create a configurarion file to specify what languages to load. Like this:
+
+```spacy_multilingual.yaml
+nlp_engine_name: spacy
+models:
+  -
+    lang_code: en
+    model_name: en_core_web_lg
+  -
+    lang_code: es
+    model_name: es_core_news_md
+```
+
+In the previous example we specify to load English language with spacy model "en_core_web_lg" and Spanish language with spacy model "es_core_news_md".
+
+NOTE: make sure that you have all your spacy models downloaded with a command like this:
+
+```bash
+python3 -m spacy download es_core_news_md
+```
+
+Then, we need to serve our models. We can do that very easily with (Takes about 15 seconds to load)
+
+```sh
+./presidio-analyzer serve
+```
+
+Now that our models is up and running, we can send PII text to it.
+
+_From another shell_
+
+You can make an English language query like before or use Spanish language query like this:
+
+```sh
+./presidio-analyzer analyze --text "Mi nombre es Francisco Pérez con DNI 55555555-K, vivo en Madrid y trabajo para la ONU." --fields "ES_NIF" "LOCATION" "ORG" "PERSON" --language "es"
+````
+
+The expected result is:
+
+```json
+{
+  "analyzeResults": [
+    {
+      "field": {
+        "name": "ES_NIF"
+      },
+      "score": 1.0,
+      "location": {
+        "start": 37,
+        "end": 47,
+        "length": 10
+      }
+    },
+    {
+      "field": {
+        "name": "PERSON"
+      },
+      "score": 0.8500000238418579,
+      "location": {
+        "start": 13,
+        "end": 28,
+        "length": 15
+      }
+    },
+    {
+      "field": {
+        "name": "LOCATION"
+      },
+      "score": 0.8500000238418579,
+      "location": {
+        "start": 57,
+        "end": 63,
+        "length": 6
+      }
+    },
+    {
+      "field": {
+        "name": "ORG"
+      },
+      "score": 0.8500000238418579,
+      "location": {
+        "start": 82,
+        "end": 85,
+        "length": 3
+      }
+    }
+  ],
+  "requestId": "d89ffd66-2adf-486f-a040-4e4f80af7a86"
+}
+```
+
+### Multiple Language: Method 2
+
+Use the analyzer Python code by importing `analyzer_engine.py`, `SpacyNlpEngine` and `RecognizerRegistry`
+
+```python
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.nlp_engine import SpacyNlpEngine
+from presidio_analyzer.recognizer_registry import RecognizerRegistry
+
+registry = RecognizerRegistry()
+nlp = SpacyNlpEngine({"en": "en_core_web_lg", "es": "es_core_news_md"})
+registry.load_predefined_recognizers(["es"], "spacy")
+analyzer = AnalyzerEngine(registry=registry, nlp_engine=nlp, default_language="es")
+
+# English query with just one entity
+results = analyzer.analyze(text="My phone number is 212-555-5555",
+                           entities=["PHONE_NUMBER"],
+                           language='en',
+                           all_fields=False)
+
+print(
+    ["Entity: {ent}, score: {score}\n".format(ent=res.entity_type,
+                                              score=res.score)
+      for res in results])
+
+# Spanish query with all entities and score_threshold
+results = engine.analyze(text = "Mi nombre es Francisco Pérez con DNI 55555555-K, \
+                         vivo en Madrid y trabajo para la ONU.",
+                         entities=[],
+                         language='es',
+                         all_fields=True,
+                         score_threshold=0.5)
+print(
+    ["Entity: {ent}, score: {score}\n".format(ent=res.entity_type,
+                                              score=res.score)
+      for res in results])
+```
