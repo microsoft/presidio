@@ -96,6 +96,19 @@ class PatternRecognizer(LocalRecognizer):
         """
         return None
 
+    # pylint: disable=unused-argument, no-self-use, assignment-from-none
+    def invalidate_result(self, pattern_text):
+        """
+        Logic to check for result invalidation by running pruning logic.
+        For example, each SSN number group should not consist of all the same
+        digits.
+
+        :param pattern_text: the text to validated.
+        Only the part in text that was detected by the regex engine
+        :return: A bool indicating whether the result is invalidated
+        """
+        return None
+
     @staticmethod
     def build_regex_explanation(
             recognizer_name,
@@ -163,6 +176,10 @@ class PatternRecognizer(LocalRecognizer):
                         pattern_result.score = EntityRecognizer.MAX_SCORE
                     else:
                         pattern_result.score = EntityRecognizer.MIN_SCORE
+
+                invalidation_result = self.invalidate_result(current_match)
+                if invalidation_result is not None and invalidation_result:
+                    pattern_result.score = EntityRecognizer.MIN_SCORE
 
                 if pattern_result.score > EntityRecognizer.MIN_SCORE:
                     results.append(pattern_result)
