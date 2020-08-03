@@ -12,6 +12,8 @@ from knack.commands import CLICommandsLoader, CommandGroup
 from knack.help import CLIHelp
 from knack.help_files import helps
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from analyzer_engine import AnalyzerEngine  # noqa
 from recognizer_registry.recognizer_registry import RecognizerRegistry  # noqa
 from nlp_engine import NLP_ENGINES  # noqa
