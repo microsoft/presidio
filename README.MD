@@ -1,258 +1,226 @@
 # Presidio - Data protection and anonymization API
 
-**Context aware, pluggable and customizable PII anonymization service for text and images.**
+Serviço de anonimização de PII compatível com contexto, conectável e personalizável para texto e imagens.
 
 ---
 
-[![Build status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=74)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Microsoft/presidio)](https://goreportcard.com/report/github.com/Microsoft/presidio)
-[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
-
-## Description
-
-Presidio *(Origin from Latin praesidium ‘protection, garrison’)* helps to ensure sensitive text is properly managed and governed. It provides fast ***analytics*** and ***anonymization*** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
-Presidio analyzes the text using predefined or custom recognizers to identify entities, patterns, formats, and checksums with relevant context. Presidio leverages docker and kubernetes for workloads at scale.
-
-### Why use presidio?
-
-Presidio can be integrated into any data pipeline for intelligent PII scrubbing. It is open-source, transparent and scalable. Additionally, PII anonymization use-cases often require a different set of PII entities to be detected, some of which are domain or business specific. Presidio allows you to **customize or add new PII recognizers** via API or code to best fit your anonymization needs.
-
-:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
-
-## Demo
-
-[Try Presidio with your own data](https://presidio-demo.azurewebsites.net/)
-
-## Features
-
-***Unstructured text anonymization***
-
-Presidio automatically detects Personal-Identifiable Information (PII) in unstructured text, annonymizes it based on one or more anonymization mechanisms, and returns a string with no personal identifiable data.
-For example:
-
-[![Image1](docs/assets/before-after.png)](docs/assets/before-after.png)
-
-For each PII entity, presidio returns a confidence score:
-
-[![Image2](docs/assets/findings.png)](docs/assets/findings.png)
-
-***Text anonymization in images*** (beta)
-
-Presidio uses OCR to detect text in images. It further allows the redaction of the text from the original image.
-
-[![Image3](docs/assets/ocr-example.png)](docs/assets/ocr-example.png)
-
-## Learn more
-More information could be found in the [Presidio documentation](docs/index.md).
-
-- [Installation guide](docs/install.md)
-- [Supported field types](docs/field_types.md)
-- [Database and storage scanner](docs/tutorial_scheduler.md)
-- [Architecture](docs/design.md)
-- [Setting up a development environment](docs/development.md)
-- [Adding new PII recognizers](docs/custom_fields.md)
-
-## Input and output
-
-Presidio accepts multiple sources and targets for data annonymization. Specifically:
-
-1. Storage solutions
-    * Azure Blob Storage
-    * S3
-    * Google Cloud Storage
-
-2. Databases
-    * MySQL
-    * PostgreSQL
-    * Sql Server
-    * Oracle
-
-3. Streaming platforms
-    * Kafka
-    * Azure Events Hubs
-
-4. REST requests
-
-It then can export the results to file storage, databases or streaming platforms.
-
-## The Technology Stack
-
-Presidio leverages:
-
-* [Kubernetes](https://kubernetes.io/)
-* [spaCy](https://spacy.io/)
-* [Redis](https://redis.io/)
-* [GRPC](https://grpc.io)
-* [re2](https://github.com/google/re2)
-
-## Quickstart
-
-1. Install [Presidio](docs/install.md)
-2. Decide on a name for your Presidio project. In the following examples the project name is `<my-project>`.
-3. Start using the Presidio analyze and anonymize services.
-
-## Samples
-
-**Note:** Examples are made with [HTTPie](https://httpie.org/)
-
-***Sample 1:*** Simple text analysis
-
+# Build presidio stack
+​
+## Build images base
 ```sh
-echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC333991", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
+docker build . -f Dockerfile.python.deps -t presidio.azurecr.io/presidio-python-deps:latest \
+docker build . -f Dockerfile.golang.deps -t presidio.azurecr.io/presidio-golang-deps:latest \
+docker build . -f Dockerfile.golang.base -t presidio.azurecr.io/presidio-golang-base:latest
 ```
-
----
-***Sample 2:*** Create reusable templates
-
-1. Create an analyzer template:
-
-    ```sh
-    echo -n '{"allFields":true}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
-    ```
-
-2. Analyze text:
-
-    ```sh
-    echo -n '{"text":"my credit card number is 2970-84746760-9907 345954225667833 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
-    ```
-
----
-***Sample 3:*** Detect specific entities
-
-1. Create an analyzer project with a specific set of entities:
-
-    ```sh
-    echo -n '{"fields":[{"name":"PHONE_NUMBER"}, {"name":"LOCATION"}, {"name":"DATE_TIME"}]}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-template-name>
-    ```
-
-2. Analyze text:
-
-    ```sh
-    echo -n '{"text":"We met yesterday morning in Seattle and his phone number is (212) 555 1234", "AnalyzeTemplateId":"<my-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
-    ```
-
----
-***Sample 4:*** Custom anonymization
-
-1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD):
-
-    ```sh
-    echo -n '{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
-    ```
-
-2. Anonymize text:
-
-    ```sh
-    echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
-    ```
-
----
-***Sample 5:*** Add custom PII entity recognizer
-
-This sample shows how to add an new regex recognizer via API.
-This simple recognizer identifies the word "rocket" in a text and tags it as a "ROCKET entity.
-
-1. Add a custom recognizer
-
-    ```sh
-    echo -n {"value": {"entity": "ROCKET","language": "en", "patterns": [{"name": "rocket-regex","regex": "\\W*(rocket)\\W*","score": 1}]}} | http <api-service-address>/api/v1/analyzer/recognizers/rocket
-    ```
-
-2. Analyze text:
-
-    ```sh
-    echo -n '{"text":"They sent a rocket to the moon!", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
-    ```
-
----
-***Sample 6:*** Image anonymization
-
-1. Create an anonymizer image template (This template redacts values with black color):
-
-    ```sh
-    echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize-image/<my-anonymize-image-template-name>
-    ```
-
-2. Anonymize image:
-
-    ```sh
-    http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
-    ```
-
----
-
-## Single click deployment using the default values
-
-The script will install Presidio on your Kubenetes cluster. Prerequesites:
-
-1. A Kubernetes cluster with [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled
-2. `kubectl` installed
-    * verify you can communicate with the cluster by running:
-
-        ``` sh
-        kubectl version
-        ```
-
-3. Local `helm` client.
-4. Recent presidio repo is cloned on your local machine.
-
-### Installation Steps
-
-1. Navigate into `<root>\deployment` from command line.
-
-2. If You have helm installed, but havn't run `helm init`, execute [deploy-helm.sh](deploy-helm.sh) in the command line. It will install `tiller` (helm server side) on your cluster, and grant it sufficient permissions.
-
-3. Grant the Kubernetes cluster access to the container registry
-    * If using Azure Kubernetes Service, follow these instructions to [grant the AKS cluster access to the ACR.](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks)
-
-4. If you already have `helm` and `tiller` configured, or if you installed it in the previous step, execute [deploy-presidio.sh](deploy-presidio.sh) in the command line as follows:
-
+​
+## Build services
 ```sh
-deploy-presidio.sh
+docker build . -f presidio-analyzer/Dockerfile -t presidio.azurecr.io/presidio-analyzer:latest \
+docker build . -f presidio-anonymizer/Dockerfile -t presidio.azurecr.io/presidio-anonymizer:latest \
+docker build . -f presidio-recognizers-store/Dockerfile -t presidio.azurecr.io/presidio-recognizers-store:latest \
+docker build . -f presidio-api/Dockerfile -t presidio.azurecr.io/presidio-api:latest \
+docker build . -f presidio-datasink/Dockerfile -t presidio.azurecr.io/presidio-datasink:latest \
+docker build . -f presidio-ocr/Dockerfile -t presidio.azurecr.io/presidio-ocr:latest \
+docker build . -f presidio-collector/Dockerfile -t presidio.azurecr.io/presidio-collector:latest
 ```
+​
+## Create network
+```sh
+docker network create mynetwork
+```
+​
+### Initialize Redis
+```sh
+docker run --rm --name redis --network mynetwork -d -p 6379:6379 redis
+```
+​
+### Initialize Inalyzer
+```sh
+docker run --rm --name presidio-analyzer --network mynetwork -p 3000:3000 -e GRPC_PORT=3000 presidio.azurecr.io/presidio-analyzer:latest
+```
+​
+### Initialize Anonymizer
+```sh
+docker run --rm --name presidio-anonymizer --network mynetwork -p 3001:3001 -e GRPC_PORT=3001 presidio.azurecr.io/presidio-anonymizer:latest
+```
+​
+### Initialize Recognizer
+```sh
+docker run --rm --name presidio-recognizers-store --network mynetwork -p 3004:3004 -e GRPC_PORT=3004 -e REDIS_URL=redis:6379 presidio.azurecr.io/presidio-recognizers-store:latest
+```
+​
+### Initialize Apis
+```sh
+docker run --rm --name presidio-api --network mynetwork -p 8080:8080 -e WEB_PORT=8080 -e ANALYZER_SVC_ADDRESS=presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=presidio-anonymizer:3001 -e RECOGNIZERS_STORE_SVC_ADDRESS=presidio-recognizers-store:3004 presidio.azurecr.io/presidio-api:latest
+```
+​
+## Optional services
+​
+### Initialize Datasink
+```sh
+docker run --rm --name presidio-datasink --network mynetwork -p 5000:5000 presidio.azurecr.io/presidio-datasink:latest
+```
+​
+### Initialize Scheduler
+```sh
+docker run --rm --name presidio-scheduler --network -e DATASINK_GRPC_PORT=5000 -e REDIS_URL=redis:6379 -e ANALYZER_SVC_ADDRESS=presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=presidio-anonymizer:3001 presidio.azurecr.io/presidio-scheduler:latest
+```
+​
+### Initialize OCR
+```sh
+docker run --rm --name presidio-ocr --network mynetwork -p 3003:3003 presidio.azurecr.io/presidio-ocr:latest
+```
+​
+### Initialize Collector ???
+```sh
+docker run --rm --name presidio-collector --network mynetwork -e REDIS_URL=redis:6379 -e ANALYZER_SVC_ADDRESS=presidio-analyzer:3000 -e ANONYMIZER_SVC_ADDRESS=presidio-anonymizer:3001 presidio.azurecr.io/presidio-collector:latest
+```
+​
+​
+## Examples Apis
+​
+### Recognizers
+​
+#### Create Recognizers
+```sh
+curl --location --request POST '127.0.0.1:8080/api/v1/analyzer/recognizers/1' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "value": {
+        "blacklist": [
+            "velit sint aliquip",
+            "elit consequat"
+        ],
+        "contextPhrases": [
+            "eu ullamco aute",
+            "esse velit qui"
+        ],
+        "entity": "commodo mollit qui",
+        "language": "consectetur cupidatat ad ullamco officia",
+        "name": "deserunt in aliqua ullamco",
+        "patterns": [
+            {
+                "name": "sed quis proident",
+                "regex": "aute proident et irure",
+                "score": -74888500.18834418
+            },
+            {
+                "name": "voluptate tempor",
+                "regex": "sed ",
+                "score": -66246829.50692073
+            }
+        ]
+    }
+}'
+```
+​
+#### List Recognizers By ID
+```sh
+curl --location --request GET '127.0.0.1:8080/api/v1/analyzer/recognizers/1'
+```
+​
+#### List all Recognizers
+```sh
+curl --location --request GET '127.0.0.1:8080/api/v1/analyzer/recognizers/'
+```
+​
+​
+### Analyzers
+​
+#### Analyze text
+>request
+```sh
+curl --location --request POST '127.0.0.1:8080/api/v1/projects/event-tracking/analyze' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+   "text":"John Smith lives in New York. We met yesterday morning in Seattle. I called him before on (212) 555-1234 to verify the appointment. He also told me that his drivers license is AC333991",
+   "analyzeTemplate":{
+      "allFields":true
+   }
+}'
+```
+>response
+```json
+[
+    {
+        "field": {
+            "name": "PERSON"
+        },
+        "score": 0.85,
+        "location": {
+            "end": 10,
+            "length": 10
+        }
+    },
+    {
+        "field": {
+            "name": "LOCATION"
+        },
+        "score": 0.85,
+        "location": {
+            "start": 20,
+            "end": 28,
+            "length": 8
+        }
+    },
+    {
+        "field": {
+            "name": "DATE_TIME"
+        },
+        "score": 0.85,
+        "location": {
+            "start": 37,
+            "end": 46,
+            "length": 9
+        }
+    },
+    {
+        "field": {
+            "name": "DATE_TIME"
+        },
+        "score": 0.85,
+        "location": {
+            "start": 47,
+            "end": 54,
+            "length": 7
+        }
+    },
+    {
+        "field": {
+            "name": "LOCATION"
+        },
+        "score": 0.85,
+        "location": {
+            "start": 58,
+            "end": 65,
+            "length": 7
+        }
+    },
+    {
+        "field": {
+            "name": "PHONE_NUMBER"
+        },
+        "score": 0.7,
+        "location": {
+            "start": 90,
+            "end": 104,
+            "length": 14
+        }
+    },
+    {
+        "field": {
+            "name": "US_DRIVER_LICENSE"
+        },
+        "score": 0.65,
+        "location": {
+            "start": 176,
+            "end": 184,
+            "length": 8
+        }
+    }
+]
+``
 
-The script will install Presidio on your cluster using the default values.
->Note: You can edit the file to use your own container registry and image.
 
-### Current input/output components status
+[Presidio repositório](https://github.com/microsoft/presidio).
 
-| Module              | Feature              | Status                 |
-|---------------------|----------------------|------------------------|
-| API                 | HTTP input           | :white_check_mark:     |
-| Scanner             | MySQL                | :x:                    |
-| Scanner             | MSSQL                | :x:                    |
-| Scanner             | PostgreSQL           | :x:                    |
-| Scanner             | Oracle               | :x:                    |
-| Scanner             | Azure Blob Storage   | :white_check_mark:     |
-| Scanner             | S3                   | :white_check_mark:     |
-| Scanner             | Google Cloud Storage | :x:                    |
-| Streams             | Kafka                | :white_check_mark:     |
-| Streams             | Azure Event Hub      | :white_check_mark:     |
-| Datasink (output)   | MySQL                | :white_check_mark:     |
-| Datasink (output)   | MSSQL                | :white_check_mark:     |
-| Datasink (output)   | Oracle               | :x:                    |
-| Datasink (output)   | PostgreSQL           | :white_check_mark:     |
-| Datasink (output)   | Kafka                | :white_check_mark:     |
-| Datasink (output)   | Azure Event Hub      | :white_check_mark:     |
-| Datasink (output)   | Azure Blob Storage   | :white_check_mark:     |
-| Datasink (output)   | S3                   | :white_check_mark:     |
-| Datasink (output)   | Google Cloud Storage | :x:                    |
-
-* :white_check_mark: - Working
-* :large_orange_diamond: - Partially supported (alpha)
-* :x: - Not supported yet
-
-# Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

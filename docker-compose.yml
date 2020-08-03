@@ -1,0 +1,116 @@
+version: '3.4'
+services:
+  presidio-golang-deps:
+    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-golang-deps:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile.golang.deps
+  presidio-golang-base:
+    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-golang-base:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile.golang.base
+      args:
+        REGISTRY: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev
+        PRESIDIO_DEPS_LABEL: latest
+    networks:
+      - bubble
+    depends_on:
+      - presidio-golang-deps
+  presidio-python-deps:
+    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-python-deps:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile.python.deps
+  presidio-analyzer:
+    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-analyzer:latest
+    build:
+      context: .
+      dockerfile: ./presidio-analyzer/Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      GRPC_PORT: 3000
+    networks:
+      - bubble
+    depends_on:
+      - presidio-python-deps
+  presidio-anonymizer:
+    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-anonymizer:latest
+    build:
+      context: .
+      dockerfile: ./presidio-anonymizer/Dockerfile
+    ports:
+      - 3001:3001
+    environment:
+      GRPC_PORT: 3001
+    networks:
+      - bubble
+    depends_on:
+      - presidio-golang-deps
+  presidio-recognizers-store:
+    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-recognizers-store:latest
+    build:
+      context: .
+      dockerfile: ./presidio-recognizers-store/Dockerfile
+    ports:
+      - 3004:3004
+    environment:
+      GRPC_PORT: 3004
+      REDIS_URL: presidio-redis:6379
+    networks:
+      - bubble
+    depends_on:
+      - presidio-redis
+  presidio-api:
+    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-api:latest
+    build:
+      context: .
+      dockerfile: ./presidio-api/Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      WEB_PORT: 8080
+      ANALYZER_SVC_ADDRESS: presidio-analyzer:3000
+      ANONYMIZER_SVC_ADDRESS: presidio-anonymizer:3001
+      RECOGNIZERS_STORE_SVC_ADDRESS: presidio-recognizers-store:3004
+    networks:
+      - bubble
+    depends_on:
+      - presidio-analyzer
+
+  presidio-redis:
+    image: presidio-redis
+    restart: always
+    ports:
+      - 6379:6379
+
+#  presidio-datasink:
+#    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-datasink:latest
+#    build:
+#      context: .
+#      dockerfile: ./presidio-datasink/Dockerfile
+#    networks:
+#      - bubble
+#    depends_on:
+#      - presidio-redis
+#  presidio-ocr:
+#    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-ocr:latest
+#    build:
+#      context: .
+#      dockerfile: ./presidio-ocr/Dockerfile
+#    networks:
+#      - bubble
+#  presidio-collector:
+#    image: 289208114389.dkr.ecr.us-east-1.amazonaws.com/picpay-dev/presidio-collector:latest
+#    build:
+#      context: .
+#      dockerfile: ./presidio-collector/Dockerfile
+#  networks:
+#    - bubble
+#  depends_on:
+#    - presidio-redis
+
+networks:
+  bubble:
+    external: true
