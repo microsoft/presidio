@@ -1,0 +1,38 @@
+steps:
+- task: Bash@3
+  displayName: 'Git diff verify deps build'
+  name: setEnv
+  inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+    
+        MASTER="remotes/origin/master"
+        GIT_DIFF_SOURCEBRANCH="HEAD"
+        # Set build_deps Triggers to false
+        BUILD_DEPS=false
+        DEPS_LABEL=latest
+    
+        # we should always use master as a comparison, except in the case that this is
+        # a build for master. In this case we can use HEAD~ (1 commit behind master)
+        # because all merges will be squash merges
+        if [[ $(git diff "$MASTER") ]]; then
+            GIT_DIFF_UPSTREAMBRANCH="$MASTER"
+        else
+            GIT_DIFF_UPSTREAMBRANCH="$MASTER~"
+        fi
+        echo "GIT_DIFF_UPSTREAMBRANCH: $GIT_DIFF_UPSTREAMBRANCH"
+        echo "GIT_DIFF_SOURCEBRANCH: $GIT_DIFF_SOURCEBRANCH"
+        FILE_CHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only)
+        echo "Files changed since last commit..."
+        echo "$FILE_CHANGE_SET"
+    
+        # if git diff detects commits made to the deps files we build the dep containerss
+        if [[ ! -z "$(echo $FILE_CHANGE_SET | grep -e "Gopkg.lock" -e "Gopkg.toml" -e "Dockerfile.python.deps" -e "Dockerfile.golang.deps" -e "Dockerfile.python.deps" -e "presidio-analyzer/Pipfile" -e "presidio-analyzer/Pipfile.lock")" ]]; then
+            echo "Performing build deps."
+            BUILD_DEPS=true
+            DEPS_LABEL=$(Build.BuildId)
+        fi
+    
+        echo "##vso[task.setvariable variable=BUILD_DEPS;isOutput=true]$BUILD_DEPS"
+        echo "##vso[task.setvariable variable=DEPS_LABEL;isOutput=true]$DEPS_LABEL"
