@@ -590,7 +590,7 @@ def test_demo_text(unit_test_guid, nlp_engine):
         "Can you please check the status on bank account 954567876544 "
         "in PresidiBank?\n\n"
         ""
-        "Kate's social security number is 078-05-1120.  "
+        "Kate's social security number is 078-05-1121.  "
         "Her driver license? it is 9234567B.\n\n"
         ""
         "This project welcomes contributions and suggestions.\n"
