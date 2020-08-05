@@ -154,7 +154,7 @@ def analyze_command_handler(text, fields, language, env_grpc_port=False, grpc_po
         field_type.name = field_name
 
     request.analyzeTemplate.language = language
-    
+
     results = stub.Apply(request)
     print(MessageToJson(results))
 
