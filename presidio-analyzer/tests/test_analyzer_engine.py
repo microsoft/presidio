@@ -658,9 +658,8 @@ def test_demo_text(unit_test_guid, nlp_engine):
     )
     assert len([entity for entity in detected_entities if entity == "US_PASSPORT"]) == 1
     assert len([entity for entity in detected_entities if entity == "US_SSN"]) == 1
-    assert len([entity for entity in detected_entities if entity == "ORG"]) == 7
 
-    assert len(results) == 26
+    assert len(results) == 19
 
 
 def test_get_recognizers_returns_predefined(nlp_engine):

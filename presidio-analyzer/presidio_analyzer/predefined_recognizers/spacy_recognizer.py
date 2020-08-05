@@ -3,7 +3,7 @@ from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplana
 
 class SpacyRecognizer(LocalRecognizer):
 
-    ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON", "ORG"]
+    ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON"]
 
     DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
 
@@ -11,8 +11,7 @@ class SpacyRecognizer(LocalRecognizer):
         ({"LOCATION"}, {"GPE", "LOC"}),
         ({"PERSON", "PER"}, {"PERSON", "PER"}),
         ({"DATE_TIME"}, {"DATE", "TIME"}),
-        ({"NRP"}, {"NORP"}),
-        ({"ORG"}, {"ORG"})
+        ({"NRP"}, {"NORP"})
     ]
 
     def __init__(
