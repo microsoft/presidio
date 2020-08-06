@@ -49,7 +49,6 @@ analyzer:
       requests:
         memory: "1500Mi"
         cpu: "1500m"
-    resources:
       limits:
         memory: "3000Mi"
         cpu: "2000m"
