@@ -42,7 +42,7 @@ class EsNifRecognizer(PatternRecognizer):
         letter = pattern_text[-1]
         number = int(''.join(filter(str.isdigit, pattern_text)))
         letters = 'TRWAGMYFPDXBNJZSQVHLCKE'
-        return letter == letters[number%23]
+        return letter == letters[number % 23]
 
     @staticmethod
     def __sanitize_value(text):
