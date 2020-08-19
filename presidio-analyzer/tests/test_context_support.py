@@ -3,6 +3,7 @@ import pytest
 
 from presidio_analyzer import PatternRecognizer, Pattern
 from presidio_analyzer.predefined_recognizers import (
+    AbaRoutingRecognizer,
     # CreditCardRecognizer,
     UsPhoneRecognizer,
     # DomainRecognizer,
@@ -23,6 +24,7 @@ def recognizers():
         "IP_ADDRESS": IpRecognizer(),
         "US_SSN": UsSsnRecognizer(),
         "PHONE_NUMBER": UsPhoneRecognizer(),
+        "ABA_ROUTING_NUMBER": AbaRoutingRecognizer(),
         "US_ITIN": UsItinRecognizer(),
         "US_DRIVER_LICENSE": UsLicenseRecognizer(),
         "US_BANK_NUMBER": UsBankRecognizer(),
@@ -58,9 +60,9 @@ def dataset(recognizers):
             raise ValueError(f"bad entity type {entity_type}")
 
         test_items.append((item, recognizer, [entity_type]))
-    # Currently we have 27 sentences, this is a sanity check
-    if not len(test_items) == 27:
-        raise ValueError(f"expected 27 context sentences but found {len(test_items)}")
+    # Currently we have 28 sentences, this is a sanity check
+    if not len(test_items) == 28:
+        raise ValueError(f"expected 28 context sentences but found {len(test_items)}")
 
     yield test_items
 
@@ -79,7 +81,10 @@ def test_text_with_context_improves_score(dataset, nlp_engine, mock_nlp_artifact
 
         assert len(results_without_context) == len(results_with_context)
         for res_wo, res_w in zip(results_without_context, results_with_context):
-            assert res_wo.score < res_w.score
+            if res_wo.score != 1.0:
+                assert res_wo.score < res_w.score
+            else:
+                assert res_wo.score <= res_w.score
 
 
 def test_context_custom_recognizer(nlp_engine, mock_nlp_artifacts):

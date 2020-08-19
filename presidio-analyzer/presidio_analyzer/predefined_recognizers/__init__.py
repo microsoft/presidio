@@ -1,3 +1,4 @@
+from .aba_routing_recognizer import AbaRoutingRecognizer
 from .credit_card_recognizer import CreditCardRecognizer
 from .crypto_recognizer import CryptoRecognizer
 from .domain_recognizer import DomainRecognizer
@@ -19,19 +20,20 @@ from .es_nif_recognizer import EsNifRecognizer
 NLP_RECOGNIZERS = {"spacy": SpacyRecognizer, "stanza": StanzaRecognizer}
 
 __all__ = [
+    "AbaRoutingRecognizer",
     "CreditCardRecognizer",
     "CryptoRecognizer",
     "DomainRecognizer",
     "EmailRecognizer",
     "IbanRecognizer",
     "IpRecognizer",
+    "NhsRecognizer",
     "SgFinRecognizer",
     "SpacyRecognizer",
     "StanzaRecognizer",
-    "NhsRecognizer",
     "UsBankRecognizer",
-    "UsLicenseRecognizer",
     "UsItinRecognizer",
+    "UsLicenseRecognizer",
     "UsPassportRecognizer",
     "UsPhoneRecognizer",
     "UsSsnRecognizer",
