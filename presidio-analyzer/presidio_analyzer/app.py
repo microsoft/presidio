@@ -138,7 +138,8 @@ def serve_command_handler(
         server.stop(0)
 
 
-def analyze_command_handler(text, fields, language, env_grpc_port=False, grpc_port=3001):
+def analyze_command_handler(text, fields, language="en", env_grpc_port=False,
+                            grpc_port=3001):
 
     if env_grpc_port:
         port = os.environ.get("GRPC_PORT")
