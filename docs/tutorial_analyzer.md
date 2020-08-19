@@ -77,9 +77,9 @@ print(
 
 ## Using multiple languages
 
-### Multiple Language: Method 1
+### Option 1: Configure which spacy/stanza models to load
 
-First, we need to create a configurarion file to specify what languages to load. Like this:
+First, we need to edit the configuration file (i.e. /presidio-analyzer/conf/spacy_multilingual.yaml) to specify what languages to load. Like this:
 
 ```spacy_multilingual.yaml
 nlp_engine_name: spacy
@@ -113,7 +113,7 @@ _From another shell_
 You can make an English language query like before or use Spanish language query like this:
 
 ```sh
-./presidio-analyzer analyze --text "Mi nombre es Francisco Pérez con DNI 55555555-K, vivo en Madrid y trabajo para la ONU." --fields "ES_NIF" "LOCATION" "ORG" "PERSON" --language "es"
+./presidio-analyzer analyze --text "Mi nombre es Francisco Pérez con DNI 55555555-K, vivo en Madrid y trabajo para la ONU." --fields "ES_NIF" "LOCATION" "PERSON" --language "es"
 ````
 
 The expected result is:
@@ -153,24 +153,13 @@ The expected result is:
         "end": 63,
         "length": 6
       }
-    },
-    {
-      "field": {
-        "name": "ORG"
-      },
-      "score": 0.8500000238418579,
-      "location": {
-        "start": 82,
-        "end": 85,
-        "length": 3
-      }
     }
   ],
   "requestId": "d89ffd66-2adf-486f-a040-4e4f80af7a86"
 }
 ```
 
-### Multiple Language: Method 2
+### Option 2: load models programmatically
 
 Use the analyzer Python code by importing `analyzer_engine.py`, `SpacyNlpEngine` and `RecognizerRegistry`
 
