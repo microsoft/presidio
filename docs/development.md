@@ -169,7 +169,7 @@ pipenv run python app.py analyze --text "John Smith drivers license is AC432223"
 
 1. If deploying from a private registry, verify that Kubernetes has access to the [Docker Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks).
 
-2. If using a Kubernetes secert to manage the registry authentication, make sure it is registered under 'presidio' namespace
+2. If using a Kubernetes secret to manage the registry authentication, make sure it is registered under 'presidio' namespace
 
 ### Further configuration
 
