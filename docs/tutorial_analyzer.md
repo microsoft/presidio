@@ -100,11 +100,7 @@ NOTE: make sure that you have all your spacy models downloaded with a command li
 python3 -m spacy download es_core_news_md
 ```
 
-Then, we need to serve our models. We can do that very easily with (Takes about 15 seconds to load)
-
-```sh
-./presidio-analyzer serve
-```
+Then, we need to serve our models as showed before in Method 1.
 
 Now that our models is up and running, we can send PII text to it.
 
