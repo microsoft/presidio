@@ -79,7 +79,7 @@ print(
 
 ### Option 1: Configure which spacy/stanza models to load
 
-First, we need to edit the configuration file (i.e. /presidio-analyzer/conf/spacy_multilingual.yaml) to specify what languages to load. Like this:
+First, we need to edit the configuration file (i.e. [/presidio-analyzer/conf/spacy_multilingual.yaml](../presidio-analyzer/presidio/conf/spacy_multilingual.yaml) ) to specify what languages to load. Like this:
 
 ```spacy_multilingual.yaml
 nlp_engine_name: spacy
@@ -92,7 +92,7 @@ models:
     model_name: es_core_news_md
 ```
 
-In the previous example we specify to load English language with spacy model "en_core_web_lg" and Spanish language with spacy model "es_core_news_md".
+In this configuration we use the `en_core_web_lg` spaCy model for English, and `es_core_news_md` spaCy model for Spanish. Presidio supports both [spaCy](https://spacy.io/usage/models) and [Stanza](https://github.com/stanfordnlp/stanza) models.
 
 NOTE: make sure that you have all your spacy models downloaded with a command like this:
 
