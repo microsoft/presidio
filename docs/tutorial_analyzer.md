@@ -166,7 +166,7 @@ from presidio_analyzer.recognizer_registry import RecognizerRegistry
 
 registry = RecognizerRegistry()
 nlp = SpacyNlpEngine({"en": "en_core_web_lg", "es": "es_core_news_md"})
-registry.load_predefined_recognizers(["es"], "spacy")
+registry.load_predefined_recognizers(["en", "es"], "spacy")
 analyzer = AnalyzerEngine(registry=registry, nlp_engine=nlp, default_language="es")
 
 # English query with just one entity
@@ -181,7 +181,7 @@ print(
       for res in results])
 
 # Spanish query with all entities and score_threshold
-results = engine.analyze(text = "Mi nombre es Francisco Pérez con DNI 55555555-K, \
+results = analyzer.analyze(text = "Mi nombre es Francisco Pérez con DNI 55555555-K, \
                          vivo en Madrid y trabajo para la ONU.",
                          entities=[],
                          language='es',
