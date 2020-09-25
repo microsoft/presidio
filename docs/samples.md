@@ -63,14 +63,14 @@ echo -n '{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"trans
 
 3. Verify files:
 
-You should receive a "Template added successfully" message after each command and you should have two files in the presidio-api container /tmp directory.
+You should receive a "Template added successfully" message after each command. You should have two files /tmp directory.
 
 ```sh
 <my project>.analyze.<my-analyze-template-name>
 <my-project>.anonymize.<my-anonymize-template-name>
 ```
 
-To see files run:
+If using Docker the files will be in the presidio-api container /tmp directory. To see the files run:
 ```sh
  docker exec presidio-api ls -l /tmp
 ```
@@ -116,14 +116,14 @@ echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"g
 ```
 
 3. Verify files:
-You should receive a "Template added successfully" message after each command and you should have two files in the presidio-api container /tmp directory.
+You should receive a "Template added successfully" message after each command. You should have two files in the /tmp directory. 
 
 ```sh
 <my project>.analyze.<my-analyze-template-name>
 <my-project>.anonymize-image.<my-anonymize-template-name>
 ```
 
-To see files run:
+If using Docker the files will be in the presidio-api container /tmp directory. To see the files run:
 ```sh
 docker exec presidio-api ls -l /tmp
 ```
