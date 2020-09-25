@@ -51,17 +51,35 @@ echo -n '{"text":"John Smith lives in New York. We met yesterday morning in Seat
 
 ## Custom Anonymization
 
-1. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD):
+1. Create an analyze template
 
-   ```sh
-   echo -n '{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
-   ```
+```sh
+echo -n '{"allFields":true}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-analyze-template-name>
+```
+2. Create an anonymizer template (This template replaces values in PHONE_NUMBER and redacts CREDIT_CARD):
+```sh
+echo -n '{"fieldTypeTransformations":[{"fields":[{"name":"PHONE_NUMBER"}],"transformation":{"replaceValue":{"newValue":"\u003cphone-number\u003e"}}},{"fields":[{"name":"CREDIT_CARD"}],"transformation":{"redactValue":{}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize/<my-anonymize-template-name>
+```
 
-2. Anonymize text:
+3. Verify files:
 
-   ```sh
-   echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
-   ```
+You should receive a "Template added successfully" message after each command and you should have two files in the presidio-api container /tmp directory.
+
+```sh
+<my project>.analyze.<my-analyze-template-name>
+<my-project>.anonymize.<my-anonymize-template-name>
+```
+
+To see files run:
+```sh
+ docker exec presidio-api ls -l /tmp
+```
+
+4. Anonymize text:
+
+```sh
+echo -n '{"text":"my phone number is 057-555-2323 and my credit card is 4961-2765-5327-5913", "AnalyzeTemplateId":"<my-analyze-template-name>", "AnonymizeTemplateId":"<my-anonymize-template-name>"  }' | http <api-service-address>/api/v1/projects/<my-project>/anonymize
+```
 
 ---
 
@@ -81,21 +99,40 @@ This simple recognizer identifies the word "rocket" in a text and tags it as a "
    ```sh
    echo -n '{"text":"They sent a rocket to the moon!", "analyzeTemplate":{"allFields":true}  }' | http <api-service-address>/api/v1/projects/<my-project>/analyze
    ```
-
 ---
 
 ## Image Anonymization
 
-1. Create an anonymizer image template (This template redacts values with black color):
+1. Create an analyze template:
 
-   ```sh
-   echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize-image/<my-anonymize-image-template-name>
-   ```
+```sh
+echo -n '{"allFields":true}' | http <api-service-address>/api/v1/templates/<my-project>/analyze/<my-analyze-template-name>
+```
 
-2. Anonymize image:
+2. Create an anonymizer image template (This template redacts values with black color):
 
-   ```sh
-   http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
-   ```
+```sh
+echo -n '{"fieldTypeGraphics":[{"graphic":{"fillColorValue":{"blue":0,"red":0,"green":0}}}]}' | http <api-service-address>/api/v1/templates/<my-project>/anonymize-image/<my-anonymize-image-template-name>
+```
+
+3. Verify files:
+You should receive a "Template added successfully" message after each command and you should have two files in the presidio-api container /tmp directory.
+
+```sh
+<my project>.analyze.<my-analyze-template-name>
+<my-project>.anonymize-image.<my-anonymize-template-name>
+```
+
+To see files run:
+```sh
+docker exec presidio-api ls -l /tmp
+```
+4. Anonymize image:
+
+```sh
+http -f POST <api-service-address>/api/v1/projects/<my-project>/anonymize-image detectionType='OCR' analyzeTemplateId='<my-analyze-template-name>' anonymizeImageTemplateId='<my-anonymize-image-template-name>' imageType='image/png' file@~/test-ocr.png > test-output.png
+```
+
+Note: Containers presidio-ocr and presidio-anonymize-image needed to anonymize images. Also, if you recieve text in your ouput image similar to "it looks like we do not support this file format", look at the output image in something like Notepad++ to see a possible error message or run the command without the ">test-output.png" to see if error appears on screen.
 
 ---

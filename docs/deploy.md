@@ -42,10 +42,12 @@ Once the build is complete you can verify the local deployment by running:
 docker ps
 ```
 
-You should see 4 Presidio containers and one Redis container running with the following names:
+You should see 6 Presidio containers and one Redis container running with the following names:
 
 ```sh
 presidio-api
+presidio-ocr
+presidio-anonymizer-image
 presidio-recognizers-store
 presidio-anonymizer
 presidio-analyzer
