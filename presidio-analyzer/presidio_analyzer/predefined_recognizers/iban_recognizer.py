@@ -49,7 +49,9 @@ class IbanRecognizer(PatternRecognizer):
         exact_match=False,
         BOSEOS=(BOS, EOS),
         regex_flags=re.DOTALL | re.MULTILINE,
+        replacement_pairs=None,
     ):
+        self.replacement_pairs = replacement_pairs or [("-", ""), ("/", ""), (" ", "")]
         self.exact_match = exact_match
         self.BOSEOS = BOSEOS if exact_match else ()
         self.flags = regex_flags
@@ -63,7 +65,7 @@ class IbanRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text):
-        pattern_text = pattern_text.replace(" ", "")
+        pattern_text = self.__sanitize_value(pattern_text, self.replacement_pairs)
         is_valid_checksum = (
             self.__generate_iban_check_digits(pattern_text, self.LETTERS)
             == pattern_text[2:4]
@@ -170,3 +172,9 @@ class IbanRecognizer(PatternRecognizer):
             return country_regex and re.match(country_regex, iban, flags=flags)
 
         return False
+
+    @staticmethod
+    def __sanitize_value(text, replacement_pairs):
+        for search_string, replacement_string in replacement_pairs:
+            text = text.replace(search_string, replacement_string)
+        return text
