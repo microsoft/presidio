@@ -138,7 +138,8 @@ def serve_command_handler(
         server.stop(0)
 
 
-def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
+def analyze_command_handler(text, fields, language="en", env_grpc_port=False,
+                            grpc_port=3001):
 
     if env_grpc_port:
         port = os.environ.get("GRPC_PORT")
@@ -154,6 +155,9 @@ def analyze_command_handler(text, fields, env_grpc_port=False, grpc_port=3001):
     for field_name in fields:
         field_type = request.analyzeTemplate.fields.add()
         field_type.name = field_name
+
+    request.analyzeTemplate.language = language
+
     results = stub.Apply(request)
     print(MessageToJson(results))
 
@@ -183,6 +187,7 @@ class CommandsLoader(CLICommandsLoader):
             ac.argument("grpc_port", default=3001, type=int, required=False)
             ac.argument("text", required=True)
             ac.argument("fields", nargs="*", required=True)
+            ac.argument("language", default="en", required=False)
         logger.info(f"cli commands: {command}")
         super(CommandsLoader, self).load_arguments(command)
 
