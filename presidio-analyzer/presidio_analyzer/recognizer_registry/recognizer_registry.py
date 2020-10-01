@@ -19,6 +19,7 @@ from presidio_analyzer.predefined_recognizers import (
     UsSsnRecognizer,
     SgFinRecognizer,
     SpacyRecognizer,
+    EsNifRecognizer,
 )
 
 
@@ -74,6 +75,9 @@ class RecognizerRegistry:
                 UsSsnRecognizer,
                 NhsRecognizer,
                 SgFinRecognizer,
+            ],
+            "es": [
+                EsNifRecognizer,
             ],
             "ALL": [
                 CreditCardRecognizer,

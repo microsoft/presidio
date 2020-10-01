@@ -11,7 +11,7 @@ class SpacyRecognizer(LocalRecognizer):
         ({"LOCATION"}, {"GPE", "LOC"}),
         ({"PERSON", "PER"}, {"PERSON", "PER"}),
         ({"DATE_TIME"}, {"DATE", "TIME"}),
-        ({"NRP"}, {"NORP"}),
+        ({"NRP"}, {"NORP"})
     ]
 
     def __init__(
