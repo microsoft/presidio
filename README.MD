@@ -5,7 +5,6 @@
 ---
 
 [![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI/Presidio-CI?branchName=master)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=129&branchName=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Microsoft/presidio)](https://goreportcard.com/report/github.com/Microsoft/presidio)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 
@@ -119,8 +118,10 @@ If you have a usage question, found a bug or have a suggestion for improvement, 
 For other matters, please email presidio@microsoft.com
 
 
+
 :exclamation: **Note:** As we are in the process of defining the roadmap for Presidio, we will only accept PRs with bug fixes and no new features in the upcoming months.
 
+---
 
 ## Contributing
 
