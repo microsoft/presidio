@@ -354,11 +354,7 @@ def update_iban_checksum(iban):
             1,
             ((24, 58),),
         ),
-        (
-            "Slash as iban separator: AL47/2121/1009/0000/0002/3569/8741",
-            1,
-            ((25, 59),),
-        ),
+        ("Slash as iban separator: AL47/2121/1009/0000/0002/3569/8741", 0, (),),
     ],
 )
 def test_all_ibans(iban, expected_len, expected_res, recognizer, entities, max_score):

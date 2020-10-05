@@ -51,7 +51,7 @@ class IbanRecognizer(PatternRecognizer):
         regex_flags=re.DOTALL | re.MULTILINE,
         replacement_pairs=None,
     ):
-        self.replacement_pairs = replacement_pairs or [("-", ""), ("/", ""), (" ", "")]
+        self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
         self.exact_match = exact_match
         self.BOSEOS = BOSEOS if exact_match else ()
         self.flags = regex_flags
