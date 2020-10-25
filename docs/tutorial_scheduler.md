@@ -142,7 +142,7 @@ Defines the job's output destination.
 #### Analyzer and Anonymizer Datasink
 
 Analyzer and anonymizer data sink arrays defines the output destination of analyze and anonymize results respectively.
-Use the following [configuration](#Input-&-Output-Configuration) defending on the desired output.
+Use the following [configuration](#Input-&-Output-Configurations) defending on the desired output.
 
 #### Supported Output Destinations
 
