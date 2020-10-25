@@ -69,10 +69,7 @@ results = analyzer.analyze(text="My phone number is 212-555-5555",
                            entities=["PHONE_NUMBER"],
                            language='en',
                            all_fields=False)
-print(
-    ["Entity: {ent}, score: {score}\n".format(ent=res.entity_type,
-                                              score=res.score)
-      for res in results])
+print(results)
 ```
 
 ## Using multiple languages
@@ -175,10 +172,7 @@ results = analyzer.analyze(text="My phone number is 212-555-5555",
                            language='en',
                            all_fields=False)
 
-print(
-    ["Entity: {ent}, score: {score}\n".format(ent=res.entity_type,
-                                              score=res.score)
-      for res in results])
+print(results)
 
 # Spanish query with all entities and score_threshold
 results = analyzer.analyze(text = "Mi nombre es Francisco Pérez con DNI 55555555-K, \
@@ -187,8 +181,5 @@ results = analyzer.analyze(text = "Mi nombre es Francisco Pérez con DNI 5555555
                          language='es',
                          all_fields=True,
                          score_threshold=0.5)
-print(
-    ["Entity: {ent}, score: {score}\n".format(ent=res.entity_type,
-                                              score=res.score)
-      for res in results])
+print(results)
 ```
