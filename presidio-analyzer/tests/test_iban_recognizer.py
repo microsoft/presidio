@@ -349,6 +349,7 @@ def update_iban_checksum(iban):
             2,
             ((15, 43), (45, 73),),
         ),
+        ("Dalla's Pizza | 3843 Peartree Road, Bamblee, SD 20241 440-600-5124",0, ())
     ],
 )
 def test_all_ibans(iban, expected_len, expected_res, recognizer, entities, max_score):
@@ -357,8 +358,3 @@ def test_all_ibans(iban, expected_len, expected_res, recognizer, entities, max_s
     for res, (start, end) in zip(results, expected_res):
 
         assert_result(res, entities[0], start, end, max_score)
-
-def test_no_iban_string(recognizer, entities):
-    text = "Dalla's Pizza | 3843 Peartree Road, Bamblee, SD 20241 440-600-5124"
-    results = recognizer.analyze(text, entities)
-    assert len(results) == 0
