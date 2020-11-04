@@ -1,4 +1,5 @@
 import string
+import logging
 
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
     regex_per_country,
@@ -17,7 +18,6 @@ try:
     import re2 as re
 except ImportError:
     import regex as re
-# https://stackoverflow.com/questions/44656264/iban-regex-design
 
 
 class IbanRecognizer(PatternRecognizer):
@@ -63,19 +63,23 @@ class IbanRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text):
-        pattern_text = pattern_text.replace(" ", "")
-        is_valid_checksum = (
-            self.__generate_iban_check_digits(pattern_text, self.LETTERS)
-            == pattern_text[2:4]
-        )
-        # score = EntityRecognizer.MIN_SCORE
-        result = False
-        if is_valid_checksum:
-            if self.__is_valid_format(pattern_text, self.BOSEOS):
-                result = True
-            elif self.__is_valid_format(pattern_text.upper(), self.BOSEOS):
-                result = None
-        return result
+        try:
+            pattern_text = pattern_text.replace(" ", "")
+            is_valid_checksum = (
+                self.__generate_iban_check_digits(pattern_text, self.LETTERS)
+                == pattern_text[2:4]
+            )
+            # score = EntityRecognizer.MIN_SCORE
+            result = False
+            if is_valid_checksum:
+                if self.__is_valid_format(pattern_text, self.BOSEOS):
+                    result = True
+                elif self.__is_valid_format(pattern_text.upper(), self.BOSEOS):
+                    result = None
+            return result
+        except ValueError:
+            logging.error("Failed to validate text %s", pattern_text)
+            return False
 
     # pylint: disable=unused-argument,arguments-differ
     def analyze(self, text, entities, nlp_artifacts=None):
