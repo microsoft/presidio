@@ -349,10 +349,18 @@ def update_iban_checksum(iban):
             2,
             ((15, 43), (45, 73),),
         ),
+        (
+            "Dash as iban separator: AL47-2121-1009-0000-0002-3569-8741",
+            1,
+            ((24, 58),),
+        ),
+        ("Slash as iban separator: AL47/2121/1009/0000/0002/3569/8741", 0, (),),
+        ("Dalla's Pizza | 3843 Peartree Road, Bamblee, SD 20241 440-600-5124",0, ())
     ],
 )
 def test_all_ibans(iban, expected_len, expected_res, recognizer, entities, max_score):
     results = recognizer.analyze(iban, entities)
     assert len(results) == expected_len
     for res, (start, end) in zip(results, expected_res):
+
         assert_result(res, entities[0], start, end, max_score)
