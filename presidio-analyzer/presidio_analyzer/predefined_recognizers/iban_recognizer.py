@@ -65,7 +65,7 @@ class IbanRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text):
-        try: 
+        try:
             pattern_text = self.__sanitize_value(pattern_text, self.replacement_pairs)
             is_valid_checksum = (
                 self.__generate_iban_check_digits(pattern_text, self.LETTERS)
