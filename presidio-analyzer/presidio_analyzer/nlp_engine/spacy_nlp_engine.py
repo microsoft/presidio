@@ -53,10 +53,9 @@ class SpacyNlpEngine(NlpEngine):
         return self.nlp[language]
 
     def doc_to_nlp_artifact(self, doc, language):
-        tokens = [token.text for token in doc]
         lemmas = [token.lemma_ for token in doc]
         tokens_indices = [token.idx for token in doc]
         entities = doc.ents
-        return NlpArtifacts(entities=entities, tokens=tokens,
+        return NlpArtifacts(entities=entities, tokens=doc,
                             tokens_indices=tokens_indices, lemmas=lemmas,
                             nlp_engine=self, language=language)

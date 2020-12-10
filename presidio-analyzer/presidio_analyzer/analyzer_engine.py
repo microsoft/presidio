@@ -13,11 +13,16 @@ logger = PresidioLogger("presidio")
 
 # pylint: disable=no-member
 class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
-
-    def __init__(self, registry=None, nlp_engine=None,
-                 app_tracer=None, enable_trace_pii=False,
-                 default_score_threshold=None, use_recognizer_store=False,
-                 default_language="en"):
+    def __init__(
+        self,
+        registry=None,
+        nlp_engine=None,
+        app_tracer=None,
+        enable_trace_pii=False,
+        default_score_threshold=None,
+        use_recognizer_store=False,
+        default_language="en",
+    ):
         """
         AnalyzerEngine class: Orchestrating the detection of PII entities
         and all related logic
@@ -36,12 +41,15 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         (only applicable for the full Presidio service)
         """
         if not nlp_engine:
-            logger.info("nlp_engine not provided. Creating new "
-                        "SpacyNlpEngine instance")
+            logger.info(
+                "nlp_engine not provided. Creating new " "SpacyNlpEngine instance"
+            )
             nlp_engine = NLP_ENGINES["spacy"]()
         if not registry:
-            logger.info("Recognizer registry not provided. "
-                        "Creating default RecognizerRegistry instance")
+            logger.info(
+                "Recognizer registry not provided. "
+                "Creating default RecognizerRegistry instance"
+            )
             if use_recognizer_store:
                 recognizer_store_api = RecognizerStoreApi()
             else:
@@ -49,6 +57,8 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             registry = RecognizerRegistry(recognizer_store_api=recognizer_store_api)
         if not app_tracer:
             app_tracer = AppTracer()
+
+        self.default_language = default_language
 
         # load nlp module
         self.nlp_engine = nlp_engine
@@ -61,11 +71,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         self.app_tracer = app_tracer
         self.enable_trace_pii = enable_trace_pii
 
-        self.default_score_threshold = default_score_threshold \
-            if default_score_threshold \
-            else 0.0
-
-        self.default_language = default_language
+        self.default_score_threshold = (
+            default_score_threshold if default_score_threshold else 0.0
+        )
 
     # pylint: disable=unused-argument
     def GetAllRecognizers(self, request, context):
@@ -78,14 +86,11 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         logger.info("Starting Analyzer's Get All Recognizers")
         language = request.language
         if not language:
-            language = self.default_langauge
+            language = self.default_language
         results = []
-        recognizers = self.registry.get_recognizers(
-            language=language,
-            all_fields=True)
+        recognizers = self.registry.get_recognizers(language=language, all_fields=True)
         for recognizer in recognizers:
-            results.append(
-                AnalyzerEngine.__convert_recognizer_to_proto(recognizer))
+            results.append(AnalyzerEngine.__convert_recognizer_to_proto(recognizer))
         return results
 
     # pylint: disable=unused-argument
@@ -98,8 +103,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         logger.info("Starting Analyzer's Apply")
 
-        entities = self.__convert_fields_to_entities(
-            request.analyzeTemplate.fields)
+        entities = self.__convert_fields_to_entities(request.analyzeTemplate.fields)
         language = self.get_language_from_request(request)
 
         threshold = request.analyzeTemplate.resultsScoreThreshold
@@ -108,25 +112,28 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         # correlation is used to group all traces related to on request
 
         correlation_id = str(uuid.uuid4())
-        logger.info(f"""text: {request.text}\n
+        logger.info(
+            f"""text: {request.text}\n
                         entities: {entities}\n
                         language: {language}\n
-                        all_fields: {all_fields}""")
-        results = self.analyze(correlation_id=correlation_id,
-                               text=request.text,
-                               entities=entities,
-                               language=language,
-                               all_fields=all_fields,
-                               score_threshold=threshold,
-                               trace=True)
+                        all_fields: {all_fields}"""
+        )
+        results = self.analyze(
+            correlation_id=correlation_id,
+            text=request.text,
+            entities=entities,
+            language=language,
+            all_fields=all_fields,
+            score_threshold=threshold,
+            trace=True,
+        )
 
         # Create Analyze Response Object
         response = analyze_pb2.AnalyzeResponse()
 
         response.requestId = correlation_id
         # pylint: disable=no-member
-        response.analyzeResults.extend(
-            self.__convert_results_to_proto(results))
+        response.analyzeResults.extend(self.__convert_results_to_proto(results))
 
         logger.info("Found %d results", len(results))
         return response
@@ -141,8 +148,7 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         """
         # bug# 597: Analyzer remove duplicates doesn't handle all cases of one
         # result as a substring of the other
-        results = sorted(results,
-                         key=lambda x: (-x.score, x.start, x.end - x.start))
+        results = sorted(results, key=lambda x: (-x.score, x.start, x.end - x.start))
         filtered_results = []
 
         for result in results:
@@ -155,8 +161,10 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                     # If result is equal to or substring of
                     # one of the other results
 
-                    if result.contained_in(filtered) and \
-                       result.entity_type == filtered.entity_type:
+                    if (
+                        result.contained_in(filtered)
+                        and result.entity_type == filtered.entity_type
+                    ):
                         valid_result = False
                         break
 
@@ -188,8 +196,16 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             language = self.default_language
         return language
 
-    def analyze(self, text, language, all_fields, entities=None, correlation_id=None,
-                score_threshold=None, trace=False):
+    def analyze(
+        self,
+        text,
+        language,
+        all_fields,
+        entities=None,
+        correlation_id=None,
+        score_threshold=None,
+        trace=False,
+    ):
         """
         analyzes the requested text, searching for the given entities
          in the given language
@@ -209,17 +225,18 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
             entities = []
 
         recognizers = self.registry.get_recognizers(
-            language=language,
-            entities=entities,
-            all_fields=all_fields)
+            language=language, entities=entities, all_fields=all_fields
+        )
 
         if all_fields:
             if entities:
-                raise ValueError("Cannot have both all_fields=True "
-                                 "and a populated list of entities. "
-                                 "Either have all_fields set to True "
-                                 "and entities are empty, or all_fields "
-                                 "is False and entities is populated")
+                raise ValueError(
+                    "Cannot have both all_fields=True "
+                    "and a populated list of entities. "
+                    "Either have all_fields set to True "
+                    "and entities are empty, or all_fields "
+                    "is False and entities is populated"
+                )
             # Since all_fields=True, list all entities by iterating
             # over all recognizers
             entities = self.__list_entities(recognizers)
@@ -229,8 +246,9 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
         if self.enable_trace_pii and trace:
-            self.app_tracer.trace(correlation_id, "nlp artifacts:"
-                                  + nlp_artifacts.to_json())
+            self.app_tracer.trace(
+                correlation_id, "nlp artifacts:" + nlp_artifacts.to_json()
+            )
 
         results = []
         for recognizer in recognizers:
@@ -240,15 +258,16 @@ class AnalyzerEngine(analyze_pb2_grpc.AnalyzeServiceServicer):
                 recognizer.is_loaded = True
 
             # analyze using the current recognizer and append the results
-            current_results = recognizer.analyze(text=text,
-                                                 entities=entities,
-                                                 nlp_artifacts=nlp_artifacts)
+            current_results = recognizer.analyze(
+                text=text, entities=entities, nlp_artifacts=nlp_artifacts
+            )
             if current_results:
                 results.extend(current_results)
 
         if trace:
-            self.app_tracer.trace(correlation_id, json.dumps(
-                [result.to_json() for result in results]))
+            self.app_tracer.trace(
+                correlation_id, json.dumps([result.to_json() for result in results])
+            )
 
         # Remove duplicates or low score results
         results = self.__remove_duplicates(results)
