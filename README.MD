@@ -28,6 +28,28 @@ Presidio can be integrated into any data pipeline for intelligent PII scrubbing.
   </kbd>
 </p>
 
+## :exclamation: Presidio V2 is coming!
+
+In the next few weeks, we will start migrating the Presidio repo from the current version to a new version.
+
+The main changes from V1 to V2 are:
+	
+- Replacing gRPC with HTTP to allow more customizable APIs and easier debugging.
+- The anonymizer service will be Python based and pip installable.
+- Focus on the analyzer and anonymizer service. Other services will be deprecated at first and potentially migrated over time to V2 with the help of the community.
+- Better documentation, samples and build flows.
+
+
+Notes:
+
+- The current V1 code base will continue to be available but will no longer be officially supported.
+- We will maintain backward compatibility with the current Presidio API for text analysis and anonymization.
+
+We are certain this change will make Presidio much more accessible, maintainable and customizable and we look forward to collaborating with this great community!
+
+Stay tuned!
+
+
 ## Overview
 
 - [Presidio Features](docs/overview.md#features)
@@ -117,9 +139,6 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
 For other matters, please email presidio@microsoft.com
 
-
-
-:exclamation: **Note:** As we are in the process of defining the roadmap for Presidio, we will only accept PRs with bug fixes and no new features in the upcoming months.
 
 ---
 
