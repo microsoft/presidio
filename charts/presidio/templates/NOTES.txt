@@ -1,9 +1,0 @@
-presidio is now installed!
-
-To find out about your newly configured system, run:
-
-  $ helm status {{ .Release.Name }}
-
-To test your new Presidio service, forward the API port: the API publishes a service at port 8080. To use the API, you first need to forward this port to your local IP address:
-
-  $ kubectl port-forward -n presidio $(kubectl get pod -n presidio -l app=presidio-demo-presidio-api -o jsonpath='{.items[0].metadata.name}') 8080:8080  
