@@ -5,7 +5,8 @@ import sys
 
 class PresidioLogger:
     """A wrapper class for logger"""
-    def __init__(self, logger_name="presidio", default_level="INFO"):
+
+    def __init__(self, logger_name: str = "presidio", default_level: str = "INFO"):
         if logger_name:
             logger = logging.getLogger(logger_name)
         else:
@@ -15,14 +16,15 @@ class PresidioLogger:
             loglevel = os.environ.get("LOG_LEVEL", default_level)
             ch = logging.StreamHandler(sys.stdout)
             formatter = logging.Formatter(
-                '[%(asctime)s][%(name)s][%(levelname)s]%(message)s')
+                "[%(asctime)s][%(name)s][%(levelname)s]%(message)s"
+            )
             ch.setFormatter(formatter)
             logger.addHandler(ch)
             logger.setLevel(loglevel)
 
         self.__logger = logger
 
-    def set_level(self, level):
+    def set_level(self, level: str):
         self.__logger.setLevel(level)
 
     def debug(self, msg, *args, **kwargs):

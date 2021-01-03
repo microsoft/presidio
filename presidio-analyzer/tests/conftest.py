@@ -1,8 +1,9 @@
 import pytest
 
 from presidio_analyzer.nlp_engine import NLP_ENGINES
-from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
 from presidio_analyzer.entity_recognizer import EntityRecognizer
+from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
+from tests.mocks import RecognizerRegistryMock
 
 
 def pytest_addoption(parser):
@@ -62,3 +63,11 @@ def ner_strength():
 @pytest.fixture(scope="session")
 def max_score():
     return EntityRecognizer.MAX_SCORE
+
+
+
+
+@pytest.fixture(scope="module")
+def loaded_registry():
+    return RecognizerRegistryMock()
+

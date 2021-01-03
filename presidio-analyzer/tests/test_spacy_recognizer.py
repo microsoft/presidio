@@ -33,7 +33,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("John Oliver is a comedian.", 1, ((0, 11),), 0),
         ("Richard Milhous Nixon", 1, ((0, 21),), 0),
         ("Richard M. Nixon", 1, ((0, 16),), 0),
-        ("Dan May has a bank account.", 1, ((0, 7),), 0),
+        ("Dan Bar has a bank account.", 1, ((0, 7),), 0),
         ("Mr. May", 1, ((4, 7),), 0),
         ("They call me Mr. May", 1, ((17, 20),), 0),
         # Test DATE_TIME Entity

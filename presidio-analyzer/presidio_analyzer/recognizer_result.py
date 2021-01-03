@@ -1,10 +1,15 @@
-from . import AnalysisExplanation
+from presidio_analyzer import AnalysisExplanation
 
 
 class RecognizerResult:
-
-    def __init__(self, entity_type, start, end, score,
-                 analysis_explanation: AnalysisExplanation = None):
+    def __init__(
+        self,
+        entity_type: str,
+        start: int,
+        end: int,
+        score: float,
+        analysis_explanation: AnalysisExplanation = None,
+    ):
         """
         Recognizer Result represents the findings of the detected entity
         of the analyzer in the text.
@@ -21,7 +26,7 @@ class RecognizerResult:
         self.score = score
         self.analysis_explanation = analysis_explanation
 
-    def append_analysis_explenation_text(self, text):
+    def append_analysis_explenation_text(self, text: str):
         if self.analysis_explanation:
             self.analysis_explanation.append_textual_explanation_line(text)
 
@@ -29,13 +34,10 @@ class RecognizerResult:
         return str(self.__dict__)
 
     def __str__(self):
-        return "type: {}, " \
-               "start: {}, " \
-               "end: {}, " \
-               "score: {}".format(self.entity_type,
-                                  self.start,
-                                  self.end,
-                                  self.score)
+        return f"type: {self.entity_type}, " \
+               f"start: {self.start}, " \
+               f"end: {self.end}, " \
+               f"score: {self.score}"
 
     def __repr__(self):
         return self.__str__()
@@ -43,7 +45,7 @@ class RecognizerResult:
     def intersects(self, other):
         """
         Checks if self intersects with a different RecognizerResult
-        :return: If interesecting, returns the number of
+        :return: If intersecting, returns the number of
         intersecting characters.
         If not, returns 0
         """

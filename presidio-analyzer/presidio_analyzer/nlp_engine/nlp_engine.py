@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from presidio_analyzer.nlp_engine import NlpArtifacts
+
 
 class NlpEngine(ABC):
     """ NlpEngine is an abstraction layer over the nlp module.
@@ -8,18 +10,18 @@ class NlpEngine(ABC):
     """
 
     @abstractmethod
-    def process_text(self, text, language):
+    def process_text(self, text: str, language: str) -> NlpArtifacts:
         """ Execute the NLP pipeline on the given text and language
         """
 
     @abstractmethod
-    def is_stopword(self, word, language):
+    def is_stopword(self, word: str, language: str) -> bool:
         """ returns true if the given word is a stop word
             (within the given language)
         """
 
     @abstractmethod
-    def is_punct(self, word, language):
+    def is_punct(self, word: str, language: str) -> bool:
         """ returns true if the given word is a punctuation word
             (within the given language)
         """
