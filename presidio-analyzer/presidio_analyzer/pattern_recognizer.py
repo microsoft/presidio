@@ -1,41 +1,47 @@
 import datetime
 
-from presidio_analyzer import LocalRecognizer, \
-    Pattern, \
-    RecognizerResult, \
-    EntityRecognizer, \
-    AnalysisExplanation
+import regex as re
 
-# Import 're2' regex engine if installed, if not- import 'regex'
-try:
-    import re2 as re
-except ImportError:
-    import regex as re
+from presidio_analyzer import (
+    LocalRecognizer,
+    Pattern,
+    RecognizerResult,
+    EntityRecognizer,
+    AnalysisExplanation,
+)
 
 
 class PatternRecognizer(LocalRecognizer):
-
-    def __init__(self, supported_entity, name=None,
-                 supported_language='en', patterns=None,
-                 black_list=None, context=None, version="0.0.1"):
+    def __init__(
+        self,
+        supported_entity,
+        name=None,
+        supported_language="en",
+        patterns=None,
+        black_list=None,
+        context=None,
+        version="0.0.1",
+    ):
         """
             :param patterns: the list of patterns to detect
             :param black_list: the list of words to detect
             :param context: list of context words
         """
         if not supported_entity:
-            raise ValueError(
-                "Pattern recognizer should be initialized with entity")
+            raise ValueError("Pattern recognizer should be initialized with entity")
 
         if not patterns and not black_list:
             raise ValueError(
                 "Pattern recognizer should be initialized with patterns"
-                " or with black list")
+                " or with black list"
+            )
 
-        super().__init__(supported_entities=[supported_entity],
-                         supported_language=supported_language,
-                         name=name,
-                         version=version)
+        super().__init__(
+            supported_entities=[supported_entity],
+            supported_language=supported_language,
+            name=name,
+            version=version,
+        )
         if patterns is None:
             self.patterns = []
         else:
@@ -43,8 +49,7 @@ class PatternRecognizer(LocalRecognizer):
         self.context = context
 
         if black_list:
-            black_list_pattern = self.__black_list_to_regex(
-                black_list)
+            black_list_pattern = self.__black_list_to_regex(black_list)
             self.patterns.append(black_list_pattern)
             self.black_list = black_list
         else:
@@ -63,9 +68,9 @@ class PatternRecognizer(LocalRecognizer):
             if pattern_result and self.context:
                 # try to improve the results score using the surrounding
                 # context words
-                enhanced_result = \
-                  self.enhance_using_context(
-                      text, pattern_result, nlp_artifacts, self.context)
+                enhanced_result = self.enhance_using_context(
+                    text, pattern_result, nlp_artifacts, self.context
+                )
                 results.extend(enhanced_result)
             elif pattern_result:
                 results.extend(pattern_result)
@@ -81,7 +86,7 @@ class PatternRecognizer(LocalRecognizer):
         :param black_list: the list of words to detect
         :return:the regex of the words for detection
         """
-        regex = r"(?:^|(?<= ))(" + '|'.join(black_list) + r")(?:(?= )|$)"
+        regex = r"(?:^|(?<= ))(" + "|".join(black_list) + r")(?:(?= )|$)"
         return Pattern(name="black_list", regex=regex, score=1.0)
 
     # pylint: disable=unused-argument, no-self-use, assignment-from-none
@@ -97,7 +102,7 @@ class PatternRecognizer(LocalRecognizer):
         return None
 
     # pylint: disable=unused-argument, no-self-use, assignment-from-none
-    def invalidate_result(self, pattern_text):
+    def invalidate_result(self, pattern_text: str):
         """
         Logic to check for result invalidation by running pruning logic.
         For example, each SSN number group should not consist of all the same
@@ -111,16 +116,15 @@ class PatternRecognizer(LocalRecognizer):
 
     @staticmethod
     def build_regex_explanation(
-            recognizer_name,
-            pattern_name,
-            pattern,
-            original_score,
-            validation_result):
-        explanation = AnalysisExplanation(recognizer=recognizer_name,
-                                          original_score=original_score,
-                                          pattern_name=pattern_name,
-                                          pattern=pattern,
-                                          validation_result=validation_result)
+        recognizer_name, pattern_name, pattern, original_score, validation_result
+    ):
+        explanation = AnalysisExplanation(
+            recognizer=recognizer_name,
+            original_score=original_score,
+            pattern_name=pattern_name,
+            pattern=pattern,
+            validation_result=validation_result,
+        )
         return explanation
 
     def __analyze_patterns(self, text, flags=None):
@@ -136,40 +140,32 @@ class PatternRecognizer(LocalRecognizer):
         results = []
         for pattern in self.patterns:
             match_start_time = datetime.datetime.now()
-            matches = re.finditer(
-                pattern.regex,
-                text,
-                flags=flags)
+            matches = re.finditer(pattern.regex, text, flags=flags)
             match_time = datetime.datetime.now() - match_start_time
-            self.logger.debug('--- match_time[%s]: %s.%s seconds',
-                              pattern.name,
-                              match_time.seconds,
-                              match_time.microseconds)
+            self.logger.debug(
+                "--- match_time[%s]: %s.%s seconds",
+                pattern.name,
+                match_time.seconds,
+                match_time.microseconds,
+            )
 
             for match in matches:
                 start, end = match.span()
                 current_match = text[start:end]
 
                 # Skip empty results
-                if current_match == '':
+                if current_match == "":
                     continue
 
                 score = pattern.score
 
                 validation_result = self.validate_result(current_match)
                 description = self.build_regex_explanation(
-                    self.name,
-                    pattern.name,
-                    pattern.regex,
-                    score,
-                    validation_result
+                    self.name, pattern.name, pattern.regex, score, validation_result
                 )
                 pattern_result = RecognizerResult(
-                    self.supported_entities[0],
-                    start,
-                    end,
-                    score,
-                    description)
+                    self.supported_entities[0], start, end, score, description
+                )
 
                 if validation_result is not None:
                     if validation_result:
@@ -184,6 +180,7 @@ class PatternRecognizer(LocalRecognizer):
                 if pattern_result.score > EntityRecognizer.MIN_SCORE:
                     results.append(pattern_result)
 
+        results = EntityRecognizer.remove_duplicates(results)
         return results
 
     def to_dict(self):
@@ -202,6 +199,6 @@ class PatternRecognizer(LocalRecognizer):
         patterns = entity_recognizer_dict.get("patterns")
         if patterns:
             patterns_list = [Pattern.from_dict(pat) for pat in patterns]
-            entity_recognizer_dict['patterns'] = patterns_list
+            entity_recognizer_dict["patterns"] = patterns_list
 
         return cls(**entity_recognizer_dict)

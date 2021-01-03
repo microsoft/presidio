@@ -26,10 +26,6 @@ class SpacyNlpEngine(NlpEngine):
             for lang_code, model_name in models.items()
         }
 
-        for model_name in models.values():
-            logger.debug("Printing spaCy model and package details:"
-                         "\n\n {}\n\n".format(spacy.info(model_name)))
-
     def process_text(self, text, language):
         """ Execute the SpaCy NLP pipeline on the given text
             and language
@@ -53,10 +49,9 @@ class SpacyNlpEngine(NlpEngine):
         return self.nlp[language]
 
     def doc_to_nlp_artifact(self, doc, language):
-        tokens = [token.text for token in doc]
         lemmas = [token.lemma_ for token in doc]
         tokens_indices = [token.idx for token in doc]
         entities = doc.ents
-        return NlpArtifacts(entities=entities, tokens=tokens,
+        return NlpArtifacts(entities=entities, tokens=doc,
                             tokens_indices=tokens_indices, lemmas=lemmas,
                             nlp_engine=self, language=language)
