@@ -40,7 +40,7 @@ jobs:
     displayName: 'Install deps: Analyzer'
     inputs:
       targetType: 'inline'
-      workingDirectory: ${{ parameters.analyzer_folder_name }}
+      workingDirectory: 'presidio-analyzer'
       script: |
         # Azure pipelines test publish
         pipenv sync --dev --sequential
@@ -51,7 +51,7 @@ jobs:
     displayName: 'Pytest: Analyzer'
     inputs:
       targetType: 'inline'
-      workingDirectory: ${{ parameters.analyzer_folder_name }}
+      workingDirectory: 'presidio-analyzer'
       script: |
         pipenv run pytest
 
@@ -59,7 +59,7 @@ jobs:
     displayName: 'Linting: Analyzer'
     inputs:
       targetType: 'inline'
-      workingDirectory: ${{ parameters.analyzer_folder_name }}
+      workingDirectory: 'presidio-analyzer'
       script: |
         pipenv run pytest
         pipenv run pylint presidio_analyzer
