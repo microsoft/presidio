@@ -37,15 +37,14 @@ class AnalysisExplanation:
         return str(self.__dict__)
 
     def set_improved_score(self, score):
-        """ Updated the score  of the entity and compute the
-            improvment fromt the original scoree
+        """Updated the score  of the entity and compute the
+        improvment fromt the original scoree
         """
         self.score = score
         self.score_context_improvement = self.score - self.original_score
 
     def set_supportive_context_word(self, word):
-        """ Sets the context word which helped increase the score
-        """
+        """Sets the context word which helped increase the score"""
         self.supportive_context_word = word
 
     def append_textual_explanation_line(self, text):

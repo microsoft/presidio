@@ -11,12 +11,12 @@ class MockRecognizer(PatternRecognizer):
     def validate_result(self, pattern_text):
         return True
 
-    def __init__(self, entity, patterns, black_list, name, context):
+    def __init__(self, entity, patterns, deny_list, name, context):
         super().__init__(
             supported_entity=entity,
             name=name,
             patterns=patterns,
-            black_list=black_list,
+            deny_list=deny_list,
             context=context,
         )
 
@@ -25,7 +25,7 @@ def test_no_entity_for_pattern_recognizer():
     with pytest.raises(ValueError):
         patterns = [Pattern("p1", "someregex", 1.0), Pattern("p1", "someregex", 0.5)]
         MockRecognizer(
-            entity=[], patterns=patterns, black_list=[], name=None, context=None
+            entity=[], patterns=patterns, deny_list=[], name=None, context=None
         )
 
 
@@ -33,7 +33,7 @@ def test_black_list_keywords_found():
     test_recognizer = MockRecognizer(
         patterns=[],
         entity="ENTITY_1",
-        black_list=["phone", "name"],
+        deny_list=["phone", "name"],
         context=None,
         name=None,
     )
@@ -51,7 +51,7 @@ def test_black_list_keywords_not_found():
     test_recognizer = MockRecognizer(
         patterns=[],
         entity="ENTITY_1",
-        black_list=["phone", "name"],
+        deny_list=["phone", "name"],
         context=None,
         name=None,
     )

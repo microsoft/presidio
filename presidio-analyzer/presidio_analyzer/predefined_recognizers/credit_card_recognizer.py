@@ -39,13 +39,13 @@ class CreditCardRecognizer(PatternRecognizer):
         replacement_pairs=None,
     ):
         """
-            :param replacement_pairs: list of tuples to replace in the string.
-                ( default: [("-", ""), (" ", "")] )
-                i.e. remove dashes and spaces from the string during recognition.
+        :param replacement_pairs: list of tuples to replace in the string.
+            ( default: [("-", ""), (" ", "")] )
+            i.e. remove dashes and spaces from the string during recognition.
         """
-        self.replacement_pairs = replacement_pairs \
-            if replacement_pairs \
-            else [("-", ""), (" ", "")]
+        self.replacement_pairs = (
+            replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
+        )
         context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
         super().__init__(

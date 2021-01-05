@@ -1,7 +1,6 @@
-import logging
 from typing import Optional, List, Iterable
 
-from presidio_analyzer import EntityRecognizer
+from presidio_analyzer import EntityRecognizer, PresidioLogger
 from presidio_analyzer.predefined_recognizers import (
     NLP_RECOGNIZERS,
     CreditCardRecognizer,
@@ -22,6 +21,8 @@ from presidio_analyzer.predefined_recognizers import (
     EsNifRecognizer,
 )
 
+logger = PresidioLogger()
+
 
 class RecognizerRegistry:
     """
@@ -31,8 +32,7 @@ class RecognizerRegistry:
     def __init__(self, recognizers: Optional[Iterable[EntityRecognizer]] = None):
         """
         :param recognizers: An optional list of recognizers that will be
-               available in addition to the predefined recognizers and the
-               custom recognizers
+               available instead of the predefined recognizers
         """
         if recognizers:
             self.recognizers = recognizers
@@ -56,7 +56,9 @@ class RecognizerRegistry:
                 NhsRecognizer,
                 SgFinRecognizer,
             ],
-            "es": [EsNifRecognizer, ],
+            "es": [
+                EsNifRecognizer,
+            ],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
@@ -116,7 +118,7 @@ class RecognizerRegistry:
                 ]
 
                 if not subset:
-                    logging.warning(
+                    logger.warning(
                         "Entity %s doesn't have the corresponding"
                         " recognizer in language : %s",
                         entity,
@@ -125,8 +127,8 @@ class RecognizerRegistry:
                 else:
                     to_return.extend(subset)
 
-        logging.info(
-            "Returning a total of %s recognizers (predefined + custom)",
+        logger.info(
+            "Returning a total of %s recognizers",
             str(len(to_return)),
         )
 
@@ -153,7 +155,7 @@ class RecognizerRegistry:
         new_recognizers = [
             rec for rec in self.recognizers if rec.name != recognizer_name
         ]
-        logging.info(
+        logger.info(
             "Removed %s recognizers which had the name %s",
             str(len(self.recognizers) - len(new_recognizers)),
             recognizer_name,
