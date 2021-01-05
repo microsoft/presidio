@@ -161,25 +161,13 @@ class AnalyzerEngine:
         :return: an array of the found entities in the text
         """
 
-        if not entities:
-            entities = []
-            all_fields = True
-        else:
-            all_fields = False
+        all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
             language=language, entities=entities, all_fields=all_fields
         )
 
         if all_fields:
-            if entities:
-                raise ValueError(
-                    "Cannot have both all_fields=True "
-                    "and a populated list of entities. "
-                    "Either have all_fields set to True "
-                    "and entities are empty, or all_fields "
-                    "is False and entities is populated"
-                )
             # Since all_fields=True, list all entities by iterating
             # over all recognizers
             entities = self.__list_entities(recognizers)

@@ -141,7 +141,7 @@ class EntityRecognizer:
         for result in results:
             # extract lemmatized context from the surrounding of the match
 
-            word = text[result.start : result.end]
+            word = text[result.start: result.end]
 
             surrounding_words = self.__extract_surrounding_words(
                 nlp_artifacts=nlp_artifacts, word=word, start=result.start
@@ -167,8 +167,9 @@ class EntityRecognizer:
     def __context_to_keywords(context: str):
         return context.split(" ")
 
+    @staticmethod
     def __find_supportive_word_in_context(
-        self, context_list: List[str], recognizer_context_list: List[str]
+        context_list: List[str], recognizer_context_list: List[str]
     ):
         """A word is considered a supportive context word if
            there's exact match between a keyword in
@@ -294,9 +295,7 @@ class EntityRecognizer:
         """
 
         if not nlp_artifacts.tokens:
-            logger.info(
-                "Skipping context extraction due to " "lack of NLP artifacts"
-            )
+            logger.info("Skipping context extraction due to " "lack of NLP artifacts")
             # if there are no nlp artifacts, this is ok, we can
             # extract context and we return a valid, yet empty
             # context

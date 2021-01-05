@@ -85,19 +85,6 @@ def test_analyze_with_multiple_predefined_recognizers(
     assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
 
-def test_analyze_without_entities(loaded_analyzer_engine, unit_test_guid):
-    with pytest.raises(ValueError):
-        language = "en"
-        text = " Credit card: 4095-2609-9393-4932,  my name is  John Oliver, DateTime: September 18 Domain: microsoft.com"  # noqa E501
-        entities = []
-        loaded_analyzer_engine.analyze(
-            correlation_id=unit_test_guid,
-            text=text,
-            entities=entities,
-            language=language,
-        )
-
-
 def test_analyze_with_empty_text(loaded_analyzer_engine, unit_test_guid):
     language = "en"
     text = ""
