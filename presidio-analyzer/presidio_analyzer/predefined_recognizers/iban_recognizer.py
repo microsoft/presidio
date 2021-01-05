@@ -1,5 +1,7 @@
 import string
 
+import regex as re
+
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
     regex_per_country,
     BOS,
@@ -13,7 +15,6 @@ from presidio_analyzer import (
     PresidioLogger,
 )
 
-import regex as re
 
 logger = PresidioLogger()
 
