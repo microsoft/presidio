@@ -1,6 +1,7 @@
 parameters:
-  analyzer_folder_name: 'presidio-analyzer'
-
+- name: analyzer_folder_name
+  type: string
+  default: 'presidio-analyzer'
 trigger:
 - V2
 
