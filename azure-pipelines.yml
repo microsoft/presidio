@@ -10,17 +10,18 @@ pr:
     include:
       - V2
 
-pool:
-  vmImage: 'ubuntu-latest'
+jobs:
+- job: 'Test'
+  pool:
+    vmImage: 'ubuntu-16.04'
   strategy:
     matrix:
       Python36:
-        python.version: '3.7.9'
-      Python38:
-        python.version: '3.8.6'
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
 
 steps:
-
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(python.version)'
