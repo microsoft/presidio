@@ -1,7 +1,3 @@
-parameters:
-- name: analyzer_folder_name
-  type: string
-  default: 'presidio-analyzer'
 trigger:
 - V2
 
@@ -18,7 +14,8 @@ jobs:
     matrix:
       Python37:
         python.version: '3.7'
-
+#      Python38:
+#        python.version: '3.8'
 
   steps:
   - task: UsePythonVersion@0
@@ -60,6 +57,5 @@ jobs:
       targetType: 'inline'
       workingDirectory: 'presidio-analyzer'
       script: |
-        pipenv run pytest
         pipenv run pylint presidio_analyzer
         pipenv run flake8 presidio_analyzer
