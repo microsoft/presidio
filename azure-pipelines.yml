@@ -17,9 +17,9 @@ jobs:
   strategy:
     matrix:
       Python36:
-        python.version: '3.6'
-      Python37:
         python.version: '3.7'
+      Python37:
+        python.version: '3.8'
 
   steps:
   - task: UsePythonVersion@0
@@ -28,17 +28,16 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - task: Bash@3
-    displayName: 'Install analyzer environment'
+    displayName: 'Setup pipenv'
     inputs:
       targetType: 'inline'
-      workingDirectory: ${{ parameters.analyzer_folder_name }}
       script: |
         set -eux  # fail on error
         python -m pip install --upgrade pip
         python -m pip install pipenv
         pipenv --python 3
   - task: Bash@3
-    displayName: 'Install analyzer dependencies'
+    displayName: 'Install deps: Analyzer'
     inputs:
       targetType: 'inline'
       workingDirectory: ${{ parameters.analyzer_folder_name }}
@@ -49,7 +48,15 @@ jobs:
         pipenv run python -m spacy download en_core_web_lg
 
   - task: Bash@3
-    displayName: 'Run analyzer tests'
+    displayName: 'Pytest: Analyzer'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: ${{ parameters.analyzer_folder_name }}
+      script: |
+        pipenv run pytest
+
+  - task: Bash@3
+    displayName: 'Linting: Analyzer'
     inputs:
       targetType: 'inline'
       workingDirectory: ${{ parameters.analyzer_folder_name }}
