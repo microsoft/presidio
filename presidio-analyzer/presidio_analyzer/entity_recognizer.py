@@ -5,6 +5,8 @@ from typing import List, Dict
 from presidio_analyzer import PresidioLogger, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
+logger = PresidioLogger()
+
 
 class EntityRecognizer:
     MIN_SCORE = 0
@@ -43,9 +45,8 @@ class EntityRecognizer:
         self.version = version
         self.is_loaded = False
 
-        self.logger = PresidioLogger()
         self.load()
-        self.logger.info("Loaded recognizer: %s", self.name)
+        logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
 
     @abstractmethod
@@ -110,29 +111,29 @@ class EntityRecognizer:
         nlp_artifacts: NlpArtifacts,
         recognizer_context_words: List[str],
     ):
-        """ using the surrounding words of the actual word matches, look
-            for specific strings that if found contribute to the score
-            of the result, improving the confidence that the match is
-            indeed of that PII entity type
+        """using the surrounding words of the actual word matches, look
+        for specific strings that if found contribute to the score
+        of the result, improving the confidence that the match is
+        indeed of that PII entity type
 
-            :param text: The actual text that was analyzed
-            :param raw_results: Recognizer results which didn't take
-                                context into consideration
-            :param nlp_artifacts: The nlp artifacts contains elements
-                                  such as lemmatized tokens for better
-                                  accuracy of the context enhancement process
-            :param recognizer_context_words: The words the current recognizer
-                                             supports (words to lookup)
+        :param text: The actual text that was analyzed
+        :param raw_results: Recognizer results which didn't take
+                            context into consideration
+        :param nlp_artifacts: The nlp artifacts contains elements
+                              such as lemmatized tokens for better
+                              accuracy of the context enhancement process
+        :param recognizer_context_words: The words the current recognizer
+                                         supports (words to lookup)
         """
         # create a deep copy of the results object so we can manipulate it
         results = copy.deepcopy(raw_results)
 
         # Sanity
         if nlp_artifacts is None:
-            self.logger.warning("[%s]. NLP artifacts were not provided", self.name)
+            logger.warning("[%s]. NLP artifacts were not provided", self.name)
             return results
         if recognizer_context_words is None or recognizer_context_words == []:
-            self.logger.info(
+            logger.info(
                 "recognizer '%s' does not support context " "enhancement", self.name
             )
             return results
@@ -140,7 +141,7 @@ class EntityRecognizer:
         for result in results:
             # extract lemmatized context from the surrounding of the match
 
-            word = text[result.start: result.end]
+            word = text[result.start : result.end]
 
             surrounding_words = self.__extract_surrounding_words(
                 nlp_artifacts=nlp_artifacts, word=word, start=result.start
@@ -197,7 +198,7 @@ class EntityRecognizer:
                 False,
             )
             if result:
-                self.logger.debug("Found context keyword '%s'", predefined_context_word)
+                logger.debug("Found context keyword '%s'", predefined_context_word)
                 word = predefined_context_word
                 break
 
@@ -207,7 +208,7 @@ class EntityRecognizer:
     def __add_n_words(
         index, n_words, lemmas, lemmatized_filtered_keywords, is_backward
     ):
-        """ Prepare a string of context words, which surrounds a lemma
+        """Prepare a string of context words, which surrounds a lemma
             at a given index. The words will be collected only if exist
             in the filtered array
 
@@ -282,18 +283,18 @@ class EntityRecognizer:
         return i
 
     def __extract_surrounding_words(self, nlp_artifacts, word, start):
-        """ Extracts words surrounding another given word.
-            The text from which the context is extracted is given in the nlp
-            doc
-            :param nlp_artifacts: An abstraction layer which holds different
-                                  items which are the result of a NLP pipeline
-                                  execution on a given text
-            :param word: The word to look for context around
-            :param start: The start index of the word in the original text
+        """Extracts words surrounding another given word.
+        The text from which the context is extracted is given in the nlp
+        doc
+        :param nlp_artifacts: An abstraction layer which holds different
+                              items which are the result of a NLP pipeline
+                              execution on a given text
+        :param word: The word to look for context around
+        :param start: The start index of the word in the original text
         """
 
         if not nlp_artifacts.tokens:
-            self.logger.info(
+            logger.info(
                 "Skipping context extraction due to " "lack of NLP artifacts"
             )
             # if there are no nlp artifacts, this is ok, we can
@@ -332,7 +333,7 @@ class EntityRecognizer:
         context_list.extend(backward_context)
         context_list.extend(forward_context)
         context_list = list(set(context_list))
-        self.logger.debug("Context list is: %s", " ".join(context_list))
+        logger.debug("Context list is: %s", " ".join(context_list))
         return context_list
 
     @staticmethod

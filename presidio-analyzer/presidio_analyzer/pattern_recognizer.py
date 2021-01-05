@@ -8,7 +8,10 @@ from presidio_analyzer import (
     RecognizerResult,
     EntityRecognizer,
     AnalysisExplanation,
+    PresidioLogger,
 )
+
+logger = PresidioLogger()
 
 
 class PatternRecognizer(LocalRecognizer):
@@ -18,19 +21,20 @@ class PatternRecognizer(LocalRecognizer):
         name=None,
         supported_language="en",
         patterns=None,
-        black_list=None,
+        deny_list=None,
         context=None,
         version="0.0.1",
     ):
         """
-            :param patterns: the list of patterns to detect
-            :param black_list: the list of words to detect
-            :param context: list of context words
+        :param patterns: A list of patterns to detect
+        :param deny_list: A list of words to detect,
+        in case our recognizer uses a predefined list of words (black list)
+        :param context: list of context words
         """
         if not supported_entity:
             raise ValueError("Pattern recognizer should be initialized with entity")
 
-        if not patterns and not black_list:
+        if not patterns and not deny_list:
             raise ValueError(
                 "Pattern recognizer should be initialized with patterns"
                 " or with black list"
@@ -48,10 +52,10 @@ class PatternRecognizer(LocalRecognizer):
             self.patterns = patterns
         self.context = context
 
-        if black_list:
-            black_list_pattern = self.__black_list_to_regex(black_list)
+        if deny_list:
+            black_list_pattern = self.__black_list_to_regex(deny_list)
             self.patterns.append(black_list_pattern)
-            self.black_list = black_list
+            self.black_list = deny_list
         else:
             self.black_list = []
 
@@ -142,7 +146,7 @@ class PatternRecognizer(LocalRecognizer):
             match_start_time = datetime.datetime.now()
             matches = re.finditer(pattern.regex, text, flags=flags)
             match_time = datetime.datetime.now() - match_start_time
-            self.logger.debug(
+            logger.debug(
                 "--- match_time[%s]: %s.%s seconds",
                 pattern.name,
                 match_time.seconds,

@@ -34,10 +34,12 @@ class RecognizerResult:
         return str(self.__dict__)
 
     def __str__(self):
-        return f"type: {self.entity_type}, " \
-               f"start: {self.start}, " \
-               f"end: {self.end}, " \
-               f"score: {self.score}"
+        return (
+            f"type: {self.entity_type}, "
+            f"start: {self.start}, "
+            f"end: {self.end}, "
+            f"score: {self.score}"
+        )
 
     def __repr__(self):
         return self.__str__()

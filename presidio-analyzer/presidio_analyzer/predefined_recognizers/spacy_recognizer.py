@@ -1,4 +1,11 @@
-from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
+from presidio_analyzer import (
+    RecognizerResult,
+    LocalRecognizer,
+    AnalysisExplanation,
+    PresidioLogger,
+)
+
+logger = PresidioLogger()
 
 
 class SpacyRecognizer(LocalRecognizer):
@@ -11,7 +18,7 @@ class SpacyRecognizer(LocalRecognizer):
         ({"LOCATION"}, {"GPE", "LOC"}),
         ({"PERSON", "PER"}, {"PERSON", "PER"}),
         ({"DATE_TIME"}, {"DATE", "TIME"}),
-        ({"NRP"}, {"NORP"})
+        ({"NRP"}, {"NORP"}),
     ]
 
     def __init__(
@@ -47,7 +54,7 @@ class SpacyRecognizer(LocalRecognizer):
     def analyze(self, text, entities, nlp_artifacts=None):
         results = []
         if not nlp_artifacts:
-            self.logger.warning("Skipping SpaCy, nlp artifacts not provided...")
+            logger.warning("Skipping SpaCy, nlp artifacts not provided...")
             return results
 
         ner_entities = nlp_artifacts.entities

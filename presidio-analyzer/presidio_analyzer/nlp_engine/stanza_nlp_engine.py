@@ -12,10 +12,10 @@ logger = PresidioLogger()
 
 # pylint: disable=super-init-not-called
 class StanzaNlpEngine(SpacyNlpEngine):
-    """ StanzaNlpEngine is an abstraction layer over the nlp module.
-        It provides processing functionality as well as other queries
-        on tokens.
-        The StanzaNlpEngine uses spacy-stanza and stanza as its NLP module
+    """StanzaNlpEngine is an abstraction layer over the nlp module.
+    It provides processing functionality as well as other queries
+    on tokens.
+    The StanzaNlpEngine uses spacy-stanza and stanza as its NLP module
     """
 
     engine_name = "stanza"

@@ -11,7 +11,7 @@ from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.nlp_engine import NLP_ENGINES
 
 
-logger = PresidioLogger("presidio")
+logger = PresidioLogger()
 
 
 class AnalyzerEngine:
@@ -21,7 +21,7 @@ class AnalyzerEngine:
         nlp_engine=None,
         app_tracer=None,
         enable_trace_pii=False,
-        default_score_threshold=None,
+        default_score_threshold=0,
         default_language="en",
     ):
         """
@@ -50,23 +50,19 @@ class AnalyzerEngine:
             registry = RecognizerRegistry()
         if not app_tracer:
             app_tracer = AppTracer()
+        self.app_tracer = app_tracer
 
         self.default_language = default_language
 
-        # load nlp module
         self.nlp_engine = nlp_engine
-        # prepare registry
         self.registry = registry
+
         # load all recognizers
         if not registry.recognizers:
             registry.load_predefined_recognizers()
 
-        self.app_tracer = app_tracer
         self.enable_trace_pii = enable_trace_pii
-
-        self.default_score_threshold = (
-            default_score_threshold if default_score_threshold else 0.0
-        )
+        self.default_score_threshold = default_score_threshold
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
         """
@@ -80,9 +76,9 @@ class AnalyzerEngine:
 
     def analyze_batch(
         self,
-        batch: Dict[str, List[str]],
-        language: str,
-        all_fields: bool,
+        batch_dict: Dict[str, List[str]],
+        language: str = "en",
+        keys_to_skip: Optional[List[str]] = None,
         entities: Optional[List[str]] = None,
         score_threshold: Optional[float] = None,
         **kwargs,
@@ -92,12 +88,15 @@ class AnalyzerEngine:
         Could be used for:
         a. Identifying PII in specific keys on a json object
         b. Identifying PII on a list of values, and not one-by-one.
-        :param batch: A dictionary containing one or more keys with corresponding
+        :param batch_dict: A dictionary containing one or more keys with corresponding
         lists of strings containing values to analyze,
         or a single string to be processed.
+        For example, a table can be represented as a dictionary of columns,
+        where the key is the column name
+        and the value is the list of values for this column. If using Pandas,
+        transform the data frame to a dict using df.to_dict(orient="list")
         :param language: The language of the text
-        :param all_fields: True if the analyzer should look for all types of PII,
-        False if use only a subset of the recognizers.
+        :param keys_to_skip: List of keys to skip analysis for.
         In such case a list of entities should be provided.
         :param entities: List of PII entities that should be looked for in the text.
         If entities=None and all_fields=True then all entities are looked for.
@@ -107,13 +106,13 @@ class AnalyzerEngine:
         (list of list of RecognizerResult) from the various recognizers.
         """
 
-        if not batch:
+        if not batch_dict:
             raise ValueError(
                 "Input not provided. batch should be a dictionary "
                 "containing one or more keys with corresponding "
                 "lists of strings containing values to analyze"
             )
-        if not isinstance(batch, dict):
+        if not isinstance(batch_dict, dict):
             raise ValueError(
                 "Input parameter batch should be a dict containing "
                 "a list of strings per key. "
@@ -121,13 +120,14 @@ class AnalyzerEngine:
             )
 
         response = {}
-        for key, list_of_texts in batch.items():
+        for key, list_of_texts in batch_dict.items():
+            if keys_to_skip and key in keys_to_skip:
+                continue
             per_text_responses = []
             for text in list_of_texts:
                 analyzer_response = self.analyze(
                     text=text,
                     language=language,
-                    all_fields=all_fields,
                     entities=entities,
                     score_threshold=score_threshold,
                     **kwargs,
@@ -140,7 +140,6 @@ class AnalyzerEngine:
         self,
         text: str,
         language: str,
-        all_fields: bool,
         entities: Optional[List[str]] = None,
         correlation_id: Optional[str] = None,
         score_threshold: Optional[float] = None,
@@ -151,8 +150,6 @@ class AnalyzerEngine:
          in the given language
         :param text: the text to analyze
         :param language: the language of the text
-        :param all_fields: True if the analyzer should look for all types of PII,
-        False if use only a subset of the recognizers.
         In such case a list of entities should be provided.
         :param entities: List of PII entities that should be looked for in the text.
         If entities=None and all_fields=True then all entities are looked for.
@@ -166,6 +163,9 @@ class AnalyzerEngine:
 
         if not entities:
             entities = []
+            all_fields = True
+        else:
+            all_fields = False
 
         recognizers = self.registry.get_recognizers(
             language=language, entities=entities, all_fields=all_fields

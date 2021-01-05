@@ -10,7 +10,15 @@ from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 
 
-__all__ = ['PresidioLogger', 'AnalysisExplanation', 'Pattern',
-           'EntityRecognizer', 'LocalRecognizer', 'RecognizerResult',
-           'PatternRecognizer', 'RemoteRecognizer', 'RecognizerRegistry',
-           'AnalyzerEngine']
+__all__ = [
+    "PresidioLogger",
+    "AnalysisExplanation",
+    "Pattern",
+    "EntityRecognizer",
+    "LocalRecognizer",
+    "RecognizerResult",
+    "PatternRecognizer",
+    "RemoteRecognizer",
+    "RecognizerRegistry",
+    "AnalyzerEngine",
+]

@@ -9,6 +9,7 @@ class PresidioLogger:
     def __init__(self, logger_name: str = "presidio", default_level: str = "INFO"):
         if logger_name:
             logger = logging.getLogger(logger_name)
+            logger.addHandler(logging.NullHandler())
         else:
             logger = logging.getLogger()
 

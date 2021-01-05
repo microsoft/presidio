@@ -7,7 +7,11 @@ class UsBankRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern("Bank Account (weak)", r"\b[0-9]{8,17}\b", 0.05,),
+        Pattern(
+            "Bank Account (weak)",
+            r"\b[0-9]{8,17}\b",
+            0.05,
+        ),
     ]
 
     CONTEXT = [
