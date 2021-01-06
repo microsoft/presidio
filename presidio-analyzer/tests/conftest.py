@@ -1,5 +1,6 @@
 import pytest
 
+from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.nlp_engine import NLP_ENGINES
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
@@ -65,9 +66,11 @@ def max_score():
     return EntityRecognizer.MAX_SCORE
 
 
+@pytest.fixture(scope="module")
+def loaded_registry():
+    return RecognizerRegistry()
 
 
 @pytest.fixture(scope="module")
-def loaded_registry():
+def mock_registry():
     return RecognizerRegistryMock()
-

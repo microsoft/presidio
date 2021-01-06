@@ -109,7 +109,7 @@ def test_analyze_with_unsupported_language(loaded_analyzer_engine, unit_test_gui
         )
 
 
-def test_two_entities_embedded(nlp_engine):
+def test_analyze_two_entities_embedded(nlp_engine):
     analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
 
     # Name with driver license in it
@@ -120,7 +120,7 @@ def test_two_entities_embedded(nlp_engine):
     assert len(results) == 2
 
 
-def test_added_pattern_recognizer_works(unit_test_guid):
+def test_analyze_added_pattern_recognizer_works(unit_test_guid):
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "ROCKET", name="Rocket recognizer", patterns=[pattern]
@@ -193,7 +193,7 @@ def test_removed_pattern_recognizer_doesnt_work(unit_test_guid):
     assert len(results) == 0
 
 
-def test_apply_with_language_returns_correct_response(loaded_analyzer_engine):
+def test_analyze_with_language_returns_correct_response(loaded_analyzer_engine):
     language = "en"
     entities = ["CREDIT_CARD"]
     min_score = 0.5
@@ -205,7 +205,7 @@ def test_apply_with_language_returns_correct_response(loaded_analyzer_engine):
     assert response is not None
 
 
-def test_when_entities_is_none_return_all_fields(loaded_registry):
+def test_analyze_when_entities_is_none_return_all_fields(loaded_registry):
     analyze_engine = AnalyzerEngine(
         registry=loaded_registry, nlp_engine=NlpEngineMock()
     )
@@ -225,7 +225,9 @@ def test_when_entities_is_none_return_all_fields(loaded_registry):
     assert "DOMAIN_NAME" in returned_entities
 
 
-def test_when_entities_is_none_all_recognizers_loaded_return_all_fields(nlp_engine):
+def test_analyze_when_entities_is_none_all_recognizers_loaded_return_all_fields(
+    nlp_engine,
+):
     analyze_engine = AnalyzerEngine(
         registry=RecognizerRegistry(), nlp_engine=nlp_engine
     )
@@ -242,7 +244,7 @@ def test_when_entities_is_none_all_recognizers_loaded_return_all_fields(nlp_engi
     assert "DOMAIN_NAME" in returned_entities
 
 
-def test_when_analyze_then_apptracer_has_value(
+def test_analyze_when_analyze_then_apptracer_has_value(
     loaded_registry, unit_test_guid, nlp_engine
 ):
     text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"  # noqa E501
@@ -419,6 +421,35 @@ def test_demo_text(unit_test_guid, nlp_engine):
     assert expected_anonymized_text == actual_anonymized_text
 
 
+def test_get_supported_fields_all_languages(mock_registry, unit_test_guid, nlp_engine):
+
+    analyzer = AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
+    entities = analyzer.get_supported_entities()
+
+    assert len(entities) == 3
+    assert "CREDIT_CARD" in entities
+    assert "DOMAIN_NAME" in entities
+    assert "PHONE_NUMBER" in entities
+
+
+def test_get_supported_fields_specific_language(loaded_registry, unit_test_guid, nlp_engine):
+
+    pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
+    pattern_recognizer = PatternRecognizer(
+        "ROCKET",
+        name="Rocket recognizer RU",
+        patterns=[pattern],
+        supported_language="ru",
+    )
+
+    analyzer = AnalyzerEngine(registry=loaded_registry, nlp_engine=nlp_engine)
+    analyzer.registry.add_recognizer(pattern_recognizer)
+    entities = analyzer.get_supported_entities(language="ru")
+
+    assert len(entities) == 1
+    assert "ROCKET" in entities
+
+
 def test_get_recognizers_returns_supported_language():
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
@@ -440,10 +471,7 @@ def test_get_recognizers_returns_supported_language():
 def test_add_recognizer_also_outputs_others(nlp_engine):
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
-        "ROCKET",
-        name="Rocket recognizer",
-        patterns=[pattern],
-        supported_language="en",
+        "ROCKET", name="Rocket recognizer", patterns=[pattern], supported_language="en",
     )
     registry = RecognizerRegistry()
     registry.add_recognizer(pattern_recognizer)
@@ -457,27 +485,3 @@ def test_add_recognizer_also_outputs_others(nlp_engine):
 
     results = analyzer.analyze(text=text, language="en")
     assert len(results) == 2
-
-
-def test_batch_on_simple_dict(nlp_engine):
-    batch = {
-        "PERSON": ["They call me Dan", "I'm Mark", "Ricardo is my name"],
-        "CITY": ["London", "Beirut", "Bangalore"],
-    }
-
-    analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
-    results = analyzer.analyze_batch(batch_dict=batch, language="en")
-    assert len(results["PERSON"]) == 3
-    assert len(results["CITY"]) == 3
-
-
-def test_batch_on_simple_dict_with_skipping(nlp_engine):
-    batch = {
-        "PERSON": ["They call me Dan", "I'm Mark", "Ricardo is my name"],
-        "CITY": ["London", "Beirut", "Bangalore"],
-    }
-
-    analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
-    results = analyzer.analyze_batch(batch_dict=batch, keys_to_skip=["CITY"])
-    assert len(results["PERSON"]) == 3
-    assert not results.get("CITY")
