@@ -1,6 +1,7 @@
 from typing import Optional, List, Iterable
 
 from presidio_analyzer import EntityRecognizer, PresidioLogger
+from presidio_analyzer.nlp_engine import NlpEngine
 from presidio_analyzer.predefined_recognizers import (
     NLP_RECOGNIZERS,
     CreditCardRecognizer,
@@ -39,7 +40,9 @@ class RecognizerRegistry:
         else:
             self.recognizers = []
 
-    def load_predefined_recognizers(self, languages=None, nlp_engine="spacy"):
+    def load_predefined_recognizers(
+        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = "spacy"
+    ):
 
         if not languages:
             languages = ["en"]
@@ -56,9 +59,7 @@ class RecognizerRegistry:
                 NhsRecognizer,
                 SgFinRecognizer,
             ],
-            "es": [
-                EsNifRecognizer,
-            ],
+            "es": [EsNifRecognizer],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
@@ -128,8 +129,7 @@ class RecognizerRegistry:
                     to_return.extend(subset)
 
         logger.info(
-            "Returning a total of %s recognizers",
-            str(len(to_return)),
+            "Returning a total of %s recognizers", str(len(to_return)),
         )
 
         if not to_return:
