@@ -32,24 +32,15 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pipenv
         pipenv --python 3
+
   - task: Bash@3
     displayName: 'Install deps: Analyzer'
     inputs:
       targetType: 'inline'
       workingDirectory: 'presidio-analyzer'
       script: |
-        # Azure pipelines test publish
         pipenv sync --dev --sequential
-        pipenv install --dev --skip-lock pytest-azurepipelines
         pipenv run python -m spacy download en_core_web_lg
-
-  - task: Bash@3
-    displayName: 'Pytest: Analyzer'
-    inputs:
-      targetType: 'inline'
-      workingDirectory: 'presidio-analyzer'
-      script: |
-        pipenv run pytest
 
   - task: Bash@3
     displayName: 'Linting: Analyzer'
@@ -59,3 +50,13 @@ jobs:
       script: |
         pipenv run pylint presidio_analyzer
         pipenv run flake8 presidio_analyzer
+
+  - task: Bash@3
+    displayName: 'Unit tests: Analyzer'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: 'presidio-analyzer'
+      script: |
+        # Install pytest and run tests
+        pipenv install --dev --skip-lock pytest-azurepipelines
+        pipenv run pytest
