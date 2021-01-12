@@ -15,7 +15,6 @@ parent_directory = os.path.abspath(
 with open(os.path.join(parent_directory, "VERSION")) as version_file:
     __version__ = version_file.read().strip()
 
-
 setup(
     python_requires='>=3.5',
     version=__version__,

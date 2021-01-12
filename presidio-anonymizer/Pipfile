@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask="==1.1.2"
+flask = "==1.1.2"
 
 [dev-packages]
 pytest = "*"
-pylint = {version = "==2.3.1"}
+pylint = { version = "==2.3.1" }
