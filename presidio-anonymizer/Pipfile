@@ -1,0 +1,11 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask="==1.1.2"
+
+[dev-packages]
+pytest = "*"
+pylint = {version = "==2.3.1"}
