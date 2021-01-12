@@ -67,7 +67,6 @@ jobs:
       targetType: 'inline'
       workingDirectory: 'presidio-anonymizer'
       script: |
-        pipenv run pylint presidio_anonymizer
         pipenv run flake8 presidio_anonymizer
 
   - task: Bash@3
