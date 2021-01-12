@@ -6,8 +6,6 @@ from setuptools import setup, find_packages
 
 requirements = ["flask==1.1.2"]
 
-setup_requirements = ['pytest-runner', ]
-
 test_requirements = ['pytest>=3', 'flask==1.1.2']
 
 __version__ = ""
@@ -35,7 +33,6 @@ setup(
     keywords='presidio_anonymizer',
     name='presidio_anonymizer',
     packages=find_packages(include=['presidio_anonymizer', 'presidio_anonymizer.*']),
-    setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/microsoft/presidio',
