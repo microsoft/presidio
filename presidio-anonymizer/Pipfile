@@ -9,3 +9,5 @@ flask = "==1.1.2"
 [dev-packages]
 pytest = "*"
 pylint = { version = "==2.3.1" }
+flake8= {version = "==3.7.9"}
+pytest-azurepipelines = "*"

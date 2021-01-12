@@ -60,3 +60,22 @@ jobs:
         # Install pytest and run tests
         pipenv install --dev --skip-lock pytest-azurepipelines
         pipenv run pytest
+
+  - task: Bash@3
+    displayName: 'Linting: Anonymizer'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: 'presidio-anonymizer'
+      script: |
+        pipenv run pylint presidio_anonymizer
+        pipenv run flake8 presidio_anonymizer
+
+  - task: Bash@3
+    displayName: 'Unit tests: Anonymizer'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: 'presidio-anonymizer'
+      script: |
+        # Install pytest and run tests
+        pipenv install --dev --skip-lock pytest-azurepipelines
+        pipenv run pytest
