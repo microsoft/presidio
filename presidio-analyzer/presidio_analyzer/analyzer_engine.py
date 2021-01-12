@@ -70,7 +70,7 @@ class AnalyzerEngine:
         """
         if not language:
             language = self.default_language
-        logger.info(f"Fetching all recognizers Recognizers for language {language}")
+        logger.info(f"Fetching all recognizers for language {language}")
         recognizers = self.registry.get_recognizers(language=language, all_fields=True)
         return recognizers
 
