@@ -1,3 +1,5 @@
+from typing import List
+
 import tldextract
 
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -21,10 +23,10 @@ class DomainRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="DOMAIN_NAME",
+        patterns: List[str] = None,
+        context: List[str] = None,
+        supported_language: str = "en",
+        supported_entity: str = "DOMAIN_NAME",
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -35,6 +37,6 @@ class DomainRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text):
+    def validate_result(self, pattern_text:str):
         result = tldextract.extract(pattern_text)
         return result.fqdn != ""

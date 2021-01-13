@@ -1,7 +1,9 @@
 import string
+from typing import Tuple, List, Dict
 
 import regex as re
 
+from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
     regex_per_country,
     BOS,
@@ -35,20 +37,20 @@ class IbanRecognizer(PatternRecognizer):
 
     CONTEXT = ["iban", "bank", "transaction"]
 
-    LETTERS = {
+    LETTERS: Dict[int, str] = {
         ord(d): str(i) for i, d in enumerate(string.digits + string.ascii_uppercase)
     }
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="IBAN_CODE",
-        exact_match=False,
-        BOSEOS=(BOS, EOS),
-        regex_flags=re.DOTALL | re.MULTILINE,
-        replacement_pairs=None,
+        patterns: List[str] = None,
+        context: List[str] = None,
+        supported_language: str = "en",
+        supported_entity: str = "IBAN_CODE",
+        exact_match: bool = False,
+        BOSEOS: Tuple[str, str] = (BOS, EOS),
+        regex_flags: int = re.DOTALL | re.MULTILINE,
+        replacement_pairs: List[Tuple[str, str]] = None,
     ):
         self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
         self.exact_match = exact_match
@@ -63,7 +65,7 @@ class IbanRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text):
+    def validate_result(self, pattern_text: str):
         try:
             pattern_text = self.__sanitize_value(pattern_text, self.replacement_pairs)
             is_valid_checksum = (
@@ -82,8 +84,14 @@ class IbanRecognizer(PatternRecognizer):
             logger.error("Failed to validate text %s", pattern_text)
             return False
 
-    # pylint: disable=unused-argument,arguments-differ
-    def analyze(self, text, entities, nlp_artifacts=None):
+    # pylint: disable=unused-argument
+    def analyze(
+        self,
+        text: str,
+        entities: List[str],
+        nlp_artifacts: NlpArtifacts = None,
+        regex_flags: int = None,
+    ) -> List[RecognizerResult]:
         results = []
 
         if self.patterns:
@@ -101,7 +109,7 @@ class IbanRecognizer(PatternRecognizer):
 
         return results
 
-    def __analyze_patterns(self, text):
+    def __analyze_patterns(self, text: str, flags: int = None):
         """
         Evaluates all patterns in the provided text, including words in
          the provided blacklist
@@ -156,7 +164,7 @@ class IbanRecognizer(PatternRecognizer):
         return results
 
     @staticmethod
-    def __number_iban(iban, letters):
+    def __number_iban(iban: str, letters: Dict[int, str]):
         return (iban[4:] + iban[:4]).translate(letters)
 
     @staticmethod
@@ -166,7 +174,11 @@ class IbanRecognizer(PatternRecognizer):
         return "{:0>2}".format(98 - (int(number_iban) % 97))
 
     @staticmethod
-    def __is_valid_format(iban, BOSEOS=(BOS, EOS), flags=re.DOTALL | re.MULTILINE):
+    def __is_valid_format(
+        iban: str,
+        BOSEOS: Tuple[str, str] = (BOS, EOS),
+        flags: int = re.DOTALL | re.MULTILINE,
+    ):
         country_code = iban[:2]
         if country_code in regex_per_country:
             country_regex = regex_per_country.get(country_code, "")
@@ -177,7 +189,7 @@ class IbanRecognizer(PatternRecognizer):
         return False
 
     @staticmethod
-    def __sanitize_value(text, replacement_pairs):
+    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]):
         for search_string, replacement_string in replacement_pairs:
             text = text.replace(search_string, replacement_string)
         return text

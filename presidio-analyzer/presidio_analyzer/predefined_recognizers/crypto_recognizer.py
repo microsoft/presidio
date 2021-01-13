@@ -1,4 +1,6 @@
 from hashlib import sha256
+from typing import List
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 # Copied from:
@@ -18,10 +20,10 @@ class CryptoRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="CRYPTO",
+        patterns: List[str] = None,
+        context: List[str] = None,
+        supported_language: str = "en",
+        supported_entity: str = "CRYPTO",
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -32,7 +34,7 @@ class CryptoRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text):
+    def validate_result(self, pattern_text:str):
         try:
             bcbytes = self.__decode_base58(pattern_text, 25)
             return bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]
@@ -40,7 +42,7 @@ class CryptoRecognizer(PatternRecognizer):
             return False
 
     @staticmethod
-    def __decode_base58(bc, length):
+    def __decode_base58(bc, length: int):
         digits58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
         n = 0
         for char in bc:

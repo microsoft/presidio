@@ -7,7 +7,7 @@ During analysis, it runs a set of different *PII Recognizers*,
 each one in charge of detecting one or more PII entities using different mechanisms.
 
 Presidio analyzer comes with a set of predefined recognizers, 
-but can easily be extended with other types of custom recognizers.
+but can easily be extended with other types of [custom recognizers](#customizing-presidio-analyzer).
 Predefined and custom recognizers leverage regex, [spaCy](https://spacy.io/) 
 and other types of logic to detect PII in unstructured text.
   

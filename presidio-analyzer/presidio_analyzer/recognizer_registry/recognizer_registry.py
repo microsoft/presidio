@@ -129,7 +129,8 @@ class RecognizerRegistry:
                     to_return.extend(subset)
 
         logger.info(
-            "Returning a total of %s recognizers", str(len(to_return)),
+            "Returning a total of %s recognizers",
+            str(len(to_return)),
         )
 
         if not to_return:

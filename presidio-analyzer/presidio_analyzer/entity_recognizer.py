@@ -141,7 +141,7 @@ class EntityRecognizer:
         for result in results:
             # extract lemmatized context from the surrounding of the match
 
-            word = text[result.start: result.end]
+            word = text[result.start : result.end]
 
             surrounding_words = self.__extract_surrounding_words(
                 nlp_artifacts=nlp_artifacts, word=word, start=result.start

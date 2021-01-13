@@ -1,3 +1,8 @@
+from typing import List
+
+from spacy.tokens import Doc
+
+
 class NlpArtifacts:
     """NlpArtifacts is an abstraction layer over the results of an NLP pipeline
     processing over a given text, it holds attributes such as entities,
@@ -5,7 +10,15 @@ class NlpArtifacts:
     """
 
     # pylint: disable=abstract-method, unused-argument
-    def __init__(self, entities, tokens, tokens_indices, lemmas, nlp_engine, language):
+    def __init__(
+        self,
+        entities: List[str],
+        tokens: Doc,
+        tokens_indices: List[int],
+        lemmas: List[str],
+        nlp_engine,
+        language: str,
+    ):
         self.entities = entities
         self.tokens = tokens
         self.lemmas = lemmas

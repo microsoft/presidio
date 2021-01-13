@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -9,16 +11,8 @@ class AbaRoutingRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern(
-            "ABA routing number (weak)",
-            r"\b[0123678]\d{8}\b",
-            0.05,
-        ),
-        Pattern(
-            "ABA routing number",
-            r"\b[0123678]\d{3}-\d{4}-\d\b",
-            0.3,
-        ),
+        Pattern("ABA routing number (weak)", r"\b[0123678]\d{8}\b", 0.05,),
+        Pattern("ABA routing number", r"\b[0123678]\d{3}-\d{4}-\d\b", 0.3,),
     ]
 
     CONTEXT = [
@@ -31,11 +25,11 @@ class AbaRoutingRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="ABA_ROUTING_NUMBER",
-        replacement_pairs=None,
+        patterns: List[Pattern] = None,
+        context: List[str] = None,
+        supported_language: str = "en",
+        supported_entity: str = "ABA_ROUTING_NUMBER",
+        replacement_pairs: List[Tuple[str, str]] = None,
     ):
         self.replacement_pairs = replacement_pairs or [("-", "")]
         patterns = patterns if patterns else self.PATTERNS
@@ -59,7 +53,7 @@ class AbaRoutingRecognizer(PatternRecognizer):
         return s % 10 == 0
 
     @staticmethod
-    def __sanitize_value(text, replacement_pairs):
+    def __sanitize_value(text, replacement_pairs: List[Tuple[str, str]]):
         for search_string, replacement_string in replacement_pairs:
             text = text.replace(search_string, replacement_string)
         return text

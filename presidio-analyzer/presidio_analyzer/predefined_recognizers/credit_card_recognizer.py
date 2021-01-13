@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -21,7 +23,6 @@ class CreditCardRecognizer(PatternRecognizer):
         "visa",
         "mastercard",
         "cc ",
-        # "american express" #Task #603: Support keyphrases
         "amex",
         "discover",
         "jcb",
@@ -32,11 +33,11 @@ class CreditCardRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="CREDIT_CARD",
-        replacement_pairs=None,
+        patterns: List[Pattern] = None,
+        context: List[str] = None,
+        supported_language: str = "en",
+        supported_entity: str = "CREDIT_CARD",
+        replacement_pairs: List[Tuple[str, str]] = None,
     ):
         """
         :param replacement_pairs: list of tuples to replace in the string.
@@ -55,14 +56,14 @@ class CreditCardRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text):
+    def validate_result(self, pattern_text: str):
         sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
         checksum = self.__luhn_checksum(sanitized_value)
 
         return checksum
 
     @staticmethod
-    def __luhn_checksum(sanitized_value):
+    def __luhn_checksum(sanitized_value: str):
         def digits_of(n):
             return [int(d) for d in str(n)]
 

@@ -1,4 +1,5 @@
 import datetime
+from typing import List
 
 import regex as re
 
@@ -10,6 +11,7 @@ from presidio_analyzer import (
     AnalysisExplanation,
     PresidioLogger,
 )
+from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = PresidioLogger()
 
@@ -17,13 +19,13 @@ logger = PresidioLogger()
 class PatternRecognizer(LocalRecognizer):
     def __init__(
         self,
-        supported_entity,
-        name=None,
-        supported_language="en",
-        patterns=None,
-        deny_list=None,
-        context=None,
-        version="0.0.1",
+        supported_entity: str,
+        name: str = None,
+        supported_language: str = "en",
+        patterns: List[Pattern] = None,
+        deny_list: List[str] = None,
+        context: List[str] = None,
+        version: str = "0.0.1",
     ):
         """
         :param patterns: A list of patterns to detect
@@ -53,7 +55,7 @@ class PatternRecognizer(LocalRecognizer):
         self.context = context
 
         if deny_list:
-            black_list_pattern = self.__black_list_to_regex(deny_list)
+            black_list_pattern = self.__deny_list_to_regex(deny_list)
             self.patterns.append(black_list_pattern)
             self.black_list = deny_list
         else:
@@ -63,7 +65,13 @@ class PatternRecognizer(LocalRecognizer):
         pass
 
     # pylint: disable=unused-argument,arguments-differ
-    def analyze(self, text, entities, nlp_artifacts=None, regex_flags=None):
+    def analyze(
+        self,
+        text: str,
+        entities: List[str],
+        nlp_artifacts: NlpArtifacts = None,
+        regex_flags=None,
+    ) -> List[RecognizerResult]:
         results = []
 
         if self.patterns:
@@ -82,19 +90,19 @@ class PatternRecognizer(LocalRecognizer):
         return results
 
     @staticmethod
-    def __black_list_to_regex(black_list):
+    def __deny_list_to_regex(deny_list:List[str]) -> Pattern:
         """
         Converts a list of word to a matching regex, to be analyzed by the
          regex engine as a part of the analyze logic
 
-        :param black_list: the list of words to detect
+        :param deny_list: the list of words to detect
         :return:the regex of the words for detection
         """
-        regex = r"(?:^|(?<= ))(" + "|".join(black_list) + r")(?:(?= )|$)"
-        return Pattern(name="black_list", regex=regex, score=1.0)
+        regex = r"(?:^|(?<= ))(" + "|".join(deny_list) + r")(?:(?= )|$)"
+        return Pattern(name="deny_list", regex=regex, score=1.0)
 
     # pylint: disable=unused-argument, no-self-use, assignment-from-none
-    def validate_result(self, pattern_text):
+    def validate_result(self, pattern_text) -> bool:
         """
         Validates the pattern logic, for example by running
          checksum on a detected pattern.
@@ -106,7 +114,7 @@ class PatternRecognizer(LocalRecognizer):
         return None
 
     # pylint: disable=unused-argument, no-self-use, assignment-from-none
-    def invalidate_result(self, pattern_text: str):
+    def invalidate_result(self, pattern_text: str) -> bool:
         """
         Logic to check for result invalidation by running pruning logic.
         For example, each SSN number group should not consist of all the same
@@ -120,8 +128,12 @@ class PatternRecognizer(LocalRecognizer):
 
     @staticmethod
     def build_regex_explanation(
-        recognizer_name, pattern_name, pattern, original_score, validation_result
-    ):
+        recognizer_name: str,
+        pattern_name: str,
+        pattern: str,
+        original_score: float,
+        validation_result: bool,
+    ) -> AnalysisExplanation:
         explanation = AnalysisExplanation(
             recognizer=recognizer_name,
             original_score=original_score,
@@ -131,7 +143,7 @@ class PatternRecognizer(LocalRecognizer):
         )
         return explanation
 
-    def __analyze_patterns(self, text, flags=None):
+    def __analyze_patterns(self, text: str, flags: int = None):
         """
         Evaluates all patterns in the provided text, including words in
          the provided blacklist

@@ -22,6 +22,11 @@ class StanzaNlpEngine(SpacyNlpEngine):
     is_available = bool(stanza)
 
     def __init__(self, models=None):
+        """
+        Initializes a wrapper on stanza functionality.
+        :param models: Dictionary with the name of the stanza model per language.
+        For example: models = {"en": "en"}
+        """
         if not models:
             models = {"en": "en"}
         logger.debug(f"Loading Stanza models: {models.values()}")
