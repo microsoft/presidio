@@ -18,7 +18,7 @@ jobs:
 #        python.version: '3.8'
 
   steps:
-  - task: UsePythonVersion@0
+    - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
     displayName: 'Use Python $(python.version)'
@@ -51,12 +51,30 @@ jobs:
         pipenv run pylint presidio_analyzer
         pipenv run flake8 presidio_analyzer
 
-  - task: Bash@3
-    displayName: 'Unit tests: Analyzer'
-    inputs:
-      targetType: 'inline'
-      workingDirectory: 'presidio-analyzer'
-      script: |
-        # Install pytest and run tests
-        pipenv install --dev --skip-lock pytest-azurepipelines
-        pipenv run pytest
+    - task: Bash@3
+      displayName: 'Unit tests: Analyzer'
+      inputs:
+        targetType: 'inline'
+        workingDirectory: 'presidio-analyzer'
+        script: |
+          # Install pytest and run tests
+          pipenv install --dev --skip-lock pytest-azurepipelines
+          pipenv run pytest
+
+    - task: Bash@3
+      displayName: 'Linting: Anonymizer'
+      inputs:
+        targetType: 'inline'
+        workingDirectory: 'presidio-anonymizer'
+        script: |
+          pipenv run flake8 presidio_anonymizer
+
+    - task: Bash@3
+      displayName: 'Unit tests: Anonymizer'
+      inputs:
+        targetType: 'inline'
+        workingDirectory: 'presidio-anonymizer'
+        script: |
+          # Install pytest and run tests
+          pipenv install --dev --skip-lock pytest-azurepipelines
+          pipenv run pytest
