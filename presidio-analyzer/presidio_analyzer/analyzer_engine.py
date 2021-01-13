@@ -77,7 +77,7 @@ class AnalyzerEngine:
     def get_supported_entities(self, language: Optional[str] = None) -> List[str]:
         """
         Returns a list of the entities that can be detected
-        :param language: Optional, return only entities supported in a specific language.
+        :param language: Optional, return only entities supported in a specific language
         :return: List of entity names
         """
 
