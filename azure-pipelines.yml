@@ -62,12 +62,12 @@ jobs:
               pipenv run pytest
 
         - task: Bash@3
-            displayName: 'Linting: Anonymizer'
-            inputs:
-              targetType: 'inline'
-              workingDirectory: 'presidio-anonymizer'
-              script: |
-                pipenv run flake8 presidio_anonymizer
+          displayName: 'Linting: Anonymizer'
+          inputs:
+            targetType: 'inline'
+            workingDirectory: 'presidio-anonymizer'
+            script: |
+              pipenv run flake8 presidio_anonymizer
 
         - task: Bash@3
           displayName: 'Unit tests: Anonymizer'
