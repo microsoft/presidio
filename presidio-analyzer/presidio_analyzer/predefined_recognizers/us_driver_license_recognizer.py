@@ -12,7 +12,6 @@ from presidio_analyzer import Pattern, PatternRecognizer
 # one to indicate at least one digit or one '*'
 
 
-# pylint: disable=line-too-long,abstract-method
 class UsLicenseRecognizer(PatternRecognizer):
     """
     Recognizes US driver license using regex

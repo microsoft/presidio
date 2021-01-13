@@ -6,7 +6,6 @@ class UsItinRecognizer(PatternRecognizer):
     Recognizes US ITIN (Individual Taxpayer Identification Number) using regex
     """
 
-    # pylint: disable=line-too-long,abstract-method
     PATTERNS = [
         Pattern(
             "Itin (very weak)",

@@ -10,7 +10,6 @@ from presidio_analyzer.nlp_engine import SpacyNlpEngine
 logger = PresidioLogger()
 
 
-# pylint: disable=super-init-not-called
 class StanzaNlpEngine(SpacyNlpEngine):
     """StanzaNlpEngine is an abstraction layer over the nlp module.
     It provides processing functionality as well as other queries
