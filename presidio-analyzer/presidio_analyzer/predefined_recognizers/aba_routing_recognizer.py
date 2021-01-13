@@ -9,10 +9,16 @@ class AbaRoutingRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern("ABA routing number (weak)", r"\b[0123678]\d{8}\b", 0.05,),
-        Pattern("ABA routing number",
-                r"\b[0123678]\d{3}-\d{4}-\d\b",
-                0.3,),
+        Pattern(
+            "ABA routing number (weak)",
+            r"\b[0123678]\d{8}\b",
+            0.05,
+        ),
+        Pattern(
+            "ABA routing number",
+            r"\b[0123678]\d{3}-\d{4}-\d\b",
+            0.3,
+        ),
     ]
 
     CONTEXT = [
@@ -42,8 +48,7 @@ class AbaRoutingRecognizer(PatternRecognizer):
         )
 
     def validate_result(self, pattern_text):
-        sanitized_value = self.__sanitize_value(pattern_text,
-                                                self.replacement_pairs)
+        sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
         return self.__checksum(sanitized_value)
 
     @staticmethod

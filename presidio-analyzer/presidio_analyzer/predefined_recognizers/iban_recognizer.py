@@ -1,5 +1,6 @@
 import string
-import logging
+
+import regex as re
 
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
     regex_per_country,
@@ -11,13 +12,11 @@ from presidio_analyzer import (
     PatternRecognizer,
     RecognizerResult,
     EntityRecognizer,
+    PresidioLogger,
 )
 
-# Import 're2' regex engine if installed, if not- import 'regex'
-try:
-    import re2 as re
-except ImportError:
-    import regex as re
+
+logger = PresidioLogger()
 
 
 class IbanRecognizer(PatternRecognizer):
@@ -29,7 +28,7 @@ class IbanRecognizer(PatternRecognizer):
         Pattern(
             "IBAN Generic",
             # pylint: disable=line-too-long
-            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?\b", # noqa
+            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?\b",  # noqa
             0.5,
         ),
     ]
@@ -80,7 +79,7 @@ class IbanRecognizer(PatternRecognizer):
                     result = None
             return result
         except ValueError:
-            logging.error("Failed to validate text %s", pattern_text)
+            logger.error("Failed to validate text %s", pattern_text)
             return False
 
     # pylint: disable=unused-argument,arguments-differ
