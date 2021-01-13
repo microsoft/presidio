@@ -1,5 +1,7 @@
-class Pattern:
+import json
 
+
+class Pattern:
     def __init__(self, name, regex, score):
         """
         A class that represents a regex pattern.
@@ -17,10 +19,7 @@ class Pattern:
         :return: a dictionary
         """
 
-        return_dict = {"name": self.name,
-                       "score": self.score,
-                       "regex": self.regex
-                       }
+        return_dict = {"name": self.name, "score": self.score, "regex": self.regex}
         return return_dict
 
     @classmethod
@@ -31,3 +30,9 @@ class Pattern:
         :return: a Pattern instance
         """
         return cls(**pattern_dict)
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
+
+    def __str__(self):
+        return json.dumps(self.to_dict())

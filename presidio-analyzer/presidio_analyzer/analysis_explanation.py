@@ -1,9 +1,15 @@
 class AnalysisExplanation:
 
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, recognizer, original_score, pattern_name=None,
-                 pattern=None, validation_result=None,
-                 textual_explanation=None):
+    def __init__(
+        self,
+        recognizer: str,
+        original_score: float,
+        pattern_name: str = None,
+        pattern: str = None,
+        validation_result: float = None,
+        textual_explanation: str = None,
+    ):
         """
         AnalysisExplanation is a class that holds tracing information
         to explain why PII entities where indentified as such
@@ -24,22 +30,21 @@ class AnalysisExplanation:
         self.score = original_score
         self.textual_explanation = textual_explanation
         self.score_context_improvement = 0
-        self.supportive_context_word = ''
+        self.supportive_context_word = ""
         self.validation_result = validation_result
 
     def __repr__(self):
         return str(self.__dict__)
 
     def set_improved_score(self, score):
-        """ Updated the score  of the entity and compute the
-            improvment fromt the original scoree
+        """Updated the score  of the entity and compute the
+        improvment fromt the original scoree
         """
         self.score = score
         self.score_context_improvement = self.score - self.original_score
 
     def set_supportive_context_word(self, word):
-        """ Sets the context word which helped increase the score
-        """
+        """Sets the context word which helped increase the score"""
         self.supportive_context_word = word
 
     def append_textual_explanation_line(self, text):
@@ -47,5 +52,4 @@ class AnalysisExplanation:
         if self.textual_explanation is None:
             self.textual_explanation = text
         else:
-            self.textual_explanation = "{}\n{}".format(
-                self.textual_explanation, text)
+            self.textual_explanation = "{}\n{}".format(self.textual_explanation, text)

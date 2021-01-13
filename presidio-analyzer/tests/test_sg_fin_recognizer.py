@@ -15,18 +15,19 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    "text, expected_len, expected_positions, expected_scores",
-    [
-        ("G1122144L", 2, ((0, 9), (0, 9),), (0.3, 0.5),),  # should this be only 1?
-        ("PA12348L", 0, (), (),),
-    ],
+    "text, expected_len, expected_position, expected_score",
+    [("G1122144L", 1, (0, 9), 0.5), ("PA12348L", 0, (), (),),],
 )
 def test_all_sg_fins(
-    text, expected_len, expected_positions, expected_scores, recognizer, entities,
+    text, expected_len, expected_position, expected_score, recognizer, entities,
 ):
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
-    for res, score, (st_pos, fn_pos) in zip(
-        results, expected_scores, expected_positions
-    ):
-        assert_result(res, entities[0], st_pos, fn_pos, score)
+    if results:
+        assert_result(
+            results[0],
+            entities[0],
+            expected_position[0],
+            expected_position[1],
+            expected_score,
+        )

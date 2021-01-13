@@ -7,7 +7,11 @@ class NhsRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern("NHS (medium)", r"\b([0-9]{3})[- ]?([0-9]{3})[- ]?([0-9]{4})\b", 0.5,),
+        Pattern(
+            "NHS (medium)",
+            r"\b([0-9]{3})[- ]?([0-9]{3})[- ]?([0-9]{4})\b",
+            0.5,
+        ),
     ]
 
     CONTEXT = [
@@ -25,9 +29,9 @@ class NhsRecognizer(PatternRecognizer):
         supported_entity="UK_NHS",
         replacement_pairs=None,
     ):
-        self.replacement_pairs = replacement_pairs \
-            if replacement_pairs \
-            else [("-", ""), (" ", "")]
+        self.replacement_pairs = (
+            replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
+        )
         context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
         super().__init__(

@@ -1,4 +1,4 @@
-from presidio_analyzer import EntityRecognizer
+from presidio_analyzer import EntityRecognizer, RecognizerResult, AnalysisExplanation
 
 
 def test_to_dict_correct_dictionary():
@@ -31,3 +31,75 @@ def test_index_finding():
         match, start, tokens, tokens_indices
     )
     assert index == 3
+
+
+def test_remove_duplicates():
+    # test same result with different score will return only the highest
+    arr = [
+        RecognizerResult(
+            start=0,
+            end=5,
+            score=0.1,
+            entity_type="x",
+            analysis_explanation=AnalysisExplanation(
+                recognizer="test",
+                original_score=0,
+                pattern_name="test",
+                pattern="test",
+                validation_result=None,
+            ),
+        ),
+        RecognizerResult(
+            start=0,
+            end=5,
+            score=0.5,
+            entity_type="x",
+            analysis_explanation=AnalysisExplanation(
+                recognizer="test",
+                original_score=0,
+                pattern_name="test",
+                pattern="test",
+                validation_result=None,
+            ),
+        ),
+    ]
+    results = EntityRecognizer.remove_duplicates(arr)
+    assert len(results) == 1
+    assert results[0].score == 0.5
+    # TODO: add more cases with bug:
+    # bug# 597: Analyzer remove duplicates doesn't handle all cases of one
+    #           result as a substring of the other
+
+
+def test_remove_duplicates_different_entity_no_removal():
+    # test same result with different score will return only the highest
+    arr = [
+        RecognizerResult(
+            start=0,
+            end=5,
+            score=0.1,
+            entity_type="x",
+            analysis_explanation=AnalysisExplanation(
+                recognizer="test",
+                original_score=0,
+                pattern_name="test",
+                pattern="test",
+                validation_result=None,
+            ),
+        ),
+        RecognizerResult(
+            start=0,
+            end=5,
+            score=0.5,
+            entity_type="y",
+            analysis_explanation=AnalysisExplanation(
+                recognizer="test",
+                original_score=0,
+                pattern_name="test",
+                pattern="test",
+                validation_result=None,
+            ),
+        ),
+    ]
+    results = EntityRecognizer.remove_duplicates(arr)
+    assert len(results) == 2

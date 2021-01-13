@@ -4,14 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-cython = "*"
-spacy = "==2.2.3"
+spacy = "==2.3"
 regex = "*"
-pyre2 = {file = "https://github.com/torosent/pyre2/archive/release/0.2.23.zip"}
-grpcio = "*"
-protobuf = "*"
 tldextract = "*"
-knack = "*"
+numpy = "==1.19.3"
 
 [dev-packages]
 pytest = "*"
