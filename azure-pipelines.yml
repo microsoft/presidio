@@ -34,10 +34,10 @@ jobs:
               pipenv --python 3
 
         - task: Bash@3
-          displayName: 'Install deps: Analyzer'
+          displayName: 'Install deps'
           inputs:
             targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
+            workingDirectory: 'presidio'
             script: |
               pipenv sync --dev --sequential
               pipenv run python -m spacy download en_core_web_lg
@@ -46,7 +46,7 @@ jobs:
           displayName: 'Linting: Analyzer'
           inputs:
             targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
+            workingDirectory: 'presidio'
             script: |
               pipenv run pylint presidio_analyzer
               pipenv run flake8 presidio_analyzer
@@ -55,7 +55,7 @@ jobs:
           displayName: 'Unit tests: Analyzer'
           inputs:
             targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
+            workingDirectory: 'presidio'
             script: |
               # Install pytest and run tests
               pipenv install --dev --skip-lock pytest-azurepipelines
@@ -65,7 +65,7 @@ jobs:
           displayName: 'Linting: Anonymizer'
           inputs:
             targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
+            workingDirectory: 'presidio'
             script: |
               pipenv run flake8 presidio_anonymizer
 
@@ -73,7 +73,7 @@ jobs:
           displayName: 'Unit tests: Anonymizer'
           inputs:
             targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
+            workingDirectory: 'presidio'
             script: |
               # Install pytest and run tests
               pipenv install --dev --skip-lock pytest-azurepipelines
