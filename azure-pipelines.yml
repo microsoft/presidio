@@ -1,5 +1,5 @@
 trigger:
-- V2
+  - V2
 
 pr:
   branches:
@@ -7,56 +7,74 @@ pr:
       - V2
 
 jobs:
-- job: 'Test'
-  pool:
-    vmImage: 'ubuntu-16.04'
-  strategy:
-    matrix:
-      Python37:
-        python.version: '3.7'
-#      Python38:
-#        python.version: '3.8'
+  - job: 'Test'
+    pool:
+      vmImage: 'ubuntu-16.04'
+    strategy:
+      matrix:
+        Python37:
+          python.version: '3.7'
+    #      Python38:
+    #        python.version: '3.8'
 
-  steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(python.version)'
-    displayName: 'Use Python $(python.version)'
+    steps:
+      - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
 
-  - task: Bash@3
-    displayName: 'Setup pipenv'
-    inputs:
-      targetType: 'inline'
-      script: |
-        set -eux  # fail on error
-        python -m pip install --upgrade pip
-        python -m pip install pipenv
-        pipenv --python 3
+        - task: Bash@3
+          displayName: 'Setup pipenv'
+          inputs:
+            targetType: 'inline'
+            script: |
+              set -eux  # fail on error
+              python -m pip install --upgrade pip
+              python -m pip install pipenv
+              pipenv --python 3
 
-  - task: Bash@3
-    displayName: 'Install deps: Analyzer'
-    inputs:
-      targetType: 'inline'
-      workingDirectory: 'presidio-analyzer'
-      script: |
-        pipenv sync --dev --sequential
-        pipenv run python -m spacy download en_core_web_lg
+        - task: Bash@3
+          displayName: 'Install deps: Analyzer'
+          inputs:
+            targetType: 'inline'
+            workingDirectory: 'presidio-analyzer'
+            script: |
+              pipenv sync --dev --sequential
+              pipenv run python -m spacy download en_core_web_lg
 
-  - task: Bash@3
-    displayName: 'Linting: Analyzer'
-    inputs:
-      targetType: 'inline'
-      workingDirectory: 'presidio-analyzer'
-      script: |
-        pipenv run pylint presidio_analyzer
-        pipenv run flake8 presidio_analyzer
+        - task: Bash@3
+          displayName: 'Linting: Analyzer'
+          inputs:
+            targetType: 'inline'
+            workingDirectory: 'presidio-analyzer'
+            script: |
+              pipenv run pylint presidio_analyzer
+              pipenv run flake8 presidio_analyzer
 
-  - task: Bash@3
-    displayName: 'Unit tests: Analyzer'
-    inputs:
-      targetType: 'inline'
-      workingDirectory: 'presidio-analyzer'
-      script: |
-        # Install pytest and run tests
-        pipenv install --dev --skip-lock pytest-azurepipelines
-        pipenv run pytest
+              - task: Bash@3
+                displayName: 'Unit tests: Analyzer'
+                inputs:
+                  targetType: 'inline'
+                  workingDirectory: 'presidio-analyzer'
+                  script: |
+                    # Install pytest and run tests
+                    pipenv install --dev --skip-lock pytest-azurepipelines
+                    pipenv run pytest
+
+              - task: Bash@3
+                displayName: 'Linting: Anonymizer'
+                inputs:
+                  targetType: 'inline'
+                  workingDirectory: 'presidio-anonymizer'
+                  script: |
+                    pipenv run flake8 presidio_anonymizer
+
+              - task: Bash@3
+                displayName: 'Unit tests: Anonymizer'
+                inputs:
+                  targetType: 'inline'
+                  workingDirectory: 'presidio-anonymizer'
+                  script: |
+                    # Install pytest and run tests
+                    pipenv install --dev --skip-lock pytest-azurepipelines
+                    pipenv run pytest
