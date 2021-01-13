@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 requirements = ["flask==1.1.2"]
 
-test_requirements = ["pytest>=3", "flask==1.1.2"]
+test_requirements = ["pytest>=3", "flake8==3.7.9", "flask==1.1.2"]
 
 __version__ = ""
 parent_directory = os.path.abspath(
