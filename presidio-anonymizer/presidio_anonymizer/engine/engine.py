@@ -1,12 +1,10 @@
-from domain.result import AnalyzeResults
-
-
 # TODO this needs to be implemented currently a stab.
+# TODO replace analyze_results with domain results
 # Notice the document Omri created, it impacts the implementation
 class Engine:
     def __init__(self,
                  text: str,
-                 analyze_results: AnalyzeResults):
+                 analyze_results: list[str]):
         self.analyze_results = analyze_results
         self.text = text
         self.end_point = len(text)
