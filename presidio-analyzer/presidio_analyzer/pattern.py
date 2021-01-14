@@ -1,8 +1,9 @@
 import json
+from typing import Dict
 
 
 class Pattern:
-    def __init__(self, name, regex, score):
+    def __init__(self, name: str, regex: str, score: float):
         """
         A class that represents a regex pattern.
         :param name: the name of the pattern
@@ -23,7 +24,7 @@ class Pattern:
         return return_dict
 
     @classmethod
-    def from_dict(cls, pattern_dict):
+    def from_dict(cls, pattern_dict: Dict):
         """
         Loads an instance from a dictionary
         :param pattern_dict: a dictionary holding the pattern's parameters
