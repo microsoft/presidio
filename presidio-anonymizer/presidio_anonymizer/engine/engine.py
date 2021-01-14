@@ -2,12 +2,14 @@
 # TODO replace analyze_results with domain results
 # Notice the document Omri created, it impacts the implementation
 class Engine:
-    def __init__(self,
-                 text: str,
-                 # TODO change to domain object
-                 transformations: list[str],
-                 # TODO change to domain object
-                 analyze_results: list[str]):
+    def __init__(
+            self,
+            text: str,
+            # TODO change to domain object
+            transformations: list[str],
+            # TODO change to domain object
+            analyze_results: list[str],
+    ):
         self.transformations = transformations
         self.analyze_results = analyze_results
         self.text = text
