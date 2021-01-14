@@ -1,8 +1,12 @@
 # TODO implement + test
-from anonymizers.anonymizer import AnonymizerAbstract
+from anonymizers.anonymizer import Anonymizer
 
 
-class Mask(AnonymizerAbstract):
+class Mask(Anonymizer):
+    """
+    Mask the given text with given value
+    """
+
     def __init__(self,
                  old_text: str,
                  replace_with: str,

@@ -1,8 +1,13 @@
 # TODO implement + test
-from anonymizers.anonymizer import AnonymizerAbstract
+from anonymizers.anonymizer import Anonymizer
 
 
-class FPE(AnonymizerAbstract):
+class FPE(Anonymizer):
+    """
+    Current text will be transformed into FPE -
+    Format Preserving Encryption using FF1 algorithm.
+    """
+
     def __init__(self,
                  old_text: str,
                  key: str,
