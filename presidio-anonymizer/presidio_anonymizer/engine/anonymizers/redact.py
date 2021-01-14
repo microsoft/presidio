@@ -3,8 +3,8 @@ from anonymizers.anonymizer import AnonymizerAbstract
 
 
 class Redact(AnonymizerAbstract):
-    def __init__(self, new_text: str):
-        self.new_text = new_text
+    def __init__(self):
+        pass
 
     def anonymize(self):
         pass
