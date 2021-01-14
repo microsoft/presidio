@@ -11,7 +11,7 @@ Presidio services are PEP8 compliant and continuously enforced on style guide is
 
 Running flake8 locally, using `pipenv run flake8`, you can check for those issues prior to committing a change.
 
-To make stuff easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using `black`:
+To make things easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using `black`:
 
 1. [Install pre-commit package manager locally.](https://pre-commit.com/#install) 
 
