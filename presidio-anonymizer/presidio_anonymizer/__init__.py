@@ -1,1 +1,7 @@
-"""Top-level package for presidio-anonymizer."""
+import logging
+
+logging.getLogger("presidio-anonymizer").addHandler(logging.NullHandler())
+
+__all__ = [
+
+]
