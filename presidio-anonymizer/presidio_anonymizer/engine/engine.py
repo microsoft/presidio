@@ -1,7 +1,7 @@
-# TODO this needs to be implemented currently a stab.
-# TODO replace analyze_results with domain results
-# Notice the document Omri created, it impacts the implementation
 class Engine:
+    # TODO this needs to be implemented currently a stab.
+    # TODO replace analyze_results with domain results
+    # Notice the document Omri created, it impacts the implementation
     def __init__(
             self,
             text: str,
