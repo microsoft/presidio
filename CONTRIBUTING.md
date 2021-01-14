@@ -40,7 +40,7 @@ To get started, refer to the documentation for [setting up a development environ
 ### How to test?
 
 - For Go, the official methods for testing are used. see https://golang.org/pkg/testing/
-- For Python, Presidio leverages `pytest`, `pylint` and `flake8`. See [this tutorial](docs/development.md#dev-python) on more information on testing the presidio-analyzer module.
+- For Python, Presidio leverages `pytest` and `flake8`. See [this tutorial](docs/development.md#dev-python) on more information on testing the presidio-analyzer module.
 
 ### Adding new recognizers for new PII types
 

@@ -8,7 +8,6 @@ class DomainRecognizer(PatternRecognizer):
     Recognizes domain names using regex
     """
 
-    # pylint: disable=line-too-long
     PATTERNS = [
         Pattern(
             "Domain ()",

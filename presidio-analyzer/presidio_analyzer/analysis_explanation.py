@@ -1,6 +1,4 @@
 class AnalysisExplanation:
-
-    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         recognizer: str,

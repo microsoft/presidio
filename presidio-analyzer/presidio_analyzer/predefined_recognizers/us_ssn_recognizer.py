@@ -3,7 +3,6 @@ from collections import defaultdict
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
-# pylint: disable=line-too-long,abstract-method
 class UsSsnRecognizer(PatternRecognizer):
     """
     Recognizes US Social Security Number (SSN) using regex
