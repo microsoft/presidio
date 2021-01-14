@@ -8,4 +8,8 @@ repos:
       rev: 3.7.9
       hooks:
         - id: flake8
+          additional_dependencies: [
+              'pep8-naming',
+              'flake8-docstrings',
+          ]
           args: ['--max-line-length=88']
