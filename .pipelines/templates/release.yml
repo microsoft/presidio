@@ -4,7 +4,8 @@ jobs:
   steps:
     - bash: |
         ver=$(cat VERSION)
-        echo '##vso[task.setvariable variable=version]$ver'
+        echo $ver
+        echo '##vso[task.setvariable variable=version;]$ver'
 
     - task: GitHubRelease@0
       inputs:
