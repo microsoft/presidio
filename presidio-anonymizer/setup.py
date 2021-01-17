@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# noqa: D100
 import os.path
 from os import path
 

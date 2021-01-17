@@ -13,3 +13,5 @@ repos:
               'flake8-docstrings',
           ]
           args: ['--max-line-length=88']
+          exclude: ^presidio-analyzer/
+
