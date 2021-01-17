@@ -30,9 +30,9 @@ def update_iban_checksum(iban):
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "iban, expected_len, expected_res",
     [
+        # fmt: off
         ("AL47212110090000000235698741", 1, ((0, 28),),),
         ("AL47 2121 1009 0000 0002 3569 8741", 1, ((0, 34),),),
         ("AL47 212A 1009 0000 0002 3569 8741", 0, ()),
@@ -357,6 +357,7 @@ def update_iban_checksum(iban):
         ),
         ("Slash as iban separator: AL47/2121/1009/0000/0002/3569/8741", 0, (),),
         ("Dalla's Pizza | 3843 Peartree Road, Bamblee, SD 20241 440-600-5124", 0, ())
+        # fmt: on
     ],
 )
 def test_all_ibans(iban, expected_len, expected_res, recognizer, entities, max_score):

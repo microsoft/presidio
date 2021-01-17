@@ -15,9 +15,12 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "text, expected_len, expected_position, expected_score",
-    [("G1122144L", 1, (0, 9), 0.5), ("PA12348L", 0, (), (),)],
+    [
+        # fmt: off
+        ("G1122144L", 1, (0, 9), 0.5), ("PA12348L", 0, (), (),)
+        # fmt: on
+    ],
 )
 def test_all_sg_fins(
     text,

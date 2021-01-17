@@ -18,14 +18,12 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "text, expected_len, expected_scores, expected_res",
     [
+        # fmt: off
         (
             "4012888888881881 4012-8888-8888-1881 4012 8888 8888 1881",
-            3,
-            (),
-            ((0, 16), (17, 36), (37, 56),),
+            3, (), ((0, 16), (17, 36), (37, 56),),
         ),
         ("122000000000003", 1, (), ((0, 15),),),
         ("my credit card: 122000000000003", 1, (), ((16, 31),),),
@@ -44,6 +42,7 @@ def entities():
         ("my credit card number is 4012-8888-8888-1882", 0, (), (),),
         ("36168002586008", 0, (), (),),
         ("my credit card number is 36168002586008", 0, (), (),),
+        # fmt: on
     ],
 )
 def test_all_credit_cards(

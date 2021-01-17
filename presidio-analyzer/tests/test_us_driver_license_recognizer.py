@@ -15,9 +15,9 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "text, expected_len, expected_positions, expected_score_ranges",
     [
+        # fmt: off
         # WA license tests
         (
             "AA1B2**9ABA7 A*1234AB*CD9",
@@ -42,6 +42,7 @@ def entities():
         ("ABCD ABCDEFGHIJ", 0, (), (),),
         # The following fails due to keyphrases not yet supported
         # ("my driver license: ABCDEFG", 1, ((19, 25),), ((0.5, 0.91),),),
+        # fmt: on
     ],
 )
 def test_all_us_driver_licenses(

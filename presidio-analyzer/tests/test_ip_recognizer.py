@@ -15,9 +15,9 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "text, expected_len, expected_positions, expected_score_ranges",
     [
+        # fmt: off
         # IPv4 tests
         ("microsoft.com 192.168.0.1", 1, ((14, 25),), ((0.6, 0.81),),),
         ("my ip: 192.168.0", 0, (), (),),
@@ -25,6 +25,7 @@ def entities():
         # ("microsoft.com 684D:1111:222:3333:4444:5555:6:77", 1, ((14, 46),), ((0.59, 0.81),),),  # noqa: E501
         # ("my ip: 684D:1111:222:3333:4444:5555:6:77", 1, ((7, 39),), ((0.79, "max"),),),  # noqa: E501
         ("684D:1111:222:3333:4444:5555:77", 0, (), (),),
+        # fmt: on
     ],
 )
 def test_all_ips(

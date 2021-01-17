@@ -16,13 +16,14 @@ def entities():
 
 # Generate random address https://www.bitaddress.org/
 @pytest.mark.parametrize(
-    # fmt: off
     "text, expected_len, expected_positions",
     [
+        # fmt: off
         ("16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ", 1, ((0, 34),),),
         ("my wallet address is: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ", 1, ((22, 56),),),
         ("16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ2", 0, ()),
         ("my wallet address is: 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ2", 0, ()),
+        # fmt: on
     ],
 )
 def test_all_cryptos(

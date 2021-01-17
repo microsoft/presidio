@@ -15,13 +15,14 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "text, expected_len, expected_positions, expected_score",
     [
+        # fmt: off
         # valid bank accounts
         ("945456787654", 1, ((0, 12),), 0.05),
         # invalid bank accounts
         ("1234567", 0, (), -1.0),
+        # fmt: on
     ],
 )
 def test_all_us_banks(

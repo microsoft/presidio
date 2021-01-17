@@ -15,12 +15,13 @@ def entities():
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "text, expected_len, expected_positions, expected_score_ranges",
     [
+        # fmt: off
         ("912803456", 1, ((0, 9),), ((0.0, 0.1),),),
         # requires multiword context
         # ("my travel document is 912803456", 1, ((22, 31),), ((.5, 0.6),),),
+        # fmt: on
     ],
 )
 def test_all_us_passports(
