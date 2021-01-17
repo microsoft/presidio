@@ -1,4 +1,4 @@
-class Engine:
+class AnonymizerEngine:
     # Task: 2672
     # TODO this needs to be implemented currently a stab.
     # TODO replace analyze_results with domain results
@@ -16,7 +16,7 @@ class Engine:
         self.text = text
         self._end_point = len(text)
 
-    def run(self):
+    def anonymize(self):
         # TODO a loop that goes through the analyzer results from END to START! reverse.
         # TODO for each result, replace the old value with the new value
         # Make sure we handle partial intersections using the endpoint param
