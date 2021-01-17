@@ -6,7 +6,7 @@ jobs:
         echo '##vso[task.setvariable variable=version]$version'
 
     - task: GitHubRelease@0
-        inputs:
-            gitHubConnection: $(GITHUB_CONNECTION)
-            tagSource: manual
-            tag: $(version)
+      inputs:
+        gitHubConnection: $(GITHUB_CONNECTION)
+        tagSource: manual
+        tag: $(version)
