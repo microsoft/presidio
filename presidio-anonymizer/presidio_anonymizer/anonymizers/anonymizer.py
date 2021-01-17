@@ -1,6 +1,7 @@
-import abc
+from abc import abstractmethod, ABC
 
 
-class Anonymizer(metaclass=abc.ABCMeta):
+class Anonymizer(ABC):
+    @abstractmethod
     def anonymize(self):
-        pass
+         pass
