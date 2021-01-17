@@ -1,0 +1,21 @@
+parameters:
+  - UPSTREAM_BRANCH: remotes/origin/master
+steps:
+- task: Bash@3
+  displayName: 'verify version is changed'
+  name: verify-version
+  inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+    
+        GIT_DIFF_UPSTREAMBRANCH=${{ parameters.UPSTREAM_BRANCH }}
+        GIT_DIFF_SOURCEBRANCH="HEAD"
+
+        VERSION_FILECHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only | grep -w LICENSE)
+        # check if file was changeds
+        if [ -z "$VERSION_FILECHANGE_SET" ]; then
+            echo "version file not changed"
+            >&2 echo "VERSION file should be changed in PR to master branch"
+        fi
+        echo "version file changed"
