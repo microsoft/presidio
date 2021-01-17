@@ -1,5 +1,6 @@
 jobs:
-- job: 'GitHub Release'
+- job: 'GitHubRelease'
+  displayName: 'GitHub Release'
   steps:
     - bash: |
         version=$(cat VERSION)
