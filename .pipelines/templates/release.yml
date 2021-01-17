@@ -5,7 +5,8 @@ jobs:
     - bash: |
         ver=$(cat VERSION)
         echo $ver
-        echo '##vso[task.setvariable variable=version;]$ver'
+        echo "##vso[task.setvariable variable=version;]$ver"
+      displayName: Set Version
 
     - task: GitHubRelease@0
       inputs:
