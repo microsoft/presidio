@@ -12,5 +12,4 @@ class Hash(object):
         self.old_text = old_text
 
     def anonymize(self):
-        encoded_text = self.old_text.encode()
-        return hashlib.sha256(encoded_text).hexdigest()
+        pass
