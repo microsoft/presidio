@@ -1,13 +1,19 @@
 jobs:
-- job: 'GitHubRelease'
-  displayName: 'GitHub Release'
+- job: 'Version'
+  displayName: 'get version'
   steps:
     - bash: |
         ver=$(cat VERSION)
         echo $ver
         echo "##vso[task.setvariable variable=version;]$ver"
       displayName: Set Version
-
+      name: setVer
+- job: GitHubRelease
+  displayName: GitHub Release
+  dependsOn: Version
+  variables:
+    version: $[ dependencies.Version.outputs['setVer.version'] ]
+  steps:
     - task: GitHubRelease@0
       inputs:
         gitHubConnection: $(GITHUB_CONNECTION)
