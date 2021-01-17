@@ -3,11 +3,12 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route('/anonymize', methods=['POST'])
+# TODO add method for get supported anonymizers. 2629
+@app.route("/anonymize", methods=["POST"])
 def anonymize():
     content = request.json
     return content
 
 
-if __name__ == 'main':
+if __name__ == "main":
     app.run()

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-from presidio_anonymizer.presidio_anonymizer import app
+import api
 
 
 def test_anonymize():
-    tester = app.test_client()
-    resp = tester.post('/anonymize', json={'hello': 1, 'world': 'what?'})
-    assert resp.json == {'hello': 1, 'world': 'what?'}
+    tester = api.app.test_client()
+    resp = tester.post("/anonymize", json={"hello": 1, "world": "what?"})
+    assert resp.json == {"hello": 1, "world": "what?"}
