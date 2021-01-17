@@ -1,6 +1,6 @@
 jobs:
 - job: 'GitHub Release'
-    steps:
+  steps:
     - bash: |
         version=$(cat VERSION)
         echo '##vso[task.setvariable variable=version]$version'
