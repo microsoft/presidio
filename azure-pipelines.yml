@@ -11,7 +11,7 @@ jobs:
       steps:
         - template: .pipelines/validate-version.yml
           parameters:
-            UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
+            UPSTREAM_BRANCH: remotes/origin/$(System.PullRequest.TargetBranch)
     - job: 'Test'
       dependsOn: 'Validate'
       pool:
