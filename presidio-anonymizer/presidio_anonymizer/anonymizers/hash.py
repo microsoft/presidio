@@ -1,6 +1,3 @@
-import hashlib
-
-
 # TODO implement + test
 class Hash(object):
     """
