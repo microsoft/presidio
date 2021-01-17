@@ -1,3 +1,5 @@
+trigger: none
+pr: none
 jobs:
 - job: version
   displayName: 'Get the version number'
