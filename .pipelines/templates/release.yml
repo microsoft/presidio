@@ -10,4 +10,4 @@ jobs:
       inputs:
         gitHubConnection: $(GITHUB_CONNECTION)
         tagSource: manual
-        tag: $(version)
+        tag: ${version}
