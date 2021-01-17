@@ -9,7 +9,7 @@ steps:
   inputs:
       targetType: 'inline'
       script: |
-        set -ex  # fail on error
+        set -x  # log everything
     
         GIT_DIFF_UPSTREAMBRANCH=${{ parameters.UPSTREAM_BRANCH }}
         GIT_DIFF_SOURCEBRANCH="HEAD"
