@@ -25,6 +25,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
 
 
 @pytest.mark.parametrize(
+    # fmt: off
     "text, expected_len, expected_positions, entity_num",
     [
         # Test PERSON entity

@@ -15,6 +15,7 @@ def entities():
 
 
 @pytest.mark.parametrize(
+    # fmt: off
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         ("912803456", 1, ((0, 9),), ((0.0, 0.1),),),

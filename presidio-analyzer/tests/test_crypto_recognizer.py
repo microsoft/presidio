@@ -16,6 +16,7 @@ def entities():
 
 # Generate random address https://www.bitaddress.org/
 @pytest.mark.parametrize(
+    # fmt: off
     "text, expected_len, expected_positions",
     [
         ("16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ", 1, ((0, 34),),),

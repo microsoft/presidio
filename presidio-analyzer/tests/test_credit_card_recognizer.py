@@ -18,6 +18,7 @@ def entities():
 
 
 @pytest.mark.parametrize(
+    # fmt: off
     "text, expected_len, expected_scores, expected_res",
     [
         (

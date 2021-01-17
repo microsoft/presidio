@@ -15,6 +15,7 @@ def entities():
 
 
 @pytest.mark.parametrize(
+    # fmt: off
     "text, expected_len, expected_positions",
     [
         # valid domain names
