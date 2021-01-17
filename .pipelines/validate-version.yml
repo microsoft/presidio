@@ -5,7 +5,7 @@ parameters:
 steps:
 - task: Bash@3
   displayName: 'verify version is changed'
-  name: verify-version
+  name: verify
   inputs:
       targetType: 'inline'
       script: |
