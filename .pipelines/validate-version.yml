@@ -18,6 +18,6 @@ steps:
         # check if file was changeds
         if [ -z "$VERSION_FILECHANGE_SET" ]; then
             echo "version file not changed"
-            >&2 echo "VERSION file should be changed in PR to master branch"
+            ##vso[task.complete result=Failed;]DONE
         fi
         echo "version file changed"
