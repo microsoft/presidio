@@ -19,7 +19,7 @@ steps:
 
         GIT_DIFF_SOURCEBRANCH="HEAD"
 
-        VERSION_FILECHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only | grep -w LICENSE)
+        VERSION_FILECHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only | grep -w VERSION)
         # check if file was changeds
         if [ -z "$VERSION_FILECHANGE_SET" ]; then
             echo "version file not changed"
