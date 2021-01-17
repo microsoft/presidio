@@ -1,3 +1,6 @@
+from typing import List
+
+
 class AnonymizerEngine:
     # Task: 2672
     # TODO this needs to be implemented currently a stab.
@@ -7,9 +10,9 @@ class AnonymizerEngine:
             self,
             text: str,
             # TODO change to domain object
-            transformations: list[str],
+            transformations: List[str],
             # TODO change to domain object
-            analyze_results: list[str],
+            analyze_results: List[str],
     ):
         self.transformations = transformations
         self.analyze_results = analyze_results
