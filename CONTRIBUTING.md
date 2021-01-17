@@ -27,7 +27,7 @@ To get started, refer to the documentation for [setting up a development environ
 - All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.
 - In order for a pull request to be accepted, the CI (containing unit tests, functional tests and linting) needs to succeed, in addition to approvals from two maintainers.
 - PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
-
+- Every PR must bump the presidio version by changing the VERSION file to the appropriate [semver](https://semver.org/).
 
 ### How can I contribute?
 

@@ -7,7 +7,13 @@ pr:
       - V2
 
 jobs:
+    - job: 'Validate'
+      steps:
+        - template: .pipelines/templates/validate-version.yml
+          parameters:
+            UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
     - job: 'Test'
+      dependsOn: 'Validate'
       pool:
         vmImage: 'ubuntu-16.04'
       strategy:

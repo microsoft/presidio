@@ -1,0 +1,27 @@
+parameters:
+- name: UPSTREAM_BRANCH
+  type: string
+  default: remotes/origin/master
+steps:
+- task: Bash@3
+  displayName: 'verify version is changed'
+  name: verify
+  inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # exit on error
+    
+        GIT_DIFF_UPSTREAMBRANCH=${{ parameters.UPSTREAM_BRANCH }}
+        if [[ ! $GIT_DIFF_UPSTREAMBRANCH == *"/"* ]]; then
+          echo "missing full path, adding remotes/origin/"
+          GIT_DIFF_UPSTREAMBRANCH=remotes/origin/$GIT_DIFF_UPSTREAMBRANCH
+        fi
+
+        GIT_DIFF_SOURCEBRANCH="HEAD"
+
+        VERSION_FILECHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only | grep -w VERSION)
+        # check if file was changeds
+        if [ -z "$VERSION_FILECHANGE_SET" ]; then
+            echo "version file not changed"
+        fi
+        echo "version file changed"
