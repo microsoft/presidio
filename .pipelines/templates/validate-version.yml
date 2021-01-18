@@ -4,7 +4,7 @@ parameters:
   default: remotes/origin/master
 steps:
 - task: Bash@3
-  displayName: 'verify version is changed'
+  displayName: 'verify version change'
   name: verify
   inputs:
       targetType: 'inline'
