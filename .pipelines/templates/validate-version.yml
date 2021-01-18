@@ -30,3 +30,19 @@ steps:
             echo "version file not changed"
         fi
         echo "version file changed"
+
+        # get the actual change in version file
+        DIFF=$(git diff --word-diff "$GIT_DIFF_UPSTREAMBRANCH" "$GIT_DIFF_SOURCEBRANCH" VERSION | tail -1)
+        
+        OLD_VERSION=$(echo $DIFF | awk -v FS="([-|-])" '{print $2}')
+        OLD_SEMVER=(${OLD_VERSION//./})   
+        NEW_VERSION=$(echo $DIFF | awk -v FS='+' '{print $2}' )
+        NEW_SEMVER=(${NEW_VERSION//./})   
+        echo "new version is" $NEW_VERSION "old semver is" $OLD_SEMVER
+        echo "old version if" $OLD_VERSION
+
+        # compare to see if version was bumped up
+        if [ "$OLD_SEMVER" -gt "$NEW_SEMVER" ]; then
+            >&2 echo "Version not greater than previous"
+        fi
+        echo "version bumped up"
