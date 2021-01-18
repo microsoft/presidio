@@ -1,0 +1,13 @@
+version: '3'
+services:
+  presidio-anonymizer:
+    build:
+      context: ""
+      args:
+        - NAME=presidio-anonymizer
+    environment:
+      - FLASK_RUN_PORT=5001
+    container_name: presidio-anonymizer
+    image: presidio-anonymizer
+    ports:
+      - "5001:5001"
