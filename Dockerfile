@@ -11,4 +11,5 @@ COPY ./${NAME} /usr/bin/${NAME}
 RUN pipenv lock --requirements > requirements.txt
 RUN pip install -r requirements.txt
 
+EXPOSE ${PORT}
 CMD flask run
