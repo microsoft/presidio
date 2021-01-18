@@ -10,8 +10,11 @@ steps:
       targetType: 'inline'
       script: |
         set -eux  # exit on error
-    
+        
         GIT_DIFF_UPSTREAMBRANCH=${{ parameters.UPSTREAM_BRANCH }}
+
+        # git diff will throw an error if the upstream branch name is not the full path.
+        # we add the "remotes/origin/" prefix if the branch name does not contain "/".
         if [[ ! $GIT_DIFF_UPSTREAMBRANCH == *"/"* ]]; then
           echo "missing full path, adding remotes/origin/"
           GIT_DIFF_UPSTREAMBRANCH=remotes/origin/$GIT_DIFF_UPSTREAMBRANCH
@@ -19,8 +22,10 @@ steps:
 
         GIT_DIFF_SOURCEBRANCH="HEAD"
 
+        # get the change for version file
         VERSION_FILECHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only | grep -w VERSION)
-        # check if file was changeds
+
+        # check if file has changed
         if [ -z "$VERSION_FILECHANGE_SET" ]; then
             echo "version file not changed"
         fi
