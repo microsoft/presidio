@@ -8,6 +8,7 @@ spacy = "==2.3"
 regex = "*"
 tldextract = "*"
 numpy = "==1.19.3"
+flask = "==1.1.2"
 
 [dev-packages]
 pytest = "*"
