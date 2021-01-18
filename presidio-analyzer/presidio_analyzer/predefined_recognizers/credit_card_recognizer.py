@@ -6,7 +6,6 @@ class CreditCardRecognizer(PatternRecognizer):
     Recognizes common credit card numbers using regex + checksum
     """
 
-    # pylint: disable=line-too-long
     PATTERNS = [
         Pattern(
             "All Credit Cards (weak)",

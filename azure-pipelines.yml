@@ -55,7 +55,6 @@ jobs:
             targetType: 'inline'
             workingDirectory: 'presidio-analyzer'
             script: |
-              pipenv run pylint presidio_analyzer
               pipenv run flake8 presidio_analyzer
 
         - task: Bash@3

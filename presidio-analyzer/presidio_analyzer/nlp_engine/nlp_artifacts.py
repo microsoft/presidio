@@ -4,7 +4,6 @@ class NlpArtifacts:
     tokens and lemmas which can be used by any recognizer
     """
 
-    # pylint: disable=abstract-method, unused-argument
     def __init__(self, entities, tokens, tokens_indices, lemmas, nlp_engine, language):
         self.entities = entities
         self.tokens = tokens

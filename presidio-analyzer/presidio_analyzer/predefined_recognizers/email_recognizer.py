@@ -3,7 +3,6 @@ import tldextract
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
-# pylint: disable=line-too-long
 class EmailRecognizer(PatternRecognizer):
     """
     Recognizes email addresses using regex
