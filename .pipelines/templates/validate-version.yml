@@ -27,7 +27,9 @@ steps:
 
         # check if file has changed
         if [ -z "$VERSION_FILECHANGE_SET" ]; then
+            # file not changed, error
             echo "version file not changed"
+            exit 1
         fi
         echo "version file changed"
 
@@ -43,6 +45,7 @@ steps:
 
         # compare to see if version was bumped up
         if [ "$OLD_SEMVER" -gt "$NEW_SEMVER" ]; then
+            # version not bumped up, error
             echo "Version not greater than previous" >&2 
             exit 1
         fi
