@@ -1,6 +1,3 @@
-from typing import List
-
-
 class AnonymizerEngine:
     # Task: 2672
     # TODO this needs to be implemented currently a stab.
@@ -8,16 +5,12 @@ class AnonymizerEngine:
     # Notice the document Omri created, it impacts the implementation
     def __init__(
             self,
-            text: str,
-            # TODO change to domain object
-            transformations: List[str],
-            # TODO change to domain object
-            analyze_results: List[str],
+            data: dict,
     ):
-        self.transformations = transformations
-        self.analyze_results = analyze_results
-        self.text = text
-        self._end_point = len(text)
+        self._transformations = data.get("transformations")
+        self._analyze_results = data.get("analyzer_results")
+        self._text = data.get("text")
+        self._end_point = len(self._text)
 
     def anonymize(self):
         # TODO a loop that goes through the analyzer results from END to START! reverse.
@@ -25,4 +18,4 @@ class AnonymizerEngine:
         # Make sure we handle partial intersections using the endpoint param
         # TODO dictionary with the transformations and fields
         # To map field to its transformation
-        pass
+        return ""
