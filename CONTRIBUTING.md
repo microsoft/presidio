@@ -29,6 +29,12 @@ To get started, refer to the documentation for [setting up a development environ
 - PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
 - Every PR must bump the presidio version by changing the VERSION file to the appropriate [semver](https://semver.org/).
 
+#### Versioning guidelines
+
+- A typical pull request with a new feature bumps the minor version.
+- Bug fix, documentation change and operational code (i.e. devops) change bump the patch version.
+- A breaking change bumps the major version. Please consult with the Presidio team prior to opening such PRs.
+
 ### How can I contribute?
 
 - [Testing](#how-to-test)
