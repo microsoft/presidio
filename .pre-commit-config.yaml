@@ -12,6 +12,6 @@ repos:
               'pep8-naming',
               'flake8-docstrings',
           ]
-          args: ['--max-line-length=88', '--docstring-convention=numpy']
+          args: ['--max-line-length=88', '--docstring-convention=numpy', '--per-file-ignores=**/tests/**.py:D']
           exclude: ^presidio-analyzer/ #TODO: Remove once analyzer will be aligned with flake8 (mainly docstrings)
 
