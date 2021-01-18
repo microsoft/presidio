@@ -1,8 +1,5 @@
+"""Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 from typing import List
-
-"""
-Handles the entire logic of the Presidio-anonymizer.
-"""
 
 
 class AnonymizerEngine:

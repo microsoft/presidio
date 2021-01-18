@@ -1,8 +1,5 @@
+"""Anonymizers abstraction - each anonymizer should implement this class."""
 from abc import abstractmethod, ABC
-
-"""
-Anonymizers abstraction
-"""
 
 
 class Anonymizer(ABC):

@@ -1,7 +1,12 @@
-# TODO implement + test
+"""
+Format Preserving encryption for PII text entities.
+
+Uses FF1 algorithm for the encryption.
+"""
 from anonymizers.anonymizer import Anonymizer
 
 
+# TODO implement + test
 class FPE(Anonymizer):
     """
     FPE - Format Preserving Encryption.

@@ -1,5 +1,8 @@
-# TODO implement + test
+"""Hashes the PII text entity."""
+
+
 class Hash(object):
+    # TODO implement + test
     """Hash given text with sha256 algorithm."""
 
     def __init__(self,

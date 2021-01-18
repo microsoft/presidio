@@ -1,7 +1,8 @@
-# TODO implement + test
+"""Replaces the PII text entity with empty string."""
 from anonymizers.anonymizer import Anonymizer
 
 
+# TODO implement + test
 class Redact(Anonymizer):
     """Redact the string - empty value."""
 

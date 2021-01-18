@@ -1,3 +1,4 @@
+"""Replaces the PII text entity with new string."""
 from anonymizers.anonymizer import Anonymizer
 
 

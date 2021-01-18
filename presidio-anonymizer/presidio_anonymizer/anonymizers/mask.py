@@ -1,7 +1,8 @@
-# TODO implement + test
+"""Mask some or all given text entity PII with given character."""
 from anonymizers.anonymizer import Anonymizer
 
 
+# TODO implement + test
 class Mask(Anonymizer):
     """Mask the given text with given value."""
 
