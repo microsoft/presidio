@@ -1,0 +1,52 @@
+parameters:
+- name: UPSTREAM_BRANCH
+  type: string
+  default: remotes/origin/master
+steps:
+- task: Bash@3
+  displayName: 'Verify version change'
+  name: verify
+  inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # exit on error
+        
+        GIT_DIFF_UPSTREAMBRANCH=${{ parameters.UPSTREAM_BRANCH }}
+
+        # git diff will throw an error if the upstream branch name is not the full path.
+        # we add the "remotes/origin/" prefix if the branch name does not contain "/".
+        if [[ ! $GIT_DIFF_UPSTREAMBRANCH == *"/"* ]]; then
+          echo "missing full path, adding remotes/origin/"
+          GIT_DIFF_UPSTREAMBRANCH=remotes/origin/$GIT_DIFF_UPSTREAMBRANCH
+        fi
+
+        GIT_DIFF_SOURCEBRANCH="HEAD"
+
+        # get the change for version file
+        VERSION_FILECHANGE_SET=$(git diff "$GIT_DIFF_SOURCEBRANCH" "$GIT_DIFF_UPSTREAMBRANCH" --name-only | grep -w VERSION)
+
+        # check if file has changed
+        if [ -z "$VERSION_FILECHANGE_SET" ]; then
+            # file not changed, error
+            echo "version file not changed"
+            exit 1
+        fi
+        echo "version file changed"
+
+        # get the actual change in version file
+        DIFF=$(git diff --word-diff "$GIT_DIFF_UPSTREAMBRANCH" "$GIT_DIFF_SOURCEBRANCH" VERSION | tail -1)
+        
+        OLD_VERSION=$(echo $DIFF | awk -v FS="([-|-])" '{print $2}')
+        OLD_SEMVER=(${OLD_VERSION//./})   
+        NEW_VERSION=$(echo $DIFF | awk -v FS='+' '{print $2}' )
+        NEW_SEMVER=(${NEW_VERSION//./})   
+        echo "new version is" $NEW_VERSION "old semver is" $OLD_SEMVER
+        echo "old version if" $OLD_VERSION
+
+        # compare to see if version was bumped up
+        if [ "$OLD_SEMVER" -gt "$NEW_SEMVER" ]; then
+            # version not bumped up, error
+            echo "Version not greater than previous" >&2 
+            exit 1
+        fi
+        echo "version bumped up"
