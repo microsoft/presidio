@@ -1,14 +1,14 @@
-FROM python:3.7
+FROM python:3.8-slim
 
 ARG NAME
+ARG SPACY_MODEL
 WORKDIR /usr/bin/${NAME}
-
-RUN pip install pipenv
 
 COPY ./${NAME} /usr/bin/${NAME}
 
-RUN pipenv lock --requirements > requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install pipenv
+RUN pipenv sync
+RUN if [ "$SPACY_MODEL" != "" ] ; then pipenv run python -m spacy download "$SPACY_MODEL" ; fi
 
 EXPOSE ${FLASK_RUN_PORT}
-CMD flask run
+CMD pipenv run flask run --host 0.0.0.0
