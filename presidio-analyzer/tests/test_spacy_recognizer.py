@@ -27,6 +27,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
     [
+        # fmt: off
         # Test PERSON entity
         ("my name is Dan", 1, ((11, 14),), 0),
         ("Dan Tailor", 1, ((0, 10),), 0),
@@ -43,6 +44,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("May 1st", 1, ((0, 7),), 1),
         ("May 1st, 1977", 1, ((0, 13),), 1),
         ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
+        # fmt: on
     ],
 )
 def test_all_spacy(

@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import List
 
@@ -56,7 +55,10 @@ def test_analyze_with_predefined_recognizers_return_results(
     language = "en"
     entities = ["CREDIT_CARD"]
     results = loaded_analyzer_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language=language,
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language=language,
     )
 
     assert len(results) == 1
@@ -74,7 +76,10 @@ def test_analyze_with_multiple_predefined_recognizers(
         registry=loaded_registry, nlp_engine=nlp_engine
     )
     results = analyzer_engine_with_spacy.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language=language,
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language=language,
     )
 
     assert len(results) == 2
@@ -90,7 +95,10 @@ def test_analyze_with_empty_text(loaded_analyzer_engine, unit_test_guid):
     text = ""
     entities = ["CREDIT_CARD", "PHONE_NUMBER"]
     results = loaded_analyzer_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language=language,
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language=language,
     )
 
     assert len(results) == 0
@@ -130,13 +138,17 @@ def test_analyze_added_pattern_recognizer_works(unit_test_guid):
 
     # Make sure the analyzer doesn't get this entity
     analyze_engine = AnalyzerEngine(
-        registry=mock_recognizer_registry, nlp_engine=NlpEngineMock(),
+        registry=mock_recognizer_registry,
+        nlp_engine=NlpEngineMock(),
     )
     text = "rocket is my favorite transportation"
     entities = ["CREDIT_CARD", "ROCKET"]
 
     results = analyze_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language="en",
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language="en",
     )
 
     assert len(results) == 0
@@ -146,7 +158,10 @@ def test_analyze_added_pattern_recognizer_works(unit_test_guid):
 
     # Check that the entity is recognized:
     results = analyze_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language="en",
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language="en",
     )
 
     assert len(results) == 1
@@ -163,13 +178,17 @@ def test_removed_pattern_recognizer_doesnt_work(unit_test_guid):
 
     # Make sure the analyzer doesn't get this entity
     analyze_engine = AnalyzerEngine(
-        registry=mock_recognizer_registry, nlp_engine=NlpEngineMock(),
+        registry=mock_recognizer_registry,
+        nlp_engine=NlpEngineMock(),
     )
     text = "spaceship is my favorite transportation"
     entities = ["CREDIT_CARD", "SPACESHIP"]
 
     results = analyze_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language="en",
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language="en",
     )
 
     assert len(results) == 0
@@ -178,7 +197,10 @@ def test_removed_pattern_recognizer_doesnt_work(unit_test_guid):
     mock_recognizer_registry.add_recognizer(pattern_recognizer)
     # Check that the entity is recognized:
     results = analyze_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language="en",
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language="en",
     )
     assert len(results) == 1
     assert_result(results[0], "SPACESHIP", 0, 10, 0.8)
@@ -187,7 +209,10 @@ def test_removed_pattern_recognizer_doesnt_work(unit_test_guid):
     mock_recognizer_registry.remove_recognizer("Spaceship recognizer")
     # Test again to see we didn't get any results
     results = analyze_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language="en",
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language="en",
     )
 
     assert len(results) == 0
@@ -199,7 +224,10 @@ def test_analyze_with_language_returns_correct_response(loaded_analyzer_engine):
     min_score = 0.5
     text = "My credit card number is 4916994465041084"
     response = loaded_analyzer_engine.analyze(
-        text=text, language=language, entities=entities, score_threshold=min_score,
+        text=text,
+        language=language,
+        entities=entities,
+        score_threshold=min_score,
     )
 
     assert response is not None
@@ -333,7 +361,10 @@ def test_when_default_threshold_is_more_than_half_only_one_passes(
         default_score_threshold=0.7,
     )
     results = analyzer_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language=language,
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language=language,
     )
 
     assert len(results) == 1
@@ -353,7 +384,10 @@ def test_when_default_threshold_is_zero_all_results_pass(
         registry=loaded_registry, nlp_engine=NlpEngineMock()
     )
     results = analyzer_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=entities, language=language,
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language=language,
     )
 
     assert len(results) == 2
@@ -373,7 +407,10 @@ def test_demo_text(unit_test_guid, nlp_engine):
         default_score_threshold=0.35, nlp_engine=nlp_engine
     )
     results = analyzer_engine.analyze(
-        correlation_id=unit_test_guid, text=text, entities=None, language=language,
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=None,
+        language=language,
     )
 
     def replace_with_entity_name(original_text: str, responses: List[RecognizerResult]):
@@ -432,7 +469,9 @@ def test_get_supported_fields_all_languages(mock_registry, unit_test_guid, nlp_e
     assert "PHONE_NUMBER" in entities
 
 
-def test_get_supported_fields_specific_language(loaded_registry, unit_test_guid, nlp_engine):
+def test_get_supported_fields_specific_language(
+    loaded_registry, unit_test_guid, nlp_engine
+):
 
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
@@ -461,7 +500,8 @@ def test_get_recognizers_returns_supported_language():
     mock_recognizer_registry = RecognizerRegistryMock()
     mock_recognizer_registry.add_recognizer(pattern_recognizer)
     analyze_engine = AnalyzerEngine(
-        registry=mock_recognizer_registry, nlp_engine=NlpEngineMock(),
+        registry=mock_recognizer_registry,
+        nlp_engine=NlpEngineMock(),
     )
     response = analyze_engine.get_recognizers(language="ru")
     # there is only 1 mocked russian recognizer
@@ -471,7 +511,10 @@ def test_get_recognizers_returns_supported_language():
 def test_add_recognizer_also_outputs_others(nlp_engine):
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
-        "ROCKET", name="Rocket recognizer", patterns=[pattern], supported_language="en",
+        "ROCKET",
+        name="Rocket recognizer",
+        patterns=[pattern],
+        supported_language="en",
     )
     registry = RecognizerRegistry()
     registry.add_recognizer(pattern_recognizer)

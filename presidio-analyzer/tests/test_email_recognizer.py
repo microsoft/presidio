@@ -17,6 +17,7 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions",
     [
+        # fmt: off
         # valid email addresses
         ("info@presidio.site", 1, ((0, 18),),),
         ("my email address is info@presidio.site", 1, ((20, 38),),),
@@ -27,6 +28,7 @@ def entities():
         ),
         # invalid email address
         ("my email is info@presidio.", 0, ()),
+        # fmt: on
     ],
 )
 def test_all_email_addresses(

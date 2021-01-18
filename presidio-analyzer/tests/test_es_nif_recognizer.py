@@ -17,6 +17,7 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions",
     [
+        # fmt: off
         # valid NIF scores
         ("55555555K", 1, ((0, 9),),),
         ("55555555-K", 1, ((0, 10),),),
@@ -25,6 +26,7 @@ def entities():
         ("01111111G", 1, ((0, 9),),),
         # invalid NIF scores
         ("401-023-2138", 0, ()),
+        # fmt: on
     ],
 )
 def test_all_es_nifes(
