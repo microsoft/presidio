@@ -1,4 +1,5 @@
 import json
+import os
 from typing import List
 
 import pytest
@@ -96,7 +97,8 @@ def test_request_invalid_json_formats(request_json, result_text):
 
 
 def test_request_valid_json():
-    with open("resources/payload.json") as json_file:
+    json_path = os.path.dirname(__file__) + "/resources/payload.json"
+    with open(json_path) as json_file:
         content = json.load(json_file)
         data = AnonymizerRequest.validate_and_convert(content)
         assert data.get("text") == content.get("text")
@@ -112,7 +114,8 @@ def test_request_valid_json():
 
 
 def test_analyzer_results_sorted_set():
-    with open("resources/dup_payload.json") as json_file:
+    json_path = os.path.dirname(__file__) + "/resources/dup_payload.json"
+    with open(json_path) as json_file:
         content = json.load(json_file)
         data = AnonymizerRequest.validate_and_convert(content)
         analyze_results = data.get("analyzer_results")
