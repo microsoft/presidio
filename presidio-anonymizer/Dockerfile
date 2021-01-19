@@ -1,14 +1,14 @@
 FROM python:3.8-slim
 
 ARG NAME
-ARG SPACY_MODEL
+ENV PIPENV_VENV_IN_PROJECT=1
 WORKDIR /usr/bin/${NAME}
 
-COPY ./${NAME} /usr/bin/${NAME}
-
+COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv
 RUN pipenv sync
-RUN if [ "$SPACY_MODEL" != "" ] ; then pipenv run python -m spacy download "$SPACY_MODEL" ; fi
+
+COPY . /usr/bin/${NAME}/
 
 EXPOSE ${FLASK_RUN_PORT}
 CMD pipenv run flask run --host 0.0.0.0
