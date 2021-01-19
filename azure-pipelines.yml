@@ -24,6 +24,14 @@ jobs:
             script: |
               npm install inclusivelint
               npx inclusivelint -r -p .
+    
+    - job: SecurityAnalysis
+      displayName: Security Analysis
+      pool:
+          # CredScan only runs on Windows
+          vmImage: 'windows-latest'
+      steps:
+        - template: .pipelines/templates/security-analysis.yml
        
     - job: 'Test'
       dependsOn: 'validate'
