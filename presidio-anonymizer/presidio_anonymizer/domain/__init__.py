@@ -1,3 +1,4 @@
+"""Handles all the domain objects (structs) of the anonymizer."""
 from .anonymizerrequest import AnonymizerRequest
 from .analyzer_result import AnalyzerResult
 

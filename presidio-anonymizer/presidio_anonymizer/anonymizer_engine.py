@@ -1,4 +1,6 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
+
+
 class AnonymizerEngine:
     """
     AnonymizerEngine class.
@@ -15,14 +17,10 @@ class AnonymizerEngine:
             self,
             data: dict,
     ):
-        """
-               Handle text replacement for PIIs with requested transformations.
+        """Handle text replacement for PIIs with requested transformations.
 
-               :param text: The original text we want to replace PIIs in
-               :param transformations: The desired transformations - mapping between PII type
-               and transformation type with relevant params
-               :param analyze_results: The results of the analyzer of PIIs locations and scores
-               """
+        :param data: a map which contains the transformations, analyzer_results and text
+        """
         self._transformations = data.get("transformations")
         self._analyze_results = data.get("analyzer_results")
         self._text = data.get("text")

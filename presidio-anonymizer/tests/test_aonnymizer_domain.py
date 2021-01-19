@@ -37,7 +37,7 @@ from presidio_anonymizer.domain.anonymizerrequest import AnonymizerRequest
 )
 def test_analyzer_result_invalid_json_formats(request_json, result_text):
     try:
-        AnalyzerResult.validate_and_convert(request_json)
+        AnalyzerResult.validate_and_create(request_json)
     except InvalidJsonException as e:
         assert e.err == result_text
     except Exception as e:
@@ -51,7 +51,7 @@ def test_analyzer_result_valid_json():
         "score": 0.8,
         "entity_type": "NUMBER"
     }
-    data = AnalyzerResult.validate_and_convert(content)
+    data = AnalyzerResult.validate_and_create(content)
     assert data.start == content.get("start")
     assert data.end == content.get("end")
     assert data.score == content.get("score")
