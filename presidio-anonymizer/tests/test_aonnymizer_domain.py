@@ -6,8 +6,8 @@ import pytest
 
 from presidio_anonymizer.domain.analyzer_result import AnalyzerResult
 from presidio_anonymizer.domain.analyzer_results import AnalyzerResults
-from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
 from presidio_anonymizer.domain.anonymizer_request import AnonymizerRequest
+from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
 
 
 @pytest.mark.parametrize(
@@ -124,7 +124,19 @@ def test_analyzer_results_sorted_set():
         assert len(sorted_results) == 2
         assert list(sorted_results)[0].start < list(sorted_results)[1].start
         assert list(sorted_results)[0].end < list(sorted_results)[1].end
-        assert list(sorted_results)[0].score < list(sorted_results)[1].score
+
+
+def test_analyzer_results_reversed_sorted_set():
+    json_path = os.path.dirname(__file__) + "/resources/dup_payload.json"
+    with open(json_path) as json_file:
+        content = json.load(json_file)
+        data = AnonymizerRequest.validate_and_convert(content)
+        analyze_results = data.get("analyzer_results")
+        assert len(analyze_results) == len(content.get("analyzer_results"))
+        sorted_results = analyze_results.to_sorted_set(True)
+        assert len(sorted_results) == 2
+        assert list(sorted_results)[1].start < list(sorted_results)[0].start
+        assert list(sorted_results)[1].end < list(sorted_results)[0].end
 
 
 def test_analyzer_results_not_failing_on_empty_list():
