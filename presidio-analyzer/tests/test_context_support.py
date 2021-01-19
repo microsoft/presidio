@@ -89,6 +89,7 @@ def test_text_with_context_improves_score(dataset, nlp_engine, mock_nlp_artifact
 
 def test_context_custom_recognizer(nlp_engine, mock_nlp_artifacts):
     """This test checks that a custom recognizer is also enhanced by context.
+
     However this test also verifies a specific case in which the pattern also
     includes a preceeding space (' rocket'). This in turn cause for a misalignment
     between the tokens and the regex match (the token will be just 'rocket').
