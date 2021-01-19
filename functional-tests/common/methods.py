@@ -3,9 +3,9 @@ import json
 
 ANONYMIZER_BASE_URL = "http://localhost:5001"
 
-ANALYZER_BASE_URL = "http://localhost:5002"
+ANALYZER_BASE_URL = "http://localhost:3000"
 
-DEFAULT_HEADERS = {"Content-Type": "application/json", "Accept": "*/*"}
+DEFAULT_HEADERS = {"Content-Type": "application/json"}
 
 
 def anonymize(data):
