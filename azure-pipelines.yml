@@ -13,6 +13,18 @@ jobs:
         - template: .pipelines/templates/validate-version.yml
           parameters:
             UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
+
+    - job: inclusivelint
+      displayName: 'Inclusive linting validation'
+      steps:
+        - task: Bash@3
+          displayName: 'inclusive lint'
+          inputs:
+            targetType: 'inline'
+            script: |
+              npm install inclusivelint
+              inclusivelint -r -p .
+       
     - job: 'Test'
       dependsOn: 'validate'
       pool:
