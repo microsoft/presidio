@@ -1,5 +1,5 @@
 from flask import Flask, request
-from presidio_anonymizer.domain.anonymizerrequest import AnonymizerRequest
+from presidio_anonymizer.domain.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
 from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
 

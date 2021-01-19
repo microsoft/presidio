@@ -1,5 +1,5 @@
 """Handles all the domain objects (structs) of the anonymizer."""
-from .anonymizerrequest import AnonymizerRequest
+from .anonymizer_request import AnonymizerRequest
 from .analyzer_result import AnalyzerResult
 
 from .analyzer_results import AnalyzerResults

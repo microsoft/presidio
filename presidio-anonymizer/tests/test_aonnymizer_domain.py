@@ -7,7 +7,7 @@ import pytest
 from presidio_anonymizer.domain.analyzer_result import AnalyzerResult
 from presidio_anonymizer.domain.analyzer_results import AnalyzerResults
 from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
-from presidio_anonymizer.domain.anonymizerrequest import AnonymizerRequest
+from presidio_anonymizer.domain.anonymizer_request import AnonymizerRequest
 
 
 @pytest.mark.parametrize(
