@@ -1,0 +1,3 @@
+# these files are always checked out with lf only, required
+# for tests to pass on windows
+* text eol=lf
