@@ -17,6 +17,7 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
+        # fmt: off
         ("(425) 882 9090", 1, ((0, 14),), ((0.7, "max"),),),
         ("my phone number is: 110bcd25-a55d-453a-8046-1297901ea002", 0, (), (),),
         ("I am available at (425) 882-9090", 1, ((18, 32),), ((0.69, "max"),),),
@@ -24,6 +25,7 @@ def entities():
         ("425 8829090", 1, ((0, 11),), ((0.45, 0.6),),),
         ("This is just a sentence 425 8829090", 1, ((24, 35),), ((0.29, 0.51),),),
         ("4258829090", 1, ((0, 10),), ((0.0, 0.3),),),
+        # fmt: on
     ],
 )
 def test_all_phone_numbers(

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# noqa: D100
 import os.path
 from os import path
 
@@ -24,7 +25,8 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
     ],
-    description="Persidio Anonymizer package - replaces analyzed text with desired values.",
+    description="Persidio Anonymizer package - replaces analyzed text with desired "
+                "values.",
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,

@@ -17,6 +17,7 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
+        # fmt: off
         # very weak match
         ("078-051121 07805-1121", 2, ((0, 10), (11, 21),), ((0.0, 0.3), (0.0, 0.3),),),
         # weak match
@@ -34,6 +35,7 @@ def entities():
         ("078-05-0000", 0, (), (),),
         ("078 00 1123", 0, (), (),),
         ("693-09.4444", 0, (), (),),
+        # fmt: on
     ],
 )
 def test_all_us_ssns(
@@ -46,7 +48,7 @@ def test_all_us_ssns(
     max_score,
 ):
     results = recognizer.analyze(text, entities)
-    results = sorted(results, key = lambda x: x.start)
+    results = sorted(results, key=lambda x: x.start)
     assert len(results) == expected_len
     for res, (st_pos, fn_pos), (st_score, fn_score) in zip(
         results, expected_positions, expected_score_ranges
