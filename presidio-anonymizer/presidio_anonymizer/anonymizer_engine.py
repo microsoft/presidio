@@ -1,5 +1,12 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 
+from presidio_anonymizer.domain.transformations import Transformations
+from presidio_anonymizer.anonymizers.fpe import FPE
+from presidio_anonymizer.anonymizers.mask import Mask
+from presidio_anonymizer.anonymizers.replace import Replace
+
+anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace}
+
 
 class AnonymizerEngine:
     """
@@ -9,10 +16,6 @@ class AnonymizerEngine:
     and replaces the PII entities with the desired transformations.
     """
 
-    # Task: 2672
-    # TODO this needs to be implemented currently a stab.
-    # TODO replace analyze_results with domain results
-    # Notice the document Omri created, it impacts the implementation
     def __init__(
             self,
             data: dict,
@@ -21,7 +24,7 @@ class AnonymizerEngine:
 
         :param data: a map which contains the transformations, analyzer_results and text
         """
-        self._transformations = data.get("transformations")
+        self._transformations = Transformations(data.get("transformations"))
         self._analyze_results = data.get("analyzer_results")
         self._text = data.get("text")
         self._end_point = len(self._text)
@@ -31,9 +34,16 @@ class AnonymizerEngine:
 
         :return: the anonymized text
         """
-        # TODO a loop that goes through the analyzer results from END to START! reverse.
-        # TODO for each result, replace the old value with the new value
-        # Make sure we handle partial intersections using the endpoint param
-        # TODO dictionary with the transformations and fields
-        # To map field to its transformation
-        return ""
+        analyzer_results = self._analyze_results.to_sorted_set(True)
+        for result in analyzer_results:
+            transformation = self._transformations.get_transformation(result)
+            anonymizer_class = anonymizers.get(transformation.get("type").lower())
+
+            new_text = anonymizer_class().anonymize(transformation)
+            self.replace(result.start, result.end, new_text)
+        return self._text
+
+    def replace(self, start, end, new_text):
+        end_of_text = min(end, self._end_point)
+        self._text = self._text[:start] + new_text + self._text[end_of_text:]
+        self._end_point = start
