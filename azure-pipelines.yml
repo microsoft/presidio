@@ -19,10 +19,12 @@ jobs:
         vmImage: 'ubuntu-16.04'
       strategy:
         matrix:
+          Python36:
+            python.version: '3.6'
           Python37:
             python.version: '3.7'
-      #      Python38:
-      #        python.version: '3.8'
+          Python38:
+            python.version: '3.8'
 
       steps:
         - task: UsePythonVersion@0
