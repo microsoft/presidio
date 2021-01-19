@@ -69,7 +69,6 @@ class PatternRecognizer(LocalRecognizer):
     def load(self):  # noqa D102
         pass
 
-    # pylint: disable=unused-argument,arguments-differ
     def analyze(
         self,
         text: str,
@@ -116,7 +115,6 @@ class PatternRecognizer(LocalRecognizer):
         regex = r"(?:^|(?<= ))(" + "|".join(deny_list) + r")(?:(?= )|$)"
         return Pattern(name="deny_list", regex=regex, score=1.0)
 
-    # pylint: disable=unused-argument, no-self-use, assignment-from-none
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
         Validate the pattern logic e.g., by running checksum on a detected pattern.

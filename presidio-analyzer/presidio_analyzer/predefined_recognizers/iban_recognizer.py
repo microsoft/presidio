@@ -40,7 +40,6 @@ class IbanRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "IBAN Generic",
-            # pylint: disable=line-too-long
             r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?\b",  # noqa
             0.5,
         ),
@@ -95,7 +94,6 @@ class IbanRecognizer(PatternRecognizer):
             logger.error("Failed to validate text %s", pattern_text)
             return False
 
-    # pylint: disable=unused-argument
     def analyze(
         self,
         text: str,

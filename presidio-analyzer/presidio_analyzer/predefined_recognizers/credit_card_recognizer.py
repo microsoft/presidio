@@ -16,7 +16,6 @@ class CreditCardRecognizer(PatternRecognizer):
     This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
-    # pylint: disable=line-too-long
     PATTERNS = [
         Pattern(
             "All Credit Cards (weak)",
