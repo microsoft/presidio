@@ -30,6 +30,7 @@ class AnonymizerEngine:
         and transformation type with relevant params
         :param analyze_results: The results of the analyzer of PIIs locations and scores
         """
+        print("this is just a test")
         self.transformations = transformations
         self.analyze_results = analyze_results
         self.text = text
