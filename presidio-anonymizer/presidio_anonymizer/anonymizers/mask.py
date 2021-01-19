@@ -1,11 +1,10 @@
-# TODO implement + test
+"""Mask some or all given text entity PII with given character."""
 from anonymizers.anonymizer import Anonymizer
 
 
+# TODO implement + test
 class Mask(Anonymizer):
-    """
-    Mask the given text with given value
-    """
+    """Mask the given text with given value."""
 
     def __init__(self,
                  old_text: str,
@@ -18,4 +17,9 @@ class Mask(Anonymizer):
         self.old_text = old_text
 
     def anonymize(self):
+        """
+        Anonymize a given amount of text with a given character.
+
+        :return: The given text masked as requested
+        """
         pass

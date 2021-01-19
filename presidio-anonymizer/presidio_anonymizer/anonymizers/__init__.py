@@ -1,3 +1,4 @@
+"""Initializing all the existing anonymizers."""
 from .fpe import FPE
 from .anonymizer import Anonymizer
 from .hash import Hash

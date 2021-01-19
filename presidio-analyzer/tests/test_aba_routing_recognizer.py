@@ -17,6 +17,7 @@ def entities():
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score",
     [
+        # fmt: off
         # Bank of America
         ("121000358", 1, ((0, 9),), 1.0),
         # Chase
@@ -27,6 +28,7 @@ def entities():
         # invalid ABA numbers
         ("421042111", 0, (), -1.0),
         ("1234-0000-0", 0, (), -1.0),
+        # fmt: on
     ],
 )
 def test_aba_routing_numbers(
