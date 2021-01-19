@@ -16,6 +16,7 @@ class AnalyzerResults(List):
     - One PII is contained in another - anonymizer will use the PII with larger text.
     - Partial intersection - both will be returned concatenated.
     """
+
     def to_sorted_set(self, reverse=False):
         """
         Manipulate the list.
