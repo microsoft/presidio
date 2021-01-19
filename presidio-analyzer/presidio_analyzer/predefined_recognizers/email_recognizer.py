@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import tldextract
 
@@ -8,7 +8,12 @@ from presidio_analyzer import Pattern, PatternRecognizer
 # pylint: disable=line-too-long
 class EmailRecognizer(PatternRecognizer):
     """
-    Recognizes email addresses using regex
+    Recognize email addresses using regex.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
     """
 
     PATTERNS = [
@@ -23,8 +28,8 @@ class EmailRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns: List[str] = None,
-        context: List[str] = None,
+        patterns: Optional[List[Pattern]] = None,
+        context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "EMAIL_ADDRESS",
     ):
@@ -37,6 +42,6 @@ class EmailRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text:str):
+    def validate_result(self, pattern_text: str):  # noqa D102
         result = tldextract.extract(pattern_text)
         return result.fqdn != ""

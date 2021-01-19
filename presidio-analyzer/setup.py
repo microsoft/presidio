@@ -1,3 +1,4 @@
+"""Setup.py for Presidio Analyzer."""
 import os.path
 from os import path
 

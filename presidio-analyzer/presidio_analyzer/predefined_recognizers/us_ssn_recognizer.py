@@ -1,12 +1,17 @@
 from collections import defaultdict
+from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
 # pylint: disable=line-too-long,abstract-method
 class UsSsnRecognizer(PatternRecognizer):
-    """
-    Recognizes US Social Security Number (SSN) using regex
+    """Recognize US Social Security Number (SSN) using regex.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
     """
 
     PATTERNS = [
@@ -32,10 +37,10 @@ class UsSsnRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="US_SSN",
+        patterns: Optional[List[Pattern]] = None,
+        context: Optional[List[str]] = None,
+        supported_language: str = "en",
+        supported_entity: str = "US_SSN",
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -46,7 +51,13 @@ class UsSsnRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def invalidate_result(self, pattern_text):
+    def invalidate_result(self, pattern_text: str) -> bool:
+        """
+        Check if the pattern text cannot be validated as a US_SSN entity.
+
+        :param pattern_text: Text detected as pattern by regex
+        :return: True if invalidated
+        """
         # if there are delimiters, make sure both delimiters are the same
         delimiter_counts = defaultdict(int)
         for c in pattern_text:

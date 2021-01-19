@@ -1,5 +1,5 @@
 import string
-from typing import Tuple, List, Dict
+from typing import Tuple, List, Dict, Optional
 
 import regex as re
 
@@ -17,13 +17,24 @@ from presidio_analyzer import (
     PresidioLogger,
 )
 
-
-logger = PresidioLogger()
+logger = PresidioLogger("presidio-analyzer")
 
 
 class IbanRecognizer(PatternRecognizer):
     """
-    Recognizes IBAN code using regex and checksum
+    Recognize IBAN code using regex and checksum.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
+    :param exact_match: Whether patterns should be exactly matched or not
+    :param bos_eos: Tuple of strings for beginning of string (BOS)
+    and end of string (EOS)
+    :param regex_flags: Regex flags options
+    :param replacement_pairs: List of tuples with potential replacement values
+    for different strings to be used during pattern matching.
+    This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
     PATTERNS = [
@@ -48,13 +59,13 @@ class IbanRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "IBAN_CODE",
         exact_match: bool = False,
-        BOSEOS: Tuple[str, str] = (BOS, EOS),
+        bos_eos: Tuple[str, str] = (BOS, EOS),
         regex_flags: int = re.DOTALL | re.MULTILINE,
-        replacement_pairs: List[Tuple[str, str]] = None,
+        replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
         self.replacement_pairs = replacement_pairs or [("-", ""), (" ", "")]
         self.exact_match = exact_match
-        self.BOSEOS = BOSEOS if exact_match else ()
+        self.BOSEOS = bos_eos if exact_match else ()
         self.flags = regex_flags
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT
@@ -65,7 +76,7 @@ class IbanRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str):
+    def validate_result(self, pattern_text: str):  # noqa D102
         try:
             pattern_text = self.__sanitize_value(pattern_text, self.replacement_pairs)
             is_valid_checksum = (
@@ -91,7 +102,7 @@ class IbanRecognizer(PatternRecognizer):
         entities: List[str],
         nlp_artifacts: NlpArtifacts = None,
         regex_flags: int = None,
-    ) -> List[RecognizerResult]:
+    ) -> List[RecognizerResult]:  # noqa D102
         results = []
 
         if self.patterns:
@@ -111,9 +122,9 @@ class IbanRecognizer(PatternRecognizer):
 
     def __analyze_patterns(self, text: str, flags: int = None):
         """
-        Evaluates all patterns in the provided text, including words in
-         the provided blacklist
+        Evaluate all patterns in the provided text.
 
+        Logic includes detecting words in the provided deny list.
         In a sentence we could get a false positive at the end of our regex, were we
         want to find the IBAN but not the false positive at the end of the match.
 
@@ -164,11 +175,11 @@ class IbanRecognizer(PatternRecognizer):
         return results
 
     @staticmethod
-    def __number_iban(iban: str, letters: Dict[int, str]):
+    def __number_iban(iban: str, letters: Dict[int, str]) -> str:
         return (iban[4:] + iban[:4]).translate(letters)
 
     @staticmethod
-    def __generate_iban_check_digits(iban, letters):
+    def __generate_iban_check_digits(iban: str, letters: Dict[int, str]) -> str:
         transformed_iban = (iban[:2] + "00" + iban[4:]).upper()
         number_iban = IbanRecognizer.__number_iban(transformed_iban, letters)
         return "{:0>2}".format(98 - (int(number_iban) % 97))
@@ -176,20 +187,20 @@ class IbanRecognizer(PatternRecognizer):
     @staticmethod
     def __is_valid_format(
         iban: str,
-        BOSEOS: Tuple[str, str] = (BOS, EOS),
+        bos_eos: Tuple[str, str] = (BOS, EOS),
         flags: int = re.DOTALL | re.MULTILINE,
-    ):
+    ) -> bool:
         country_code = iban[:2]
         if country_code in regex_per_country:
             country_regex = regex_per_country.get(country_code, "")
-            if BOSEOS and country_regex:
-                country_regex = BOSEOS[0] + country_regex + BOSEOS[1]
+            if bos_eos and country_regex:
+                country_regex = bos_eos[0] + country_regex + bos_eos[1]
             return country_regex and re.match(country_regex, iban, flags=flags)
 
         return False
 
     @staticmethod
-    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]):
+    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
         for search_string, replacement_string in replacement_pairs:
             text = text.replace(search_string, replacement_string)
         return text

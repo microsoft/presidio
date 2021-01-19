@@ -1,0 +1,18 @@
+repos:
+  -   repo: https://github.com/ambv/black
+      rev: stable
+      hooks:
+        - id: black
+          language_version: python3.7
+  -   repo: https://gitlab.com/pycqa/flake8
+      rev: 3.7.9
+      hooks:
+        - id: flake8
+          additional_dependencies: [
+              'pep8-naming',
+              'flake8-docstrings',
+          ]
+          args: ['--max-line-length=88', 
+                 '--docstring-convention=numpy', 
+                 '--per-file-ignores=**/tests/**.py:D', 
+                 '--extend-ignore=E203,D107,D100,D104,D202,ANN101,ANN102,ANN204,ANN203']

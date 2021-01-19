@@ -1,5 +1,6 @@
+from __future__ import annotations
 import datetime
-from typing import List
+from typing import List, Optional, Dict
 
 import regex as re
 
@@ -13,10 +14,19 @@ from presidio_analyzer import (
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-logger = PresidioLogger()
+logger = PresidioLogger("presidio-analyzer")
 
 
 class PatternRecognizer(LocalRecognizer):
+    """
+    PII entity recognizer using regular expressions or deny-lists.
+
+    :param patterns: A list of patterns to detect
+    :param deny_list: A list of words to detect,
+    in case our recognizer uses a predefined list of words (black list)
+    :param context: list of context words
+    """
+
     def __init__(
         self,
         supported_entity: str,
@@ -27,12 +37,7 @@ class PatternRecognizer(LocalRecognizer):
         context: List[str] = None,
         version: str = "0.0.1",
     ):
-        """
-        :param patterns: A list of patterns to detect
-        :param deny_list: A list of words to detect,
-        in case our recognizer uses a predefined list of words (black list)
-        :param context: list of context words
-        """
+
         if not supported_entity:
             raise ValueError("Pattern recognizer should be initialized with entity")
 
@@ -61,7 +66,7 @@ class PatternRecognizer(LocalRecognizer):
         else:
             self.black_list = []
 
-    def load(self):
+    def load(self):  # noqa D102
         pass
 
     # pylint: disable=unused-argument,arguments-differ
@@ -70,8 +75,17 @@ class PatternRecognizer(LocalRecognizer):
         text: str,
         entities: List[str],
         nlp_artifacts: NlpArtifacts = None,
-        regex_flags=None,
+        regex_flags: int = None,
     ) -> List[RecognizerResult]:
+        """
+        Analyzes text to detect PII using regular expressions or deny-lists.
+
+        :param text: Text to be analyzed
+        :param entities: Entities this recognizer can detect
+        :param nlp_artifacts: Output values from the NLP engine
+        :param regex_flags:
+        :return:
+        """
         results = []
 
         if self.patterns:
@@ -90,10 +104,11 @@ class PatternRecognizer(LocalRecognizer):
         return results
 
     @staticmethod
-    def __deny_list_to_regex(deny_list:List[str]) -> Pattern:
+    def __deny_list_to_regex(deny_list: List[str]) -> Pattern:
         """
-        Converts a list of word to a matching regex, to be analyzed by the
-         regex engine as a part of the analyze logic
+        Convert a list of word to a matching regex.
+
+        To be analyzed by the regex engine as a part of the analyze logic.
 
         :param deny_list: the list of words to detect
         :return:the regex of the words for detection
@@ -102,10 +117,9 @@ class PatternRecognizer(LocalRecognizer):
         return Pattern(name="deny_list", regex=regex, score=1.0)
 
     # pylint: disable=unused-argument, no-self-use, assignment-from-none
-    def validate_result(self, pattern_text) -> bool:
+    def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
-        Validates the pattern logic, for example by running
-         checksum on a detected pattern.
+        Validate the pattern logic e.g., by running checksum on a detected pattern.
 
         :param pattern_text: the text to validated.
         Only the part in text that was detected by the regex engine
@@ -113,12 +127,11 @@ class PatternRecognizer(LocalRecognizer):
         """
         return None
 
-    # pylint: disable=unused-argument, no-self-use, assignment-from-none
-    def invalidate_result(self, pattern_text: str) -> bool:
+    def invalidate_result(self, pattern_text: str) -> Optional[bool]:
         """
         Logic to check for result invalidation by running pruning logic.
-        For example, each SSN number group should not consist of all the same
-        digits.
+
+        For example, each SSN number group should not consist of all the same digits.
 
         :param pattern_text: the text to validated.
         Only the part in text that was detected by the regex engine
@@ -134,6 +147,16 @@ class PatternRecognizer(LocalRecognizer):
         original_score: float,
         validation_result: bool,
     ) -> AnalysisExplanation:
+        """
+        Construct an explanation for why this entity was detected.
+
+        :param recognizer_name: Name of recognizer detecting the entity
+        :param pattern_name: Regex pattern name which detected the entity
+        :param pattern: Regex pattern logic
+        :param original_score: Score given by the recognizer
+        :param validation_result: Whether validation was used and its result
+        :return: Analysis explanation
+        """
         explanation = AnalysisExplanation(
             recognizer=recognizer_name,
             original_score=original_score,
@@ -143,10 +166,13 @@ class PatternRecognizer(LocalRecognizer):
         )
         return explanation
 
-    def __analyze_patterns(self, text: str, flags: int = None):
+    def __analyze_patterns(
+        self, text: str, flags: int = None
+    ) -> List[RecognizerResult]:
         """
-        Evaluates all patterns in the provided text, including words in
-         the provided blacklist
+        Evaluate all patterns in the provided text.
+
+        Including words in the provided deny-list
 
         :param text: text to analyze
         :param flags: regex flags
@@ -199,7 +225,8 @@ class PatternRecognizer(LocalRecognizer):
         results = EntityRecognizer.remove_duplicates(results)
         return results
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
+        """Serialize instance into a dictionary."""
         return_dict = super().to_dict()
 
         return_dict["patterns"] = [pat.to_dict() for pat in self.patterns]
@@ -211,7 +238,8 @@ class PatternRecognizer(LocalRecognizer):
         return return_dict
 
     @classmethod
-    def from_dict(cls, entity_recognizer_dict):
+    def from_dict(cls, entity_recognizer_dict: Dict) -> PatternRecognizer:
+        """Create instance from a serialized dict."""
         patterns = entity_recognizer_dict.get("patterns")
         if patterns:
             patterns_list = [Pattern.from_dict(pat) for pat in patterns]

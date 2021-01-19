@@ -1,14 +1,29 @@
+from __future__ import annotations
 import copy
 from abc import abstractmethod
 from typing import List, Dict
 
-from presidio_analyzer import PresidioLogger, RecognizerResult
+from presidio_analyzer import RecognizerResult, PresidioLogger
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-logger = PresidioLogger()
+logger = PresidioLogger("presidio-analyzer")
 
 
 class EntityRecognizer:
+    """
+    A class representing an abstract PII entity recognizer.
+
+    EntityRecognizer is an abstract class to be inherited by
+    Recognizers which hold the logic for recognizing specific PII entities.
+
+    :param supported_entities: the entities supported by this recognizer
+    (for example, phone number, address, etc.)
+    :param supported_language: the language supported by this recognizer.
+    The supported langauge code is iso6391Name
+    :param name: the name of this recognizer (optional)
+    :param version: the recognizer current version
+    """
+
     MIN_SCORE = 0
     MAX_SCORE = 1.0
     CONTEXT_SIMILARITY_THRESHOLD = 0.65
@@ -24,16 +39,7 @@ class EntityRecognizer:
         supported_language: str = "en",
         version: str = "0.0.1",
     ):
-        """
-        An abstract class to be inherited by Recognizers which hold the logic
-         for recognizing specific PII entities.
-        :param supported_entities: the entities supported by this recognizer
-        (for example, phone number, address, etc.)
-        :param supported_language: the language supported by this recognizer.
-        The supported langauge code is iso6391Name
-        :param name: the name of this recognizer (optional)
-        :param version: the recognizer current version
-        """
+
         self.supported_entities = supported_entities
 
         if name is None:
@@ -50,48 +56,60 @@ class EntityRecognizer:
         self.is_loaded = True
 
     @abstractmethod
-    def load(self):
+    def load(self) -> None:
         """
-        Initialize the recognizer assets if needed
+        Initialize the recognizer assets if needed.
+
         (e.g. machine learning models)
         """
 
     @abstractmethod
-    def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+    def analyze(
+        self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts
+    ) -> List[RecognizerResult]:
         """
-        This is the core method for analyzing text, assuming entities are
-        the subset of the supported entities types.
+        Analyze text to identify entities.
 
         :param text: The text to be analyzed
-        :param entities: The list of entities to be detected
-        :param nlp_artifacts: Value of type NlpArtifacts.
-        A group of attributes which are the result of
-                              some NLP process over the matching text
-        :return: list of RecognizerResult
-        :rtype: [RecognizerResult]
+        :param entities: The list of entities this recognizer is able to detect
+        :param nlp_artifacts: A group of attributes which are the result of
+        an NLP process over the input text.
+        :return: List of results detected by this recognizer.
         """
 
         return None
 
-    def get_supported_entities(self):
+    def get_supported_entities(self) -> List[str]:
         """
+        Return the list of entities this recognizer can identify.
+
         :return: A list of the supported entities by this recognizer
         """
         return self.supported_entities
 
-    def get_supported_language(self):
+    def get_supported_language(self) -> str:
         """
+        Return the language this recognizer can support.
+
         :return: A list of the supported language by this recognizer
         """
         return self.supported_language
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
+        Return the version of this recognizer.
+
         :return: The current version of this recognizer
         """
         return self.version
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
+        """
+        Serialize self to dictionary.
+
+        :return: a dictionary
+        """
+
         return_dict = {
             "supported_entities": self.supported_entities,
             "supported_language": self.supported_language,
@@ -101,7 +119,13 @@ class EntityRecognizer:
         return return_dict
 
     @classmethod
-    def from_dict(cls, entity_recognizer_dict: Dict):
+    def from_dict(cls, entity_recognizer_dict: Dict) -> EntityRecognizer:
+        """
+        Create EntityRecognizer from a dict input.
+
+        :param entity_recognizer_dict: Dict containing keys and values for instantiation
+        """
+
         return cls(**entity_recognizer_dict)
 
     def enhance_using_context(
@@ -110,8 +134,11 @@ class EntityRecognizer:
         raw_results: List[RecognizerResult],
         nlp_artifacts: NlpArtifacts,
         recognizer_context_words: List[str],
-    ):
-        """using the surrounding words of the actual word matches, look
+    ) -> List[RecognizerResult]:
+        """
+        Update results in case surrounding words are relevant to the context words.
+
+        Using the surrounding words of the actual word matches, look
         for specific strings that if found contribute to the score
         of the result, improving the confidence that the match is
         indeed of that PII entity type
@@ -164,16 +191,18 @@ class EntityRecognizer:
         return results
 
     @staticmethod
-    def __context_to_keywords(context: str):
+    def __context_to_keywords(context: str) -> List[str]:
         return context.split(" ")
 
     @staticmethod
     def __find_supportive_word_in_context(
         context_list: List[str], recognizer_context_list: List[str]
-    ):
-        """A word is considered a supportive context word if
-           there's exact match between a keyword in
-           context_text and any keyword in context_list
+    ) -> str:
+        """
+        Find words in the text which are relevant for context evaluation.
+
+        A word is considered a supportive context word if there's exact match
+        between a keyword in context_text and any keyword in context_list.
 
         :param context_list words before and after the matched entity within
                a specified window size
@@ -207,11 +236,17 @@ class EntityRecognizer:
 
     @staticmethod
     def __add_n_words(
-        index, n_words, lemmas, lemmatized_filtered_keywords, is_backward
-    ):
-        """Prepare a string of context words, which surrounds a lemma
-            at a given index. The words will be collected only if exist
-            in the filtered array
+        index: int,
+        n_words: int,
+        lemmas: List[str],
+        lemmatized_filtered_keywords: List[str],
+        is_backward: bool,
+    ) -> List[str]:
+        """
+        Prepare a string of context words.
+
+        Return a list of words which surrounds a lemma at a given index.
+        The words will be collected only if exist in the filtered array
 
         :param index: index of the lemma that its surrounding words we want
         :param n_words: number of words to take
@@ -239,23 +274,31 @@ class EntityRecognizer:
         return context_words
 
     def __add_n_words_forward(
-        self, index, n_words, lemmas, lemmatized_filtered_keywords
-    ):
+        self,
+        index: int,
+        n_words: int,
+        lemmas: List[str],
+        lemmatized_filtered_keywords: List[str],
+    ) -> List[str]:
         return self.__add_n_words(
             index, n_words, lemmas, lemmatized_filtered_keywords, False
         )
 
     def __add_n_words_backward(
-        self, index, n_words, lemmas, lemmatized_filtered_keywords
-    ):
+        self,
+        index: int,
+        n_words: int,
+        lemmas: List[str],
+        lemmatized_filtered_keywords: List[str],
+    ) -> List[str]:
         return self.__add_n_words(
             index, n_words, lemmas, lemmatized_filtered_keywords, True
         )
 
     @staticmethod
-    def find_index_of_match_token(
-        word: str, start: int, tokens, tokens_indices: List[int]
-    ):
+    def _find_index_of_match_token(
+        word: str, start: int, tokens, tokens_indices: List[int]  # noqa ANN001
+    ) -> int:
         found = False
         # we use the known start index of the original word to find the actual
         # token at that index, we are not checking for equivilance since the
@@ -283,10 +326,14 @@ class EntityRecognizer:
             )
         return i
 
-    def __extract_surrounding_words(self, nlp_artifacts, word, start):
-        """Extracts words surrounding another given word.
+    def __extract_surrounding_words(
+        self, nlp_artifacts: NlpArtifacts, word: str, start: int
+    ) -> List[str]:
+        """Extract words surrounding another given word.
+
         The text from which the context is extracted is given in the nlp
-        doc
+        doc.
+
         :param nlp_artifacts: An abstraction layer which holds different
                               items which are the result of a NLP pipeline
                               execution on a given text
@@ -299,7 +346,7 @@ class EntityRecognizer:
             # if there are no nlp artifacts, this is ok, we can
             # extract context and we return a valid, yet empty
             # context
-            return ""
+            return [""]
 
         # Get the already prepared words in the given text, in their
         # LEMMATIZED version
@@ -308,7 +355,7 @@ class EntityRecognizer:
         # since the list of tokens is not necessarily aligned
         # with the actual index of the match, we look for the
         # token index which corresponds to the match
-        token_index = EntityRecognizer.find_index_of_match_token(
+        token_index = EntityRecognizer._find_index_of_match_token(
             word, start, nlp_artifacts.tokens, nlp_artifacts.tokens_indices
         )
 
@@ -338,8 +385,10 @@ class EntityRecognizer:
     @staticmethod
     def remove_duplicates(results: List[RecognizerResult]) -> List[RecognizerResult]:
         """
-        Removes each result which has a span contained in a
-        result's span with a higher score
+        Remove duplicate results.
+
+        Remove duplicates in case the two results
+        have identical start and ends and types.
         :param results: List[RecognizerResult]
         :return: List[RecognizerResult]
         """

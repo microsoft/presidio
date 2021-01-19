@@ -1,5 +1,7 @@
 """
-The IBAN patterns are based on the IBAN specification here:
+List of different regex patterns for IBAN.
+
+The IBAN patterns are based on the IBAN specification here
 https://en.wikipedia.org/wiki/International_Bank_Account_Number
 In addition, an IBAN example per country can be found here:
 git shttps://www.xe.com/ibancalculator/countrylist

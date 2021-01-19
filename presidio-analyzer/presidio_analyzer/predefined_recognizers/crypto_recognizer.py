@@ -1,5 +1,5 @@
 from hashlib import sha256
-from typing import List
+from typing import List, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -8,8 +8,12 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 
 class CryptoRecognizer(PatternRecognizer):
-    """
-    Recognizes common crypto account numbers using regex + checksum
+    """Recognize common crypto account numbers using regex + checksum.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
     """
 
     PATTERNS = [
@@ -20,8 +24,8 @@ class CryptoRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns: List[str] = None,
-        context: List[str] = None,
+        patterns: Optional[List[Pattern]] = None,
+        context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "CRYPTO",
     ):
@@ -34,7 +38,7 @@ class CryptoRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text:str):
+    def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         try:
             bcbytes = self.__decode_base58(pattern_text, 25)
             return bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]
@@ -42,7 +46,7 @@ class CryptoRecognizer(PatternRecognizer):
             return False
 
     @staticmethod
-    def __decode_base58(bc, length: int):
+    def __decode_base58(bc: str, length: int) -> bytes:
         digits58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
         n = 0
         for char in bc:

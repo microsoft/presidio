@@ -41,14 +41,14 @@ def nlp_engine(nlp_engines):
 
 @pytest.fixture(scope="module")
 def dataset(recognizers):
-    """ Loads up a group of sentences with relevant context words and creates
-        a list of tuples of the sentence, a recognizer and entity types.
+    """Loads up a group of sentences with relevant context words and creates
+    a list of tuples of the sentence, a recognizer and entity types.
     """
 
     data_path = os.path.dirname(__file__) + "/data/context_sentences_tests.txt"
     with open(data_path, "r") as f:
         # get non-empty lines without comments
-        lines = [l.strip() for l in f if l[0] != "#" and l.strip()]
+        lines = [line.strip() for line in f if line[0] != "#" and line.strip()]
 
     test_items = []
     for i in range(0, len(lines), 2):
@@ -89,10 +89,10 @@ def test_text_with_context_improves_score(dataset, nlp_engine, mock_nlp_artifact
 
 def test_context_custom_recognizer(nlp_engine, mock_nlp_artifacts):
     """This test checks that a custom recognizer is also enhanced by context.
-       However this test also verifies a specific case in which the pattern also
-       includes a preceeding space (' rocket'). This in turn cause for a misalignment
-       between the tokens and the regex match (the token will be just 'rocket').
-       This misalignment is handled in order to find the correct context window.
+    However this test also verifies a specific case in which the pattern also
+    includes a preceeding space (' rocket'). This in turn cause for a misalignment
+    between the tokens and the regex match (the token will be just 'rocket').
+    This misalignment is handled in order to find the correct context window.
     """
     rocket_recognizer = PatternRecognizer(
         supported_entity="ROCKET",
