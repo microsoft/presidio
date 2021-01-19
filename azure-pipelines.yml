@@ -68,6 +68,16 @@ jobs:
               pipenv run pytest
 
         - task: Bash@3
+          displayName: 'Package Wheel: Analyzer'
+          inputs:
+            targetType: 'inline'
+            workingDirectory: 'presidio-analyzer'
+            script: |
+              set -eux  # fail on error
+              pip install wheel
+              python setup.py bdist_wheel
+
+        - task: Bash@3
           displayName: 'Install deps: Anonymizer'
           inputs:
             targetType: 'inline'
@@ -92,3 +102,13 @@ jobs:
               # Install pytest and run tests
               pipenv install --dev --skip-lock pytest-azurepipelines
               pipenv run pytest
+
+        - task: Bash@3
+          displayName: 'Package Wheel: Anonymizer'
+          inputs:
+            targetType: 'inline'
+            workingDirectory: 'presidio-anonymizer'
+            script: |
+              set -eux  # fail on error
+              pip install wheel
+              python setup.py bdist_wheel
