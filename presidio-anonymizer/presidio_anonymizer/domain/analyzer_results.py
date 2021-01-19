@@ -16,7 +16,7 @@ class AnalyzerResults(List):
     - One PII is contained in another - anonymizer will use the PII with larger text.
     - Partial intersection - both will be returned concatenated.
     """
-    def to_sorted_set(self):
+    def to_sorted_set(self, reverse=False):
         """
         Manipulate the list.
 
@@ -33,9 +33,8 @@ class AnalyzerResults(List):
         sort - Use __gt__ of AnalyzerResult to compare and sort
         :return: set
         """
-        # uses __gt__ to sort the objects.
         analyzer_results = self._remove_dups()
-        return sorted(analyzer_results)
+        return sorted(analyzer_results, reverse=reverse)
 
     def _remove_dups(self):
         obj_set = set()
