@@ -47,7 +47,7 @@ class RecognizerRegistry:
         if not languages:
             languages = ["en"]
 
-        NlpRecognizer = NLP_RECOGNIZERS.get(nlp_engine, SpacyRecognizer)
+        nlp_recognizer = NLP_RECOGNIZERS.get(nlp_engine, SpacyRecognizer)
         recognizers_map = {
             "en": [
                 UsBankRecognizer,
@@ -67,7 +67,7 @@ class RecognizerRegistry:
                 EmailRecognizer,
                 IbanRecognizer,
                 IpRecognizer,
-                NlpRecognizer,
+                nlp_recognizer,
             ],
         }
         for lang in languages:
@@ -129,7 +129,8 @@ class RecognizerRegistry:
                     to_return.extend(subset)
 
         logger.info(
-            "Returning a total of %s recognizers", str(len(to_return)),
+            "Returning a total of %s recognizers",
+            str(len(to_return)),
         )
 
         if not to_return:

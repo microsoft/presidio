@@ -2,10 +2,12 @@ from presidio_analyzer import PresidioLogger
 
 
 class AppTracer:
-    """This class provides the ability to log/trace the system's decisions,
+    """
+    This class provides the ability to log/trace the system's decisions,
     such as which modules were used for detection,
     which logic was utilized, what results were given and potentially why.
-    This can be useful for analyzing the detection accuracy of the system."""
+    This can be useful for analyzing the detection accuracy of the system.
+    """
 
     def __init__(self, enabled: bool = True):
 

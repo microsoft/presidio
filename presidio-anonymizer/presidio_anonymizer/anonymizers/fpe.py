@@ -1,11 +1,17 @@
-# TODO implement + test
+"""
+Format Preserving encryption for PII text entities.
+
+Uses FF1 algorithm for the encryption.
+"""
 from anonymizers.anonymizer import Anonymizer
 
 
+# TODO implement + test
 class FPE(Anonymizer):
     """
-    Current text will be transformed into FPE -
-    Format Preserving Encryption using FF1 algorithm.
+    FPE - Format Preserving Encryption.
+
+    PII text will be replaced with a format preserving encryption using FF1 algorithm.
     """
 
     def __init__(self,
@@ -19,4 +25,5 @@ class FPE(Anonymizer):
         self.key = key
 
     def anonymize(self):
+        """Return anonymized text using FF1 algorithm."""
         pass
