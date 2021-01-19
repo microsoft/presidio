@@ -1,8 +1,8 @@
 """Wrapper to the list of AnalyzerResult which manipulates the list."""
-from presidio_anonymizer.domain.analyzer_result import AnalyzerResult
+from typing import List
 
 
-class AnalyzerResults:
+class AnalyzerResults(List):
     """
     Receives the analyzer result list and manipulates it.
 
@@ -16,23 +16,6 @@ class AnalyzerResults:
     - One PII is contained in another - anonymizer will use the PII with larger text.
     - Partial intersection - both will be returned concatenated.
     """
-
-    def __len__(self):
-        """
-        Return the length of the results.
-
-        :return: int
-        """
-        return len(self.results)
-
-    def __init__(self):
-        """Initialize the class with empty list."""
-        self.results = []
-
-    def append_result(self, result: AnalyzerResult):
-        """Add new AnalyzerResult to the list."""
-        self.results.append(result)
-
     def to_sorted_set(self):
         """
         Manipulate the list.
@@ -56,9 +39,9 @@ class AnalyzerResults:
 
     def _remove_dups(self):
         obj_set = set()
-        for result_a in self.results:
-            for index in range(len(self.results)):
-                other = self.results.__getitem__(index)
+        for result_a in self:
+            for index in range(len(self)):
+                other = self.__getitem__(index)
                 # not the same object
                 if not result_a.__eq__(other):
                     # if there is an object containing result_a
@@ -67,6 +50,6 @@ class AnalyzerResults:
                             (result_a.equal_indices(
                                 other) and result_a.score < other.score):
                         break
-                if index == len(self.results) - 1:
+                if index == len(self) - 1:
                     obj_set.add(result_a)
         return obj_set

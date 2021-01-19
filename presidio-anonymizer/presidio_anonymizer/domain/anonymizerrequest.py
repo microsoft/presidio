@@ -28,7 +28,7 @@ class AnonymizerRequest(dict):
                "analyzer_results": AnalyzerResults()}
 
         for result in content.get("analyzer_results"):
-            cls.get("analyzer_results").append_result(
+            cls.get("analyzer_results").append(
                 AnalyzerResult.validate_and_create(result))
         return cls
 

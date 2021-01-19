@@ -104,7 +104,7 @@ def test_request_valid_json():
         assert data.get("text") == content.get("text")
         assert data.get("transformations") == content.get("transformations")
         assert len(data.get("analyzer_results")) == len(content.get("analyzer_results"))
-        for result_a in data.get("analyzer_results").results:
+        for result_a in data.get("analyzer_results"):
             result_b = __find_element(content.get("analyzer_results"),
                                       result_a.entity_type)
             assert result_b
@@ -119,7 +119,7 @@ def test_analyzer_results_sorted_set():
         content = json.load(json_file)
         data = AnonymizerRequest.validate_and_convert(content)
         analyze_results = data.get("analyzer_results")
-        assert len(analyze_results.results) == len(content.get("analyzer_results"))
+        assert len(analyze_results) == len(content.get("analyzer_results"))
         sorted_results = analyze_results.to_sorted_set()
         assert len(sorted_results) == 2
         assert list(sorted_results)[0].start < list(sorted_results)[1].start
