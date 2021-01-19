@@ -48,34 +48,11 @@ jobs:
             script: |
               pipenv sync --dev --sequential
               pipenv run python -m spacy download en_core_web_lg
-
-        - task: Bash@3
-          displayName: 'Linting: Analyzer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
-            script: |
-              pipenv run flake8 presidio_analyzer
-
-        - task: Bash@3
-          displayName: 'Unit tests: Analyzer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
-            script: |
-              # Install pytest and run tests
-              pipenv install --dev --skip-lock pytest-azurepipelines
-              pipenv run pytest
-
-        - task: Bash@3
-          displayName: 'Package Wheel: Analyzer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
-            script: |
-              set -eux  # fail on error
-              pip install wheel
-              python setup.py bdist_wheel
+        
+        - template: .pipelines/templates/build-python.yml
+          parameters:
+            SERVICE: 'Analyzer'
+            WORKING_FOLDER: 'presidio-analyzer'
 
         - task: Bash@3
           displayName: 'Install deps: Anonymizer'
@@ -85,30 +62,9 @@ jobs:
             script: |
               pipenv sync --dev --sequential
 
-        - task: Bash@3
-          displayName: 'Linting: Anonymizer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
-            script: |
-              pipenv run flake8 presidio_anonymizer
+        - template: .pipelines/templates/build-python.yml
+          parameters:
+            SERVICE: 'Anonymizer'
+            WORKING_FOLDER: 'presidio-anonymizer'
 
-        - task: Bash@3
-          displayName: 'Unit tests: Anonymizer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
-            script: |
-              # Install pytest and run tests
-              pipenv install --dev --skip-lock pytest-azurepipelines
-              pipenv run pytest
-
-        - task: Bash@3
-          displayName: 'Package Wheel: Anonymizer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
-            script: |
-              set -eux  # fail on error
-              pip install wheel
-              python setup.py bdist_wheel
+        
