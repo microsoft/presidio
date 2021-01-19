@@ -23,7 +23,7 @@ setuptools.setup(
         "presidio_analyzer.recognizer_registry",
     ],
     trusted_host=["pypi.org"],
-    tests_require=["pytest", "flake8==3.7.9", "pylint==2.3.1"],
+    tests_require=["pytest", "flake8==3.7.9"],
     install_requires=[
         "spacy==2.3",
         "regex==2020.11.13",

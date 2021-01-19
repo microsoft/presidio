@@ -12,4 +12,5 @@ numpy = "==1.19.3"
 [dev-packages]
 pytest = "*"
 flake8= {version = "==3.7.9"}
-pylint = {version = "==2.3.1"}
+pep8-naming = "*"
+flake8-docstrings = "*"

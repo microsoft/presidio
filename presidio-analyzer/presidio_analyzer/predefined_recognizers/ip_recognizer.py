@@ -3,7 +3,6 @@ from typing import Optional, List
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
-# pylint: disable=line-too-long,abstract-method
 class IpRecognizer(PatternRecognizer):
     """
     Recognize IP address using regex.

@@ -13,7 +13,6 @@ class UsPassportRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
-    # pylint: disable=line-too-long,abstract-method
     # Weak pattern: all passport numbers are a weak match, e.g., 14019033
     PATTERNS = [
         Pattern("Passport (very weak)", r"(\b[0-9]{9}\b)", 0.05),

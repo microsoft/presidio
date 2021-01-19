@@ -13,7 +13,6 @@ class UsItinRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
-    # pylint: disable=line-too-long,abstract-method
     PATTERNS = [
         Pattern(
             "Itin (very weak)",

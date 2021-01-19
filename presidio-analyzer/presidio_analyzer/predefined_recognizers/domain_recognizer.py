@@ -15,7 +15,6 @@ class DomainRecognizer(PatternRecognizer):
     :param supported_entity: The entity this recognizer can detect
     """
 
-    # pylint: disable=line-too-long
     PATTERNS = [
         Pattern(
             "Domain ()",

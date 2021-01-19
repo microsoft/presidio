@@ -23,7 +23,6 @@ class UsPhoneRecognizer(PatternRecognizer):
         Pattern("Phone (weak)", r"(\b\d{10}\b)", 0.05),
     ]
 
-    # pylint: disable=line-too-long,abstract-method
     CONTEXT = ["phone", "number", "telephone", "cell", "mobile", "call"]
 
     def __init__(
