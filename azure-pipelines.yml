@@ -34,7 +34,7 @@ jobs:
         - template: .pipelines/templates/security-analysis.yml
        
     - job: 'Test'
-      dependsOn: 
+      dependsOn:
       #- 'validate'
       - 'inclusivelint'
       - 'SecurityAnalysis'
@@ -93,3 +93,34 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
+
+    - job: FunctionalTests
+      pool:
+        vmImage: 'ubuntu-16.04'
+
+      steps:
+        - task: DockerCompose@0
+          displayName: Start Presidio Cluster
+          inputs:
+            action: Run services
+            dockerComposeFile: docker-compose.yml
+            buildImages: true
+
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '3.8'
+
+        - script: |
+            python -m venv env
+            source env/bin/activate
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install pytest-azurepipelines
+          workingDirectory: functional-tests
+          displayName: Install requirements
+
+        - script: |
+            source env/bin/activate
+            pytest
+          workingDirectory: functional-tests
+          displayName: Run tests
