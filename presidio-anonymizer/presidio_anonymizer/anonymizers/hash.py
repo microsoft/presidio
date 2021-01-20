@@ -6,10 +6,9 @@ class Hash(object):
     """Hash given text with sha256 algorithm."""
 
     def anonymize(self, params={}):
-        old_text = params.get("old_text")
         """
         Hash given value using sha256.
 
         :return: hashed original text
         """
-        pass
+        return params.get("old_text")

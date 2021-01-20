@@ -44,10 +44,10 @@ class AnonymizerEngine:
             anonymizer_class = anonymizers.get(transformation.get("type").lower())
 
             new_text = anonymizer_class().anonymize(transformation)
-            self.replace(result.start, result.end, new_text)
+            self.__replace(result.start, result.end, new_text)
         return self._text
 
-    def replace(self, start, end, new_text):
+    def __replace(self, start, end, new_text):
         end_of_text = min(end, self._end_point)
         self._text = self._text[:start] + new_text + self._text[end_of_text:]
         self._end_point = start

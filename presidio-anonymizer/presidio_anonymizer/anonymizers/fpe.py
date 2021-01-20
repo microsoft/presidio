@@ -15,9 +15,9 @@ class FPE(Anonymizer):
     """
 
     def anonymize(self, params={}):
+        """Return anonymized text using FF1 algorithm."""
         old_text = params.get("old_text")
         decrypt = params.get("decrypt")
         tweak = params.get("tweak")
         key = params.get("key")
-        """Return anonymized text using FF1 algorithm."""
-        pass
+        return old_text + decrypt + tweak + key
