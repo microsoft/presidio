@@ -45,9 +45,9 @@ class AnonymizerEngineRequest:
         :param analyzer_result: the result we are going to do the transformation on
         :return: transformation
         """
-        transformation = self.get(analyzer_result.entity_type)
+        transformation = self._transformations.get(analyzer_result.entity_type)
         if not transformation:
-            transformation = self.get("default")
+            transformation = self._transformations.get("default")
             if not transformation:
                 new_val = f"<{analyzer_result.entity_type}>"
                 return {"type": "replace", "new_value": new_val, "anonymizer": Replace}
@@ -87,7 +87,6 @@ class AnonymizerEngineRequest:
         self._text = data.get("text")
         if self._text == "" or self._text is None:
             raise InvalidParamException("Invalid input, text can not be empty")
-        self._end_point = len(self._text)
 
     def __get_anonymizer(self, transformation):
         anonymizer_type = transformation.get("type").lower()
