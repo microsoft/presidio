@@ -45,7 +45,7 @@ class AnonymizerEngine:
 
         :return: the anonymized text
         """
-        self._validate_input()
+        self.__validate_input()
         analyzer_results = self._analysis_results.to_sorted_set(True)
         for result in analyzer_results:
             transformation = self._transformations.get_transformation(result)
@@ -69,7 +69,7 @@ class AnonymizerEngine:
         self._text = self._text[:start] + new_text + self._text[end_of_text:]
         self._end_point = start
 
-    def _validate_input(self):
+    def __validate_input(self):
         if self._analysis_results is None or len(self._analysis_results) == 0:
             raise InvalidParamException("Analyze results must contain data.")
         for key, transformation in self._transformations.items():
