@@ -1,11 +1,11 @@
 import json
 import os
 
-from presidio_anonymizer.domain import AnonymizerRequest
 from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.domain import AnonymizerRequest
 
 
-def test_analyzer_results_sorted_set():
+def test_engine_result():
     json_path = os.path.dirname(__file__) + "/resources/dup_payload.json"
     with open(json_path) as json_file:
         content = json.load(json_file)
@@ -13,3 +13,9 @@ def test_analyzer_results_sorted_set():
         text = AnonymizerEngine(data).anonymize()
         assert text == 'hello world, my name is <FULL_NAME>. ' \
                        'My number is: <PHONE_NUMBER>'
+
+
+def test_engine_result_with_empty_text_values_not_failing():
+    data = {}
+    text = AnonymizerEngine(data).anonymize()
+    assert text == ''

@@ -1,5 +1,5 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
-
+from domain import AnalyzerResults
 from presidio_anonymizer.domain.transformations import Transformations
 from presidio_anonymizer.anonymizers.fpe import FPE
 from presidio_anonymizer.anonymizers.mask import Mask
@@ -26,7 +26,11 @@ class AnonymizerEngine:
         """
         self._transformations = Transformations(data.get("transformations"))
         self._analyze_results = data.get("analyzer_results")
+        if self._analyze_results is None:
+            self._analyze_results = AnalyzerResults()
         self._text = data.get("text")
+        if self._text is None:
+            self._text = ""
         self._end_point = len(self._text)
 
     def anonymize(self):
