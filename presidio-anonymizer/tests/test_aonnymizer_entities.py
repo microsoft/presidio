@@ -64,6 +64,22 @@ def test_analyzer_result_valid_json():
     [
         ({}, "Invalid input, analyzer results can not be empty",),
         ({
+             "text": "Hello world",
+             "analyzer_results": [
+                 {
+                     "start": 28,
+                     "end": 32,
+                     "score": 0.8,
+                     "entity_type": "NUMBER"
+                 }
+             ],
+             "transformations": {
+                 "default": {
+                     "type": "none"
+                 }
+             }
+         }, "Invalid anonymizer class 'none'.",),
+        ({
              "text": "hello world, my name is Jane Doe. My number is: 034453334",
              "analyzer_results": [
                  {
