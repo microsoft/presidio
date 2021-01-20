@@ -50,7 +50,7 @@ class AnonymizerEngine:
         for result in analyzer_results:
             transformation = self._transformations.get_transformation(result)
             logger.debug(f"received transformation {transformation.get('type')}")
-            anonymizer_class = self.__get_anonymizer(transformation)
+            anonymizer_class = transformation.get("anonymizer")
             new_text = anonymizer_class().anonymize(transformation)
             self.__replace(result.start, result.end, new_text)
         return self._text

@@ -1,5 +1,6 @@
 """Manage getting the correct transformation from the list and returning default."""
 from presidio_anonymizer.domain.analyzer_result import AnalyzerResult
+from presidio_anonymizer.anonymizers import Replace
 
 
 class Transformations(dict):
@@ -22,5 +23,5 @@ class Transformations(dict):
             transformation = self.get("default")
             if not transformation:
                 new_val = f"<{analyzer_result.entity_type}>"
-                return {"type": "replace", "new_value": new_val}
+                return {"type": "replace", "new_value": new_val, "anonymizer": Replace}
         return transformation
