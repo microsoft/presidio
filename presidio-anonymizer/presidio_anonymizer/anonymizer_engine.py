@@ -1,4 +1,6 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
+import logging
+
 from presidio_anonymizer.entities import AnonymizerEngineRequest
 
 
@@ -18,51 +20,22 @@ class AnonymizerEngine:
 
         :param data: a map which contains the transformations, analyzer_results and text
         """
-        transformations = data.get("transformations")
-        if transformations is None:
-            transformations = {}
-        self._transformations = Transformations(transformations)
-        self._analysis_results = data.get("analyzer_results")
-        self._text = data.get("text")
-        if self._text is None:
-            self._text = ""
-        self._end_point = len(self._text)
 
     def anonymize(self, engine_request: AnonymizerEngineRequest):
         """Anonymize method to anonymize the given text.
 
         :return: the anonymized text
         """
-        self.__validate_input()
-        analyzer_results = self._analysis_results.to_sorted_set(True)
+        original_text = engine_request.get_text()
+        end_point = len(original_text)
+        text = engine_request.get_text()
+        analyzer_results = engine_request.get_analysis_results().to_sorted_set(True)
         for result in analyzer_results:
-            transformation = self._transformations.get_transformation(result)
-            logger.debug(f"received transformation {transformation.get('type')}")
+            transformation = engine_request.get_transformation(result)
+            self.logger.debug(f"received transformation {transformation.get('type')}")
             anonymizer_class = transformation.get("anonymizer")
             new_text = anonymizer_class().anonymize(transformation)
-            self.__replace(result.start, result.end, new_text)
-        return self._text
-
-    def __get_anonymizer(self, transformation):
-        anonymizer_type = transformation.get("type").lower()
-        anonymizer_class = anonymizers.get(anonymizer_type)
-        if anonymizer_class is None:
-            logger.error(f"No such anonimyzer class {anonymizer_type}")
-            raise InvalidParamException(
-                f"Invalid anonymizer class '{anonymizer_type}'.")
-        return anonymizer_class
-
-    def __replace(self, start, end, new_text):
-        end_of_text = min(end, self._end_point)
-        self._text = self._text[:start] + new_text + self._text[end_of_text:]
-        self._end_point = start
-
-    def __validate_input(self):
-        if self._analysis_results is None or len(self._analysis_results) == 0:
-            raise InvalidParamException("Analyze results must contain data.")
-        for key, transformation in self._transformations.items():
-            anonymizer = self.__get_anonymizer(transformation)
-            transformation["anonymizer"] = anonymizer
-            self._transformations[key] = transformation
-        if self._text == "" or self._text is None:
-            raise InvalidParamException("Please insert a valid text.")
+            end_of_text = min(result.end, end_point)
+            text = text[:result.start] + new_text + text[end_of_text:]
+            end_point = result.start
+        return text
