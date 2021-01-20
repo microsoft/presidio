@@ -1,17 +1,5 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
-import logging
-
-from presidio_anonymizer.anonymizers.fpe import FPE
-from presidio_anonymizer.anonymizers.hash import Hash
-from presidio_anonymizer.anonymizers.mask import Mask
-from presidio_anonymizer.anonymizers.redact import Redact
-from presidio_anonymizer.anonymizers.replace import Replace
-from presidio_anonymizer.domain.invalid_exception import InvalidParamException
-from presidio_anonymizer.domain.transformations import Transformations
-
-anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
-               "redact": Redact}
-logger = logging.getLogger("presidio-anonymizer")
+from presidio_anonymizer.entities import AnonymizerEngineRequest
 
 
 class AnonymizerEngine:
@@ -21,10 +9,10 @@ class AnonymizerEngine:
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
     and replaces the PII entities with the desired transformations.
     """
+    logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(
             self,
-            data: dict,
     ):
         """Handle text replacement for PIIs with requested transformations.
 
@@ -40,7 +28,7 @@ class AnonymizerEngine:
             self._text = ""
         self._end_point = len(self._text)
 
-    def anonymize(self):
+    def anonymize(self, engine_request: AnonymizerEngineRequest):
         """Anonymize method to anonymize the given text.
 
         :return: the anonymized text

@@ -3,7 +3,7 @@ AnalyzerResult is the exact copy of the recognizer result.
 
 Represents the findings of detected entity.
 """
-from presidio_anonymizer.domain.invalid_exception import InvalidParamException
+from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
 
 class AnalyzerResult(object):
@@ -98,4 +98,4 @@ class AnalyzerResult(object):
         for field in ["start", "end", "score", "entity_type"]:
             if content.get(field) is None:
                 raise InvalidParamException(
-                    f"Invalid json, analyzer result must contain {field}")
+                    f"Invalid input, analyzer result must contain {field}")

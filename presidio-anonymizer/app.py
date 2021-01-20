@@ -1,6 +1,8 @@
 from flask import Flask, request
 from presidio_anonymizer.domain.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
+from presidio_anonymizer.entities.engine_request import AnonymizerEngineRequest
+from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 from presidio_anonymizer.domain.invalid_exception import InvalidParamException
 
 app = Flask(__name__)
@@ -18,8 +20,7 @@ def anonymize():
     except Exception:
         # TODO add logger 2652
         return "Internal server error", 500
-    engine = AnonymizerEngine(data)
-    text = engine.anonymize()
+    text = AnonymizerEngine().anonymize(data)
     return text
 
 

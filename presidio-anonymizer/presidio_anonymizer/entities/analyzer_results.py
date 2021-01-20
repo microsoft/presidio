@@ -34,10 +34,10 @@ class AnalyzerResults(List):
         sort - Use __gt__ of AnalyzerResult to compare and sort
         :return: set
         """
-        analyzer_results = self._remove_dups()
+        analyzer_results = self._remove_conflicts()
         return sorted(analyzer_results, reverse=reverse)
 
-    def _remove_dups(self):
+    def _remove_conflicts(self):
         """
         Iterate the list and create a set from it.
 
