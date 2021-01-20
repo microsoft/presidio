@@ -7,12 +7,12 @@ pr:
       - V2
 
 jobs:
-    - job: validate
-      displayName: 'Validate PR pre-requisites'
-      steps:
-        - template: .pipelines/templates/validate-version.yml
-          parameters:
-            UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
+    #- job: validate
+    #  displayName: 'Validate PR pre-requisites'
+    #  steps:
+    #    - template: .pipelines/templates/validate-version.yml
+    #      parameters:
+    #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
     - job: 'Test'
       dependsOn: 'validate'
       pool:
