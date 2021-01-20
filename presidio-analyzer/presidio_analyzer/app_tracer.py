@@ -3,7 +3,7 @@ from presidio_analyzer import PresidioLogger
 
 class AppTracer:
     """
-    Allow the logging/tracing the system's decisions.
+    Allow logging/tracing the system's decisions.
 
     Relevant in cases where we want to know which modules were used for detection,
     which logic was utilized, what results were given and potentially why.
