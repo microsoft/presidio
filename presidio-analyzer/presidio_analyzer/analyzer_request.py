@@ -2,6 +2,7 @@ class AnalyzerRequest:
     """
     Analyzer request data
     """
+
     def __init__(self, req_data):
         self.text = req_data.get("text")
         self.language = req_data.get("language")

@@ -54,7 +54,9 @@ class Server:
                 return json.dumps(recognizer_result_list, default=lambda o: o.to_json(),
                                   sort_keys=True, indent=4)
             except Exception as e:
-                self.logger.error("A fatal error occurred during execution of AnalyzerEngine.analyze(). {}".format(e))
+                self.logger.error("A fatal error occurred "
+                                  "during execution of "
+                                  "AnalyzerEngine.analyze(). {}".format(e))
                 return json.dumps({"Error": e}), 500
 
         @self.app.route("/recognizers", methods=["GET"])
@@ -68,7 +70,9 @@ class Server:
                 names = [o.name for o in recognizers_list]
                 return json.dumps(names)
             except Exception as e:
-                self.logger.error("A fatal error occurred during execution of AnalyzerEngine.get_recognizers(). {}"
+                self.logger.error("A fatal error occurred "
+                                  "during execution of "
+                                  "AnalyzerEngine.get_recognizers(). {}"
                                   .format(e))
                 return json.dumps({"Error": e}), 500
 
