@@ -6,7 +6,7 @@ import pytest
 
 from presidio_anonymizer.entities.analyzer_result import AnalyzerResult
 from presidio_anonymizer.entities.analyzer_results import AnalyzerResults
-from presidio_anonymizer.entities.engine_request import AnonymizerRequest
+from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
 
