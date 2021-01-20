@@ -1,7 +1,7 @@
 """Exception to indicate the request json we received is invalid."""
 
 
-class InvalidJsonException(Exception):
+class InvalidParamException(Exception):
     """Throw exception with error when user input is not valid."""
 
     def __init__(self, err: str):

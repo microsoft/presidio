@@ -1,5 +1,5 @@
 """Mask some or all given text entity PII with given character."""
-from anonymizers.anonymizer import Anonymizer
+from presidio_anonymizer.anonymizers.anonymizer import Anonymizer
 
 
 # TODO implement + test

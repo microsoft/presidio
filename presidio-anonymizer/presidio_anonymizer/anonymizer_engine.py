@@ -1,4 +1,5 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
+from presidio_anonymizer.entities import AnonymizerEngineRequest
 
 
 class AnonymizerEngine:
@@ -11,22 +12,17 @@ class AnonymizerEngine:
 
     # Task: 2672
     # TODO this needs to be implemented currently a stab.
-    # TODO replace analyze_results with domain results
+    # TODO replace analyze_results with entities results
     # Notice the document Omri created, it impacts the implementation
     def __init__(
             self,
-            data: dict,
     ):
         """Handle text replacement for PIIs with requested transformations.
 
         :param data: a map which contains the transformations, analyzer_results and text
         """
-        self._transformations = data.get("transformations")
-        self._analyze_results = data.get("analyzer_results")
-        self._text = data.get("text")
-        self._end_point = len(self._text)
 
-    def anonymize(self):
+    def anonymize(self, engine_request: AnonymizerEngineRequest):
         """Anonymize method to anonymize the given text.
 
         :return: the anonymized text
