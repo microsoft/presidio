@@ -4,10 +4,10 @@ from typing import List
 
 class AnalyzerResults(List):
     """
-    Receives the analyzer result list and manipulates it.
+    A class which provides operations over the analyzer result list..
 
      The manipulation contains removal of unused results and sort by indices order.
-     According to the logic of:
+     Additional information about the rationale of this class:
     - One PII - uses a given or default transformation to anonymize and replace the PII
     text entity.
     - Full overlap of PIIs - When one text have several PIIs, the PII with the higher
@@ -19,9 +19,10 @@ class AnalyzerResults(List):
 
     def to_sorted_set(self, reverse=False):
         """
-        Manipulate the list.
+        Create a sorted set from the list.
 
-        remove_dups - removes results which impact the same text and should be ignored.
+        _remove_conflicts method - removes results which impact the same text and
+        should be ignored.
         using the logic:
         - One PII - uses a given or default transformation to anonymize and
         replace the PII text entity.

@@ -2,7 +2,7 @@
 
 from .analyzer_results import AnalyzerResults
 from .invalid_exception import InvalidParamException
-from .engine_request import AnonymizerRequest
+from .anonymizer_request import AnonymizerRequest
 from .analyzer_result import AnalyzerResult
 
 __all__ = [

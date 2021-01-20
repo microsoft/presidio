@@ -6,11 +6,12 @@ import pytest
 
 from presidio_anonymizer.entities.analyzer_result import AnalyzerResult
 from presidio_anonymizer.entities.analyzer_results import AnalyzerResults
-from presidio_anonymizer.entities.engine_request import AnonymizerRequest
+from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
 
 @pytest.mark.parametrize(
+    # fmt: off
     "request_json, result_text",
     [
         ({}, "Invalid input, analyzer result must contain start",),
@@ -35,6 +36,7 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
              "score": 0.8,
          }, "Invalid input, analyzer result must contain entity_type",),
     ],
+    # fmt: on
 )
 def test_analyzer_result_fails_on_invalid_json_formats(request_json, result_text):
     try:
@@ -60,6 +62,7 @@ def test_analyzer_result_pass_with_valid_json():
 
 
 @pytest.mark.parametrize(
+    # fmt: off
     "request_json, result_text",
     [
         ({}, "Invalid input, analyzer results can not be empty",),
@@ -102,6 +105,7 @@ def test_analyzer_result_pass_with_valid_json():
              ]
          }, "Invalid input, text can not be empty",)
     ],
+    # fmt: on
 )
 def test_creating_anonymizer_request_should_fail_over_validation(request_json,
                                                                  result_text):

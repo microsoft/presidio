@@ -10,7 +10,7 @@ class AnalyzerResult(object):
     """
     AnalyzerResult is a duplication of the recognizer result.
 
-    Suppose to validate and compare an recognizer result object.
+    Validate and compare an recognizer result object.
     """
 
     def __init__(self,
@@ -77,8 +77,8 @@ class AnalyzerResult(object):
 
         :return: int
         """
-        return hash(str(self.start) + " " + str(self.end) + " " + str(
-            self.score) + " " + self.entity_type)
+        return hash(
+            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
 
     @classmethod
     def validate_and_create(cls, content):
