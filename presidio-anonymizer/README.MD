@@ -22,8 +22,8 @@ Each anonymizer requires different values:
 - FPE -
 - Mask -
 
-Text might have zero to many PIIs, the anonymizer handle those scenarios in the following
-ways:
+As the input text could potentially have overlapping PII entities, there are different
+anonymization scenarios:
 
 - One PII - uses a given or default transformation to anonymize and replace the PII text
   entity.
