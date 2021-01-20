@@ -25,10 +25,10 @@ Each anonymizer requires different values:
 As the input text could potentially have overlapping PII entities, there are different
 anonymization scenarios:
 
-- One PII - uses a given or default transformation to anonymize and replace the PII text
-  entity.
+- No overlap (single PII) - single PII over text entity, uses a given or default
+  transformation to anonymize and replace the PII text entity.
 - Full overlap of PIIs - When one text have several PIIs, the PII with the higher score
-  will be taken. Between PIIs with similar scores, the selection will be arbitrary.
+  will be taken. Between PIIs with identical scores, the selection will be arbitrary.
 - One PII is contained in another - anonymizer will use the PII with larger text.
 - Partial intersection - both will be returned concatenated.
 
@@ -64,7 +64,7 @@ pipenv sync
 Start the server with flask (***this is a test server please do not use in prod***):
 
 ```
-python app.py
+pipenv run app.py
 ```
 
 The request should be:
