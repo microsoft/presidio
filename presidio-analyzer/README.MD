@@ -24,8 +24,14 @@ python -m spacy download en_core_web_sm
 ```
 
 ## Getting started
+### Running Presidio as an HTTP server
+```sh
+cd presidio-analyzer
+python app.py
+curl -d '{"text":"John Smith drivers license is AC432223", "language":"en"}' -H "Content-Type: application/json" -X POST http://localhost:3000/analyze
+```
 
-Here's a simple analysis script:
+### simple analysis script:
 
 ```python
 from presidio_analyzer import AnalyzerEngine
