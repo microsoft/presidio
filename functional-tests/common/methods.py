@@ -1,9 +1,6 @@
 import requests
 import json
-
-ANONYMIZER_BASE_URL = "http://localhost:5001"
-
-ANALYZER_BASE_URL = "http://localhost:3000"
+from common.constants import ANONYMIZER_BASE_URL, ANALYZER_BASE_URL
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
 

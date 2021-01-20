@@ -1,6 +1,8 @@
+import pytest
 from common.methods import anonymize
 
 
+@pytest.mark.api
 def test_anonymize():
     request_body = {"key": "value"}
 
