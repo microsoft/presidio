@@ -57,5 +57,4 @@ class NlpArtifacts:
 
     def to_json(self) -> str:
         """Convert nlp artifacts to json."""
-
         return str(self.__dict__)

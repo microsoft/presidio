@@ -76,7 +76,6 @@ class EntityRecognizer:
         an NLP process over the input text.
         :return: List of results detected by this recognizer.
         """
-
         return None
 
     def get_supported_entities(self) -> List[str]:
@@ -109,7 +108,6 @@ class EntityRecognizer:
 
         :return: a dictionary
         """
-
         return_dict = {
             "supported_entities": self.supported_entities,
             "supported_language": self.supported_language,
@@ -125,7 +123,6 @@ class EntityRecognizer:
 
         :param entity_recognizer_dict: Dict containing keys and values for instantiation
         """
-
         return cls(**entity_recognizer_dict)
 
     def enhance_using_context(
@@ -209,7 +206,6 @@ class EntityRecognizer:
         :param recognizer_context_list a list of words considered as
                 context keywords manually specified by the recognizer's author
         """
-
         word = ""
         # If the context list is empty, no need to continue
         if context_list is None or recognizer_context_list is None:
@@ -340,7 +336,6 @@ class EntityRecognizer:
         :param word: The word to look for context around
         :param start: The start index of the word in the original text
         """
-
         if not nlp_artifacts.tokens:
             logger.info("Skipping context extraction due to " "lack of NLP artifacts")
             # if there are no nlp artifacts, this is ok, we can

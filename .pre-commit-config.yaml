@@ -15,4 +15,4 @@ repos:
           args: ['--max-line-length=88', 
                  '--docstring-convention=numpy', 
                  '--per-file-ignores=**/tests/**.py:D', 
-                 '--extend-ignore=E203,D107,D100,D104,D202,ANN101,ANN102,ANN204,ANN203']
+                 '--extend-ignore=E203,D100,D202,ANN101,ANN102,ANN204,ANN203']

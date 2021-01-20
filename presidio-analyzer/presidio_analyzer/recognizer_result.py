@@ -52,7 +52,6 @@ class RecognizerResult:
 
     def __repr__(self) -> str:
         """Return a string representation of the instance."""
-
         return self.__str__()
 
     def intersects(self, other: RecognizerResult) -> int:
@@ -63,7 +62,6 @@ class RecognizerResult:
         intersecting characters.
         If not, returns 0
         """
-
         # if they do not overlap the intersection is 0
         if self.end < other.start or other.end < self.start:
             return 0
@@ -77,5 +75,4 @@ class RecognizerResult:
 
         :return: true if contained
         """
-
         return self.start >= other.start and self.end <= other.end

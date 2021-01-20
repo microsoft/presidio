@@ -59,7 +59,6 @@ class NhsRecognizer(PatternRecognizer):
         Only the part in text that was detected by the regex engine
         :return: A bool indicating whether the validation was successful.
         """
-
         text = self.__sanitize_value(pattern_text, self.replacement_pairs)
         total = sum(
             [int(c) * multiplier for c, multiplier in zip(text, reversed(range(11)))]

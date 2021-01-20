@@ -24,7 +24,6 @@ class Pattern:
 
         :return: a dictionary
         """
-
         return_dict = {"name": self.name, "score": self.score, "regex": self.regex}
         return return_dict
 

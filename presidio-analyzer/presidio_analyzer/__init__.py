@@ -1,3 +1,5 @@
+"""Presidio analyzer package."""
+
 import logging
 
 from presidio_analyzer.presidio_logger import PresidioLogger

@@ -87,7 +87,6 @@ class AnalyzerEngine:
         :param language: Return only entities supported in a specific language.
         :return: List of entity names
         """
-
         recognizers = self.get_recognizers(language=language)
         supported_entities = []
         for recognizer in recognizers:
@@ -119,7 +118,6 @@ class AnalyzerEngine:
         :param trace: Should tracing of the response occur or not
         :return: an array of the found entities in the text
         """
-
         all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
