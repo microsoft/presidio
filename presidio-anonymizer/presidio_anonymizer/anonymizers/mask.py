@@ -12,8 +12,8 @@ class Mask(Anonymizer):
 
         :return: The given text masked as requested
         """
-        chars_to_replace = params.get("chars_to_replace")
-        from_end = params.get("from_end")
-        replace_with = params.get("replace_with")
-        old_text = params.get("old_text")
-        return chars_to_replace + from_end + replace_with + old_text
+        # chars_to_replace = params.get("chars_to_replace")
+        # from_end = params.get("from_end")
+        # replace_with = params.get("replace_with")
+        # old_text = params.get("old_text")
+        return ""

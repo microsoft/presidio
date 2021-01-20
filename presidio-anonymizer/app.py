@@ -1,7 +1,7 @@
 from flask import Flask, request
 from presidio_anonymizer.domain.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
-from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
+from presidio_anonymizer.domain.invalid_exception import InvalidParamException
 
 app = Flask(__name__)
 
@@ -13,7 +13,7 @@ def anonymize():
         return "Invalid request json", 400
     try:
         data = AnonymizerRequest.validate_and_convert(content)
-    except InvalidJsonException as e:
+    except InvalidParamException as e:
         return e.err, 400
     except Exception:
         # TODO add logger 2652

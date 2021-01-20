@@ -1,11 +1,17 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
-from presidio_anonymizer.domain import AnalyzerResults
-from presidio_anonymizer.domain.transformations import Transformations
-from presidio_anonymizer.anonymizers.fpe import FPE
-from presidio_anonymizer.anonymizers.mask import Mask
-from presidio_anonymizer.anonymizers.replace import Replace
+import logging
 
-anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace}
+from presidio_anonymizer.anonymizers.fpe import FPE
+from presidio_anonymizer.anonymizers.hash import Hash
+from presidio_anonymizer.anonymizers.mask import Mask
+from presidio_anonymizer.anonymizers.redact import Redact
+from presidio_anonymizer.anonymizers.replace import Replace
+from presidio_anonymizer.domain.invalid_exception import InvalidParamException
+from presidio_anonymizer.domain.transformations import Transformations
+
+anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
+               "redact": Redact}
+logger = logging.getLogger("presidio-anonymizer")
 
 
 class AnonymizerEngine:
@@ -24,10 +30,11 @@ class AnonymizerEngine:
 
         :param data: a map which contains the transformations, analyzer_results and text
         """
-        self._transformations = Transformations(data.get("transformations"))
-        self._analyze_results = data.get("analyzer_results")
-        if self._analyze_results is None:
-            self._analyze_results = AnalyzerResults()
+        transformations = data.get("transformations")
+        if transformations is None:
+            transformations = {}
+        self._transformations = Transformations(transformations)
+        self._analysis_results = data.get("analyzer_results")
         self._text = data.get("text")
         if self._text is None:
             self._text = ""
@@ -38,16 +45,36 @@ class AnonymizerEngine:
 
         :return: the anonymized text
         """
-        analyzer_results = self._analyze_results.to_sorted_set(True)
+        self._validate_input()
+        analyzer_results = self._analysis_results.to_sorted_set(True)
         for result in analyzer_results:
             transformation = self._transformations.get_transformation(result)
-            anonymizer_class = anonymizers.get(transformation.get("type").lower())
-
+            logger.debug(f"received transformation {transformation.get('type')}")
+            anonymizer_class = self.__get_anonymizer(transformation)
             new_text = anonymizer_class().anonymize(transformation)
             self.__replace(result.start, result.end, new_text)
         return self._text
+
+    def __get_anonymizer(self, transformation):
+        anonymizer_type = transformation.get("type").lower()
+        anonymizer_class = anonymizers.get(anonymizer_type)
+        if anonymizer_class is None:
+            logger.error(f"No such anonimyzer class {anonymizer_type}")
+            raise InvalidParamException(
+                f"Invalid anonymizer class '{anonymizer_type}'.")
+        return anonymizer_class
 
     def __replace(self, start, end, new_text):
         end_of_text = min(end, self._end_point)
         self._text = self._text[:start] + new_text + self._text[end_of_text:]
         self._end_point = start
+
+    def _validate_input(self):
+        if self._analysis_results is None or len(self._analysis_results) == 0:
+            raise InvalidParamException("Analyze results must contain data.")
+        for key, transformation in self._transformations.items():
+            anonymizer = self.__get_anonymizer(transformation)
+            transformation["anonymizer"] = anonymizer
+            self._transformations[key] = transformation
+        if self._text == "" or self._text is None:
+            raise InvalidParamException("Please insert a valid text.")

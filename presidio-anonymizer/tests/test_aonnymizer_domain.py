@@ -7,7 +7,7 @@ import pytest
 from presidio_anonymizer.domain.analyzer_result import AnalyzerResult
 from presidio_anonymizer.domain.analyzer_results import AnalyzerResults
 from presidio_anonymizer.domain.anonymizer_request import AnonymizerRequest
-from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
+from presidio_anonymizer.domain.invalid_exception import InvalidParamException
 
 
 @pytest.mark.parametrize(
@@ -39,7 +39,7 @@ from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
 def test_analyzer_result_invalid_json_formats(request_json, result_text):
     try:
         AnalyzerResult.validate_and_create(request_json)
-    except InvalidJsonException as e:
+    except InvalidParamException as e:
         assert e.err == result_text
     except Exception as e:
         assert not e
@@ -90,7 +90,7 @@ def test_analyzer_result_valid_json():
 def test_request_invalid_json_formats(request_json, result_text):
     try:
         AnonymizerRequest.validate_and_convert(request_json)
-    except InvalidJsonException as e:
+    except InvalidParamException as e:
         assert e.err == result_text
     except Exception as e:
         assert not e

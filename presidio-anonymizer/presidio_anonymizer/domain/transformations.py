@@ -9,11 +9,6 @@ class Transformations(dict):
     If the desired transformation does not exist, it will be replaced with default.
     """
 
-    def __init__(self, dict):
-        self = dict
-        if self is None:
-            self = {}
-
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """
         Get the right transformation from the list.

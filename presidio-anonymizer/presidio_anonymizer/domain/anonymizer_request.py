@@ -1,7 +1,7 @@
 """Validate and replace the json from the user request to object."""
 from presidio_anonymizer.domain.analyzer_result import AnalyzerResult
 from presidio_anonymizer.domain.analyzer_results import AnalyzerResults
-from presidio_anonymizer.domain.invalid_exception import InvalidJsonException
+from presidio_anonymizer.domain.invalid_exception import InvalidParamException
 
 
 class AnonymizerRequest(dict):
@@ -35,7 +35,7 @@ class AnonymizerRequest(dict):
     @classmethod
     def __validate_fields(cls, content):
         if not content.get("analyzer_results"):
-            raise InvalidJsonException("Invalid json, "
-                                       "analyzer results can not be empty")
+            raise InvalidParamException("Invalid json, "
+                                        "analyzer results can not be empty")
         if not content.get("text"):
-            raise InvalidJsonException("Invalid json, text can not be empty")
+            raise InvalidParamException("Invalid json, text can not be empty")
