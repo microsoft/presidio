@@ -12,6 +12,7 @@ from presidio_analyzer.pattern_recognizer import PatternRecognizer
 from presidio_analyzer.remote_recognizer import RemoteRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
+from presidio_analyzer.analyzer_request import AnalyzerRequest
 
 logging.getLogger("presidio-analyzer").addHandler(logging.NullHandler())
 
@@ -26,4 +27,5 @@ __all__ = [
     "RemoteRecognizer",
     "RecognizerRegistry",
     "AnalyzerEngine",
+    "AnalyzerRequest",
 ]

@@ -455,7 +455,6 @@ def test_demo_text(unit_test_guid, nlp_engine):
 
 
 def test_get_supported_fields_all_languages(mock_registry, unit_test_guid, nlp_engine):
-
     analyzer = AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
     entities = analyzer.get_supported_entities()
 
@@ -468,7 +467,6 @@ def test_get_supported_fields_all_languages(mock_registry, unit_test_guid, nlp_e
 def test_get_supported_fields_specific_language(
     loaded_registry, unit_test_guid, nlp_engine
 ):
-
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "ROCKET",

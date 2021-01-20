@@ -108,11 +108,9 @@ class AnalyzerEngine:
 
         :param text: the text to analyze
         :param language: the language of the text
-        In such case a list of entities should be provided.
         :param entities: List of PII entities that should be looked for in the text.
-        If entities=None and all_fields=True then all entities are looked for.
+        If entities=None then all entities are looked for.
         :param correlation_id: cross call ID for this request
-        of the requested language
         :param score_threshold: A minimum value for which
         to return an identified entity
         :param trace: Should tracing of the response occur or not
