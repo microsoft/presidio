@@ -4,7 +4,7 @@ import os
 import app
 
 
-def test_anonymize():
+def test_anonymize_api_works_properly():
     json_path = os.path.dirname(__file__) + "/resources/payload.json"
     with open(json_path) as json_file:
         content = json.load(json_file)

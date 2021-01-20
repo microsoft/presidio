@@ -6,7 +6,7 @@ import pytest
 
 from presidio_anonymizer.entities.analyzer_result import AnalyzerResult
 from presidio_anonymizer.entities.analyzer_results import AnalyzerResults
-from presidio_anonymizer.entities.engine_request import AnonymizerEngineRequest
+from presidio_anonymizer.entities.engine_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
 
@@ -36,7 +36,7 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
          }, "Invalid input, analyzer result must contain entity_type",),
     ],
 )
-def test_analyzer_result_invalid_json_formats(request_json, result_text):
+def test_analyzer_result_fails_on_invalid_json_formats(request_json, result_text):
     try:
         AnalyzerResult.validate_and_create(request_json)
     except InvalidParamException as e:
@@ -45,7 +45,7 @@ def test_analyzer_result_invalid_json_formats(request_json, result_text):
         assert not e
 
 
-def test_analyzer_result_valid_json():
+def test_analyzer_result_pass_with_valid_json():
     content = {
         "start": 0,
         "end": 32,
@@ -103,20 +103,21 @@ def test_analyzer_result_valid_json():
          }, "Invalid input, text can not be empty",)
     ],
 )
-def test_request_invalid_json_formats(request_json, result_text):
+def test_creating_anonymizer_request_should_fail_over_validation(request_json,
+                                                                 result_text):
     try:
-        AnonymizerEngineRequest(request_json)
+        AnonymizerRequest(request_json)
     except InvalidParamException as e:
         assert e.err == result_text
     except Exception as e:
         assert not e
 
 
-def test_request_valid_json():
+def test_anonymizer_request_pass_on_valid_json():
     json_path = os.path.dirname(__file__) + "/resources/payload.json"
     with open(json_path) as json_file:
         content = json.load(json_file)
-        data = AnonymizerEngineRequest(content)
+        data = AnonymizerRequest(content)
         assert data._text == content.get("text")
         assert data._transformations == content.get("transformations")
         assert len(data._analysis_results) == len(content.get("analyzer_results"))
@@ -133,7 +134,7 @@ def test_analyzer_results_sorted_set():
     json_path = os.path.dirname(__file__) + "/resources/dup_payload.json"
     with open(json_path) as json_file:
         content = json.load(json_file)
-        data = AnonymizerEngineRequest(content)
+        data = AnonymizerRequest(content)
         analyze_results = data.get_analysis_results()
         assert len(analyze_results) == len(content.get("analyzer_results"))
         sorted_results = analyze_results.to_sorted_set()
@@ -146,7 +147,7 @@ def test_analyzer_results_reversed_sorted_set():
     json_path = os.path.dirname(__file__) + "/resources/dup_payload.json"
     with open(json_path) as json_file:
         content = json.load(json_file)
-        data = AnonymizerEngineRequest(content)
+        data = AnonymizerRequest(content)
         analyze_results = data.get_analysis_results()
         assert len(analyze_results) == len(content.get("analyzer_results"))
         sorted_results = analyze_results.to_sorted_set(True)

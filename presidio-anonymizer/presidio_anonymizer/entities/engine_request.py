@@ -15,8 +15,8 @@ from presidio_anonymizer.entities.analyzer_results import AnalyzerResults
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
 
-class AnonymizerEngineRequest:
-    """The request the engine will get and act on."""
+class AnonymizerRequest:
+    """Input validation for the anonymize process."""
 
     anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
                    "redact": Redact}
@@ -25,7 +25,7 @@ class AnonymizerEngineRequest:
 
     def __init__(self,
                  data: dict):
-        """Handle text replacement for PIIs with requested transformations.
+        """Handle and validate data for the text replacement.
 
         :param data: a map which contains the transformations, analyzer_results and text
         """
@@ -67,15 +67,28 @@ class AnonymizerEngineRequest:
         self.__handle_transformations(data)
 
     def __handle_analyzer_results(self, data):
-        results = data.get("analyzer_results")
-        if results is None or len(results) == 0:
+        """
+        Go over analyzer results, check they are valid and convert to AnalyzeResult.
+
+        :param data: contains the text, transformations and analyzer_results
+        :return: None
+        """
+        analyzer_results = data.get("analyzer_results")
+        if analyzer_results is None or len(analyzer_results) == 0:
             raise InvalidParamException("Invalid input, "
                                         "analyzer results can not be empty")
-        for result in results:
+        for analyzer_result in analyzer_results:
             self._analysis_results.append(
-                AnalyzerResult.validate_and_create(result))
+                AnalyzerResult.validate_and_create(analyzer_result))
 
     def __handle_transformations(self, data):
+        """
+        Go over the transformations and get the relevant anonymizer class for it.
+
+        Inserts the class to the transformation so the engine will use it.
+        :param data: contains the text, transformations and analyzer_results
+        :return: None
+        """
         transformations = data.get("transformations")
         if transformations is not None:
             for key, transformation in transformations.items():
@@ -89,6 +102,12 @@ class AnonymizerEngineRequest:
             raise InvalidParamException("Invalid input, text can not be empty")
 
     def __get_anonymizer(self, transformation):
+        """
+        Extract the anonymizer class from the anonymizers list.
+
+        :param transformation: a single transformation value
+        :return: anonymizer_class
+        """
         anonymizer_type = transformation.get("type").lower()
         anonymizer_class = self.anonymizers.get(anonymizer_type)
         if anonymizer_class is None:
