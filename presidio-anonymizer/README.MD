@@ -32,6 +32,26 @@ anonymization scenarios:
 - One PII is contained in another - anonymizer will use the PII with larger text.
 - Partial intersection - both will be returned concatenated.
 
+Example of how each scenario would work. Our text will be:
+
+My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
+03-232323.
+
+- No overlaps - only Inigo was recognized as NAME:
+  My name is <NAME> Montoya. You Killed my Father. Prepare to die. BTW my number is:
+  03-232323.
+- Full overlap - the number was recognized as PHONE_NUMBER with score of 0.7 and as SSN
+  with score of 0.6, we will take the higher score:
+  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is: <
+  PHONE_NUMBER>
+- One PII is contained is another - Inigo was recognized as FIRST_NAME and Inigo Montoya
+  was recognized as NAME, we will take the larger one:
+  My name is <NAME>. You Killed my Father. Prepare to die. BTW my number is: 03-232323.
+- Partial intersection - the number 03-2323 is recognized as a PHONE_NUMBER but 232323 is
+  recognized as SSN:
+  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is: <
+  PHONE_NUMBER><SSN>.
+
 ## Installation
 
 ### As package:
