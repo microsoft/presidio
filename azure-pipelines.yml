@@ -7,12 +7,12 @@ pr:
       - V2
 
 jobs:
-    - job: validate
-      displayName: 'Validate PR pre-requisites'
-      steps:
-        - template: .pipelines/templates/validate-version.yml
-          parameters:
-            UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
+    #- job: validate
+    #  displayName: 'Validate PR pre-requisites'
+    #  steps:
+    #    - template: .pipelines/templates/validate-version.yml
+    #      parameters:
+    #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
 
     - job: inclusivelint
       displayName: 'Inclusive linting validation'
@@ -34,7 +34,7 @@ jobs:
         - template: .pipelines/templates/security-analysis.yml
        
     - job: 'Test'
-      dependsOn: 'validate'
+    #  dependsOn: 'validate'
       pool:
         vmImage: 'ubuntu-16.04'
       strategy:
@@ -88,5 +88,3 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
-
-        
