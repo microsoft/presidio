@@ -95,6 +95,10 @@ jobs:
             WORKING_FOLDER: 'presidio-anonymizer'
 
     - job: FunctionalTests
+      dependsOn:
+        #- 'validate'
+        - 'inclusivelint'
+        - 'SecurityAnalysis'
       pool:
         vmImage: 'ubuntu-16.04'
 
