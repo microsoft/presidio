@@ -1,5 +1,6 @@
 from presidio_analyzer.presidio_logger import PresidioLogger
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
+from presidio_analyzer.analyzer_request import AnalyzerRequest
 from flask import Flask, request
 import json
 import os
@@ -40,22 +41,15 @@ class Server:
             Executes the analyzer function
             """
             # Parse the request params
-            req_data = request.get_json()
-
-            text = req_data.get("text")
-            language = req_data.get("language")
-            entities = req_data.get("entities")
-            correlation_id = req_data.get("correlation_id")
-            score_threshold = req_data.get("score_threshold")
-            trace = req_data.get("trace")
+            req_data = AnalyzerRequest(request.get_json())
             try:
                 recognizer_result_list = self.engine.analyze(
-                    text,
-                    language,
-                    correlation_id=correlation_id,
-                    score_threshold=score_threshold,
-                    entities=entities,
-                    trace=trace)
+                    req_data.text,
+                    req_data.language,
+                    correlation_id=req_data.correlation_id,
+                    score_threshold=req_data.score_threshold,
+                    entities=req_data.entities,
+                    trace=req_data.trace)
 
                 return json.dumps(recognizer_result_list, default=lambda o: o.to_json(),
                                   sort_keys=True, indent=4)
