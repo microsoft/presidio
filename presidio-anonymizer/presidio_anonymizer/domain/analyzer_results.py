@@ -38,6 +38,14 @@ class AnalyzerResults(List):
         return sorted(analyzer_results, reverse=reverse)
 
     def _remove_dups(self):
+        """
+        Iterate the list and create a set from it.
+
+        Only insert results which are:
+        1. Indices are not contained in other result.
+        2. Have the same indices as other results but with larger score.
+        :return: set
+        """
         obj_set = set()
         for result_a in self:
             for index in range(len(self)):
