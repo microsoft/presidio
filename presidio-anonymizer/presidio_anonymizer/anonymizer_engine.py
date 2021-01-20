@@ -1,5 +1,5 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
-from domain import AnalyzerResults
+from presidio_anonymizer.domain import AnalyzerResults
 from presidio_anonymizer.domain.transformations import Transformations
 from presidio_anonymizer.anonymizers.fpe import FPE
 from presidio_anonymizer.anonymizers.mask import Mask
