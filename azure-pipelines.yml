@@ -105,3 +105,15 @@ jobs:
 
       steps:
         - template: .pipelines/templates/functional-tests.yml
+
+    - job: DeployToDevEnviroment
+      displayName: Deploy to Development Environment
+      dependsOn:
+        - 'Test'
+        - 'FunctionalTests'
+      pool:
+        vmImage: 'ubuntu-16.04'
+        steps:
+        - script: echo Deploy to Development Environment
+#       - template: .pipelines/templates/dev-deployment.yml
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/V2'))
