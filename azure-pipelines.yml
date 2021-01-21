@@ -35,7 +35,7 @@ jobs:
        
     - job: 'Test'
       dependsOn: 
-      - 'validate'
+      #- 'validate'
       - 'inclusivelint'
       - 'SecurityAnalysis'
       pool:
