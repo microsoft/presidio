@@ -67,8 +67,9 @@ class AnalyzerResult:
         :param other: another analyzer_result
         :return: bool
         """
-        return self.equal_indices(other) \
-               and self.entity_type == other.entity_type and self.score is other.score
+        equal_type = self.entity_type == other.entity_type
+        equal_score = self.score is other.score
+        return self.equal_indices(other) and equal_type and equal_score
 
     def __hash__(self):
         """
