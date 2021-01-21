@@ -1,11 +1,6 @@
 trigger:
   - V2
 
-pr:
-  branches:
-    include:
-      - V2
-
 jobs:
     #- job: validate
     #  displayName: 'Validate PR pre-requisites'
