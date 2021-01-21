@@ -1,9 +1,19 @@
+from typing import List, Tuple, Optional
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
 class CreditCardRecognizer(PatternRecognizer):
     """
-    Recognizes common credit card numbers using regex + checksum
+    Recognize common credit card numbers using regex + checksum.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
+    :param replacement_pairs: List of tuples with potential replacement values
+    for different strings to be used during pattern matching.
+    This can allow a greater variety in input, for example by removing dashes or spaces.
     """
 
     PATTERNS = [
@@ -20,7 +30,6 @@ class CreditCardRecognizer(PatternRecognizer):
         "visa",
         "mastercard",
         "cc ",
-        # "american express" #Task #603: Support keyphrases
         "amex",
         "discover",
         "jcb",
@@ -31,17 +40,13 @@ class CreditCardRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="CREDIT_CARD",
-        replacement_pairs=None,
+        patterns: Optional[List[Pattern]] = None,
+        context: Optional[List[str]] = None,
+        supported_language: str = "en",
+        supported_entity: str = "CREDIT_CARD",
+        replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
-        """
-        :param replacement_pairs: list of tuples to replace in the string.
-            ( default: [("-", ""), (" ", "")] )
-            i.e. remove dashes and spaces from the string during recognition.
-        """
+
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
@@ -54,27 +59,27 @@ class CreditCardRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text):
+    def validate_result(self, pattern_text: str) -> bool:  # noqa D102
         sanitized_value = self.__sanitize_value(pattern_text, self.replacement_pairs)
         checksum = self.__luhn_checksum(sanitized_value)
 
         return checksum
 
     @staticmethod
-    def __luhn_checksum(sanitized_value):
-        def digits_of(n):
-            return [int(d) for d in str(n)]
+    def __luhn_checksum(sanitized_value: str) -> bool:
+        def digits_of(n: str) -> List[int]:
+            return [int(dig) for dig in str(n)]
 
         digits = digits_of(sanitized_value)
         odd_digits = digits[-1::-2]
         even_digits = digits[-2::-2]
         checksum = sum(odd_digits)
         for d in even_digits:
-            checksum += sum(digits_of(d * 2))
+            checksum += sum(digits_of(str(d * 2)))
         return checksum % 10 == 0
 
     @staticmethod
-    def __sanitize_value(text, replacement_pairs):
+    def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
         for search_string, replacement_string in replacement_pairs:
             text = text.replace(search_string, replacement_string)
         return text

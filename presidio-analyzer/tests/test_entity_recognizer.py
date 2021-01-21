@@ -27,7 +27,7 @@ def test_index_finding():
     start = 19
     tokens = ["my", "phone", "number", "is:(425", ")", "882", "-", "9090"]
     tokens_indices = [0, 3, 9, 16, 23, 25, 28, 29]
-    index = EntityRecognizer.find_index_of_match_token(
+    index = EntityRecognizer._find_index_of_match_token(
         match, start, tokens, tokens_indices
     )
     assert index == 3

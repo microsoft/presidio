@@ -1,3 +1,5 @@
+from typing import Optional, List
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 # Weak pattern: all FIN number start with "S", "T", "F" or "G"
@@ -7,7 +9,12 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class SgFinRecognizer(PatternRecognizer):
     """
-    Recognizes SG FIN/NRIC number using regex
+    Recognize SG FIN/NRIC number using regex.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
     """
 
     PATTERNS = [
@@ -19,10 +26,10 @@ class SgFinRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="SG_NRIC_FIN",
+        patterns: Optional[List[Pattern]] = None,
+        context: Optional[List[str]] = None,
+        supported_language: str = "en",
+        supported_entity: str = "SG_NRIC_FIN",
     ):
         patterns = patterns if patterns else self.PATTERNS
         context = context if context else self.CONTEXT

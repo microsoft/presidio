@@ -4,14 +4,15 @@ import sys
 
 
 class PresidioLogger:
-    """A wrapper class for logger"""
+    """A wrapper class for logger."""
 
-    def __init__(self, logger_name: str = "presidio", default_level: str = "INFO"):
+    def __init__(
+        self, logger_name: str = "presidio-analyzer", default_level: str = "INFO"
+    ):
         if logger_name:
             logger = logging.getLogger(logger_name)
-            logger.addHandler(logging.NullHandler())
         else:
-            logger = logging.getLogger()
+            logger = logging.getLogger("presidio-analyzer")
 
         if not logger.handlers:
             loglevel = os.environ.get("LOG_LEVEL", default_level)
@@ -25,10 +26,11 @@ class PresidioLogger:
 
         self.__logger = logger
 
-    def set_level(self, level: str):
+    def set_level(self, level: str):  # noqa ANN201
+        """Set the logging level of this logger.  level must be an int or a str."""
         self.__logger.setLevel(level)
 
-    def debug(self, msg, *args, **kwargs):
+    def debug(self, msg, *args, **kwargs):  # noqa ANN002 ANN003 ANN201
         """
         Log 'msg % args' with severity 'DEBUG'.
 
@@ -39,7 +41,7 @@ class PresidioLogger:
         """
         self.__logger.debug(msg, *args, **kwargs)
 
-    def info(self, msg, *args, **kwargs):
+    def info(self, msg, *args, **kwargs):  # noqa ANN002 ANN003 ANN201
         """
         Log 'msg % args' with severity 'INFO'.
 
@@ -50,7 +52,7 @@ class PresidioLogger:
         """
         self.__logger.info(msg, *args, **kwargs)
 
-    def warning(self, msg, *args, **kwargs):
+    def warning(self, msg, *args, **kwargs):  # noqa ANN002 ANN003 ANN201
         """
         Log 'msg % args' with severity 'WARNING'.
 
@@ -61,7 +63,7 @@ class PresidioLogger:
         """
         self.__logger.warning(msg, *args, **kwargs)
 
-    def error(self, msg, *args, **kwargs):
+    def error(self, msg, *args, **kwargs):  # noqa ANN002 ANN003 ANN201
         """
         Log 'msg % args' with severity 'ERROR'.
 
@@ -72,7 +74,7 @@ class PresidioLogger:
         """
         self.__logger.error(msg, *args, **kwargs)
 
-    def critical(self, msg, *args, **kwargs):
+    def critical(self, msg, *args, **kwargs):  # noqa ANN002 ANN003 ANN201
         """
         Log 'msg % args' with severity 'CRITICAL'.
 

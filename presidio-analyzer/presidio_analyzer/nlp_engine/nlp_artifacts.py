@@ -1,10 +1,25 @@
+from typing import List
+
+from spacy.tokens import Doc
+
+
 class NlpArtifacts:
-    """NlpArtifacts is an abstraction layer over the results of an NLP pipeline
+    """
+    NlpArtifacts is an abstraction layer over the results of an NLP pipeline.
+
     processing over a given text, it holds attributes such as entities,
     tokens and lemmas which can be used by any recognizer
     """
 
-    def __init__(self, entities, tokens, tokens_indices, lemmas, nlp_engine, language):
+    def __init__(
+        self,
+        entities: List[str],
+        tokens: Doc,
+        tokens_indices: List[int],
+        lemmas: List[str],
+        nlp_engine,  # noqa ANN001
+        language: str,
+    ):
         self.entities = entities
         self.tokens = tokens
         self.lemmas = lemmas
@@ -12,7 +27,14 @@ class NlpArtifacts:
         self.keywords = self.set_keywords(nlp_engine, lemmas, language)
 
     @staticmethod
-    def set_keywords(nlp_engine, lemmas, language):
+    def set_keywords(
+        nlp_engine, lemmas: List[str], language: str  # noqa ANN001
+    ) -> List[str]:
+        """
+        Return keywords fpr text.
+
+        Extracts lemmas with certain conditions as keywords.
+        """
         if not nlp_engine:
             return []
         keywords = [
@@ -33,5 +55,6 @@ class NlpArtifacts:
         keywords = [item for sublist in keywords for item in sublist]
         return keywords
 
-    def to_json(self):
+    def to_json(self) -> str:
+        """Convert nlp artifacts to json."""
         return str(self.__dict__)
