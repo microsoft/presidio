@@ -1,5 +1,5 @@
 """List wrapper of AnalyzerResult which sort the list using AnalyzerResult.__gt__."""
-from presidio_anonymizer.entities.analyzer_result import AnalyzerResult
+from presidio_anonymizer.entities import AnalyzerResult
 
 
 class AnalyzerResults(list):

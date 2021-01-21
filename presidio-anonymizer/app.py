@@ -1,15 +1,18 @@
+"""REST API server for anonymizer."""
 import os
 
 from flask import Flask, request
 
-from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
-from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
-from presidio_anonymizer.entities.invalid_exception import InvalidParamException
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import AnonymizerRequest
+from presidio_anonymizer.entities import InvalidParamException
 
 DEFAULT_PORT = "3000"
 
 
 class Server:
+    """Flask server for anonymizer."""
+
     def __init__(self):
         self.app = Flask(__name__)
 

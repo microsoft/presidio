@@ -3,7 +3,7 @@ AnalyzerResult is the exact copy of the recognizer result.
 
 Represents the findings of detected entity.
 """
-from presidio_anonymizer.entities.invalid_exception import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamException
 
 
 class AnalyzerResult:
@@ -67,8 +67,8 @@ class AnalyzerResult:
         :param other: another analyzer_result
         :return: bool
         """
-        return self.equal_indices(other) and self.entity_type == other.entity_type \
-               and self.score is other.score
+        return self.equal_indices(other) \
+               and self.entity_type == other.entity_type and self.score is other.score
 
     def __hash__(self):
         """

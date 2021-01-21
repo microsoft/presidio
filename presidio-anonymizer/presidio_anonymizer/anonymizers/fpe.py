@@ -3,7 +3,7 @@ Format Preserving encryption for PII text entities.
 
 Uses FF1 algorithm for the encryption.
 """
-from presidio_anonymizer.anonymizers.anonymizer import Anonymizer
+from presidio_anonymizer.anonymizers import Anonymizer
 
 
 # TODO implement + test

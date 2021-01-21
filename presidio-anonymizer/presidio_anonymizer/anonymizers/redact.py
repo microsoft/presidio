@@ -1,5 +1,5 @@
 """Replaces the PII text entity with empty string."""
-from presidio_anonymizer.anonymizers.anonymizer import Anonymizer
+from presidio_anonymizer.anonymizers import Anonymizer
 
 
 # TODO implement + test

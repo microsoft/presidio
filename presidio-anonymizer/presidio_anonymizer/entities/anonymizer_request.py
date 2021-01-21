@@ -5,14 +5,14 @@ It get the data and validate it before the engine receives it.
 """
 import logging
 
-from presidio_anonymizer.anonymizers.fpe import FPE
-from presidio_anonymizer.anonymizers.hash import Hash
-from presidio_anonymizer.anonymizers.mask import Mask
-from presidio_anonymizer.anonymizers.redact import Redact
-from presidio_anonymizer.anonymizers.replace import Replace
-from presidio_anonymizer.entities.analyzer_result import AnalyzerResult
-from presidio_anonymizer.entities.analyzer_results import AnalyzerResults
-from presidio_anonymizer.entities.invalid_exception import InvalidParamException
+from presidio_anonymizer.anonymizers import FPE
+from presidio_anonymizer.anonymizers import Hash
+from presidio_anonymizer.anonymizers import Mask
+from presidio_anonymizer.anonymizers import Redact
+from presidio_anonymizer.anonymizers import Replace
+from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import AnalyzerResult
+from presidio_anonymizer.entities import AnalyzerResults
 
 
 class AnonymizerRequest:
