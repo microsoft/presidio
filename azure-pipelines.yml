@@ -95,6 +95,7 @@ jobs:
             WORKING_FOLDER: 'presidio-anonymizer'
 
     - job: FunctionalTests
+      displayName: Functional Tests
       dependsOn:
         #- 'validate'
         - 'inclusivelint'
