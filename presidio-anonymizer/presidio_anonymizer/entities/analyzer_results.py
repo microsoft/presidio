@@ -49,16 +49,9 @@ class AnalyzerResults(List):
         """
         obj_set = set()
         for result_a in self:
-            for index in range(len(self)):
-                other = self.__getitem__(index)
-                # not the same object
-                if not result_a.__eq__(other):
-                    # if there is an object containing result_a
-                    # or an object with equal indices and higher score pass
-                    if other.contains(result_a) or \
-                            (result_a.equal_indices(
-                                other) and result_a.score < other.score):
-                        break
-                if index == len(self) - 1:
-                    obj_set.add(result_a)
+            other_elements = AnalyzerResults(self)
+            other_elements.remove(result_a)
+            if not any([result_a.same_or_contained(other_element) for other_element in
+                        other_elements]):
+                obj_set.add(result_a)
         return obj_set

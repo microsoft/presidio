@@ -98,7 +98,7 @@ class AnonymizerRequest:
 
     def __handle_text(self, data):
         self._text = data.get("text")
-        if self._text == "" or self._text is None:
+        if not self._text:
             raise InvalidParamException("Invalid input, text can not be empty")
 
     def __get_anonymizer(self, transformation):
@@ -110,7 +110,7 @@ class AnonymizerRequest:
         """
         anonymizer_type = transformation.get("type").lower()
         anonymizer_class = self.anonymizers.get(anonymizer_type)
-        if anonymizer_class is None:
+        if not anonymizer_class:
             self.logger.error(f"No such anonimyzer class {anonymizer_type}")
             raise InvalidParamException(
                 f"Invalid anonymizer class '{anonymizer_type}'.")

@@ -14,12 +14,12 @@ def anonymize():
         return "Invalid request json", 400
     try:
         data = AnonymizerRequest(content)
+        text = AnonymizerEngine().anonymize(data)
     except InvalidParamException as e:
         return e.err, 400
     except Exception:
         # TODO add logger 2652
         return "Internal server error", 500
-    text = AnonymizerEngine().anonymize(data)
     return text
 
 
