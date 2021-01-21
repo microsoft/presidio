@@ -22,7 +22,7 @@ class AnonymizerEngine:
         :param data: a map which contains the transformations, analyzer_results and text
         """
 
-    def anonymize(self, engine_request: AnonymizerRequest):
+    def anonymize(self, engine_request: AnonymizerRequest) -> str:
         """Anonymize method to anonymize the given text.
 
         :return: the anonymized text

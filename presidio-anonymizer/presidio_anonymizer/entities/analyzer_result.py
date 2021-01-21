@@ -6,9 +6,9 @@ Represents the findings of detected entity.
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
 
-class AnalyzerResult(object):
+class AnalyzerResult:
     """
-    AnalyzerResult is a duplication of the recognizer result.
+    AnalyzerResult is the output of the analyze process.
 
     Validate and compare an recognizer result object.
     """
@@ -67,9 +67,8 @@ class AnalyzerResult(object):
         :param other: another analyzer_result
         :return: bool
         """
-        return self.equal_indices(
-            other) and self.entity_type.__eq__(
-            other.entity_type) and self.score is other.score
+        return self.equal_indices(other) and self.entity_type == other.entity_type \
+               and self.score is other.score
 
     def __hash__(self):
         """
@@ -107,7 +106,7 @@ class AnalyzerResult(object):
 
     @classmethod
     def __validate_fields(cls, content):
-        for field in ["start", "end", "score", "entity_type"]:
+        for field in ("start", "end", "score", "entity_type"):
             if content.get(field) is None:
                 raise InvalidParamException(
                     f"Invalid input, analyzer result must contain {field}")

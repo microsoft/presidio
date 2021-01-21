@@ -1,13 +1,13 @@
-"""Wrapper to the list of AnalyzerResult which manipulates the list."""
-from typing import List
+"""List wrapper of AnalyzerResult which sort the list using AnalyzerResult.__gt__."""
+from presidio_anonymizer.entities.analyzer_result import AnalyzerResult
 
 
-class AnalyzerResults(List):
+class AnalyzerResults(list):
     """
     A class which provides operations over the analyzer result list..
 
-     The manipulation contains removal of unused results and sort by indices order.
-     Additional information about the rationale of this class:
+     It includes removal of unused results and sort by indices order.
+     Additional information about the rational of this class:
     - One PII - uses a given or default transformation to anonymize and replace the PII
     text entity.
     - Full overlap of PIIs - When one text have several PIIs, the PII with the higher
@@ -17,7 +17,7 @@ class AnalyzerResults(List):
     - Partial intersection - both will be returned concatenated.
     """
 
-    def to_sorted_set(self, reverse=False):
+    def to_sorted_set(self, reverse=False) -> set[AnalyzerResult]:
         """
         Create a sorted set from the list.
 
