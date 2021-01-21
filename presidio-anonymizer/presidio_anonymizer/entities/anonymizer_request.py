@@ -74,7 +74,7 @@ class AnonymizerRequest:
         :return: None
         """
         analyzer_results = data.get("analyzer_results")
-        if analyzer_results is None or len(analyzer_results) == 0:
+        if not analyzer_results:
             raise InvalidParamException("Invalid input, "
                                         "analyzer results can not be empty")
         for analyzer_result in analyzer_results:
