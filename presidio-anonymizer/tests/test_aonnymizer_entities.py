@@ -141,7 +141,7 @@ def test_analyzer_results_sorted_set():
         data = AnonymizerRequest(content)
         analyze_results = data.get_analysis_results()
         assert len(analyze_results) == len(content.get("analyzer_results"))
-        sorted_results = analyze_results.to_sorted_set()
+        sorted_results = analyze_results.to_sorted_unique_results()
         assert len(sorted_results) == 2
         assert list(sorted_results)[0].start < list(sorted_results)[1].start
         assert list(sorted_results)[0].end < list(sorted_results)[1].end
@@ -154,7 +154,7 @@ def test_analyzer_results_reversed_sorted_set():
         data = AnonymizerRequest(content)
         analyze_results = data.get_analysis_results()
         assert len(analyze_results) == len(content.get("analyzer_results"))
-        sorted_results = analyze_results.to_sorted_set(True)
+        sorted_results = analyze_results.to_sorted_unique_results(True)
         assert len(sorted_results) == 2
         assert list(sorted_results)[1].start < list(sorted_results)[0].start
         assert list(sorted_results)[1].end < list(sorted_results)[0].end
@@ -162,7 +162,7 @@ def test_analyzer_results_reversed_sorted_set():
 
 def test_analyzer_results_not_failing_on_empty_list():
     analyzer_result = AnalyzerResults()
-    assert len(analyzer_result.to_sorted_set()) == 0
+    assert len(analyzer_result.to_sorted_unique_results()) == 0
 
 
 def __find_element(content: List, entity_type: str):

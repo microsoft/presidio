@@ -30,7 +30,8 @@ class AnonymizerEngine:
         original_text = engine_request.get_text()
         last_replacement_point = len(original_text)
         output_text = engine_request.get_text()
-        analyzer_results = engine_request.get_analysis_results().to_sorted_set(True)
+        analyzer_results = engine_request.get_analysis_results(
+        ).to_sorted_unique_results(True)
         for analyzer_result in analyzer_results:
             transformation = engine_request.get_transformation(analyzer_result)
             self.logger.debug(f"received transformation {transformation.get('type')}")

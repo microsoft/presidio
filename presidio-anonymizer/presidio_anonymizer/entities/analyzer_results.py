@@ -1,4 +1,6 @@
 """List wrapper of AnalyzerResult which sort the list using AnalyzerResult.__gt__."""
+from typing import List
+
 from presidio_anonymizer.entities import AnalyzerResult
 
 
@@ -17,9 +19,9 @@ class AnalyzerResults(list):
     - Partial intersection - both will be returned concatenated.
     """
 
-    def to_sorted_set(self, reverse=False) -> set[AnalyzerResult]:
+    def to_sorted_unique_results(self, reverse=False) -> List[AnalyzerResult]:
         """
-        Create a sorted set from the list.
+        Create a sorted list with unique results from the list.
 
         _remove_conflicts method - removes results which impact the same text and
         should be ignored.
@@ -33,25 +35,25 @@ class AnalyzerResults(list):
         with larger text.
         - Partial intersection - both will be returned concatenated.
         sort - Use __gt__ of AnalyzerResult to compare and sort
-        :return: set
+        :return: List
         """
         analyzer_results = self._remove_conflicts()
         return sorted(analyzer_results, reverse=reverse)
 
     def _remove_conflicts(self):
         """
-        Iterate the list and create a set from it.
+        Iterate the list and create a sorted unique results list from it.
 
         Only insert results which are:
         1. Indices are not contained in other result.
         2. Have the same indices as other results but with larger score.
-        :return: set
+        :return: List
         """
-        obj_set = set()
+        unique_elements = []
         for result_a in self:
             other_elements = AnalyzerResults(self)
             other_elements.remove(result_a)
             if not any([result_a.same_or_contained(other_element) for other_element in
                         other_elements]):
-                obj_set.add(result_a)
-        return obj_set
+                unique_elements.append(result_a)
+        return unique_elements
