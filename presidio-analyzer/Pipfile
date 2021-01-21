@@ -18,3 +18,5 @@ flake8-docstrings = "*"
 
 
 TEST
+
+CODEOWNERS
