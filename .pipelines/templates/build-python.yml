@@ -9,6 +9,7 @@ steps:
           targetType: 'inline'
           workingDirectory: ${{ parameters.WORKING_FOLDER }}
           script: |
+              set -eux  # fail on error
               pipenv run flake8 ${{ parameters.WORKING_FOLDER }}
 
     - task: Bash@3
@@ -17,6 +18,7 @@ steps:
           targetType: 'inline'
           workingDirectory: ${{ parameters.WORKING_FOLDER }}
           script: |
+              set -eux  # fail on error
               # Install pytest and run tests
               pipenv install --dev --skip-lock pytest-azurepipelines
               pipenv run pytest
