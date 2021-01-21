@@ -1,9 +1,16 @@
+from typing import List, Optional
+
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
 class UsPassportRecognizer(PatternRecognizer):
     """
-    Recognizes US Passport number using regex
+    Recognizes US Passport number using regex.
+
+    :param patterns: List of patterns to be used by this recognizer
+    :param context: List of context words to increase confidence in detection
+    :param supported_language: Language this recognizer supports
+    :param supported_entity: The entity this recognizer can detect
     """
 
     # Weak pattern: all passport numbers are a weak match, e.g., 14019033
@@ -14,10 +21,10 @@ class UsPassportRecognizer(PatternRecognizer):
 
     def __init__(
         self,
-        patterns=None,
-        context=None,
-        supported_language="en",
-        supported_entity="US_PASSPORT",
+        patterns: Optional[List[Pattern]] = None,
+        context: Optional[List[str]] = None,
+        supported_language: str = "en",
+        supported_entity: str = "US_PASSPORT",
     ):
         context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS

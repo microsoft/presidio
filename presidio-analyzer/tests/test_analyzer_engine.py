@@ -9,16 +9,12 @@ from presidio_analyzer import (
     Pattern,
     RecognizerResult,
     RecognizerRegistry,
-    AnalysisExplanation,
 )
-from presidio_analyzer import PresidioLogger
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 # noqa: F401
 from tests import assert_result
 from tests.mocks import NlpEngineMock, AppTracerMock, RecognizerRegistryMock
-
-logger = PresidioLogger()
 
 
 @pytest.fixture(scope="module")
@@ -49,7 +45,7 @@ def nlp_engine(nlp_engines):
 
 
 def test_analyze_with_predefined_recognizers_return_results(
-        loaded_analyzer_engine, unit_test_guid, max_score
+    loaded_analyzer_engine, unit_test_guid, max_score
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
     language = "en"
@@ -66,7 +62,7 @@ def test_analyze_with_predefined_recognizers_return_results(
 
 
 def test_analyze_with_multiple_predefined_recognizers(
-        loaded_registry, unit_test_guid, nlp_engine, max_score
+    loaded_registry, unit_test_guid, nlp_engine, max_score
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
     language = "en"
@@ -254,7 +250,7 @@ def test_analyze_when_entities_is_none_return_all_fields(loaded_registry):
 
 
 def test_analyze_when_entities_is_none_all_recognizers_loaded_return_all_fields(
-        nlp_engine,
+    nlp_engine,
 ):
     analyze_engine = AnalyzerEngine(
         registry=RecognizerRegistry(), nlp_engine=nlp_engine
@@ -273,7 +269,7 @@ def test_analyze_when_entities_is_none_all_recognizers_loaded_return_all_fields(
 
 
 def test_analyze_when_analyze_then_apptracer_has_value(
-        loaded_registry, unit_test_guid, nlp_engine
+    loaded_registry, unit_test_guid, nlp_engine
 ):
     text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"  # noqa E501
     language = "en"
@@ -322,7 +318,7 @@ def test_when_threshold_is_zero_all_results_pass(loaded_registry, unit_test_guid
 
 
 def test_when_threshold_is_more_than_half_only_credit_card_passes(
-        loaded_registry, unit_test_guid
+    loaded_registry, unit_test_guid
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
     language = "en"
@@ -346,7 +342,7 @@ def test_when_threshold_is_more_than_half_only_credit_card_passes(
 
 
 def test_when_default_threshold_is_more_than_half_only_one_passes(
-        loaded_registry, unit_test_guid
+    loaded_registry, unit_test_guid
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
     language = "en"
@@ -371,7 +367,7 @@ def test_when_default_threshold_is_more_than_half_only_one_passes(
 
 
 def test_when_default_threshold_is_zero_all_results_pass(
-        loaded_registry, unit_test_guid
+    loaded_registry, unit_test_guid
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
     language = "en"
@@ -426,7 +422,7 @@ def test_demo_text(unit_test_guid, nlp_engine):
                 continue
             start = resp.start + delta
             end = resp.end + delta
-            entity_text = original_text[resp.start: resp.end]
+            entity_text = original_text[resp.start : resp.end]
             entity_type = resp.entity_type
 
             new_text = f"{new_text[:start]}<{entity_type}>{new_text[end:]}"
@@ -469,7 +465,7 @@ def test_get_supported_fields_all_languages(mock_registry, unit_test_guid, nlp_e
 
 
 def test_get_supported_fields_specific_language(
-        loaded_registry, unit_test_guid, nlp_engine
+    loaded_registry, unit_test_guid, nlp_engine
 ):
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(

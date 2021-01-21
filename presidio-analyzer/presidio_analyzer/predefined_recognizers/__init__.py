@@ -1,3 +1,5 @@
+"""Predefined recognizers package. Holds all the default recognizers."""
+
 from .aba_routing_recognizer import AbaRoutingRecognizer
 from .credit_card_recognizer import CreditCardRecognizer
 from .crypto_recognizer import CryptoRecognizer
