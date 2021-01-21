@@ -115,6 +115,7 @@ jobs:
             versionSpec: '3.8'
 
         - script: |
+            set -eux  # fail on error
             python -m venv env
             source env/bin/activate
             python -m pip install --upgrade pip
@@ -124,6 +125,7 @@ jobs:
           displayName: Install requirements
 
         - script: |
+            set -eux  # fail on error
             source env/bin/activate
             pytest
           workingDirectory: functional-tests
