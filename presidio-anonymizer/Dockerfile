@@ -11,4 +11,4 @@ RUN pipenv sync
 COPY . /usr/bin/${NAME}/
 
 EXPOSE ${FLASK_RUN_PORT}
-CMD pipenv run flask run --host 0.0.0.0
+CMD pipenv run python app.py --host 0.0.0.0

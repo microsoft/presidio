@@ -1,15 +1,15 @@
-# Presidio Analyzer Dockerfile. 
-# This dockerfile installs presidio analyzer wheel from a pypi endpoint.
-ARG REGISTRY=presidio.azurecr.io
-ARG PRESIDIO_DEPS_LABEL=latest
-FROM ${REGISTRY}/presidio-python-deps:${PRESIDIO_DEPS_LABEL}
+FROM python:3.8-slim
 
-ARG NAME=presidio-analyzer
-ARG PIP_EXTRA_INDEX_URL
-ARG VERSION
-
+ARG NAME
+ARG SPACY_MODEL=en_core_web_lg
+ENV PIPENV_VENV_IN_PROJECT=1
 WORKDIR /usr/bin/${NAME}
-ENV PIP_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
 
-RUN . $(pipenv --venv)/bin/activate && pip install presidio-analyzer==${VERSION:-0.0.1}    
+COPY ./Pipfile* /usr/bin/${NAME}/
+RUN pip install pipenv
+RUN pipenv sync
+RUN pipenv run python -m spacy download ${SPACY_MODEL}
 
+COPY . /usr/bin/${NAME}/
+EXPOSE ${FLASK_RUN_PORT}
+CMD pipenv run python app.py --host 0.0.0.0
