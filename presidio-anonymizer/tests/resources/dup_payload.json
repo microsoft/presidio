@@ -1,0 +1,35 @@
+{
+  "text": "hello world, my name is Jane Doe. My number is: 034453334",
+  "analyzer_results": [
+    {
+      "start": 48,
+      "end": 57,
+      "score": 0.95,
+      "entity_type": "PHONE_NUMBER"
+    },
+    {
+      "start": 24,
+      "end": 32,
+      "score": 0.6,
+      "entity_type": "FULL_NAME"
+    },
+    {
+      "start": 24,
+      "end": 28,
+      "score": 0.9,
+      "entity_type": "FIRST_NAME"
+    },
+    {
+      "start": 29,
+      "end": 32,
+      "score": 0.6,
+      "entity_type": "LAST_NAME"
+    },
+    {
+      "start": 24,
+      "end": 30,
+      "score": 0.8,
+      "entity_type": "NAME"
+    }
+  ]
+}
