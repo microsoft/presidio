@@ -79,6 +79,8 @@ class AnalyzerResult(object):
         """
         return hash(
             f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
+        return hash(
+            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
 
     def same_or_contained(self, other):
         """
