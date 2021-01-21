@@ -1,2 +1,2 @@
 # Package dependency changes should be approved by a member of 'presidio-admin' team
-**/Pipfile* @microsoft/presidio-admin
+**/Pipfile* @microsoft/presidio-administrators
