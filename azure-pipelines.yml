@@ -1,5 +1,6 @@
 trigger:
   - V2
+  - feature/dev-environment-infra
 
 pr:
   branches:
