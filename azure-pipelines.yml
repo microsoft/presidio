@@ -33,7 +33,8 @@ jobs:
       steps:
         - template: .pipelines/templates/security-analysis.yml
        
-    - job: 'Test'
+    - job: 'TestAnalyzer'
+      displayName: Test Analyzer
       dependsOn:
       #- 'validate'
       - 'inclusivelint'
@@ -66,7 +67,7 @@ jobs:
               pipenv --python 3
 
         - task: Bash@3
-          displayName: 'Install deps: Analyzer'
+          displayName: 'Install deps'
           inputs:
             targetType: 'inline'
             workingDirectory: 'presidio-analyzer'
@@ -79,6 +80,39 @@ jobs:
           parameters:
             SERVICE: 'Analyzer'
             WORKING_FOLDER: 'presidio-analyzer'
+
+    - job: 'TestAnonymizer'
+      displayName: Test Anonymizer
+      dependsOn:
+      #- 'validate'
+      - 'inclusivelint'
+      - 'SecurityAnalysis'
+      pool:
+        vmImage: 'ubuntu-16.04'
+      strategy:
+        matrix:
+          #Python36: disabled bug2677
+          #  python.version: '3.6'
+          Python37:
+            python.version: '3.7'
+          Python38:
+            python.version: '3.8'
+
+      steps:
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '$(python.version)'
+          displayName: 'Use Python $(python.version)'
+
+        - task: Bash@3
+          displayName: 'Setup pipenv'
+          inputs:
+            targetType: 'inline'
+            script: |
+              set -eux  # fail on error
+              python -m pip install --upgrade pip
+              python -m pip install pipenv
+              pipenv --python 3
 
         - task: Bash@3
           displayName: 'Install deps: Anonymizer'
