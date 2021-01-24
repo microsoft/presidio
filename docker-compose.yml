@@ -9,3 +9,12 @@ services:
       - PORT=5001
     ports:
       - "5001:5001"
+  presidio-analyzer:
+    build:
+      context: ./presidio-analyzer
+      args:
+        - NAME=presidio-analyzer
+    environment:
+      - PORT=5001
+    ports:
+      - "5002:5001"
