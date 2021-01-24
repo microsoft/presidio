@@ -1,3 +1,7 @@
+"""Presidio analyzer package."""
+
+import logging
+
 from presidio_analyzer.presidio_logger import PresidioLogger
 from presidio_analyzer.pattern import Pattern
 from presidio_analyzer.analysis_explanation import AnalysisExplanation
@@ -10,17 +14,18 @@ from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 
+logging.getLogger("presidio-analyzer").addHandler(logging.NullHandler())
 
 __all__ = [
     "PresidioLogger",
-    "AnalysisExplanation",
     "Pattern",
+    "AnalysisExplanation",
+    "RecognizerResult",
     "EntityRecognizer",
     "LocalRecognizer",
-    "RecognizerResult",
     "PatternRecognizer",
     "RemoteRecognizer",
     "RecognizerRegistry",
     "AnalyzerEngine",
-    "AnalyzerRequest"
+    "AnalyzerRequest",
 ]

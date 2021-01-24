@@ -2,41 +2,44 @@ import json
 from typing import List, Optional
 
 from presidio_analyzer import (
-    PresidioLogger,
     RecognizerRegistry,
     RecognizerResult,
     EntityRecognizer,
+    PresidioLogger,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NLP_ENGINES
+from presidio_analyzer.nlp_engine import NLP_ENGINES, NlpEngine
 
-
-logger = PresidioLogger()
+logger = PresidioLogger("presidio-analyzer")
 
 
 class AnalyzerEngine:
+    """
+    Entry point for Presidio Analyzer.
+
+    Orchestrating the detection of PII entities and all related logic.
+
+    :param registry: instance of type RecognizerRegistry
+    :param nlp_engine: instance of type NlpEngine
+    (for example SpacyNlpEngine)
+    :param app_tracer: instance of type AppTracer, used to trace the logic
+    used during each request for interpretability reasons.
+    :param enable_trace_pii: bool,
+    defines whether PII values should be traced or not.
+    :param default_score_threshold: Minimum confidence value
+    for detected entities to be returned
+    """
+
     def __init__(
         self,
-        registry=None,
-        nlp_engine=None,
-        app_tracer=None,
-        enable_trace_pii=False,
-        default_score_threshold=0,
-        default_language="en",
+        registry: RecognizerRegistry = None,
+        nlp_engine: NlpEngine = None,
+        app_tracer: AppTracer = None,
+        enable_trace_pii: bool = False,
+        default_score_threshold: float = 0,
+        default_language: str = "en",
     ):
-        """
-        AnalyzerEngine class: Orchestrating the detection of PII entities
-        and all related logic
-        :param registry: instance of type RecognizerRegistry
-        :param nlp_engine: instance of type NlpEngine
-        (for example SpacyNlpEngine)
-        :param app_tracer: instance of type AppTracer,
-        used to trace the logic used during each request
-        :param enable_trace_pii: bool,
-        defines whether PII values should be traced or not.
-        :param default_score_threshold: Minimum confidence value
-        for detected entities to be returned
-        """
+
         if not nlp_engine:
             logger.info(
                 "nlp_engine not provided. Creating new " "SpacyNlpEngine instance"
@@ -66,6 +69,9 @@ class AnalyzerEngine:
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
         """
+        Return a list of PII recognizers currently loaded.
+
+        :param language: Return the recognizers supporting a given language.
         :return: List of [Recognizer] as a RecognizersAllResponse
         """
         if not language:
@@ -76,11 +82,11 @@ class AnalyzerEngine:
 
     def get_supported_entities(self, language: Optional[str] = None) -> List[str]:
         """
-        Returns a list of the entities that can be detected
-        :param language: Optional, return only entities supported in a specific language
+        Return a list of the entities that can be detected.
+
+        :param language: Return only entities supported in a specific language.
         :return: List of entity names
         """
-
         recognizers = self.get_recognizers(language=language)
         supported_entities = []
         for recognizer in recognizers:
@@ -98,21 +104,18 @@ class AnalyzerEngine:
         trace: Optional[bool] = False,
     ) -> List[RecognizerResult]:
         """
-        analyzes the requested text, searching for the given entities
-         in the given language
+        Find PII entities in text using different PII recognizers for a given language.
+
         :param text: the text to analyze
         :param language: the language of the text
-        In such case a list of entities should be provided.
         :param entities: List of PII entities that should be looked for in the text.
-        If entities=None and all_fields=True then all entities are looked for.
+        If entities=None then all entities are looked for.
         :param correlation_id: cross call ID for this request
-        of the requested language
         :param score_threshold: A minimum value for which
         to return an identified entity
         :param trace: Should tracing of the response occur or not
         :return: an array of the found entities in the text
         """
-
         all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
@@ -122,7 +125,7 @@ class AnalyzerEngine:
         if all_fields:
             # Since all_fields=True, list all entities by iterating
             # over all recognizers
-            entities = self.__list_entities(recognizers)
+            entities = self.get_supported_entities(language=language)
 
         # run the nlp pipeline over the given text, store the results in
         # a NlpArtifacts instance
@@ -154,15 +157,16 @@ class AnalyzerEngine:
 
         # Remove duplicates or low score results
         results = EntityRecognizer.remove_duplicates(results)
-        results = self._remove_low_scores(results, score_threshold)
+        results = self.__remove_low_scores(results, score_threshold)
 
         return results
 
-    def _remove_low_scores(
+    def __remove_low_scores(
         self, results: List[RecognizerResult], score_threshold: float = None
     ) -> List[RecognizerResult]:
         """
-        Removes results for which the confidence is lower than the threshold
+        Remove results for which the confidence is lower than the threshold.
+
         :param results: List of RecognizerResult
         :param score_threshold: float value for minimum possible confidence
         :return: List[RecognizerResult]
@@ -172,17 +176,3 @@ class AnalyzerEngine:
 
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
-
-    @staticmethod
-    def __list_entities(recognizers: List[EntityRecognizer]):
-        """
-        Returns a List[str] of unique entity names supported
-        by the provided recognizers
-        :param recognizers: list of EntityRecognizer
-        :return: List[str]
-        """
-        entities = []
-        for recognizer in recognizers:
-            entities.extend(recognizer.supported_entities)
-
-        return list(set(entities))

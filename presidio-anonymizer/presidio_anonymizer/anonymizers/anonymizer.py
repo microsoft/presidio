@@ -6,6 +6,6 @@ class Anonymizer(ABC):
     """Anonymizer abstract class to be implemented by each anonymizer."""
 
     @abstractmethod
-    def anonymize(self):
+    def anonymize(self, params={}):
         """Anonymize method to be implemented in each anonymizer."""
         pass

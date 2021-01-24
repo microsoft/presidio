@@ -22,19 +22,19 @@ from presidio_analyzer.predefined_recognizers import (
     EsNifRecognizer,
 )
 
-logger = PresidioLogger()
+logger = PresidioLogger("presidio-analyzer")
 
 
 class RecognizerRegistry:
     """
-    Detects, registers and holds all recognizers to be used by the analyzer
+    Detect, register and hold all recognizers to be used by the analyzer.
+
+    :param recognizers: An optional list of recognizers,
+    that will be available instead of the predefined recognizers
     """
 
     def __init__(self, recognizers: Optional[Iterable[EntityRecognizer]] = None):
-        """
-        :param recognizers: An optional list of recognizers that will be
-               available instead of the predefined recognizers
-        """
+
         if recognizers:
             self.recognizers = recognizers
         else:
@@ -42,8 +42,14 @@ class RecognizerRegistry:
 
     def load_predefined_recognizers(
         self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = "spacy"
-    ):
+    ) -> None:
+        """
+        Load the existing recognizers into memory.
 
+        :param languages: List of languages for which to load recognizers
+        :param nlp_engine: The NLP engine to use. Default is 'spacy'.
+        :return: None
+        """
         if not languages:
             languages = ["en"]
 
@@ -83,10 +89,10 @@ class RecognizerRegistry:
         language: str,
         entities: Optional[List[str]] = None,
         all_fields: bool = False,
-    ):
+    ) -> List[EntityRecognizer]:
         """
-        Returns a list of the recognizer, which supports the specified name and
-        language.
+        Return a list of recognizers which supports the specified name and language.
+
         :param entities: the requested entities
         :param language: the requested language
         :param all_fields: a flag to return all fields of a requested language.
@@ -138,9 +144,10 @@ class RecognizerRegistry:
 
         return to_return
 
-    def add_recognizer(self, recognizer: EntityRecognizer):
+    def add_recognizer(self, recognizer: EntityRecognizer) -> None:
         """
-        Adds a new recognizer to the list of recognizers
+        Add a new recognizer to the list of recognizers.
+
         :param recognizer: Recognizer to add
         """
         if not isinstance(recognizer, EntityRecognizer):
@@ -148,9 +155,10 @@ class RecognizerRegistry:
 
         self.recognizers.append(recognizer)
 
-    def remove_recognizer(self, recognizer_name: str):
+    def remove_recognizer(self, recognizer_name: str) -> None:
         """
         Remove a recognizer based on its name.
+
         :param recognizer_name: Name of recognizer to remove
         """
         new_recognizers = [

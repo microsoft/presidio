@@ -1,5 +1,7 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
-from typing import List
+import logging
+
+from presidio_anonymizer.entities import AnonymizerRequest
 
 
 class AnonymizerEngine:
@@ -10,39 +12,33 @@ class AnonymizerEngine:
     and replaces the PII entities with the desired transformations.
     """
 
-    # Task: 2672
-    # TODO this needs to be implemented currently a stab.
-    # TODO replace analyze_results with domain results
-    # Notice the document Omri created, it impacts the implementation
+    logger = logging.getLogger("presidio-anonymizer")
+
     def __init__(
             self,
-            text: str,
-            # TODO change to domain object
-            transformations: List[str],
-            # TODO change to domain object
-            analyze_results: List[str],
     ):
-        """
-        Handle text replacement for PIIs with requested transformations.
+        """Handle text replacement for PIIs with requested transformations.
 
-        :param text: The original text we want to replace PIIs in
-        :param transformations: The desired transformations - mapping between PII type
-        and transformation type with relevant params
-        :param analyze_results: The results of the analyzer of PIIs locations and scores
+        :param data: a map which contains the transformations, analyzer_results and text
         """
-        self.transformations = transformations
-        self.analyze_results = analyze_results
-        self.text = text
-        self._end_point = len(text)
 
-    def anonymize(self):
+    def anonymize(self, engine_request: AnonymizerRequest) -> str:
         """Anonymize method to anonymize the given text.
 
         :return: the anonymized text
         """
-        # TODO a loop that goes through the analyzer results from END to START! reverse.
-        # TODO for each result, replace the old value with the new value
-        # Make sure we handle partial intersections using the endpoint param
-        # TODO dictionary with the transformations and fields
-        # To map field to its transformation
-        pass
+        original_text = engine_request.get_text()
+        last_replacement_point = len(original_text)
+        output_text = engine_request.get_text()
+        analyzer_results = engine_request.get_analysis_results(
+        ).to_sorted_unique_results(True)
+        for analyzer_result in analyzer_results:
+            transformation = engine_request.get_transformation(analyzer_result)
+            self.logger.debug(f"received transformation {transformation.get('type')}")
+            anonymizer_class = transformation.get("anonymizer")
+            new_text = anonymizer_class().anonymize(transformation)
+            end_of_text = min(analyzer_result.end, last_replacement_point)
+            output_text = output_text[:analyzer_result.start] + new_text + output_text[
+                                                                           end_of_text:]
+            last_replacement_point = analyzer_result.start
+        return output_text
