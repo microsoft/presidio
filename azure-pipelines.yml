@@ -13,16 +13,41 @@ jobs:
     #    - template: .pipelines/templates/validate-version.yml
     #      parameters:
     #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
+
+    - job: inclusivelint
+      displayName: 'Inclusive linting validation'
+      steps:
+        - task: Bash@3
+          displayName: 'inclusive lint'
+          inputs:
+            targetType: 'inline'
+            script: |
+              npm install inclusivelint
+              npx inclusivelint -r -p .
+    
+    - job: SecurityAnalysis
+      displayName: Security Analysis
+      pool:
+          # CredScan only runs on Windows
+          vmImage: 'windows-latest'
+      steps:
+        - template: .pipelines/templates/security-analysis.yml
+       
     - job: 'Test'
-    #  dependsOn: 'validate'
+      dependsOn: 
+      #- 'validate'
+      - 'inclusivelint'
+      - 'SecurityAnalysis'
       pool:
         vmImage: 'ubuntu-16.04'
       strategy:
         matrix:
+          #Python36: disabled bug2677
+          #  python.version: '3.6'
           Python37:
             python.version: '3.7'
-      #      Python38:
-      #        python.version: '3.8'
+          Python38:
+            python.version: '3.8'
 
       steps:
         - task: UsePythonVersion@0
@@ -46,26 +71,14 @@ jobs:
             targetType: 'inline'
             workingDirectory: 'presidio-analyzer'
             script: |
+              set -eux  # fail on error
               pipenv sync --dev --sequential
               pipenv run python -m spacy download en_core_web_lg
-
-        - task: Bash@3
-          displayName: 'Linting: Analyzer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
-            script: |
-              pipenv run flake8 presidio_analyzer
-
-        - task: Bash@3
-          displayName: 'Unit tests: Analyzer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
-            script: |
-              # Install pytest and run tests
-              pipenv install --dev --skip-lock pytest-azurepipelines
-              pipenv run pytest
+        
+        - template: .pipelines/templates/build-python.yml
+          parameters:
+            SERVICE: 'Analyzer'
+            WORKING_FOLDER: 'presidio-analyzer'
 
         - task: Bash@3
           displayName: 'Install deps: Anonymizer'
@@ -73,22 +86,10 @@ jobs:
             targetType: 'inline'
             workingDirectory: 'presidio-anonymizer'
             script: |
+              set -eux  # fail on error
               pipenv sync --dev --sequential
 
-        - task: Bash@3
-          displayName: 'Linting: Anonymizer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
-            script: |
-              pipenv run flake8 presidio_anonymizer
-
-        - task: Bash@3
-          displayName: 'Unit tests: Anonymizer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
-            script: |
-              # Install pytest and run tests
-              pipenv install --dev --skip-lock pytest-azurepipelines
-              pipenv run pytest
+        - template: .pipelines/templates/build-python.yml
+          parameters:
+            SERVICE: 'Anonymizer'
+            WORKING_FOLDER: 'presidio-anonymizer'
