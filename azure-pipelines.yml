@@ -129,7 +129,6 @@ jobs:
             WORKING_FOLDER: 'presidio-anonymizer'
     - job: BuildContainers
       displayName: Build and Push Containers
-      condition: eq(variables['Build.Reason'], 'IndividualCI')
       dependsOn:
         - 'inclusivelint'
         - 'SecurityAnalysis'
@@ -141,11 +140,13 @@ jobs:
       steps:
         - task: DockerCompose@0
           displayName: Build Presidio Images
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
           inputs:
               action: Build services
               dockerComposeFile: docker-compose.yml  
         - task: DockerCompose@0
           displayName: Push Presidio Images to ACR
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
           inputs:
               action: Push services
               dockerComposeFile: docker-compose.yml  
