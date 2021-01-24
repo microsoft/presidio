@@ -3,9 +3,7 @@ import os
 
 from flask import Flask, request
 
-from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnonymizerRequest
-from presidio_anonymizer.entities import InvalidParamException
 
 DEFAULT_PORT = "3000"
 
@@ -23,13 +21,10 @@ class Server:
                 return "Invalid request json", 400
             try:
                 data = AnonymizerRequest(content)
-                text = AnonymizerEngine().anonymize(data)
-            except InvalidParamException as e:
-                return e.err, 400
             except Exception:
                 # TODO add logger 2652
                 return "Internal server error", 500
-            return text
+            return data, "Hello"
 
 
 if __name__ == "__main__":
