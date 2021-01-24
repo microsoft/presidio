@@ -5,14 +5,10 @@ class Hash(object):
     # TODO implement + test
     """Hash given text with sha256 algorithm."""
 
-    def __init__(self,
-                 old_text: str):
-        self.old_text = old_text
-
-    def anonymize(self):
+    def anonymize(self, params={}):
         """
         Hash given value using sha256.
 
         :return: hashed original text
         """
-        pass
+        return params.get("old_text")

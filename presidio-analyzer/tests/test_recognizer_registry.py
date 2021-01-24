@@ -1,6 +1,3 @@
-import hashlib
-import logging
-
 import pytest
 
 from presidio_analyzer import (
@@ -90,7 +87,7 @@ def test_add_pattern_recognizer():
     )
 
     # Create an empty recognizer registry
-    recognizer_registry = RecognizerRegistry(recognizers = [])
+    recognizer_registry = RecognizerRegistry(recognizers=[])
     assert len(recognizer_registry.recognizers) == 0
 
     # Add a new recognizer for the word "rocket" (case insensitive)
@@ -107,7 +104,7 @@ def test_remove_pattern_recognizer():
         "SPACESHIP", name="Spaceship recognizer", patterns=[pattern]
     )
     # Create an empty recognizer registry
-    recognizer_registry = RecognizerRegistry(recognizers = [])
+    recognizer_registry = RecognizerRegistry(recognizers=[])
     assert len(recognizer_registry.recognizers) == 0
 
     # Add a new recognizer for the word "rocket" (case insensitive)

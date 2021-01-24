@@ -21,11 +21,9 @@ def entities():
         # valid email addresses
         ("info@presidio.site", 1, ((0, 18),),),
         ("my email address is info@presidio.site", 1, ((20, 38),),),
-        (
-            "try one of these emails: info@presidio.site or anotherinfo@presidio.site",
+        ("try one of these emails: info@presidio.site or anotherinfo@presidio.site",
             2,
-            ((25, 43), (47, 72),),
-        ),
+         ((25, 43), (47, 72),),),
         # invalid email address
         ("my email is info@presidio.", 0, ()),
         # fmt: on

@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from presidio_analyzer.presidio_logger import PresidioLogger
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
@@ -20,6 +22,7 @@ WELCOME_MESSAGE = r"""
 
 
 class Server:
+    """HTTP Server for calling Presidio Analyzer."""
 
     def __init__(self):
         self.logger = PresidioLogger(os.environ.get("PRESIDIO_LOGGER"))
@@ -28,18 +31,14 @@ class Server:
         self.engine = AnalyzerEngine()
         self.logger.info(WELCOME_MESSAGE)
 
-        @self.app.route('/health')
+        @self.app.route("/health")
         def health() -> str:
-            """
-            Basic health probe.  get ok + 200
-            """
-            return 'ok'
+            """Return basic health probe result.  get ok + 200."""
+            return "ok"
 
         @self.app.route("/analyze", methods=["POST"])
-        def analyze():
-            """
-            Executes the analyzer function
-            """
+        def analyze() -> Tuple[str, int]:
+            """Execute the analyzer function."""
             # Parse the request params
             req_data = AnalyzerRequest(request.get_json())
             try:
@@ -49,31 +48,40 @@ class Server:
                     correlation_id=req_data.correlation_id,
                     score_threshold=req_data.score_threshold,
                     entities=req_data.entities,
-                    trace=req_data.trace)
+                    trace=req_data.trace,
+                )
 
-                return json.dumps(recognizer_result_list, default=lambda o: o.to_json(),
-                                  sort_keys=True, indent=4)
+                return (
+                    json.dumps(
+                        recognizer_result_list,
+                        default=lambda o: o.to_json(),
+                        sort_keys=True,
+                        indent=4,
+                    ),
+                    200,
+                )
             except Exception as e:
-                self.logger.error("A fatal error occurred "
-                                  "during execution of "
-                                  "AnalyzerEngine.analyze(). {}".format(e))
+                self.logger.error(
+                    "A fatal error occurred "
+                    "during execution of "
+                    "AnalyzerEngine.analyze(). {}".format(e)
+                )
                 return json.dumps({"Error": e}), 500
 
         @self.app.route("/recognizers", methods=["GET"])
-        def recognizers():
-            """
-            Returns a list of supported recognizers
-            """
-            language = request.args.get('language')
+        def recognizers() -> Tuple[str, int]:
+            """Return a list of supported recognizers."""
+            language = request.args.get("language")
             try:
                 recognizers_list = self.engine.get_recognizers(language)
                 names = [o.name for o in recognizers_list]
-                return json.dumps(names)
+                return json.dumps(names), 200
             except Exception as e:
-                self.logger.error("A fatal error occurred "
-                                  "during execution of "
-                                  "AnalyzerEngine.get_recognizers(). {}"
-                                  .format(e))
+                self.logger.error(
+                    "A fatal error occurred "
+                    "during execution of "
+                    "AnalyzerEngine.get_recognizers(). {}".format(e)
+                )
                 return json.dumps({"Error": e}), 500
 
 

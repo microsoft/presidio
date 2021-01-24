@@ -1,0 +1,34 @@
+parameters:
+    - name: SERVICE
+    - name: WORKING_FOLDER
+
+steps:
+    - task: Bash@3
+      displayName: 'Linting: ${{ parameters.SERVICE }}'
+      inputs:
+          targetType: 'inline'
+          workingDirectory: ${{ parameters.WORKING_FOLDER }}
+          script: |
+              set -eux  # fail on error
+              pipenv run flake8 ${{ parameters.WORKING_FOLDER }}
+
+    - task: Bash@3
+      displayName: 'Unit tests: ${{ parameters.SERVICE }}'
+      inputs:
+          targetType: 'inline'
+          workingDirectory: ${{ parameters.WORKING_FOLDER }}
+          script: |
+              set -eux  # fail on error
+              # Install pytest and run tests
+              pipenv install --dev --skip-lock pytest-azurepipelines
+              pipenv run pytest
+
+    - task: Bash@3
+      displayName: 'Package Wheel: ${{ parameters.SERVICE }}'
+      inputs:
+          targetType: 'inline'
+          workingDirectory: ${{ parameters.WORKING_FOLDER }}
+          script: |
+              set -eux  # fail on error
+              pip install wheel
+              python setup.py bdist_wheel
