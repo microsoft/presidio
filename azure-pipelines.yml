@@ -161,7 +161,7 @@ jobs:
         - 'SecurityAnalysis'
       pool:
         vmImage: 'ubuntu-16.04'
-      ${{ eq(variables['Build.Reason'], 'IndividualCI') }}:
+      ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
         REGISTRY_NAME: '$(REGISTRY_NAME)'  
         TAG: '$(Build.BuildId)'  
       steps:
