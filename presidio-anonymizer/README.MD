@@ -22,6 +22,10 @@ Each anonymizer requires different values:
 - FPE -
 - Mask -
 
+Please notice: if default value is not stated in transformations object, the default
+anonymizer is "replace" for all entities. The replacing value will be the entity type
+e.g.: <PHONE_NUMBER>
+
 As the input text could potentially have overlapping PII entities, there are different
 anonymization scenarios:
 
@@ -64,13 +68,18 @@ pip install presidio-anonymizer
 
 #### Getting started
 
-[comment]: <shiranr> (TODO need to add when task 2626 - documentation for anonymizer)
+AnonymizerRequest receives a json (e.g. test/payload.json), validate the json format and
+returns an object the engine can use and anonymize.
 
 ```python
+import os
 from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
+from presidio_anonymizer.entities import AnonymizerRequest
 
-engine = AnonymizerEngine()
-engine.anonymize()
+json_path = os.path.dirname(__file__) + "/test/resources/payload.json"
+with open(json_path) as json_file:
+  data = AnonymizerRequest(json_file)
+  text = AnonymizerEngine().anonymize(data)
 ```
 
 ### As service:
@@ -93,21 +102,11 @@ The request should be:
 POST /anonymize
 ```
 
-[comment]: <shiranr> (TODO add result example when anonymizer is ready 2626)
-
-```
-RESULT
-```
-
 Payload:
-
 ```json
 {
   "text": "hello world, my name is Jane Doe. My number is: 034453334",
   "transformations": {
-    "DEFAULT": {
-      "type": "replace"
-    },
     "PHONE_NUMBER": {
       "type": "mask",
       "masking_char": "*",
@@ -143,4 +142,8 @@ Payload:
   ]
 }
 ```
-
+Result:
+```
+200 OK
+hello world, my name is <NAME>. My number is: 03445****
+```

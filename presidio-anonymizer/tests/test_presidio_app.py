@@ -10,4 +10,5 @@ def test_anonymize_api_works_properly():
         content = json.load(json_file)
     tester = Server().app.test_client()
     resp = tester.post("/anonymize", json=content)
+    assert resp.data.decode() == 'hello world, my name is ANONYMIZED. My number is: '
     assert resp.status == "200 OK"
