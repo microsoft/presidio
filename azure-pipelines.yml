@@ -1,6 +1,7 @@
 trigger:
-  - V2
-  - '*'
+  branches:
+    include:
+    - '*'
 
 pr:
   branches:
