@@ -28,9 +28,9 @@ class Server:
                 data = AnonymizerRequest(content)
                 text = AnonymizerEngine().anonymize(data)
             except InvalidParamException as e:
-                logging.debug(
+                logging.warning(
                     {f"failed to anonymize text with validation error: {e.err_msg}"})
-                return e.err_msg, 400
+                return e.err_msg, 422
             except Exception as e:
                 logging.error({f"failed to anonymize text with error: {e}"})
                 return "Internal server error", 500
