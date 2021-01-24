@@ -35,4 +35,4 @@ class Server:
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", DEFAULT_PORT))
     server = Server()
-    server.app.run(port=port)
+    server.app.run(host="0.0.0.0", port=port)

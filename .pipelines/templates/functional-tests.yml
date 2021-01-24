@@ -1,0 +1,28 @@
+steps:
+    - task: DockerCompose@0
+      displayName: Start Presidio Cluster
+      inputs:
+          action: Run services
+          dockerComposeFile: docker-compose.yml
+          buildImages: true
+
+    - task: UsePythonVersion@0
+      inputs:
+          versionSpec: '3.8'
+
+    - script: |
+          set -eux  # fail on error
+          python -m venv env
+          source env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-azurepipelines
+      workingDirectory: functional-tests
+      displayName: Install requirements
+
+    - script: |
+          set -eux  # fail on error
+          source env/bin/activate
+          pytest
+      workingDirectory: functional-tests
+      displayName: Run tests
