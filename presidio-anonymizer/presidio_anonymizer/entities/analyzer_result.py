@@ -89,15 +89,16 @@ class AnalyzerResult:
         return f"start: {str(self.start)}, end: {str(self.end)}, " \
                f"score: {str(self.score)}, entity_type: {self.entity_type}"
 
-    def same_or_contained(self, other):
+    def has_conflict(self, other):
         """
-        Check is two analyzer results are contained or the same.
+        Check is two analyzer results are conflicted or not
 
         :param other: AnalyzerResult
         :return:
         """
-        return other.contains(self) or (
-                self.equal_indices(other) and self.score < other.score)
+        if self.equal_indices(other):
+            return self.score <= other.score
+        return other.contains(self)
 
     @classmethod
     def validate_and_create(cls, content):

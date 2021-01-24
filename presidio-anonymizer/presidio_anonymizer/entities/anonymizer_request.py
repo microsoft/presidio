@@ -33,10 +33,6 @@ class AnonymizerRequest:
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
 
-    def get_transformations(self):
-        """Get the transformations data."""
-        return self._transformations
-
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """
         Get the right transformation from the list.

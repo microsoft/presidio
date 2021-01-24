@@ -4,8 +4,7 @@ from typing import List
 
 import pytest
 
-from presidio_anonymizer.entities.analyzer_result import AnalyzerResult
-from presidio_anonymizer.entities.analyzer_results import AnalyzerResults
+from presidio_anonymizer.anonymizers import Anonymizer, Replace, Mask
 from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
@@ -118,51 +117,44 @@ def test_creating_anonymizer_request_should_fail_over_validation(request_json,
 
 
 def test_anonymizer_request_pass_on_valid_json():
-    json_path = os.path.dirname(__file__) + "/resources/payload.json"
+    json_path = file_path("payload.json")
     with open(json_path) as json_file:
         content = json.load(json_file)
         data = AnonymizerRequest(content)
+        assert data.get_text() == content.get("text")
         assert data._text == content.get("text")
         assert data._transformations == content.get("transformations")
         assert len(data._analysis_results) == len(content.get("analyzer_results"))
+        assert data._analysis_results == data.get_analysis_results()
         for result_a in data._analysis_results:
-            result_b = __find_element(content.get("analyzer_results"),
-                                      result_a.entity_type)
-            assert result_b
-            assert result_a.score == result_b.get("score")
-            assert result_a.start == result_b.get("start")
-            assert result_a.end == result_b.get("end")
+            same_result_in_content = __find_element(content.get("analyzer_results"),
+                                                    result_a.entity_type)
+            assert same_result_in_content
+            assert result_a.score == same_result_in_content.get("score")
+            assert result_a.start == same_result_in_content.get("start")
+            assert result_a.end == same_result_in_content.get("end")
+            assert data.get_transformation(result_a)
 
 
-def test_analyzer_results_sorted_set():
-    json_path = os.path.dirname(__file__) + "/resources/dup_payload.json"
+def test_anonymizer_get_transformation_successfully():
+    json_path = file_path("payload.json")
     with open(json_path) as json_file:
         content = json.load(json_file)
         data = AnonymizerRequest(content)
-        analyze_results = data.get_analysis_results()
-        assert len(analyze_results) == len(content.get("analyzer_results"))
-        sorted_results = analyze_results.to_sorted_unique_results()
-        assert len(sorted_results) == 2
-        assert list(sorted_results)[0].start < list(sorted_results)[1].start
-        assert list(sorted_results)[0].end < list(sorted_results)[1].end
-
-
-def test_analyzer_results_reversed_sorted_set():
-    json_path = os.path.dirname(__file__) + "/resources/dup_payload.json"
-    with open(json_path) as json_file:
-        content = json.load(json_file)
-        data = AnonymizerRequest(content)
-        analyze_results = data.get_analysis_results()
-        assert len(analyze_results) == len(content.get("analyzer_results"))
-        sorted_results = analyze_results.to_sorted_unique_results(True)
-        assert len(sorted_results) == 2
-        assert list(sorted_results)[1].start < list(sorted_results)[0].start
-        assert list(sorted_results)[1].end < list(sorted_results)[0].end
-
-
-def test_analyzer_results_not_failing_on_empty_list():
-    analyzer_result = AnalyzerResults()
-    assert len(analyzer_result.to_sorted_unique_results()) == 0
+        replace_result = data.get_analysis_results()[0]
+        default_replace_transformation = data.get_transformation(replace_result)
+        assert default_replace_transformation.get('type') == 'replace'
+        assert default_replace_transformation.get('new_value') == 'ANONYMIZED'
+        assert issubclass(default_replace_transformation.get('anonymizer'), Anonymizer)
+        assert issubclass(default_replace_transformation.get('anonymizer'), Replace)
+        mask_transformation = data.get_transformation(data.get_analysis_results()[3])
+        assert mask_transformation.get('type') == 'mask'
+        assert mask_transformation.get('from_end')
+        assert mask_transformation.get('chars_to_mask') == 4
+        assert mask_transformation.get('masking_char') == '*'
+        assert mask_transformation.get('anonymizer')
+        assert issubclass(mask_transformation.get('anonymizer'), Anonymizer)
+        assert issubclass(mask_transformation.get('anonymizer'), Mask)
 
 
 def __find_element(content: List, entity_type: str):
@@ -170,3 +162,8 @@ def __find_element(content: List, entity_type: str):
         if result.get("entity_type") == entity_type:
             return result
     return None
+
+
+def file_path(file_name: str):
+    return os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..', f"resources/{file_name}"))
