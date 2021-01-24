@@ -149,4 +149,4 @@ jobs:
         vmImage: 'ubuntu-16.04'
         steps:
           - script: echo Deploy to Development Environment
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/V2'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/V2'))
