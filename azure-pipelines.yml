@@ -34,7 +34,7 @@ jobs:
         - template: .pipelines/templates/security-analysis.yml
        
     - job: 'Test'
-      dependsOn: 
+      dependsOn:
       #- 'validate'
       - 'inclusivelint'
       - 'SecurityAnalysis'
@@ -93,3 +93,15 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
+
+    - job: FunctionalTests
+      displayName: Functional Tests
+      dependsOn:
+        #- 'validate'
+        - 'inclusivelint'
+        - 'SecurityAnalysis'
+      pool:
+        vmImage: 'ubuntu-16.04'
+
+      steps:
+        - template: .pipelines/templates/functional-tests.yml
