@@ -24,14 +24,38 @@ python -m spacy download en_core_web_sm
 ```
 
 ## Getting started
+
 ### Running Presidio as an HTTP server
+
+You can run presidio analyzer as an http server using either python runtime or using a docker container.
+
+#### Using python runtime
+
 ```sh
 cd presidio-analyzer
 python app.py
 curl -d '{"text":"John Smith drivers license is AC432223", "language":"en"}' -H "Content-Type: application/json" -X POST http://localhost:3000/analyze
 ```
 
-### simple analysis script:
+#### Using docker container
+
+```sh
+cd presidio-analyzer
+docker build -t presidio-analyzer --build-arg NAME=presidio-analyzer  .
+docker run -p 5001:5001 presidio-analyzer 
+```
+
+Note: you can change the spacy model which is downloaded to the container at build time, using the following build command:
+
+```sh
+docker build -t presidio-analyzer --build-arg NAME=presidio-analyzer  --build-arg SPACY_MODEL=en_core_web_sm .
+```
+
+TODO: The Analyzer is hard-coded to use the large english model. Extending to any model will be worked on in user story #2675
+
+TODO: The Analyzer container is built with a single spacy model. Add support for multiple models will worked on in user story #2678
+
+### simple analysis script
 
 ```python
 from presidio_analyzer import AnalyzerEngine
