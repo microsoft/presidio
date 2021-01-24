@@ -6,6 +6,6 @@ services:
       args:
         - NAME=presidio-anonymizer
     environment:
-      - FLASK_RUN_PORT=5001
+      - PORT=5001
     ports:
       - "5001:5001"
