@@ -127,15 +127,48 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
-
-    - job: FunctionalTests
-      displayName: Functional Tests
+    - job: BuildContainers
+      displayName: Build and Push Containers
       dependsOn:
-        #- 'validate'
         - 'inclusivelint'
         - 'SecurityAnalysis'
       pool:
         vmImage: 'ubuntu-16.04'
-
+      variables:
+        REGISTRY_NAME: '$(REGISTRY_NAME)'  
+        TAG: '$(Build.BuildId)'  
       steps:
+        - task: DockerCompose@0
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
+          displayName: Build Presidio Images
+          inputs:
+              action: Build services
+              dockerComposeFile: docker-compose.yml  
+        - task: DockerCompose@0
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
+          displayName: Push Presidio Images to ACR
+          inputs:
+              action: Push services
+              dockerComposeFile: docker-compose.yml  
+              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
+              azureContainerRegistry: $(REGISTRY_NAME)
+
+    - job: FunctionalTests
+      displayName: Functional Tests
+      dependsOn:
+        - 'BuildContainers'
+        - 'inclusivelint'
+        - 'SecurityAnalysis'
+      pool:
+        vmImage: 'ubuntu-16.04'
+      ${{ eq(variables['Build.Reason'], 'IndividualCI') }}:
+        REGISTRY_NAME: '$(REGISTRY_NAME)'  
+        TAG: '$(Build.BuildId)'  
+      steps:
+        - task: DockerCompose@0
+          condition: ne(variables['Build.Reason'], 'IndividualCI')
+          displayName: Build Presidio Images
+          inputs:
+              action: Build services
+              dockerComposeFile: docker-compose.yml
         - template: .pipelines/templates/functional-tests.yml
