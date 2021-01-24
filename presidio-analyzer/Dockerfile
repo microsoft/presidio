@@ -11,5 +11,5 @@ RUN pipenv sync
 RUN pipenv run python -m spacy download ${SPACY_MODEL}
 
 COPY . /usr/bin/${NAME}/
-EXPOSE ${FLASK_RUN_PORT}
+EXPOSE ${PORT}
 CMD pipenv run python app.py --host 0.0.0.0
