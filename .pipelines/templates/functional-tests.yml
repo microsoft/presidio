@@ -18,7 +18,7 @@ steps:
           pip install -r requirements.txt
           pip install pytest-azurepipelines
       workingDirectory: functional-tests
-      displayName: Install requirements
+      displayName: Install dependencies
 
     - script: |
           set -eux  # fail on error
