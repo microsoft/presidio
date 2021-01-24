@@ -1,4 +1,5 @@
 """REST API server for anonymizer."""
+import logging
 import os
 
 from flask import Flask, request
@@ -13,6 +14,8 @@ DEFAULT_PORT = "3000"
 class Server:
     """Flask server for anonymizer."""
 
+    logger = logging.getLogger("presidio-anonymizer")
+
     def __init__(self):
         self.app = Flask(__name__)
 
@@ -25,9 +28,11 @@ class Server:
                 data = AnonymizerRequest(content)
                 text = AnonymizerEngine().anonymize(data)
             except InvalidParamException as e:
-                return e.err, 400
-            except Exception:
-                # TODO add logger 2652
+                logging.debug(
+                    {f"failed to anonymize text with validation error: {e.err_msg}"})
+                return e.err_msg, 400
+            except Exception as e:
+                logging.error({f"failed to anonymize text with error: {e}"})
                 return "Internal server error", 500
             return text
 

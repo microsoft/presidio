@@ -3,6 +3,8 @@ AnalyzerResult is the exact copy of the recognizer result.
 
 Represents the findings of detected entity.
 """
+import logging
+
 from presidio_anonymizer.entities import InvalidParamException
 
 
@@ -12,6 +14,8 @@ class AnalyzerResult:
 
     Validate and compare an recognizer result object.
     """
+
+    logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self,
                  entity_type: str,
@@ -79,8 +83,11 @@ class AnalyzerResult:
         """
         return hash(
             f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
-        return hash(
-            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
+
+    def __str__(self):
+        """Analyzer_result class data to string."""
+        return f"start: {str(self.start)}, end: {str(self.end)}, " \
+               f"score: {str(self.score)}, entity_type: {self.entity_type}"
 
     def same_or_contained(self, other):
         """
@@ -109,5 +116,6 @@ class AnalyzerResult:
     def __validate_fields(cls, content):
         for field in ("start", "end", "score", "entity_type"):
             if content.get(field) is None:
+                cls.logger.debug(f"invalid input, no field {field} for {content}")
                 raise InvalidParamException(
                     f"Invalid input, analyzer result must contain {field}")

@@ -4,6 +4,6 @@
 class InvalidParamException(Exception):
     """Throw exception with error when user input is not valid."""
 
-    def __init__(self, err: str):
-        self.err = err
-        super().__init__(self.err)
+    def __init__(self, msg: str):
+        self.err_msg = msg
+        super().__init__(self.err_msg)
