@@ -1,4 +1,3 @@
-from __future__ import annotations
 import datetime
 from typing import List, Optional, Dict
 
@@ -236,7 +235,7 @@ class PatternRecognizer(LocalRecognizer):
         return return_dict
 
     @classmethod
-    def from_dict(cls, entity_recognizer_dict: Dict) -> PatternRecognizer:
+    def from_dict(cls, entity_recognizer_dict: Dict) -> "PatternRecognizer":
         """Create instance from a serialized dict."""
         patterns = entity_recognizer_dict.get("patterns")
         if patterns:

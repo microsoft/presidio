@@ -43,5 +43,4 @@ class AnonymizerEngine:
             output_text = output_text[:analyzer_result.start] + new_text + output_text[
                                                                            end_of_text:]
             last_replacement_point = analyzer_result.start
-            self.logger.debug(f"text after replacement is {output_text}")
         return output_text

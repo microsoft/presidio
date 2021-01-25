@@ -17,23 +17,12 @@ class AnalyzerResult:
 
     logger = logging.getLogger("presidio-anonymizer")
 
-    def __init__(self,
-                 entity_type: str,
-                 score: float,
-                 start: int,
-                 end: int):
-        """
-         Analyzer Result represents the detected entity of the analyzer in the text.
-
-        :param entity_type: type of the entity (PHONE_NUMBER etc.)
-        :param score: the score given by the recognizer
-        :param start: start index in the text
-        :param end: end index in the text
-        """
-        self.score = score
-        self.entity_type = entity_type
-        self.start = start
-        self.end = end
+    def __init__(self, content: dict):
+        self.__validate_fields(content)
+        self.score = content.get("score")
+        self.entity_type = content.get("entity_type")
+        self.start = content.get("start")
+        self.end = content.get("end")
 
     def contains(self, other):
         """
@@ -100,23 +89,9 @@ class AnalyzerResult:
             return self.score <= other.score
         return other.contains(self)
 
-    @classmethod
-    def validate_and_create(cls, content):
-        """
-        Validate and create analyzer result from user input and json.
-
-        :param content: json with analyzer result. See example in payload.json
-        :return: AnalyzerResult
-        """
-        cls.__validate_fields(content)
-        return cls(content.get("entity_type"), content.get("score"),
-                   content.get("start"),
-                   content.get("end"))
-
-    @classmethod
-    def __validate_fields(cls, content):
+    def __validate_fields(self, content):
         for field in ("start", "end", "score", "entity_type"):
             if content.get(field) is None:
-                cls.logger.debug(f"invalid input, no field {field} for {content}")
+                self.logger.debug(f"invalid input, no field {field} for {content}")
                 raise InvalidParamException(
                     f"Invalid input, analyzer result must contain {field}")
