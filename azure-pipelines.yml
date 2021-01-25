@@ -2,6 +2,7 @@ trigger:
   branches:
     include:
     - V2
+    - feature/push-containers-in-ci
 
 pr:
   branches:
