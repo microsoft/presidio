@@ -1,5 +1,7 @@
 trigger:
-  - V2
+  branches:
+    include:
+      - V2
 
 pr:
   branches:
