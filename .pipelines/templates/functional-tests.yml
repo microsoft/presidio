@@ -5,9 +5,9 @@ steps:
           action: Run services
           dockerComposeFile: docker-compose.yml
           buildImages: false
-          dockerComposeFileArgs: |
-                REGISTRY_NAME=$(REGISTRY_NAME)
-                TAG=$(TAG)
+          # dockerComposeFileArgs: |
+          #       REGISTRY_NAME=$(REGISTRY_NAME)
+          #       TAG=$(TAG)
     - task: UsePythonVersion@0
       inputs:
           versionSpec: '3.8'
