@@ -1,4 +1,3 @@
-from __future__ import annotations
 import json
 from typing import Dict
 
@@ -28,7 +27,7 @@ class Pattern:
         return return_dict
 
     @classmethod
-    def from_dict(cls, pattern_dict: Dict) -> Pattern:
+    def from_dict(cls, pattern_dict: Dict) -> "Pattern":
         """
         Load an instance from a dictionary.
 
