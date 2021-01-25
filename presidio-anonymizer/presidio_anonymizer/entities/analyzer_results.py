@@ -1,4 +1,5 @@
 """List wrapper of AnalyzerResult which sort the list using AnalyzerResult.__gt__."""
+import logging
 from typing import List
 
 from presidio_anonymizer.entities import AnalyzerResult
@@ -19,6 +20,8 @@ class AnalyzerResults(list):
     - Partial intersection - both will be returned concatenated.
     """
 
+    logger = logging.getLogger("presidio-anonymizer")
+
     def to_sorted_unique_results(self, reverse=False) -> List[AnalyzerResult]:
         """
         Create a sorted list with unique results from the list.
@@ -37,6 +40,7 @@ class AnalyzerResults(list):
         sort - Use __gt__ of AnalyzerResult to compare and sort
         :return: List
         """
+        self.logger.debug("removing conflicts and sorting analyzer results list")
         analyzer_results = self._remove_conflicts()
         return sorted(analyzer_results, reverse=reverse)
 
@@ -56,4 +60,7 @@ class AnalyzerResults(list):
             if not any([result_a.same_or_contained(other_element) for other_element in
                         other_elements]):
                 unique_elements.append(result_a)
+            else:
+                self.logger.debug(
+                    f"removing element {result_a} from results list due to conflict")
         return unique_elements

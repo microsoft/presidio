@@ -40,9 +40,9 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 )
 def test_analyzer_result_fails_on_invalid_json_formats(request_json, result_text):
     try:
-        AnalyzerResult.validate_and_create(request_json)
+        AnalyzerResult(request_json)
     except InvalidParamException as e:
-        assert e.err == result_text
+        assert e.err_msg == result_text
     except Exception as e:
         assert not e
 
@@ -54,7 +54,7 @@ def test_analyzer_result_pass_with_valid_json():
         "score": 0.8,
         "entity_type": "NUMBER"
     }
-    data = AnalyzerResult.validate_and_create(content)
+    data = AnalyzerResult(content)
     assert data.start == content.get("start")
     assert data.end == content.get("end")
     assert data.score == content.get("score")
@@ -112,7 +112,7 @@ def test_creating_anonymizer_request_should_fail_over_validation(request_json,
     try:
         AnonymizerRequest(request_json)
     except InvalidParamException as e:
-        assert e.err == result_text
+        assert e.err_msg == result_text
     except Exception as e:
         assert not e
 

@@ -10,9 +10,9 @@ from presidio_anonymizer.anonymizers import Hash
 from presidio_anonymizer.anonymizers import Mask
 from presidio_anonymizer.anonymizers import Redact
 from presidio_anonymizer.anonymizers import Replace
-from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities import AnalyzerResult
 from presidio_anonymizer.entities import AnalyzerResults
+from presidio_anonymizer.entities import InvalidParamException
 
 
 class AnonymizerRequest:
@@ -75,11 +75,12 @@ class AnonymizerRequest:
         """
         analyzer_results = data.get("analyzer_results")
         if not analyzer_results:
+            self.logger.debug("invalid input, json missing field: analyzer_results")
             raise InvalidParamException("Invalid input, "
                                         "analyzer results can not be empty")
         for analyzer_result in analyzer_results:
             self._analysis_results.append(
-                AnalyzerResult.validate_and_create(analyzer_result))
+                AnalyzerResult(analyzer_result))
 
     def __handle_transformations(self, data):
         """
@@ -92,13 +93,16 @@ class AnonymizerRequest:
         transformations = data.get("transformations")
         if transformations is not None:
             for key, transformation in transformations.items():
+                self.logger.debug(f"converting {transformation} to anonymizer class")
                 anonymizer = self.__get_anonymizer(transformation)
+                self.logger.debug(f"applying class {anonymizer} to {transformation}")
                 transformation["anonymizer"] = anonymizer
                 self._transformations[key] = transformation
 
     def __handle_text(self, data):
         self._text = data.get("text")
         if not self._text:
+            self.logger.debug("invalid input, json is missing text field")
             raise InvalidParamException("Invalid input, text can not be empty")
 
     def __get_anonymizer(self, transformation):
@@ -111,7 +115,7 @@ class AnonymizerRequest:
         anonymizer_type = transformation.get("type").lower()
         anonymizer_class = self.anonymizers.get(anonymizer_type)
         if not anonymizer_class:
-            self.logger.error(f"No such anonimyzer class {anonymizer_type}")
+            self.logger.error(f"No such anonymizer class {anonymizer_type}")
             raise InvalidParamException(
                 f"Invalid anonymizer class '{anonymizer_type}'.")
         return anonymizer_class

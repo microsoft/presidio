@@ -1,3 +1,6 @@
+import json
+import os
+
 import pytest
 from common.methods import anonymize
 
@@ -16,3 +19,33 @@ def test_anonymize():
 
     assert response_status == 200
     assert response_content == "hello world, my name is <NAME>. My number is: 034453334"
+
+
+@pytest.mark.api
+def test_anonymize_with_payload():
+    json_path = file_path("payload.json")
+    with open(json_path) as json_file:
+        content = json.load(json_file)
+
+    response_status, response_content = anonymize(content)
+
+    assert response_content == 'hello world, my name is ANONYMIZED. My number is: '
+    assert response_status == 200
+
+
+@pytest.mark.api
+def test_anonymize_api_fails_on_invalid_value_of_text():
+    json_path = file_path("payload.json")
+    with open(json_path) as json_file:
+        content = json.load(json_file)
+        content["text"] = ""
+
+    response_status, response_content = anonymize(content)
+
+    assert response_content == 'Invalid input, text can not be empty'
+    assert response_status == 422
+
+
+def file_path(file_name: str):
+    return os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..', f"resources/{file_name}"))
