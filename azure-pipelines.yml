@@ -1,3 +1,8 @@
+# Presidio PR validation and CI pipeline.
+# * PR Validation: security analysis, lint, unit test, functional tests
+# * CI: lint, unit test, functional tests, push to private Azure Container registry 
+#       and deploy to internal development environment
+
 trigger:
   branches:
     include:
@@ -29,6 +34,7 @@ jobs:
     
     - job: SecurityAnalysis
       displayName: Security Analysis
+      condition: ne(variables['Build.Reason'], 'IndividualCI')
       pool:
           # CredScan only runs on Windows
           vmImage: 'windows-latest'
@@ -129,6 +135,8 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
+
+    # Build containers only in CI (condition is in the tasks since next job depends on it)
     - job: BuildContainers
       displayName: Build and Push Containers
       dependsOn:
@@ -167,20 +175,22 @@ jobs:
         - 'SecurityAnalysis'
       pool:
         vmImage: 'ubuntu-16.04'
-      
+      # Only set docker compose args in CI where we push them to ACR
       ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
         variables:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
       steps:
+        # Build containers in PR or manual (not CI where they are pulled from ACT)
         - task: DockerCompose@0
           condition: ne(variables['Build.Reason'], 'IndividualCI')
           displayName: Build Presidio Images
           inputs:
               action: Build services
               dockerComposeFile: docker-compose.yml
+        # Only pull container in CI where we push them to ACR
         - task: DockerCompose@0
-          displayName: Pull Presidio Images to ACR
+          displayName: Pull Presidio Images from ACR
           condition: eq(variables['Build.Reason'], 'IndividualCI')
           inputs:
               action: Run a Docker Compose command
