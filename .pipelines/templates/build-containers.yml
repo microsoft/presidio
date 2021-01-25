@@ -5,15 +5,11 @@ parameters:
 - name: TAG
   type: string
   default: ''
-- name: BUILD_CONTAINERS
-  type: boolean
-  default: true
 - name: AZURE_SUBSCRIPTION
   type: string
 steps:
   - task: DockerCompose@0
     displayName: Build Presidio Images
-    condition: eq(${{ parameters.BUILD_CONTAINERS }}, true)
     inputs:
         action: Build services
         dockerComposeFile: docker-compose.yml
@@ -22,7 +18,6 @@ steps:
           TAG=${{ parameters.TAG }}
   - task: DockerCompose@0
     displayName: Push Presidio Images to ACR
-    condition: eq(${{ parameters.BUILD_CONTAINERS }}, true)
     inputs:
         action: Push services
         dockerComposeFile: docker-compose.yml  

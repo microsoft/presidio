@@ -48,6 +48,12 @@ jobs:
       #- 'validate'
       - 'inclusivelint'
       - 'SecurityAnalysis'
+      condition: |
+        and
+        (
+          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
+        )
       pool:
         vmImage: 'ubuntu-16.04'
       strategy:
@@ -96,6 +102,12 @@ jobs:
       #- 'validate'
       - 'inclusivelint'
       - 'SecurityAnalysis'
+      condition: |
+        and
+        (
+          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
+        )
       pool:
         vmImage: 'ubuntu-16.04'
       strategy:
@@ -137,12 +149,13 @@ jobs:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
 
-    # Build containers only in CI (condition is in the tasks since next job depends on it)
+    # Build containers only in CI
     - job: BuildContainers
       displayName: Build and Push Containers
+      condition: ${{ eq(variables['Build.Reason'], 'IndividualCI') }}
       dependsOn:
-        - 'inclusivelint'
-        - 'SecurityAnalysis'
+        - 'TestAnonymizer'
+        - 'TestAnalyzer'
       pool:
         vmImage: 'ubuntu-16.04'
       variables:
@@ -153,7 +166,6 @@ jobs:
           parameters:
             REGISTRY_NAME: $(REGISTRY_NAME)
             TAG: $(TAG)
-            BUILD_CONTAINERS: ${{ eq(variables['Build.Reason'], 'IndividualCI') }}
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
         
     - job: FunctionalTests
@@ -162,6 +174,13 @@ jobs:
         - 'BuildContainers'
         - 'inclusivelint'
         - 'SecurityAnalysis'
+      condition: |
+        and
+        (
+          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped'),
+          in(dependencies.BuildContainers.result, 'Succeeded', 'Skipped')
+        )
       pool:
         vmImage: 'ubuntu-16.04'
       # Only set docker compose args in CI where we push them to ACR
