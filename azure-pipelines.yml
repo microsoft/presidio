@@ -43,8 +43,8 @@ jobs:
         vmImage: 'ubuntu-16.04'
       strategy:
         matrix:
-          #Python36: disabled bug2677
-          #  python.version: '3.6'
+          Python36:
+            python.version: '3.6'
           Python37:
             python.version: '3.7'
           Python38:
@@ -91,8 +91,8 @@ jobs:
         vmImage: 'ubuntu-16.04'
       strategy:
         matrix:
-          #Python36: disabled bug2677
-          #  python.version: '3.6'
+          Python36:
+            python.version: '3.6'
           Python37:
             python.version: '3.7'
           Python38:

@@ -1,4 +1,3 @@
-from __future__ import annotations
 import copy
 from abc import abstractmethod
 from typing import List, Dict
@@ -117,7 +116,7 @@ class EntityRecognizer:
         return return_dict
 
     @classmethod
-    def from_dict(cls, entity_recognizer_dict: Dict) -> EntityRecognizer:
+    def from_dict(cls, entity_recognizer_dict: Dict) -> "EntityRecognizer":
         """
         Create EntityRecognizer from a dict input.
 
