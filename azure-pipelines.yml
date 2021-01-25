@@ -153,7 +153,7 @@ jobs:
           parameters:
             REGISTRY_NAME: $(REGISTRY_NAME)
             TAG: $(TAG)
-            BUILD_CONTAINERS: eq(variables['Build.Reason'], 'IndividualCI')
+            BUILD_CONTAINERS: ${{ eq(variables['Build.Reason'], 'IndividualCI') }}
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
         
     - job: FunctionalTests
