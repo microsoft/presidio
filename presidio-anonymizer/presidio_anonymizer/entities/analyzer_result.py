@@ -3,6 +3,8 @@ AnalyzerResult is the exact copy of the recognizer result.
 
 Represents the findings of detected entity.
 """
+import logging
+
 from presidio_anonymizer.entities import InvalidParamException
 
 
@@ -13,23 +15,14 @@ class AnalyzerResult:
     Validate and compare an recognizer result object.
     """
 
-    def __init__(self,
-                 entity_type: str,
-                 score: float,
-                 start: int,
-                 end: int):
-        """
-         Analyzer Result represents the detected entity of the analyzer in the text.
+    logger = logging.getLogger("presidio-anonymizer")
 
-        :param entity_type: type of the entity (PHONE_NUMBER etc.)
-        :param score: the score given by the recognizer
-        :param start: start index in the text
-        :param end: end index in the text
-        """
-        self.score = score
-        self.entity_type = entity_type
-        self.start = start
-        self.end = end
+    def __init__(self, content: dict):
+        self.__validate_fields(content)
+        self.score = content.get("score")
+        self.entity_type = content.get("entity_type")
+        self.start = content.get("start")
+        self.end = content.get("end")
 
     def contains(self, other):
         """
@@ -79,8 +72,11 @@ class AnalyzerResult:
         """
         return hash(
             f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
-        return hash(
-            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
+
+    def __str__(self):
+        """Analyzer_result class data to string."""
+        return f"start: {str(self.start)}, end: {str(self.end)}, " \
+               f"score: {str(self.score)}, entity_type: {self.entity_type}"
 
     def same_or_contained(self, other):
         """
@@ -92,22 +88,9 @@ class AnalyzerResult:
         return other.contains(self) or (
                 self.equal_indices(other) and self.score < other.score)
 
-    @classmethod
-    def validate_and_create(cls, content):
-        """
-        Validate and create analyzer result from user input and json.
-
-        :param content: json with analyzer result. See example in payload.json
-        :return: AnalyzerResult
-        """
-        cls.__validate_fields(content)
-        return cls(content.get("entity_type"), content.get("score"),
-                   content.get("start"),
-                   content.get("end"))
-
-    @classmethod
-    def __validate_fields(cls, content):
+    def __validate_fields(self, content):
         for field in ("start", "end", "score", "entity_type"):
             if content.get(field) is None:
+                self.logger.debug(f"invalid input, no field {field} for {content}")
                 raise InvalidParamException(
                     f"Invalid input, analyzer result must contain {field}")

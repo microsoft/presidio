@@ -34,7 +34,9 @@ class AnonymizerEngine:
         ).to_sorted_unique_results(True)
         for analyzer_result in analyzer_results:
             transformation = engine_request.get_transformation(analyzer_result)
-            self.logger.debug(f"received transformation {transformation.get('type')}")
+            self.logger.debug(
+                f"for analyzer result {analyzer_result} received transformation "
+                f"{str(transformation)}")
             anonymizer_class = transformation.get("anonymizer")
             new_text = anonymizer_class().anonymize(transformation)
             end_of_text = min(analyzer_result.end, last_replacement_point)

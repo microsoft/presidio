@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from presidio_analyzer import AnalysisExplanation
 
 
@@ -54,7 +52,7 @@ class RecognizerResult:
         """Return a string representation of the instance."""
         return self.__str__()
 
-    def intersects(self, other: RecognizerResult) -> int:
+    def intersects(self, other: "RecognizerResult") -> int:
         """
         Check if self intersects with a different RecognizerResult.
 
@@ -69,7 +67,7 @@ class RecognizerResult:
         # otherwise the intersection is min(end) - max(start)
         return min(self.end, other.end) - max(self.start, other.start)
 
-    def contained_in(self, other: RecognizerResult) -> bool:
+    def contained_in(self, other: "RecognizerResult") -> bool:
         """
         Check if self is contained in a different RecognizerResult.
 
