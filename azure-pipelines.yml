@@ -1,5 +1,13 @@
+# Presidio PR validation and CI pipeline.
+# * PR Validation: security analysis, lint, unit test, functional tests
+# * CI: lint, unit test, functional tests, push to private Azure Container registry 
+#       and deploy to internal development environment
+
 trigger:
-  - V2
+  branches:
+    include:
+    - V2
+    - feature/push-containers-in-ci
 
 pr:
   branches:
@@ -27,6 +35,7 @@ jobs:
     
     - job: SecurityAnalysis
       displayName: Security Analysis
+      condition: ne(variables['Build.Reason'], 'IndividualCI')
       pool:
           # CredScan only runs on Windows
           vmImage: 'windows-latest'
@@ -39,6 +48,12 @@ jobs:
       #- 'validate'
       - 'inclusivelint'
       - 'SecurityAnalysis'
+      condition: |
+        and
+        (
+          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
+        )
       pool:
         vmImage: 'ubuntu-16.04'
       strategy:
@@ -87,6 +102,12 @@ jobs:
       #- 'validate'
       - 'inclusivelint'
       - 'SecurityAnalysis'
+      condition: |
+        and
+        (
+          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
+        )
       pool:
         vmImage: 'ubuntu-16.04'
       strategy:
@@ -128,14 +149,65 @@ jobs:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
 
+    # Build containers only in CI
+    - job: BuildContainers
+      displayName: Build and Push Containers
+      condition: ${{ eq(variables['Build.Reason'], 'IndividualCI') }}
+      dependsOn:
+        - 'TestAnonymizer'
+        - 'TestAnalyzer'
+      pool:
+        vmImage: 'ubuntu-16.04'
+      variables:
+        REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+        TAG: ':$(Build.BuildId)'
+      steps:
+        - template: .pipelines/templates/build-containers.yml
+          parameters:
+            REGISTRY_NAME: $(REGISTRY_NAME)
+            TAG: $(TAG)
+            AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+        
     - job: FunctionalTests
       displayName: Functional Tests
       dependsOn:
-        #- 'validate'
+        - 'BuildContainers'
         - 'inclusivelint'
         - 'SecurityAnalysis'
+      condition: |
+        and
+        (
+          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped'),
+          in(dependencies.BuildContainers.result, 'Succeeded', 'Skipped')
+        )
       pool:
         vmImage: 'ubuntu-16.04'
-
+      # Only set docker compose args in CI where we push them to ACR
+      ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
+        variables:
+          REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+          TAG: ':$(Build.BuildId)'
       steps:
+        # Build containers in PR or manual (not CI where they are pulled from ACT)
+        - task: DockerCompose@0
+          condition: ne(variables['Build.Reason'], 'IndividualCI')
+          displayName: Build Presidio Images
+          inputs:
+              action: Build services
+              dockerComposeFile: docker-compose.yml
+        # Only pull container in CI where we push them to ACR
+        - task: DockerCompose@0
+          displayName: Pull Presidio Images from ACR
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
+          inputs:
+              action: Run a Docker Compose command
+              dockerComposeCommand: pull
+              dockerComposeFile: docker-compose.yml  
+              containerregistrytype: Azure Container Registry
+              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
+              azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'  
+              dockerComposeFileArgs: |
+                REGISTRY_NAME=$(REGISTRY_NAME)
+                TAG=$(TAG)
         - template: .pipelines/templates/functional-tests.yml

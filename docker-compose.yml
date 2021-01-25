@@ -1,6 +1,7 @@
 version: '3'
 services:
   presidio-anonymizer:
+    image: ${REGISTRY_NAME}presidio-anonymizer${TAG}
     build:
       context: ./presidio-anonymizer
       args:
@@ -10,6 +11,7 @@ services:
     ports:
       - "5001:5001"
   presidio-analyzer:
+    image: ${REGISTRY_NAME}presidio-analyzer${TAG}
     build:
       context: ./presidio-analyzer
       args:
