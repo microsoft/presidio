@@ -16,8 +16,8 @@ from presidio_anonymizer.entities import AnalyzerResult, InvalidParamException
     # fmt: on
 )
 def test_analyzer_result_successfully_contains_another(start, end):
-    first = AnalyzerResult("", 0, 0, 10)
-    second = AnalyzerResult("", 0, start, end)
+    first = create_analayzer_result("", 0, 0, 10)
+    second = create_analayzer_result("", 0, start, end)
 
     assert first.contains(second)
 
@@ -34,15 +34,15 @@ def test_analyzer_result_successfully_contains_another(start, end):
     # fmt: on
 )
 def test_analyzer_result_fail_contains_another(start, end):
-    first = AnalyzerResult("", 0, 5, 10)
-    second = AnalyzerResult("", 0, start, end)
+    first = create_analayzer_result("", 0, 5, 10)
+    second = create_analayzer_result("", 0, start, end)
 
     assert not first.contains(second)
 
 
 def test_analyzer_result_successfully_equal_indices_of_another():
-    first = AnalyzerResult("", 0, 0, 10)
-    second = AnalyzerResult("", 0, 0, 10)
+    first = create_analayzer_result("", 0, 0, 10)
+    second = create_analayzer_result("", 0, 0, 10)
 
     assert first.equal_indices(second)
 
@@ -59,15 +59,15 @@ def test_analyzer_result_successfully_equal_indices_of_another():
     # fmt: on
 )
 def test_analyzer_result_fail_equal_indices_of_another(start, end):
-    first = AnalyzerResult("", 0, 5, 10)
-    second = AnalyzerResult("", 0, start, end)
+    first = create_analayzer_result("", 0, 5, 10)
+    second = create_analayzer_result("", 0, start, end)
 
     assert not first.equal_indices(second)
 
 
 def test_analyzer_result_equals_another():
-    first = AnalyzerResult("bla", 0.2, 0, 10)
-    second = AnalyzerResult("bla", 0.2, 0, 10)
+    first = create_analayzer_result("bla", 0.2, 0, 10)
+    second = create_analayzer_result("bla", 0.2, 0, 10)
 
     assert first == second
 
@@ -84,15 +84,15 @@ def test_analyzer_result_equals_another():
     # fmt: on
 )
 def test_analyzer_result_not_equal_another(entity_type, score, start, end):
-    first = AnalyzerResult("bla", 0.2, 0, 10)
-    second = AnalyzerResult(entity_type, score, start, end)
+    first = create_analayzer_result("bla", 0.2, 0, 10)
+    second = create_analayzer_result(entity_type, score, start, end)
 
     assert first != second
 
 
 def test_analyzer_result_successfully_hashed_and_equal():
-    first = AnalyzerResult("", 0, 0, 10)
-    second = AnalyzerResult("", 0, 0, 10)
+    first = create_analayzer_result("", 0, 0, 10)
+    second = create_analayzer_result("", 0, 0, 10)
 
     assert first.__hash__() == second.__hash__()
 
@@ -109,8 +109,8 @@ def test_analyzer_result_successfully_hashed_and_equal():
     # fmt: on
 )
 def test_analyzer_result_hash_not_equal_another(entity_type, score, start, end):
-    first = AnalyzerResult("bla", 0.2, 0, 10)
-    second = AnalyzerResult(entity_type, score, start, end)
+    first = create_analayzer_result("bla", 0.2, 0, 10)
+    second = create_analayzer_result(entity_type, score, start, end)
 
     assert first.__hash__() != second.__hash__()
 
@@ -127,8 +127,8 @@ def test_analyzer_result_hash_not_equal_another(entity_type, score, start, end):
     # fmt: on
 )
 def test_analyzer_result_has_conflict(entity_type, score, start, end):
-    first = AnalyzerResult("bla", 0.2, 2, 10)
-    second = AnalyzerResult(entity_type, score, start, end)
+    first = create_analayzer_result("bla", 0.2, 2, 10)
+    second = create_analayzer_result(entity_type, score, start, end)
 
     assert first.has_conflict(second)
 
@@ -144,8 +144,8 @@ def test_analyzer_result_has_conflict(entity_type, score, start, end):
     # fmt: on
 )
 def test_analyzer_result_has_no_conflict(entity_type, score, start, end):
-    first = AnalyzerResult("bla", 0.2, 2, 10)
-    second = AnalyzerResult(entity_type, score, start, end)
+    first = create_analayzer_result("bla", 0.2, 2, 10)
+    second = create_analayzer_result(entity_type, score, start, end)
 
     assert not first.has_conflict(second)
 
@@ -180,25 +180,19 @@ def test_analyzer_result_has_no_conflict(entity_type, score, start, end):
 )
 def test_analyzer_result_fails_on_invalid_json_formats(request_json, result_text):
     try:
-        AnalyzerResult.validate_and_create(request_json)
+        AnalyzerResult(request_json)
     except InvalidParamException as e:
-        assert e.err == result_text
+        assert e.err_msg == result_text
     except Exception as e:
         assert not e
 
 
 def test_analyzer_result_pass_with_valid_json():
-    content = {
-        "start": 0,
-        "end": 32,
-        "score": 0.8,
-        "entity_type": "NUMBER"
-    }
-    data = AnalyzerResult.validate_and_create(content)
-    assert data.start == content.get("start")
-    assert data.end == content.get("end")
-    assert data.score == content.get("score")
-    assert data.entity_type == content.get("entity_type")
+    data = create_analayzer_result("NUMBER", 0.8, 0, 32)
+    assert data.start == 0
+    assert data.end == 32
+    assert data.score == 0.8
+    assert data.entity_type == "NUMBER"
 
 
 @pytest.mark.parametrize(
@@ -213,8 +207,8 @@ def test_analyzer_result_pass_with_valid_json():
     # fmt: on
 )
 def test_analyzer_result_greater_of_another(start, end):
-    first = AnalyzerResult("", 0, 5, 10)
-    second = AnalyzerResult("", 0, start, end)
+    first = create_analayzer_result("", 0, 5, 10)
+    second = create_analayzer_result("", 0, start, end)
 
     assert first.__gt__(second)
 
@@ -230,7 +224,12 @@ def test_analyzer_result_greater_of_another(start, end):
     # fmt: on
 )
 def test_analyzer_result_not_greater_of_another(start, end):
-    first = AnalyzerResult("", 0, 5, 10)
-    second = AnalyzerResult("", 0, start, end)
+    first = create_analayzer_result("", 0, 5, 10)
+    second = create_analayzer_result("", 0, start, end)
 
     assert not first.__gt__(second)
+
+
+def create_analayzer_result(entity_type: str, score: float, start: int, end: int):
+    data = {"entity_type": entity_type, "score": score, "start": start, "end": end}
+    return AnalyzerResult(data)

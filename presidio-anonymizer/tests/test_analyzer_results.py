@@ -37,4 +37,4 @@ def test_analyzer_results_reversed_sorted_set():
 
 def file_path(file_name: str):
     return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..', f"resources/{file_name}"))
+        os.path.join(os.path.dirname(__file__), f"resources/{file_name}"))

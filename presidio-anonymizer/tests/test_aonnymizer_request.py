@@ -13,57 +13,6 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
     # fmt: off
     "request_json, result_text",
     [
-        ({}, "Invalid input, analyzer result must contain start",),
-        ({
-             "end": 32,
-             "score": 0.8,
-             "entity_type": "NUMBER"
-         }, "Invalid input, analyzer result must contain start",),
-        ({
-             "start": 28,
-             "score": 0.8,
-             "entity_type": "NUMBER"
-         }, "Invalid input, analyzer result must contain end",),
-        ({
-             "start": 28,
-             "end": 32,
-             "entity_type": "NUMBER"
-         }, "Invalid input, analyzer result must contain score",),
-        ({
-             "start": 28,
-             "end": 32,
-             "score": 0.8,
-         }, "Invalid input, analyzer result must contain entity_type",),
-    ],
-    # fmt: on
-)
-def test_analyzer_result_fails_on_invalid_json_formats(request_json, result_text):
-    try:
-        AnalyzerResult(request_json)
-    except InvalidParamException as e:
-        assert e.err_msg == result_text
-    except Exception as e:
-        assert not e
-
-
-def test_analyzer_result_pass_with_valid_json():
-    content = {
-        "start": 0,
-        "end": 32,
-        "score": 0.8,
-        "entity_type": "NUMBER"
-    }
-    data = AnalyzerResult(content)
-    assert data.start == content.get("start")
-    assert data.end == content.get("end")
-    assert data.score == content.get("score")
-    assert data.entity_type == content.get("entity_type")
-
-
-@pytest.mark.parametrize(
-    # fmt: off
-    "request_json, result_text",
-    [
         ({}, "Invalid input, analyzer results can not be empty",),
         ({
              "text": "Hello world",
@@ -166,4 +115,4 @@ def __find_element(content: List, entity_type: str):
 
 def file_path(file_name: str):
     return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..', f"resources/{file_name}"))
+        os.path.join(os.path.dirname(__file__), f"resources/{file_name}"))
