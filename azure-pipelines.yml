@@ -1,5 +1,7 @@
 trigger:
-  - V2
+  branches:
+    include:
+    - V2
 
 pr:
   branches:
@@ -127,15 +129,67 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
-
-    - job: FunctionalTests
-      displayName: Functional Tests
+    - job: BuildContainers
+      displayName: Build and Push Containers
       dependsOn:
-        #- 'validate'
         - 'inclusivelint'
         - 'SecurityAnalysis'
       pool:
         vmImage: 'ubuntu-16.04'
-
+      variables:
+        REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+        TAG: ':$(Build.BuildId)'
       steps:
+        - task: DockerCompose@0
+          displayName: Build Presidio Images
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
+          inputs:
+              action: Build services
+              dockerComposeFile: docker-compose.yml
+              dockerComposeFileArgs: |
+                REGISTRY_NAME=$(REGISTRY_NAME)
+                TAG=$(TAG)
+        - task: DockerCompose@0
+          displayName: Push Presidio Images to ACR
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
+          inputs:
+              action: Push services
+              dockerComposeFile: docker-compose.yml  
+              containerregistrytype: Azure Container Registry
+              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
+              azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'
+
+    - job: FunctionalTests
+      displayName: Functional Tests
+      dependsOn:
+        - 'BuildContainers'
+        - 'inclusivelint'
+        - 'SecurityAnalysis'
+      pool:
+        vmImage: 'ubuntu-16.04'
+      
+      ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
+        variables:
+          REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+          TAG: ':$(Build.BuildId)'
+      steps:
+        - task: DockerCompose@0
+          condition: ne(variables['Build.Reason'], 'IndividualCI')
+          displayName: Build Presidio Images
+          inputs:
+              action: Build services
+              dockerComposeFile: docker-compose.yml
+        - task: DockerCompose@0
+          displayName: Pull Presidio Images to ACR
+          condition: eq(variables['Build.Reason'], 'IndividualCI')
+          inputs:
+              action: Run a Docker Compose command
+              dockerComposeCommand: pull
+              dockerComposeFile: docker-compose.yml  
+              containerregistrytype: Azure Container Registry
+              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
+              azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'  
+              dockerComposeFileArgs: |
+                REGISTRY_NAME=$(REGISTRY_NAME)
+                TAG=$(TAG)
         - template: .pipelines/templates/functional-tests.yml
