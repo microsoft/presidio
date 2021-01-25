@@ -80,7 +80,7 @@ class AnonymizerRequest:
                                         "analyzer results can not be empty")
         for analyzer_result in analyzer_results:
             self._analysis_results.append(
-                AnalyzerResult.validate_and_create(analyzer_result))
+                AnalyzerResult(analyzer_result))
 
     def __handle_transformations(self, data):
         """
