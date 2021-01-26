@@ -21,7 +21,7 @@ jobs:
     #      parameters:
     #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
 
-    - job: inclusivelint
+    - job: Inclusivelint
       displayName: 'Inclusive linting validation'
       steps:
         - task: Bash@3
@@ -41,7 +41,7 @@ jobs:
       steps:
         - template: .pipelines/templates/security-analysis.yml
        
-    - job: 'TestAnalyzer'
+    - job: TestAnalyzer
       displayName: Test Analyzer
       dependsOn:
       #- 'validate'
@@ -95,7 +95,7 @@ jobs:
             SERVICE: 'Analyzer'
             WORKING_FOLDER: 'presidio-analyzer'
 
-    - job: 'TestAnonymizer'
+    - job: TestAnonymizer
       displayName: Test Anonymizer
       dependsOn:
       #- 'validate'
@@ -147,7 +147,7 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
-
+            
     # Build containers only in CI
     - job: BuildContainers
       displayName: Build and Push Containers
