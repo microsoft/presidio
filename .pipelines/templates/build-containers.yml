@@ -1,0 +1,26 @@
+parameters:
+- name: REGISTRY_NAME
+  type: string
+  default: ''
+- name: TAG
+  type: string
+  default: ''
+- name: AZURE_SUBSCRIPTION
+  type: string
+steps:
+  - task: DockerCompose@0
+    displayName: Build Presidio Images
+    inputs:
+        action: Build services
+        dockerComposeFile: docker-compose.yml
+        dockerComposeFileArgs: |
+          REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
+          TAG=${{ parameters.TAG }}
+  - task: DockerCompose@0
+    displayName: Push Presidio Images to ACR
+    inputs:
+        action: Push services
+        dockerComposeFile: docker-compose.yml  
+        containerregistrytype: Azure Container Registry
+        azureSubscriptionEndpoint: ${{ parameters.AZURE_SUBSCRIPTION }}
+        azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}

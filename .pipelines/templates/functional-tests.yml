@@ -4,8 +4,7 @@ steps:
       inputs:
           action: Run services
           dockerComposeFile: docker-compose.yml
-          buildImages: true
-
+          buildImages: false
     - task: UsePythonVersion@0
       inputs:
           versionSpec: '3.8'
