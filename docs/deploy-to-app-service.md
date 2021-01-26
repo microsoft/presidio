@@ -1,8 +1,7 @@
-# Deploy presidio service to an Azure App Service
+# Deploy presidio services to an Azure App Service
 
 Presidio containers can be hosted on an Azure App Service.
-The following script sets up a single app service.
-Repeat it for each of the presidio services (analyzer and anonymizer).
+Follow the provided script to se up an app service for each of the presidio services (analyzer and anonymizer).
 
 ## Basic setup
 
@@ -32,4 +31,11 @@ create and configure LA
 
 ## Blocking network access
 
-block ip address
+Use the following script to restrict network access for a specific ip such as your computer, a front-end website and an API management.
+
+``` bash
+FRONT_END_IP_RANGE=[front end ip range]
+az webapp config access-restriction add --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME \
+  --rule-name 'Front-end allow rule' --action Allow --ip-address $FRONT_END_IP_RANGE --priority 100
+
+```
