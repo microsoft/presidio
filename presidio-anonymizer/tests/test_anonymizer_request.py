@@ -57,12 +57,9 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 )
 def test_creating_anonymizer_request_should_fail_over_validation(request_json,
                                                                  result_text):
-    try:
+    with pytest.raises(InvalidParamException) as e:
         AnonymizerRequest(request_json)
-    except InvalidParamException as e:
-        assert e.err_msg == result_text
-    except Exception as e:
-        assert not e
+        assert result_text == e.err_msg
 
 
 def test_anonymizer_request_pass_on_valid_json():
