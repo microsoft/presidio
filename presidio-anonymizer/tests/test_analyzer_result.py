@@ -15,7 +15,7 @@ from presidio_anonymizer.entities import AnalyzerResult, InvalidParamException
     ],
     # fmt: on
 )
-def test_analyzer_result_successfully_contains_another(start, end):
+def test_given_analyzer_results_then_one_contains_another(start, end):
     first = create_analayzer_result("", 0, 0, 10)
     second = create_analayzer_result("", 0, start, end)
 
@@ -33,14 +33,14 @@ def test_analyzer_result_successfully_contains_another(start, end):
     ],
     # fmt: on
 )
-def test_analyzer_result_fail_contains_another(start, end):
+def test_given_analyzer_result_then_they_do_not_contain_one_another(start, end):
     first = create_analayzer_result("", 0, 5, 10)
     second = create_analayzer_result("", 0, start, end)
 
     assert not first.contains(second)
 
 
-def test_analyzer_result_successfully_equal_indices_of_another():
+def test_given_analyzer_results_with_same_indices_then_indices_are_equal():
     first = create_analayzer_result("", 0, 0, 10)
     second = create_analayzer_result("", 0, 0, 10)
 
@@ -58,14 +58,15 @@ def test_analyzer_result_successfully_equal_indices_of_another():
     ],
     # fmt: on
 )
-def test_analyzer_result_fail_equal_indices_of_another(start, end):
+def test_given_analyzer_results_with_different_indices_then_indices_are_not_equal(start,
+                                                                                  end):
     first = create_analayzer_result("", 0, 5, 10)
     second = create_analayzer_result("", 0, start, end)
 
     assert not first.equal_indices(second)
 
 
-def test_analyzer_result_equals_another():
+def test_given_identical_analyzer_results_then_they_are_equal():
     first = create_analayzer_result("bla", 0.2, 0, 10)
     second = create_analayzer_result("bla", 0.2, 0, 10)
 
@@ -83,14 +84,15 @@ def test_analyzer_result_equals_another():
     ],
     # fmt: on
 )
-def test_analyzer_result_not_equal_another(entity_type, score, start, end):
+def test_given_different_analyzer_result_then_they_are_not_equal(entity_type, score,
+                                                                 start, end):
     first = create_analayzer_result("bla", 0.2, 0, 10)
     second = create_analayzer_result(entity_type, score, start, end)
 
     assert first != second
 
 
-def test_analyzer_result_successfully_hashed_and_equal():
+def test_given_analyzer_result_then_their_hash_is_equal():
     first = create_analayzer_result("", 0, 0, 10)
     second = create_analayzer_result("", 0, 0, 10)
 
@@ -108,7 +110,8 @@ def test_analyzer_result_successfully_hashed_and_equal():
     ],
     # fmt: on
 )
-def test_analyzer_result_hash_not_equal_another(entity_type, score, start, end):
+def test_given_different_analyzer_results_then_hash_is_not_equal(entity_type, score,
+                                                                 start, end):
     first = create_analayzer_result("bla", 0.2, 0, 10)
     second = create_analayzer_result(entity_type, score, start, end)
 
@@ -126,7 +129,8 @@ def test_analyzer_result_hash_not_equal_another(entity_type, score, start, end):
     ],
     # fmt: on
 )
-def test_analyzer_result_has_conflict(entity_type, score, start, end):
+def test_given_analyzer_results_with_conflicting_indices_then_there_is_a_conflict(
+        entity_type, score, start, end):
     first = create_analayzer_result("bla", 0.2, 2, 10)
     second = create_analayzer_result(entity_type, score, start, end)
 
@@ -143,7 +147,8 @@ def test_analyzer_result_has_conflict(entity_type, score, start, end):
     ],
     # fmt: on
 )
-def test_analyzer_result_has_no_conflict(entity_type, score, start, end):
+def test_given_analyzer_results_with_no_conflicting_indices_then_there_is_no_conflict(
+        entity_type, score, start, end):
     first = create_analayzer_result("bla", 0.2, 2, 10)
     second = create_analayzer_result(entity_type, score, start, end)
 
@@ -178,13 +183,14 @@ def test_analyzer_result_has_no_conflict(entity_type, score, start, end):
     ],
     # fmt: on
 )
-def test_analyzer_result_fails_on_invalid_json_formats(request_json, result_text):
+def test_given_json_for_creating_analyzer_result_without_text_then_creation_fails(
+        request_json, result_text):
     with pytest.raises(InvalidParamException) as e:
         AnalyzerResult(request_json)
         assert result_text == e.err_msg
 
 
-def test_analyzer_result_pass_with_valid_json():
+def test_given_valid_json_for_creating_analyzer_result_then_creation_is_successful():
     data = create_analayzer_result("NUMBER", 0.8, 0, 32)
     assert data.start == 0
     assert data.end == 32
@@ -203,7 +209,7 @@ def test_analyzer_result_pass_with_valid_json():
     ],
     # fmt: on
 )
-def test_analyzer_result_greater_of_another(start, end):
+def test_given_analyzer_results_then_one_is_greater_then_another(start, end):
     first = create_analayzer_result("", 0, 5, 10)
     second = create_analayzer_result("", 0, start, end)
 
@@ -220,7 +226,7 @@ def test_analyzer_result_greater_of_another(start, end):
     ],
     # fmt: on
 )
-def test_analyzer_result_not_greater_of_another(start, end):
+def test_given_analyzer_result_then_one_is_not_greater_then_another(start, end):
     first = create_analayzer_result("", 0, 5, 10)
     second = create_analayzer_result("", 0, start, end)
 

@@ -4,12 +4,12 @@ import os
 from presidio_anonymizer.entities import AnalyzerResults, AnonymizerRequest
 
 
-def test_analyzer_results_not_failing_on_empty_list():
+def test_given_empty_list_then_analyzer_result_creation_is_not_failing():
     analyzer_result = AnalyzerResults()
     assert len(analyzer_result.to_sorted_unique_results()) == 0
 
 
-def test_analyzer_results_sorted_set():
+def test_given_conflicting_analyzer_results_then_none_conflicting_results_returned():
     payload = get_dup_payload()
     data = AnonymizerRequest(payload)
     analyze_results = data.get_analysis_results()
@@ -20,7 +20,7 @@ def test_analyzer_results_sorted_set():
     assert list(sorted_results)[0].end < list(sorted_results)[1].end
 
 
-def test_analyzer_results_reversed_sorted_set():
+def test_given_conflict_analyzer_results_then_reversed_none_conflict_list_returned():
     payload = get_dup_payload()
     data = AnonymizerRequest(payload)
     analyze_results = data.get_analysis_results()

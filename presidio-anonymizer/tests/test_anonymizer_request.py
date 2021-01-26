@@ -55,14 +55,14 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
     ],
     # fmt: on
 )
-def test_creating_anonymizer_request_should_fail_over_validation(request_json,
-                                                                 result_text):
+def test_given_invalid_json_then_request_creation_should_fail(request_json,
+                                                              result_text):
     with pytest.raises(InvalidParamException) as e:
         AnonymizerRequest(request_json)
         assert result_text == e.err_msg
 
 
-def test_anonymizer_request_pass_on_valid_json():
+def test_given_valid_json_then_request_creation_should_succeed():
     json_path = file_path("payload.json")
     with open(json_path) as json_file:
         content = json.load(json_file)
@@ -82,7 +82,7 @@ def test_anonymizer_request_pass_on_valid_json():
             assert data.get_transformation(result_a)
 
 
-def test_anonymizer_get_transformation_successfully():
+def test_given_valid_anonymizer_request_then_get_transformations_successfully():
     json_path = file_path("payload.json")
     with open(json_path) as json_file:
         content = json.load(json_file)
