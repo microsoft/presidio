@@ -7,7 +7,6 @@ trigger:
   branches:
     include:
     - V2
-    - bug/errors-in-pipeline
 
 pr:
   branches:
