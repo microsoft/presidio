@@ -188,7 +188,7 @@ jobs:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
       steps:
-        # Build containers in PR or manual (not CI where they are pulled from ACT)
+        # Build containers in PR or manual (not CI where they are pulled from ACR)
         - task: DockerCompose@0
           condition: ne(variables['Build.Reason'], 'IndividualCI')
           displayName: Build Presidio Images
