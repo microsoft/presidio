@@ -19,12 +19,13 @@ def test_given_a_correct_analyze_input_then_return_full_response():
 @pytest.mark.api
 def test_given_a_correct_input_for_supported_entities_then_expect_a_correct_response():
     request_body = "language=en"
+    expected_list = sorted(json.loads(
+        '["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"]'))
 
     response_status, response_content = analyzer_supported_entities(request_body)
 
     assert response_status == 200
-    assert response_content == json.loads(
-        '["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"]')
+    assert sorted(response_content) == expected_list
 
 
 @pytest.mark.api
@@ -36,3 +37,15 @@ def test_given_a_unsupported_language_for_supported_entities_then_expect_an_erro
     assert response_status == 500
     assert response_content == json.loads(
         '{"Error": ["No matching recognizers were found to serve the request."]}')
+
+
+@pytest.mark.api
+def test_given_an_illegal_input_for_supported_entities_then_igonre_and_proceed():
+    request_body = "uknown=input"
+    expected_list = sorted(json.loads(
+        '["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"]'))
+
+    response_status, response_content = analyzer_supported_entities(request_body)
+
+    assert response_status == 200
+    assert sorted(response_content) == expected_list
