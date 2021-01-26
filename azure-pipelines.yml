@@ -45,12 +45,12 @@ jobs:
       displayName: Test Analyzer
       dependsOn:
       #- 'validate'
-      - 'inclusivelint'
+      - 'Inclusivelint'
       - 'SecurityAnalysis'
       condition: |
         and
         (
-          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          eq(dependencies.Inclusivelint.result, 'Succeeded'),
           in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
         )
       pool:
@@ -99,12 +99,12 @@ jobs:
       displayName: Test Anonymizer
       dependsOn:
       #- 'validate'
-      - 'inclusivelint'
+      - 'Inclusivelint'
       - 'SecurityAnalysis'
       condition: |
         and
         (
-          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          eq(dependencies.Inclusivelint.result, 'Succeeded'),
           in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
         )
       pool:
@@ -147,7 +147,7 @@ jobs:
           parameters:
             SERVICE: 'Anonymizer'
             WORKING_FOLDER: 'presidio-anonymizer'
-            
+
     # Build containers only in CI
     - job: BuildContainers
       displayName: Build and Push Containers
@@ -171,12 +171,12 @@ jobs:
       displayName: Functional Tests
       dependsOn:
         - 'BuildContainers'
-        - 'inclusivelint'
+        - 'Inclusivelint'
         - 'SecurityAnalysis'
       condition: |
         and
         (
-          eq(dependencies.inclusivelint.result, 'Succeeded'),
+          eq(dependencies.Inclusivelint.result, 'Succeeded'),
           in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped'),
           in(dependencies.BuildContainers.result, 'Succeeded', 'Skipped')
         )
