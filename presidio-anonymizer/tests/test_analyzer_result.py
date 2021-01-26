@@ -179,12 +179,9 @@ def test_analyzer_result_has_no_conflict(entity_type, score, start, end):
     # fmt: on
 )
 def test_analyzer_result_fails_on_invalid_json_formats(request_json, result_text):
-    try:
+    with pytest.raises(InvalidParamException) as e:
         AnalyzerResult(request_json)
-    except InvalidParamException as e:
-        assert e.err_msg == result_text
-    except Exception as e:
-        assert not e
+        assert result_text == e.err_msg
 
 
 def test_analyzer_result_pass_with_valid_json():
