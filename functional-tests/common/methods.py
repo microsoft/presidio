@@ -17,3 +17,10 @@ def analyze(data):
         f"{ANALYZER_BASE_URL}/analyze", json=data, headers=DEFAULT_HEADERS
     )
     return response.status_code, json.loads(response.content)
+
+
+def analyzer_supported_entities(data):
+    response = requests.get(
+        f"{ANALYZER_BASE_URL}/supportedentities?{data}", headers=DEFAULT_HEADERS
+    )
+    return response.status_code, json.loads(response.content)
