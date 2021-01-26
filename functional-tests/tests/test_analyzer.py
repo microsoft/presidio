@@ -19,8 +19,7 @@ def test_given_a_correct_analyze_input_then_return_full_response():
 @pytest.mark.api
 def test_given_a_correct_input_for_supported_entities_then_expect_a_correct_response():
     language_query_parameter = "language=en"
-    expected_list = sorted(json.loads(
-        '["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"]'))
+    expected_list = sorted(["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"])
 
     response_status, response_content = analyzer_supported_entities(language_query_parameter)
 
@@ -35,15 +34,13 @@ def test_given_a_unsupported_language_for_supported_entities_then_expect_an_erro
     response_status, response_content = analyzer_supported_entities(language_query_parameter)
 
     assert response_status == 500
-    assert response_content == json.loads(
-        '{"Error": ["No matching recognizers were found to serve the request."]}')
+    assert response_content == {"Error": ["No matching recognizers were found to serve the request."]}
 
 
 @pytest.mark.api
 def test_given_an_illegal_input_for_supported_entities_then_igonre_and_proceed():
     language_query_parameter = "uknown=input"
-    expected_list = sorted(json.loads(
-        '["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"]'))
+    expected_list = sorted(["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"])
 
     response_status, response_content = analyzer_supported_entities(language_query_parameter)
 
