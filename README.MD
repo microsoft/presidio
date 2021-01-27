@@ -2,6 +2,14 @@
 
 **Context aware, pluggable and customizable PII anonymization service for text and images.**
 
+
+---
+
+[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=V2)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=207&branchName=V2)
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
+
+
 ## What is Presidio
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for sensitive text containing credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data or additional PII entities.
