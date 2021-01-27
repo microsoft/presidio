@@ -11,6 +11,8 @@ class NlpEngine(ABC):
     on tokens.
     """
 
+    default_conf_file = "conf/default.yaml"
+
     @abstractmethod
     def process_text(self, text: str, language: str) -> NlpArtifacts:
         """Execute the NLP pipeline on the given text and language."""

@@ -10,7 +10,7 @@ from presidio_analyzer import (
     RecognizerResult,
     RecognizerRegistry,
 )
-from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.nlp_engine import NlpArtifacts, SpacyNlpEngine, StanzaNlpEngine
 
 # noqa: F401
 from tests import assert_result
@@ -538,6 +538,20 @@ def test_given_no_interpretability_requested_then_response_contains_no_analysis(
     assert len(results) == 1
     assert results[0].analysis_explanation is None
 
+def test_given_no_interpretability_requested_then_response_contains_no_analysis(loaded_analyzer_engine, unit_test_guid):
+    text = "John Smith drivers license is AC432223"
+    language = "en"
+    remove_interpretability_response = True
+    results = loaded_analyzer_engine.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        remove_interpretability_response=remove_interpretability_response,
+        language=language,
+    )
+
+    assert len(results) == 1
+    assert results[0].analysis_explanation is None
+
 
 def test_given_interpretability_requested_then_response_contains_analysis(loaded_analyzer_engine, unit_test_guid):
     text = "John Smith drivers license is AC432223"
@@ -552,3 +566,35 @@ def test_given_interpretability_requested_then_response_contains_analysis(loaded
 
     assert len(results) == 1
     assert results[0].analysis_explanation is not None
+
+
+
+def test_read_test_nlp_conf_file_returns_spacy_nlp_engine(
+    mock_registry, mock_he_model, mock_bn_model
+):
+    class MockAnalyzerEngine(AnalyzerEngine):
+        @staticmethod
+        def _get_full_conf_path():
+            root_folder = Path(__file__).parent
+            return Path(root_folder, "conf/test.yaml")
+
+    engine = MockAnalyzerEngine(registry=mock_registry)
+    assert isinstance(engine.nlp_engine, SpacyNlpEngine)
+    assert engine.nlp_engine.nlp is not None
+
+
+@pytest.mark.skip_engine("stanza_en")
+def test_read_test_stanza_nlp_conf_file_returns_stanza_nlp_engine(
+    mock_registry, mock_he_model, mock_bn_model
+):
+    class MockAnalyzerEngine(AnalyzerEngine):
+        @staticmethod
+        def _get_full_conf_path():
+            root_folder = Path(__file__).parent
+            return Path(root_folder, "conf/test_stanza.yaml")
+
+    engine = MockAnalyzerEngine(registry=mock_registry)
+    assert isinstance(engine.nlp_engine, StanzaNlpEngine)
+    assert engine.nlp_engine.nlp is not None
+
+

@@ -1,4 +1,8 @@
+import shutil
+from pathlib import Path
+
 import pytest
+import spacy
 
 from presidio_analyzer import EntityRecognizer
 from presidio_analyzer import RecognizerRegistry
@@ -73,3 +77,42 @@ def loaded_registry():
 @pytest.fixture(scope="module")
 def mock_registry():
     return RecognizerRegistryMock()
+
+
+@pytest.fixture(scope="session")
+def mock_he_model():
+    """
+    Create an empty Hebrew spaCy pipeline and save it to disk.
+
+    So that it could be loaded using spacy.load()
+    """
+    he = spacy.blank("he")
+    he.to_disk("he_test")
+
+
+@pytest.fixture(scope="session")
+def mock_bn_model():
+    """
+    Create an empty Bengali spaCy pipeline and save it to disk.
+
+    So that it could be loaded using spacy.load()
+    """
+    bn = spacy.blank("bn")
+    bn.to_disk("bn_test")
+
+
+def pytest_sessionfinish():
+    """Remove files created during mock spaCy models creation."""
+    he_test_model_path = Path(Path(__file__).parent.parent, "he_test")
+    if he_test_model_path.exists():
+        try:
+            shutil.rmtree(he_test_model_path)
+        except OSError as e:
+            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))
+
+    bn_test_model_path = Path(Path(__file__).parent.parent, "bn_test")
+    if bn_test_model_path.exists():
+        try:
+            shutil.rmtree(bn_test_model_path)
+        except OSError as e:
+            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))

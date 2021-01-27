@@ -1,9 +1,8 @@
-from typing import Optional, List, Iterable
+from typing import Optional, List, Iterable, Union, Type
 
 from presidio_analyzer import EntityRecognizer, PresidioLogger
-from presidio_analyzer.nlp_engine import NlpEngine
+from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, StanzaNlpEngine
 from presidio_analyzer.predefined_recognizers import (
-    NLP_RECOGNIZERS,
     CreditCardRecognizer,
     CryptoRecognizer,
     DomainRecognizer,
@@ -20,6 +19,7 @@ from presidio_analyzer.predefined_recognizers import (
     SgFinRecognizer,
     SpacyRecognizer,
     EsNifRecognizer,
+    StanzaRecognizer,
 )
 
 logger = PresidioLogger("presidio-analyzer")
@@ -41,19 +41,19 @@ class RecognizerRegistry:
             self.recognizers = []
 
     def load_predefined_recognizers(
-        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = "spacy"
+        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None
     ) -> None:
         """
         Load the existing recognizers into memory.
 
         :param languages: List of languages for which to load recognizers
-        :param nlp_engine: The NLP engine to use. Default is 'spacy'.
+        :param nlp_engine: The NLP engine to use.
         :return: None
         """
         if not languages:
             languages = ["en"]
 
-        nlp_recognizer = NLP_RECOGNIZERS.get(nlp_engine, SpacyRecognizer)
+        nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
         recognizers_map = {
             "en": [
                 UsBankRecognizer,
@@ -83,6 +83,23 @@ class RecognizerRegistry:
                 rc(supported_language=lang) for rc in recognizers_map.get("ALL", [])
             ]
             self.recognizers.extend(all_recognizers)
+
+    @staticmethod
+    def _get_nlp_recognizer(
+        nlp_engine: NlpEngine,
+    ) -> Union[Type[SpacyRecognizer], Type[StanzaRecognizer]]:
+        """Return the recognizer leveraging the selected NLP Engine."""
+
+        if not nlp_engine or isinstance(nlp_engine, SpacyNlpEngine):
+            return SpacyRecognizer
+        if isinstance(nlp_engine, StanzaNlpEngine):
+            return StanzaRecognizer
+        else:
+            logger.warning(
+                "nlp engine should be either SpacyNlpEngine or StanzaNlpEngine"
+            )
+            # Returning default
+            return SpacyRecognizer
 
     def get_recognizers(
         self,

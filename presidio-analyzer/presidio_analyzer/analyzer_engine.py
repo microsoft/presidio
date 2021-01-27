@@ -1,5 +1,8 @@
 import json
+from pathlib import Path
 from typing import List, Optional
+
+import yaml
 
 from presidio_analyzer import (
     RecognizerRegistry,
@@ -8,7 +11,7 @@ from presidio_analyzer import (
     PresidioLogger,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NLP_ENGINES, NlpEngine
+from presidio_analyzer.nlp_engine import NlpEngine, create_nlp_engine
 
 logger = PresidioLogger("presidio-analyzer")
 
@@ -41,10 +44,8 @@ class AnalyzerEngine:
     ):
 
         if not nlp_engine:
-            logger.info(
-                "nlp_engine not provided. Creating new " "SpacyNlpEngine instance"
-            )
-            nlp_engine = NLP_ENGINES["spacy"]()
+            nlp_engine = self._create_nlp_engine(self._get_full_conf_path())
+
         if not registry:
             logger.info(
                 "Recognizer registry not provided. "
@@ -62,10 +63,41 @@ class AnalyzerEngine:
 
         # load all recognizers
         if not registry.recognizers:
-            registry.load_predefined_recognizers()
+            registry.load_predefined_recognizers(
+                nlp_engine=self.nlp_engine, languages=[self.default_language]
+            )
 
         self.enable_trace_pii = enable_trace_pii
         self.default_score_threshold = default_score_threshold
+
+    @staticmethod
+    def _create_nlp_engine(nlp_conf_file_path: Path) -> NlpEngine:
+        """
+        Create a specific NlpEngine class based on default configuration.
+
+        :param nlp_conf_file_path: Path to conf file
+        """
+        # Create specific NlpEngine given configuration file:
+        if not nlp_conf_file_path.exists():
+            nlp_configuration = {
+                "nlp_engine_name": "spacy",
+                "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
+            }
+            logger.warning(
+                f"configuration file {NlpEngine.default_conf_file} not found.  "
+                f"Using default config: {nlp_configuration}."
+            )
+
+        else:
+            nlp_configuration = yaml.safe_load(open(nlp_conf_file_path))
+
+        nlp_engine = create_nlp_engine(nlp_configuration)
+        return nlp_engine
+
+    @staticmethod
+    def _get_full_conf_path() -> Path:
+        """Return a Path to the default conf file."""
+        return Path(Path(__file__).parent.parent, NlpEngine.default_conf_file)
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
         """
