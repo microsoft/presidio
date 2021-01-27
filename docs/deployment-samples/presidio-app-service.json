@@ -17,17 +17,6 @@
                 "description": "Location for all resources."
             }
         },
-        "newOrExistingAppServicePlan": {
-            "type": "string",
-            "metadata": {
-                "description": "Use an existing App service plan or create a new one."
-            },
-            "defaultValue": "new",
-            "allowedValues": [
-                "new",
-                "existing"
-            ]
-            },
         "sku": {
             "type": "string",
             "defaultValue": "B2",
@@ -74,7 +63,6 @@
     "resources": [
         {
             "type": "Microsoft.Web/serverfarms",
-            "condition": "[equals(parameters('newOrExistingAppServicePlan'),'new')]",
             "apiVersion": "2020-06-01",
             "name": "[variables('appServicePlanPortalName')]",
             "location": "[parameters('location')]",
