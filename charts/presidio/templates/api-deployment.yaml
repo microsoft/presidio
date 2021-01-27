@@ -15,8 +15,9 @@ spec:
       app: {{ $fullname }}
   template:
     metadata:
-      {{- with .Values.api.ingress.annotations }}
-{{ toYaml . | indent 6 }}
+      {{- with .Values.api.annotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
       {{- end }}
       labels:
         app: {{ $fullname }}

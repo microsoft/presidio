@@ -19,12 +19,12 @@ api:
   name: presidio-api
   replicas: 1
   imagePullPolicy: Always
+  # annotations:
   service:
     type: ClusterIP
     externalPort: 8080
     internalPort: 8080
     name: http
-    # annotations:
   # Configure liveness probes except `httpGet` and the belongings
   #livenessProbe:
   #  initialDelaySeconds: 20
