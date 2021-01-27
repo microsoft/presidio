@@ -19,6 +19,9 @@
         },
         "newOrExistingAppServicePlan": {
             "type": "string",
+            "metadata": {
+                "description": "Use an existing App service plan or create a new one."
+            },
             "allowedValues": [
                 "new",
                 "existing"
@@ -62,12 +65,11 @@
                 "description": "The user password for docker registry."
             }
         },
-        "workspaceRetention": {
-            "type": "int",
-            "defaultValue": 30
-        },
-        "workspaceName": {
-            "type": "string"
+        "ipRestriction": {
+            "type": "string",
+             "metadata": {
+                "description": "Optional IP range to restrict access to."
+            }
         }
     },
     "variables": {
@@ -96,8 +98,7 @@
             "location": "[parameters('location')]",
 
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]",
-                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]"
             ],
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]",
@@ -146,7 +147,17 @@
                             },
                             "detailedErrorMessages": {
                                 "enabled": true
+                            },
+                            "ipSecurityRestrictions": [
+                            {
+                                "condition": "[not(empty(parameters('ipRestriction')))]",
+
+                                "ipAddress": "parameters('ipRestriction')",
+                                "action": "Allow",
+                                "priority": 100,
+                                "name": "Front-end allow rule"
                             }
+                            ]
                         }
                     }
                 ]
