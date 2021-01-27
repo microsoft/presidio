@@ -43,8 +43,11 @@ class Server:
             # Parse the request params
             req_data = AnalyzerRequest(request.get_json())
             try:
-                if req_data.text is None:
+                if not req_data.text:
                     raise Exception("No text provided")
+
+                if not req_data.language:
+                    raise Exception("No language provided")
 
                 recognizer_result_list = self.engine.analyze(
                     req_data.text,
