@@ -17,26 +17,9 @@
                 "description": "Location for all resources."
             }
         },
-        "newOrExistingAppServicePlan": {
-            "type": "string",
-            "metadata": {
-                "description": "Use an existing App service plan or create a new one."
-            },
-            "allowedValues": [
-                "new",
-                "existing"
-            ]
-            },
         "sku": {
             "type": "string",
-            "defaultValue": "B1",
-            "allowedValues": [
-                "F1",
-                "B1",
-                "S1",
-                "P1",
-                "I1"
-            ],
+            "defaultValue": "B2",
             "metadata": {
                 "description": "The SKU of App Service Plan."
             }
@@ -69,7 +52,7 @@
             "type": "string",
             "defaultValue": "any",
              "metadata": {
-                "description": "Optional IP range to restrict access to."
+                "description": "Optional IP range to restrict access to. Must be a full CIDR address (include /32 for public internet address)"
             }
         }
     },
@@ -80,7 +63,6 @@
     "resources": [
         {
             "type": "Microsoft.Web/serverfarms",
-            "condition": "[equals(parameters('newOrExistingAppServicePlan'),'new')]",
             "apiVersion": "2020-06-01",
             "name": "[variables('appServicePlanPortalName')]",
             "location": "[parameters('location')]",
