@@ -80,7 +80,11 @@ class AnalyzerResult:
 
     def has_conflict(self, other):
         """
-        Check is two analyzer results are conflicted or not
+        Check if two analyzer results are conflicted or not
+
+        I have a conflict if:
+        1. My indices are the same as the other and my score is lower.
+        2. If my indices are contained in another.
 
         :param other: AnalyzerResult
         :return:
