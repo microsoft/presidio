@@ -15,7 +15,7 @@ class AnonymizerEngine:
     logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(
-            self,
+        self,
     ):
         """Handle text replacement for PIIs with requested transformations.
 
@@ -30,17 +30,24 @@ class AnonymizerEngine:
         original_text = engine_request.get_text()
         last_replacement_point = len(original_text)
         output_text = engine_request.get_text()
-        analyzer_results = engine_request.get_analysis_results(
-        ).to_sorted_unique_results(True)
+        analyzer_results = (
+            engine_request.get_analysis_results().to_sorted_unique_results(True)
+        )
         for analyzer_result in analyzer_results:
             transformation = engine_request.get_transformation(analyzer_result)
             self.logger.debug(
                 f"for analyzer result {analyzer_result} received transformation "
-                f"{str(transformation)}")
+                f"{str(transformation)}"
+            )
             anonymizer_class = transformation.get("anonymizer")
-            new_text = anonymizer_class().anonymize(transformation)
+            new_text = anonymizer_class().anonymize(
+                original_text=original_text, params=transformation
+            )
             end_of_text = min(analyzer_result.end, last_replacement_point)
-            output_text = output_text[:analyzer_result.start] + new_text + output_text[
-                                                                           end_of_text:]
+            output_text = (
+                output_text[: analyzer_result.start]
+                + new_text
+                + output_text[end_of_text:]
+            )
             last_replacement_point = analyzer_result.start
         return output_text

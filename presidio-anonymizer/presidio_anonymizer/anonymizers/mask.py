@@ -6,7 +6,7 @@ from presidio_anonymizer.anonymizers import Anonymizer
 class Mask(Anonymizer):
     """Mask the given text with given value."""
 
-    def anonymize(self, params={}):
+    def anonymize(self, original_text=None, params={}):
         """
         Anonymize a given amount of text with a given character.
 
