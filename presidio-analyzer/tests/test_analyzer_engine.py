@@ -522,3 +522,27 @@ def test_add_recognizer_also_outputs_others(nlp_engine):
 
     results = analyzer.analyze(text=text, language="en")
     assert len(results) == 2
+
+
+def test_batch_on_simple_dict(nlp_engine):
+    batch = {
+        "PERSON": ["They call me Dan", "I'm Mark", "Ricardo is my name"],
+        "CITY": ["London", "Beirut", "Bangalore"],
+    }
+
+    analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
+    results = analyzer.analyze_batch(batch_dict=batch, language="en")
+    assert len(results["PERSON"]) == 3
+    assert len(results["CITY"]) == 3
+
+
+def test_batch_on_simple_dict_with_skipping(nlp_engine):
+    batch = {
+        "PERSON": ["They call me Dan", "I'm Mark", "Ricardo is my name"],
+        "CITY": ["London", "Beirut", "Bangalore"],
+    }
+
+    analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
+    results = analyzer.analyze_batch(batch_dict=batch, keys_to_skip=["CITY"])
+    assert len(results["PERSON"]) == 3
+    assert not results.get("CITY")

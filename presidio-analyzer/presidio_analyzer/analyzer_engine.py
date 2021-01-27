@@ -1,5 +1,5 @@
 import json
-from typing import List, Optional
+from typing import List, Optional, Dict, Union
 
 from presidio_analyzer import (
     RecognizerRegistry,
@@ -160,6 +160,69 @@ class AnalyzerEngine:
         results = self.__remove_low_scores(results, score_threshold)
 
         return results
+
+    def analyze_batch(
+        self,
+        batch_dict: Dict[str, List[str]],
+        language: str = "en",
+        keys_to_skip: Optional[List[str]] = None,
+        entities: Optional[List[str]] = None,
+        score_threshold: Optional[float] = None,
+        **kwargs,  # noqa ANN003
+    ) -> Union[List[RecognizerResult], Dict[str, List[List[RecognizerResult]]]]:
+        """
+        Run analysis on a dictionary containing a list of values.
+
+        Could be used for:
+        a. Identifying PII in specific keys on a json object
+        b. Identifying PII on a list of values, and not one-by-one.
+        :param batch_dict: A dictionary containing one or more keys with corresponding
+        lists of strings containing values to analyze,
+        or a single string to be processed.
+        For example, a table can be represented as a dictionary of columns,
+        where the key is the column name
+        and the value is the list of values for this column. If using Pandas,
+        transform the data frame to a dict using df.to_dict(orient="list")
+        :param language: The language of the text
+        :param keys_to_skip: List of keys to skip analysis for.
+        In such case a list of entities should be provided.
+        :param entities: List of PII entities that should be looked for in the text.
+        If entities=None and all_fields=True then all entities are looked for.
+        :param score_threshold: value to ignore results with score lower than threshold
+        :param kwargs: additional parameters for the analyze function
+        :return: A dictionary containing the original keys, and a list of results
+        (list of list of RecognizerResult) from the various recognizers.
+        """
+
+        if not batch_dict:
+            raise ValueError(
+                "Input not provided. batch should be a dictionary "
+                "containing one or more keys with corresponding "
+                "lists of strings containing values to analyze"
+            )
+        if not isinstance(batch_dict, dict):
+            raise ValueError(
+                "Input parameter batch should be a dict containing "
+                "a list of strings per key. "
+                "For the analysis of one string, run the analyze function)"
+            )
+
+        response = {}
+        for key, list_of_texts in batch_dict.items():
+            if keys_to_skip and key in keys_to_skip:
+                continue
+            per_text_responses = []
+            for text in list_of_texts:
+                analyzer_response = self.analyze(
+                    text=text,
+                    language=language,
+                    entities=entities,
+                    score_threshold=score_threshold,
+                    **kwargs,
+                )
+                per_text_responses.append(analyzer_response)
+            response[key] = per_text_responses
+        return response
 
     def __remove_low_scores(
         self, results: List[RecognizerResult], score_threshold: float = None
