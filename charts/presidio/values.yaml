@@ -1,5 +1,5 @@
 registry: mcr.microsoft.com
- 
+
 # Image pull secret
 #privateRegistry: acr-auth
 tag: latest
@@ -24,6 +24,7 @@ api:
     externalPort: 8080
     internalPort: 8080
     name: http
+    # annotations:
   # Configure liveness probes except `httpGet` and the belongings
   #livenessProbe:
   #  initialDelaySeconds: 20
@@ -35,6 +36,9 @@ api:
   ingress:
     enabled: false
     class: nginx
+    additional_annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    # host:
 
 # For any of the services below, a service mesh like Linkerd or Istio
 # is needed to properly balance traffic to more than 1 replica.
@@ -97,7 +101,7 @@ scheduler:
     externalPort: 3001
     internalPort: 3001
     name: grpc
-  
+
 recognizersstore:
   name: presidio-recognizers-store
   imagePullPolicy: Always

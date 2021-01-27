@@ -12,7 +12,9 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.api.ingress.class }}
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- with .Values.api.ingress.additional_annotations }}
+{{ toYaml . | indent 4 }}
+    {{- end }}
 spec:
   rules:
   - http:
@@ -21,4 +23,7 @@ spec:
         backend:
           serviceName: {{ $serviceName }}
           servicePort: {{ $servicePort }}
+    {{- with .Values.api.ingress.host }}
+    host: {{ . }}
+    {{- end }}
 {{- end -}}
