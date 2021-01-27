@@ -7,7 +7,7 @@ from presidio_anonymizer.anonymizers import Anonymizer
 class Replace(Anonymizer):
     """Receives new text to replace old PII text entity with."""
 
-    def anonymize(self, params={}):
+    def anonymize(self, original_text=None, params={}):
         """:return: new_val."""
         new_val = params.get("new_value")
         return new_val
