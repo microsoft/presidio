@@ -1,0 +1,95 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webAppName": {
+            "type": "string",
+            "defaultValue": "[concat('webApp-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
+            "metadata": {
+                "description": "Web app name."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "B2",
+            "metadata": {
+                "description": "The SKU of App Service Plan."
+            },
+            "allowedValues": [
+                "F2",
+                "B2",
+                "S2",
+                "P2",
+                "I2"
+            ]
+        },
+        "dockerRegistryUser": {
+            "type": "string",
+            "metadata": {
+                "description": "The user name for docker registry."
+            }
+        },
+        "dockerRegistryPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The user password for docker registry."
+            }
+        },
+        "ipRestriction": {
+            "type": "string",
+            "defaultValue": "any",
+            "metadata": {
+                "description": "Optional IP range to restrict access to."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "linkedTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/b6f9679844893d0d6936fa217e78b770d6222eb2/docs/deployment-samples/presidio-app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webAppName": {
+                        "value": "[parameters('webAppName')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('sku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "image": {
+                        "value": "presidio.azurecr.io/presidio-anonymizer:10219"
+                    },
+                    "dockerRegsitryUrl": {
+                        "value": "presidio.azurecr.io"
+                    },
+                    "dockerRegistryUser": {
+                        "value": "[parameters('dockerRegistryUser')]"
+                    },
+                    "dockerRegistryPassword": {
+                        "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    "ipRestriction": {
+                        "value": "[parameters('ipRestriction')]"
+                    }
+                }
+            }
+        }
+    ]
+}
