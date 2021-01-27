@@ -3,6 +3,7 @@ from typing import Tuple
 from presidio_analyzer.presidio_logger import PresidioLogger
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
+from presidio_analyzer.error_response import ErrorResponse
 from flask import Flask, request
 import json
 import os
@@ -42,6 +43,12 @@ class Server:
             # Parse the request params
             req_data = AnalyzerRequest(request.get_json())
             try:
+                if not req_data.text:
+                    raise Exception("No text provided")
+
+                if not req_data.language:
+                    raise Exception("No language provided")
+
                 recognizer_result_list = self.engine.analyze(
                     req_data.text,
                     req_data.language,
@@ -66,7 +73,7 @@ class Server:
                     "during execution of "
                     "AnalyzerEngine.analyze(). {}".format(e)
                 )
-                return json.dumps({"Error": e.args}), 500
+                return ErrorResponse(e.args[0]).to_json(), 500
 
         @self.app.route("/recognizers", methods=["GET"])
         def recognizers() -> Tuple[str, int]:
@@ -82,7 +89,7 @@ class Server:
                     "during execution of "
                     "AnalyzerEngine.get_recognizers(). {}".format(e)
                 )
-                return json.dumps({"Error": e.args}), 500
+                return ErrorResponse(e.args[0]).to_json(), 500
 
         @self.app.route("/supportedentities", methods=["GET"])
         def supported_entities() -> Tuple[str, int]:
@@ -97,7 +104,7 @@ class Server:
                     "during execution of "
                     "AnalyzerEngine.supported_entities(). {}".format(e)
                 )
-                return json.dumps({"Error": e.args}), 500
+                return ErrorResponse(e.args[0]).to_json(), 500
 
 
 if __name__ == "__main__":
