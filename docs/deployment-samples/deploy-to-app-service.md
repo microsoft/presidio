@@ -78,3 +78,7 @@ To deploy the app service using the provided ARM template, fill in the provided 
 az deployment group create --resource-group $RESOURCE_GROUP --template-file presidio-app-service.json --parameters @values.json
 
 ```
+
+## Deploy both services to Azure
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2Fdeploy-to-azure%2Fpresidio-analyzer%2Fdeploytoazure.json)
