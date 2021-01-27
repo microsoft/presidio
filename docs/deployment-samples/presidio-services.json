@@ -93,7 +93,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "presidio-analyzer",
-            "condition": "[equals(parameters('analyzer'), 'true')]",
+            "condition": "[parameters('analyzer')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -132,7 +132,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "presidio-anonymizer",
-            "condition": "[equals(parameters('anonymizer'), 'true')]",
+            "condition": "[parameters('anonymizer')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
