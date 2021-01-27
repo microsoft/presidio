@@ -8,11 +8,11 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 Presidio includes:
 
-1. Predefined or custom PII recognizers leveraging Named Entity Recognition, regular expressions, formats and checksum with relevant context in multiple languages.
+1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
-3. Multiple usage options, from Python or PySpark pipelines to Kubernetes
-4. Customizability in PII identification and anonymization.
-5. Module for redacting PII text in images.
+3. Multiple usage options, **from Python or PySpark workloads to Kubernetes**.
+4. **Customizability** in PII identification and anonymization.
+5. Module for **redacting PII text in images**.
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
