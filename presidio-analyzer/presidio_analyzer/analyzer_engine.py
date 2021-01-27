@@ -31,6 +31,8 @@ class AnalyzerEngine:
     defines whether PII values should be traced or not.
     :param default_score_threshold: Minimum confidence value
     for detected entities to be returned
+    :param supported_languages: List of possible languages this engine could be run on.
+    Used for loading the right NLP models and recognizers for these languages.
     """
 
     def __init__(
@@ -40,8 +42,10 @@ class AnalyzerEngine:
         app_tracer: AppTracer = None,
         enable_trace_pii: bool = False,
         default_score_threshold: float = 0,
-        default_language: str = "en",
+        supported_languages: List[str] = None,
     ):
+        if not supported_languages:
+            supported_languages = ["en"]
 
         if not nlp_engine:
             nlp_engine = self._create_nlp_engine(self._get_full_conf_path())
@@ -56,7 +60,7 @@ class AnalyzerEngine:
             app_tracer = AppTracer()
         self.app_tracer = app_tracer
 
-        self.default_language = default_language
+        self.supported_languages = supported_languages
 
         self.nlp_engine = nlp_engine
         self.registry = registry
@@ -64,7 +68,7 @@ class AnalyzerEngine:
         # load all recognizers
         if not registry.recognizers:
             registry.load_predefined_recognizers(
-                nlp_engine=self.nlp_engine, languages=[self.default_language]
+                nlp_engine=self.nlp_engine, languages=self.supported_languages
             )
 
         self.enable_trace_pii = enable_trace_pii
@@ -106,11 +110,19 @@ class AnalyzerEngine:
         :param language: Return the recognizers supporting a given language.
         :return: List of [Recognizer] as a RecognizersAllResponse
         """
-        if not language:
-            language = self.default_language
-        logger.info(f"Fetching all recognizers for language {language}")
-        recognizers = self.registry.get_recognizers(language=language, all_fields=True)
-        return recognizers
+        languages = self.supported_languages
+
+        if language:
+            languages = [language]
+
+        recognizers = []
+        for language in languages:
+            logger.info(f"Fetching all recognizers for language {language}")
+            recognizers.extend(
+                self.registry.get_recognizers(language=language, all_fields=True)
+            )
+
+        return list(set(recognizers))
 
     def get_supported_entities(self, language: Optional[str] = None) -> List[str]:
         """

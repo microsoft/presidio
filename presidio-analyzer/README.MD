@@ -186,7 +186,7 @@ lemmatization, Named Entity Recognition and other NLP tasks.
 #### Configuring the NLP Engine
 
 As its internal NLP engine, Presidio supports both [spaCy](https://spacy.io/usage/models)
-and [Stanza](https://github.com/stanfordnlp/stanza).
+and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follow these two steps:
 
 1. Download the spaCy/Stanza NER models for your desired language.
    To download a new model with spaCy:
@@ -197,51 +197,64 @@ and [Stanza](https://github.com/stanfordnlp/stanza).
 
    In this example we download the medium size model for Spanish.
 
+   To download a new model with Stanza:
+
+   ```python
+   import stanza
+   stanza.download("en") # where en is the language code of the model.
+   ```
+
    For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
 2. Update the models configuration
     - **Via configuration**: Add the downloaded models to the [default `conf` file](conf/default.yaml).
 
-    An example Conf file:
+        An example Conf file:
 
-    ```yaml
-    nlp_engine_name: spacy
-    models:
-        -
-        lang_code: en
-        model_name: en_core_web_lg
-        -
-        lang_code: es
-        model_name: es_core_news_md 
-    ```
+        ```yaml
+        nlp_engine_name: spacy
+        models:
+            -
+            lang_code: en
+            model_name: en_core_web_lg
+            -
+            lang_code: es
+            model_name: es_core_news_md 
+        ```
 
-    In this configuration we use the `en_core_web_lg` spaCy model for English, and `es_core_news_md` spaCy model for Spanish.
+        In this configuration we use the `en_core_web_lg` spaCy model for English, and `es_core_news_md` spaCy model for Spanish.
 
-    - **Via code**: Create an `NlpEngine` using the `create_nlp_engine` method:
+    - **Via code**: Create an `NlpEngine` using the `create_nlp_engine` method and a configuration dict:
 
-    ```python
-    from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
-    from presidio_analyzer.nlp_engine import create_nlp_engine
+        ```python
+        from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+        from presidio_analyzer.nlp_engine import create_nlp_engine
 
-    configuration = { "nlp_engine_name": "spacy",
-                    "models": [{"lang_code": "es", "model_name": "es_core_news_md"}]
-                    }
+        configuration = { "nlp_engine_name": "spacy",
+                        "models": 
+                            [{
+                              "lang_code" : "es", 
+                              "model_name": "es_core_news_md"
+                            }]
+                        }
 
-    nlp_engine = create_nlp_engine(nlp_configuration=configuration)
-    analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine)
-    analyzer_engine.analyze(text="Mi nombre es Paula", language="es")
-    ```
+        nlp_engine = create_nlp_engine(nlp_configuration=configuration)
+        analyzer_engine = AnalyzerEngine(
+                            nlp_engine=nlp_engine, 
+                            supported_languages=["es"])
 
-3. Create recognizers capable of detecting PII in the desired language,
-or update the context lists used by existing recognizers.
-Presidio uses context words surrounding the entity to increase score,
-so these context words should also be added in the desired language.
+        analyzer_engine.analyze(text="Mi nombre es David", language="es")
+        ```
 
-### HTTP API
+#### Set up language specific recognizers
 
-#### /analyze
+Recognizers are language dependent either by their logic or by the context words used while scanning the surrounding of a detected entity.
+As these context words are used to increase score, they should be in the expected input language. Consider updating the context words of existing recogniers or add new recognizers to support new languages.
 
-Analyzes a text
-Method: POST
+## HTTP API
+
+`/analyze`
+
+Analyzes a text. Method: `POST`
 
 Parameters
 
@@ -253,26 +266,25 @@ Parameters
 | score_threshold|float|yes|the the minimal score threshold|
 | entities|string[]|yes|a list of entities to analyze|
 | trace|bool|yes|whether to trace the request|
-| remove_interpretability_response|bool|yes|whether to include anaysis explenation in the response|
+| remove_interpretability_response|bool|yes|whether to include analysis explanation in the response |
 
-#### /recognizers
+`/recognizers`
 
 Returns a list of supported recognizers.
-Method: GET
+Method: `GET`
 
 Parameters
 
 | Name | Type | Optional | Description|
 | --- | --- | ---| ---|
-| language|string|yes|2 characters of the desired language. E.g en, de|
+| language|string|yes|2 characters of the desired language code. e.g., en, de. |
 
-#### /supportedentities
+`/supportedentities`
 
-Returns a list of supported entities.
-Method: GET
+Returns a list of supported entities. Method: `GET`
 
 Parameters
 
 | Name | Type | Optional | Description|
 | --- | --- | ---| ---|
-| language|string|yes|2 characters of the desired language. E.g en, de|
+| language|string|yes|2 characters of the desired language code. e.g., en, de. |

@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 from spacy.tokens import Doc
@@ -57,4 +58,13 @@ class NlpArtifacts:
 
     def to_json(self) -> str:
         """Convert nlp artifacts to json."""
-        return str(self.__dict__)
+
+        return_dict = self.__dict__.copy()
+
+        # Converting spaCy tokens and spans to string as they are not serializable
+        if "tokens" in return_dict:
+            return_dict["tokens"] = [token.text for token in self.tokens]
+        if "entities" in return_dict:
+            return_dict["entities"] = [entity.text for entity in self.entities]
+
+        return json.dumps(return_dict)
