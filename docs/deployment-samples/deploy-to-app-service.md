@@ -1,7 +1,7 @@
 # Deploy presidio services to an Azure App Service
 
 Presidio containers can be hosted on an Azure App Service.
-Follow the provided script to se up an app service for each of the presidio services (analyzer and anonymizer).
+Follow the provided script to set up an app service for each of the presidio services (analyzer and anonymizer).
 
 ## Basic setup
 
@@ -23,9 +23,6 @@ az appservice plan create --name $APP_SERVICE_NAME-plan --resource-group $RESOUR
 # create the web app
 az webapp create --name $APP_SERVICE_NAME --plan $APP_SERVICE_NAME-plan \
 --resource-group $RESOURCE_GROUP -i $IMAGE_NAME -s $ACR_USER_NAME -w $ACR_USER_PASSWORD
-# configure the exposed port
-az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME  \
---settings WEBSITES_PORT=3000
 ```
 
 ## Blocking network access
@@ -57,14 +54,25 @@ LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP=<resource group of log analytics>
 LOG_ANALYTICS_WORKSPACE_NAME=<log analytics name>
 
 # create a log analytics workspace
-az monitor log-analytics workspace create --resource-group $LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP --name $LOG_ANALYTICS_WORKSPACE_NAME
+az monitor log-analytics workspace create --resource-group $LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME
 
 # query the log analytics workspace id
-LOG_ANALYTICS_WORKSPACE_ID = $(az monitor log-analytics workspace show --resource-group $LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP --name $LOG_ANALYTICS_WORKSPACE_NAME --query id)
+LOG_ANALYTICS_WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group $LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME --query id)
 # query the app service id
-APP_SERVICE_ID = $(az monitor log-analytics workspace show --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME --query id)
+APP_SERVICE_ID=$(az monitor log-analytics workspace show --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME --query id)
 
 # create the diagnostics settings
+##TODO: NOT WORKING CHECK WHY THE #APP_SERVICE_ID not works!!!
 az monitor diagnostic-settings create --name $APP_SERVICE_NAME-diagnostics --resource /
 $APP_SERVICE_ID --logs   '[{"category": "AppServicePlatformLogs","enabled": true}, {"category": "AppServiceConsoleLogs", "enabled": true}]' --metrics '[{"category": "AllMetrics","enabled": true}]' --workspace $LOG_ANALYTICS_WORKSPACE_ID
+```
+
+## Using an ARM template
+
+Alternatlively, you can use the provided ARM template which uses either an existing App Service Plan, or creates a new one.
+Note that while Log Analytics integration with Azure App Service is in preview, the ARM template deployment will not create a Log Analytics resource or configure the diagnostics settings from the App Service to a Log Analytics workspace.
+
+```bash
+az deployment group create --resource-group $RESOURCE_GROUP --template-file presidio-app-service.json
+
 ```
