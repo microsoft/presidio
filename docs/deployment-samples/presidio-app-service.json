@@ -22,6 +22,7 @@
             "metadata": {
                 "description": "Use an existing App service plan or create a new one."
             },
+            "defaultValue": "new",
             "allowedValues": [
                 "new",
                 "existing"
@@ -29,14 +30,7 @@
             },
         "sku": {
             "type": "string",
-            "defaultValue": "B1",
-            "allowedValues": [
-                "F1",
-                "B1",
-                "S1",
-                "P1",
-                "I1"
-            ],
+            "defaultValue": "B2",
             "metadata": {
                 "description": "The SKU of App Service Plan."
             }
@@ -69,7 +63,7 @@
             "type": "string",
             "defaultValue": "any",
              "metadata": {
-                "description": "Optional IP range to restrict access to."
+                "description": "Optional IP range to restrict access to. Must be a full CIDR address (include /32 for public internet address)"
             }
         }
     },
