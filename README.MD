@@ -10,7 +10,7 @@ Presidio includes:
 
 1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
-3. Multiple usage options, **from Python or PySpark workloads to Kubernetes**.
+3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
 4. **Customizability** in PII identification and anonymization.
 5. Module for **redacting PII text in images**.
 
