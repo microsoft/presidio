@@ -4,7 +4,7 @@
 
 ## What is Presidio
 
-Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
+Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for sensitive text containing credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data or additional PII entities.
 
 Presidio includes:
 
