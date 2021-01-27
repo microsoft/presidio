@@ -46,7 +46,7 @@ def test_given_no_analyze_language_input_then_return_error():
 
 
 @pytest.mark.api
-def test_given_no_analyze_text_input_then_return_error():
+def test_given_analyze_text_no_language_input_then_return_error():
     request_body = {
         "text": "John Smith drivers license is AC432223"}
 
@@ -81,6 +81,16 @@ def test_given_a_correlationid_analyze_input_then_return_normal_response():
 def test_given_a_trace_true_analyze_input_then_return_normal_response():
     request_body = {
         "text": "John Smith drivers license is AC432223", "language": "en", "trace": "1"}
+
+    response_status, response_content = analyze(request_body)
+
+    assert response_status == 200
+
+
+@pytest.mark.api
+def test_given_a_trace_invalid_value_analyze_input_then_return_normal_response():
+    request_body = {
+        "text": "John Smith drivers license is AC432223", "language": "en", "trace": "somedata"}
 
     response_status, response_content = analyze(request_body)
 
