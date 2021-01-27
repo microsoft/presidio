@@ -15,6 +15,17 @@ def test_given_a_correct_analyze_input_then_return_full_response():
 
 
 @pytest.mark.api
+def test_given_analyze_threshold_input_then_return_result_above_threshold():
+    request_body = {
+        "text": "John Smith drivers license is AC432223", "language": "en", "score_threshold": 0.7}
+
+    response_status, response_content = analyze(request_body)
+
+    assert response_status == 200
+    assert response_content == ["{'entity_type': 'PERSON', 'start': 0, 'end': 10, 'score': 0.85, 'analysis_explanation': {'recognizer': 'SpacyRecognizer', 'pattern_name': None, 'pattern': None, 'original_score': 0.85, 'score': 0.85, 'textual_explanation': \"Identified as PERSON by Spacy's Named Entity Recognition\", 'score_context_improvement': 0, 'supportive_context_word': '', 'validation_result': None}}"]
+
+
+@pytest.mark.api
 def test_given_no_analyze_text_input_then_return_error():
     request_body = {}
 
@@ -26,6 +37,16 @@ def test_given_no_analyze_text_input_then_return_error():
 
 @pytest.mark.api
 def test_given_no_analyze_language_input_then_return_error():
+    request_body = {"language": "en"}
+
+    response_status, response_content = analyze(request_body)
+
+    assert response_status == 500
+    assert response_content == {"error": "No text provided"}
+
+
+@pytest.mark.api
+def test_given_no_analyze_text_input_then_return_error():
     request_body = {
         "text": "John Smith drivers license is AC432223"}
 
@@ -64,17 +85,6 @@ def test_given_a_trace_true_analyze_input_then_return_normal_response():
     response_status, response_content = analyze(request_body)
 
     assert response_status == 200
-
-
-@pytest.mark.api
-def test_given_analyze_threshold_input_then_return_result_above_threshold():
-    request_body = {
-        "text": "John Smith drivers license is AC432223", "language": "en", "score_threshold": 0.7}
-
-    response_status, response_content = analyze(request_body)
-
-    assert response_status == 200
-    assert response_content == ["{'entity_type': 'PERSON', 'start': 0, 'end': 10, 'score': 0.85, 'analysis_explanation': {'recognizer': 'SpacyRecognizer', 'pattern_name': None, 'pattern': None, 'original_score': 0.85, 'score': 0.85, 'textual_explanation': \"Identified as PERSON by Spacy's Named Entity Recognition\", 'score_context_improvement': 0, 'supportive_context_word': '', 'validation_result': None}}"]
 
 
 def test_given_analyze_entities_input_then_return_results_only_with_those_entities():
