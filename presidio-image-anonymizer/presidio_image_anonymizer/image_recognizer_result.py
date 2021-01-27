@@ -1,4 +1,3 @@
-# TODO implement and test
 class ImageRecognizerResult:
     """
     ImageRecognizerResult represents the results of analysing the image.

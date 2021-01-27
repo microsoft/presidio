@@ -1,6 +1,5 @@
-from PIL import Image
-from typing import Union, List
-from presidio_image_anonymizer import ImageRecognizerResult
+from typing import List
+from presidio_image_anonymizer.image_recognizer_result import ImageRecognizerResult
 from presidio_analyzer import RecognizerResult
 
 
@@ -8,10 +7,10 @@ from presidio_analyzer import RecognizerResult
 class ImageAnalyzerEngine:
     """ImageAnalyzerEngine class."""
 
-    def analyse(self, image: Union[Image, str]) -> List[ImageRecognizerResult]:
+    def analyse(self, image: object) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
-        :param image: PIL Image or file path(str) to be processed
+        :param image: PIL Image/numpy array or file path(str) to be processed
 
         :return: list of the extract entities with image bounding boxes
         """

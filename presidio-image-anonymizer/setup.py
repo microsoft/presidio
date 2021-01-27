@@ -2,7 +2,7 @@
 import os.path
 from os import path
 
-import setuptools
+from setuptools import setup, find_packages
 
 __version__ = ""
 parent_directory = os.path.abspath(
@@ -11,22 +11,22 @@ parent_directory = os.path.abspath(
 with open(os.path.join(parent_directory, "VERSION")) as version_file:
     __version__ = version_file.read().strip()
 
-setuptools.setup(
+setup(
     name="presidio_image_anonymizer",
     version=__version__,
     description="Presidio image anonymizer package",
     url="https://github.com/Microsoft/presidio",
-    packages=[
-        "presidio_image_anonymizer",
-    ],
+    packages=find_packages(exclude=["tests"]),
+    test_suite="tests",
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8==3.7.9"],
-    install_requires=["flask==1.1.2", "pillow"],
+    install_requires=["flask==1.1.2", "pillow", "pytesseract"],
     include_package_data=True,
     license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+        "Natural Language :: English",
     ],
 )
