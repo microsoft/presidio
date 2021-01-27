@@ -2,6 +2,20 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "analyzer": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata":{
+                "description": "Choose if to deploy the Analyzer service"
+            }
+        },
+        "anonymizer": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata":{
+                "description": "Choose if to deploy the Anonymizer service"
+            }
+        },
         "analyzerWebAppName": {
             "type": "string",
             "defaultValue": "[concat('webApp-', uniqueString(resourceGroup().id))]",
@@ -79,6 +93,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "presidio-analyzer",
+            "condition": "[equals(parameters('analyzer'), 'true')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -117,6 +132,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "presidio-anonymizer",
+            "condition": "[equals(parameters('anonymizer'), 'true')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {

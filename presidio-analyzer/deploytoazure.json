@@ -56,25 +56,25 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "linkedTemplate",
+            "name": "presidio-analyzer",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/infra-app-service-sample/docs/deployment-samples/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/infra-app-service-sample/docs/deployment-samples/presidio-services.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "webAppName": {
+                    "anonymizer": {
+                        "value": false
+                    },
+                    "analyzerWebAppName": {
                         "value": "[parameters('webAppName')]"
                     },
-                    "sku": {
+                    "analyzerSku": {
                         "value": "[parameters('sku')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
-                    },
-                    "image": {
-                        "value": "presidio.azurecr.io/presidio-anonymizer:10219"
                     },
                     "dockerRegsitryUrl": {
                         "value": "presidio.azurecr.io"
