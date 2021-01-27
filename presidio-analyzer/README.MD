@@ -229,20 +229,21 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
         from presidio_analyzer.nlp_engine import create_nlp_engine
 
-        configuration = { "nlp_engine_name": "spacy",
-                        "models": 
-                            [{
-                              "lang_code" : "es", 
-                              "model_name": "es_core_news_md"
-                            }]
-                        }
+        configuration = {
+            "nlp_engine_name": "spacy",
+            "models": [{"lang_code": "es", "model_name": "es_core_news_md"},
+                       {"lang_code": "en", "model_name": "en_core_web_lg"}],
+        }
 
         nlp_engine = create_nlp_engine(nlp_configuration=configuration)
         analyzer_engine = AnalyzerEngine(
-                            nlp_engine=nlp_engine, 
-                            supported_languages=["es"])
+            nlp_engine=nlp_engine, supported_languages=["en", "es"]
+        )
+        results_spanish = analyzer_engine.analyze(text="Mi nombre es David", language="es")
+        print(results_spanish)
 
-        analyzer_engine.analyze(text="Mi nombre es David", language="es")
+        results_english = analyzer_engine.analyze(text="My name is David", language="en")
+        print(results_english)
         ```
 
 #### Set up language specific recognizers
