@@ -34,6 +34,19 @@ def test_anonymize_with_payload():
 
 
 @pytest.mark.api
+def test_anonymize_with_payload_with_intersection_results():
+    json_path = file_path("intersection_payload.json")
+    with open(json_path) as json_file:
+        content = json.load(json_file)
+
+    response_status, response_content = anonymize(content)
+
+    assert response_content == 'hello world, my name is <FULL_NAME><LAST_NAME>' \
+                               ' My number is: <PHONE_NUMBER><SSN>'
+    assert response_status == 200
+
+
+@pytest.mark.api
 def test_anonymize_api_fails_on_invalid_value_of_text():
     json_path = file_path("payload.json")
     with open(json_path) as json_file:
