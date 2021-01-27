@@ -23,3 +23,4 @@ class AnalyzerRequest:
         self.correlation_id = req_data.get("correlation_id")
         self.score_threshold = req_data.get("score_threshold")
         self.trace = req_data.get("trace")
+        self.remove_interpretability_response = req_data.get("remove_interpretability_response")

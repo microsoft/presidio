@@ -522,3 +522,33 @@ def test_add_recognizer_also_outputs_others(nlp_engine):
 
     results = analyzer.analyze(text=text, language="en")
     assert len(results) == 2
+
+
+def test_given_no_interpretability_requested_then_response_contains_no_analysis(loaded_analyzer_engine, unit_test_guid):
+    text = "John Smith drivers license is AC432223"
+    language = "en"
+    remove_interpretability_response = True
+    results = loaded_analyzer_engine.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        remove_interpretability_response=remove_interpretability_response,
+        language=language,
+    )
+
+    assert len(results) == 1
+    assert results[0].analysis_explanation is None
+
+
+def test_given_interpretability_requested_then_response_contains_analysis(loaded_analyzer_engine, unit_test_guid):
+    text = "John Smith drivers license is AC432223"
+    language = "en"
+    remove_interpretability_response = False
+    results = loaded_analyzer_engine.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        remove_interpretability_response=remove_interpretability_response,
+        language=language,
+    )
+
+    assert len(results) == 1
+    assert results[0].analysis_explanation is not None
