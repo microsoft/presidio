@@ -1,6 +1,7 @@
 # Deploy presidio services to an Azure App Service
 
-Presidio containers can be hosted on an Azure App Service.
+Presidio containers can be hosted on an [Azure App Service](https://docs.microsoft.com/en-us/azure/app-service/).
+Azure App Service provides a managed production environment, which supports docker containers and devops optimizations. It is a global scale service with built in security and compliance features that fits multiple cloud workloads. The presidio team uses Azure App Service for both its development environment and the presidio demo website.
 Follow the provided script to set up an app service for each of the presidio services (analyzer and anonymizer).
 
 ## Basic setup
@@ -71,8 +72,9 @@ $APP_SERVICE_ID --logs   '[{"category": "AppServicePlatformLogs","enabled": true
 
 Alternatlively, you can use the provided ARM template which uses either an existing App Service Plan, or creates a new one.
 Note that while Log Analytics integration with Azure App Service is in preview, the ARM template deployment will not create a Log Analytics resource or configure the diagnostics settings from the App Service to a Log Analytics workspace.
+To deploy the app service using the provided ARM template, fill in the provided values.json file with the required values and run the following script.
 
 ```bash
-az deployment group create --resource-group $RESOURCE_GROUP --template-file presidio-app-service.json
+az deployment group create --resource-group $RESOURCE_GROUP --template-file presidio-app-service.json --parameters @values.json
 
 ```
