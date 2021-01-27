@@ -102,6 +102,7 @@ class AnalyzerEngine:
         correlation_id: Optional[str] = None,
         score_threshold: Optional[float] = None,
         trace: Optional[bool] = False,
+        include_interpretability_response: Optional[bool] = True
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -114,6 +115,7 @@ class AnalyzerEngine:
         :param score_threshold: A minimum value for which
         to return an identified entity
         :param trace: Should tracing of the response occur or not
+        :param include_interpretability_response: Should the interpretability text be returned in the response.
         :return: an array of the found entities in the text
         """
         all_fields = not entities
