@@ -18,13 +18,11 @@ from presidio_anonymizer.entities import InvalidParamException
 class AnonymizerRequest:
     """Input validation for the anonymize process."""
 
-    anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
-                   "redact": Redact}
-
     logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self,
-                 data: dict):
+                 data: dict,
+                 anonymizers):
         """Handle and validate data for the text replacement.
 
         :param data: a map which contains the transformations, analyzer_results and text
@@ -32,6 +30,7 @@ class AnonymizerRequest:
         self._transformations = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
+        self.anonymizers = anonymizers
 
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """

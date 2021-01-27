@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webAppName": {
+            "value": "temp-presidio-anonimyzer"
+        },
+        "sku": {
+            "value": "B1"
+        },
+        "image": {
+            "value": "presidio.azurecr.io/presidio-anonymizer:10219"
+        },
+        "dockerRegsitryUrl": {
+            "value": "presidio.azurecr.io"
+        },
+        "dockerRegistryUser": {
+            "value": "presidio"
+        },
+        "dockerRegistryPassword": {
+            "value": "zWxOp+4Zqni2EI5vNTcCGhK+kBZj0Gio"
+        },
+        "newOrExistingAppServicePlan": {
+            "value": "existing"
+        },
+        "ipRestriction": {
+            "value": "77.124.95.206"
+        }
+    }
+}

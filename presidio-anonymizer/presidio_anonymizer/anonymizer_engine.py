@@ -1,6 +1,7 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 import logging
 
+from presidio_anonymizer.anonymizers import Mask, FPE, Replace, Hash, Redact
 from presidio_anonymizer.entities import AnonymizerRequest
 
 
@@ -13,9 +14,11 @@ class AnonymizerEngine:
     """
 
     logger = logging.getLogger("presidio-anonymizer")
+    builtin_anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
+                           "redact": Redact}
 
     def __init__(
-        self,
+            self,
     ):
         """Handle text replacement for PIIs with requested transformations.
 
@@ -45,9 +48,14 @@ class AnonymizerEngine:
             )
             end_of_text = min(analyzer_result.end, last_replacement_point)
             output_text = (
-                output_text[: analyzer_result.start]
-                + new_text
-                + output_text[end_of_text:]
+                    output_text[: analyzer_result.start]
+                    + new_text
+                    + output_text[end_of_text:]
             )
             last_replacement_point = analyzer_result.start
         return output_text
+
+    def anonymizers(self):
+        """Return a list of supported anonymizers."""
+        names = [p for p in self.builtin_anonymizers.keys()]
+        return names
