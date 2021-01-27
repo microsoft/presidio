@@ -42,7 +42,7 @@ def test_given_several_transformations_then_we_use_the_correct_one():
 
 
 class Anonymizer:
-    def anonymize(self, data):
+    def anonymize(self, original_text, data):
         return "I am your new text!"
 
 
