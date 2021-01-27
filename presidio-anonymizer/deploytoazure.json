@@ -19,16 +19,16 @@
         },
         "sku": {
             "type": "string",
-            "defaultValue": "B1",
+            "defaultValue": "B2",
             "metadata": {
                 "description": "The SKU of App Service Plan."
             },
             "allowedValues": [
-                "F1",
-                "B1",
-                "S1",
-                "P1",
-                "I1"
+                "F2",
+                "B2",
+                "S2",
+                "P2",
+                "I2"
             ]
         },
         "dockerRegistryUser": {
@@ -74,7 +74,7 @@
                         "value": "[parameters('location')]"
                     },
                     "image": {
-                        "value": "presidio.azurecr.io/presidio-anonymizer:10219"
+                        "value": "presidio.azurecr.io/presidio-analyzer:10219"
                     },
                     "dockerRegsitryUrl": {
                         "value": "presidio.azurecr.io"
