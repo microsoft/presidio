@@ -197,6 +197,7 @@ Parameters
 | score_threshold|float|yes|the the minimal score threshold|
 | entities|string[]|yes|a list of entities to analyze|
 | trace|bool|yes|whether to trace the request|
+| remove_interpretability_response|bool|yes|whether to include anaysis explenation in the response|
 
 #### /recognizers
 Returns a list of supported recognizers.
