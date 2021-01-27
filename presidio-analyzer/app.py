@@ -66,7 +66,7 @@ class Server:
                     "during execution of "
                     "AnalyzerEngine.analyze(). {}".format(e)
                 )
-                return json.dumps({"Error": e}), 500
+                return json.dumps({"Error": e.args}), 500
 
         @self.app.route("/recognizers", methods=["GET"])
         def recognizers() -> Tuple[str, int]:
@@ -82,7 +82,22 @@ class Server:
                     "during execution of "
                     "AnalyzerEngine.get_recognizers(). {}".format(e)
                 )
-                return json.dumps({"Error": e}), 500
+                return json.dumps({"Error": e.args}), 500
+
+        @self.app.route("/supportedentities", methods=["GET"])
+        def supported_entities() -> Tuple[str, int]:
+            """Return a list of supported entities."""
+            language = request.args.get("language")
+            try:
+                entities_list = self.engine.get_supported_entities(language)
+                return json.dumps(entities_list), 200
+            except Exception as e:
+                self.logger.error(
+                    "A fatal error occurred "
+                    "during execution of "
+                    "AnalyzerEngine.supported_entities(). {}".format(e)
+                )
+                return json.dumps({"Error": e.args}), 500
 
 
 if __name__ == "__main__":
