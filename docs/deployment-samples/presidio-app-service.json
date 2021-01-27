@@ -67,6 +67,7 @@
         },
         "ipRestriction": {
             "type": "string",
+            "defaultValue": "any",
              "metadata": {
                 "description": "Optional IP range to restrict access to."
             }
@@ -119,7 +120,15 @@
                             "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
                             "value": "[parameters('dockerRegistryPassword')]"
                         }
-                    ]
+                    ],
+                    "ipSecurityRestrictions": [
+                            {
+                                "ipAddress": "[parameters('ipRestriction')]",
+                                "action": "Allow",
+                                "priority": 100,
+                                "name": "Front-end allow rule"
+                            }
+                            ]
                 },
                 "resources": [
                     {
@@ -147,17 +156,7 @@
                             },
                             "detailedErrorMessages": {
                                 "enabled": true
-                            },
-                            "ipSecurityRestrictions": [
-                            {
-                                "condition": "[not(empty(parameters('ipRestriction')))]",
-
-                                "ipAddress": "parameters('ipRestriction')",
-                                "action": "Allow",
-                                "priority": 100,
-                                "name": "Front-end allow rule"
                             }
-                            ]
                         }
                     }
                 ]
