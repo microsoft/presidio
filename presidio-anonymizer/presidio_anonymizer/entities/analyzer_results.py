@@ -57,7 +57,7 @@ class AnalyzerResults(list):
         for result_a in self:
             other_elements = AnalyzerResults(self)
             other_elements.remove(result_a)
-            if not any([result_a.same_or_contained(other_element) for other_element in
+            if not any([result_a.has_conflict(other_element) for other_element in
                         other_elements]):
                 unique_elements.append(result_a)
             else:
