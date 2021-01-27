@@ -32,7 +32,7 @@ def test_given_no_analyze_text_input_then_return_error():
     response_status, response_content = analyze(request_body)
 
     assert response_status == 500
-    assert response_content == {"error": "No language provided"}
+    assert response_content == {"error": "No text provided"}
 
 
 @pytest.mark.api
