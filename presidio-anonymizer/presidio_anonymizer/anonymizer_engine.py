@@ -40,10 +40,11 @@ class AnonymizerEngine:
                 f"for analyzer result {analyzer_result} received transformation "
                 f"{str(transformation)}"
             )
-            self.__validate_position_over_text(analyzer_result, text_len)            anonymizer_class = transformation.get("anonymizer")
-            anonymizer_class().validate(params=transformation)
-            text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
-            anonymized_text = anonymizer_class().anonymize(
+            self.__validate_position_over_text(analyzer_result, text_len)
+            anonymizer = transformation.get("anonymizer")
+            anonymizer.validate(params=transformation)
+            text_to_anonymize = output_text[analyzer_result.start: analyzer_result.end]
+            anonymized_text = anonymizer.anonymize(
                 params=transformation, text=text_to_anonymize
             )  # TODO: [ADO-2754] replace with the singleton class instance
             end_of_text = min(analyzer_result.end, last_replacement_point)
