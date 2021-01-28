@@ -76,9 +76,6 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
-                    "dockerRegsitryUrl": {
-                        "value": "presidio.azurecr.io"
-                    },
                     "dockerRegistryUser": {
                         "value": "[parameters('dockerRegistryUser')]"
                     },
