@@ -9,9 +9,14 @@ class Mask(Anonymizer):
 
     def anonymize(self, original_text: str = None, params: dict = None) -> str:
         """
-        Anonymize a given amount of text with a given character.
+        Mask a given amount of text with a given character.
 
-        :return: The given text masked as requested
+        :param original_text: the text to be masked
+        :param params:
+            masking_char: The character to be masked with
+            chars_to_mask: The amount of characters to mask
+            from_end: Whether to mask the text from it's end
+        :return: the masked text
         """
         effective_chars_to_mask = self._get_effective_chars_to_mask(
             original_text, params.get("chars_to_mask")
@@ -23,7 +28,14 @@ class Mask(Anonymizer):
         )
 
     def validate(self, params: dict = None) -> None:
-        """TODO: docstring."""
+        """
+        Validate the parameters for mask.
+
+        :param params:
+            masking_char: The character to be masked with
+            chars_to_mask: The amount of characters to mask
+            from_end: Whether to mask the text from it's end
+        """
         masking_char = params.get("masking_char")
         validate_parameter(masking_char, "masking_char", str)
         if len(masking_char) > 1:
