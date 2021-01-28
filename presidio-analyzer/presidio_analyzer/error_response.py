@@ -2,8 +2,7 @@ import json
 
 
 class ErrorResponse:
-    """
-    Error Response for the Flask API.
+    """Error Response.
 
     :param msg - the error message to return
     """

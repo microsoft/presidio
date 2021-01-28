@@ -160,7 +160,7 @@ class AnalyzerEngine:
         to return an identified entity
         :param trace: Should tracing of the response occur or not
         :param remove_interpretability_response:
-        Should the interpretability text be returned in the response
+        Should the interpretability text be returned in the response.
         :return: an array of the found entities in the text
         """
         all_fields = not entities

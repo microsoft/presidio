@@ -1,4 +1,4 @@
-"""List wrapper of AnalyzerResult which sort the list using AnalyzerResult.__gt__."""
+"""A List of AnalyzerResult which sort the list using AnalyzerResult.__gt__."""
 import logging
 from typing import List
 
