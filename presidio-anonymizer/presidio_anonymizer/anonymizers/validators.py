@@ -1,3 +1,4 @@
+"""Anomnymizers validations utility methods."""
 from presidio_anonymizer.entities import InvalidParamException
 
 
