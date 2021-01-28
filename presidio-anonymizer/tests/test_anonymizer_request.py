@@ -71,7 +71,7 @@ def test_given_no_transformations_then_we_get_the_default():
     analyzer_result.entity_type = "PHONE"
     transformation = request.get_transformation(analyzer_result)
     assert transformation.get("type") == "replace"
-    assert transformation.get("anonymizer") == Replace
+    assert isinstance(transformation.get("anonymizer"), Replace)
 
 
 def test_given_valid_json_then_request_creation_should_succeed():
@@ -99,16 +99,16 @@ def test_given_valid_anonymizer_request_then_get_transformations_successfully():
     default_replace_transformation = data.get_transformation(replace_result)
     assert default_replace_transformation.get('type') == 'replace'
     assert default_replace_transformation.get('new_value') == 'ANONYMIZED'
-    assert issubclass(default_replace_transformation.get('anonymizer'), Anonymizer)
-    assert issubclass(default_replace_transformation.get('anonymizer'), Replace)
+    assert isinstance(default_replace_transformation.get('anonymizer'), Anonymizer)
+    assert isinstance(default_replace_transformation.get('anonymizer'), Replace)
     mask_transformation = data.get_transformation(data.get_analysis_results()[3])
     assert mask_transformation.get('type') == 'mask'
     assert mask_transformation.get('from_end')
     assert mask_transformation.get('chars_to_mask') == 4
     assert mask_transformation.get('masking_char') == '*'
     assert mask_transformation.get('anonymizer')
-    assert issubclass(mask_transformation.get('anonymizer'), Anonymizer)
-    assert issubclass(mask_transformation.get('anonymizer'), Mask)
+    assert isinstance(mask_transformation.get('anonymizer'), Anonymizer)
+    assert isinstance(mask_transformation.get('anonymizer'), Mask)
 
 
 def __find_element(content: List, entity_type: str):
