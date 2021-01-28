@@ -147,3 +147,13 @@ Result:
 200 OK
 hello world, my name is <NAME>. My number is: 03445****
 ```
+
+
+### HTTP API
+
+#### /anonymizers
+Returns a list of supported anonymizers.
+
+Method: GET
+
+No paramaters are required.
