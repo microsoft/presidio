@@ -14,7 +14,7 @@ class Mask(Anonymizer):
         :return: The given text masked as requested
         """
         effective_chars_to_mask = self._get_effective_chars_to_mask(
-            original_text, params.get("effective_chars_to_mask")
+            original_text, params.get("chars_to_mask")
         )
         from_end = params.get("from_end")
         masking_char = params.get("masking_char")
@@ -26,7 +26,7 @@ class Mask(Anonymizer):
         """TODO: docstring."""
         masking_char = params.get("masking_char")
         validate_parameter(masking_char, "masking_char", str)
-        if not len(masking_char) > 1:
+        if len(masking_char) > 1:
             raise InvalidParamException(
                 f"Invalid input, masking_char must be a character"
             )
