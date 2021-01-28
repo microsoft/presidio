@@ -7,6 +7,10 @@ from presidio_anonymizer.entities import InvalidParamException
 class Mask(Anonymizer):
     """Mask the given text with given value."""
 
+    CHARS_TO_MASK = "chars_to_mask"
+    FROM_END = "from_end"
+    MASKING_CHAR = "masking_char"
+
     def anonymize(self, text: str = None, params: dict = None) -> str:
         """
         Mask a given amount of text with a given character.
@@ -19,10 +23,10 @@ class Mask(Anonymizer):
         :return: the masked text
         """
         effective_chars_to_mask = self._get_effective_chars_to_mask(
-            text, params.get("chars_to_mask")
+            text, params.get(self.CHARS_TO_MASK)
         )
-        from_end = params.get("from_end")
-        masking_char = params.get("masking_char")
+        from_end = params.get(self.FROM_END)
+        masking_char = params.get(self.MASKING_CHAR)
         return self._get_anonymized_text(
             text, effective_chars_to_mask, from_end, masking_char
         )
@@ -36,15 +40,15 @@ class Mask(Anonymizer):
             chars_to_mask: The amount of characters to mask
             from_end: Whether to mask the text from it's end
         """
-        masking_char = params.get("masking_char")
-        validate_parameter(masking_char, "masking_char", str)
+        masking_char = params.get(self.MASKING_CHAR)
+        validate_parameter(masking_char, self.MASKING_CHAR, str)
         if len(masking_char) > 1:
             raise InvalidParamException(
-                f"Invalid input, masking_char must be a character"
+                f"Invalid input, {self.MASKING_CHAR} must be a character"
             )
 
-        validate_parameter(params.get("chars_to_mask"), "chars_to_mask", int)
-        validate_parameter(params.get("from_end"), "from_end", bool)
+        validate_parameter(params.get(self.CHARS_TO_MASK), self.CHARS_TO_MASK, int)
+        validate_parameter(params.get(self.FROM_END), self.FROM_END, bool)
 
     @staticmethod
     def _get_effective_chars_to_mask(text, chars_to_mask):

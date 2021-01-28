@@ -26,7 +26,7 @@ from presidio_anonymizer.entities import InvalidParamException
     ]
     # fmt: on
 )
-def test_anonymize_returns_expected_string_for_valid_inputs(
+def test_when_given_valid_value_then_expected_string_returned(
     text, masking_char, chars_to_mask, from_end, anonymized_text
 ):
     params = {
@@ -40,7 +40,7 @@ def test_anonymize_returns_expected_string_for_valid_inputs(
     assert anonymized_text == actual_anonymized_text
 
 
-def test_validate_when_masking_char_is_missing_then_ipe_raised():
+def test_when_masking_char_is_missing_then_ipe_raised():
     params = _get_default_mask_parameters()
     params.pop("masking_char")
 
@@ -48,17 +48,19 @@ def test_validate_when_masking_char_is_missing_then_ipe_raised():
         Mask().validate(params)
 
 
-def test_validate_when_masking_char_is_bad_typed_ipe_raised():
+def test_when_masking_char_is_bad_typed_then_ipe_raised():
     params = _get_default_mask_parameters()
     params["masking_char"] = 1
 
     with pytest.raises(
-        InvalidParamException, match="Invalid parameter value for 'masking_char'"
+        InvalidParamException,
+        match="Invalid parameter value for masking_char. "
+        "Expecting 'string', but got 'number'.",
     ):
         Mask().validate(params)
 
 
-def test_validate_when_masking_char_length_is_greater_than_one_then_ipe_raised():
+def test_when_masking_char_length_is_greater_than_one_then_ipe_raised():
     params = _get_default_mask_parameters()
     params["masking_char"] = "string_not_character"
 
@@ -68,7 +70,7 @@ def test_validate_when_masking_char_length_is_greater_than_one_then_ipe_raised()
         Mask().validate(params)
 
 
-def test_validate_when_chars_to_mask_is_missing_then_ipe_raised():
+def test_when_chars_to_mask_is_missing_then_ipe_raised():
     params = _get_default_mask_parameters()
     params.pop("chars_to_mask")
 
@@ -76,17 +78,19 @@ def test_validate_when_chars_to_mask_is_missing_then_ipe_raised():
         Mask().validate(params)
 
 
-def test_validate_when_chars_to_mask_bad_typed_ipe_raised():
+def test_when_chars_to_mask_bad_typed_then_ipe_raised():
     params = _get_default_mask_parameters()
     params["chars_to_mask"] = "not_an_integer"
 
     with pytest.raises(
-        InvalidParamException, match="Invalid parameter value for 'chars_to_mask'"
+        InvalidParamException,
+        match="Invalid parameter value for chars_to_mask. "
+        "Expecting 'number', but got 'string'.",
     ):
         Mask().validate(params)
 
 
-def test_validate_when_from_end_is_missing_then_ipe_raised():
+def test_when_from_end_is_missing_then_ipe_raised():
     params = _get_default_mask_parameters()
     params.pop("from_end")
 
@@ -94,12 +98,14 @@ def test_validate_when_from_end_is_missing_then_ipe_raised():
         Mask().validate(params)
 
 
-def test_validate_when_from_end_is_bad_typed_ipe_raised():
+def test_when_from_end_is_bad_typed_then_ipe_raised():
     params = _get_default_mask_parameters()
     params["from_end"] = "not_a_boolean"
 
     with pytest.raises(
-        InvalidParamException, match="Invalid parameter value for 'from_end'"
+        InvalidParamException,
+        match="Invalid parameter value for from_end. "
+        "Expecting 'boolean', but got 'string'.",
     ):
         Mask().validate(params)
 
