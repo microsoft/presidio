@@ -29,7 +29,6 @@ from presidio_anonymizer.entities import InvalidParamException
 def test_anonymize_returns_expected_string_for_valid_inputs(
     text, masking_char, chars_to_mask, from_end, anonymized_text
 ):
-    # TODO: mock MaskParameters
     params = {
         "masking_char": masking_char,
         "chars_to_mask": chars_to_mask,
