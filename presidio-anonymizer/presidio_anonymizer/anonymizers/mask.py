@@ -7,11 +7,11 @@ from presidio_anonymizer.entities import InvalidParamException
 class Mask(Anonymizer):
     """Mask the given text with given value."""
 
-    def anonymize(self, original_text: str = None, params: dict = None) -> str:
+    def anonymize(self, text: str = None, params: dict = None) -> str:
         """
         Mask a given amount of text with a given character.
 
-        :param original_text: the text to be masked
+        :param text: the text to be masked
         :param params:
             masking_char: The character to be masked with
             chars_to_mask: The amount of characters to mask
@@ -19,12 +19,12 @@ class Mask(Anonymizer):
         :return: the masked text
         """
         effective_chars_to_mask = self._get_effective_chars_to_mask(
-            original_text, params.get("chars_to_mask")
+            text, params.get("chars_to_mask")
         )
         from_end = params.get("from_end")
         masking_char = params.get("masking_char")
         return self._get_anonymized_text(
-            original_text, effective_chars_to_mask, from_end, masking_char
+            text, effective_chars_to_mask, from_end, masking_char
         )
 
     def validate(self, params: dict = None) -> None:
@@ -47,13 +47,13 @@ class Mask(Anonymizer):
         validate_parameter(params.get("from_end"), "from_end", bool)
 
     @staticmethod
-    def _get_effective_chars_to_mask(original_text, chars_to_mask):
-        return min(len(original_text), chars_to_mask) if chars_to_mask > 0 else 0
+    def _get_effective_chars_to_mask(text, chars_to_mask):
+        return min(len(text), chars_to_mask) if chars_to_mask > 0 else 0
 
     @staticmethod
-    def _get_anonymized_text(original_text, chars_to_mask, from_end, masking_char):
+    def _get_anonymized_text(text, chars_to_mask, from_end, masking_char):
         if not from_end:
-            return masking_char * chars_to_mask + original_text[chars_to_mask:]
+            return masking_char * chars_to_mask + text[chars_to_mask:]
         else:
-            mask_from_index = len(original_text) - chars_to_mask
-            return original_text[:mask_from_index] + masking_char * chars_to_mask
+            mask_from_index = len(text) - chars_to_mask
+            return text[:mask_from_index] + masking_char * chars_to_mask

@@ -6,7 +6,7 @@ from presidio_anonymizer.anonymizers import Anonymizer
 class Redact(Anonymizer):
     """Redact the string - empty value."""
 
-    def anonymize(self, original_text: str = None, params: dict = None) -> str:
+    def anonymize(self, text: str = None, params: dict = None) -> str:
         """:return: an empty value."""
         return ""
 

@@ -14,7 +14,7 @@ class FPE(Anonymizer):
     PII text will be replaced with a format preserving encryption using FF1 algorithm.
     """
 
-    def anonymize(self, original_text: str = None, params: dict = None) -> str:
+    def anonymize(self, text: str = None, params: dict = None) -> str:
         """Return anonymized text using FF1 algorithm."""
         old_text = params.get("old_text")
         decrypt = params.get("decrypt")
