@@ -43,10 +43,10 @@ class AnonymizerRequest:
         """
         transformation = self._transformations.get(analyzer_result.entity_type)
         if not transformation:
-            transformation = self._transformations.get("default")
+            transformation = self._transformations.get("DEFAULT")
             if not transformation:
-                new_val = f"<{analyzer_result.entity_type}>"
-                return {"type": "replace", "new_value": new_val, "anonymizer": Replace}
+                transformation = {"type": "replace", "anonymizer": Replace}
+        transformation["entity_type"] = analyzer_result.entity_type
         return transformation
 
     def get_text(self):

@@ -1,6 +1,7 @@
 import json
 import os
 from typing import List
+from unittest.mock import Mock
 
 import pytest
 
@@ -59,48 +60,55 @@ def test_given_invalid_json_then_request_creation_should_fail(request_json,
                                                               result_text):
     with pytest.raises(InvalidParamException) as e:
         AnonymizerRequest(request_json)
-        assert result_text == e.err_msg
+    assert result_text == e.value.err_msg
+
+
+def test_given_no_transformations_then_we_get_the_default():
+    content = get_content()
+    request = AnonymizerRequest(content)
+    request._transformations = {}
+    analyzer_result = Mock()
+    analyzer_result.entity_type = "PHONE"
+    transformation = request.get_transformation(analyzer_result)
+    assert transformation.get("type") == "replace"
+    assert transformation.get("anonymizer") == Replace
 
 
 def test_given_valid_json_then_request_creation_should_succeed():
-    json_path = file_path("payload.json")
-    with open(json_path) as json_file:
-        content = json.load(json_file)
-        data = AnonymizerRequest(content)
-        assert data.get_text() == content.get("text")
-        assert data._text == content.get("text")
-        assert data._transformations == content.get("transformations")
-        assert len(data._analysis_results) == len(content.get("analyzer_results"))
-        assert data._analysis_results == data.get_analysis_results()
-        for result_a in data._analysis_results:
-            same_result_in_content = __find_element(content.get("analyzer_results"),
-                                                    result_a.entity_type)
-            assert same_result_in_content
-            assert result_a.score == same_result_in_content.get("score")
-            assert result_a.start == same_result_in_content.get("start")
-            assert result_a.end == same_result_in_content.get("end")
-            assert data.get_transformation(result_a)
+    content = get_content()
+    data = AnonymizerRequest(content)
+    assert data.get_text() == content.get("text")
+    assert data._text == content.get("text")
+    assert data._transformations == content.get("transformations")
+    assert len(data._analysis_results) == len(content.get("analyzer_results"))
+    assert data._analysis_results == data.get_analysis_results()
+    for result_a in data._analysis_results:
+        same_result_in_content = __find_element(content.get("analyzer_results"),
+                                                result_a.entity_type)
+        assert same_result_in_content
+        assert result_a.score == same_result_in_content.get("score")
+        assert result_a.start == same_result_in_content.get("start")
+        assert result_a.end == same_result_in_content.get("end")
+        assert data.get_transformation(result_a)
 
 
 def test_given_valid_anonymizer_request_then_get_transformations_successfully():
-    json_path = file_path("payload.json")
-    with open(json_path) as json_file:
-        content = json.load(json_file)
-        data = AnonymizerRequest(content)
-        replace_result = data.get_analysis_results()[0]
-        default_replace_transformation = data.get_transformation(replace_result)
-        assert default_replace_transformation.get('type') == 'replace'
-        assert default_replace_transformation.get('new_value') == 'ANONYMIZED'
-        assert issubclass(default_replace_transformation.get('anonymizer'), Anonymizer)
-        assert issubclass(default_replace_transformation.get('anonymizer'), Replace)
-        mask_transformation = data.get_transformation(data.get_analysis_results()[3])
-        assert mask_transformation.get('type') == 'mask'
-        assert mask_transformation.get('from_end')
-        assert mask_transformation.get('chars_to_mask') == 4
-        assert mask_transformation.get('masking_char') == '*'
-        assert mask_transformation.get('anonymizer')
-        assert issubclass(mask_transformation.get('anonymizer'), Anonymizer)
-        assert issubclass(mask_transformation.get('anonymizer'), Mask)
+    content = get_content()
+    data = AnonymizerRequest(content)
+    replace_result = data.get_analysis_results()[0]
+    default_replace_transformation = data.get_transformation(replace_result)
+    assert default_replace_transformation.get('type') == 'replace'
+    assert default_replace_transformation.get('new_value') == 'ANONYMIZED'
+    assert issubclass(default_replace_transformation.get('anonymizer'), Anonymizer)
+    assert issubclass(default_replace_transformation.get('anonymizer'), Replace)
+    mask_transformation = data.get_transformation(data.get_analysis_results()[3])
+    assert mask_transformation.get('type') == 'mask'
+    assert mask_transformation.get('from_end')
+    assert mask_transformation.get('chars_to_mask') == 4
+    assert mask_transformation.get('masking_char') == '*'
+    assert mask_transformation.get('anonymizer')
+    assert issubclass(mask_transformation.get('anonymizer'), Anonymizer)
+    assert issubclass(mask_transformation.get('anonymizer'), Mask)
 
 
 def __find_element(content: List, entity_type: str):
@@ -113,3 +121,14 @@ def __find_element(content: List, entity_type: str):
 def file_path(file_name: str):
     return os.path.abspath(
         os.path.join(os.path.dirname(__file__), f"resources/{file_name}"))
+
+
+content = {}
+
+
+def get_content():
+    global content
+    json_path = file_path("payload.json")
+    with open(json_path) as json_file:
+        content = json.load(json_file)
+        return content
