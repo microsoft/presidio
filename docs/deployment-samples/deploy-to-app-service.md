@@ -63,7 +63,6 @@ LOG_ANALYTICS_WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-
 APP_SERVICE_ID=$(az monitor log-analytics workspace show --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME --query id)
 
 # create the diagnostics settings
-##TODO: NOT WORKING CHECK WHY THE #APP_SERVICE_ID not works!!!
 az monitor diagnostic-settings create --name $APP_SERVICE_NAME-diagnostics --resource /
 $APP_SERVICE_ID --logs   '[{"category": "AppServicePlatformLogs","enabled": true}, {"category": "AppServiceConsoleLogs", "enabled": true}]' --metrics '[{"category": "AllMetrics","enabled": true}]' --workspace $LOG_ANALYTICS_WORKSPACE_ID
 ```

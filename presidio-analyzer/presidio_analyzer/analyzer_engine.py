@@ -102,6 +102,7 @@ class AnalyzerEngine:
         correlation_id: Optional[str] = None,
         score_threshold: Optional[float] = None,
         trace: Optional[bool] = False,
+        remove_interpretability_response: Optional[bool] = False,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -114,6 +115,8 @@ class AnalyzerEngine:
         :param score_threshold: A minimum value for which
         to return an identified entity
         :param trace: Should tracing of the response occur or not
+        :param remove_interpretability_response:
+        Should the interpretability text be returned in the response.
         :return: an array of the found entities in the text
         """
         all_fields = not entities
@@ -158,6 +161,9 @@ class AnalyzerEngine:
         # Remove duplicates or low score results
         results = EntityRecognizer.remove_duplicates(results)
         results = self.__remove_low_scores(results, score_threshold)
+        results = self.__remove_analysis_explanation(
+            results, remove_interpretability_response
+        )
 
         return results
 
@@ -175,4 +181,20 @@ class AnalyzerEngine:
             score_threshold = self.default_score_threshold
 
         new_results = [result for result in results if result.score >= score_threshold]
+        return new_results
+
+    def __remove_analysis_explanation(
+        self,
+        results: List[RecognizerResult],
+        remove_interpretability_response: bool = None,
+    ) -> List[RecognizerResult]:
+        """Remove interpretability from response."""
+        if not remove_interpretability_response:
+            return results
+
+        new_results = []
+        for recognizer in results:
+            recognizer.analysis_explanation = None
+            new_results.append(recognizer)
+
         return new_results
