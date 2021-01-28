@@ -80,7 +80,7 @@ class AnalyzerResult:
 
     def has_conflict(self, other):
         """
-        Check if two analyzer results are conflicted or not
+        Check if two analyzer results are conflicted or not.
 
         I have a conflict if:
         1. My indices are the same as the other and my score is lower.
