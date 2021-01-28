@@ -56,7 +56,7 @@ def test_validate_when_masking_char_is_bad_typed_ipe_raised():
     params["masking_char"] = 1
 
     with pytest.raises(
-        InvalidParamException, match="Invalid parameter value for masking_char"
+        InvalidParamException, match="Invalid parameter value for 'masking_char'"
     ):
         Mask().validate(params)
 
@@ -84,7 +84,7 @@ def test_validate_when_chars_to_mask_bad_typed_ipe_raised():
     params["chars_to_mask"] = "not_an_integer"
 
     with pytest.raises(
-        InvalidParamException, match="Invalid parameter value for chars_to_mask"
+        InvalidParamException, match="Invalid parameter value for 'chars_to_mask'"
     ):
         Mask().validate(params)
 
@@ -102,7 +102,7 @@ def test_validate_when_from_end_is_bad_typed_ipe_raised():
     params["from_end"] = "not_a_boolean"
 
     with pytest.raises(
-        InvalidParamException, match="Invalid parameter value for from_end"
+        InvalidParamException, match="Invalid parameter value for 'from_end'"
     ):
         Mask().validate(params)
 

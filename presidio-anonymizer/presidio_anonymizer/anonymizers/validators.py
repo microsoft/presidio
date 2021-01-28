@@ -13,4 +13,4 @@ def validate_parameter(
     if parameter_value is None:
         raise InvalidParamException(f"Expected parameter {parameter_name}")
     if not isinstance(parameter_value, parameter_type):
-        raise InvalidParamException(f"Invalid parameter value for {parameter_name}")
+        raise InvalidParamException(f"Invalid parameter value for '{parameter_name}'")
