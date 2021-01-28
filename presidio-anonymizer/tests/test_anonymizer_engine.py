@@ -7,4 +7,3 @@ def test_given_request_anonymizers_return_list():
     anon_list = engine.anonymizers()
 
     assert anon_list == expected_list
-

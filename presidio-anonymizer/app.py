@@ -57,6 +57,7 @@ class Server:
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
 
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", DEFAULT_PORT))
     server = Server()

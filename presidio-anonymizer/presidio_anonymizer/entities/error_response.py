@@ -1,9 +1,10 @@
+"""Handle a serializable error response."""
 import json
 
 
 class ErrorResponse:
     """
-    Error Response
+    Error Response.
 
     :param msg - the error message to return
     """
