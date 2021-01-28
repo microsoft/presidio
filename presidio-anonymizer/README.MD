@@ -158,6 +158,10 @@ Method: GET
 
 No paramaters are required.
 
+Response sample:
+```json
+["mask", "fpe", "replace", "hash", "redact"]
+```
 
 ### Deploy Presidio Anonymizer to Azure
 
