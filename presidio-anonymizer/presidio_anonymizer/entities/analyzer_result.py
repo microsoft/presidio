@@ -80,7 +80,7 @@ class AnalyzerResult:
 
     def has_conflict(self, other):
         """
-        Check if two analyzer results are conflicted or not
+        Check if two analyzer results are conflicted or not.
 
         I have a conflict if:
         1. My indices are the same as the other and my score is lower.
@@ -99,3 +99,8 @@ class AnalyzerResult:
                 self.logger.debug(f"invalid input, no field {field} for {content}")
                 raise InvalidParamException(
                     f"Invalid input, analyzer result must contain {field}")
+        start = content.get("start")
+        end = content.get("end")
+        if start > end:
+            raise InvalidParamException(
+                f"Invalid input, analyzer result {start} must be smaller then {end}")
