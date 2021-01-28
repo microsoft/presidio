@@ -50,13 +50,18 @@ def test_given_empty_dict_then_get_text_from_ocr_dict_returns_empty_str():
     assert expected_text == text
 
 
+@pytest.mark.parametrize(
+    "sep, expected_text",
+    [
+        (" ", " Homey Interiors was created by Katie  Cromley."),
+        ("+", "+Homey+Interiors+was+created+by+Katie++Cromley."),
+    ],
+)
 def test_given_valid_dict_then_get_text_from_ocr_dict_returns_correct_str(
-    get_ocr_results,
+    get_ocr_results, sep, expected_text
 ):
     ocr_result = get_ocr_results
-    expected_text = "Homey Interiors was created by Katie Cromley."
-    text = ImageAnalyzerEngine.get_text_from_ocr_dict(ocr_result)
-
+    text = ImageAnalyzerEngine.get_text_from_ocr_dict(ocr_result, sep)
     assert expected_text == text
 
 
@@ -65,7 +70,7 @@ def test_given_wrong_keys_in_dict_then_get_text_from_ocr_dict_returns_exception(
     expected_exception_message = "Key 'text' not found in dictionary"
     with pytest.raises(KeyError) as e:
         ImageAnalyzerEngine.get_text_from_ocr_dict(ocr_result)
-    assert expected_exception_message == e.value.err_msg
+    assert expected_exception_message == e.value.args[0]
 
 
 def test_given_valid_ocr_results_and_entities_then_map_entities_returns_correct_output(
@@ -94,7 +99,7 @@ def test_given_wrong_keys_in_ocr_result_dict_then_map_entities_returns_exception
     expected_exception_message = "Key 'text' not found in dictionary"
     with pytest.raises(KeyError) as e:
         ImageAnalyzerEngine.map_entities([], ocr_result)
-    assert expected_exception_message == e.value.err_msg
+    assert expected_exception_message == e.value.args[0]
 
 
 def test_given_repeated_entities_then_map_entities_returns_correct_number_of_bboxes(

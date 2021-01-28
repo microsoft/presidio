@@ -3,7 +3,6 @@ from typing import Union, Tuple
 from presidio_image_anonymizer.image_analyzer_engine import ImageAnalyzerEngine
 
 
-# TODO implement and test
 class ImageAnonymizerEngine:
     """ImageAnonymizerEngine class only supporting redaction currently."""
 

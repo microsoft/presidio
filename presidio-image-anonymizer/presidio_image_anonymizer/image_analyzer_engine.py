@@ -6,7 +6,6 @@ from presidio_analyzer import AnalyzerEngine
 from collections import namedtuple
 
 
-# TODO implement and test
 class ImageAnalyzerEngine:
     """ImageAnalyzerEngine class."""
 
@@ -65,15 +64,21 @@ class ImageAnalyzerEngine:
         return bboxes
 
     @staticmethod
-    def get_text_from_ocr_dict(ocr_result: dict) -> str:
+    def get_text_from_ocr_dict(ocr_result: dict, separator: str = " ") -> str:
         """Combine the text from the OCR dict to full text.
 
         :param ocr_result: dictionary containing the ocr results per word
+        :param separator: separator to use when joining the words
 
         return: str containing the full extracted text as string
         """
-        text = "This project"
-        return text
+        if not ocr_result:
+            return ""
+        elif "text" in ocr_result:
+            text = separator.join(ocr_result["text"])
+            return text
+        else:
+            raise KeyError("Key 'text' not found in dictionary")
 
     @staticmethod
     def map_entities(
