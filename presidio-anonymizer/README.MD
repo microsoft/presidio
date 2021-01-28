@@ -16,7 +16,9 @@ Presidio anonymizer comes by default with the following anonymizers:
 [comment]: <shiranr> (#TODO need to fill this once the the functionality is done 2656 - 2659)
 Each anonymizer requires different values:
 
-- Replace -
+- Replace - replaces the text PII with a new text value:<br>
+  Receives parameter: "new_value"<br>
+  If "new_value" is not supplied default behavior: <entity_type>
 - Redact - None
 - Hash - None
 - FPE -

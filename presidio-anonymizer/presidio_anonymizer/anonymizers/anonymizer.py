@@ -9,6 +9,6 @@ class Anonymizer(ABC):
     logger = logging.getLogger("presidio-anonymizer")
 
     @abstractmethod
-    def anonymize(self, original_text=None, params={}):
+    def anonymize(self, original_text, params):
         """Anonymize method to be implemented in each anonymizer."""
         pass
