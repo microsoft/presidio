@@ -60,7 +60,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/infra-app-service-sample/docs/deployment-samples/presidio-services.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/deploy-to-azure/docs/deployment-samples/presidio-services.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
