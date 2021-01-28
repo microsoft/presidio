@@ -157,3 +157,9 @@ Returns a list of supported anonymizers.
 Method: GET
 
 No paramaters are required.
+
+
+### Deploy Presidio Anonymizer to Azure
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2Fdeploy-to-azure%2Fpresidio-anonymizer%2Fdeploytoazure.json)
+

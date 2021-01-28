@@ -71,6 +71,11 @@ print(results)
 
 ```
 
+### Deploy Presidio Analyzer to Azure
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2Fdeploy-to-azure%2Fpresidio-analyzer%2Fdeploytoazure.json)
+
+
 ## Customizing Presidio analyzer 
 
 Presidio can be exteded to support new types of PII entities, and to support additional languages.
@@ -197,6 +202,7 @@ Parameters
 | score_threshold|float|yes|the the minimal score threshold|
 | entities|string[]|yes|a list of entities to analyze|
 | trace|bool|yes|whether to trace the request|
+| remove_interpretability_response|bool|yes|whether to include anaysis explenation in the response|
 
 #### /recognizers
 Returns a list of supported recognizers.

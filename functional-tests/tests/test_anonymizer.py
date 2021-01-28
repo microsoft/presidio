@@ -18,7 +18,7 @@ def test_anonymize():
     response_status, response_content = anonymize(request_body)
 
     assert response_status == 200
-    assert response_content == "hello world, my name is <NAME>. My number is: 034453334"
+    assert response_content == "hello world, my name is ANONYMIZED. My number is: 034453334"
 
 
 @pytest.mark.api
@@ -30,6 +30,19 @@ def test_anonymize_with_payload():
     response_status, response_content = anonymize(content)
 
     assert response_content == 'hello world, my name is ANONYMIZED. My number is: '
+    assert response_status == 200
+
+
+@pytest.mark.api
+def test_anonymize_with_payload_with_intersection_results():
+    json_path = file_path("intersection_payload.json")
+    with open(json_path) as json_file:
+        content = json.load(json_file)
+
+    response_status, response_content = anonymize(content)
+
+    assert response_content == 'hello world, my name is <FULL_NAME><LAST_NAME>' \
+                               ' My number is: <PHONE_NUMBER><SSN>'
     assert response_status == 200
 
 

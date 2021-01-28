@@ -187,7 +187,7 @@ def test_given_json_for_creating_analyzer_result_without_text_then_creation_fail
         request_json, result_text):
     with pytest.raises(InvalidParamException) as e:
         AnalyzerResult(request_json)
-        assert result_text == e.err_msg
+    assert result_text == e.value.err_msg
 
 
 def test_given_valid_json_for_creating_analyzer_result_then_creation_is_successful():
@@ -231,6 +231,16 @@ def test_given_analyzer_result_then_one_is_not_greater_then_another(start, end):
     second = create_analayzer_result("", 0, start, end)
 
     assert not first.__gt__(second)
+
+
+def test_given_endpoint_larger_then_start_point_then_we_fail():
+    with pytest.raises(InvalidParamException) as e:
+        create_analayzer_result("", 0, 10, 0)
+    assert e.value.err_msg == "Invalid input, analyzer result 10 must be smaller then 0"
+
+
+def test_given_endpoint_same_as_start_point_then_we_pass():
+    assert create_analayzer_result("", 0, 0, 0)
 
 
 def create_analayzer_result(entity_type: str, score: float, start: int, end: int):

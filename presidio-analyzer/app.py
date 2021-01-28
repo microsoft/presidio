@@ -56,6 +56,7 @@ class Server:
                     score_threshold=req_data.score_threshold,
                     entities=req_data.entities,
                     trace=req_data.trace,
+                    remove_interpretability_response=req_data.remove_interpretability_response,  # noqa E501
                 )
 
                 return (
