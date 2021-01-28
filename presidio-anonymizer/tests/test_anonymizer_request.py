@@ -5,6 +5,7 @@ from unittest.mock import Mock
 
 import pytest
 
+from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.anonymizers import Anonymizer, Replace, Mask
 from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
@@ -59,13 +60,13 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 def test_given_invalid_json_then_request_creation_should_fail(request_json,
                                                               result_text):
     with pytest.raises(InvalidParamException) as e:
-        AnonymizerRequest(request_json)
+        AnonymizerRequest(request_json, AnonymizerEngine().builtin_anonymizers)
     assert result_text == e.value.err_msg
 
 
 def test_given_no_transformations_then_we_get_the_default():
     content = get_content()
-    request = AnonymizerRequest(content)
+    request = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
     request._transformations = {}
     analyzer_result = Mock()
     analyzer_result.entity_type = "PHONE"
@@ -76,7 +77,7 @@ def test_given_no_transformations_then_we_get_the_default():
 
 def test_given_valid_json_then_request_creation_should_succeed():
     content = get_content()
-    data = AnonymizerRequest(content)
+    data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
     assert data.get_text() == content.get("text")
     assert data._text == content.get("text")
     assert data._transformations == content.get("transformations")
@@ -94,7 +95,7 @@ def test_given_valid_json_then_request_creation_should_succeed():
 
 def test_given_valid_anonymizer_request_then_get_transformations_successfully():
     content = get_content()
-    data = AnonymizerRequest(content)
+    data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
     replace_result = data.get_analysis_results()[0]
     default_replace_transformation = data.get_transformation(replace_result)
     assert default_replace_transformation.get('type') == 'replace'

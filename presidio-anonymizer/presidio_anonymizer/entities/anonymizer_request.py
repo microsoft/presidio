@@ -23,10 +23,10 @@ class AnonymizerRequest:
 
         :param data: a map which contains the transformations, analyzer_results and text
         """
+        self.anonymizers = anonymizers
         self._transformations = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
-        self.anonymizers = anonymizers
 
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """

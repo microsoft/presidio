@@ -28,7 +28,7 @@ class Server:
                 return ErrorResponse("Invalid request json"), 400
             try:
                 engine = AnonymizerEngine()
-                data = AnonymizerRequest(content, engine.anonymizers())
+                data = AnonymizerRequest(content, engine.builtin_anonymizers)
                 text = engine.anonymize(data)
             except InvalidParamException as e:
                 self.logger.warning(
