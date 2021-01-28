@@ -44,7 +44,7 @@ class AnonymizerEngine:
             anonymizer_class().validate(params=transformation)
             text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
             anonymized_text = anonymizer_class().anonymize(
-                params=transformation, text_to_anonymize=text_to_anonymize
+                params=transformation, text=text_to_anonymize
             )
             end_of_text = min(analyzer_result.end, last_replacement_point)
             self.__validate_position_over_text(analyzer_result, text_len)
