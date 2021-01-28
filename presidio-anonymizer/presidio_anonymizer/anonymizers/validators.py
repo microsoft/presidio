@@ -1,8 +1,4 @@
-import logging
-
 from presidio_anonymizer.entities import InvalidParamException
-
-logger = logging.getLogger("presidio-anonymizer")
 
 
 def validate_parameter(
