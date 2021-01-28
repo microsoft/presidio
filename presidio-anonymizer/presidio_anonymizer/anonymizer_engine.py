@@ -42,13 +42,15 @@ class AnonymizerEngine:
             )
             anonymizer_class = transformation.get("anonymizer")
             anonymizer_class().validate(params=transformation)
-            new_text = anonymizer_class().anonymize(
-                params=transformation, original_text=original_full_text)
+            text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
+            anonymized_text = anonymizer_class().anonymize(
+                params=transformation, text_to_anonymize=text_to_anonymize
+            )
             end_of_text = min(analyzer_result.end, last_replacement_point)
             self.__validate_position_over_text(analyzer_result, text_len)
             output_text = (
                 output_text[: analyzer_result.start]
-                + new_text
+                + anonymized_text
                 + output_text[end_of_text:]
             )
             last_replacement_point = analyzer_result.start
@@ -58,4 +60,5 @@ class AnonymizerEngine:
         if text_len < analyzer_result.start or analyzer_result.end > text_len:
             raise InvalidParamException(
                 f"Invalid analyzer result: '{analyzer_result}', "
-                f"original text length is only {text_len}.")
+                f"original text length is only {text_len}."
+            )

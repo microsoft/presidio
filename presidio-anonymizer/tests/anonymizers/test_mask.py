@@ -6,7 +6,7 @@ from presidio_anonymizer.entities import InvalidParamException
 
 @pytest.mark.parametrize(
     # fmt: off
-    "original_text, masking_char, chars_to_mask, from_end, anonymized_text",
+    "text, masking_char, chars_to_mask, from_end, anonymized_text",
     [
         ("text", "*", 4, False, "****"),  # Fully mask
         ("text", "*", 4, True, "****"),  # Fully mask from the end
@@ -27,7 +27,7 @@ from presidio_anonymizer.entities import InvalidParamException
     # fmt: on
 )
 def test_anonymize_returns_expected_string_for_valid_inputs(
-    original_text, masking_char, chars_to_mask, from_end, anonymized_text
+    text, masking_char, chars_to_mask, from_end, anonymized_text
 ):
     # TODO: mock MaskParameters
     params = {
@@ -36,9 +36,7 @@ def test_anonymize_returns_expected_string_for_valid_inputs(
         "from_end": from_end,
     }
 
-    actual_anonymized_text = Mask().anonymize(
-        original_text=original_text, params=params
-    )
+    actual_anonymized_text = Mask().anonymize(text=text, params=params)
 
     assert anonymized_text == actual_anonymized_text
 

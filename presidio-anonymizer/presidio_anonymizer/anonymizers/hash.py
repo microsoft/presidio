@@ -6,7 +6,7 @@ class Hash(Anonymizer):
     # TODO implement + test
     """Hash given text with sha256 algorithm."""
 
-    def anonymize(self, original_text: str = None, params: dict = None) -> str:
+    def anonymize(self, text: str = None, params: dict = None) -> str:
         """
         Hash given value using sha256.
 
