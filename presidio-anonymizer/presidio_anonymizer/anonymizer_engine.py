@@ -41,6 +41,9 @@ class AnonymizerEngine:
                 f"{str(transformation)}"
             )
             anonymizer = transformation.get("anonymizer")
+            anonymizer.validate(params=transformation)
+            new_text = anonymizer.anonymize(
+                params=transformation, original_text=original_full_text)
             end_of_text = min(analyzer_result.end, last_replacement_point)
             self.__validate_position_over_text(analyzer_result, text_len)
             new_text = anonymizer.anonymize(original_full_text, transformation)
