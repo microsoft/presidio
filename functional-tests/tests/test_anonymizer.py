@@ -18,7 +18,7 @@ def test_anonymize():
     response_status, response_content = anonymize(request_body)
 
     assert response_status == 200
-    assert response_content == "hello world, my name is <NAME>. My number is: 034453334"
+    assert response_content == "hello world, my name is ANONYMIZED. My number is: 034453334"
 
 
 @pytest.mark.api
