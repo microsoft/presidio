@@ -2,6 +2,7 @@ import json
 import os
 
 import pytest
+
 from common.methods import anonymize
 
 
@@ -57,6 +58,18 @@ def test_anonymize_api_fails_on_invalid_value_of_text():
 
     assert response_content == 'Invalid input, text can not be empty'
     assert response_status == 422
+
+
+@pytest.mark.api
+def test_anonymize_with_redact_and_replace():
+    json_path = file_path("redact_and_replace_payload.json")
+    with open(json_path) as json_file:
+        content = json.load(json_file)
+
+    response_status, response_content = anonymize(content)
+
+    assert response_content == "hello world, my name is . My number is: <PHONE_NUMBER>"
+    assert response_status == 200
 
 
 def file_path(file_name: str):
