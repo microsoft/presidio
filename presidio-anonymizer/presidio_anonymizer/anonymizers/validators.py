@@ -6,9 +6,9 @@ def validate_parameter(
 ) -> None:
     """Validate an anonymizer parameter.
 
-    Both validate a parameter exists and that it is an instance of the
-    parameter_type. Otherwise, raise the appropriate InvalidParamException
-    with the parameter_name as content.
+    Both validate the existence of an anonymizer parameter and that it is an
+    instance of the parameter_type. Otherwise, raise the appropriate
+    InvalidParamException with the parameter_name as content.
     """
     if parameter_value is None:
         raise InvalidParamException(f"Expected parameter {parameter_name}")
