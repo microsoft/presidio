@@ -14,7 +14,6 @@ from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
     SpacyNlpEngine,
     StanzaNlpEngine,
-    create_nlp_engine,
 )
 
 # noqa: F401
@@ -590,18 +589,3 @@ def test_read_test_stanza_nlp_conf_file_returns_stanza_nlp_engine(
     engine = MockAnalyzerEngine(registry=mock_registry)
     assert isinstance(engine.nlp_engine, StanzaNlpEngine)
     assert engine.nlp_engine.nlp is not None
-
-
-def test_spanish_correct_answer():
-    configuration = {
-        "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "es", "model_name": "es_core_news_md"}],
-    }
-
-    nlp_engine = create_nlp_engine(nlp_configuration=configuration)
-    analyzer_engine = AnalyzerEngine(
-        nlp_engine=nlp_engine, supported_languages=["en", "es"]
-    )
-    results_spanish = analyzer_engine.analyze(text="Mi nombre es David", language="es")
-    assert len(results_spanish) == 1
-    assert_result(results_spanish[0], "PERSON", 13, 18, 0.85)
