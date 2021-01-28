@@ -78,15 +78,20 @@ class AnalyzerResult:
         return f"start: {str(self.start)}, end: {str(self.end)}, " \
                f"score: {str(self.score)}, entity_type: {self.entity_type}"
 
-    def same_or_contained(self, other):
+    def has_conflict(self, other):
         """
-        Check is two analyzer results are contained or the same.
+        Check if two analyzer results are conflicted or not.
+
+        I have a conflict if:
+        1. My indices are the same as the other and my score is lower.
+        2. If my indices are contained in another.
 
         :param other: AnalyzerResult
         :return:
         """
-        return other.contains(self) or (
-                self.equal_indices(other) and self.score < other.score)
+        if self.equal_indices(other):
+            return self.score <= other.score
+        return other.contains(self)
 
     def __validate_fields(self, content):
         for field in ("start", "end", "score", "entity_type"):
@@ -94,3 +99,8 @@ class AnalyzerResult:
                 self.logger.debug(f"invalid input, no field {field} for {content}")
                 raise InvalidParamException(
                     f"Invalid input, analyzer result must contain {field}")
+        start = content.get("start")
+        end = content.get("end")
+        if start > end:
+            raise InvalidParamException(
+                f"Invalid input, analyzer result {start} must be smaller then {end}")
