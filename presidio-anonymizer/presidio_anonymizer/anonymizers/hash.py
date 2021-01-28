@@ -15,5 +15,5 @@ class Hash(Anonymizer):
         return params.get("old_text")
 
     def validate(self, params: dict = None) -> None:
-        """TODO: docstring."""
+        """TODO: [ADO-2544] docstring."""
         pass

@@ -11,5 +11,5 @@ class Redact(Anonymizer):
         return ""
 
     def validate(self, params: dict = None) -> None:
-        """TODO: docstring."""
+        """TODO: [ADO-2545] docstring."""
         pass
