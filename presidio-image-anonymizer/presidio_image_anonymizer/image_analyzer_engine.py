@@ -3,7 +3,6 @@ from presidio_image_anonymizer.image_recognizer_result import ImageRecognizerRes
 from presidio_image_anonymizer.ocr import OCR
 from presidio_analyzer import RecognizerResult
 from presidio_analyzer import AnalyzerEngine
-from collections import namedtuple
 
 
 class ImageAnalyzerEngine:
@@ -16,51 +15,12 @@ class ImageAnalyzerEngine:
 
         :return: list of the extract entities with image bounding boxes
         """
-        result_dict = OCR().perform_ocr(image)
-        text = self.get_text_from_ocr_dict(result_dict)
+        ocr_result = OCR().perform_ocr(image)
+        text = self.get_text_from_ocr_dict(ocr_result)
 
         analyzer = AnalyzerEngine()
-        results = analyzer.analyze(text=text, language="en")
-        Bbox = namedtuple(
-            "Bbox",
-            [
-                "entity_type",
-                "start_char",
-                "end_char",
-                "score",
-                "left",
-                "top",
-                "width",
-                "height",
-            ],
-        )
-        bboxes = []
-
-        for element in results:
-
-            subtext = text[element.start : element.end]
-            print(subtext)
-            words = subtext.split(" ")
-
-            for word in words:
-                indexes = [
-                    i
-                    for i in range(len(result_dict["text"]))
-                    if word in result_dict["text"][i]
-                ]
-                for index in indexes:
-                    bboxes.append(
-                        Bbox(
-                            element.entity_type,
-                            element.start,
-                            element.end,
-                            element.score,
-                            result_dict["left"][index],
-                            result_dict["top"][index],
-                            result_dict["width"][index],
-                            result_dict["height"][index],
-                        )
-                    )
+        analyzer_result = analyzer.analyze(text=text, language="en")
+        bboxes = self.map_entities(analyzer_result, ocr_result, text)
         return bboxes
 
     @staticmethod
@@ -82,13 +42,50 @@ class ImageAnalyzerEngine:
 
     @staticmethod
     def map_entities(
-        text_analyzer: RecognizerResult, ocr_result: dict
+        text_analyzer: RecognizerResult, ocr_result: dict, text: str
     ) -> List[ImageRecognizerResult]:
         """Map extracted PII entities to image bounding boxes.
 
         :param text_analyzer: PII entities recognized by presidio analyzer
         :param ocr_results: dict results with words and bboxes from OCR
+        :param text: text the results are based on
 
         return: list of extracted entities with image bounding boxes
         """
-        pass
+        if not ocr_result:
+            return []
+        elif "text" not in ocr_result:
+            raise KeyError("Key 'text' not found in dictionary")
+
+        if not text_analyzer:
+            return []
+
+        bboxes = []
+        proc_indexes = 0
+        indexes = len(text_analyzer)
+
+        pos = 0
+        for index, word in enumerate(ocr_result["text"]):
+            for element in text_analyzer:
+                if (pos == element.start) and (
+                    text[element.start : element.end] in word
+                ):
+                    bboxes.append(
+                        ImageRecognizerResult(
+                            element.entity_type,
+                            element.start,
+                            element.end,
+                            element.score,
+                            ocr_result["left"][index],
+                            ocr_result["top"][index],
+                            ocr_result["width"][index],
+                            ocr_result["height"][index],
+                        )
+                    )
+                    proc_indexes += 1
+
+            if proc_indexes == indexes:
+                break
+            pos += len(word) + 1
+
+        return bboxes

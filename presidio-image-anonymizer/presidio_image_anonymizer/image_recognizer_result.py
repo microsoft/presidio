@@ -32,3 +32,18 @@ class ImageRecognizerResult:
         self.top = top
         self.width = width
         self.height = height
+
+    def __eq__(self, other):
+        """
+        Check two ImageRecognizerResult objects are equal by using all class fields.
+
+        :param other: another ImageRecognizerResult object
+        :return: bool
+        """
+        equal_type = self.entity_type == other.entity_type
+        equal_pos = (self.start == other.start) and (self.end == other.end)
+        equal_score = self.score == other.score
+        equal_box1 = (self.left == other.left) and (self.top == other.top)
+        equal_box2 = (self.width == other.width) and (self.height == other.height)
+        equal_box = equal_box1 and equal_box2
+        return equal_type and equal_pos and equal_score and equal_box
