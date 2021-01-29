@@ -149,3 +149,18 @@ def test_given_entity_with_multiple_words_then_map_entities_returns_correct_bbox
 
     assert len(expected_result) == len(mapped_entities)
     assert expected_result == mapped_entities
+
+
+def test_given_entities_not_same_length_then_map_entities_returns_correct_output(
+    get_ocr_analyzer_results, get_image_recognizerresult
+):
+    ocr_result, text, recogniser_result = get_ocr_analyzer_results
+    recogniser_result[1].start += 1
+    expected_result = get_image_recognizerresult
+    expected_result[1].start += 1
+    mapped_entities = ImageAnalyzerEngine.map_entities(
+        recogniser_result, ocr_result, text
+    )
+
+    assert len(expected_result) == len(mapped_entities)
+    assert expected_result == mapped_entities

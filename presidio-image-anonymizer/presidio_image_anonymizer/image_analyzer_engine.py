@@ -72,9 +72,9 @@ class ImageAnalyzerEngine:
             else:
                 for element in text_analyzer:
                     text_element = text[element.start : element.end]
-                    if (pos == element.start) and (
-                        not set(text_element).isdisjoint(set(word))
-                    ):
+                    if (
+                        max(pos, element.start) < min(element.end, pos + len(word))
+                    ) and ((text_element in word) or (word in text_element)):
                         bboxes.append(
                             ImageRecognizerResult(
                                 element.entity_type,
