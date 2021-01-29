@@ -23,6 +23,8 @@ from presidio_anonymizer.entities import InvalidParamException
         ("text", "*", 0, True, "text"),  # from the end
         ("text", "*", -1, False, "text"),  # Negative chars_to_mask
         ("text", "*", -1, True, "text"),  # from the end
+        ("", "*", 1, False, ""),  # Empty string
+        ("", "*", 0, False, ""),  # Empty string nullified mask
     ]
     # fmt: on
 )
