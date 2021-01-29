@@ -33,10 +33,6 @@ class AnonymizerRequest:
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
 
-    def get_transformations(self):
-        """Get the transformations data."""
-        return self._transformations
-
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """
         Get the right transformation from the list.
@@ -47,10 +43,10 @@ class AnonymizerRequest:
         """
         transformation = self._transformations.get(analyzer_result.entity_type)
         if not transformation:
-            transformation = self._transformations.get("default")
+            transformation = self._transformations.get("DEFAULT")
             if not transformation:
-                new_val = f"<{analyzer_result.entity_type}>"
-                return {"type": "replace", "new_value": new_val, "anonymizer": Replace}
+                transformation = {"type": "replace", "anonymizer": Replace}
+        transformation["entity_type"] = analyzer_result.entity_type
         return transformation
 
     def get_text(self):

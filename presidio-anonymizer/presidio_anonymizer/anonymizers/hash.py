@@ -1,11 +1,12 @@
 """Hashes the PII text entity."""
+from presidio_anonymizer.anonymizers import Anonymizer
 
 
-class Hash(object):
+class Hash(Anonymizer):
     # TODO implement + test
     """Hash given text with sha256 algorithm."""
 
-    def anonymize(self, params={}):
+    def anonymize(self, original_text=None, params={}):
         """
         Hash given value using sha256.
 

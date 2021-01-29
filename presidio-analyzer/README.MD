@@ -71,6 +71,11 @@ print(results)
 
 ```
 
+### Deploy Presidio Analyzer to Azure
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2Fdeploy-to-azure%2Fpresidio-analyzer%2Fdeploytoazure.json)
+
+
 ## Customizing Presidio analyzer 
 
 Presidio can be exteded to support new types of PII entities, and to support additional languages.
@@ -181,3 +186,40 @@ contain recognizers focused on English. To extend it to new languages, two main 
 1. Replace the NLP model with a model in the desired language
 2. Create recognizers capable of detecting PII in the desired language. 
 Presidio uses context words surrounding the entity to increase score, so these context words should also be added in the desired language.
+
+### HTTP API
+#### /analyze
+Analyzes a text
+Method: POST
+
+Parameters
+
+| Name | Type | Optional | Description|
+| --- | --- | ---| ---|
+| text|string|no|the text to analyze|
+| language|string|no|2 characters of the desired language. E.g en, de|
+| correlation_id|string|yes|a correlation id to append to headers and traces|
+| score_threshold|float|yes|the the minimal score threshold|
+| entities|string[]|yes|a list of entities to analyze|
+| trace|bool|yes|whether to trace the request|
+| remove_interpretability_response|bool|yes|whether to include anaysis explenation in the response|
+
+#### /recognizers
+Returns a list of supported recognizers.
+Method: GET
+
+Parameters
+
+| Name | Type | Optional | Description|
+| --- | --- | ---| ---|
+| language|string|yes|2 characters of the desired language. E.g en, de|
+
+#### /supportedentities
+Returns a list of supported entities.
+Method: GET
+
+Parameters
+
+| Name | Type | Optional | Description|
+| --- | --- | ---| ---|
+| language|string|yes|2 characters of the desired language. E.g en, de|
