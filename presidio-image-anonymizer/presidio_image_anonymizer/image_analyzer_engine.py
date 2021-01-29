@@ -65,27 +65,49 @@ class ImageAnalyzerEngine:
         indexes = len(text_analyzer)
 
         pos = 0
-        for index, word in enumerate(ocr_result["text"]):
-            for element in text_analyzer:
-                if (pos == element.start) and (
-                    text[element.start : element.end] in word
-                ):
-                    bboxes.append(
-                        ImageRecognizerResult(
-                            element.entity_type,
-                            element.start,
-                            element.end,
-                            element.score,
-                            ocr_result["left"][index],
-                            ocr_result["top"][index],
-                            ocr_result["width"][index],
-                            ocr_result["height"][index],
+        iter_ocr = enumerate(ocr_result["text"])
+        for index, word in iter_ocr:
+            if not word:
+                pos += 1
+            else:
+                for element in text_analyzer:
+                    text_element = text[element.start : element.end]
+                    if (pos == element.start) and (
+                        not set(text_element).isdisjoint(set(word))
+                    ):
+                        bboxes.append(
+                            ImageRecognizerResult(
+                                element.entity_type,
+                                element.start,
+                                element.end,
+                                element.score,
+                                ocr_result["left"][index],
+                                ocr_result["top"][index],
+                                ocr_result["width"][index],
+                                ocr_result["height"][index],
+                            )
                         )
-                    )
-                    proc_indexes += 1
 
-            if proc_indexes == indexes:
-                break
-            pos += len(word) + 1
+                        while pos + len(word) < element.end:
+                            index, word = next(iter_ocr)
+                            if word:
+                                bboxes.append(
+                                    ImageRecognizerResult(
+                                        element.entity_type,
+                                        element.start,
+                                        element.end,
+                                        element.score,
+                                        ocr_result["left"][index],
+                                        ocr_result["top"][index],
+                                        ocr_result["width"][index],
+                                        ocr_result["height"][index],
+                                    )
+                                )
+                            pos += len(word) + 1
+                        proc_indexes += 1
+
+                if proc_indexes == indexes:
+                    break
+                pos += len(word) + 1
 
         return bboxes

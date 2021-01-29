@@ -4,7 +4,7 @@ from presidio_image_anonymizer.image_recognizer_result import ImageRecognizerRes
 from presidio_analyzer import RecognizerResult
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def get_ocr_analyzer_results():
     ocr_result = {}
     ocr_result["text"] = [
@@ -31,7 +31,7 @@ def get_ocr_analyzer_results():
     return ocr_result, text, analyzer_result
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def get_image_recognizerresult():
     results = []
     results.append(ImageRecognizerResult("PERSON", 32, 37, 0.85, 896, 64, 183, 40))
@@ -119,7 +119,30 @@ def test_given_word_has_entity_but_not_entity_then_map_entity_returns_correct_bb
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
     ocr_result["text"][2] = "Katieiors"
+    text = " Homey Katieiors was created by Katie  Cromley."
     expected_result = get_image_recognizerresult
+    mapped_entities = ImageAnalyzerEngine.map_entities(
+        recogniser_result, ocr_result, text
+    )
+
+    assert len(expected_result) == len(mapped_entities)
+    assert expected_result == mapped_entities
+
+
+def test_given_entity_with_multiple_words_then_map_entities_returns_correct_bboxees(
+    get_ocr_analyzer_results,
+):
+    ocr_result, text, recogniser_result = get_ocr_analyzer_results
+
+    # create new object for multiple words entities
+    recogniser_result = [RecognizerResult("PERSON", 32, 46, 0.85)]
+    expected_result = []
+    expected_result.append(
+        ImageRecognizerResult("PERSON", 32, 46, 0.85, 896, 64, 183, 40)
+    )
+    expected_result.append(
+        ImageRecognizerResult("PERSON", 32, 46, 0.85, 141, 134, 190, 50)
+    )
     mapped_entities = ImageAnalyzerEngine.map_entities(
         recogniser_result, ocr_result, text
     )
