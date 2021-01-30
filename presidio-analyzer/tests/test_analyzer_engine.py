@@ -524,7 +524,9 @@ def test_add_recognizer_also_outputs_others(nlp_engine):
     assert len(results) == 2
 
 
-def test_given_no_interpretability_requested_then_response_contains_no_analysis(loaded_analyzer_engine, unit_test_guid):
+def test_given_no_interpretability_requested_then_response_contains_no_analysis(
+    loaded_analyzer_engine, unit_test_guid
+):
     text = "John Smith drivers license is AC432223"
     language = "en"
     remove_interpretability_response = True
@@ -539,7 +541,9 @@ def test_given_no_interpretability_requested_then_response_contains_no_analysis(
     assert results[0].analysis_explanation is None
 
 
-def test_given_interpretability_requested_then_response_contains_analysis(loaded_analyzer_engine, unit_test_guid):
+def test_given_interpretability_requested_then_response_contains_analysis(
+    loaded_analyzer_engine, unit_test_guid
+):
     text = "John Smith drivers license is AC432223"
     language = "en"
     remove_interpretability_response = False
