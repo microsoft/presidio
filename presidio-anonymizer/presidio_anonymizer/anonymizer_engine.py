@@ -40,14 +40,18 @@ class AnonymizerEngine:
                 f"for analyzer result {analyzer_result} received transformation "
                 f"{str(transformation)}"
             )
-            anonymizer = transformation.get("anonymizer")
-            end_of_text = min(analyzer_result.end, last_replacement_point)
             self.__validate_position_over_text(analyzer_result, text_len)
-            new_text = anonymizer.anonymize(original_full_text, transformation)
+            anonymizer = transformation.get("anonymizer")
+            anonymizer.validate(params=transformation)
+            text_to_anonymize = output_text[analyzer_result.start: analyzer_result.end]
+            anonymized_text = anonymizer.anonymize(
+                params=transformation, text=text_to_anonymize
+            )  # TODO: [ADO-2754] replace with the singleton class instance
+            end_of_text = min(analyzer_result.end, last_replacement_point)
             output_text = (
-                    output_text[: analyzer_result.start]
-                    + new_text
-                    + output_text[end_of_text:]
+                output_text[: analyzer_result.start]
+                + anonymized_text
+                + output_text[end_of_text:]
             )
             last_replacement_point = analyzer_result.start
         return output_text
@@ -56,4 +60,5 @@ class AnonymizerEngine:
         if text_len < analyzer_result.start or analyzer_result.end > text_len:
             raise InvalidParamException(
                 f"Invalid analyzer result: '{analyzer_result}', "
-                f"original text length is only {text_len}.")
+                f"original text length is only {text_len}."
+            )
