@@ -15,7 +15,6 @@ Presidio anonymizer comes by default with the following anonymizers:
 - Redact - removes PII completely from text Parameters: None
 - Hash - hash the PII using sha256
 - FPE - using ff1 algorithm for formatting-Preserving Encryption on the PII
-- Mask - mask the selected amount of characters of the PII with a given character
 - Mask - replaces PII with a given character. <br>
   Parameters: 
   * "chars_to_mask" - the amount of characters out of the PII that should
