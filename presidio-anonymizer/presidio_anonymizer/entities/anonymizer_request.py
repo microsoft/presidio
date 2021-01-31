@@ -107,7 +107,7 @@ class AnonymizerRequest:
         Extract the anonymizer class from the anonymizers list.
 
         :param transformation: a single transformation value
-        :return: anonymizer
+        :return: Anonymizer
         """
         anonymizer_type = transformation.get("type").lower()
         anonymizer = self.anonymizers.get(anonymizer_type)
