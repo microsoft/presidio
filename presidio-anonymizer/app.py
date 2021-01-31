@@ -18,6 +18,11 @@ class Server:
         self.logger = logging.getLogger("presidio-anonymizer")
         self.app = Flask(__name__)
 
+        @self.app.route("/health")
+        def health() -> str:
+            """Return basic health probe result.  get ok + 200."""
+            return "ok"
+
         @self.app.route("/anonymize", methods=["POST"])
         def anonymize():
             content = request.get_json()
