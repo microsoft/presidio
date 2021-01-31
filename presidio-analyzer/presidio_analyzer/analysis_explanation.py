@@ -51,3 +51,6 @@ class AnalysisExplanation:
             self.textual_explanation = text
         else:
             self.textual_explanation = "{}\n{}".format(self.textual_explanation, text)
+
+    def to_dict(self):
+        return self.__dict__
