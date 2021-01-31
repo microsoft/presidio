@@ -35,7 +35,7 @@ class RecognizerResult:
         if self.analysis_explanation:
             self.analysis_explanation.append_textual_explanation_line(text)
 
-    def to_json(self) -> str:
+    def to_json_string(self) -> str:
         """Return a json string serializing this instance."""
         return str(self.__dict__)
 
