@@ -1,3 +1,5 @@
+from typing import Dict
+
 from presidio_analyzer import AnalysisExplanation
 
 
@@ -35,8 +37,12 @@ class RecognizerResult:
         if self.analysis_explanation:
             self.analysis_explanation.append_textual_explanation_line(text)
 
-    def to_dict(self) -> dict:
-        """Return a dictionary of the instance"""
+    def to_dict(self) -> Dict:
+        """
+        Serialize self to dictionary.
+
+        :return: a dictionary
+        """
         return self.__dict__
 
     def __str__(self) -> str:
