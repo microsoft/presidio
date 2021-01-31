@@ -13,5 +13,5 @@ class Replace(Anonymizer):
         return new_val
 
     def validate(self, params: dict = None) -> None:
-        """TODO: [ADO-2543] docstring."""
+        """No parameters validation for replacing value."""
         pass
