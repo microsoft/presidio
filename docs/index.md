@@ -31,7 +31,7 @@
 4. [Perform PII identification using presidio-analyzer](analyzer/index.md)
 5. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
 6. [Perform PII identification and anonymization in images using presidio-image-anonymizer](image-anonymizer/index.md)
-7. [Example deployments](samples/index.md)
+7. [Example deployments](samples/deployments/index.md)
 
 ## Support
 
