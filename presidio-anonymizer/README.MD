@@ -13,6 +13,13 @@ Presidio anonymizer comes by default with the following anonymizers:
   If "new_value" is not supplied or empty, default behavior will be: <entity_type>
   e.g: <PHONE_NUMBER>
 - Redact - removes PII completely from text Parameters: None
+- Mask - replaces PII with a given character. <br>
+  Parameters: 
+  * "chars_to_mask" - the amount of characters out of the PII that should
+   be masked. 
+  * "masking_char" - the character to be masked with. 
+  * "from_end" - Whether to mask the PII from it's end.
+   
 - Hash - hash the PII using sha256
 - FPE - using ff1 algorithm for formatting-Preserving Encryption on the PII
 - Mask - mask the selected amount of characters of the PII with a given character
