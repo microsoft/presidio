@@ -18,7 +18,10 @@ def test_anonymize():
     response_status, response_content = anonymize(request_body)
 
     assert response_status == 200
-    assert response_content == "hello world, my name is ANONYMIZED. My number is: 034453334"
+    assert (
+        response_content
+        == "hello world, my name is ANONYMIZED. My number is: 034453334"
+    )
 
 
 @pytest.mark.api
@@ -29,7 +32,10 @@ def test_anonymize_with_payload():
 
     response_status, response_content = anonymize(content)
 
-    assert response_content == 'hello world, my name is ANONYMIZED. My number is: '
+    assert (
+        response_content
+        == "hello world, my name is ANONYMIZED. My number is: 03445****"
+    )
     assert response_status == 200
 
 
@@ -41,8 +47,10 @@ def test_anonymize_with_payload_with_intersection_results():
 
     response_status, response_content = anonymize(content)
 
-    assert response_content == 'hello world, my name is <FULL_NAME><LAST_NAME>' \
-                               ' My number is: <PHONE_NUMBER><SSN>'
+    assert (
+        response_content == "hello world, my name is <FULL_NAME><LAST_NAME>"
+        " My number is: <PHONE_NUMBER><SSN>"
+    )
     assert response_status == 200
 
 
@@ -55,10 +63,11 @@ def test_anonymize_api_fails_on_invalid_value_of_text():
 
     response_status, response_content = anonymize(content)
 
-    assert response_content == 'Invalid input, text can not be empty'
+    assert response_content == "Invalid input, text can not be empty"
     assert response_status == 422
 
 
 def file_path(file_name: str):
     return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..', f"resources/{file_name}"))
+        os.path.join(os.path.dirname(__file__), "..", f"resources/{file_name}")
+    )

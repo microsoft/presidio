@@ -15,15 +15,18 @@ def test_given_shorter_text_from_analyzer_result_range_then_we_fail():
     mock.get_text = lambda: "Number"
     analyzer_results = Mock()
     analyzer_result = AnalyzerResult(
-        {"score": 0.5, "entity_type": "PHONE_NUMBER", "start": 8, "end": 20})
+        {"score": 0.5, "entity_type": "PHONE_NUMBER", "start": 8, "end": 20}
+    )
     analyzer_results.to_sorted_unique_results = lambda reverse: [analyzer_result]
     mock.get_analysis_results = lambda: analyzer_results
     mock.get_transformation = lambda result: transformation
     with pytest.raises(InvalidParamException) as e:
         AnonymizerEngine().anonymize(mock)
-    assert e.value.err_msg == "Invalid analyzer result: 'start: 8, end: 20, " \
-                              "score: 0.5, entity_type: PHONE_NUMBER', " \
-                              "original text length is only 6."
+    assert (
+        e.value.err_msg == "Invalid analyzer result: 'start: 8, end: 20, "
+        "score: 0.5, entity_type: PHONE_NUMBER', "
+        "original text length is only 6."
+    )
 
 
 def test_given_several_transformations_then_we_use_the_correct_one():
@@ -33,17 +36,21 @@ def test_given_several_transformations_then_we_use_the_correct_one():
     mock.get_text = lambda: "Number: 0554555556"
     analyzer_results = Mock()
     analyzer_result = AnalyzerResult(
-        {"score": 0.5, "entity_type": "PHONE_NUMBER", "start": 8, "end": 18})
+        {"score": 0.5, "entity_type": "PHONE_NUMBER", "start": 8, "end": 18}
+    )
     analyzer_results.to_sorted_unique_results = lambda reverse: [analyzer_result]
     mock.get_analysis_results = lambda: analyzer_results
     mock.get_transformation = lambda result: transformation
     text = AnonymizerEngine().anonymize(mock)
-    assert text == 'Number: I am your new text!'
+    assert text == "Number: I am your new text!"
 
 
 class Anonymizer:
-    def anonymize(self, original_text, data):
+    def anonymize(self, text, params):
         return "I am your new text!"
+
+    def validate(self, params):
+        pass
 
 
 content = {}
@@ -60,9 +67,10 @@ def get_payload():
 
 def file_path(file_name: str):
     return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), f"resources/{file_name}"))
+        os.path.join(os.path.dirname(__file__), f"resources/{file_name}")
+    )
 
 
 def get_transformation(arg):
     assert arg == "anonymizer"
-    return Anonymizer
+    return Anonymizer()
