@@ -155,7 +155,8 @@ class AnalyzerEngine:
 
         if trace:
             self.app_tracer.trace(
-                correlation_id, json.dumps([result.to_json() for result in results])
+                correlation_id,
+                json.dumps([str(result.to_dict()) for result in results]),
             )
 
         # Remove duplicates or low score results
