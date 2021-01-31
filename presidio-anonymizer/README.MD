@@ -9,8 +9,8 @@ entities with desired values.
 Presidio anonymizer comes by default with the following anonymizers:
 
 - Replace - replaces PII with desired value <br>
-  Parameters: "new_value" - replaces existing text with this value. <br>
-  If "new_value" is not supplied default behavior: <entity_type>
+  Parameters: "new_value" - replaces existing text with the given value. <br>
+  If "new_value" is not supplied or empty, default behavior will be: <entity_type>
 - Redact - removes PII completely from text Parameters: None
 - Hash - hash the PII using sha256
 - FPE - using ff1 algorithm for formatting-Preserving Encryption on the PII

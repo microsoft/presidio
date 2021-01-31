@@ -104,6 +104,6 @@ class AnalyzerResult:
         if start < 0 or end < 0:
             raise InvalidParamException(
                 f"Invalid input, analyzer result start and end must be positive")
-        if start > end or start == end:
+        if start >= end:
             raise InvalidParamException(
-                f"Invalid input, analyzer result {start} must be smaller then {end}")
+                f"Invalid input, analyzer result {start} must be smaller than {end}")

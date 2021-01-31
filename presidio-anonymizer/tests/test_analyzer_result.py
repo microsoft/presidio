@@ -235,13 +235,13 @@ def test_given_analyzer_result_then_one_is_not_greater_then_another(start, end):
 def test_given_endpoint_larger_then_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_analayzer_result("", 0, 10, 0)
-    assert e.value.err_msg == "Invalid input, analyzer result 10 must be smaller then 0"
+    assert e.value.err_msg == "Invalid input, analyzer result 10 must be smaller than 0"
 
 
 def test_given_endpoint_equal_to_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_analayzer_result("", 0, 0, 0)
-    assert e.value.err_msg == "Invalid input, analyzer result 0 must be smaller then 0"
+    assert e.value.err_msg == "Invalid input, analyzer result 0 must be smaller than 0"
 
 
 @pytest.mark.parametrize(
@@ -255,10 +255,9 @@ def test_given_endpoint_equal_to_start_point_then_we_fail():
     # fmt: on
 )
 def test_given_negative_start_or_endpoint_then_we_fail(start, end):
-    with pytest.raises(InvalidParamException) as e:
+    with pytest.raises(InvalidParamException, match="Invalid input, analyzer result "
+                                                    "start and end must be positive"):
         create_analayzer_result("", 0, start, end)
-    assert e.value.err_msg == "Invalid input, analyzer result start and " \
-                              "end must be positive"
 
 
 def create_analayzer_result(entity_type: str, score: float, start: int, end: int):
