@@ -33,15 +33,6 @@ def test_when_actual_parameter_is_non_json_typed_then_ipe_raised_with_general_er
 
 
 def test_given_wrong_type_then_we_fail():
-    with pytest.raises(
-            InvalidParamException, match="Invalid parameter value for 'name'."
-    ):
-        validate_type(
-            parameter_value=1, parameter_name="name", parameter_type=str
-        )
-
-
-def test_given_wrong_type_then_we_fail():
     err_str = "Invalid parameter value for name. Expecting 'string', but got 'number'."
     with pytest.raises(
             InvalidParamException,

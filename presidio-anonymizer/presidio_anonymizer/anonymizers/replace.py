@@ -16,6 +16,6 @@ class Replace(Anonymizer):
         return new_val
 
     def validate(self, params: dict = None) -> None:
-        """validate the new value is string."""
+        """Validate the new value is string."""
         validate_type(params.get(self.NEW_VALUE), self.NEW_VALUE, str)
         pass
