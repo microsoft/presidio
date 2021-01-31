@@ -62,7 +62,7 @@ class Server:
                 return (
                     json.dumps(
                         recognizer_result_list,
-                        default=lambda o: o.to_json(),
+                        default=lambda o: o.__dict__,
                         sort_keys=True,
                         indent=4,
                     ),
