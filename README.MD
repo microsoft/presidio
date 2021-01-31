@@ -2,19 +2,23 @@
 
 **Context aware, pluggable and customizable PII anonymization service for text and images.**
 
-
 ---
 
 [![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=V2)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=207&branchName=V2)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 
-
 ## What is Presidio
 
-Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for sensitive text containing credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data or additional PII entities.
+Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.
 
-Presidio includes:
+### Goals
+
+- Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
+- Embrace extensibility and customizability to a specific business need.
+- Facilitate both fully automated and semi-automated PII de-identification flows on multiple platforms.
+
+### Main features
 
 1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
@@ -24,11 +28,7 @@ Presidio includes:
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-## Demo
-
-[Try Presidio with your own data](https://aka.ms/presidio-demo)
-
-## Overview
+### How it works
 
 <p align="center">
   <kbd>  
@@ -36,18 +36,32 @@ Presidio includes:
   </kbd>
 </p>
 
-## Getting started
+### Demo
 
-## Usage documentation
+[Try Presidio with your own data](https://aka.ms/presidio-demo)
 
-## Samples
+## Installing Presidio
 
-## How to contact us?
+1. [Using pip](docs/installation.md#using-pip)
+2. [Using Docker](docs/installation.md#using-docker)
 
-If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
-For other matters, please email presidio@microsoft.com
+## Running Presidio
+
+1. [Running Presidio via code](docs/deployment-samples/python/index.md)
+2. [Running Presidio via HTTP](docs/deployment-samples/docker/index.md)
+2. [Setting up a development environment](docs/development.md)
+3. [Perform PII identification using presidio-analyzer](docs/analyzer/index.md)
+4. [Perform PII anonymization using presidio-anonymizer](docs/anonymizer/index.md)
+5. [Perform PII identification and anonymization in images using presidio-image-anonymizer](docs/image-anonymizer/index.md)
+6. [Example deployments](deployment-samples/index.md)
 
 ---
+
+## Support
+
+- Before you submit an issue, please go over the [documentation](docs/readme.md). For general discussions, please use the [Github repo's discussion board](https://github.com/microsoft/presidio/discussions).
+- If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
+- For other matters, please email [presidio@microsoft.com](mailto:presidio@microsoft.com).
 
 ## Contributing
 

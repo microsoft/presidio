@@ -1,4 +1,4 @@
-# Presidio Analyzer
+# Presidio Image anonymizer
 
 ## Description
 
@@ -11,13 +11,13 @@
 
 - Running in Python.
 - Running using Docker.
-- Creating new anonymizers.
+- Customizing.
 - API reference.
 
 ### Running in Python
 
 ### Running using Docker
 
-### Creating new anonymizers
+### Customizing
 
 ### API reference

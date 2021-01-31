@@ -4,15 +4,21 @@
 
 ## What is Presidio
 
-Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
+Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.
 
-Presidio includes:
+### Goals
 
-1. Predefined or custom PII recognizers leveraging Named Entity Recognition, regular expressions, formats and checksum with relevant context in multiple languages.
+- Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
+- Embrace extensibility and customizability to a specific business need.
+- Facilitate both fully automated and semi-automated PII de-identification flows on multiple platforms.
+
+### Main features
+
+1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
-3. Multiple usage options, from Python or PySpark pipelines to Kubernetes
-4. Customizability in PII identification and anonymization.
-5. Module for redacting PII text in images.
+3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
+4. **Customizability** in PII identification and anonymization.
+5. Module for **redacting PII text in images**.
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
@@ -24,35 +30,27 @@ Presidio includes:
 
 <p align="center">
   <kbd>  
-  <img width="-100" height="-50" src="docs/assets/presidio_gif.gif">
+  <img width="-100" height="-50" src="assets/presidio_gif.gif">
   </kbd>
 </p>
 
-## Getting started
+## Installing Presidio
 
-## Usage documentation
+1. [Using pip](installation.md#using-pip)
+2. [Using Docker](installation.md#using-docker)
 
-## Samples
+## Running Presidio
 
-## How to contact us?
+1. [Running Presidio via code](deployment-samples/python/index.md)
+2. [Running Presidio via HTTP](deployment-samples/docker/index.md)
+2. [Setting up a development environment](development.md)
+3. [Perform PII identification using presidio-analyzer](analyzer/index.md)
+4. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
+5. [Perform PII identification and anonymization in images using presidio-image-anonymizer](image-anonymizer/index.md)
+6. [Example deployments](../deployment-samples/index.md)
 
-If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
-For other matters, please email presidio@microsoft.com
+## Support
 
----
-
-## Contributing
-
-For details on contributing to this repository, see the [contributing guide](CONTRIBUTING.md).
-
-This project welcomes contributions and suggestions. Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+- Before you submit an issue, please go over the [documentation](docs/readme.md). For general discussions, please use the [Github repo's discussion board](https://github.com/microsoft/presidio/discussions).
+- If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
+- For other matters, please email [presidio@microsoft.com](mailto:presidio@microsoft.com).
