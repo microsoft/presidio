@@ -2,7 +2,6 @@
 from presidio_anonymizer.anonymizers import Anonymizer
 
 
-# TODO implement + test
 class Redact(Anonymizer):
     """Redact the string - empty value."""
 
@@ -11,5 +10,5 @@ class Redact(Anonymizer):
         return ""
 
     def validate(self, params: dict = None) -> None:
-        """TODO: [ADO-2545] docstring."""
+        """Redact does not require any paramters so no validation is needed."""
         pass

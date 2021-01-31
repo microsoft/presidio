@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 class AnalysisExplanation:
     """
     Hold tracing information to explain why PII entities were identified as such.
@@ -51,3 +54,11 @@ class AnalysisExplanation:
             self.textual_explanation = text
         else:
             self.textual_explanation = "{}\n{}".format(self.textual_explanation, text)
+
+    def to_dict(self) -> Dict:
+        """
+        Serialize self to dictionary.
+
+        :return: a dictionary
+        """
+        return self.__dict__
