@@ -235,13 +235,15 @@ def test_given_analyzer_result_then_one_is_not_greater_then_another(start, end):
 def test_given_endpoint_larger_then_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_analayzer_result("", 0, 10, 0)
-    assert e.value.err_msg == "Invalid input, analyzer result 10 must be smaller than 0"
+    assert e.value.err_msg == "Invalid input, analyzer result start index '10' " \
+                              "must be smaller than end index '0'"
 
 
 def test_given_endpoint_equal_to_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_analayzer_result("", 0, 0, 0)
-    assert e.value.err_msg == "Invalid input, analyzer result 0 must be smaller than 0"
+    assert e.value.err_msg == "Invalid input, analyzer result start index '0' " \
+                              "must be smaller than end index '0'"
 
 
 @pytest.mark.parametrize(
