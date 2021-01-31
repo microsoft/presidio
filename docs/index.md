@@ -47,7 +47,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 3. [Perform PII identification using presidio-analyzer](analyzer/index.md)
 4. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
 5. [Perform PII identification and anonymization in images using presidio-image-anonymizer](image-anonymizer/index.md)
-6. [Example deployments](../deployment-samples/index.md)
+6. [Example deployments](deployment-samples/index.md)
 
 ## Support
 
