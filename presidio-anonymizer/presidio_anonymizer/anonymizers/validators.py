@@ -3,7 +3,7 @@ from presidio_anonymizer.entities import InvalidParamException
 
 
 def validate_parameter(
-    parameter_value, parameter_name: str, parameter_type: type
+        parameter_value, parameter_name: str, parameter_type: type
 ) -> None:
     """Validate an anonymizer parameter.
 
@@ -13,7 +13,11 @@ def validate_parameter(
     """
     if parameter_value is None:
         raise InvalidParamException(f"Expected parameter {parameter_name}")
-    if not isinstance(parameter_value, parameter_type):
+    validate_type(parameter_value, parameter_name, parameter_type)
+
+
+def validate_type(parameter_value, parameter_name, parameter_type):
+    if parameter_value and not isinstance(parameter_value, parameter_type):
         message = _get_bad_typed_parameter_error_message(
             parameter_name,
             expected_type=parameter_type,
