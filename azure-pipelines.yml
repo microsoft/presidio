@@ -6,7 +6,7 @@
 trigger:
   branches:
     include:
-    - V2s
+    - V2
 
 pr:
   branches:
