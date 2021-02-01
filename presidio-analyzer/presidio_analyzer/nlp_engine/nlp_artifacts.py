@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from spacy.tokens import Doc
+from spacy.tokens import Doc, Span
 
 
 class NlpArtifacts:
@@ -14,7 +14,7 @@ class NlpArtifacts:
 
     def __init__(
         self,
-        entities: List[str],
+        entities: List[Span],
         tokens: Doc,
         tokens_indices: List[int],
         lemmas: List[str],

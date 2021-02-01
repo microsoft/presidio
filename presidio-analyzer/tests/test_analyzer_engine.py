@@ -13,7 +13,6 @@ from presidio_analyzer import (
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
     SpacyNlpEngine,
-    StanzaNlpEngine,
 )
 
 # noqa: F401
@@ -562,30 +561,8 @@ def test_given_interpretability_requested_then_response_contains_analysis(
     assert results[0].analysis_explanation is not None
 
 
-def test_read_test_nlp_conf_file_returns_spacy_nlp_engine(
-    mock_registry, mock_he_model, mock_bn_model
-):
-    class MockAnalyzerEngine(AnalyzerEngine):
-        @staticmethod
-        def _get_full_conf_path():
-            root_folder = Path(__file__).parent
-            return Path(root_folder, "conf/test.yaml")
+def test_read_test_spacy_nlp_conf_file_returns_spacy_nlp_engine(mock_registry):
+    engine = AnalyzerEngine(registry=mock_registry)
 
-    engine = MockAnalyzerEngine(registry=mock_registry)
     assert isinstance(engine.nlp_engine, SpacyNlpEngine)
-    assert engine.nlp_engine.nlp is not None
-
-
-@pytest.mark.skip_engine("stanza_en")
-def test_read_test_stanza_nlp_conf_file_returns_stanza_nlp_engine(
-    mock_registry, mock_he_model, mock_bn_model
-):
-    class MockAnalyzerEngine(AnalyzerEngine):
-        @staticmethod
-        def _get_full_conf_path():
-            root_folder = Path(__file__).parent
-            return Path(root_folder, "conf/test_stanza.yaml")
-
-    engine = MockAnalyzerEngine(registry=mock_registry)
-    assert isinstance(engine.nlp_engine, StanzaNlpEngine)
     assert engine.nlp_engine.nlp is not None

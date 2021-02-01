@@ -6,7 +6,7 @@ import spacy
 
 from presidio_analyzer import EntityRecognizer
 from presidio_analyzer import RecognizerRegistry
-from presidio_analyzer.nlp_engine import NLP_ENGINES
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
 from tests.mocks import RecognizerRegistryMock
 
@@ -34,9 +34,16 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture(scope="session")
-def nlp_engines(request):
+def nlp_engine_provider():
+    return NlpEngineProvider()
+
+
+@pytest.fixture(scope="session")
+def nlp_engines(request, nlp_engine_provider):
     available_engines = {}
-    for name, engine_cls in NLP_ENGINES.items():
+
+    nlp_engines = nlp_engine_provider.nlp_engines
+    for name, engine_cls in nlp_engines.items():
         if name == "spacy" and not request.config.getoption("--runfast"):
             available_engines[f"{name}_en"] = engine_cls({"en": "en_core_web_lg"})
         else:

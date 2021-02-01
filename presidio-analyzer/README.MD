@@ -175,13 +175,15 @@ To create a new recognizer via code:
 
 ### Multi language support
 
-Presidio can detect PII in multiple languages. In its default configuration,
-it contains recognizers and models for English.
-To allow Presidio to support additional languages, these modules needs to be configured:
+Presidio supports PII detection in multiple languages.
+In its default configuration, it contains recognizers and models for English.
+To configure Presidio to detect PII in additional languages, these modules require modification:
 
-1. The NlpEngine which contains the NLP model which performs tokenization,
+1. The `NlpEngine` containing the NLP model which performs tokenization,
 lemmatization, Named Entity Recognition and other NLP tasks.
-2. PII recognizers should be adapted or created.
+2. PII recognizers (different `EntityRecognizer` objects) should be adapted or created.
+
+> While different detection mechanisms such as regular expressions are language agnostic, the context words used to increase the PII detection confidence aren't. Consider updating the list of context words for each recognizer to leverage context words in additional languages.
 
 #### Configuring the NLP Engine
 
@@ -189,24 +191,57 @@ As its internal NLP engine, Presidio supports both [spaCy](https://spacy.io/usag
 and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follow these two steps:
 
 1. Download the spaCy/Stanza NER models for your desired language.
-   To download a new model with spaCy:
 
-   ```shell script
-   python -m spacy download es_core_news_md
-   ```
+    - To download a new model with spaCy:
 
-   In this example we download the medium size model for Spanish.
+        ```shell script
+        python -m spacy download es_core_news_md
+        ```
 
-   To download a new model with Stanza:
+        In this example we download the medium size model for Spanish.
 
-   ```python
-   import stanza
-   stanza.download("en") # where en is the language code of the model.
-   ```
+   - To download a new model with Stanza:
+
+        ```python
+        import stanza
+        stanza.download("en") # where en is the language code of the model.
+        ```
 
    For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
-2. Update the models configuration
-    - **Via configuration**: Add the downloaded models to the [default `conf` file](conf/default.yaml).
+
+2. Update the models configuration in one of two ways:
+    - **Via code**: Create an `NlpEngine` using the `NlpEnginerProvider` class, and pass it to the `AnalyzerEngine` as input:
+
+        ```python
+        from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+        from presidio_analyzer.nlp_engine import NlpEngineProvider
+
+        # Create configuration containing engine name and models
+        configuration = {
+            "nlp_engine_name": "spacy",
+            "models": [{"lang_code": "es", "model_name": "es_core_news_md"},
+                       {"lang_code": "en", "model_name": "en_core_web_lg"}],
+        }
+
+        # Create NLP engine based on configuration
+        provider = NlpEngineProvider(nlp_configuration=configuration)
+        nlp_engine_with_spanish = provider.create_engine()
+
+        # Pass the created NLP engine and supported_languages to the AnalyzerEngine
+        analyzer = AnalyzerEngine(
+            nlp_engine=nlp_engine_with_spanish, 
+            supported_languages=["en", "es"]
+        )
+
+        # Analyze in different languages
+        results_spanish = analyzer.analyze(text="Mi nombre es David", language="es")
+        print(results_spanish)
+
+        results_english = analyzer.analyze(text="My name is David", language="en")
+        print(results_english)
+        ```
+
+    - **Via configuration**: Set up the models which should be used in the [default `conf` file](conf/default.yaml).
 
         An example Conf file:
 
@@ -221,35 +256,64 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
             model_name: es_core_news_md 
         ```
 
-        In this configuration we use the `en_core_web_lg` spaCy model for English, and `es_core_news_md` spaCy model for Spanish.
-
-    - **Via code**: Create an `NlpEngine` using the `create_nlp_engine` method and a configuration dict:
+        The default conf file is read during the default initialization of the `AnalyzerEngine`. Alternatively, the path to a custom configuration file can be passed to the `NlpEngineProvider`:
 
         ```python
         from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
-        from presidio_analyzer.nlp_engine import create_nlp_engine
+        from presidio_analyzer.nlp_engine import NlpEngineProvider
 
-        configuration = {
-            "nlp_engine_name": "spacy",
-            "models": [{"lang_code": "es", "model_name": "es_core_news_md"},
-                       {"lang_code": "en", "model_name": "en_core_web_lg"}],
-        }
+        # Create NLP engine based on configuration file
+        provider = NlpEngineProvider(conf_file="PATH_TO_YAML")
+        nlp_engine_with_spanish = provider.create_engine()
 
-        nlp_engine = create_nlp_engine(nlp_configuration=configuration)
-        analyzer_engine = AnalyzerEngine(
-            nlp_engine=nlp_engine, supported_languages=["en", "es"]
+        # Pass created NLP engine and supported_languages to the AnalyzerEngine
+        analyzer = AnalyzerEngine(
+            nlp_engine=nlp_engine_with_spanish, 
+            supported_languages=["en", "es"]
         )
-        results_spanish = analyzer_engine.analyze(text="Mi nombre es David", language="es")
+
+        # Analyze in different languages
+        results_spanish = analyzer.analyze(text="Mi nombre es David", language="es")
         print(results_spanish)
 
-        results_english = analyzer_engine.analyze(text="My name is David", language="en")
+        results_english = analyzer.analyze(text="My name is David", language="en")
         print(results_english)
         ```
+
+    In this examples we create an `NlpEngine` holding two spaCy models (one in English: `en_core_web_lg` and one in Spanish: `es_core_news_md`), define the `supported_languages` parameter accordingly, and can send requests in each of these languages.
 
 #### Set up language specific recognizers
 
 Recognizers are language dependent either by their logic or by the context words used while scanning the surrounding of a detected entity.
-As these context words are used to increase score, they should be in the expected input language. Consider updating the context words of existing recogniers or add new recognizers to support new languages.
+As these context words are used to increase score, they should be in the expected input language.
+
+Consider updating the context words of existing recognizers or add new recognizers to support new languages.
+Each recognizer can support one language. For example:
+
+```python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer.predefined_recognizers import EmailRecognizer
+
+# Setting up an English Email recognizer:
+email_recognizer_en = EmailRecognizer(supported_language="en",context=["email","mail"])
+
+# Setting up a Spanish Email recognizer
+email_recognizer_es = EmailRecognizer(supported_language="es",context=["correo","electrónico"])
+
+registry = RecognizerRegistry()
+
+# Add recognizers to registry
+registry.add_recognizer(email_recognizer_en)
+registry.add_recognizer(email_recognizer_es)
+
+# Set up analyzer with our updated recognizer registry
+analyzer = AnalyzerEngine(
+    registry=registry,
+    supported_languages=["en","es"],
+    nlp_engine=nlp_engine_with_spanish)
+
+analyzer.analyze(...)
+```
 
 ## HTTP API
 
