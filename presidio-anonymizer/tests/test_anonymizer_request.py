@@ -72,7 +72,7 @@ def test_given_no_transformations_then_we_get_the_default():
     analyzer_result.entity_type = "PHONE"
     transformation = request.get_transformation(analyzer_result)
     assert transformation.get("type") == "replace"
-    assert isinstance(transformation.get("anonymizer"), Replace)
+    assert type(transformation.get("anonymizer")) == type(Replace)
 
 
 def test_given_valid_json_then_request_creation_should_succeed():

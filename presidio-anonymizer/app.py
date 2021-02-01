@@ -30,7 +30,7 @@ class Server:
         def anonymize():
             content = request.get_json()
             if not content:
-                return ErrorResponse("Invalid request json"), 400
+                return ErrorResponse("Invalid request json").to_json(), 400
             try:
                 engine = AnonymizerEngine()
                 data = AnonymizerRequest(content, engine.builtin_anonymizers)
@@ -41,7 +41,7 @@ class Server:
                 return e.err_msg, 422
             except Exception as e:
                 self.logger.error(f"failed to anonymize text with error: {e}")
-                return ErrorResponse("Internal server error"), 500
+                return ErrorResponse("Internal server error").to_json(), 500
             return text
 
         @self.app.route("/anonymizers", methods=["GET"])
