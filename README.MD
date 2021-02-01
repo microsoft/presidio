@@ -8,7 +8,6 @@
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 
-
 ## What is Presidio
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_analytics_** and **_anonymization_** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
@@ -116,8 +115,6 @@ Follow the [Deployment Guidelines](docs/deploy.md) for details:
 
 If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
 For other matters, please email presidio@microsoft.com
-
-
 
 :exclamation: **Note:** As we are in the process of defining the roadmap for Presidio, we will only accept PRs with bug fixes and no new features in the upcoming months.
 
