@@ -14,7 +14,7 @@ repos:
           ]
           args: ['--max-line-length=88', 
                  '--docstring-convention=numpy', 
-                 '--per-file-ignores=**/tests/**.py:D functional-tests/**:D', 
+                 '--per-file-ignores=**/tests/**.py:D functional-tests/**:D,E501,W291',
                  '--extend-ignore=
                  		E203,
                  		D100,
