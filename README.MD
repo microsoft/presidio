@@ -48,7 +48,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 ## Running Presidio
 
 1. [Running Presidio via code](docs/deployment-samples/python/index.md)
-2. [Running Presidio via HTTP](docs/deployment-samples/docker/index.md)
+2. [Running Presidio as an HTTP service](docs/deployment-samples/docker/index.md)
 2. [Setting up a development environment](docs/development.md)
 3. [Perform PII identification using presidio-analyzer](docs/analyzer/index.md)
 4. [Perform PII anonymization using presidio-anonymizer](docs/anonymizer/index.md)
