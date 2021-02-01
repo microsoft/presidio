@@ -26,7 +26,8 @@ class AnonymizerRequest:
         self._transformations = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
-        self.default_transformation = {"type": "replace", "anonymizer": self.anonymizers["replace"]()}
+        self.default_transformation = {"type": "replace",
+                                       "anonymizer": self.anonymizers["replace"]()}
 
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """
