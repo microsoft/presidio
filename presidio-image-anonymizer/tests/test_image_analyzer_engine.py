@@ -24,18 +24,20 @@ def get_ocr_analyzer_results():
     ocr_result["height"] = [50, 47, 37, 28, 40, 50, 40, 50, 50]
     text = " Homey Interiors was created by Katie  Cromley."
 
-    analyzer_result = []
-    analyzer_result.append(RecognizerResult("PERSON", 32, 37, 0.85))
-    analyzer_result.append(RecognizerResult("PERSON", 39, 46, 0.85))
+    analyzer_result = [
+        RecognizerResult("PERSON", 32, 37, 0.85),
+        RecognizerResult("PERSON", 39, 46, 0.85),
+    ]
 
     return ocr_result, text, analyzer_result
 
 
 @pytest.fixture(scope="function")
 def get_image_recognizerresult():
-    results = []
-    results.append(ImageRecognizerResult("PERSON", 32, 37, 0.85, 896, 64, 183, 40))
-    results.append(ImageRecognizerResult("PERSON", 39, 46, 0.85, 141, 134, 190, 50))
+    results = [
+        ImageRecognizerResult("PERSON", 32, 37, 0.85, 896, 64, 183, 40),
+        ImageRecognizerResult("PERSON", 39, 46, 0.85, 141, 134, 190, 50),
+    ]
     return results
 
 
@@ -64,18 +66,16 @@ def test_given_valid_dict_then_get_text_from_ocr_dict_returns_correct_str(
 
 def test_given_wrong_keys_in_dict_then_get_text_from_ocr_dict_returns_exception():
     ocr_result = {"words": ["John"], "level": [0]}
-    expected_exception_message = "Key 'text' not found in dictionary"
-    with pytest.raises(KeyError) as e:
+    with pytest.raises(KeyError):
         ImageAnalyzerEngine.get_text_from_ocr_dict(ocr_result)
-    assert expected_exception_message == e.value.args[0]
 
 
-def test_given_valid_ocr_results_and_entities_then_map_entities_returns_correct_output(
+def test_given_valid_ocr_and_entities_then_map_analyzer_results_returns_correct_output(
     get_ocr_analyzer_results, get_image_recognizerresult
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
     expected_result = get_image_recognizerresult
-    mapped_entities = ImageAnalyzerEngine.map_entities(
+    mapped_entities = ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
         recogniser_result, ocr_result, text
     )
 
@@ -83,24 +83,35 @@ def test_given_valid_ocr_results_and_entities_then_map_entities_returns_correct_
     assert expected_result == mapped_entities
 
 
-def test_given_empty_ocr_dict_and_entities_lists_then_map_entities_returns_empty_list(
+def test_given_empty_ocr_entities_lists_then_map_analyzer_results_returns_empty_list(
     get_ocr_analyzer_results,
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
-    assert ImageAnalyzerEngine.map_entities([], {}, "") == []
-    assert ImageAnalyzerEngine.map_entities([], ocr_result, text) == []
-    assert ImageAnalyzerEngine.map_entities(recogniser_result, {}, "") == []
+    assert ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes([], {}, "") == []
+    assert (
+        ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes([], ocr_result, text)
+        == []
+    )
+    assert (
+        ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
+            recogniser_result, {}, ""
+        )
+        == []
+    )
 
 
-def test_given_wrong_keys_in_ocr_result_dict_then_map_entities_returns_exception():
+def test_given_wrong_keys_in_ocr_dict_then_map_analyzer_results_returns_exception(
+    get_ocr_analyzer_results,
+):
+    ocr_result, text, recogniser_result = get_ocr_analyzer_results
     ocr_result = {"words": ["John"], "level": [0]}
-    expected_exception_message = "Key 'text' not found in dictionary"
-    with pytest.raises(KeyError) as e:
-        ImageAnalyzerEngine.map_entities([], ocr_result, "")
-    assert expected_exception_message == e.value.args[0]
+    with pytest.raises(KeyError):
+        ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
+            recogniser_result, ocr_result, ""
+        )
 
 
-def test_given_repeated_entities_then_map_entities_returns_correct_number_of_bboxes(
+def test_given_repeat_entities_then_map_analyzer_results_returns_correct_no_of_bboxes(
     get_ocr_analyzer_results,
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
@@ -110,7 +121,12 @@ def test_given_repeated_entities_then_map_entities_returns_correct_number_of_bbo
     text = " Katie Interiors was created by Katie  Cromley."
 
     assert (
-        len(ImageAnalyzerEngine.map_entities(recogniser_result, ocr_result, text)) == 3
+        len(
+            ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
+                recogniser_result, ocr_result, text
+            )
+        )
+        == 3
     )
 
 
@@ -121,7 +137,7 @@ def test_given_word_has_entity_but_not_entity_then_map_entity_returns_correct_bb
     ocr_result["text"][2] = "Katieiors"
     text = " Homey Katieiors was created by Katie  Cromley."
     expected_result = get_image_recognizerresult
-    mapped_entities = ImageAnalyzerEngine.map_entities(
+    mapped_entities = ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
         recogniser_result, ocr_result, text
     )
 
@@ -129,21 +145,18 @@ def test_given_word_has_entity_but_not_entity_then_map_entity_returns_correct_bb
     assert expected_result == mapped_entities
 
 
-def test_given_entity_with_multiple_words_then_map_entities_returns_correct_bboxees(
+def test_given_multiword_entity_then_map_analyzer_results__returns_correct_bboxes(
     get_ocr_analyzer_results,
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
 
     # create new object for multiple words entities
     recogniser_result = [RecognizerResult("PERSON", 32, 46, 0.85)]
-    expected_result = []
-    expected_result.append(
-        ImageRecognizerResult("PERSON", 32, 46, 0.85, 896, 64, 183, 40)
-    )
-    expected_result.append(
-        ImageRecognizerResult("PERSON", 32, 46, 0.85, 141, 134, 190, 50)
-    )
-    mapped_entities = ImageAnalyzerEngine.map_entities(
+    expected_result = [
+        ImageRecognizerResult("PERSON", 32, 46, 0.85, 896, 64, 183, 40),
+        ImageRecognizerResult("PERSON", 32, 46, 0.85, 141, 134, 190, 50),
+    ]
+    mapped_entities = ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
         recogniser_result, ocr_result, text
     )
 
@@ -151,14 +164,14 @@ def test_given_entity_with_multiple_words_then_map_entities_returns_correct_bbox
     assert expected_result == mapped_entities
 
 
-def test_given_entities_not_same_length_then_map_entities_returns_correct_output(
+def test_given_dif_len_entities_then_map_analyzer_results_returns_correct_output(
     get_ocr_analyzer_results, get_image_recognizerresult
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
     recogniser_result[1].start += 1
     expected_result = get_image_recognizerresult
     expected_result[1].start += 1
-    mapped_entities = ImageAnalyzerEngine.map_entities(
+    mapped_entities = ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
         recogniser_result, ocr_result, text
     )
 
