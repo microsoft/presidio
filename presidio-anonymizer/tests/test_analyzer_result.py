@@ -8,7 +8,6 @@ from presidio_anonymizer.entities import AnalyzerResult, InvalidParamException
     "start, end",
     [
         (0, 10),
-        (10, 10),
         (2, 8),
         (0, 8),
         (0, 10),
@@ -236,11 +235,31 @@ def test_given_analyzer_result_then_one_is_not_greater_then_another(start, end):
 def test_given_endpoint_larger_then_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_analayzer_result("", 0, 10, 0)
-    assert e.value.err_msg == "Invalid input, analyzer result 10 must be smaller then 0"
+    assert e.value.err_msg == "Invalid input, analyzer result start index '10' " \
+                              "must be smaller than end index '0'"
 
 
-def test_given_endpoint_same_as_start_point_then_we_pass():
-    assert create_analayzer_result("", 0, 0, 0)
+def test_given_endpoint_equal_to_start_point_then_we_fail():
+    with pytest.raises(InvalidParamException) as e:
+        create_analayzer_result("", 0, 0, 0)
+    assert e.value.err_msg == "Invalid input, analyzer result start index '0' " \
+                              "must be smaller than end index '0'"
+
+
+@pytest.mark.parametrize(
+    # fmt: off
+    "start, end",
+    [
+        (-1, 10),
+        (6, -12),
+        (-2, -2),
+    ],
+    # fmt: on
+)
+def test_given_negative_start_or_endpoint_then_we_fail(start, end):
+    with pytest.raises(InvalidParamException, match="Invalid input, analyzer result "
+                                                    "start and end must be positive"):
+        create_analayzer_result("", 0, start, end)
 
 
 def create_analayzer_result(entity_type: str, score: float, start: int, end: int):

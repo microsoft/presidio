@@ -101,6 +101,10 @@ class AnalyzerResult:
                     f"Invalid input, analyzer result must contain {field}")
         start = content.get("start")
         end = content.get("end")
-        if start > end:
+        if start < 0 or end < 0:
             raise InvalidParamException(
-                f"Invalid input, analyzer result {start} must be smaller then {end}")
+                f"Invalid input, analyzer result start and end must be positive")
+        if start >= end:
+            raise InvalidParamException(
+                f"Invalid input, analyzer result start index '{start}' "
+                f"must be smaller than end index '{end}'")

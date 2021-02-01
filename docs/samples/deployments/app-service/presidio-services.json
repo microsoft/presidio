@@ -1,0 +1,171 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "analyzer": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata":{
+                "description": "Choose if to deploy the Analyzer service"
+            }
+        },
+        "anonymizer": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata":{
+                "description": "Choose if to deploy the Anonymizer service"
+            }
+        },
+        "analyzerWebAppName": {
+            "type": "string",
+            "defaultValue": "[concat('webApp-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
+            "metadata": {
+                "description": "Web app name."
+            }
+        },
+        "anonymizerWebAppName": {
+            "type": "string",
+            "defaultValue": "[concat('webApp-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
+            "metadata": {
+                "description": "Web app name."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "analyzerSku": {
+            "type": "string",
+            "defaultValue": "B2",
+            "metadata": {
+                "description": "The SKU of App Service Plan."
+            },
+            "allowedValues": [
+                "F2",
+                "B2",
+                "S2",
+                "P2",
+                "I2"
+            ]
+        },
+        "anonymizerSku": {
+            "type": "string",
+            "defaultValue": "B1",
+            "metadata": {
+                "description": "The SKU of App Service Plan."
+            },
+            "allowedValues": [
+                "F1",
+                "B1",
+                "S1",
+                "P1",
+                "I1"
+            ]
+        },
+        "dockerRegistryUser": {
+            "type": "string",
+            "metadata": {
+                "description": "The user name for docker registry."
+            }
+        },
+        "dockerRegistryPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The user password for docker registry."
+            }
+        },
+        "ipRestriction": {
+            "type": "string",
+            "defaultValue": "any",
+            "metadata": {
+                "description": "Optional IP range to restrict access to."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-analyzer",
+            "condition": "[parameters('analyzer')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/V2/docs/deployment-samples/presidio-app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webAppName": {
+                        "value": "[parameters('analyzerWebAppName')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('analyzerSku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "image": {
+                        "value": "presidio.azurecr.io/presidio-analyzer:10219"
+                    },
+                    "dockerRegsitryUrl": {
+                        "value": "presidio.azurecr.io"
+                    },
+                    "dockerRegistryUser": {
+                        "value": "[parameters('dockerRegistryUser')]"
+                    },
+                    "dockerRegistryPassword": {
+                        "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    "ipRestriction": {
+                        "value": "[parameters('ipRestriction')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-anonymizer",
+            "condition": "[parameters('anonymizer')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/V2/docs/deployment-samples/presidio-app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webAppName": {
+                        "value": "[parameters('anonymizerWebAppName')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('anonymizerSku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "image": {
+                        "value": "presidio.azurecr.io/presidio-anonymizer:10219"
+                    },
+                    "dockerRegsitryUrl": {
+                        "value": "presidio.azurecr.io"
+                    },
+                    "dockerRegistryUser": {
+                        "value": "[parameters('dockerRegistryUser')]"
+                    },
+                    "dockerRegistryPassword": {
+                        "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    "ipRestriction": {
+                        "value": "[parameters('ipRestriction')]"
+                    }
+                }
+            }
+        }
+    ]
+}

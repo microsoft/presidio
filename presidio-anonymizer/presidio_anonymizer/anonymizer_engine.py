@@ -1,6 +1,7 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 import logging
 
+from presidio_anonymizer.anonymizers import Mask, FPE, Replace, Hash, Redact
 from presidio_anonymizer.entities import AnonymizerRequest, InvalidParamException
 
 
@@ -13,9 +14,11 @@ class AnonymizerEngine:
     """
 
     logger = logging.getLogger("presidio-anonymizer")
+    builtin_anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
+                           "redact": Redact}
 
     def __init__(
-        self,
+            self,
     ):
         """Handle text replacement for PIIs with requested transformations.
 
@@ -40,20 +43,30 @@ class AnonymizerEngine:
                 f"for analyzer result {analyzer_result} received transformation "
                 f"{str(transformation)}"
             )
-            anonymizer_class = transformation.get("anonymizer")
-            new_text = anonymizer_class().anonymize(original_full_text, transformation)
-            end_of_text = min(analyzer_result.end, last_replacement_point)
             self.__validate_position_over_text(analyzer_result, text_len)
+            anonymizer = transformation.get("anonymizer")()
+            anonymizer.validate(params=transformation)
+            text_to_anonymize = output_text[analyzer_result.start: analyzer_result.end]
+            anonymized_text = anonymizer.anonymize(
+                params=transformation, text=text_to_anonymize
+            )  # TODO: [ADO-2754] replace with the singleton class instance
+            end_of_text = min(analyzer_result.end, last_replacement_point)
             output_text = (
                 output_text[: analyzer_result.start]
-                + new_text
+                + anonymized_text
                 + output_text[end_of_text:]
             )
             last_replacement_point = analyzer_result.start
         return output_text
 
+    def anonymizers(self):
+        """Return a list of supported anonymizers."""
+        names = [p for p in self.builtin_anonymizers.keys()]
+        return names
+
     def __validate_position_over_text(self, analyzer_result, text_len):
         if text_len < analyzer_result.start or analyzer_result.end > text_len:
             raise InvalidParamException(
                 f"Invalid analyzer result: '{analyzer_result}', "
-                f"original text length is only {text_len}.")
+                f"original text length is only {text_len}."
+            )

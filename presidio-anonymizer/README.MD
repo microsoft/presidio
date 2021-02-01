@@ -5,22 +5,23 @@
 The Presidio anonymizer is a Python based module for anonymizing detected PII text
 entities with desired values.
 
+[comment]: <shiranr> (#TODO need to fill this once the the functionality is done 2656 - 2659)
 Presidio anonymizer comes by default with the following anonymizers:
 
-- Replace - replaces PII with desired value
-- Redact - removes PII completely from text
+- Replace - replaces the PII with desired value <br>
+  Parameters: "new_value" - replaces existing text with the given value. <br>
+  If "new_value" is not supplied or empty, default behavior will be: <entity_type>
+  e.g: <PHONE_NUMBER>
+- Redact - removes the PII completely from text Parameters: None
 - Hash - hash the PII using sha256
 - FPE - using ff1 algorithm for formatting-Preserving Encryption on the PII
-- Mask - mask the selected amount of characters of the PII with a given character
+- Mask - replaces the PII with a given character. <br>
+  Parameters: 
+  * "chars_to_mask" - the amount of characters out of the PII that should
+   be replaced. 
+  * "masking_char" - the character to be replaced with. 
+  * "from_end" - Whether to mask the PII from it's end.
 
-[comment]: <shiranr> (#TODO need to fill this once the the functionality is done 2656 - 2659)
-Each anonymizer requires different values:
-
-- Replace -
-- Redact - None
-- Hash - None
-- FPE -
-- Mask -
 
 Please notice: if default value is not stated in transformations object, the default
 anonymizer is "replace" for all entities. The replacing value will be the entity type
@@ -147,3 +148,23 @@ Result:
 200 OK
 hello world, my name is <NAME>. My number is: 03445****
 ```
+
+
+### HTTP API
+
+#### /anonymizers
+Returns a list of supported anonymizers.
+
+Method: GET
+
+No paramaters are required.
+
+Response sample:
+```json
+["mask", "fpe", "replace", "hash", "redact"]
+```
+
+### Deploy Presidio Anonymizer to Azure
+
+TODO: change this link to main branch once merged (#2765).
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2FV2%2Fpresidio-anonymizer%2Fdeploytoazure.json)

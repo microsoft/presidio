@@ -5,11 +5,6 @@ It get the data and validate it before the engine receives it.
 """
 import logging
 
-from presidio_anonymizer.anonymizers import FPE
-from presidio_anonymizer.anonymizers import Hash
-from presidio_anonymizer.anonymizers import Mask
-from presidio_anonymizer.anonymizers import Redact
-from presidio_anonymizer.anonymizers import Replace
 from presidio_anonymizer.entities import AnalyzerResult
 from presidio_anonymizer.entities import AnalyzerResults
 from presidio_anonymizer.entities import InvalidParamException
@@ -18,20 +13,21 @@ from presidio_anonymizer.entities import InvalidParamException
 class AnonymizerRequest:
     """Input validation for the anonymize process."""
 
-    anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
-                   "redact": Redact}
-
     logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self,
-                 data: dict):
+                 data: dict,
+                 anonymizers):
         """Handle and validate data for the text replacement.
 
         :param data: a map which contains the transformations, analyzer_results and text
         """
+        self.anonymizers = anonymizers
         self._transformations = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
+        self.default_transformation = {"type": "replace",
+                                       "anonymizer": self.anonymizers["replace"]}
 
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """
@@ -45,7 +41,7 @@ class AnonymizerRequest:
         if not transformation:
             transformation = self._transformations.get("DEFAULT")
             if not transformation:
-                transformation = {"type": "replace", "anonymizer": Replace}
+                transformation = self.default_transformation
         transformation["entity_type"] = analyzer_result.entity_type
         return transformation
 
@@ -106,12 +102,12 @@ class AnonymizerRequest:
         Extract the anonymizer class from the anonymizers list.
 
         :param transformation: a single transformation value
-        :return: anonymizer_class
+        :return: Anonymizer
         """
         anonymizer_type = transformation.get("type").lower()
-        anonymizer_class = self.anonymizers.get(anonymizer_type)
-        if not anonymizer_class:
+        anonymizer = self.anonymizers.get(anonymizer_type)
+        if not anonymizer:
             self.logger.error(f"No such anonymizer class {anonymizer_type}")
             raise InvalidParamException(
                 f"Invalid anonymizer class '{anonymizer_type}'.")
-        return anonymizer_class
+        return anonymizer
