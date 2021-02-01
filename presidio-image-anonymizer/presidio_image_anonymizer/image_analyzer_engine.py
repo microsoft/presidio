@@ -8,7 +8,7 @@ from presidio_analyzer import AnalyzerEngine
 class ImageAnalyzerEngine:
     """ImageAnalyzerEngine class."""
 
-    def analyze(self, image: object) -> List[ImageRecognizerResult]:
+    def analyze(self, image: object, **kwargs) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
         :param image: PIL Image/numpy array or file path(str) to be processed
@@ -19,7 +19,7 @@ class ImageAnalyzerEngine:
         text = OCR().get_text_from_ocr_dict(ocr_result)
 
         analyzer = AnalyzerEngine()
-        analyzer_result = analyzer.analyze(text=text, language="en")
+        analyzer_result = analyzer.analyze(text=text, language="en", **kwargs)
         bboxes = self.map_analyzer_results_to_bounding_boxes(
             analyzer_result, ocr_result, text
         )
@@ -30,6 +30,9 @@ class ImageAnalyzerEngine:
         text_analyzer_results: List[RecognizerResult], ocr_result: dict, text: str
     ) -> List[ImageRecognizerResult]:
         """Map extracted PII entities to image bounding boxes.
+
+        Matching is based on the position of the recognised entity from analyzer
+        and word (in ocr dict) in the text.
 
         :param text_analyzer_results: PII entities recognized by presidio analyzer
         :param ocr_result: dict results with words and bboxes from OCR
@@ -52,6 +55,7 @@ class ImageAnalyzerEngine:
             else:
                 for element in text_analyzer_results:
                     text_element = text[element.start : element.end]
+                    # check position and text of ocr word matches recognised entity
                     if (
                         max(pos, element.start) < min(element.end, pos + len(word))
                     ) and ((text_element in word) or (word in text_element)):
@@ -68,6 +72,9 @@ class ImageAnalyzerEngine:
                             )
                         )
 
+                        # add bounding boxes for all words in ocr dict
+                        # contained within the text of recognised entity
+                        # based on relative position in the full text
                         while pos + len(word) < element.end:
                             index, word = next(iter_ocr)
                             if word:

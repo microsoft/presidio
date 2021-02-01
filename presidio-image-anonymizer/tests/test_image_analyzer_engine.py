@@ -4,7 +4,7 @@ from presidio_image_anonymizer.image_recognizer_result import ImageRecognizerRes
 from presidio_analyzer import RecognizerResult
 
 
-def test_given_valid_ocr_and_entities_then_map_analyzer_results_returns_correct_output(
+def test_given_valid_ocr_and_entities_then_map_analyzer_returns_correct_len_and_output(
     get_ocr_analyzer_results, get_image_recognizerresult
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
@@ -64,7 +64,7 @@ def test_given_repeat_entities_then_map_analyzer_results_returns_correct_no_of_b
     )
 
 
-def test_given_word_has_entity_but_not_entity_then_map_entity_returns_correct_bboxes(
+def test_given_word_has_entity_but_not_entity_then_map_entity_correct_bboxes_and_len(
     get_ocr_analyzer_results, get_image_recognizerresult
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
@@ -79,7 +79,7 @@ def test_given_word_has_entity_but_not_entity_then_map_entity_returns_correct_bb
     assert expected_result == mapped_entities
 
 
-def test_given_multiword_entity_then_map_analyzer_results__returns_correct_bboxes(
+def test_given_multiword_entity_then_map_analyzer_returns_correct_bboxes_and_len(
     get_ocr_analyzer_results,
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
@@ -98,7 +98,7 @@ def test_given_multiword_entity_then_map_analyzer_results__returns_correct_bboxe
     assert expected_result == mapped_entities
 
 
-def test_given_dif_len_entities_then_map_analyzer_results_returns_correct_output(
+def test_given_dif_len_entities_then_map_analyzer_returns_correct_outputand_len(
     get_ocr_analyzer_results, get_image_recognizerresult
 ):
     ocr_result, text, recogniser_result = get_ocr_analyzer_results
