@@ -44,11 +44,6 @@ class Server:
                 return ErrorResponse("Internal server error"), 500
             return text
 
-        @self.app.route("/health")
-        def health() -> str:
-            """Return basic health probe result.  get ok + 200."""
-            return "ok"
-
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""

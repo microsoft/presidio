@@ -24,7 +24,8 @@ def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_ret
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.out.json")
     )
     engine = AnonymizerEngine()
-    anonymizer_request = AnonymizerRequest(anonymizer_request_dict, engine.builtin_anonymizers)
+    anonymizer_request = AnonymizerRequest(
+        anonymizer_request_dict, engine.builtin_anonymizers)
 
     try:
         actual_anonymize_result = engine.anonymize(anonymizer_request)

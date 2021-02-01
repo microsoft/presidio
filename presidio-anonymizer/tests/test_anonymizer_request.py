@@ -6,7 +6,7 @@ from unittest.mock import Mock
 import pytest
 
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.anonymizers import Anonymizer, Replace, Mask
+from presidio_anonymizer.anonymizers import Replace, Mask
 from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
 
