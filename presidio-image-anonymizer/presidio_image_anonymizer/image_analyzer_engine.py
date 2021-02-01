@@ -16,7 +16,7 @@ class ImageAnalyzerEngine:
         :return: list of the extract entities with image bounding boxes
         """
         ocr_result = OCR().perform_ocr(image)
-        text = self.get_text_from_ocr_dict(ocr_result)
+        text = OCR().get_text_from_ocr_dict(ocr_result)
 
         analyzer = AnalyzerEngine()
         analyzer_result = analyzer.analyze(text=text, language="en")
@@ -24,20 +24,6 @@ class ImageAnalyzerEngine:
             analyzer_result, ocr_result, text
         )
         return bboxes
-
-    @staticmethod
-    def get_text_from_ocr_dict(ocr_result: dict, separator: str = " ") -> str:
-        """Combine the text from the OCR dict to full text.
-
-        :param ocr_result: dictionary containing the ocr results per word
-        :param separator: separator to use when joining the words
-
-        return: str containing the full extracted text as string
-        """
-        if not ocr_result:
-            return ""
-        else:
-            return separator.join(ocr_result["text"])
 
     @staticmethod
     def map_analyzer_results_to_bounding_boxes(

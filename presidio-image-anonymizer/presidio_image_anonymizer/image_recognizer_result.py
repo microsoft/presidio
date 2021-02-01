@@ -1,4 +1,7 @@
-class ImageRecognizerResult:
+from presidio_analyzer import RecognizerResult
+
+
+class ImageRecognizerResult(RecognizerResult):
     """
     ImageRecognizerResult represents the results of analysing the image.
 
@@ -24,10 +27,7 @@ class ImageRecognizerResult:
         height: int,
     ):
 
-        self.entity_type = entity_type
-        self.start = start
-        self.end = end
-        self.score = score
+        super().__init__(entity_type, start, end, score)
         self.left = left
         self.top = top
         self.width = width
