@@ -73,4 +73,4 @@ def file_path(file_name: str):
 
 def get_transformation(arg):
     assert arg == "anonymizer"
-    return Anonymizer()
+    return Anonymizer

@@ -149,6 +149,21 @@ Result:
 hello world, my name is <NAME>. My number is: 03445****
 ```
 
+
+### HTTP API
+
+#### /anonymizers
+Returns a list of supported anonymizers.
+
+Method: GET
+
+No paramaters are required.
+
+Response sample:
+```json
+["mask", "fpe", "replace", "hash", "redact"]
+```
+
 ### Deploy Presidio Anonymizer to Azure
 
 TODO: change this link to main branch once merged (#2765).
