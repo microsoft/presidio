@@ -15,7 +15,7 @@ def anonymizers():
     response = requests.get(
         f"{ANONYMIZER_BASE_URL}/anonymizers", headers=DEFAULT_HEADERS
     )
-    return response.status_code, json.loads(response.content)
+    return response.status_code, response.content
 
 
 def analyze(data):

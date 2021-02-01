@@ -12,6 +12,8 @@ from tests.integration.file_utils import get_scenario_file_content
     [
         "mask_name_phone_number",
         "mask_phone_number_with_bad_masking_char",
+        "redact_and_replace",
+        "replace_with_intersecting_entities",
     ],
 )
 def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_returned(
@@ -25,7 +27,8 @@ def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_ret
     )
     engine = AnonymizerEngine()
     anonymizer_request = AnonymizerRequest(
-        anonymizer_request_dict, engine.builtin_anonymizers)
+        anonymizer_request_dict, engine.builtin_anonymizers
+    )
 
     try:
         actual_anonymize_result = engine.anonymize(anonymizer_request)
