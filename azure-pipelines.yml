@@ -1,13 +1,4 @@
-# Presidio PR validation and CI pipeline.
-# * PR Validation: security analysis, lint, unit test, functional tests
-# * CI: lint, unit test, functional tests, push to private Azure Container registry
-#       and deploy to internal development environment
-
-trigger:
-  branches:
-    include:
-    - V2
-
+# Presidio PR validation: security analysis, lint, build, unit test, functional tests
 pr:
   branches:
     include:
@@ -30,35 +21,22 @@ stages:
         - job: Inclusivelint
           displayName: 'Inclusive linting validation'
           steps:
-            - task: Bash@3
-              displayName: 'inclusive lint'
-              inputs:
-                targetType: 'inline'
-                script: |
-                  npm install inclusivelint
-                  npx inclusivelint -r -p .
-        
+            - template: .pipelines/templates/inclusive-lint.yml
+
         - job: SecurityAnalysis
           displayName: Security Analysis
-          condition: ne(variables['Build.Reason'], 'IndividualCI')
           pool:
               # CredScan only runs on Windows
               vmImage: 'windows-latest'
           steps:
             - template: .pipelines/templates/security-analysis.yml
-          
+
         - job: TestAnalyzer
           displayName: Test Analyzer
           dependsOn:
           #- 'validate'
           - 'Inclusivelint'
           - 'SecurityAnalysis'
-          condition: |
-            and
-            (
-              eq(dependencies.Inclusivelint.result, 'Succeeded'),
-              in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
-            )
           pool:
             vmImage: 'ubuntu-16.04'
           strategy:
@@ -75,31 +53,7 @@ stages:
               inputs:
                 versionSpec: '$(python.version)'
               displayName: 'Use Python $(python.version)'
-
-            - task: Bash@3
-              displayName: 'Setup pipenv'
-              inputs:
-                targetType: 'inline'
-                script: |
-                  set -eux  # fail on error
-                  python -m pip install --upgrade pip
-                  python -m pip install pipenv
-                  pipenv --python 3
-
-            - task: Bash@3
-              displayName: 'Install deps'
-              inputs:
-                targetType: 'inline'
-                workingDirectory: 'presidio-analyzer'
-                script: |
-                  set -eux  # fail on error
-                  pipenv sync --dev --sequential
-                  pipenv run python -m spacy download en_core_web_lg
-            
-            - template: .pipelines/templates/build-python.yml
-              parameters:
-                SERVICE: 'Analyzer'
-                WORKING_FOLDER: 'presidio-analyzer'
+            - template: .pipelines/templates/build-analyzer.yml
 
         - job: TestAnonymizer
           displayName: Test Anonymizer
@@ -107,12 +61,6 @@ stages:
           #- 'validate'
           - 'Inclusivelint'
           - 'SecurityAnalysis'
-          condition: |
-            and
-            (
-              eq(dependencies.Inclusivelint.result, 'Succeeded'),
-              in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
-            )
           pool:
             vmImage: 'ubuntu-16.04'
           strategy:
@@ -129,72 +77,20 @@ stages:
               inputs:
                 versionSpec: '$(python.version)'
               displayName: 'Use Python $(python.version)'
+            - template: .pipelines/templates/build-anonymizer.yml
 
-            - task: Bash@3
-              displayName: 'Setup pipenv'
-              inputs:
-                targetType: 'inline'
-                script: |
-                  set -eux  # fail on error
-                  python -m pip install --upgrade pip
-                  python -m pip install pipenv
-                  pipenv --python 3
-
-            - task: Bash@3
-              displayName: 'Install deps: Anonymizer'
-              inputs:
-                targetType: 'inline'
-                workingDirectory: 'presidio-anonymizer'
-                script: |
-                  set -eux  # fail on error
-                  pipenv sync --dev --sequential
-
-            - template: .pipelines/templates/build-python.yml
-              parameters:
-                SERVICE: 'Anonymizer'
-                WORKING_FOLDER: 'presidio-anonymizer'
-
-        # Build containers only in CI
-        - job: BuildContainers
-          displayName: Build and Push Containers
-          condition: ${{ eq(variables['Build.Reason'], 'IndividualCI') }}
-          dependsOn:
-            - 'TestAnonymizer'
-            - 'TestAnalyzer'
-          pool:
-            vmImage: 'ubuntu-16.04'
-          variables:
-            REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-            TAG: ':$(Build.BuildId)'
-          steps:
-            - template: .pipelines/templates/build-containers.yml
-              parameters:
-                REGISTRY_NAME: $(REGISTRY_NAME)
-                TAG: $(TAG)
-                AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-            
         - job: FunctionalTests
           displayName: Functional Tests
           dependsOn:
-            - 'BuildContainers'
             - 'Inclusivelint'
             - 'SecurityAnalysis'
-          condition: |
-            and
-            (
-              eq(dependencies.Inclusivelint.result, 'Succeeded'),
-              in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped'),
-              in(dependencies.BuildContainers.result, 'Succeeded', 'Skipped')
-            )
           pool:
             vmImage: 'ubuntu-16.04'
           variables:
             REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
             TAG: ':$(Build.BuildId)'
           steps:
-            # Build containers in PR or manual (not CI where they are pulled from ACR)
             - task: DockerCompose@0
-              condition: ne(variables['Build.Reason'], 'IndividualCI')
               displayName: Build Presidio Images
               inputs:
                   action: Build services
@@ -202,162 +98,4 @@ stages:
                   dockerComposeFileArgs: |
                     REGISTRY_NAME=$(REGISTRY_NAME)
                     TAG=$(TAG)
-            # Pull container in CI where we push them to ACR
-            - task: DockerCompose@0
-              displayName: Pull Presidio Images from ACR
-              condition: eq(variables['Build.Reason'], 'IndividualCI')
-              inputs:
-                  action: Run a Docker Compose command
-                  dockerComposeCommand: pull
-                  dockerComposeFile: docker-compose.yml  
-                  containerregistrytype: Azure Container Registry
-                  azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
-                  azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'  
-                  dockerComposeFileArgs: |
-                    REGISTRY_NAME=$(REGISTRY_NAME)
-                    TAG=$(TAG)
             - template: .pipelines/templates/functional-tests.yml
-  - stage: DeployDev
-    dependsOn: BuildAndTest
-    variables:
-      REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-    condition: ${{ eq(variables['Build.Reason'], 'IndividualCI') }}
-    displayName: Deploy to Dev environment
-    jobs:
-        - job: DeployAnalyzerToDev
-          displayName: Deploy Analyzer to Dev Environment
-          pool:
-            vmImage: 'ubuntu-16.04'
-          steps:
-            - checkout: none
-            - task: AzureCLI@2
-              displayName: Create staging slot
-              name: createStagingSlot
-              inputs:
-                azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-                scriptType: bash
-                scriptLocation: inlineScript
-                inlineScript: |
-                  set -eux  # fail on error
-
-                  az webapp deployment slot create --name $(ANALYZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --configuration-source $(ANALYZER_DEV_APP_NAME) --slot staging
-                  URI=https://$(az webapp config hostname list --webapp-name $(ANALYZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --slot staging --query '[0].name' -o tsv)
-                  echo $URI
-                  echo "##vso[task.setvariable variable=STAGING_URI;isOutput=true]$URI"
-            - task: AzureWebAppContainer@1
-              displayName: Deploy to staging slot
-              inputs:
-                azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-                deployToSlotOrASE: true
-                resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
-                appName: $(ANALYZER_DEV_APP_NAME)
-                slotName: staging
-                imageName: $(REGISTRY_NAME)presidio-analyzer:$(Build.BuildId)
-
-        - job: DeployAnonymizerToDev
-          displayName: Deploy Anonymizer to Dev Environment
-          pool:
-            vmImage: 'ubuntu-16.04'
-          steps:
-            - checkout: none
-            - task: AzureCLI@2
-              displayName: Create staging slot
-              name: createStagingSlot
-              inputs:
-                azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-                scriptType: bash
-                scriptLocation: inlineScript
-                inlineScript: |
-                  set -eux  # fail on error
-
-                  az webapp deployment slot create --name $(ANONYMIZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --configuration-source $(ANONYMIZER_DEV_APP_NAME) --slot staging
-                  URI=https://$(az webapp config hostname list --webapp-name $(ANONYMIZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --slot staging --query '[0].name' -o tsv)
-                  echo $URI
-                  echo "##vso[task.setvariable variable=STAGING_URI;isOutput=true]$URI"
-            - task: AzureWebAppContainer@1
-              displayName: Deploy to staging slot
-              inputs:
-                azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-                deployToSlotOrASE: true
-                resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
-                appName: $(ANONYMIZER_DEV_APP_NAME)
-                slotName: staging
-                imageName: $(REGISTRY_NAME)presidio-anonymizer:$(Build.BuildId)
-
-        - job: TestDeployment
-          displayName: Smoke and E2E Tests on the deployement
-          dependsOn: 
-            - DeployAnalyzerToDev
-            - DeployAnonymizerToDev
-          variables:
-            ANALYZER_STAGING_URI: $[ dependencies.DeployAnalyzerToDev.outputs['createStagingSlot.STAGING_URI'] ]  
-            ANONYMIZER_STAGING_URI: $[ dependencies.DeployAnonymizerToDev.outputs['createStagingSlot.STAGING_URI'] ]  
-          steps:
-          - task: Bash@3
-            displayName: 'Wait and Smoke test'
-            timeoutInMinutes: 7
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -ux  # do not fail on error
-                
-                ANALYZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANALYZER_STAGING_URI/health)
-                ANONYMIZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANONYMIZER_STAGING_URI/health)
-                echo analyzer status code is $ANALYZER_STATUS_CODE
-                echo anonymizer status code is $ANONYMIZER_STATUS_CODE
-
-                while [ ! $ANALYZER_STATUS_CODE == 200 ] || [ ! $ANONYMIZER_STATUS_CODE == 200 ]
-                do
-                    sleep 30
-                    ANALYZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANALYZER_STAGING_URI/health)
-                    ANONYMIZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANONYMIZER_STAGING_URI/health)
-                    echo analyzer status code is $ANALYZER_STATUS_CODE
-                    echo anonymizer status code is $ANONYMIZER_STATUS_CODE
-                done
-
-        - job: SwapBothSlots
-          condition: eq(dependencies.TestDeployment.result, 'Succeeded')
-          strategy:
-            matrix:
-              Analyzer:
-                Name: 'Analyzer'
-                AppServiceName: $(ANALYZER_DEV_APP_NAME)
-              Anonymizer:
-                Name: 'Anonymizer'
-                AppServiceName: $(ANONYMIZER_DEV_APP_NAME)
-          displayName: Swap slots from staging to production
-          dependsOn: TestDeployment
-          steps:
-          - checkout: none
-          - task: AzureAppServiceManage@0
-            displayName: Swap $(Name) slot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              action: Swap Slots
-              webAppName: $(AppServiceName)
-              sourceSlot: staging
-              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
-
-        - job: DeleteBothSlots
-          condition: always()
-          dependsOn: 
-            - SwapBothSlots
-          strategy:
-            matrix:
-              Analyzer:
-                Name: 'Analyzer'
-                AppServiceName: $(ANALYZER_DEV_APP_NAME)
-              Anonymizer:
-                Name: 'Anonymizer'
-                AppServiceName: $(ANONYMIZER_DEV_APP_NAME)
-          displayName: Delete staging slot
-          steps:
-          - checkout: none
-          - task: AzureAppServiceManage@0
-            displayName: Delete $(Name) staging slot 
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              action: Delete Slot
-              webAppName: $(AppServiceName)
-              slot: staging
-              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)

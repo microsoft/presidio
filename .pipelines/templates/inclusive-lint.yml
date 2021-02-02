@@ -1,0 +1,8 @@
+steps:
+    - task: Bash@3
+      displayName: 'inclusive lint'
+      inputs:
+          targetType: 'inline'
+          script: |
+              npm install inclusivelint
+              npx inclusivelint -r -p .
