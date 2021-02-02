@@ -97,7 +97,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/V2/docs/deployment-samples/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/V2/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -136,7 +136,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/V2/docs/deployment-samples/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/V2/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
