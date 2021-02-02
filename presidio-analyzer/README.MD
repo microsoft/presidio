@@ -72,7 +72,7 @@ print(results)
 ### Deploy Presidio Analyzer to Azure
 
 TODO: change this link to main branch once merged (#2765).
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2FV2%2Fpresidio-analyzer%2Fdeploytoazure.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-analyzer%2Fdeploytoazure.json)
 
 
 ## Customizing Presidio analyzer
