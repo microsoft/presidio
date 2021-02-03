@@ -52,14 +52,6 @@ steps:
 
       df -h
 
-      # install dependency libraries
-      # re2
-      re2_version="2018-12-01"
-      wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
-      mkdir re2
-      tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
-      cd re2 && sudo make install
-
       # Azure pipelines test publish
       # regex
       pipenv sync --dev --sequential
