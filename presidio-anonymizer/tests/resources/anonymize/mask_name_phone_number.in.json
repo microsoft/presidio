@@ -1,14 +1,16 @@
 {
-  "text": "hello world, my name is Jane Doe. My number is: 034453334",
+  "text": "hello world, my name is Jane Doe. My number is: 03-4453334",
   "transformations": {
     "DEFAULT": {
-      "type": "replace",
-      "new_value": "ANONYMIZED"
+      "type": "mask",
+      "masking_char": "*",
+        "chars_to_mask": 20,
+      "from_end": false
     },
     "PHONE_NUMBER": {
       "type": "mask",
       "masking_char": "*",
-      "chars_to_mask": 4,
+      "chars_to_mask": 6,
       "from_end": true
     }
   },
@@ -18,18 +20,6 @@
       "end": 32,
       "score": 0.8,
       "entity_type": "NAME"
-    },
-    {
-      "start": 24,
-      "end": 28,
-      "score": 0.8,
-      "entity_type": "FIRST_NAME"
-    },
-    {
-      "start": 29,
-      "end": 32,
-      "score": 0.6,
-      "entity_type": "LAST_NAME"
     },
     {
       "start": 48,

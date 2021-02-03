@@ -58,9 +58,9 @@ LOG_ANALYTICS_WORKSPACE_NAME=<log analytics name>
 az monitor log-analytics workspace create --resource-group $LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME
 
 # query the log analytics workspace id
-LOG_ANALYTICS_WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group $LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME --query id)
+LOG_ANALYTICS_WORKSPACE_ID=$(az monitor log-analytics workspace show --resource-group $LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME --query id -o tsv)
 # query the app service id
-APP_SERVICE_ID=$(az monitor log-analytics workspace show --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME --query id)
+APP_SERVICE_ID=$(az monitor log-analytics workspace show --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME --query id -o tsv)
 
 # create the diagnostics settings
 az monitor diagnostic-settings create --name $APP_SERVICE_NAME-diagnostics --resource /
@@ -80,4 +80,5 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file pres
 
 ## Deploy Presidio services to Azure
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2Fdeploy-to-azure%2Fdocs%2Fdeployment-samples%2Fpresidio-services.json)
+TODO: change this link to main branch once merged (#2765).
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
