@@ -19,6 +19,7 @@ from presidio_anonymizer.entities import InvalidParamException
         ("t", "*", 3, False, "*"),  # with overflowing chars_to_mask
         ("t", "*", 3, True, "*"),  # from the end
         ("text", "😈", 4, False, "😈😈😈😈"),  # Mask with 'Unicode EmojiSources' character
+        ("😈😈😈😈", "*", 4, False, "****"),  # Mask 'Unicode EmojiSources' character
         ("text", "*", 0, False, "text"),  # Nullified mask
         ("text", "*", 0, True, "text"),  # from the end
         ("text", "*", -1, False, "text"),  # Negative chars_to_mask
