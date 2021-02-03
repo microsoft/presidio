@@ -3,6 +3,7 @@ import logging
 
 from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
 
-logging.getLogger("presidio-anonymizer").addHandler(logging.NullHandler())
+# Set up default logging (with NullHandler)
+logging.getLogger("presidio_anonymizer").addHandler(logging.NullHandler())
 
 __all__ = ["AnonymizerEngine"]

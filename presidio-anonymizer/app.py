@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+from logging.config import fileConfig
 from typing import Tuple
 
 from flask import Flask, request
@@ -13,12 +14,16 @@ from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
 
+LOGGING_CONF = "logging.ini"
+
 
 class Server:
     """Flask server for anonymizer."""
 
     def __init__(self):
-        self.logger = logging.getLogger("presidio-anonymizer")
+        fileConfig(LOGGING_CONF)
+        self.logger = logging.getLogger("presidio_anonymizer")
+        self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
 
         @self.app.route("/health")
@@ -37,7 +42,8 @@ class Server:
                 text = engine.anonymize(data)
             except InvalidParamException as e:
                 self.logger.warning(
-                    f"failed to anonymize text with validation error: {e.err_msg}")
+                    f"failed to anonymize text with validation error: {e.err_msg}"
+                )
                 return e.err_msg, 422
             except Exception as e:
                 self.logger.error(f"failed to anonymize text with error: {e}")

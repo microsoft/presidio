@@ -20,7 +20,7 @@ class AnalyzerResults(list):
     - Partial intersection - both will be returned concatenated.
     """
 
-    logger = logging.getLogger("presidio-anonymizer")
+    logger = logging.getLogger("presidio_anonymizer")
 
     def to_sorted_unique_results(self, reverse=False) -> List[AnalyzerResult]:
         """
@@ -57,10 +57,15 @@ class AnalyzerResults(list):
         for result_a in self:
             other_elements = AnalyzerResults(self)
             other_elements.remove(result_a)
-            if not any([result_a.has_conflict(other_element) for other_element in
-                        other_elements]):
+            if not any(
+                [
+                    result_a.has_conflict(other_element)
+                    for other_element in other_elements
+                ]
+            ):
                 unique_elements.append(result_a)
             else:
                 self.logger.debug(
-                    f"removing element {result_a} from results list due to conflict")
+                    f"removing element {result_a} from results list due to conflict"
+                )
         return unique_elements

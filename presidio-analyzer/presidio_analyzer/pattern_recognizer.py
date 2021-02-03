@@ -1,4 +1,5 @@
 import datetime
+import logging
 from typing import List, Optional, Dict
 
 import regex as re
@@ -9,11 +10,10 @@ from presidio_analyzer import (
     RecognizerResult,
     EntityRecognizer,
     AnalysisExplanation,
-    PresidioLogger,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio_analyzer")
 
 
 class PatternRecognizer(LocalRecognizer):

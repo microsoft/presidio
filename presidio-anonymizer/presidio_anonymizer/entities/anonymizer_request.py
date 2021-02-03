@@ -13,11 +13,9 @@ from presidio_anonymizer.entities import InvalidParamException
 class AnonymizerRequest:
     """Input validation for the anonymize process."""
 
-    logger = logging.getLogger("presidio-anonymizer")
+    logger = logging.getLogger("presidio_anonymizer")
 
-    def __init__(self,
-                 data: dict,
-                 anonymizers):
+    def __init__(self, data: dict, anonymizers):
         """Handle and validate data for the text replacement.
 
         :param data: a map which contains the transformations, analyzer_results and text
@@ -26,8 +24,10 @@ class AnonymizerRequest:
         self._transformations = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
-        self.default_transformation = {"type": "replace",
-                                       "anonymizer": self.anonymizers["replace"]}
+        self.default_transformation = {
+            "type": "replace",
+            "anonymizer": self.anonymizers["replace"],
+        }
 
     def get_transformation(self, analyzer_result: AnalyzerResult):
         """
@@ -68,11 +68,11 @@ class AnonymizerRequest:
         analyzer_results = data.get("analyzer_results")
         if not analyzer_results:
             self.logger.debug("invalid input, json missing field: analyzer_results")
-            raise InvalidParamException("Invalid input, "
-                                        "analyzer results can not be empty")
+            raise InvalidParamException(
+                "Invalid input, " "analyzer results can not be empty"
+            )
         for analyzer_result in analyzer_results:
-            self._analysis_results.append(
-                AnalyzerResult(analyzer_result))
+            self._analysis_results.append(AnalyzerResult(analyzer_result))
 
     def __handle_transformations(self, data):
         """
@@ -109,5 +109,6 @@ class AnonymizerRequest:
         if not anonymizer:
             self.logger.error(f"No such anonymizer class {anonymizer_type}")
             raise InvalidParamException(
-                f"Invalid anonymizer class '{anonymizer_type}'.")
+                f"Invalid anonymizer class '{anonymizer_type}'."
+            )
         return anonymizer

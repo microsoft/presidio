@@ -1,3 +1,4 @@
+import logging
 import string
 from typing import Tuple, List, Dict, Optional
 
@@ -14,10 +15,9 @@ from presidio_analyzer import (
     PatternRecognizer,
     RecognizerResult,
     EntityRecognizer,
-    PresidioLogger,
 )
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio_analyzer")
 
 
 class IbanRecognizer(PatternRecognizer):

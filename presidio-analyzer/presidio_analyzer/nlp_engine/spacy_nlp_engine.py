@@ -1,13 +1,13 @@
+import logging
 from typing import Optional, Dict
 
 import spacy
 from spacy.language import Language
 from spacy.tokens import Doc
 
-from presidio_analyzer import PresidioLogger
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio_analyzer")
 
 
 class SpacyNlpEngine(NlpEngine):
