@@ -14,6 +14,10 @@ from tests.integration.file_utils import get_scenario_file_content
         "mask_phone_number_with_bad_masking_char",
         "redact_and_replace",
         "replace_with_intersecting_entities",
+        "hash_md5",
+        "hash_sha256",
+        "hash_sha512",
+        "hash_sha256_default",
     ],
 )
 def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_returned(
