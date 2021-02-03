@@ -52,7 +52,7 @@ stages:
           - template: .pipelines/templates/functional-tests.yml
 
   - stage: DeployDev
-    dependsOn: BuildAndTest
+    dependsOn: PushContainersAndFunctionalTests
     variables:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
     displayName: Deploy to Dev environment
