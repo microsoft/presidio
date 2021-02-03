@@ -23,7 +23,7 @@ def install_models(conf_file: str) -> None:
     logger.info(f"Installing models from configuration: {nlp_configuration}")
 
     if "nlp_engine_name" not in nlp_configuration:
-        raise ValueError("NLP config file  should contain an nlp_engine_name field")
+        raise ValueError("NLP config file should contain an nlp_engine_name field")
 
     if "models" not in nlp_configuration:
         raise ValueError("NLP config file should contain a list of models")
