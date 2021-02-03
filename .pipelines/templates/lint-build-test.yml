@@ -12,7 +12,7 @@ stages:
       - job: Inclusivelint
         displayName: 'Inclusive linting validation'
         steps:
-          - template: .pipelines/templates/inclusive-lint.yml
+          - template: ./inclusive-lint.yml
 
       - job: SecurityAnalysis
         displayName: Security Analysis
@@ -20,7 +20,7 @@ stages:
           # CredScan only runs on Windows
           vmImage: 'windows-latest'
         steps:
-          - template: .pipelines/templates/security-analysis.yml
+          - template: ./security-analysis.yml
 
       - job: TestAnalyzer
         displayName: Test Analyzer
