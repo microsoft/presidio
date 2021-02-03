@@ -9,7 +9,9 @@ variables:
         
 stages:
   - template: .pipelines/templates/lint-build-test.yml
-  - stage:
+  - stage: FunctionalTests
+    displayName: Functional Tests
+    jobs:
     - job: FunctionalTests
       displayName: Functional Tests
       pool:
