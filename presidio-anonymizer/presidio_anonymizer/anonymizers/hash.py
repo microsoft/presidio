@@ -20,11 +20,11 @@ class Hash(Anonymizer):
         """
         hash_type = params.get(self.HASH_TYPE, self.SHA256)
         hash_switcher = {
-            self.SHA256: lambda s: sha256(s.encode()),
-            self.SHA512: lambda s: sha512(s.encode()),
-            self.MD5: lambda s: md5(s.encode()),
+            self.SHA256: lambda s: sha256(s),
+            self.SHA512: lambda s: sha512(s),
+            self.MD5: lambda s: md5(s),
         }
-        return hash_switcher.get(hash_type)(text).hexdigest()
+        return hash_switcher.get(hash_type)(text.encode()).hexdigest()
 
     def validate(self, params: dict = None) -> None:
         """Validate the hash type is string and in range of allowed hash types."""
