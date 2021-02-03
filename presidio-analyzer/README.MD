@@ -324,6 +324,13 @@ analyzer = AnalyzerEngine(
 analyzer.analyze(...)
 ```
 
+#### Automatically install NLP models into the Docker container
+
+When packaging the code into a Docker container, 
+NLP models are automatically installed. To define which models should be installed, 
+update the [conf/default.yaml](conf/default.yaml) file. This file is read
+during the `docker build` phase and the models defined in it are installed automatically.
+
 ## HTTP API
 
 `/analyze`
