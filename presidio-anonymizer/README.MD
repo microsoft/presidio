@@ -16,6 +16,7 @@ Presidio anonymizer comes by default with the following anonymizers:
 - Hash - hash the PII using either sha256, sha512 or md5.
   Parameters:
   * "hash_type" - sets the type of hashing. can be either sha256, sha512 or md5.
+    The default hash type is sha256.
 - FPE - using ff1 algorithm for formatting-Preserving Encryption on the PII
 - Mask - replaces the PII with a given character. <br>
   Parameters: 

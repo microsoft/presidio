@@ -7,18 +7,17 @@ def validate_parameter_in_range(
 ) -> None:
     """Validate an anonymizer parameter.
 
-    valdidates the existence of an anonymizer parameter and that it is an
+    validates the existence of an anonymizer parameter and that it is an
     instance of the parameter_type and that it is within the range of provided values.
     Otherwise, raise the appropriate InvalidParamException with the
     parameter_name as content.
     """
-    validate_parameter(parameter_value, parameter_name, parameter_type)
+    validate_parameter(parameter_value, parameter_name, object)
     if parameter_value not in values_range:
         raise InvalidParamException(
             f"Parameter {parameter_name} value {parameter_value} is not in "
             f"range of values {values_range}"
         )
-    pass
 
 
 def validate_parameter(

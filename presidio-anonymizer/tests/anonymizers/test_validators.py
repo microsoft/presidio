@@ -19,7 +19,7 @@ def test_when_parameter_not_in_range_then_ipe_raised():
         )
 
 
-def test_when_parameter_in_range_we_pass():
+def test_when_parameter_in_range_then_we_pass():
     validate_parameter_in_range(
         values_range=["1", "2"],
         parameter_value="1",

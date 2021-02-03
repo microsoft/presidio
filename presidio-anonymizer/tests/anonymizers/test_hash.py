@@ -1,11 +1,13 @@
 import pytest
 
 from presidio_anonymizer.anonymizers import Hash
+from presidio_anonymizer.entities import InvalidParamException
 
 
 @pytest.mark.parametrize(
     "text, anonymized_text",
     [
+        # fmt: off
         (
             "123456",
             "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
@@ -17,9 +19,10 @@ from presidio_anonymizer.anonymizers import Hash
         (
             "😈😈😈😈",
             "0fff975d92d0f33d23030511b4dc02cf706f4da9b9ffdefebed56bb364b73219",
-        ),  # Hash 'Unicode EmojiSources' character
-    ]
-    # fmt: on
+        ),
+        # Hash 'Unicode EmojiSources' character
+        # fmt: on
+    ],
 )
 def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_returned(
     text, anonymized_text
@@ -33,6 +36,7 @@ def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_re
 @pytest.mark.parametrize(
     "text, hash_type, anonymized_text",
     [
+        # fmt: off
         (
             "123456",
             "sha256",
@@ -72,9 +76,10 @@ def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_re
             "😈😈😈😈",
             "md5",
             "5bf45eeaade2060ac6cdd532e1c35eef",
-        ),  # MD5 Hash 'Unicode EmojiSources' character
-    ]
-    # fmt: on
+        ),
+        # MD5 Hash 'Unicode EmojiSources' character
+        # fmt: on
+    ],
 )
 def test_when_given_valid_value_with_hash_type_then_expected_string_returned(
     text, hash_type, anonymized_text
@@ -85,3 +90,38 @@ def test_when_given_valid_value_with_hash_type_then_expected_string_returned(
     actual_anonymized_text = Hash().anonymize(text=text, params=params)
 
     assert anonymized_text == actual_anonymized_text
+
+
+def test_when_hash_type_not_in_range_then_ipe_raised():
+    params = _get_default_hash_parameters()
+    params["hash_type"] = "not_a_hash"
+
+    with pytest.raises(
+        InvalidParamException,
+        match="Parameter hash_type value not_a_hash is not in range of values"
+        " \\['sha256', 'sha512', 'md5'\\]",
+    ):
+        Hash().validate(params)
+
+
+def test_when_hash_type_is_missing_then_we_pass():
+    params = _get_default_hash_parameters()
+    params.pop("hash_type")
+
+    Hash().validate(params)
+
+
+def test_when_hash_type_is_empty_string_then_ipe_raised():
+    params = _get_default_hash_parameters()
+    params["hash_type"] = ""
+
+    with pytest.raises(
+        InvalidParamException,
+        match="Parameter hash_type value  is not in range of values"
+        " \\['sha256', 'sha512', 'md5'\\]",
+    ):
+        Hash().validate(params)
+
+
+def _get_default_hash_parameters():
+    return {"hash_type": ""}

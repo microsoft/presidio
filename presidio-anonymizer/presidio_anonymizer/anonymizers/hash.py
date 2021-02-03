@@ -18,7 +18,7 @@ class Hash(Anonymizer):
 
         :return: hashed original text
         """
-        hash_type = params.get(self.HASH_TYPE, self.SHA256)
+        hash_type = self._get_hash_type_or_default(params)
         hash_switcher = {
             self.SHA256: lambda s: sha256(s),
             self.SHA512: lambda s: sha512(s),
@@ -30,8 +30,11 @@ class Hash(Anonymizer):
         """Validate the hash type is string and in range of allowed hash types."""
         validate_parameter_in_range(
             [self.SHA256, self.SHA512, self.MD5],
-            params.get(self.HASH_TYPE, self.SHA256),
+            self._get_hash_type_or_default(params),
             self.HASH_TYPE,
             str,
         )
         pass
+
+    def _get_hash_type_or_default(self, params: dict = None):
+        return params.get(self.HASH_TYPE, self.SHA256)
