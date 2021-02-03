@@ -10,7 +10,10 @@ from presidio_analyzer import (
     RecognizerResult,
     RecognizerRegistry,
 )
-from presidio_analyzer.nlp_engine import NlpArtifacts
+from presidio_analyzer.nlp_engine import (
+    NlpArtifacts,
+    SpacyNlpEngine,
+)
 
 # noqa: F401
 from tests import assert_result
@@ -556,3 +559,10 @@ def test_given_interpretability_requested_then_response_contains_analysis(
 
     assert len(results) == 1
     assert results[0].analysis_explanation is not None
+
+
+def test_read_test_spacy_nlp_conf_file_returns_spacy_nlp_engine(mock_registry):
+    engine = AnalyzerEngine(registry=mock_registry)
+
+    assert isinstance(engine.nlp_engine, SpacyNlpEngine)
+    assert engine.nlp_engine.nlp is not None
