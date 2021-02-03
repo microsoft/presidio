@@ -1,6 +1,8 @@
+import logging
+from logging.config import fileConfig
+from pathlib import Path
 from typing import Tuple
 
-from presidio_analyzer.presidio_logger import PresidioLogger
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.error_response import ErrorResponse
@@ -9,6 +11,8 @@ import json
 import os
 
 DEFAULT_PORT = "3000"
+
+LOGGING_CONF_FILE = "logging.ini"
 
 WELCOME_MESSAGE = r"""
  _______  _______  _______  _______ _________ ______  _________ _______
@@ -26,7 +30,9 @@ class Server:
     """HTTP Server for calling Presidio Analyzer."""
 
     def __init__(self):
-        self.logger = PresidioLogger(os.environ.get("PRESIDIO_LOGGER"))
+        fileConfig(Path(Path(__file__).parent, LOGGING_CONF_FILE))
+        self.logger = logging.getLogger("presidio-analyzer")
+        self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
         self.logger.info("Starting analyzer engine")
         self.engine = AnalyzerEngine()
