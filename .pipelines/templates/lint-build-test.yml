@@ -1,6 +1,5 @@
 stages:
   - stage: LintBuildTest
-    displayName: Lint, Build and Test
     jobs:
       #- job: validate
       #  displayName: 'Validate PR pre-requisites'
