@@ -2,8 +2,7 @@ import json
 import os
 
 import pytest
-
-from common.methods import anonymize
+from common.methods import anonymize, anonymizers
 
 
 @pytest.mark.api
@@ -82,5 +81,12 @@ def test_anonymize_with_redact_and_replace():
 
 def file_path(file_name: str):
     return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", f"resources/{file_name}")
-    )
+        os.path.join(os.path.dirname(__file__), '..', f"resources/{file_name}"))
+
+
+@pytest.mark.api
+def test_anonymizers():
+    expected_list = ["mask", "fpe", "replace", "hash", "redact"]
+    response_status, response_content = anonymizers()
+    assert response_status == 200
+    assert all([a == b for a, b in zip(response_content, expected_list)])

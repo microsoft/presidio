@@ -89,6 +89,8 @@
                     "linuxFxVersion": "[variables('linuxFxVersion')]",
                     "httpLoggingEnabled": true,
                     "detailedErrorLoggingEnabled": true,
+                    "clientAffinityEnabled": false,
+                    "alwaysOn": true,
                     "appSettings": [
                         {
                             "name": "DOCKER_REGISTRY_SERVER_USERNAME",

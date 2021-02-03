@@ -80,4 +80,5 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file pres
 
 ## Deploy Presidio services to Azure
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Ffeature%2Fdeploy-to-azure%2Fdocs%2Fdeployment-samples%2Fpresidio-services.json)
+TODO: change this link to main branch once merged (#2765).
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
