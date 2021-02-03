@@ -13,8 +13,10 @@ repos:
               'flake8-docstrings',
           ]
           args: ['--max-line-length=88', 
-                 '--docstring-convention=numpy', 
-                 '--per-file-ignores=**/tests/**.py:D functional-tests/**:D', 
+                 '--docstring-convention=numpy',
+                  # 'PEP8 Rules' to ignore in tests. Ignore documentation rules for all tests
+                  # and ignore long lines / whitespaces for functional-tests where we define jsons in-code.
+                 '--per-file-ignores=**/tests/**.py:D functional-tests/**:D,E501,W291,W293',
                  '--extend-ignore=
                  		E203,
                  		D100,
