@@ -39,6 +39,8 @@ __all__ = [
     "UsPassportRecognizer",
     "UsPhoneRecognizer",
     "UsSsnRecognizer",
-    "NLP_RECOGNIZERS",
     "EsNifRecognizer",
+    "SpacyRecognizer",
+    "StanzaRecognizer",
+    "NLP_RECOGNIZERS",
 ]

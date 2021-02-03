@@ -1,0 +1,8 @@
+nlp_engine_name: spacy
+models:
+  -
+    lang_code: he
+    model_name: he_test
+  -
+    lang_code: bn
+    model_name: bn_test

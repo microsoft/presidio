@@ -50,8 +50,8 @@ class Server:
                     raise Exception("No language provided")
 
                 recognizer_result_list = self.engine.analyze(
-                    req_data.text,
-                    req_data.language,
+                    text=req_data.text,
+                    language=req_data.language,
                     correlation_id=req_data.correlation_id,
                     score_threshold=req_data.score_threshold,
                     entities=req_data.entities,

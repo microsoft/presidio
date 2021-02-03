@@ -8,7 +8,7 @@ from presidio_analyzer import (
     PresidioLogger,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NLP_ENGINES, NlpEngine
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 
 logger = PresidioLogger("presidio-analyzer")
 
@@ -28,6 +28,8 @@ class AnalyzerEngine:
     defines whether PII values should be traced or not.
     :param default_score_threshold: Minimum confidence value
     for detected entities to be returned
+    :param supported_languages: List of possible languages this engine could be run on.
+    Used for loading the right NLP models and recognizers for these languages.
     """
 
     def __init__(
@@ -37,32 +39,33 @@ class AnalyzerEngine:
         app_tracer: AppTracer = None,
         enable_trace_pii: bool = False,
         default_score_threshold: float = 0,
-        default_language: str = "en",
+        supported_languages: List[str] = None,
     ):
+        if not supported_languages:
+            supported_languages = ["en"]
 
         if not nlp_engine:
-            logger.info(
-                "nlp_engine not provided. Creating new " "SpacyNlpEngine instance"
-            )
-            nlp_engine = NLP_ENGINES["spacy"]()
+            logger.info("nlp_engine not provided, creating default.")
+            provider = NlpEngineProvider()
+            nlp_engine = provider.create_engine()
+
         if not registry:
-            logger.info(
-                "Recognizer registry not provided. "
-                "Creating default RecognizerRegistry instance"
-            )
+            logger.info("registry not provided, creating default.")
             registry = RecognizerRegistry()
         if not app_tracer:
             app_tracer = AppTracer()
         self.app_tracer = app_tracer
 
-        self.default_language = default_language
+        self.supported_languages = supported_languages
 
         self.nlp_engine = nlp_engine
         self.registry = registry
 
         # load all recognizers
         if not registry.recognizers:
-            registry.load_predefined_recognizers()
+            registry.load_predefined_recognizers(
+                nlp_engine=self.nlp_engine, languages=self.supported_languages
+            )
 
         self.enable_trace_pii = enable_trace_pii
         self.default_score_threshold = default_score_threshold
@@ -75,10 +78,18 @@ class AnalyzerEngine:
         :return: List of [Recognizer] as a RecognizersAllResponse
         """
         if not language:
-            language = self.default_language
-        logger.info(f"Fetching all recognizers for language {language}")
-        recognizers = self.registry.get_recognizers(language=language, all_fields=True)
-        return recognizers
+            languages = self.supported_languages
+        else:
+            languages = [language]
+
+        recognizers = []
+        for language in languages:
+            logger.info(f"Fetching all recognizers for language {language}")
+            recognizers.extend(
+                self.registry.get_recognizers(language=language, all_fields=True)
+            )
+
+        return list(set(recognizers))
 
     def get_supported_entities(self, language: Optional[str] = None) -> List[str]:
         """
@@ -190,6 +201,7 @@ class AnalyzerEngine:
         remove_interpretability_response: bool = None,
     ) -> List[RecognizerResult]:
         """Remove interpretability from response."""
+
         if not remove_interpretability_response:
             return results
 
