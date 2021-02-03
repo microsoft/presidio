@@ -1,8 +1,12 @@
+import shutil
+from pathlib import Path
+
 import pytest
+import spacy
 
 from presidio_analyzer import EntityRecognizer
 from presidio_analyzer import RecognizerRegistry
-from presidio_analyzer.nlp_engine import NLP_ENGINES
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
 from tests.mocks import RecognizerRegistryMock
 
@@ -30,9 +34,16 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture(scope="session")
-def nlp_engines(request):
+def nlp_engine_provider():
+    return NlpEngineProvider()
+
+
+@pytest.fixture(scope="session")
+def nlp_engines(request, nlp_engine_provider):
     available_engines = {}
-    for name, engine_cls in NLP_ENGINES.items():
+
+    nlp_engines = nlp_engine_provider.nlp_engines
+    for name, engine_cls in nlp_engines.items():
         if name == "spacy" and not request.config.getoption("--runfast"):
             available_engines[f"{name}_en"] = engine_cls({"en": "en_core_web_lg"})
         else:
@@ -73,3 +84,42 @@ def loaded_registry():
 @pytest.fixture(scope="module")
 def mock_registry():
     return RecognizerRegistryMock()
+
+
+@pytest.fixture(scope="session")
+def mock_he_model():
+    """
+    Create an empty Hebrew spaCy pipeline and save it to disk.
+
+    So that it could be loaded using spacy.load()
+    """
+    he = spacy.blank("he")
+    he.to_disk("he_test")
+
+
+@pytest.fixture(scope="session")
+def mock_bn_model():
+    """
+    Create an empty Bengali spaCy pipeline and save it to disk.
+
+    So that it could be loaded using spacy.load()
+    """
+    bn = spacy.blank("bn")
+    bn.to_disk("bn_test")
+
+
+def pytest_sessionfinish():
+    """Remove files created during mock spaCy models creation."""
+    he_test_model_path = Path(Path(__file__).parent.parent, "he_test")
+    if he_test_model_path.exists():
+        try:
+            shutil.rmtree(he_test_model_path)
+        except OSError as e:
+            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))
+
+    bn_test_model_path = Path(Path(__file__).parent.parent, "bn_test")
+    if bn_test_model_path.exists():
+        try:
+            shutil.rmtree(bn_test_model_path)
+        except OSError as e:
+            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))
