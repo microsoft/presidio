@@ -20,7 +20,7 @@ preferably in a virtual environment like Conda.
 
 ```sh
 pip install presidio-analyzer
-python -m spacy download en_core_web_sm
+python -m spacy download en_core_web_lg
 ```
 
 ## Getting started
@@ -51,11 +51,9 @@ Note: you can change the spacy model which is downloaded to the container at bui
 docker build -t presidio-analyzer --build-arg NAME=presidio-analyzer  --build-arg SPACY_MODEL=en_core_web_sm .
 ```
 
-TODO: The Analyzer is hard-coded to use the large english model. Extending to any model will be worked on in user story #2675
-
 TODO: The Analyzer container is built with a single spacy model. Add support for multiple models will worked on in user story #2678
 
-### simple analysis script
+### Simple analysis script
 
 ```python
 from presidio_analyzer import AnalyzerEngine
@@ -77,26 +75,27 @@ TODO: change this link to main branch once merged (#2765).
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-analyzer%2Fdeploytoazure.json)
 
 
-## Customizing Presidio analyzer 
+## Customizing Presidio analyzer
 
 Presidio can be exteded to support new types of PII entities, and to support additional languages.
 
-The three main modules are the `AnalyzerEngine` and the `RecognizerRegistry` and `EntityRecognizer`. 
-- The `AnalyzerEngine` is in charge of calling each requested recognizer. 
+The three main modules are the `AnalyzerEngine` and the `RecognizerRegistry` and `EntityRecognizer`.
+
+- The `AnalyzerEngine` is in charge of calling each requested recognizer.
 - The `RecognizerRegistry` is in charge of providing the list of predefined and custom recognizers for analysis.
 - The `EntityRecognizer` class can be extended to support new types of PII recognition logic.
 
 ### Extending the analyzer for additional PII entities
 
-First, a class based on `EntityRecognizer` needs to be created. 
+First, a class based on `EntityRecognizer` needs to be created.
 Second, the new recognizer should be added to the recognizer registry.
 So that the `AnalyzerEngine` would be able to use the new recognizer during analysis.
 
 In order to implement a new recognizer by code, follow these two steps:
 
-#### Simple example:
+#### Simple example
 
-For simple recognizers based on regular expressions or deny-lists, 
+For simple recognizers based on regular expressions or deny-lists,
 we can leverage the provided `PatternsRecognizer`:
 
 ```python
@@ -106,11 +105,13 @@ titles_recognizer = PatternRecognizer(supported_entity="TITLE",
 ```
 
 Calling the recognizer itself:
+
 ```python
 titles_recognizer.analyze(text="Mr. Schmidt",entities="TITLE")
 ```
 
 Adding to the list of recognizers:
+
 ```python
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 
@@ -131,6 +132,7 @@ print(results)
 ```
 
 Alternatively, we can add the recognizer to the existing analyzer:
+
 ```python
 from presidio_analyzer import AnalyzerEngine
 
@@ -142,56 +144,191 @@ results = analyzer.analyze(text=text,language="en")
 print(results)
 ```
 
-
 #### Creating a new `EntityRecognizer` in code
 
 There are various types of Recognizers in Presidio:
+
 - `EntityRecognizer`, the base class
 - `PatternsRecognizer`, for regex and deny-list based detection
-- `LocalRecognizer`: A base class for all recognizers living within the same process as the `AnalyzerEngine`. 
-- `RemoteRecognizer`: A base class for accessing external recognizers, 
+- `LocalRecognizer`: A base class for all recognizers living within the same process as the `AnalyzerEngine`.
+- `RemoteRecognizer`: A base class for accessing external recognizers,
 such as 3rd party services or ML models served outside the main Presidio Python process.
 
-
 To create a new recognizer via code:
+
 1. Create a new Python class which implements [LocalRecognizer](presidio_analyzer/local_recognizer.py).
-(`LocalRecognizer` implements the base [EntityRecognizer](presidio_analyzer/entity_recognizer.py) class.) 
+(`LocalRecognizer` implements the base [EntityRecognizer](presidio_analyzer/entity_recognizer.py) class.)
 
     This class has the following functions:
 
     i. load: load a model / resource to be used during recognition
-    
+
     ```python
    def load(self)
     ```
-    
+
     ii. analyze: The main function to be called for getting entities out of the new recognizer:
-    
+
     ```python
-    def analyze(self, text, entities, nlp_artifacts):
+   def analyze(self, text, entities, nlp_artifacts)
     ```
-    
+
     Notes:
-    1. Each recognizer has access to different NLP assets such as tokens, lemmas, and more. 
+    1. Each recognizer has access to different NLP assets such as tokens, lemmas, and more.
     These are given through the `nlp_artifacts` parameter.
     Refer to the [code documentation](presidio_analyzer/entity_recognizer.py) for more information.
-    
-    2. The `analyze` method should return a list of [RecognizerResult](presidio_analyzer/recognizer_result.py). 
+
+    2. The `analyze` method should return a list of [RecognizerResult](presidio_analyzer/recognizer_result.py).
 
 2. Add it to the recognizer registry using `registry.add_recognizer(my_recognizer)`.
 
 ### Multi language support
 
-Presidio comes with support for multiple languages, however the basic installations 
-contain recognizers focused on English. To extend it to new languages, two main things are required:
-1. Replace the NLP model with a model in the desired language
-2. Create recognizers capable of detecting PII in the desired language. 
-Presidio uses context words surrounding the entity to increase score, so these context words should also be added in the desired language.
+Presidio supports PII detection in multiple languages.
+In its default configuration, it contains recognizers and models for English.
+To configure Presidio to detect PII in additional languages, these modules require modification:
 
-### HTTP API
-#### /analyze
-Analyzes a text
-Method: POST
+1. The `NlpEngine` containing the NLP model which performs tokenization,
+lemmatization, Named Entity Recognition and other NLP tasks.
+2. PII recognizers (different `EntityRecognizer` objects) should be adapted or created.
+
+> While different detection mechanisms such as regular expressions are language agnostic, the context words used to increase the PII detection confidence aren't. Consider updating the list of context words for each recognizer to leverage context words in additional languages.
+
+#### Configuring the NLP Engine
+
+As its internal NLP engine, Presidio supports both [spaCy](https://spacy.io/usage/models)
+and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follow these two steps:
+
+1. Download the spaCy/Stanza NER models for your desired language.
+
+    - To download a new model with spaCy:
+
+        ```shell script
+        python -m spacy download es_core_news_md
+        ```
+
+        In this example we download the medium size model for Spanish.
+
+   - To download a new model with Stanza:
+
+        ```python
+        import stanza
+        stanza.download("en") # where en is the language code of the model.
+        ```
+
+   For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
+
+2. Update the models configuration in one of two ways:
+    - **Via code**: Create an `NlpEngine` using the `NlpEnginerProvider` class, and pass it to the `AnalyzerEngine` as input:
+
+        ```python
+        from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+        from presidio_analyzer.nlp_engine import NlpEngineProvider
+
+        # Create configuration containing engine name and models
+        configuration = {
+            "nlp_engine_name": "spacy",
+            "models": [{"lang_code": "es", "model_name": "es_core_news_md"},
+                       {"lang_code": "en", "model_name": "en_core_web_lg"}],
+        }
+
+        # Create NLP engine based on configuration
+        provider = NlpEngineProvider(nlp_configuration=configuration)
+        nlp_engine_with_spanish = provider.create_engine()
+
+        # Pass the created NLP engine and supported_languages to the AnalyzerEngine
+        analyzer = AnalyzerEngine(
+            nlp_engine=nlp_engine_with_spanish, 
+            supported_languages=["en", "es"]
+        )
+
+        # Analyze in different languages
+        results_spanish = analyzer.analyze(text="Mi nombre es David", language="es")
+        print(results_spanish)
+
+        results_english = analyzer.analyze(text="My name is David", language="en")
+        print(results_english)
+        ```
+
+    - **Via configuration**: Set up the models which should be used in the [default `conf` file](conf/default.yaml).
+
+        An example Conf file:
+
+        ```yaml
+        nlp_engine_name: spacy
+        models:
+            -
+            lang_code: en
+            model_name: en_core_web_lg
+            -
+            lang_code: es
+            model_name: es_core_news_md 
+        ```
+
+        The default conf file is read during the default initialization of the `AnalyzerEngine`. Alternatively, the path to a custom configuration file can be passed to the `NlpEngineProvider`:
+
+        ```python
+        from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+        from presidio_analyzer.nlp_engine import NlpEngineProvider
+
+        # Create NLP engine based on configuration file
+        provider = NlpEngineProvider(conf_file="PATH_TO_YAML")
+        nlp_engine_with_spanish = provider.create_engine()
+
+        # Pass created NLP engine and supported_languages to the AnalyzerEngine
+        analyzer = AnalyzerEngine(
+            nlp_engine=nlp_engine_with_spanish, 
+            supported_languages=["en", "es"]
+        )
+
+        # Analyze in different languages
+        results_spanish = analyzer.analyze(text="Mi nombre es David", language="es")
+        print(results_spanish)
+
+        results_english = analyzer.analyze(text="My name is David", language="en")
+        print(results_english)
+        ```
+
+    In this examples we create an `NlpEngine` holding two spaCy models (one in English: `en_core_web_lg` and one in Spanish: `es_core_news_md`), define the `supported_languages` parameter accordingly, and can send requests in each of these languages.
+
+#### Set up language specific recognizers
+
+Recognizers are language dependent either by their logic or by the context words used while scanning the surrounding of a detected entity.
+As these context words are used to increase score, they should be in the expected input language.
+
+Consider updating the context words of existing recognizers or add new recognizers to support new languages.
+Each recognizer can support one language. For example:
+
+```python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer.predefined_recognizers import EmailRecognizer
+
+# Setting up an English Email recognizer:
+email_recognizer_en = EmailRecognizer(supported_language="en",context=["email","mail"])
+
+# Setting up a Spanish Email recognizer
+email_recognizer_es = EmailRecognizer(supported_language="es",context=["correo","electrónico"])
+
+registry = RecognizerRegistry()
+
+# Add recognizers to registry
+registry.add_recognizer(email_recognizer_en)
+registry.add_recognizer(email_recognizer_es)
+
+# Set up analyzer with our updated recognizer registry
+analyzer = AnalyzerEngine(
+    registry=registry,
+    supported_languages=["en","es"],
+    nlp_engine=nlp_engine_with_spanish)
+
+analyzer.analyze(...)
+```
+
+## HTTP API
+
+`/analyze`
+
+Analyzes a text. Method: `POST`
 
 Parameters
 
@@ -203,24 +340,25 @@ Parameters
 | score_threshold|float|yes|the the minimal score threshold|
 | entities|string[]|yes|a list of entities to analyze|
 | trace|bool|yes|whether to trace the request|
-| remove_interpretability_response|bool|yes|whether to include anaysis explenation in the response|
+| remove_interpretability_response|bool|yes|whether to include analysis explanation in the response |
 
-#### /recognizers
+`/recognizers`
+
 Returns a list of supported recognizers.
-Method: GET
+Method: `GET`
 
 Parameters
 
 | Name | Type | Optional | Description|
 | --- | --- | ---| ---|
-| language|string|yes|2 characters of the desired language. E.g en, de|
+| language|string|yes|2 characters of the desired language code. e.g., en, de. |
 
-#### /supportedentities
-Returns a list of supported entities.
-Method: GET
+`/supportedentities`
+
+Returns a list of supported entities. Method: `GET`
 
 Parameters
 
 | Name | Type | Optional | Description|
 | --- | --- | ---| ---|
-| language|string|yes|2 characters of the desired language. E.g en, de|
+| language|string|yes|2 characters of the desired language code. e.g., en, de. |
