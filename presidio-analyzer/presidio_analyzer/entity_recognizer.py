@@ -1,12 +1,11 @@
 import copy
-import logging
 from abc import abstractmethod
 from typing import List, Dict
 
-from presidio_analyzer import RecognizerResult
+from presidio_analyzer import RecognizerResult, PresidioLogger
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-logger = logging.getLogger("presidio_analyzer")
+logger = PresidioLogger("presidio-analyzer")
 
 
 class EntityRecognizer:

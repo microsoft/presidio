@@ -1,4 +1,4 @@
-import logging
+from presidio_analyzer import PresidioLogger
 
 
 class AppTracer:
@@ -12,7 +12,9 @@ class AppTracer:
     """
 
     def __init__(self, enabled: bool = True):
-        self.logger = logging.getLogger("decision_process")
+
+        self.logger = PresidioLogger("Interpretability")
+        self.logger.set_level("INFO")
         self.enabled = enabled
 
     def trace(self, request_id: str, trace_data: str) -> None:

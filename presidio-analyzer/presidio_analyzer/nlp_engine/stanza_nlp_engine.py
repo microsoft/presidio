@@ -1,4 +1,4 @@
-import logging
+from presidio_analyzer import PresidioLogger
 
 try:
     import stanza
@@ -8,7 +8,7 @@ except ImportError:
 
 from presidio_analyzer.nlp_engine import SpacyNlpEngine
 
-logger = logging.getLogger("presidio_analyzer")
+logger = PresidioLogger("presidio-analyzer")
 
 
 class StanzaNlpEngine(SpacyNlpEngine):

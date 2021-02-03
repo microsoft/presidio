@@ -15,7 +15,7 @@ class AnalyzerResult:
     Validate and compare an recognizer result object.
     """
 
-    logger = logging.getLogger("presidio_anonymizer")
+    logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self, content: dict):
         self.__validate_fields(content)
@@ -71,15 +71,12 @@ class AnalyzerResult:
         :return: int
         """
         return hash(
-            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}"
-        )
+            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
 
     def __str__(self):
         """Analyzer_result class data to string."""
-        return (
-            f"start: {str(self.start)}, end: {str(self.end)}, "
-            f"score: {str(self.score)}, entity_type: {self.entity_type}"
-        )
+        return f"start: {str(self.start)}, end: {str(self.end)}, " \
+               f"score: {str(self.score)}, entity_type: {self.entity_type}"
 
     def has_conflict(self, other):
         """
@@ -101,16 +98,13 @@ class AnalyzerResult:
             if content.get(field) is None:
                 self.logger.debug(f"invalid input, no field {field} for {content}")
                 raise InvalidParamException(
-                    f"Invalid input, analyzer result must contain {field}"
-                )
+                    f"Invalid input, analyzer result must contain {field}")
         start = content.get("start")
         end = content.get("end")
         if start < 0 or end < 0:
             raise InvalidParamException(
-                f"Invalid input, analyzer result start and end must be positive"
-            )
+                f"Invalid input, analyzer result start and end must be positive")
         if start >= end:
             raise InvalidParamException(
                 f"Invalid input, analyzer result start index '{start}' "
-                f"must be smaller than end index '{end}'"
-            )
+                f"must be smaller than end index '{end}'")

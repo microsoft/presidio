@@ -1,16 +1,16 @@
 import json
-import logging
 from typing import List, Optional
 
 from presidio_analyzer import (
     RecognizerRegistry,
     RecognizerResult,
     EntityRecognizer,
+    PresidioLogger,
 )
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 
-logger = logging.getLogger("presidio_analyzer")
+logger = PresidioLogger("presidio-analyzer")
 
 
 class AnalyzerEngine:
