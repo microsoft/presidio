@@ -1,0 +1,196 @@
+# Presidio CI: lint, build, unit test, functional tests, push to private Azure Container registry, deploy to dev demo
+
+trigger:
+  branches:
+    include:
+      - V2
+
+variables:
+  - group: Presidio-V2-CI
+
+stages:
+  - template: .pipelines/templates/lint-build-test.yml
+  - stage: PushContainersAndFunctionalTests
+    dependsOn: LintBuildTest
+    jobs:
+      - job: BuildAndPushContainers
+        displayName: Build and Push Containers
+        pool:
+          vmImage: 'ubuntu-16.04'
+        variables:
+          REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+          TAG: ':$(Build.BuildId)'
+        steps:
+          - template: .pipelines/templates/build-containers.yml
+            parameters:
+              REGISTRY_NAME: $(REGISTRY_NAME)
+              TAG: $(TAG)
+              AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+
+      - job: FunctionalTests
+        displayName: Functional Tests
+        dependsOn:
+          - 'BuildAndPushContainers'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        variables:
+          REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+          TAG: ':$(Build.BuildId)'
+        steps:
+          - task: DockerCompose@0
+            displayName: Pull Presidio Images from ACR
+            inputs:
+              action: Run a Docker Compose command
+              dockerComposeCommand: pull
+              dockerComposeFile: docker-compose.yml
+              containerregistrytype: Azure Container Registry
+              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
+              azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'
+              dockerComposeFileArgs: |
+                REGISTRY_NAME=$(REGISTRY_NAME)
+                TAG=$(TAG)
+          - template: .pipelines/templates/functional-tests.yml
+
+  - stage: DeployDev
+    dependsOn: PushContainersAndFunctionalTests
+    variables:
+      REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+    displayName: Deploy to Dev environment
+    jobs:
+      - job: DeployAnalyzerToDev
+        displayName: Deploy Analyzer to Dev Environment
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - checkout: none
+          - task: AzureCLI@2
+            displayName: Create staging slot
+            name: createStagingSlot
+            inputs:
+              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -eux  # fail on error
+
+                az webapp deployment slot create --name $(ANALYZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --configuration-source $(ANALYZER_DEV_APP_NAME) --slot staging
+                URI=https://$(az webapp config hostname list --webapp-name $(ANALYZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --slot staging --query '[0].name' -o tsv)
+                echo $URI
+                echo "##vso[task.setvariable variable=STAGING_URI;isOutput=true]$URI"
+          - task: AzureWebAppContainer@1
+            displayName: Deploy to staging slot
+            inputs:
+              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
+              deployToSlotOrASE: true
+              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
+              appName: $(ANALYZER_DEV_APP_NAME)
+              slotName: staging
+              imageName: $(REGISTRY_NAME)presidio-analyzer:$(Build.BuildId)
+
+      - job: DeployAnonymizerToDev
+        displayName: Deploy Anonymizer to Dev Environment
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - checkout: none
+          - task: AzureCLI@2
+            displayName: Create staging slot
+            name: createStagingSlot
+            inputs:
+              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -eux  # fail on error
+
+                az webapp deployment slot create --name $(ANONYMIZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --configuration-source $(ANONYMIZER_DEV_APP_NAME) --slot staging
+                URI=https://$(az webapp config hostname list --webapp-name $(ANONYMIZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --slot staging --query '[0].name' -o tsv)
+                echo $URI
+                echo "##vso[task.setvariable variable=STAGING_URI;isOutput=true]$URI"
+          - task: AzureWebAppContainer@1
+            displayName: Deploy to staging slot
+            inputs:
+              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
+              deployToSlotOrASE: true
+              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
+              appName: $(ANONYMIZER_DEV_APP_NAME)
+              slotName: staging
+              imageName: $(REGISTRY_NAME)presidio-anonymizer:$(Build.BuildId)
+
+      - job: TestDeployment
+        displayName: Smoke and E2E Tests on the deployement
+        dependsOn:
+          - DeployAnalyzerToDev
+          - DeployAnonymizerToDev
+        variables:
+          ANALYZER_STAGING_URI: $[ dependencies.DeployAnalyzerToDev.outputs['createStagingSlot.STAGING_URI'] ]
+          ANONYMIZER_STAGING_URI: $[ dependencies.DeployAnonymizerToDev.outputs['createStagingSlot.STAGING_URI'] ]
+        steps:
+          - task: Bash@3
+            displayName: 'Wait and Smoke test'
+            timeoutInMinutes: 10
+            inputs:
+              targetType: 'inline'
+              script: |
+                set -ux  # do not fail on error
+
+                ANALYZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANALYZER_STAGING_URI/health)
+                ANONYMIZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANONYMIZER_STAGING_URI/health)
+                echo analyzer status code is $ANALYZER_STATUS_CODE
+                echo anonymizer status code is $ANONYMIZER_STATUS_CODE
+
+                while [ ! $ANALYZER_STATUS_CODE == 200 ] || [ ! $ANONYMIZER_STATUS_CODE == 200 ]
+                do
+                    sleep 30
+                    ANALYZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANALYZER_STAGING_URI/health)
+                    ANONYMIZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANONYMIZER_STAGING_URI/health)
+                    echo analyzer status code is $ANALYZER_STATUS_CODE
+                    echo anonymizer status code is $ANONYMIZER_STATUS_CODE
+                done
+
+      - job: SwapBothSlots
+        condition: eq(dependencies.TestDeployment.result, 'Succeeded')
+        strategy:
+          matrix:
+            Analyzer:
+              Name: 'Analyzer'
+              AppServiceName: $(ANALYZER_DEV_APP_NAME)
+            Anonymizer:
+              Name: 'Anonymizer'
+              AppServiceName: $(ANONYMIZER_DEV_APP_NAME)
+        displayName: Swap slots from staging to production
+        dependsOn: TestDeployment
+        steps:
+          - checkout: none
+          - task: AzureAppServiceManage@0
+            displayName: Swap $(Name) slot
+            inputs:
+              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
+              action: Swap Slots
+              webAppName: $(AppServiceName)
+              sourceSlot: staging
+              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
+
+      - job: DeleteBothSlots
+        condition: always()
+        dependsOn:
+          - SwapBothSlots
+        strategy:
+          matrix:
+            Analyzer:
+              Name: 'Analyzer'
+              AppServiceName: $(ANALYZER_DEV_APP_NAME)
+            Anonymizer:
+              Name: 'Anonymizer'
+              AppServiceName: $(ANONYMIZER_DEV_APP_NAME)
+        displayName: Delete staging slot
+        steps:
+          - checkout: none
+          - task: AzureAppServiceManage@0
+            displayName: Delete $(Name) staging slot
+            inputs:
+              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
+              action: Delete Slot
+              webAppName: $(AppServiceName)
+              slot: staging
+              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)

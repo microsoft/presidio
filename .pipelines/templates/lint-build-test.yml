@@ -1,0 +1,72 @@
+stages:
+  - stage: LintBuildTest
+    # displayNames are defined below to avoid duplicate descriptions in the PR
+    displayName:
+    jobs:
+      #- job: validate
+      #  displayName: 'Validate PR pre-requisites'
+      #  steps:
+      #    - template: .pipelines/templates/validate-version.yml
+      #      parameters:
+      #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
+
+      - job: Inclusivelint
+        displayName: 'Inclusive linting validation'
+        steps:
+          - template: ./inclusive-lint.yml
+
+      - job: SecurityAnalysis
+        displayName: Security Analysis
+        pool:
+          # CredScan only runs on Windows
+          vmImage: 'windows-latest'
+        steps:
+          - template: ./security-analysis.yml
+
+      - job: TestAnalyzer
+        displayName: Test Analyzer
+        dependsOn:
+          #- 'validate'
+          - 'Inclusivelint'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        strategy:
+          matrix:
+            Python36:
+              python.version: '3.6'
+            Python37:
+              python.version: '3.7'
+            Python38:
+              python.version: '3.8'
+
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(python.version)'
+            displayName: 'Use Python $(python.version)'
+          - template: ./build-analyzer.yml
+
+      - job: TestAnonymizer
+        displayName: Test Anonymizer
+        dependsOn:
+          #- 'validate'
+          - 'Inclusivelint'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        strategy:
+          matrix:
+            Python36:
+              python.version: '3.6'
+            Python37:
+              python.version: '3.7'
+            Python38:
+              python.version: '3.8'
+
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(python.version)'
+            displayName: 'Use Python $(python.version)'
+          - template: ./build-anonymizer.yml
+
+
