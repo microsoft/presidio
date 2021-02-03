@@ -10,6 +10,7 @@ variables:
 stages:
   - template: .pipelines/templates/lint-build-test.yml
   - stage: FunctionalTests
+    dependsOn: [] # Run FunctionalTests in parallel to LintBuildTest
     displayName: Functional Tests
     jobs:
     - job: FunctionalTests
