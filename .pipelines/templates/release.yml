@@ -43,3 +43,4 @@ jobs:
         REGISTRY_NAME: $(REGISTRY_NAME)
         TAG: $(TAG)
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+        PROJECT_NAME: public/$(Build.Repository.Name)
