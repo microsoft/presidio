@@ -1,16 +1,12 @@
 import datetime
 
+import regex as re
+
 from presidio_analyzer import LocalRecognizer, \
     Pattern, \
     RecognizerResult, \
     EntityRecognizer, \
     AnalysisExplanation
-
-# Import 're2' regex engine if installed, if not- import 'regex'
-try:
-    import re2 as re
-except ImportError:
-    import regex as re
 
 
 class PatternRecognizer(LocalRecognizer):

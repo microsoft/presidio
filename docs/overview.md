@@ -69,6 +69,5 @@ Presidio leverages:
 - [spaCy](https://spacy.io/)
 - [Redis](https://redis.io/)
 - [GRPC](https://grpc.io)
-- [re2](https://github.com/google/re2)
 
 The [design document](design.md) introduces Presidio's concepts and architecture.

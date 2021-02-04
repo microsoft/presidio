@@ -123,29 +123,8 @@ Where `WHEEL_FILE` is the path to the created wheel file
 pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.1.0/en_core_web_lg-2.1.0.tar.gz
 ```
 
-Note that if you skip this step, the Spacy model would install lazily during the first call to the `AnalyzerEngine`
 
-4. _Optional_ : install `re2` and `pyre2`:
-
-- Install [re2](https://github.com/google/re2):
-
-  ```sh
-  re2_version="2018-12-01"
-  wget -O re2.tar.gz https://github.com/google/re2/archive/${re2_version}.tar.gz
-  mkdir re2
-  tar --extract --file "re2.tar.gz" --directory "re2" --strip-components 1
-  cd re2 && make install
-  ```
-
-- Install `pyre2`'s fork:
-
-  ```
-  pip install https://github.com/torosent/pyre2/archive/release/0.2.23.zip
-  ```
-
-  Note: If you don't install `re2`, Presidio will use the `regex` package for regular expressions handling
-
-5. Test the installation
+4. Test the installation
 
 To test, run Python on the virtual env you've installed the presidio-analyzer in.
 Then, make sure this code returns an answer:

@@ -1,6 +1,8 @@
 import string
 import logging
 
+import regex as re
+
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
     regex_per_country,
     BOS,
@@ -12,12 +14,6 @@ from presidio_analyzer import (
     RecognizerResult,
     EntityRecognizer,
 )
-
-# Import 're2' regex engine if installed, if not- import 'regex'
-try:
-    import re2 as re
-except ImportError:
-    import regex as re
 
 
 class IbanRecognizer(PatternRecognizer):
