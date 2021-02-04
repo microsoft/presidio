@@ -335,12 +335,12 @@ Parameters
 | Name | Type | Optional | Description|
 | --- | --- | ---| ---|
 | text|string|no|the text to analyze|
-| language|string|no|2 characters of the desired language. E.g en, de|
-| correlation_id|string|yes|a correlation id to append to headers and traces|
-| score_threshold|float|yes|the the minimal score threshold|
-| entities|string[]|yes|a list of entities to analyze|
-| trace|bool|yes|whether to trace the request|
-| remove_interpretability_response|bool|yes|whether to include analysis explanation in the response |
+| language|string|no| Two characters of the desired language. E.g en, de|
+| correlation_id|string|yes| A correlation id to append to headers and traces|
+| score_threshold|float|yes| The the minimal score threshold|
+| entities|string[]|yes| A list of entities to analyze|
+| trace|bool|yes| Whether to trace the request|
+| return_decision_process|bool|yes| Should the decision points within the analysis be returned as part of the response |
 
 `/recognizers`
 

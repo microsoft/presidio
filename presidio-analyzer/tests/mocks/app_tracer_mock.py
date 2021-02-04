@@ -1,7 +1,9 @@
 import logging
 
+from presidio_analyzer.app_tracer import AppTracer
 
-class AppTracerMock:
+
+class AppTracerMock(AppTracer):
     def __init__(self, enable_interpretability=True):
 
         logger = logging.getLogger("InterpretabilityMock")

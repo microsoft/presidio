@@ -32,7 +32,7 @@ def loaded_analyzer_engine(loaded_registry, app_tracer):
         loaded_registry,
         NlpEngineMock(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts),
         app_tracer=app_tracer,
-        enable_trace_pii=True,
+        log_decision_process=True,
     )
     return analyzer_engine
 
@@ -281,7 +281,7 @@ def test_analyze_when_analyze_then_apptracer_has_value(
     analyzer_engine_with_spacy = AnalyzerEngine(
         loaded_registry,
         app_tracer=app_tracer_mock,
-        enable_trace_pii=True,
+        log_decision_process=True,
         nlp_engine=nlp_engine,
     )
     results = analyzer_engine_with_spacy.analyze(
@@ -289,7 +289,7 @@ def test_analyze_when_analyze_then_apptracer_has_value(
         text=text,
         entities=entities,
         language=language,
-        trace=True,
+        return_decision_process=True,
     )
     assert len(results) == 3
     for result in results:
@@ -532,11 +532,11 @@ def test_given_no_interpretability_requested_then_response_contains_no_analysis(
 ):
     text = "John Smith drivers license is AC432223"
     language = "en"
-    remove_interpretability_response = True
+    return_decision_process = False
     results = loaded_analyzer_engine.analyze(
         correlation_id=unit_test_guid,
         text=text,
-        remove_interpretability_response=remove_interpretability_response,
+        return_decision_process=return_decision_process,
         language=language,
     )
 
@@ -549,11 +549,11 @@ def test_given_interpretability_requested_then_response_contains_analysis(
 ):
     text = "John Smith drivers license is AC432223"
     language = "en"
-    remove_interpretability_response = False
+    return_decision_process = True
     results = loaded_analyzer_engine.analyze(
         correlation_id=unit_test_guid,
         text=text,
-        remove_interpretability_response=remove_interpretability_response,
+        return_decision_process=return_decision_process,
         language=language,
     )
 
