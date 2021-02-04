@@ -7,6 +7,8 @@ parameters:
   default: ''
 - name: AZURE_SUBSCRIPTION
   type: string
+- name: PROJECT_NAME
+  type: string
 steps:
   - task: DockerCompose@0
     displayName: Build Presidio Images
@@ -24,3 +26,4 @@ steps:
         containerregistrytype: Azure Container Registry
         azureSubscriptionEndpoint: ${{ parameters.AZURE_SUBSCRIPTION }}
         azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
+        projectName: ${{ parameters.PROJECT_NAME }}
