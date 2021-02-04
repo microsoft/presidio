@@ -29,18 +29,24 @@ def install_models(conf_file: str) -> None:
         raise ValueError("NLP config file should contain a list of models")
 
     for model in nlp_configuration["models"]:
-        if nlp_configuration["nlp_engine_name"] == "spacy":
-            spacy.cli.download(model["model_name"])
-        elif nlp_configuration["nlp_engine_name"] == "stanza":
-            if not stanza:
-                raise ValueError("the Stanza package should be installed manually")
-            else:
-                stanza.download(model["model_name"])
-        else:
-            raise ValueError(
-                f"Unsupported nlp engine: {nlp_configuration['nlp_engine_name']}"
-            )
+        engine_name = nlp_configuration["nlp_engine_name"]
+        model_name = model["model_name"]
+        _download_model(engine_name, model_name)
+
     logger.info("finished installing models")
+
+
+def _download_model(engine_name: str, model_name: str):
+    if engine_name not in ("spacy", "stanza"):
+        raise ValueError(f"Unsupported nlp engine: {engine_name}")
+
+    if engine_name == "spacy":
+        spacy.cli.download(model_name)
+    elif engine_name == "stanza":
+        if stanza:
+            stanza.download(model_name)
+        else:
+            raise ImportError("stanza is not installed")
 
 
 if __name__ == "__main__":
