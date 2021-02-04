@@ -24,3 +24,19 @@ jobs:
         tag: $(version)
 
 
+- job: BuildAndPushContainers
+  displayName: Build and Push Containers
+  dependsOn:
+    - 'TestAnonymizer'
+    - 'TestAnalyzer'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  variables:
+    version: $[ dependencies.Version.outputs['setVer.version'] ]
+    REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+  steps:
+    - template: .pipelines/templates/build-containers.yml
+      parameters:
+        REGISTRY_NAME: $(REGISTRY_NAME)
+        TAG: public/$(version)
+        AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
