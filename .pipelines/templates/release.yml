@@ -1,5 +1,9 @@
 trigger: none
 pr: none
+
+variables:
+  - group: Presidio-V2-CI
+
 jobs:
 - job: version
   displayName: 'Get the version number'
