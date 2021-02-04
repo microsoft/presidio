@@ -43,20 +43,12 @@ class Server:
 
             data = AnonymizerRequest(content, self.engine.builtin_anonymizers)
             text = self.engine.anonymize(data)
-            return jsonify(text=text)
+            return jsonify(result=text)
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
-            try:
-                return json.dumps(self.engine.anonymizers()), 200
-            except Exception as e:
-                self.logger.error(
-                    "A fatal error occurred "
-                    "during execution of "
-                    "anonymizers. {}".format(e)
-                )
-                return ErrorResponse(e.args[0]).to_json(), 500
+            return json.dumps(self.engine.anonymizers()), 200
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
@@ -66,8 +58,8 @@ class Server:
             return ErrorResponse(err.err_msg).to_json(), 422
 
         @self.app.errorhandler(Exception)
-        def server_error(err):
-            self.logger.error(f"failed to anonymize text with error: {err}")
+        def server_error(e):
+            self.logger.error("A fatal error occurred " "during execution".format(e))
             return ErrorResponse("Internal server error").to_json(), 500
 
 
