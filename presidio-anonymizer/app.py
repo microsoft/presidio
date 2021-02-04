@@ -50,7 +50,7 @@ class Server:
                 return ErrorResponse(e.args[0]).to_json(), 500
 
         @self.app.errorhandler(InvalidParamException)
-        def server_error(err):
+        def invalid_param(err):
             self.logger.warning(
                 f"failed to anonymize text with validation error: {err.err_msg}")
             return ErrorResponse(err.err_msg).to_json(), 422
