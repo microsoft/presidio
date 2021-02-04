@@ -37,7 +37,7 @@ jobs:
     version: $[ dependencies.Version.outputs['setVer.version'] ]
     REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
     IMAGE_PREFIX: 'public/'
-    TAG: $(version)
+    TAG: ':$(version)'
   steps:
     - template: ./build-containers.yml
       parameters:

@@ -28,4 +28,3 @@ steps:
         containerregistrytype: Azure Container Registry
         azureSubscriptionEndpoint: ${{ parameters.AZURE_SUBSCRIPTION }}
         azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
-        projectName: public/$(Build.Repository.Name)
