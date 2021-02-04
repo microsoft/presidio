@@ -24,9 +24,9 @@ def test_given_anonymize_called_with_valid_request_then_expected_valid_response_
 
     response_status, response_content = anonymize(request_body)
 
-    expected_response = "hello world, my name is ANONYMIZED. My number is: 03445****"
+    expected_response = """{"result":"hello world, my name is ANONYMIZED. My number is: 03445****"}"""
     assert response_status == 200
-    assert response_content == expected_response
+    assert equal_json_strings(expected_response, response_content)
 
 
 @pytest.mark.api
@@ -45,9 +45,9 @@ def test_given_anonymize_called_with_empty_text_then_invalid_input_message_retur
 
     response_status, response_content = anonymize(request_body)
 
-    expected_response = "Invalid input, text can not be empty"
+    expected_response = '{"error": "Invalid input, text can not be empty"}'
     assert response_status == 422
-    assert response_content == expected_response
+    assert equal_json_strings(expected_response, response_content)
 
 
 @pytest.mark.api
