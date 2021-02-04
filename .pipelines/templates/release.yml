@@ -22,3 +22,5 @@ jobs:
         gitHubConnection: $(GITHUB_CONNECTION)
         tagSource: manual
         tag: $(version)
+
+
