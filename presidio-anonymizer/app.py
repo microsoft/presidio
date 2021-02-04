@@ -4,7 +4,7 @@ import logging
 import os
 from typing import Tuple
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnonymizerRequest
@@ -31,18 +31,10 @@ class Server:
             content = request.get_json()
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
-            try:
-                engine = AnonymizerEngine()
-                data = AnonymizerRequest(content, engine.builtin_anonymizers)
-                text = engine.anonymize(data)
-            except InvalidParamException as e:
-                self.logger.warning(
-                    f"failed to anonymize text with validation error: {e.err_msg}")
-                return e.err_msg, 422
-            except Exception as e:
-                self.logger.error(f"failed to anonymize text with error: {e}")
-                return ErrorResponse("Internal server error").to_json(), 500
-            return text
+            engine = AnonymizerEngine()
+            data = AnonymizerRequest(content, engine.builtin_anonymizers)
+            text = engine.anonymize(data)
+            return jsonify(text=text)
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
@@ -56,6 +48,17 @@ class Server:
                     "anonymizers. {}".format(e)
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
+
+        @self.app.errorhandler(InvalidParamException)
+        def server_error(err):
+            self.logger.warning(
+                f"failed to anonymize text with validation error: {err.err_msg}")
+            return ErrorResponse(err.err_msg).to_json(), 422
+
+        @self.app.errorhandler(Exception)
+        def server_error(err):
+            self.logger.error(f"failed to anonymize text with error: {err}")
+            return ErrorResponse("Internal server error").to_json(), 500
 
 
 if __name__ == "__main__":
