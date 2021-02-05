@@ -9,6 +9,8 @@ COPY ./${NAME}/Pipfile.lock /usr/bin/${NAME}/Pipfile.lock
 
 WORKDIR /usr/bin/${NAME}
 
+RUN apt-get update && apt-get -y install gcc
+
 # Making sure we have pipenv
 RUN pip install pipenv
 # Updating setuptools
