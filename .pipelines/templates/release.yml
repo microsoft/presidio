@@ -1,3 +1,5 @@
+# Presidio Release: Push to Github Release, pypi, and to ACR twice (with verison, latest) with 'public' tag for MCR release.
+
 trigger: none
 pr: none
 
