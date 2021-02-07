@@ -31,13 +31,16 @@ jobs:
 - job: PublishToPyPi
   displayName: Publish to PyPi
   dependsOn: version
+  strategy:
+    matrix:
+      Analyzer:
+        WORKING_FOLDER: 'presidio-analyzer'
+      Anonymizer:
+        WORKING_FOLDER: 'presidio-anonymizer'
   steps:
     - template: ./publish-to-pypi.yml
       parameters:
-        WORKING_FOLDER: 'presidio-analyzer'
-    - template: ./publish-to-pypi.yml
-      parameters:
-        WORKING_FOLDER: 'presidio-anonymizer'
+        WORKING_FOLDER: '$(WORKING_FOLDER)'
 
 - job: BuildAndPushContainers
   displayName: Build and Push Containers

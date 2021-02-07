@@ -31,7 +31,5 @@ steps:
       targetType: 'inline'
       script: |
         set -eux  # fail on error
-        echo ${PYPIRC_PATH}
-        ls -l
         twine upload -r presidio --verbose --config-file $(PYPIRC_PATH) --skip-existing dist/*
       workingDirectory: '${{ parameters.WORKING_FOLDER }}'
