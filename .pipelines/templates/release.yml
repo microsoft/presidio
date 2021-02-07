@@ -40,7 +40,7 @@ jobs:
       parameters:
         REGISTRY_NAME: $(REGISTRY_NAME)
         IMAGE_PREFIX: 'public/'
-        TAG: ':$(version)'
+        TAG: :$(version)
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
     - template: ./build-and-push-containers.yml
       parameters:
