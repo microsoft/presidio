@@ -27,8 +27,7 @@ setuptools.setup(
     install_requires=[
         "spacy==2.3",
         "regex==2020.11.13",
-        "tldextract==3.1.0",
-        "flask==1.1.2",
+        "tldextract==3.1.0"
     ],
     include_package_data=True,
     license="MIT",
