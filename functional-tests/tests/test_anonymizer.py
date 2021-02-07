@@ -77,7 +77,7 @@ def test_given_anonymize_called_with_empty_analyzer_results_then_invalid_input_m
 
 
 @pytest.mark.api
-def test_given_anonymize_called_with_deformed_body_than_internal_server_error_returned():
+def test_given_anonymize_called_with_deformed_body_then_internal_server_error_returned():
     request_body = """
     {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
