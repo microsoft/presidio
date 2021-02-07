@@ -8,7 +8,7 @@ def anonymize(data):
     response = requests.post(
         f"{ANONYMIZER_BASE_URL}/anonymize", data=data, headers=DEFAULT_HEADERS
     )
-    return response.status_code, response.content.decode()
+    return response.status_code, response.content
 
 
 def anonymizers():
