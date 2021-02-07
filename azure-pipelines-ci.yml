@@ -21,7 +21,7 @@ stages:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
         steps:
-          - template: .pipelines/templates/build-containers.yml
+          - template: .pipelines/templates/build-and-push-containers.yml
             parameters:
               REGISTRY_NAME: $(REGISTRY_NAME)
               TAG: $(TAG)
