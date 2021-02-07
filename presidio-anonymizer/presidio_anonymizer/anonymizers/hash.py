@@ -36,5 +36,9 @@ class Hash(Anonymizer):
         )
         pass
 
+    def anonymizer_name(self) -> str:
+        """Return anonymizer name."""
+        return "hash"
+
     def _get_hash_type_or_default(self, params: dict = None):
         return params.get(self.HASH_TYPE, self.SHA256)

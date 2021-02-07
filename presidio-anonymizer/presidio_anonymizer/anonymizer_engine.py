@@ -13,14 +13,10 @@ class AnonymizerEngine:
     and replaces the PII entities with the desired transformations.
     """
 
-    def __get_sub_classes():
-        sub_classes = {}
-        for cls in Anonymizer.__subclasses__():
-            sub_classes[cls.__name__.lower()] = cls
-        return sub_classes
-
     logger = logging.getLogger("presidio-anonymizer")
-    builtin_anonymizers = __get_sub_classes()
+    builtin_anonymizers = {
+        cls.anonymizer_name(cls): cls for cls in Anonymizer.__subclasses__()
+    }
 
     def __init__(
         self,
