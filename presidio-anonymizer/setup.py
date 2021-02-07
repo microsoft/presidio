@@ -5,8 +5,6 @@ from os import path
 
 from setuptools import setup, find_packages
 
-requirements = ["flask==1.1.2"]
-
 test_requirements = ["pytest>=3", "flake8==3.7.9", "flask==1.1.2"]
 
 __version__ = ""
@@ -29,7 +27,6 @@ setup(
     ],
     description="Persidio Anonymizer package - replaces analyzed text with desired "
                 "values.",
-    install_requires=requirements,
     license="MIT license",
     include_package_data=True,
     keywords="presidio_anonymizer",
