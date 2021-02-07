@@ -35,6 +35,9 @@ jobs:
     - template: ./publish-to-pypi.yml
       parameters:
         WORKING_FOLDER: 'presidio-analyzer'
+    - template: ./publish-to-pypi.yml
+      parameters:
+        WORKING_FOLDER: 'presidio-anonymizer'
 
 - job: BuildAndPushContainers
   displayName: Build and Push Containers
