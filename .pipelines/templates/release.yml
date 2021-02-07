@@ -45,5 +45,5 @@ jobs:
     - template: ./build-and-push-containers.yml
       parameters:
         REGISTRY_NAME: $(REGISTRY_NAME)
-        TAG: 'latest'
+        TAG: ':latest'
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
