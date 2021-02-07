@@ -1,4 +1,4 @@
-# Presidio CI: lint, build, unit test, functional tests, push to private Azure Container registry, deploy to dev demo
+# Presidio CI: lint, build, unit test, e2e tests, push to private Azure Container registry, deploy to dev demo
 
 trigger:
   branches:
@@ -10,7 +10,7 @@ variables:
 
 stages:
   - template: .pipelines/templates/lint-build-test.yml
-  - stage: PushContainersAndFunctionalTests
+  - stage: PushContainersAndE2ETests
     dependsOn: LintBuildTest
     jobs:
       - job: BuildAndPushContainers
@@ -21,14 +21,14 @@ stages:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
         steps:
-          - template: .pipelines/templates/build-containers.yml
+          - template: .pipelines/templates/build-and-push-containers.yml
             parameters:
               REGISTRY_NAME: $(REGISTRY_NAME)
               TAG: $(TAG)
               AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
 
-      - job: FunctionalTests
-        displayName: Functional Tests
+      - job: E2ETests
+        displayName: E2E Tests
         dependsOn:
           - 'BuildAndPushContainers'
         pool:
@@ -49,10 +49,10 @@ stages:
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
                 TAG=$(TAG)
-          - template: .pipelines/templates/functional-tests.yml
+          - template: .pipelines/templates/e2e-tests.yml
 
   - stage: DeployDev
-    dependsOn: PushContainersAndFunctionalTests
+    dependsOn: PushContainersAndE2ETests
     variables:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
     displayName: Deploy to Dev environment
