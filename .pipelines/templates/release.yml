@@ -39,11 +39,11 @@ jobs:
     - template: ./build-and-push-containers.yml
       parameters:
         REGISTRY_NAME: $(REGISTRY_NAME)
-        IMAGE_PREFIX: 'public/'
-        TAG: :$(version)
+        IMAGE_PREFIX: "public/"
+        TAG: ":$(version)"
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
     - template: ./build-and-push-containers.yml
       parameters:
         REGISTRY_NAME: $(REGISTRY_NAME)
-        TAG: ':latest'
+        TAG: ":latest"
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
