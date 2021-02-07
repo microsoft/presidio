@@ -1,3 +1,4 @@
+"""REST API server for analyzer."""
 import logging
 from logging.config import fileConfig
 from pathlib import Path

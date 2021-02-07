@@ -1,6 +1,3 @@
-import json
-import os
-
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnalyzerResults, AnonymizerRequest
 
@@ -32,18 +29,14 @@ def test_given_conflict_analyzer_results_then_reversed_none_conflict_list_return
     assert list(sorted_results)[1].end < list(sorted_results)[0].end
 
 
-content = {}
-
-
 def get_dup_payload():
-    global content
-    if not content:
-        json_path = file_path("dup_payload.json")
-        with open(json_path) as json_file:
-            content = json.load(json_file)
-    return content
-
-
-def file_path(file_name: str):
-    return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), f"resources/{file_name}"))
+    return {
+        "text": "hello world, my name is Jane Doe. My number is: 034453334",
+        "analyzer_results": [
+            {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"},
+            {"start": 24, "end": 32, "score": 0.6, "entity_type": "FULL_NAME"},
+            {"start": 24, "end": 28, "score": 0.9, "entity_type": "FIRST_NAME"},
+            {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
+            {"start": 24, "end": 30, "score": 0.8, "entity_type": "NAME"},
+        ],
+    }

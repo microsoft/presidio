@@ -17,6 +17,17 @@ DEFAULT_PORT = "3000"
 
 LOGGING_CONF_FILE = "logging.ini"
 
+WELCOME_MESSAGE = r"""
+ _______  _______  _______  _______ _________ ______  _________ _______
+(  ____ )(  ____ )(  ____ \(  ____ \\__   __/(  __  \ \__   __/(  ___  )
+| (    )|| (    )|| (    \/| (    \/   ) (   | (  \  )   ) (   | (   ) |
+| (____)|| (____)|| (__    | (_____    | |   | |   ) |   | |   | |   | |
+|  _____)|     __)|  __)   (_____  )   | |   | |   | |   | |   | |   | |
+| (      | (\ (   | (            ) |   | |   | |   ) |   | |   | |   | |
+| )      | ) \ \__| (____/\/\____) |___) (___| (__/  )___) (___| (___) |
+|/       |/   \__/(_______/\_______)\_______/(______/ \_______/(_______)
+"""
+
 
 class Server:
     """Flask server for anonymizer."""
@@ -29,6 +40,9 @@ class Server:
         self.engine = AnonymizerEngine()
 
         self.app = Flask(__name__)
+        self.logger.info("Starting anonymizer engine")
+        self.engine = AnonymizerEngine()
+        self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
         def health() -> str:
