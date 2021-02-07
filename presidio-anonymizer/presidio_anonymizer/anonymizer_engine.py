@@ -42,25 +42,31 @@ class AnonymizerEngine:
         analyzer_results = (
             engine_request.get_analysis_results().to_sorted_unique_results(True)
         )
+
+        # loop over each analyzer result
+        # get anonymizer type class for the analyzer result (replace, redact etc.)
+        # trigger the anonymizer method on the section of the text
+        # perform the anonymization
+        # concat the anonymized string into the output string
         for analyzer_result in analyzer_results:
+            self.__validate_position_over_text(analyzer_result, text_len)
+
             transformation = engine_request.get_transformation(analyzer_result)
             self.logger.debug(
                 f"for analyzer result {analyzer_result} received transformation "
                 f"{str(transformation)}"
             )
-            self.__validate_position_over_text(analyzer_result, text_len)
-            anonymizer = transformation.get("anonymizer")()
-            anonymizer.validate(params=transformation)
-            text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
-            anonymized_text = anonymizer.anonymize(
-                params=transformation, text=text_to_anonymize
-            )  # TODO: [ADO-2754] replace with the singleton class instance
-            end_of_text = min(analyzer_result.end, last_replacement_point)
-            output_text = (
-                output_text[: analyzer_result.start]
-                + anonymized_text
-                + output_text[end_of_text:]
+
+            anonymizer = self.__extract_anonymizer(transformation)
+
+            anonymized_text = self.__anonymize_section(
+                anonymizer, output_text, analyzer_result, transformation
             )
+
+            output_text = self.__update_output_with_anonymized_section(
+                analyzer_result, last_replacement_point, output_text, anonymized_text
+            )
+
             last_replacement_point = analyzer_result.start
         return output_text
 
@@ -75,3 +81,28 @@ class AnonymizerEngine:
                 f"Invalid analyzer result: '{analyzer_result}', "
                 f"original text length is only {text_len}."
             )
+
+    def __extract_anonymizer(self, transformation):
+        anonymizer = transformation.get("anonymizer")()
+        # if the anonymizer is not valid, a InvalidParamException
+        anonymizer.validate(params=transformation)
+        return anonymizer
+
+    def __anonymize_section(
+        self, anonymizer, output_text, analyzer_result, transformation
+    ):
+        text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
+        anonymized_text = anonymizer.anonymize(
+            params=transformation, text=text_to_anonymize
+        )  # TODO: [ADO-2754] replace with the singleton class instance
+        return anonymized_text
+
+    def __update_output_with_anonymized_section(
+        self, analyzer_result, last_replacement_point, output_text, anonymized_text
+    ):
+        end_of_text = min(analyzer_result.end, last_replacement_point)
+        return (
+            output_text[: analyzer_result.start]
+            + anonymized_text
+            + output_text[end_of_text:]
+        )
