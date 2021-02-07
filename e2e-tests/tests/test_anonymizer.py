@@ -24,7 +24,9 @@ def test_given_anonymize_called_with_valid_request_then_expected_valid_response_
 
     response_status, response_content = anonymize(request_body)
 
-    expected_response = """{"result":"hello world, my name is ANONYMIZED. My number is: 03445****"}"""
+    expected_response = (
+        """{"result":"hello world, my name is ANONYMIZED. My number is: 03445****"}"""
+    )
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
 
