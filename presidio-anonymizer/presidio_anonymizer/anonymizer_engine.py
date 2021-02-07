@@ -14,11 +14,16 @@ class AnonymizerEngine:
     """
 
     logger = logging.getLogger("presidio-anonymizer")
-    builtin_anonymizers = {"mask": Mask, "fpe": FPE, "replace": Replace, "hash": Hash,
-                           "redact": Redact}
+    builtin_anonymizers = {
+        "mask": Mask,
+        "fpe": FPE,
+        "replace": Replace,
+        "hash": Hash,
+        "redact": Redact,
+    }
 
     def __init__(
-            self,
+        self,
     ):
         """Handle text replacement for PIIs with requested transformations.
 
@@ -33,7 +38,7 @@ class AnonymizerEngine:
         original_full_text = engine_request.get_text()
         text_len = len(original_full_text)
         last_replacement_point = text_len
-        output_text = engine_request.get_text()
+        output_text = original_full_text
         analyzer_results = (
             engine_request.get_analysis_results().to_sorted_unique_results(True)
         )
@@ -46,7 +51,7 @@ class AnonymizerEngine:
             self.__validate_position_over_text(analyzer_result, text_len)
             anonymizer = transformation.get("anonymizer")()
             anonymizer.validate(params=transformation)
-            text_to_anonymize = output_text[analyzer_result.start: analyzer_result.end]
+            text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
             anonymized_text = anonymizer.anonymize(
                 params=transformation, text=text_to_anonymize
             )  # TODO: [ADO-2754] replace with the singleton class instance
