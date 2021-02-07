@@ -1,3 +1,5 @@
+# Presidio Release: Push to Github Releases, pypi, and to ACR twice (with verison, latest) with 'public' tag for MCR release.
+
 trigger: none
 pr: none
 
@@ -50,12 +52,17 @@ jobs:
   variables:
     version: $[ dependencies.Version.outputs['setVer.version'] ]
     REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-    IMAGE_PREFIX: 'public/'
-    TAG: ':$(version)'
+    IMAGE_PREFIX: "public/"
   steps:
-    - template: ./build-containers.yml
+    - template: ./build-and-push-containers.yml
       parameters:
         REGISTRY_NAME: $(REGISTRY_NAME)
         IMAGE_PREFIX: $(IMAGE_PREFIX)
-        TAG: $(TAG)
+        TAG: ":$(version)"
+        AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+    - template: ./build-and-push-containers.yml
+      parameters:
+        REGISTRY_NAME: $(REGISTRY_NAME)
+        IMAGE_PREFIX: $(IMAGE_PREFIX)
+        TAG: ":latest"
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
