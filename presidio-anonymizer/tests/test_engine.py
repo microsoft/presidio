@@ -1,5 +1,3 @@
-import json
-import os
 from unittest.mock import Mock
 
 import pytest
@@ -51,24 +49,6 @@ class Anonymizer:
 
     def validate(self, params):
         pass
-
-
-content = {}
-
-
-def get_payload():
-    global content
-    if not content:
-        json_path = file_path("dup_payload.json")
-        with open(json_path) as json_file:
-            content = json.load(json_file)
-    return content
-
-
-def file_path(file_name: str):
-    return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), f"resources/{file_name}")
-    )
 
 
 def get_transformation(arg):
