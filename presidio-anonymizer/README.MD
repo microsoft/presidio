@@ -72,19 +72,7 @@ pip install presidio-anonymizer
 
 #### Getting started
 
-AnonymizerRequest receives a json (e.g. test/payload.json), validate the json format and
-returns an object the engine can use and anonymize.
-
-```python
-import os
-from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
-from presidio_anonymizer.entities import AnonymizerRequest
-
-json_path = os.path.dirname(__file__) + "/test/resources/payload.json"
-with open(json_path) as json_file:
-  data = AnonymizerRequest(json_file)
-  text = AnonymizerEngine().anonymize(data)
-```
+[comment]: <shhart> (#TODO [ADO-2797] Document again as AnonymizerRequest constructor changed)
 
 ### As service:
 
