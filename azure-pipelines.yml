@@ -1,4 +1,4 @@
-# Presidio PR validation: security analysis, lint, build, unit test, functional tests
+# Presidio PR validation: security analysis, lint, build, unit test, e2e tests
 pr:
   branches:
     include:
@@ -9,12 +9,12 @@ variables:
         
 stages:
   - template: .pipelines/templates/lint-build-test.yml
-  - stage: FunctionalTests
-    dependsOn: [] # Run FunctionalTests in parallel to LintBuildTest
-    displayName: Functional Tests
+  - stage: E2ETests
+    dependsOn: [] # Run E2ETests in parallel to LintBuildTest
+    displayName: E2E Tests
     jobs:
-    - job: FunctionalTests
-      displayName: Functional Tests
+    - job: E2ETests
+      displayName: E2e Tests
       pool:
         vmImage: 'ubuntu-16.04'
       variables:
@@ -29,4 +29,4 @@ stages:
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
                 TAG=$(TAG)
-        - template: .pipelines/templates/functional-tests.yml
+        - template: .pipelines/templates/e2e-tests.yml
