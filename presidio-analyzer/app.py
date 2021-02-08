@@ -77,9 +77,8 @@ class Server:
                 )
             except Exception as e:
                 self.logger.error(
-                    "A fatal error occurred "
-                    "during execution of "
-                    "AnalyzerEngine.analyze(). {}".format(e)
+                    f"A fatal error occurred during execution of "
+                    f"AnalyzerEngine.analyze(). {e}"
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
 
@@ -93,9 +92,8 @@ class Server:
                 return json.dumps(names), 200
             except Exception as e:
                 self.logger.error(
-                    "A fatal error occurred "
-                    "during execution of "
-                    "AnalyzerEngine.get_recognizers(). {}".format(e)
+                    f"A fatal error occurred during execution of "
+                    f"AnalyzerEngine.get_recognizers(). {e}"
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
 
@@ -108,9 +106,8 @@ class Server:
                 return json.dumps(entities_list), 200
             except Exception as e:
                 self.logger.error(
-                    "A fatal error occurred "
-                    "during execution of "
-                    "AnalyzerEngine.supported_entities(). {}".format(e)
+                    f"A fatal error occurred during execution of "
+                    f"AnalyzerEngine.supported_entities(). {e}"
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
 

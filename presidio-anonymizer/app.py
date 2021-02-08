@@ -73,7 +73,7 @@ class Server:
 
         @self.app.errorhandler(Exception)
         def server_error(e):
-            self.logger.error("A fatal error occurred " "during execution".format(e))
+            self.logger.error(f"A fatal error occurred during execution: {e}")
             return ErrorResponse("Internal server error").to_json(), 500
 
 
