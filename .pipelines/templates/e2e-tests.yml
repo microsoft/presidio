@@ -16,12 +16,12 @@ steps:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest-azurepipelines
-      workingDirectory: functional-tests
+      workingDirectory: e2e-tests
       displayName: Install dependencies
 
     - script: |
           set -eux  # fail on error
           source env/bin/activate
           pytest
-      workingDirectory: functional-tests
+      workingDirectory: e2e-tests
       displayName: Run tests

@@ -1,5 +1,3 @@
-import json
-import os
 from typing import List
 from unittest.mock import Mock
 
@@ -57,8 +55,9 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
     ],
     # fmt: on
 )
-def test_given_invalid_json_then_request_creation_should_fail(request_json,
-                                                              result_text):
+def test_given_invalid_json_then_request_creation_should_fail(
+    request_json, result_text
+):
     with pytest.raises(InvalidParamException) as e:
         AnonymizerRequest(request_json, AnonymizerEngine().builtin_anonymizers)
     assert result_text == e.value.err_msg
@@ -84,8 +83,9 @@ def test_given_valid_json_then_request_creation_should_succeed():
     assert len(data._analysis_results) == len(content.get("analyzer_results"))
     assert data._analysis_results == data.get_analysis_results()
     for result_a in data._analysis_results:
-        same_result_in_content = __find_element(content.get("analyzer_results"),
-                                                result_a.entity_type)
+        same_result_in_content = __find_element(
+            content.get("analyzer_results"), result_a.entity_type
+        )
         assert same_result_in_content
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
@@ -98,16 +98,16 @@ def test_given_valid_anonymizer_request_then_get_transformations_successfully():
     data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
     replace_result = data.get_analysis_results()[0]
     default_replace_transformation = data.get_transformation(replace_result)
-    assert default_replace_transformation.get('type') == 'replace'
-    assert default_replace_transformation.get('new_value') == 'ANONYMIZED'
-    assert type(default_replace_transformation.get('anonymizer')) == type(Replace)
+    assert default_replace_transformation.get("type") == "replace"
+    assert default_replace_transformation.get("new_value") == "ANONYMIZED"
+    assert type(default_replace_transformation.get("anonymizer")) == type(Replace)
     mask_transformation = data.get_transformation(data.get_analysis_results()[3])
-    assert mask_transformation.get('type') == 'mask'
-    assert mask_transformation.get('from_end')
-    assert mask_transformation.get('chars_to_mask') == 4
-    assert mask_transformation.get('masking_char') == '*'
-    assert mask_transformation.get('anonymizer')
-    assert type(mask_transformation.get('anonymizer')) == type(Mask)
+    assert mask_transformation.get("type") == "mask"
+    assert mask_transformation.get("from_end")
+    assert mask_transformation.get("chars_to_mask") == 4
+    assert mask_transformation.get("masking_char") == "*"
+    assert mask_transformation.get("anonymizer")
+    assert type(mask_transformation.get("anonymizer")) == type(Mask)
 
 
 def __find_element(content: List, entity_type: str):
@@ -117,17 +117,22 @@ def __find_element(content: List, entity_type: str):
     return None
 
 
-def file_path(file_name: str):
-    return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), f"resources/{file_name}"))
-
-
-content = {}
-
-
 def get_content():
-    global content
-    json_path = file_path("payload.json")
-    with open(json_path) as json_file:
-        content = json.load(json_file)
-        return content
+    return {
+        "text": "hello world, my name is Jane Doe. My number is: 034453334",
+        "transformations": {
+            "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
+            "PHONE_NUMBER": {
+                "type": "mask",
+                "masking_char": "*",
+                "chars_to_mask": 4,
+                "from_end": True,
+            },
+        },
+        "analyzer_results": [
+            {"start": 24, "end": 32, "score": 0.8, "entity_type": "NAME"},
+            {"start": 24, "end": 28, "score": 0.8, "entity_type": "FIRST_NAME"},
+            {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
+            {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"},
+        ],
+    }

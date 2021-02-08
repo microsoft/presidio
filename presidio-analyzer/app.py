@@ -1,3 +1,4 @@
+"""REST API server for analyzer."""
 from typing import Tuple
 
 from presidio_analyzer.presidio_logger import PresidioLogger
