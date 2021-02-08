@@ -51,10 +51,8 @@ class AnonymizerEngine:
         for analyzer_result in analyzer_results:
             self.__validate_position_over_text(analyzer_result, text_len)
 
-            transformation = engine_request.get_transformation(analyzer_result)
-            self.logger.debug(
-                f"for analyzer result {analyzer_result} received transformation "
-                f"{str(transformation)}"
+            transformation = self.__get_transformation_from_analyzer_result(
+                engine_request, analyzer_result
             )
 
             anonymizer = self.__extract_anonymizer(transformation)
@@ -106,3 +104,14 @@ class AnonymizerEngine:
             + anonymized_text
             + output_text[end_of_text:]
         )
+
+    def __get_transformation_from_analyzer_result(
+        self, engine_request, analyzer_result
+    ):
+        entity_type = analyzer_result.entity_type
+        transformation = engine_request.get_transformation(entity_type)
+        self.logger.debug(
+            f"for analyzer result {analyzer_result} received transformation "
+            f"{str(transformation)}"
+        )
+        return transformation

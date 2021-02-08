@@ -69,7 +69,7 @@ def test_given_no_transformations_then_we_get_the_default():
     request._transformations = {}
     analyzer_result = Mock()
     analyzer_result.entity_type = "PHONE"
-    transformation = request.get_transformation(analyzer_result)
+    transformation = request.get_transformation(analyzer_result.entity_type)
     assert transformation.get("type") == "replace"
     assert type(transformation.get("anonymizer")) == type(Replace)
 
@@ -90,18 +90,20 @@ def test_given_valid_json_then_request_creation_should_succeed():
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
         assert result_a.end == same_result_in_content.get("end")
-        assert data.get_transformation(result_a)
+        assert data.get_transformation(result_a.entity_type)
 
 
 def test_given_valid_anonymizer_request_then_get_transformations_successfully():
     content = get_content()
     data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
     replace_result = data.get_analysis_results()[0]
-    default_replace_transformation = data.get_transformation(replace_result)
+    default_replace_transformation = data.get_transformation(replace_result.entity_type)
     assert default_replace_transformation.get("type") == "replace"
     assert default_replace_transformation.get("new_value") == "ANONYMIZED"
     assert type(default_replace_transformation.get("anonymizer")) == type(Replace)
-    mask_transformation = data.get_transformation(data.get_analysis_results()[3])
+    mask_transformation = data.get_transformation(
+        data.get_analysis_results()[3].entity_type
+    )
     assert mask_transformation.get("type") == "mask"
     assert mask_transformation.get("from_end")
     assert mask_transformation.get("chars_to_mask") == 4
