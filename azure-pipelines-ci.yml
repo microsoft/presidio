@@ -1,6 +1,7 @@
 # Presidio CI: lint, build, unit test, e2e tests, push to private Azure Container registry, deploy to dev demo
 
 trigger:
+  batch: true
   branches:
     include:
       - V2
@@ -21,7 +22,7 @@ stages:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
         steps:
-          - template: .pipelines/templates/build-containers.yml
+          - template: .pipelines/templates/build-and-push-containers.yml
             parameters:
               REGISTRY_NAME: $(REGISTRY_NAME)
               TAG: $(TAG)
