@@ -30,7 +30,8 @@ setuptools.setup(
     install_requires=[
         "spacy==2.3",
         "regex==2020.11.13",
-        "tldextract==3.1.0"
+        "tldextract==3.1.0",
+        "pyyaml==5.4.1",
     ],
     include_package_data=True,
     license="MIT",
