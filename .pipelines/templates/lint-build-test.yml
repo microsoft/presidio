@@ -1,6 +1,5 @@
 stages:
   - stage: LintBuildTest
-    # displayNames are defined below to avoid duplicate descriptions in the PR
     displayName:
     jobs:
       #- job: validate
@@ -9,6 +8,16 @@ stages:
       #    - template: .pipelines/templates/validate-version.yml
       #      parameters:
       #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
+
+      - job: MarkdownLint
+        displayName: 'Markdown linting validation'
+        steps:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                npm install -g markdownlint-cli
+                markdownlint .
 
       - job: Inclusivelint
         displayName: 'Inclusive linting validation'

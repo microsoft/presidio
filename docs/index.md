@@ -1,6 +1,7 @@
 # Presidio - Data Protection and Anonymization API
 
-**Context aware, pluggable and customizable PII anonymization service for text and images.**
+**Context aware, pluggable and customizable PII anonymization service for text
+ and images.**
 
 ## What is Presidio
 
@@ -12,11 +13,7 @@
 
 ## Overview
 
-<p align="center">
-  <kbd>  
-  <img width="-100" height="-50" src="assets/presidio_gif.gif">
-  </kbd>
-</p>
+![Presidio Detection Flow](assets/presidio_gif.gif)
 
 ## Installing Presidio
 
@@ -35,6 +32,8 @@
 
 ## Support
 
-- Before you submit an issue, please go over the [documentation](docs/readme.md). For general discussions, please use the [Github repo's discussion board](https://github.com/microsoft/presidio/discussions).
-- If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
+- Before you submit an issue, please go over the [documentation](docs/readme.md).
+ For general discussions, please use the [Github repo's discussion board](https://github.com/microsoft/presidio/discussions).
+- If you have a usage question, found a bug or have a suggestion for improvement,
+ please file a [Github issue](https://github.com/microsoft/presidio/issues).
 - For other matters, please email [presidio@microsoft.com](mailto:presidio@microsoft.com).
