@@ -1,0 +1,35 @@
+parameters:
+  WORKING_FOLDER: ''
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.8'
+  - task: Bash@3
+    displayName: 'Package Wheel'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        pip install wheel
+        python setup.py bdist_wheel
+      workingDirectory: ${{ parameters.WORKING_FOLDER }}
+  - task: Bash@3
+    displayName: 'Install twine'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        pip install twine
+      workingDirectory: ${{ parameters.WORKING_FOLDER }}
+  - task: TwineAuthenticate@1
+    displayName: 'Authenticate with PyPi'
+    inputs:
+      pythonUploadServiceConnection: Pypi-Presidio
+  - task: Bash@3
+    displayName: 'Upload Wheel to PyPi'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        twine upload -r presidio --verbose --config-file $(PYPIRC_PATH) --skip-existing dist/*
+      workingDirectory: '${{ parameters.WORKING_FOLDER }}'
