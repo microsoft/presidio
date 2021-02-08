@@ -8,6 +8,7 @@ requirements = ["pillow", "pytesseract==0.3.7", "presidio-analyzer>=1.9.0"]
 
 test_requirements = ["pytest>=3", "flake8==3.7.9"]
 
+__version__ = ""
 this_directory = path.abspath(path.dirname(__file__))
 parent_directory = os.path.abspath(os.path.join(this_directory, os.pardir))
 
@@ -18,7 +19,8 @@ with open(os.path.join(parent_directory, "VERSION")) as version_file:
     __version__ = version_file.read().strip()
 
 setup(
-    name="presidio_image_anonymizer",
+    name="presidio-image-anonymizer",
+    python_requires=">=3.5",
     version=__version__,
     description="Presidio image anonymizer package",
     url="https://github.com/Microsoft/presidio",
@@ -29,7 +31,7 @@ setup(
     install_requires=requirements,
     include_package_data=True,
     license="MIT",
-keywords="presidio_image_anonymizer",
+    keywords="presidio_image_anonymizer",
     classifiers=[
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
