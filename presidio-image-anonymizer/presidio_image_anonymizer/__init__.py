@@ -1,14 +1,13 @@
 """Image Anonymizer root module."""
 
-from presidio_image_anonymizer.image_analyzer_engine import ImageAnalyzerEngine
-from presidio_image_anonymizer.image_anonymizer_engine import ImageAnonymizerEngine
-from presidio_image_anonymizer.image_recognizer_result import ImageRecognizerResult
-from presidio_image_anonymizer.ocr import OCR
-
+from .image_recognizer_result import ImageRecognizerResult
+from .ocr import OCR
+from .image_analyzer_engine import ImageAnalyzerEngine
+from .image_anonymizer_engine import ImageAnonymizerEngine
 
 __all__ = [
-    "ImageAnalyzerEngine",
-    "ImageAnonymizerEngine",
     "ImageRecognizerResult",
     "OCR",
+    "ImageAnalyzerEngine",
+    "ImageAnonymizerEngine",
 ]
