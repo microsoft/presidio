@@ -45,14 +45,6 @@ docker build -t presidio-analyzer --build-arg NAME=presidio-analyzer  .
 docker run -p 5001:5001 presidio-analyzer 
 ```
 
-Note: you can change the spacy model which is downloaded to the container at build time, using the following build command:
-
-```sh
-docker build -t presidio-analyzer --build-arg NAME=presidio-analyzer  --build-arg SPACY_MODEL=en_core_web_sm .
-```
-
-TODO: The Analyzer container is built with a single spacy model. Add support for multiple models will worked on in user story #2678
-
 ### Simple analysis script
 
 ```python
@@ -323,6 +315,13 @@ analyzer = AnalyzerEngine(
 
 analyzer.analyze(...)
 ```
+
+#### Automatically install NLP models into the Docker container
+
+When packaging the code into a Docker container, NLP models are automatically installed. 
+To define which models should be installed, 
+update the [conf/default.yaml](conf/default.yaml) file. This file is read during
+the `docker build` phase and the models defined in it are installed automatically.
 
 ## HTTP API
 
