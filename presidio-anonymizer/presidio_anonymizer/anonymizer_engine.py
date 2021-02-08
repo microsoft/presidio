@@ -92,7 +92,7 @@ class AnonymizerEngine:
         text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
         anonymized_text = anonymizer.anonymize(
             params=transformation, text=text_to_anonymize
-        )  # TODO: [ADO-2754] replace with the singleton class instance
+        )
         return anonymized_text
 
     def __update_output_with_anonymized_section(
