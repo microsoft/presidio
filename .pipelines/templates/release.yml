@@ -1,3 +1,5 @@
+# Presidio Release: Push to Github Releases, pypi, and to ACR twice (with verison, latest) with 'public' tag for MCR release.
+
 trigger: none
 pr: none
 
@@ -15,6 +17,7 @@ jobs:
         echo "##vso[task.setvariable variable=version;isOutput=true]$ver"
       displayName: Set Version
       name: setVer
+
 - job: githubRelease
   displayName: GitHub Release
   dependsOn: version
@@ -27,6 +30,20 @@ jobs:
         tagSource: manual
         tag: $(version)
 
+- job: PublishToPyPi
+  displayName: Publish to PyPi
+  dependsOn: version
+  strategy:
+    matrix:
+      Analyzer:
+        WORKING_FOLDER: 'presidio-analyzer'
+      Anonymizer:
+        WORKING_FOLDER: 'presidio-anonymizer'
+  steps:
+    - template: ./publish-to-pypi.yml
+      parameters:
+        WORKING_FOLDER: '$(WORKING_FOLDER)'
+
 - job: BuildAndPushContainers
   displayName: Build and Push Containers
   dependsOn: version
@@ -35,12 +52,17 @@ jobs:
   variables:
     version: $[ dependencies.Version.outputs['setVer.version'] ]
     REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-    IMAGE_PREFIX: 'public/'
-    TAG: ':$(version)'
+    IMAGE_PREFIX: "public/"
   steps:
-    - template: ./build-containers.yml
+    - template: ./build-and-push-containers.yml
       parameters:
         REGISTRY_NAME: $(REGISTRY_NAME)
         IMAGE_PREFIX: $(IMAGE_PREFIX)
-        TAG: $(TAG)
+        TAG: ":$(version)"
+        AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+    - template: ./build-and-push-containers.yml
+      parameters:
+        REGISTRY_NAME: $(REGISTRY_NAME)
+        IMAGE_PREFIX: $(IMAGE_PREFIX)
+        TAG: ":latest"
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
