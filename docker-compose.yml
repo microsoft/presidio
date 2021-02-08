@@ -20,3 +20,13 @@ services:
       - PORT=5001
     ports:
       - "5002:5001"
+  presidio-image-anonymizer:
+    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-anonymizer${TAG}
+    build:
+      context: ./presidio-image-anonymizer
+      args:
+        - NAME=presidio-image-anonymizer
+    environment:
+      - PORT=5001
+    ports:
+      - "5003:5001"
