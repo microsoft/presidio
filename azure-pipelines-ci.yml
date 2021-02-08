@@ -1,6 +1,7 @@
 # Presidio CI: lint, build, unit test, e2e tests, push to private Azure Container registry, deploy to dev demo
 
 trigger:
+  batch: true
   branches:
     include:
       - V2
