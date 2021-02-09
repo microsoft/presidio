@@ -22,7 +22,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_sg_fins(
+def test_when_sgfins_in_text_then_all_sg_fins_found(
     text,
     expected_len,
     expected_position,

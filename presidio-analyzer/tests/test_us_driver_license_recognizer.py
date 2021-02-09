@@ -45,7 +45,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_us_driver_licenses(
+def test_when_driver_licenes_in_text_then_all_us_driver_licenses_found(
     text,
     expected_len,
     expected_positions,

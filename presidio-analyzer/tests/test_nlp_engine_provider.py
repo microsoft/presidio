@@ -10,14 +10,14 @@ from presidio_analyzer.nlp_engine import (
 )
 
 
-def test_create_nlp_engine_default_configuration():
+def test_when_create_nlp_engine__then_return_default_configuration():
     provider = NlpEngineProvider()
     engine = provider.create_engine()
     assert isinstance(engine, SpacyNlpEngine)
     assert engine.nlp is not None
 
 
-def test_create_nlp_engine_simple_config_succeeds(mock_he_model):
+def test_when_create_nlp_engine_then_simple_config_succeeds(mock_he_model):
     nlp_configuration = {
         "nlp_engine_name": "spacy",
         "models": [{"lang_code": "he", "model_name": "he_test"}],
@@ -30,7 +30,7 @@ def test_create_nlp_engine_simple_config_succeeds(mock_he_model):
     assert isinstance(engine.nlp["he"], spacy.lang.he.Hebrew)
 
 
-def test_create_nlp_engine_two_models_succeeds(mock_he_model, mock_bn_model):
+def test_when_create_nlp_engine_then_two_models_succeeds(mock_he_model, mock_bn_model):
     nlp_configuration = {
         "nlp_engine_name": "spacy",
         "models": [
@@ -50,7 +50,7 @@ def test_create_nlp_engine_two_models_succeeds(mock_he_model, mock_bn_model):
     assert isinstance(engine.nlp["bn"], spacy.lang.bn.Bengali)
 
 
-def test_create_nlp_engine_from_wrong_conf_fails():
+def test_when_create_nlp_engine_from_wrong_conf_then_fail():
     with pytest.raises(OSError):
         nlp_configuration = {
             "nlp_engine_name": "spacy",
@@ -60,7 +60,7 @@ def test_create_nlp_engine_from_wrong_conf_fails():
         provider.create_engine()
 
 
-def test_unsupported_nlp_engine_fails():
+def test_when_unsupported_nlp_engine_then_fail():
     with pytest.raises(ValueError) as e:
         nlp_configuration = {
             "nlp_engine_name": "unsupported_engine",
@@ -71,7 +71,7 @@ def test_unsupported_nlp_engine_fails():
     assert "Wrong NLP engine configuration" == e.value.args[0]
 
 
-def test_read_test_nlp_conf_file_returns_spacy_nlp_engine():
+def test_when_read_test_nlp_conf_file_then_returns_spacy_nlp_engine():
     test_conf_file = Path(Path(__file__).parent, "conf", "test.yaml")
     provider = NlpEngineProvider(conf_file=test_conf_file)
     nlp_engine = provider.create_engine()
@@ -81,7 +81,7 @@ def test_read_test_nlp_conf_file_returns_spacy_nlp_engine():
 
 
 @pytest.mark.skip_engine("stanza_en")
-def test_read_test_nlp_conf_file_returns_stanza_nlp_engine():
+def test_when_read_test_nlp_conf_file_then_returns_stanza_nlp_engine():
     test_conf_file = Path(Path(__file__).parent, "conf", "test_stanza.yaml")
     provider = NlpEngineProvider(conf_file=test_conf_file)
     nlp_engine = provider.create_engine()
@@ -90,7 +90,7 @@ def test_read_test_nlp_conf_file_returns_stanza_nlp_engine():
     assert nlp_engine.nlp is not None
 
 
-def test_both_conf_and_config_fails():
+def test_when_both_conf_and_config_then_fail():
     nlp_configuration = {
         "nlp_engine_name": "spacy",
         "models": [{"lang_code": "he", "model_name": "he_test"}],

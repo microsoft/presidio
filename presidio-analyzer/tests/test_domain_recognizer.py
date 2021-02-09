@@ -27,7 +27,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_domain_names(
+def test_when_all_domain_names_then_succeed(
     text, expected_len, expected_positions, recognizer, entities, max_score
 ):
     results = recognizer.analyze(text, entities)
