@@ -1,7 +1,7 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 import logging
 
-from presidio_anonymizer.anonymizers import Mask, FPE, Replace, Hash, Redact
+from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import AnonymizerRequest, InvalidParamException
 
 
@@ -15,11 +15,7 @@ class AnonymizerEngine:
 
     logger = logging.getLogger("presidio-anonymizer")
     builtin_anonymizers = {
-        "mask": Mask,
-        "fpe": FPE,
-        "replace": Replace,
-        "hash": Hash,
-        "redact": Redact,
+        cls.anonymizer_name(cls): cls for cls in Anonymizer.__subclasses__()
     }
 
     def __init__(

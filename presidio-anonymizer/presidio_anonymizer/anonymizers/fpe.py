@@ -25,3 +25,7 @@ class FPE(Anonymizer):
     def validate(self, params: dict = None) -> None:
         """TODO: [ADO-2547] docstring."""
         pass
+
+    def anonymizer_name(self) -> str:
+        """Return anonymizer name."""
+        return "fpe"
