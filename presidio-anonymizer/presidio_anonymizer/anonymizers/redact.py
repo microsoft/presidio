@@ -12,3 +12,7 @@ class Redact(Anonymizer):
     def validate(self, params: dict = None) -> None:
         """Redact does not require any paramters so no validation is needed."""
         pass
+
+    def anonymizer_name(self) -> str:
+        """Return anonymizer name."""
+        return "redact"
