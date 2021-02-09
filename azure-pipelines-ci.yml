@@ -172,26 +172,3 @@ stages:
               sourceSlot: staging
               resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
 
-      - job: DeleteBothSlots
-        condition: always()
-        dependsOn:
-          - SwapBothSlots
-        strategy:
-          matrix:
-            Analyzer:
-              Name: 'Analyzer'
-              AppServiceName: $(ANALYZER_DEV_APP_NAME)
-            Anonymizer:
-              Name: 'Anonymizer'
-              AppServiceName: $(ANONYMIZER_DEV_APP_NAME)
-        displayName: Delete staging slot
-        steps:
-          - checkout: none
-          - task: AzureAppServiceManage@0
-            displayName: Delete $(Name) staging slot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              action: Delete Slot
-              webAppName: $(AppServiceName)
-              slot: staging
-              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
