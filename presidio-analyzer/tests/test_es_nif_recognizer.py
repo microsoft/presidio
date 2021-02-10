@@ -29,7 +29,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_es_nifes(
+def test_when_all_es_nifes_then_succeed(
     text, expected_len, expected_positions, recognizer, entities, max_score
 ):
     results = recognizer.analyze(text, entities)
