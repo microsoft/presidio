@@ -8,6 +8,7 @@ parameters:
   ANALYZER_APP_NAME:
   ANONYMIZER_APP_NAME:
   RESOURCE_GROUP_NAME:
+  TAG:
 jobs:
   - job: DeployAnalyzer
     displayName: Deploy Analyzer to ${{ parameters.ENVIRONMNT_NAME }} Environment
@@ -37,7 +38,7 @@ jobs:
           resourceGroupName: ${{ parameters.RESOURCE_GROUP_NAME }}
           appName: ${{ parameters.ANALYZER_APP_NAME }}
           slotName: staging
-          imageName: ${{ parameters.REGISTRY_NAME }}presidio-analyzer:$(TAG)
+          imageName: ${{ parameters.REGISTRY_NAME }}presidio-analyzer:${{ parameters.TAG }}
 
   - job: DeployAnonymizer
     displayName: Deploy Anonymizer to ${{ parameters.ENVIRONMNT_NAME }} Environment
@@ -67,7 +68,7 @@ jobs:
           resourceGroupName: ${{ parameters.RESOURCE_GROUP_NAME }}
           appName: ${{ parameters.ANONYMIZER_APP_NAME }}
           slotName: staging
-          imageName: ${{ parameters.REGISTRY_NAME }}presidio-anonymizer:$(TAG)
+          imageName: ${{ parameters.REGISTRY_NAME }}presidio-anonymizer:${{ parameters.TAG }}
 
   - job: TestDeployment
     displayName: Smoke and E2E Tests on the deployement
@@ -75,8 +76,8 @@ jobs:
       - DeployAnalyzer
       - DeployAnonymizer
     variables:
-      ANALYZER_STAGING_URI: $[ dependencies.DeployAnalyzerToDev.outputs['createStagingSlot.STAGING_URI'] ]
-      ANONYMIZER_STAGING_URI: $[ dependencies.DeployAnonymizerToDev.outputs['createStagingSlot.STAGING_URI'] ]
+      ANALYZER_STAGING_URI: $[ dependencies.DeployAnalyzer.outputs['createStagingSlot.STAGING_URI'] ]
+      ANONYMIZER_STAGING_URI: $[ dependencies.DeployAnonymizer.outputs['createStagingSlot.STAGING_URI'] ]
     steps:
       - task: Bash@3
         displayName: 'Wait and Smoke test'
