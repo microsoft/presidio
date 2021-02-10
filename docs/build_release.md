@@ -1,13 +1,11 @@
 # Build and release process
 
-Presidio leverages Azure DevOps YAML pipelines to validate, build, releasee and deliver presidio.
+Presidio leverages Azure DevOps YAML pipelines to validate, build, releasee and deliver presidio. the pipelines make use of [templates](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops) for code reuse using [YAML Schema](https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema).
 
 ## Description
 
-Azure Pipelines [templates](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops) allow for code reuse using [YAML Schema](https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema).
+The following pipelines are provided and maintained as part of presidio development process:
 
-
-The following pipelines are used in the ALM processes of presidio:
 * [PR Validation](../azure-pipelines.yml) - used to validate pull requests.
     * Linting
     * Credential Scanning
