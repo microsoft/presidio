@@ -67,16 +67,46 @@
                 "I1"
             ]
         },
+        "imagesArePublic": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Are the images hosted on a public registry"
+            }
+        },
+        "privateAnalyzerImage": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The full analyzer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "privateAnonymizerImage": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The full anonymizer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "dockerRegsitryUrl": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The URL of docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
         "dockerRegistryUser": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
-                "description": "The user name for docker registry."
+                "description": "The user name for docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "dockerRegistryPassword": {
             "type": "securestring",
+            "defaultValue": "",
             "metadata": {
-                "description": "The user password for docker registry."
+                "description": "The user password for docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "ipRestriction": {
@@ -110,11 +140,14 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
+                    "imageIsPublic": {
+                        "value": "[parameters('imagesArePublic')]"
+                    },
                     "image": {
-                        "value": "presidio.azurecr.io/presidio-analyzer:10219"
+                        "value": "[parameters('privateAnalyzerImage')]"
                     },
                     "dockerRegsitryUrl": {
-                        "value": "presidio.azurecr.io"
+                        "value": "[parameters('dockerRegsitryUrl')]"
                     },
                     "dockerRegistryUser": {
                         "value": "[parameters('dockerRegistryUser')]"
@@ -149,11 +182,14 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
+                    "imageIsPublic": {
+                        "value": "[parameters('imagesArePublic')]"
+                    },
                     "image": {
-                        "value": "presidio.azurecr.io/presidio-anonymizer:10219"
+                        "value": "[parameters('privateAnonymizerImage')]"
                     },
                     "dockerRegsitryUrl": {
-                        "value": "presidio.azurecr.io"
+                        "value": "[parameters('dockerRegsitryUrl')]"
                     },
                     "dockerRegistryUser": {
                         "value": "[parameters('dockerRegistryUser')]"

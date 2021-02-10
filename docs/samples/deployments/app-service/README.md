@@ -2,7 +2,16 @@
 
 Presidio containers can be hosted on an [Azure App Service](https://docs.microsoft.com/en-us/azure/app-service/).
 Azure App Service provides a managed production environment, which supports docker containers and devops optimizations. It is a global scale service with built in security and compliance features that fits multiple cloud workloads. The presidio team uses Azure App Service for both its development environment and the presidio demo website.
-Follow the provided script to set up an app service for each of the presidio services (analyzer and anonymizer).
+
+## Deploy Presidio services to Azure
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
+
+TODO: change this link to main branch once merged (#2765).
+
+## Deploy using command-line script
+
+The following script can be used alternatively to the ARM template deployment above. It sets up the same components which are required for each of the presidio services (analyzer and anonymizer) as the template.
 
 ## Basic setup
 
@@ -11,8 +20,9 @@ RESOURCE_GROUP=<resource group name>
 APP_SERVICE_NAME=<name of app service>
 LOCATION=<location>
 APP_SERVICE_SKU=<sku>
-# TODO: take from MCR in user story #2569
-IMAGE_NAME=presidio.azurecr.io/presidio-anonymizer:10207
+
+IMAGE_NAME=mcr.azurecr.io/presidio-analyzer
+# the following parameters are only required if you build and deploy your own containers from a private registry
 ACR_USER_NAME=<user name>
 ACR_USER_PASSWORD=<password>
 
@@ -21,7 +31,11 @@ az group create --name $RESOURCE_GROUP
 # create the app service plan
 az appservice plan create --name $APP_SERVICE_NAME-plan --resource-group $RESOURCE_GROUP  \
 --is-linux --location $LOCATION --sku $APP_SERVICE_SKU
-# create the web app
+# create the web app using the official presidio images
+az webapp create --name $APP_SERVICE_NAME --plan $APP_SERVICE_NAME-plan \
+--resource-group $RESOURCE_GROUP -i $IMAGE_NAME
+
+# or alternatively, if building presidio and deploying from a private container registry
 az webapp create --name $APP_SERVICE_NAME --plan $APP_SERVICE_NAME-plan \
 --resource-group $RESOURCE_GROUP -i $IMAGE_NAME -s $ACR_USER_NAME -w $ACR_USER_PASSWORD
 ```
@@ -78,7 +92,3 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file pres
 
 ```
 
-## Deploy Presidio services to Azure
-
-TODO: change this link to main branch once merged (#2765).
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
