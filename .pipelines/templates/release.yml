@@ -77,7 +77,7 @@ stages:
       - template: ./deploy-stage.yml
         parameters:
           ENVIRONMNT_NAME: Prod
-          REGISTRY_NAME: $(REGISTRY_NAME)
+          REGISTRY_NAME: mcr.microsoft.com
           AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION)
           ANALYZER_APP_NAME: $(ANALYZER_PROD_APP_NAME)
           ANONYMIZER_APP_NAME: $(ANONYMIZER_PROD_APP_NAME)
