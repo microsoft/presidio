@@ -29,7 +29,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_email_addresses(
+def test_when_all_email_addresses_then_succeed(
     text, expected_len, expected_positions, recognizer, entities, max_score
 ):
     results = recognizer.analyze(text, entities)

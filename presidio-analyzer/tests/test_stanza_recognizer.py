@@ -50,7 +50,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         # fmt: on
     ],
 )
-def test_all_stanza(
+def test_when_using_stanze_then_all_stanza_result_correct(
     text,
     expected_len,
     expected_positions,
@@ -71,7 +71,7 @@ def test_all_stanza(
 
 
 @pytest.mark.skip_engine("stanza_en")
-def test_person_full_name_complex(nlp_engine, nlp_recognizer, entities):
+def test_when_person_in_text_then_person_full_name_complex_found(nlp_engine, nlp_recognizer, entities):
     text = "Richard (Rick) C. Henderson"
     results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
 

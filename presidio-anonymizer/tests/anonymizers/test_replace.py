@@ -26,5 +26,5 @@ def test_given_no_value_for_replace_then_we_return_default_value_from_entity_typ
     assert text == result
 
 
-def test_validate_anonymizer_name():
+def test_when_validate_anonymizer_then_correct_name():
     assert Replace().anonymizer_name() == "replace"

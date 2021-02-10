@@ -31,7 +31,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_aba_routing_numbers(
+def test_when_aba_routing_numbers_then_succeed(
     text, expected_len, expected_positions, expected_score, recognizer, entities
 ):
     results = recognizer.analyze(text, entities)
