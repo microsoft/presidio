@@ -70,8 +70,8 @@ jobs:
   - job: TestDeployment
     displayName: Smoke and E2E Tests on the deployement
     dependsOn:
-      - DeployAnalyzerToDev
-      - DeployAnonymizerToDev
+      - DeployAnalyzer
+      - DeployAnonymizer
     variables:
       ANALYZER_STAGING_URI: $[ dependencies.DeployAnalyzerToDev.outputs['createStagingSlot.STAGING_URI'] ]
       ANONYMIZER_STAGING_URI: $[ dependencies.DeployAnonymizerToDev.outputs['createStagingSlot.STAGING_URI'] ]
