@@ -1,5 +1,7 @@
-from PIL import Image, ImageDraw
 from typing import Union, Tuple
+
+from PIL import Image, ImageDraw
+
 from presidio_image_anonymizer.image_analyzer_engine import ImageAnalyzerEngine
 
 
@@ -7,7 +9,7 @@ class ImageAnonymizerEngine:
     """ImageAnonymizerEngine class only supporting redaction currently."""
 
     def anonymize(
-        self, image: object, fill: Union[int, Tuple[int, int, int]] = (0, 0, 0)
+            self, image: Image, fill: Union[int, Tuple[int, int, int]] = (0, 0, 0)
     ) -> Image:
         """Anonymize method to anonymize the given image.
 
@@ -17,10 +19,9 @@ class ImageAnonymizerEngine:
 
         :return: the anonymized image
         """
-        bboxes = ImageAnalyzerEngine().analyze(image)
 
-        im = Image.open(image)
-        draw = ImageDraw.Draw(im)
+        bboxes = ImageAnalyzerEngine().analyze(image)
+        draw = ImageDraw.Draw(image)
 
         for box in bboxes:
             x0 = box.left
@@ -29,4 +30,4 @@ class ImageAnonymizerEngine:
             y1 = y0 + box.height
             draw.rectangle([x0, y0, x1, y1], fill=fill)
 
-        return im
+        return image
