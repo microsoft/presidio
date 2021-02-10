@@ -109,8 +109,6 @@
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]",
                 "httpsOnly": true,
-                "clientCertMode": "Required",
-
                 "siteConfig": {
                     "linuxFxVersion": "[variables('linuxFxVersion')]",
                     "httpLoggingEnabled": true,
