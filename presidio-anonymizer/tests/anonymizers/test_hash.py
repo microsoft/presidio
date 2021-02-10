@@ -123,7 +123,7 @@ def test_when_hash_type_is_empty_string_then_ipe_raised():
         Hash().validate(params)
 
 
-def test_validate_anonymizer_name():
+def test_when_validate_anonymizer_then_correct_name():
     assert Hash().anonymizer_name() == "hash"
 
 

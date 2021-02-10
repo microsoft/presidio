@@ -48,7 +48,7 @@ def mock_recognizer_registry():
     )
 
 
-def test_get_recognizers_all(mock_recognizer_registry):
+def test_when_get_recognizers_then_all_recognizers_returned(mock_recognizer_registry):
     registry = mock_recognizer_registry
     registry.load_predefined_recognizers()
     recognizers = registry.get_recognizers(language="en", all_fields=True)
@@ -56,31 +56,31 @@ def test_get_recognizers_all(mock_recognizer_registry):
     assert len(recognizers) == 1 + 15
 
 
-def test_get_recognizers_all_fields(mock_recognizer_registry):
+def test_when_get_recognizers_then_return_all_fields(mock_recognizer_registry):
     registry = mock_recognizer_registry
     recognizers = registry.get_recognizers(language="de", all_fields=True)
     assert len(recognizers) == 2
 
 
-def test_get_recognizers_one_language_one_entity(mock_recognizer_registry):
+def test_when_get_recognizers_one_language_then_return_one_entity(mock_recognizer_registry):
     registry = mock_recognizer_registry
     recognizers = registry.get_recognizers(language="de", entities=["PERSON"])
     assert len(recognizers) == 1
 
 
-def test_get_recognizers_unsupported_language(mock_recognizer_registry):
+def test_when_get_recognizers_unsupported_language_then_return(mock_recognizer_registry):
     with pytest.raises(ValueError):
         registry = mock_recognizer_registry
         registry.get_recognizers(language="brrrr", entities=["PERSON"])
 
 
-def test_get_recognizers_specific_language_and_entity(mock_recognizer_registry):
+def test_when_get_recognizers_specific_language_and_entity_then_return_one_result(mock_recognizer_registry):
     registry = mock_recognizer_registry
     recognizers = registry.get_recognizers(language="he", entities=["PERSON"])
     assert len(recognizers) == 1
 
 
-def test_add_pattern_recognizer():
+def test_when_add_pattern_recognizer_then_item_added():
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "ROCKET", name="Rocket recognizer", patterns=[pattern]
@@ -98,7 +98,7 @@ def test_add_pattern_recognizer():
     assert recognizer_registry.recognizers[0].name == "Rocket recognizer"
 
 
-def test_remove_pattern_recognizer():
+def test_when_remove_pattern_recognizer_then_item_removed():
     pattern = Pattern("spaceship pattern", r"\W*(spaceship)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "SPACESHIP", name="Spaceship recognizer", patterns=[pattern]
