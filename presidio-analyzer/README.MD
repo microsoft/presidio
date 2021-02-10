@@ -1,22 +1,21 @@
 # Presidio analyzer
 
 ## Description
+
 The Presidio analyzer is a Python based service for detecting PII entities in text.
 
-During analysis, it runs a set of different *PII Recognizers*, 
+During analysis, it runs a set of different *PII Recognizers*,
 each one in charge of detecting one or more PII entities using different mechanisms.
 
-Presidio analyzer comes with a set of predefined recognizers, 
+Presidio analyzer comes with a set of predefined recognizers,
 but can easily be extended with other types of [custom recognizers](#customizing-presidio-analyzer).
-Predefined and custom recognizers leverage regex, [spaCy](https://spacy.io/) 
-and other types of logic to detect PII in unstructured text.
-  
+Predefined and custom recognizers leverage regex, Named Entity Recognition and other types of logic to detect PII in unstructured text.
+
 ## Installation
 
-To get started with Presidio-analyzer, 
-download the package and the `en_core_web_lg` spaCy model, 
+To get started with Presidio-analyzer,
+download the package and the `en_core_web_lg` spaCy model,
 preferably in a virtual environment like Conda.
-
 
 ```sh
 pip install presidio-analyzer
@@ -66,16 +65,16 @@ print(results)
 TODO: change this link to main branch once merged (#2765).
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-analyzer%2Fdeploytoazure.json)
 
-
 ## Customizing Presidio analyzer
 
-Presidio can be exteded to support new types of PII entities, and to support additional languages.
+Presidio can be extended to support new types of PII entities, and to support additional languages.
 
-The three main modules are the `AnalyzerEngine` and the `RecognizerRegistry` and `EntityRecognizer`.
+The four main modules are the `AnalyzerEngine` and the `RecognizerRegistry`, `NlpEngine` and `EntityRecognizer`.
 
 - The `AnalyzerEngine` is in charge of calling each requested recognizer.
 - The `RecognizerRegistry` is in charge of providing the list of predefined and custom recognizers for analysis.
 - The `EntityRecognizer` class can be extended to support new types of PII recognition logic.
+- The `NlpEngine` uses a Natural Language Processing pipeline (either `spaCy` or `stanza`) to extract information from the input text).
 
 ### Extending the analyzer for additional PII entities
 
@@ -318,8 +317,8 @@ analyzer.analyze(...)
 
 #### Automatically install NLP models into the Docker container
 
-When packaging the code into a Docker container, NLP models are automatically installed. 
-To define which models should be installed, 
+When packaging the code into a Docker container, NLP models are automatically installed.
+To define which models should be installed,
 update the [conf/default.yaml](conf/default.yaml) file. This file is read during
 the `docker build` phase and the models defined in it are installed automatically.
 
