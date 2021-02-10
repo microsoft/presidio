@@ -64,16 +64,20 @@ class Server:
                 f"failed to parse json from string '{data}' with error {e}")
             raise InvalidParamException(f"Invalid json format \'{data}\'")
 
-    @staticmethod
-    def _color_fill_string_to_value(json_params: dict) -> Union[
+    def _color_fill_string_to_value(self, json_params: dict) -> Union[
         int, Tuple[int, int, int]]:
         filling_str = json_params.get("color_fill")
-        if not filling_str:
-            return 0, 0, 0
-        filling_str_split = filling_str.split(',')
-        if len(filling_str_split) == 1:
-            return int(filling_str_split)
-        return tuple(map(int, filling_str_split))
+        try:
+            if not filling_str:
+                return 0, 0, 0
+            filling_str_split = filling_str.split(',')
+            if len(filling_str_split) == 1:
+                return int(filling_str_split[0])
+            return tuple(map(int, filling_str_split))
+        except Exception as e:
+            self.logger.error(
+                f"failed to color fill '{filling_str}' with error {e}")
+            raise InvalidParamException(f"Invalid color fill \'{filling_str}\'")
 
     @staticmethod
     def _image_to_byte_array(anonymized_image, im):
