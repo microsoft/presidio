@@ -39,7 +39,7 @@ class Server:
             anonymized_image = self.engine.anonymize(im,
                                                      color_fill)
 
-            img_byte_arr = self._image_to_byte_array(anonymized_image, im)
+            img_byte_arr = self._image_to_byte_array(anonymized_image, im.format)
             return make_response(img_byte_arr)
 
         @self.app.errorhandler(InvalidParamException)
@@ -80,10 +80,10 @@ class Server:
             raise InvalidParamException(f"Invalid color fill \'{filling_str}\'")
 
     @staticmethod
-    def _image_to_byte_array(anonymized_image, im):
+    def _image_to_byte_array(anonymized_image: Image, image_format: str):
         img_byte_arr = io.BytesIO()
         anonymized_image.save(img_byte_arr,
-                              format=im.format)
+                              format=image_format)
         img_byte_arr = img_byte_arr.getvalue()
         return img_byte_arr
 
