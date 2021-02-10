@@ -1,3 +1,6 @@
+# Blue Green deployment to app service for container of presidio services.
+# The template uses a deployment and runs smoke test on health endpoint 
+# before switching the slots.
 parameters:
   ENVIRONMNT_NAME:
   REGISTRY_NAME:
