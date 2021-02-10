@@ -5,6 +5,16 @@
 The Presidio anonymizer is a Python based module for anonymizing detected PII text
 entities with desired values.
 
+### Deploy Presidio anonymizer to Azure
+
+Use the following button to deploy presidio anonymizer to your Azure subscription.
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-anonymizer%2Fdeploytoazure.json)
+
+TODO: change this link to main branch once merged (#2765).
+
+### Anonymizer
+
 [comment]: shiranr '#TODO need to fill this once the the functionality is done 2656 - 2659'
 
 Presidio anonymizer comes by default with the following anonymizers:
@@ -159,7 +169,3 @@ Response sample:
 ["fpe", "hash", "mask", "redact", "replace"]
 ```
 
-### Deploy Presidio Anonymizer to Azure
-
-TODO: change this link to main branch once merged (#2765).
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-anonymizer%2Fdeploytoazure.json)

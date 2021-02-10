@@ -30,22 +30,29 @@
                 "description": "The full image name."
             }
         },
+        "imageIsPublic": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Is the image hosted on a public registry"
+            }
+        },
         "dockerRegsitryUrl": {
             "type": "string",
             "metadata": {
-                "description": "The URL of docker registry."
+                "description": "The URL of docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "dockerRegistryUser": {
             "type": "string",
             "metadata": {
-                "description": "The user name for docker registry."
+                "description": "The user name for docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "dockerRegistryPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "The user password for docker registry."
+                "description": "The user password for docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "ipRestriction": {
@@ -58,7 +65,23 @@
     },
     "variables": {
         "appServicePlanPortalName": "[concat('AppServicePlan-', parameters('webAppName'))]",
-        "linuxFxVersion": "[concat('DOCKER|', parameters('image'))]"
+        "linuxFxVersion": "[concat('DOCKER|', parameters('image'))]",
+        "appSettingsPrivateRegistry": [
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                            "value": "[parameters('dockerRegistryUser')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "[parameters('dockerRegsitryUrl')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                            "value": "[parameters('dockerRegistryPassword')]"
+                        }
+                    ],
+        "appSettings":   "[if(equals(parameters('imageIsPublic'), 'true'), '[]', variables('appSettingsPrivateRegistry'))]"
+        
     },
     "resources": [
         {
@@ -85,26 +108,15 @@
             ],
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]",
+                "httpsOnly": true,
                 "siteConfig": {
                     "linuxFxVersion": "[variables('linuxFxVersion')]",
                     "httpLoggingEnabled": true,
                     "detailedErrorLoggingEnabled": true,
+                    "ftpsState": "FtpsOnly",
                     "clientAffinityEnabled": false,
                     "alwaysOn": true,
-                    "appSettings": [
-                        {
-                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
-                            "value": "[parameters('dockerRegistryUser')]"
-                        },
-                        {
-                            "name": "DOCKER_REGISTRY_SERVER_URL",
-                            "value": "[parameters('dockerRegsitryUrl')]"
-                        },
-                        {
-                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
-                            "value": "[parameters('dockerRegistryPassword')]"
-                        }
-                    ],
+                    "appSettings": "[variables('appSettings')]",
                     "ipSecurityRestrictions": [
                             {
                                 "ipAddress": "[parameters('ipRestriction')]",
