@@ -115,3 +115,7 @@ def test_when_from_end_is_bad_typed_then_ipe_raised():
 
 def _get_default_mask_parameters():
     return {"masking_char": "*", "chars_to_mask": 4, "from_end": False}
+
+
+def test_when_validate_anonymizer_then_correct_name():
+    assert Mask().anonymizer_name() == "mask"

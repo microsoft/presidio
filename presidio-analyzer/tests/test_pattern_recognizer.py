@@ -21,7 +21,7 @@ class MockRecognizer(PatternRecognizer):
         )
 
 
-def test_no_entity_for_pattern_recognizer():
+def test_when_no_entity_for_pattern_recognizer_then_error():
     with pytest.raises(ValueError):
         patterns = [Pattern("p1", "someregex", 1.0), Pattern("p1", "someregex", 0.5)]
         MockRecognizer(
@@ -29,7 +29,7 @@ def test_no_entity_for_pattern_recognizer():
         )
 
 
-def test_black_list_keywords_found():
+def test_when_black_list_then_keywords_found():
     test_recognizer = MockRecognizer(
         patterns=[],
         entity="ENTITY_1",
@@ -47,7 +47,7 @@ def test_black_list_keywords_found():
     assert_result(results[1], "ENTITY_1", 36, 40, 1.0)
 
 
-def test_black_list_keywords_not_found():
+def test_when_black_list_then_keywords_not_found():
     test_recognizer = MockRecognizer(
         patterns=[],
         entity="ENTITY_1",
@@ -63,7 +63,7 @@ def test_black_list_keywords_not_found():
     assert len(results) == 0
 
 
-def test_from_dict():
+def test_when_taken_from_dict_then_load_correctly():
     json = {
         "supported_entity": "ENTITY_1",
         "supported_language": "en",
@@ -83,7 +83,7 @@ def test_from_dict():
     assert new_recognizer.version == "1.0"
 
 
-def test_from_dict_returns_instance():
+def test_when_taken_from_dict_then_returns_instance():
     pattern1_dict = {"name": "p1", "score": 0.5, "regex": "([0-9]{1,9})"}
     pattern2_dict = {"name": "p2", "score": 0.8, "regex": "([0-9]{1,9})"}
 

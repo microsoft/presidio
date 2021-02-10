@@ -38,7 +38,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_us_ssns(
+def test_when_snn_in_text_than_all_us_ssns_are_found(
     text,
     expected_len,
     expected_positions,

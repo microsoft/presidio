@@ -25,7 +25,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_us_banks(
+def test_when_bank_in_text_then_all_us_banks_found(
     text, expected_len, expected_positions, expected_score, recognizer, entities
 ):
     results = recognizer.analyze(text, entities)

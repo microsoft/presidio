@@ -17,3 +17,8 @@ class Anonymizer(ABC):
     def validate(self, params: dict = None) -> None:
         """Validate each anonymizer parameters."""
         pass
+
+    @abstractmethod
+    def anonymizer_name(self) -> str:
+        """Return anonymizer name."""
+        pass

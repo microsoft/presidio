@@ -13,15 +13,6 @@
     },
     "anonymizerSku": {
       "value": "B1"
-    },
-    "dockerRegsitryUrl": {
-      "value": ""
-    },
-    "dockerRegistryUser": {
-      "value": ""
-    },
-    "dockerRegistryPassword": {
-      "value": ""
     }
   }
 }

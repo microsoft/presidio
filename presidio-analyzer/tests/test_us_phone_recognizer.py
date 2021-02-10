@@ -28,7 +28,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_phone_numbers(
+def test_when_phone_in_text_then_all_phone_numbers_found(
     text,
     expected_len,
     expected_positions,

@@ -98,12 +98,12 @@ def test_given_anonymize_called_with_deformed_body_then_internal_server_error_re
 
 
 @pytest.mark.api
-def test_given_anonymizers_called_then_expected_builtin_anonymizers_list_returned():
+def test_given_anonymizers_called_then_expected_anonymizers_list_returned():
 
     response_status, response_content = anonymizers()
 
     expected_response = """
-        ["mask", "fpe", "replace", "hash", "redact"]
+        ["fpe", "hash", "mask", "redact", "replace"]
     """
 
     assert response_status == 200

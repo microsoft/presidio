@@ -20,6 +20,11 @@ def test_given_value_for_replace_then_we_get_the_value_back():
     # fmt: on
 )
 def test_given_no_value_for_replace_then_we_return_default_value_from_entity_type(
-        params, result):
+    params, result
+):
     text = Replace().anonymize("", params)
     assert text == result
+
+
+def test_when_validate_anonymizer_then_correct_name():
+    assert Replace().anonymizer_name() == "replace"

@@ -50,6 +50,10 @@ class Mask(Anonymizer):
         validate_parameter(params.get(self.CHARS_TO_MASK), self.CHARS_TO_MASK, int)
         validate_parameter(params.get(self.FROM_END), self.FROM_END, bool)
 
+    def anonymizer_name(self) -> str:
+        """Return anonymizer name."""
+        return "mask"
+
     @staticmethod
     def _get_effective_chars_to_mask(text, chars_to_mask):
         return min(len(text), chars_to_mask) if chars_to_mask > 0 else 0

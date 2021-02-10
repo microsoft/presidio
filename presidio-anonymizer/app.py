@@ -2,6 +2,8 @@
 import json
 import logging
 import os
+from logging.config import fileConfig
+from pathlib import Path
 from typing import Tuple
 
 from flask import Flask, request, jsonify
@@ -12,6 +14,8 @@ from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
+
+LOGGING_CONF_FILE = "logging.ini"
 
 WELCOME_MESSAGE = r"""
  _______  _______  _______  _______ _________ ______  _________ _______
@@ -29,7 +33,12 @@ class Server:
     """Flask server for anonymizer."""
 
     def __init__(self):
+        fileConfig(Path(Path(__file__).parent, LOGGING_CONF_FILE))
         self.logger = logging.getLogger("presidio-anonymizer")
+        self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
+        self.logger.info("Starting anonymizer engine")
+        self.engine = AnonymizerEngine()
+
         self.app = Flask(__name__)
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
@@ -64,7 +73,7 @@ class Server:
 
         @self.app.errorhandler(Exception)
         def server_error(e):
-            self.logger.error("A fatal error occurred " "during execution".format(e))
+            self.logger.error(f"A fatal error occurred during execution: {e}")
             return ErrorResponse("Internal server error").to_json(), 500
 
 
