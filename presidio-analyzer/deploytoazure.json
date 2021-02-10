@@ -19,7 +19,7 @@
         },
         "sku": {
             "type": "string",
-            "defaultValue": "B2",
+            "defaultValue": "P2V2",
             "metadata": {
                 "description": "The SKU of App Service Plan."
             },
@@ -27,7 +27,7 @@
                 "F2",
                 "B2",
                 "S2",
-                "P2",
+                "P2V2",
                 "I2"
             ]
         },
