@@ -74,16 +74,16 @@
                 "description": "Are the images hosted on a public registry"
             }
         },
-        "privateAnalyzerImage": {
+        "analyzerImage": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "mcr.microsoft.com/presidio-analyzer:v2-latest",
             "metadata": {
                 "description": "The full analyzer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
-        "privateAnonymizerImage": {
+        "anonymizerImage": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "mcr.microsoft.com/presidio-anonymizer:v2-latest",
             "metadata": {
                 "description": "The full anonymizer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
@@ -144,7 +144,7 @@
                         "value": "[parameters('imagesArePublic')]"
                     },
                     "image": {
-                        "value": "[parameters('privateAnalyzerImage')]"
+                        "value": "[parameters('analyzerImage')]"
                     },
                     "dockerRegsitryUrl": {
                         "value": "[parameters('dockerRegsitryUrl')]"
@@ -186,7 +186,7 @@
                         "value": "[parameters('imagesArePublic')]"
                     },
                     "image": {
-                        "value": "[parameters('privateAnonymizerImage')]"
+                        "value": "[parameters('anonymizerImage')]"
                     },
                     "dockerRegsitryUrl": {
                         "value": "[parameters('dockerRegsitryUrl')]"

@@ -10,6 +10,14 @@ Presidio analyzer comes with a set of predefined recognizers,
 but can easily be extended with other types of [custom recognizers](#customizing-presidio-analyzer).
 Predefined and custom recognizers leverage regex, [spaCy](https://spacy.io/) 
 and other types of logic to detect PII in unstructured text.
+
+### Deploy Presidio analyzer to Azure
+
+Use the following button to deploy presidio analyzer to your Azure subscription.
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-analyzer%2Fdeploytoazure.json)
+
+TODO: change this link to main branch once merged (#2765).
   
 ## Installation
 
@@ -60,12 +68,6 @@ results = analyzer.analyze(text="My phone number is 212-555-5555",
 print(results)
 
 ```
-
-### Deploy Presidio Analyzer to Azure
-
-TODO: change this link to main branch once merged (#2765).
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-analyzer%2Fdeploytoazure.json)
-
 
 ## Customizing Presidio analyzer
 
