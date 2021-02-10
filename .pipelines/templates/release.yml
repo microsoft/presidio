@@ -64,5 +64,5 @@ jobs:
       parameters:
         REGISTRY_NAME: $(REGISTRY_NAME)
         IMAGE_PREFIX: $(IMAGE_PREFIX)
-        TAG: ":latest"
+        TAG: ":v2-latest"
         AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
