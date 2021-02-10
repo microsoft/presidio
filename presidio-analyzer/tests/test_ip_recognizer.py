@@ -28,7 +28,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_ips(
+def test_when_all_ips_then_succeed(
     text,
     expected_len,
     expected_positions,

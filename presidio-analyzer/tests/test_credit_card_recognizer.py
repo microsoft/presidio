@@ -45,7 +45,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_credit_cards(
+def test_when_all_credit_cards_then_succeed(
     text,
     expected_len,
     expected_scores,

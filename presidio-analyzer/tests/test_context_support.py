@@ -72,7 +72,7 @@ def mock_nlp_artifacts():
     return NlpArtifacts([], [], [], [], None, "en")
 
 
-def test_text_with_context_improves_score(dataset, nlp_engine, mock_nlp_artifacts):
+def test_when_text_with_context_then_improves_score(dataset, nlp_engine, mock_nlp_artifacts):
     for item in dataset:
         text, recognizer, entities = item
         nlp_artifacts = nlp_engine.process_text(text, "en")
@@ -87,7 +87,7 @@ def test_text_with_context_improves_score(dataset, nlp_engine, mock_nlp_artifact
                 assert res_wo.score <= res_w.score
 
 
-def test_context_custom_recognizer(nlp_engine, mock_nlp_artifacts):
+def test_when_context_custom_recognizer_then_succeed(nlp_engine, mock_nlp_artifacts):
     """This test checks that a custom recognizer is also enhanced by context.
 
     However this test also verifies a specific case in which the pattern also

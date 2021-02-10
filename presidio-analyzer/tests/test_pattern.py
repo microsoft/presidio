@@ -13,14 +13,14 @@ def my_pattern_dict():
     return {"name": "my pattern", "regex": "[re]", "score": 0.9}
 
 
-def test_to_dict(my_pattern, my_pattern_dict):
+def test_when_use_to_dict_return_dict(my_pattern, my_pattern_dict):
     expected = my_pattern_dict
     actual = my_pattern.to_dict()
 
     assert expected == actual
 
 
-def test_from_dict(my_pattern, my_pattern_dict):
+def test_when_use_from_dict_return_pattern(my_pattern, my_pattern_dict):
     expected = my_pattern
     actual = Pattern.from_dict(my_pattern_dict)
 

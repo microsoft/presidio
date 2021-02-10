@@ -117,5 +117,5 @@ def _get_default_mask_parameters():
     return {"masking_char": "*", "chars_to_mask": 4, "from_end": False}
 
 
-def test_validate_anonymizer_name():
+def test_when_validate_anonymizer_then_correct_name():
     assert Mask().anonymizer_name() == "mask"
