@@ -56,6 +56,7 @@ stages:
     dependsOn: PushContainersAndE2ETests
     variables:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+      TAG: $(Build.BuildId)
     displayName: Deploy to Dev environment
     jobs:
       - template: .pipelines/templates/deploy-stage.yml
@@ -66,4 +67,3 @@ stages:
           ANALYZER_APP_NAME: $(ANALYZER_DEV_APP_NAME)
           ANONYMIZER_APP_NAME: $(ANONYMIZER_DEV_APP_NAME)
           RESOURCE_GROUP_NAME: $(DEV_RESOURCE_GROUP_NAME)
-          TAG: $(Build.BuildId)

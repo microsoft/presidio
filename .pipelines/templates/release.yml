@@ -71,7 +71,7 @@ stages:
     dependsOn: Release
     variables:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-      version: $[ stageDependencies.Release.Version.outputs['setVer.version'] ]
+      TAG: $[ stageDependencies.Release.Version.outputs['setVer.version'] ]
     displayName: Deploy to Production environment
     jobs:
       - template: ./deploy-stage.yml
@@ -82,4 +82,3 @@ stages:
           ANALYZER_APP_NAME: $(ANALYZER_PROD_APP_NAME)
           ANONYMIZER_APP_NAME: $(ANONYMIZER_PROD_APP_NAME)
           RESOURCE_GROUP_NAME: $(PROD_RESOURCE_GROUP_NAME)
-          TAG: $(version)

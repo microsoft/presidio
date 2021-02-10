@@ -8,7 +8,6 @@ parameters:
   ANALYZER_APP_NAME:
   ANONYMIZER_APP_NAME:
   RESOURCE_GROUP_NAME:
-  TAG:
 jobs:
   - job: DeployAnalyzer
     displayName: Deploy Analyzer to ${{ parameters.ENVIRONMNT_NAME }} Environment
@@ -38,7 +37,7 @@ jobs:
           resourceGroupName: ${{ parameters.RESOURCE_GROUP_NAME }}
           appName: ${{ parameters.ANALYZER_APP_NAME }}
           slotName: staging
-          imageName: ${{ parameters.REGISTRY_NAME }}presidio-analyzer:${{ parameters.TAG }}
+          imageName: ${{ parameters.REGISTRY_NAME }}presidio-analyzer:$(TAG)
 
   - job: DeployAnonymizer
     displayName: Deploy Anonymizer to ${{ parameters.ENVIRONMNT_NAME }} Environment
@@ -68,7 +67,7 @@ jobs:
           resourceGroupName: ${{ parameters.RESOURCE_GROUP_NAME }}
           appName: ${{ parameters.ANONYMIZER_APP_NAME }}
           slotName: staging
-          imageName: ${{ parameters.REGISTRY_NAME }}presidio-anonymizer:${{ parameters.TAG }}
+          imageName: ${{ parameters.REGISTRY_NAME }}presidio-anonymizer:$(TAG)
 
   - job: TestDeployment
     displayName: Smoke and E2E Tests on the deployement
