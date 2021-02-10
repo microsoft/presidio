@@ -73,7 +73,7 @@ stages:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
     displayName: Deploy to Production environment
     jobs:
-      - template: .pipelines/templates/deploy-stage.yml
+      - template: ./deploy-stage.yml
         parameters:
           ENVIRONMNT_NAME: Prod
           REGISTRY_NAME: $(REGISTRY_NAME)
