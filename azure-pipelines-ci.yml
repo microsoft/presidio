@@ -12,6 +12,7 @@ variables:
 stages:
   - template: .pipelines/templates/lint-build-test.yml
   - stage: PushContainersAndE2ETests
+    displayName: E2E Tests
     dependsOn: LintBuildTest
     jobs:
       - job: BuildAndPushContainers
@@ -56,7 +57,7 @@ stages:
     dependsOn: PushContainersAndE2ETests
     variables:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-    displayName: Deploy to Dev environment
+    displayName: Deploy
     jobs:
       - template: .pipelines/templates/deploy-stage.yml
         parameters:

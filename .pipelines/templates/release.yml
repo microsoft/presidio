@@ -7,6 +7,7 @@ variables:
   - group: Presidio-V2-CI
 stages:
   - stage: Release
+    displayName: Release
     jobs:
     - job: version
       displayName: 'Get the version number'
@@ -72,7 +73,7 @@ stages:
     variables:
       REGISTRY_NAME: 'mcr.microsoft.com/'
       VERSION: $[ stageDependencies.Release.version.outputs['setVer.version'] ]
-    displayName: Deploy to Production environment
+    displayName: Deploy
     jobs:
       - template: ./deploy-stage.yml
         parameters:
