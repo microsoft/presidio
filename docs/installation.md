@@ -126,8 +126,4 @@ And run:
 docker run -d -p 5002:5001 presidio/presidio-anonymizer
 ```
 
-## Further reading
-
-- For more information on developing locally, refer to the [setting up a development environment](development.md) section.
-
--
+For more information on developing locally, refer to the [setting up a development environment](development.md) section.
