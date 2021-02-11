@@ -117,7 +117,7 @@ docker-compose up -d
 Alternatively, you can build and run individual services. For example, for the `presidio-anonymizer` service:
 
 ```sh
-docker build . -t presidio/presidio-anonymizer
+docker build ./presidio-anonymizer -t presidio/presidio-anonymizer
 ```
 
 And run:
