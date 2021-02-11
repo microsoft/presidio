@@ -100,6 +100,11 @@ jobs:
                 echo analyzer status code is $ANALYZER_STATUS_CODE
                 echo anonymizer status code is $ANONYMIZER_STATUS_CODE
             done
+      - template: .pipelines/templates/e2e-tests.yml
+        parameters:
+          test_suite: 'integration'
+          analyzer_base_url: $(ANALYZER_STAGING_URI)
+          anonymizer_base_url: $(ANONYMIZER_STAGING_URI)
 
   - job: SwapBothSlots
     condition: eq(dependencies.TestDeployment.result, 'Succeeded')
