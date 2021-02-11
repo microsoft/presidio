@@ -29,6 +29,7 @@ class Server:
 
         @self.app.route("/anonymize", methods=["POST"])
         def anonymize():
+            """Return an anonymized image."""
             params = get_json_data(request.form.get('data'))
             color_fill = color_fill_string_to_value(
                 params)

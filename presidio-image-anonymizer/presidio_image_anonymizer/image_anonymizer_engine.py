@@ -1,4 +1,4 @@
-from typing import Union, Tuple, Optional
+from typing import Union, Tuple
 
 from PIL import Image, ImageDraw, ImageChops
 

@@ -10,6 +10,13 @@ logger = logging.getLogger("presidio-image-anonymizer")
 
 
 def get_json_data(data: str) -> dict:
+    """
+    Validate incoming json.
+
+    :param data: json with added values for image anonymization.
+    For now, {"color_fill":"1,1,1"}
+    :return: dictionary
+    """
     try:
         if not data:
             return {}
@@ -21,6 +28,13 @@ def get_json_data(data: str) -> dict:
 
 
 def color_fill_string_to_value(json_params: dict) -> Union[int, Tuple[int, int, int]]:
+    """
+    Get color_fill and checks it is valid for image anonymization.
+
+    color_fill can be an int or Tuple[int, int, int] of (R, G, B)
+    :param json_params: {"color_fill":"1,1,1"}
+    :return: int or Tuple[int, int, int]
+    """
     filling_str = json_params.get("color_fill")
     try:
         if not filling_str:
@@ -38,6 +52,13 @@ def color_fill_string_to_value(json_params: dict) -> Union[int, Tuple[int, int, 
 
 
 def image_to_byte_array(anonymized_image: Image, image_format: str):
+    """
+    Get an image and return a byte array.
+
+    :param anonymized_image: the image which was anonymized
+    :param image_format: the format of the original image.
+    :return:
+    """
     img_byte_arr = io.BytesIO()
     anonymized_image.save(img_byte_arr,
                           format=image_format)
