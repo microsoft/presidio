@@ -8,12 +8,12 @@ The following pipelines are provided and maintained as part of presidio developm
 
 * [PR Validation](../azure-pipelines.yml) - used to validate pull requests.
     * Linting
-    * Credential Scanning
+    * Security and compliance analysis
     * Unit tests
     * E2E tests
 * [CI](../azure-pipelines-ci.yml) - triggered on merge to main branch.
     * Linting
-    * Credential Scanning
+    * Security and compliance analysis
     * Unit tests
     * E2E tests
     * deploys the aritfacts to an interenal dev environment.
