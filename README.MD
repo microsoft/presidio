@@ -28,18 +28,17 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-
 ### Demo
 
 [Try Presidio with your own data](https://aka.ms/presidio-demo)
 
 ![Presidio demo gif](docs/assets/demo.gif)
 
-
 ## Installing Presidio
 
 1. [Using pip](docs/installation.md#using-pip)
 2. [Using Docker](docs/installation.md#using-docker)
+3. [From source](docs/installation.md#install-from-source)
 
 ## Running Presidio
 
