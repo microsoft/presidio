@@ -70,4 +70,4 @@ When creating a DL based method for PII detection, there are two main alternativ
 1. Create an external endpoint (either local or remote) which is isolated from the `presidio-analyzer` process. On the `presidio-analyzer` side, one would extend the [`RemoteRecognizer`](../../presidio-analyzer/presidio_analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 2. Integrate the model as an additional [`EntityRecognizer`](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) within the `presidio-analyzer` flow.
 
-> Considerations for selecting one option are, among others: Ease of integration, runtime considerations (For example if the new model requires a GPU) and the 3rd party dependencies of the new model vs. the existing `presidio-analyzer` package.
+> Considerations for selecting one option over another are: Ease of integration, runtime considerations (For example if the new model requires a GPU) and the 3rd party dependencies of the new model vs. the existing `presidio-analyzer` package.
