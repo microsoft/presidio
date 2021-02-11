@@ -1,6 +1,6 @@
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageChops
 
 from presidio_image_anonymizer.image_analyzer_engine import ImageAnalyzerEngine
 
@@ -8,11 +8,16 @@ from presidio_image_anonymizer.image_analyzer_engine import ImageAnalyzerEngine
 class ImageAnonymizerEngine:
     """ImageAnonymizerEngine class only supporting redaction currently."""
 
+    def __init__(self):
+        self.analyzer_engine = ImageAnalyzerEngine()
+
     def anonymize(
             self, image: Image, fill: Union[int, Tuple[int, int, int]] = (0, 0, 0)
     ) -> Image:
         """Anonymize method to anonymize the given image.
 
+        Please notice, this method duplicates the image, creates a new instance and
+        manipulate it.
         :param image: PIL Image to be processed
         :param fill: colour to fill the shape - int (0-255) for
         grayscale or Tuple(R, G, B) for RGB
@@ -20,7 +25,9 @@ class ImageAnonymizerEngine:
         :return: the anonymized image
         """
 
-        bboxes = ImageAnalyzerEngine().analyze(image)
+        image = ImageChops.duplicate(image)
+
+        bboxes = self.analyzer_engine.analyze(image)
         draw = ImageDraw.Draw(image)
 
         for box in bboxes:
