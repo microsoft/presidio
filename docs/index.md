@@ -44,11 +44,11 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 1. [Running Presidio via code](samples/python/index.md)
 2. [Running Presidio as an HTTP service](samples/docker/index.md)
-2. [Setting up a development environment](development.md)
-3. [Perform PII identification using presidio-analyzer](analyzer/index.md)
-4. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
-5. [Perform PII identification and anonymization in images using presidio-image-anonymizer](image-anonymizer/index.md)
-6. [Example deployments](samples/deployments/index.md)
+3. [Setting up a development environment](development.md)
+4. [Perform PII identification using presidio-analyzer](analyzer/index.md)
+5. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
+6. [Perform PII identification and anonymization in images using presidio-image-anonymizer](image-anonymizer/index.md)
+7. [Example deployments](samples/deployments/index.md)
 
 ---
 
