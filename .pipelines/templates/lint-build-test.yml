@@ -1,7 +1,6 @@
 stages:
   - stage: LintBuildTest
-    # displayNames are defined below to avoid duplicate descriptions in the PR
-    displayName:
+    displayName: Presidio Build
     jobs:
       #- job: validate
       #  displayName: 'Validate PR pre-requisites'
