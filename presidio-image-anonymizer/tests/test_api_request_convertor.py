@@ -28,7 +28,7 @@ def test_given_invalid_json_string_then_we_get_an_invalid_param_exception():
 
 
 def test_given_empty_json_params_then_we_send_default_color_fill():
-    color_fill_string_to_value({}) == (0, 0, 0)
+    assert color_fill_string_to_value({}) == (0, 0, 0)
 
 
 @pytest.mark.parametrize(
@@ -42,7 +42,22 @@ def test_given_empty_json_params_then_we_send_default_color_fill():
 )
 def test_given_json_params_then_we_extract_properly_color_fill(json_params,
                                                                expected_result):
-    color_fill_string_to_value(json_params) == expected_result
+    assert color_fill_string_to_value(json_params) == expected_result
+
+
+@pytest.mark.parametrize(
+    # fmt: off
+    "json_params,data",
+    [
+        ({"color_fill": "1, 0, 1, 0"}, "1, 0, 1, 0"),
+        ({"color_fill": "1, 0"}, "1, 0")
+    ],
+    # fmt: on
+)
+def test_given_json_params_then_we_fail_to_extract_properly_color_fill(json_params,
+                                                                       data):
+    with pytest.raises(InvalidParamException, match=f"Invalid color fill '{data}'"):
+        color_fill_string_to_value(json_params)
 
 
 def test_given_invalid_color_fill_then_get_an_invalid_param_exception():
