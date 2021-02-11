@@ -46,7 +46,7 @@ In these cases, we would wish to utilize a Machine Learning model capable of ide
 
 #### Utilize SpaCy or Stanza
 
-Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER), and [stanza](https://stanfordnlp.github.io/stanza/) as an alternative. As to not introduce new tools for no reason, it is recommended to first try to use `spaCy` or `stanza` over other tools.
+Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER), and [stanza](https://stanfordnlp.github.io/stanza/) as an alternative. To avoid introducing new tools, it is recommended to first try to use `spaCy` or `stanza` over other tools if possible.
 `spaCy` provides descent results compared to state-of-the-art NER models, but with much better computational performance.
 `spaCy` and `stanza` models could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities.
 When integrating such a model into Presidio, a class inheriting from the [`EntityRecognizer`](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) should be created.
