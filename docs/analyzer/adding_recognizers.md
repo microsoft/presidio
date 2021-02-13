@@ -24,7 +24,7 @@ The following class diagram shows the different types of recognizer families Pre
 - The `EntityRecognizer` is an abstract class for all recognizers.
 - The `RemoteRecognizer` is an abstract class for calling external PII detectors.
 See more info [here](#creating-a-remote-recognizer).
-- The `LocalRecognizer` is an abstract class for all recognizers sharing the Presidio-analyzer process.
+- The `LocalRecognizer` is an abstract class for all recognizers running within the Presidio-analyzer process.
 - The `PatternRecognizer` is an class for supporting regex and deny-list based recognition logic,
 including validation (e.g., with checksum) and context support. See an example [here](#simple-example).
 
@@ -37,7 +37,7 @@ so that the `AnalyzerEngine` would be able to use the new recognizer during anal
 ### Simple example
 
 For simple recognizers based on regular expressions or deny-lists,
-we can leverage the provided `PatternsRecognizer`:
+we can leverage the provided `PatternRecognizer`:
 
 ```python
 from presidio_analyzer import PatternRecognizer
@@ -51,7 +51,7 @@ Calling the recognizer itself:
 titles_recognizer.analyze(text="Mr. Schmidt",entities="TITLE")
 ```
 
-Adding to the list of recognizers:
+Adding it to the list of recognizers:
 
 ```python
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
@@ -59,7 +59,7 @@ from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 registry = RecognizerRegistry()
 registry.load_predefined_recognizers()
 
-# Add new recognizer
+# Add the recognizer to the existing list of recognizers
 registry.add_recognizer(titles_recognizer)
 
 # Set up analyzer with our updated recognizer registry
@@ -72,7 +72,7 @@ print(results)
 
 ```
 
-Alternatively, we can add the recognizer to the existing analyzer:
+Alternatively, we can add the recognizer directly to the existing registry:
 
 ```python
 from presidio_analyzer import AnalyzerEngine
