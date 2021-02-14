@@ -36,6 +36,7 @@ CONTAINER ID   IMAGE                       COMMAND                  CREATED     
 1448dfb3ec2b   presidio-image-anonymizer   "/bin/sh -c 'pipenv …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-anonymizer_1
 ```
 Edit docker-compose.yml configuration file to change the default ports.
+ 
  Starting part of the cluster, or one service only, can be done by stating its image name as argument for docker-compose. 
  For example for analyzer service:
  ```bash
@@ -46,11 +47,11 @@ Edit docker-compose.yml configuration file to change the default ports.
 TODO: add
 
 
-### Build and Run end-to-end tests locally 
+### Build and run end-to-end tests locally 
 
 Building and testing presidio locally, as explained above, can give good assurance on new changes and on regressions 
 that might have introduced during development. 
-As an easier method to build and automatically run end-to-end tests, use the `run.bat` script from the project root:
+As an easier method to build and automatically run end-to-end tests, is to use the `run.bat` script found in the project root:
 
 On Windows CMD / Powershell:
  ```bash
