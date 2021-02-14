@@ -1,24 +1,26 @@
-from methods import get_image
+from methods import get_resource_image
 from presidio_image_anonymizer import ImageAnalyzerEngine
 from presidio_image_anonymizer.entities import ImageRecognizerResult
 
 
 def test_given_image_then_text_entities_are_recognized_correctly():
-    image = get_image("ocr_test.png")
+    # Image with PII entities
+    image = get_resource_image("ocr_test.png")
     analyzer_results = ImageAnalyzerEngine().analyze(image)
     assert len(analyzer_results) == 7
-    results = get_results()
+    results = __get_expected_ocr_test_image_analysis_results()
     for i in range(7):
         assert analyzer_results[i] == results[i]
 
 
 def test_given_image_without_text_then_no_entities_recognized():
-    image = get_image("no_ocr.jpg")
+    # Image without PII entities
+    image = get_resource_image("no_ocr.jpg")
     analyzer_results = ImageAnalyzerEngine().analyze(image)
     assert len(analyzer_results) == 0
 
 
-def get_results():
+def __get_expected_ocr_test_image_analysis_results():
     return [ImageRecognizerResult("PERSON", 31, 44, 0.85, 472, 20, 91, 31),
             ImageRecognizerResult("PERSON", 31, 44, 0.85, 576, 20, 147, 31),
             ImageRecognizerResult("DOMAIN_NAME", 303, 320, 1.0, 28, 299, 438, 38),
