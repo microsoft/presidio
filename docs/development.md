@@ -25,6 +25,8 @@ After modifying presidio codebase, you might want to build presidio cluster loca
 ```bash
 docker-compose up --build -d
 ```
+> Building for the first time might take some time, mainly on downloading the default spacy models.  
+
 To validate that the services were built and started successfuly, and to see the designated port for each, 
 use docker ps:
 
