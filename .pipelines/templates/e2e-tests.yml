@@ -35,6 +35,7 @@ steps:
     - script: |
           set -eux  # fail on error
           source env/bin/activate
+          sleep 60
           if [ -z ${TEST_SUITE} ]; then pytest -v; else pytest -v -m ${TEST_SUITE}; fi
       workingDirectory: e2e-tests
       env:
