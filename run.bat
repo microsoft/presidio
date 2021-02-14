@@ -13,10 +13,10 @@ exit 0
 
 @echo off
 set E2E_TESTS_DIR=e2e-tests
-docker-compose up --build -d
+docker-compose up --build -d || exit /b
 if not exist "%E2E_TESTS_DIR%\env" py -m venv %E2E_TESTS_DIR%\env
-call .%E2E_TESTS_DIR%\env\Scripts\activate
-pip install -r %E2E_TESTS_DIR%\requirements.txt
+call %E2E_TESTS_DIR%\env\Scripts\activate || exit /b
+pip install -r %E2E_TESTS_DIR%\requirements.txt || exit /b
 pytest -v %E2E_TESTS_DIR%
 deactivate
 
