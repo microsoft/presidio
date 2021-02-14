@@ -19,7 +19,6 @@ TODO: add description
 ### Testing
 
 TODO: add
-
 ### Linting
 
 Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using `flake8`.
