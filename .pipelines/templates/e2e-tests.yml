@@ -15,6 +15,9 @@ steps:
           action: Run services
           dockerComposeFile: docker-compose.yml
           buildImages: false
+      # Start cluster when testing against remote cluster, when an external url is not provided.
+      condition: eq('${{ variables.anonymizer_base_url }}', '')
+
     - task: UsePythonVersion@0
       inputs:
           versionSpec: '3.8'
