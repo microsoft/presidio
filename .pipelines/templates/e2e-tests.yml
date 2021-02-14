@@ -1,3 +1,13 @@
+parameters:
+  - name: test_suite
+    type: string
+    default: ''
+  - name: analyzer_base_url
+    type: string
+    default: ''
+  - name: anonymizer_base_url
+    type: string
+    default: ''
 steps:
     - task: DockerCompose@0
       displayName: Start Presidio Cluster
@@ -22,6 +32,12 @@ steps:
     - script: |
           set -eux  # fail on error
           source env/bin/activate
-          pytest
+          if [ -z ${TEST_SUITE} ]; then pytest -v; else pytest -v -m ${TEST_SUITE}; fi
       workingDirectory: e2e-tests
+      env:
+        ${{ if ne(parameters.analyzer_base_url, '') }}:
+          ANALYZER_BASE_URL: ${{ parameters.analyzer_base_url }}
+        ${{ if ne(parameters.anonymizer_base_url, '') }}:
+          ANONYMIZER_BASE_URL: ${{ parameters.anonymizer_base_url }}
+        TEST_SUITE:  ${{ parameters.test_suite }}
       displayName: Run tests
