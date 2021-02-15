@@ -1,8 +1,10 @@
 from typing import List
-from presidio_image_anonymizer.image_recognizer_result import ImageRecognizerResult
-from presidio_image_anonymizer.ocr import OCR
-from presidio_analyzer import RecognizerResult
+
 from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer import RecognizerResult
+from presidio_image_anonymizer.entities.image_recognizer_result import \
+    ImageRecognizerResult
+from presidio_image_anonymizer.ocr import OCR
 
 
 class ImageAnalyzerEngine:
