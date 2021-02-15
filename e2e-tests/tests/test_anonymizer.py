@@ -53,9 +53,7 @@ def test_given_anonymize_called_with_empty_text_then_invalid_input_message_retur
     assert equal_json_strings(expected_response, response_content)
 
 
-pytest.mark.api
-
-
+@pytest.mark.api
 def test_given_anonymize_called_with_empty_analyzer_results_then_invalid_input_message_returned():
     request_body = """
     {

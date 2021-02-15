@@ -1,7 +1,10 @@
+import os
 import requests
 from common.constants import ANONYMIZER_BASE_URL, ANALYZER_BASE_URL
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
+ANALYZER_BASE_URL = os.environ.get("ANALYZER_BASE_URL", ANALYZER_BASE_URL)
+ANONYMIZER_BASE_URL = os.environ.get("ANONYMIZER_BASE_URL", ANONYMIZER_BASE_URL)
 
 
 def anonymize(data):
