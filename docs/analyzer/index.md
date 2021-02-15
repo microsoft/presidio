@@ -118,7 +118,7 @@ Presidio analyzer has a built in mechanism for tracing each decision made. This 
 
 ## Supported entities
 
-For a list of supported entities, [click here](../supported_entities.md).
+[Supported entities](../supported_entities.md).
 
 ## API reference
 
