@@ -30,9 +30,8 @@ including validation (e.g., with checksum) and context support. See an example [
 
 ## Extending the analyzer for additional PII entities
 
-First, a class based on `EntityRecognizer` needs to be created.
-Second, the new recognizer should be added to the recognizer registry,
-so that the `AnalyzerEngine` would be able to use the new recognizer during analysis.
+1. Create a new class based on `EntityRecognizer`.
+2. Add the new recognizer to the recognizer registry so that the `AnalyzerEngine` can use the new recognizer during analysis.
 
 ### Simple example
 
