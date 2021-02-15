@@ -76,7 +76,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         print(results_english)
         ```
 
-    - **Via configuration**: Set up the models which should be used in the [default `conf` file](conf/default.yaml).
+    - **Via configuration**: Set up the models which should be used in the [default `conf` file](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/conf/default.yaml).
 
         An example Conf file:
 
@@ -154,5 +154,5 @@ analyzer.analyze(...)
 
 When packaging the code into a Docker container, NLP models are automatically installed.
 To define which models should be installed,
-update the [conf/default.yaml](conf/default.yaml) file. This file is read during
+update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/conf/default.yaml) file. This file is read during
 the `docker build` phase and the models defined in it are installed automatically.

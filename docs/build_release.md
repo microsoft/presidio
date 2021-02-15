@@ -6,18 +6,20 @@ Presidio leverages Azure DevOps YAML pipelines to validate, build, releasee and 
 
 The following pipelines are provided and maintained as part of presidio development process:
 
-* [PR Validation](../azure-pipelines.yml) - used to validate pull requests.
+TODO: update links once V2 is merged
+
+* [PR Validation](https://github.com/microsoft/presidio/blob/V2/azure-pipelines.yml) - used to validate pull requests.
     * Linting
     * Security and compliance analysis
     * Unit tests
     * E2E tests
-* [CI](../azure-pipelines-ci.yml) - triggered on merge to main branch.
+* [CI](https://github.com/microsoft/presidio/blob/V2/azure-pipelines-ci.yml) - triggered on merge to main branch.
     * Linting
     * Security and compliance analysis
     * Unit tests
     * E2E tests
     * deploys the aritfacts to an interenal dev environment.
-* [Release](../azure-pipelines.yml) - manually triggered.
+* [Release](https://github.com/microsoft/presidio/blob/V2/azure-pipelines.yml) - manually triggered.
     * releases presidio official artifacts
         * pypi
         * Microsoft container registry (and docker hub)
