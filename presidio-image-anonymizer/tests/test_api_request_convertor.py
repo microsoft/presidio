@@ -1,7 +1,8 @@
 import pytest
 
-from api_request_convertor import get_json_data, color_fill_string_to_value
 from presidio_image_anonymizer.entities import InvalidParamException
+from presidio_image_anonymizer.entities.api_request_convertor import get_json_data, \
+    color_fill_string_to_value
 
 
 def test_given_no_data_then_we_get_default_dict():
