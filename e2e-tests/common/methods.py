@@ -1,5 +1,4 @@
 import os
-
 import requests
 from common.constants import ANONYMIZER_BASE_URL, ANALYZER_BASE_URL
 
