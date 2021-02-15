@@ -46,8 +46,77 @@ Edit docker-compose.yml configuration file to change the default ports.
  ```
 ### Testing
 
-TODO: add
+We strive to have a full test coverage in Presidio, and expect every pull request to
+ include tests. 
+ 
+ In each service directory, a 'test' directory can be found. In it, both unit tests,
+  for testing single files or classes, and integration tests, for testing integration
+   between the service components, or integration with external packages. 
+   
+#### Basic conventions
 
+For tests to be consistent and predictable, we use the following basic conventions:
+
+ 1. Treat tests as production code. Keep the tests concise and readable, with descriptive namings. 
+ 2. Assert on one behavior at a time in each test.
+ 3. Test names should follow a pattern of `test_when_[condition_to_test]_then_[expected_behaviour]`.
+ For example: test_when_no_interpretability_requested_then_response_contains_no_analysis.
+ 4. Use test doubles and mocks when writing unit tests. Make less use of them when writing integration tests.
+
+#### Running tests
+
+Presidio uses the [pytest](http://doc.pytest.org/) framework for testing. 
+See the pytest [documentation](https://docs.pytest.org/en/latest/contents.html) for more information.
+
+Running the tests locally can be done in two ways:
+1. Using cli, from each service directory, run:
+    ```shell
+   pipenv run pytest
+   ```
+2. Using your IDE. See configuration examples for [IDEA PyCharm / IntelliJ](https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html)
+    and [Visual Studio Code](https://code.visualstudio.com/docs/python/testing)
+
+#### End-to-end tests
+
+Since Presidio services can function as HTTP servers, Presidio uses an additional
+ End-to-end (e2e) testing layer to test their REST APIs.
+This e2e test framework is located under 'e2e-tests' directory.
+You can also find test scenarios testing the integration between Presidio services. 
+These tests should be annotated with 'integration' pytest marker `@pytest.mark.integration`, while 
+tests calling a single servcie api layer should be annotated with 'api' pytest marker `@pytest.mark.api`.
+ Running the e2e-tests locally can be done in two ways:
+ 1. Using cli, from e2e-tests directory, run:
+    
+    On Windows CMD / Powershell:
+    ```shell
+    # Create a virtualenv named env (needs to be done only on the first run)
+    py -m venv env
+    # Activate the virtualenv
+    env\Scripts\activate
+    # Install e2e-tests requirements using pip
+    pip install -r requirements.txt
+    # Run pytest
+    pytest
+     # Deactivate the virtualenv
+    deactivate
+    ```
+    On Mac / Unix-based OS / WSL:
+     ```shell
+    # Create a virtualenv named env (needs to be done only on the first run)
+    python -m venv env
+    # Activate the virtualenv
+    source env/bin/activate
+    # Install e2e-tests requirements using pip
+    pip install -r requirements.txt
+    # Run pytest
+    pytest
+     # Deactivate the virtualenv
+    deactivate
+    ```
+ 2. Using your IDE, see references in the section above.
+  
+> Note: The e2e tests require a Presidio cluster to be up, for example using the 
+containerized cluster with docker-compose.
 
 ### Build and run end-to-end tests locally 
 
