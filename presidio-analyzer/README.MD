@@ -9,8 +9,9 @@ each one in charge of detecting one or more PII entities using different mechani
 
 Presidio analyzer comes with a set of predefined recognizers,
 but can easily be extended with other types of [custom recognizers](#customizing-presidio-analyzer).
-Predefined and custom recognizers leverage regex, [spaCy](https://spacy.io/)
+Predefined and custom recognizers leverage regex, Named Entity Recognition 
 and other types of logic to detect PII in unstructured text.
+
 
 ### Deploy Presidio analyzer to Azure
 
@@ -71,13 +72,14 @@ print(results)
 
 ## Customizing Presidio analyzer
 
-Presidio can be exteded to support new types of PII entities, and to support additional languages.
+Presidio can be extended to support new types of PII entities, and to support additional languages.
 
-The three main modules are the `AnalyzerEngine` and the `RecognizerRegistry` and `EntityRecognizer`.
+The four main modules are the `AnalyzerEngine` and the `RecognizerRegistry`, `NlpEngine` and `EntityRecognizer`.
 
 - The `AnalyzerEngine` is in charge of calling each requested recognizer.
 - The `RecognizerRegistry` is in charge of providing the list of predefined and custom recognizers for analysis.
 - The `EntityRecognizer` class can be extended to support new types of PII recognition logic.
+- The `NlpEngine` uses a Natural Language Processing pipeline (either `spaCy` or `stanza`) to extract information from the input text).
 
 ### Extending the analyzer for additional PII entities
 
@@ -175,6 +177,7 @@ To create a new recognizer via code:
     2. The `analyze` method should return a list of [RecognizerResult](presidio_analyzer/recognizer_result.py).
 
 2. Add it to the recognizer registry using `registry.add_recognizer(my_recognizer)`.
+
 
 ## HTTP API
 
