@@ -24,7 +24,7 @@ The following class diagram shows the different types of recognizer families Pre
 - The `EntityRecognizer` is an abstract class for all recognizers.
 - The `RemoteRecognizer` is an abstract class for calling external PII detectors.
 See more info [here](#creating-a-remote-recognizer).
-- The `LocalRecognizer` is an abstract class for all recognizers running within the Presidio-analyzer process.
+- The abstract class `LocalRecognizer` is implemented by all recognizers running within the Presidio-analyzer process.
 - The `PatternRecognizer` is an class for supporting regex and deny-list based recognition logic,
 including validation (e.g., with checksum) and context support. See an example [here](#simple-example).
 
