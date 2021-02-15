@@ -79,33 +79,34 @@ Running the tests locally can be done in two ways:
 #### End-to-end tests
 
 Since Presidio services can function as HTTP servers, Presidio uses an additional
- End-to-end (e2e) testing layer to test their REST APIs.
+ end-to-end (e2e) testing layer to test their REST APIs.
 This e2e test framework is located under 'e2e-tests' directory.
-You can also find test scenarios testing the integration between Presidio services. 
+In it, you can also find test scenarios testing the integration between Presidio services through REST API. 
 These tests should be annotated with 'integration' pytest marker `@pytest.mark.integration`, while 
 tests calling a single servcie api layer should be annotated with 'api' pytest marker `@pytest.mark.api`.
  Running the e2e-tests locally can be done in two ways:
  1. Using cli, from e2e-tests directory, run:
-    
+
+     On Mac / Linux / WSL:
+      ```shell
+     # Create a virtualenv named env (needs to be done only on the first run)
+     python -m venv env
+     # Activate the virtualenv
+     source env/bin/activate
+     # Install e2e-tests requirements using pip
+     pip install -r requirements.txt
+     # Run pytest
+     pytest
+      # Deactivate the virtualenv
+     deactivate
+     ```
+
     On Windows CMD / Powershell:
     ```shell
     # Create a virtualenv named env (needs to be done only on the first run)
     py -m venv env
     # Activate the virtualenv
     env\Scripts\activate
-    # Install e2e-tests requirements using pip
-    pip install -r requirements.txt
-    # Run pytest
-    pytest
-     # Deactivate the virtualenv
-    deactivate
-    ```
-    On Mac / Unix-based OS / WSL:
-     ```shell
-    # Create a virtualenv named env (needs to be done only on the first run)
-    python -m venv env
-    # Activate the virtualenv
-    source env/bin/activate
     # Install e2e-tests requirements using pip
     pip install -r requirements.txt
     # Run pytest
@@ -124,16 +125,17 @@ Building and testing presidio locally, as explained above, can give good assuran
 that might have introduced during development. 
 As an easier method to build and automatically run end-to-end tests, is to use the `run.bat` script found in the project root:
 
-On Windows CMD / Powershell:
- ```bash
- .\run.bat
- ```
-On Mac / Unix-based OS / WSL:
+On Mac / Linux / WSL:
  ```bash
  chmod +x run.bat
  ./run.bat
  ```
 
+
+On Windows CMD / Powershell:
+ ```bash
+ .\run.bat
+ ```
 ### Linting
 
 Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using `flake8`.
