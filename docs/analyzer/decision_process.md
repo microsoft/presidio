@@ -17,7 +17,8 @@ To enable/disable it, call the `analyze` method with `remove_interpretability_re
 
 ### Logging the decision process
 
-Each trace contains a `correlation-id` which correlates to a specific api request. The api returns a `x-correlation-id` header which you can use to the `correlation-id` and query the `stdout` logs.
+Each api request contains a `correlation-id` which is the trace identification. It will help you to query the stdout logs.
+The id can be retrieved from each API response header: `x-correlation-id`.
 
 By having the traces written into the `stdout` it's very easy to configure a monitoring solution to ease the process of reading processing the tracing logs in a distributed system.
 
