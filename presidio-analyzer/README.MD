@@ -50,3 +50,4 @@ print(results)
 - [Creating PII recognizers](../docs/analyzer/index.md#creating-pii-recognizers)
 - [Outputting the analyzer decision process](../docs/analyzer/index.md#outputting-the-analyzer-decision-process)
 - [API reference](../docs/analyzer/index.md#api-reference)
+

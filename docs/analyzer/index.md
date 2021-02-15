@@ -66,7 +66,6 @@ docker build . -t presidio/presidio-analyzer
 ```
 
 ## Getting started
-
 ### Running in Python
 
 Once the Presidio-analyzer package is installed, run this simple analysis script:
