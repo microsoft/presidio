@@ -106,7 +106,7 @@ To create a new recognizer via code:
     ```
 
     Notes:
-    1. Each recognizer has access to different NLP assets such as tokens, lemmas, and more.
+    1. Each recognizer has access to different NLP assets such as tokens, [lemmas](https://en.wikipedia.org/wiki/Lemma_(morphology)), and more.
     These are given through the `nlp_artifacts` parameter.
     Refer to the [source code](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) for more information.
 
