@@ -9,7 +9,8 @@ from presidio_image_anonymizer.image_analyzer_engine import ImageAnalyzerEngine
 def test_given_valid_ocr_and_entities_then_map_analyzer_returns_correct_len_and_output(
         get_ocr_analyzer_results, get_image_recognizerresult
 ):
-    ocr_result, text, recogniser_result = get_ocr_analyzer_results
+    ocr_result, text, recognizer_result = get_ocr_analyzer_results
+
     expected_result = get_image_recognizerresult
     mapped_entities = ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
         recogniser_result, ocr_result, text
