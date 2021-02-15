@@ -1,4 +1,4 @@
-# Supporting new types of PII entities
+# Supporting detection of new types of PII entities
 
 Presidio can be extended to support detection of new types of PII entities, and to support additional languages.
 
