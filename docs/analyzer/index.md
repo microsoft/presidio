@@ -131,7 +131,7 @@ Parameters
 | Name | Type | Optional | Description|
 | --- | --- | ---| ---|
 | text|string|no|the text to analyze|
-| language|string|no|2 characters of the desired language. E.g en, de|
+| language|string|no|two characters for the desired language [ISO_639-1 language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). E.g en, de|
 | correlation_id|string|yes|a correlation id to append to headers and traces|
 | score_threshold|float|yes|the the minimal score threshold|
 | entities|string[]|yes|a list of entities to analyze|
