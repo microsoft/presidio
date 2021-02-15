@@ -28,28 +28,27 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-
 ### Demo
 
 [Try Presidio with your own data](https://aka.ms/presidio-demo)
 
 ![Presidio demo gif](docs/assets/demo.gif)
 
-
 ## Installing Presidio
 
 1. [Using pip](docs/installation.md#using-pip)
 2. [Using Docker](docs/installation.md#using-docker)
+3. [From source](docs/installation.md#install-from-source)
 
 ## Running Presidio
 
-1. [Running Presidio via code](docs/deployment-samples/python/index.md)
-2. [Running Presidio as an HTTP service](docs/deployment-samples/docker/index.md)
-2. [Setting up a development environment](docs/development.md)
-3. [Perform PII identification using presidio-analyzer](docs/analyzer/index.md)
-4. [Perform PII anonymization using presidio-anonymizer](docs/anonymizer/index.md)
-5. [Perform PII identification and anonymization in images using presidio-image-anonymizer](docs/image-anonymizer/index.md)
-6. [Example deployments](docs/deployment-samples/index.md)
+1. [Running Presidio via code](docs/samples/python/index.md)
+2. [Running Presidio as an HTTP service](docs/samples/docker/index.md)
+3. [Setting up a development environment](docs/development.md)
+4. [Perform PII identification using presidio-analyzer](docs/analyzer/index.md)
+5. [Perform PII anonymization using presidio-anonymizer](docs/anonymizer/index.md)
+6. [Perform PII identification and anonymization in images using presidio-image-anonymizer](docs/image-anonymizer/index.md)
+7. [Example deployments](docs/samples/deployments/index.md)
 
 ---
 
