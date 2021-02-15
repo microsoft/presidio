@@ -110,7 +110,7 @@ curl -d '{"text":"John Smith drivers license is AC432223", "language":"en"}' -H 
 
 - [Tutorial on adding new PII recognizers](adding_recognizers.md).
 - [Best practices for developing new recognizers](developing_recognizers.md).
-- For multi-language support, [click here](languages.md).
+- [Multi-language support](languages.md).
 
 ## Outputting the analyzer decision process
 
