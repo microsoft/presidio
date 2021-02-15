@@ -26,7 +26,7 @@ By having the traces written into the `stdout` it's very easy to configure a mon
 
 For the a request with the following text:
 
-```
+```text
 My name is Bart Simpson, my Credit card is: 4095-2609-9393-4932,  my phone is 425 8829090 
 ```
 
