@@ -21,9 +21,8 @@ def test_given_shorter_text_from_analyzer_result_range_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         AnonymizerEngine().anonymize(mock)
     assert (
-        e.value.err_msg == "Invalid analyzer result: 'start: 8, end: 20, "
-        "score: 0.5, entity_type: PHONE_NUMBER', "
-        "original text length is only 6."
+            e.value.err_msg == "Invalid text position start with 8 and end with 20, "
+                               "original text length is only 6."
     )
 
 
