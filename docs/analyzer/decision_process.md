@@ -80,4 +80,6 @@ results = analyzer.analyze(text="My phone number is 212-555-5555",
 print(results)
 ```
 
+These traces leverage the Python `logging` mechanisms. In the default configuration, A `StreamHandler` is used to write these logs to `sys.stdout`.
+
 > Important note: decision-process traces explain why PIIs were detected, but not why they were not detected!
