@@ -1,6 +1,7 @@
 import pytest
-from presidio_image_anonymizer.image_recognizer_result import ImageRecognizerResult
-from presidio_analyzer import RecognizerResult
+from presidio_analyzer.recognizer_result import RecognizerResult
+
+from presidio_image_anonymizer.entities import ImageRecognizerResult
 
 
 @pytest.fixture(scope="function")
