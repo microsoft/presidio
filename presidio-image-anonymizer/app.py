@@ -5,11 +5,11 @@ import os
 from PIL import Image
 from flask import Flask, request, make_response
 
-from api_request_convertor import image_to_byte_array, get_json_data, \
-    color_fill_string_to_value
 from presidio_image_anonymizer import ImageAnonymizerEngine
 from presidio_image_anonymizer.entities import ErrorResponse
 from presidio_image_anonymizer.entities import InvalidParamException
+from presidio_image_anonymizer.entities.api_request_convertor import get_json_data, \
+    image_to_byte_array, color_fill_string_to_value
 
 DEFAULT_PORT = "3000"
 
