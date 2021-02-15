@@ -5,8 +5,8 @@ import os
 from PIL import Image
 from flask import Flask, request, make_response
 
-from api_request_convertor import color_fill_string_to_value, image_to_byte_array, \
-    get_json_data
+from api_request_convertor import image_to_byte_array, get_json_data, \
+    color_fill_string_to_value
 from presidio_image_anonymizer import ImageAnonymizerEngine
 from presidio_image_anonymizer.entities import ErrorResponse
 from presidio_image_anonymizer.entities import InvalidParamException
@@ -39,7 +39,8 @@ class Server:
             anonymized_image = self.engine.anonymize(im,
                                                      color_fill)
 
-            img_byte_arr = image_to_byte_array(anonymized_image, im.format)
+            img_byte_arr = image_to_byte_array(
+                anonymized_image, im.format)
             return make_response(img_byte_arr)
 
         @self.app.errorhandler(InvalidParamException)
