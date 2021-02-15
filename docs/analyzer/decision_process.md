@@ -30,15 +30,17 @@ For the a request with the following text:
 My name is Bart Simpson, my Credit card is: 4095-2609-9393-4932,  my phone is 425 8829090 
 ```
 
-The following traces will be written to log:
+The following traces will be written to log, with this format: 
+
+`[Date Time][decision_process][Log Level][Unique Correlation ID][Trace Message]`
+
+
 
 ```
 [2019-07-14 14:22:32,409][decision_process][INFO][00000000-0000-0000-0000-000000000000][nlp artifacts:{'entities': (Bart Simpson, 4095, 425), 'tokens': ['My', 'name', 'is', 'Bart', 'Simpson', ',', 'my', 'Credit', 'card', 'is', ':', '4095', '-', '2609', '-', '9393', '-', '4932', ',', ' ', 'my', 'phone', 'is', '425', '8829090'], 'lemmas': ['My', 'name', 'be', 'Bart', 'Simpson', ',', 'my', 'Credit', 'card', 'be', ':', '4095', '-', '2609', '-', '9393', '-', '4932', ',', ' ', 'my', 'phone', 'be', '425', '8829090'], 'tokens_indices': [0, 3, 8, 11, 16, 23, 25, 28, 35, 40, 42, 44, 48, 49, 53, 54, 58, 59, 63, 65, 66, 69, 75, 78, 82], 'keywords': ['bart', 'simpson', 'credit', 'card', '4095', '2609', '9393', '4932', ' ', 'phone', '425', '8829090']}]
 
 [2019-07-14 14:22:32,417][decision_process][INFO][00000000-0000-0000-0000-000000000000][["{'entity_type': 'CREDIT_CARD', 'start': 44, 'end': 63, 'score': 1.0, 'analysis_explanation': {'recognizer': 'CreditCardRecognizer', 'pattern_name': 'All Credit Cards (weak)', 'pattern': '\\\\b((4\\\\d{3})|(5[0-5]\\\\d{2})|(6\\\\d{3})|(1\\\\d{3})|(3\\\\d{3}))[- ]?(\\\\d{3,4})[- ]?(\\\\d{3,4})[- ]?(\\\\d{3,5})\\\\b', 'original_score': 0.3, 'score': 1.0, 'textual_explanation': None, 'score_context_improvement': 0.7, 'supportive_context_word': 'credit', 'validation_result': True}}", "{'entity_type': 'PERSON', 'start': 11, 'end': 23, 'score': 0.85, 'analysis_explanation': {'recognizer': 'SpacyRecognizer', 'pattern_name': None, 'pattern': None, 'original_score': 0.85, 'score': 0.85, 'textual_explanation': \"Identified as PERSON by Spacy's Named Entity Recognition\", 'score_context_improvement': 0, 'supportive_context_word': '', 'validation_result': None}}", "{'entity_type': 'PHONE_NUMBER', 'start': 78, 'end': 89, 'score': 0.85, 'analysis_explanation': {'recognizer': 'UsPhoneRecognizer', 'pattern_name': 'Phone (medium)', 'pattern': '\\\\b(\\\\d{3}[-\\\\.\\\\s]\\\\d{3}[-\\\\.\\\\s]??\\\\d{4})\\\\b', 'original_score': 0.5, 'score': 0.85, 'textual_explanation': None, 'score_context_improvement': 0.35, 'supportive_context_word': 'phone', 'validation_result': None}}"]]
 ```
-
-The format of the traces is: `[Date Time][decision_process][Log Level][Unique Correlation ID][Trace Message]`
 
 ## Writing custom decision process for a recognizer
 
