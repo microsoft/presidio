@@ -55,9 +55,8 @@ class Server:
                   text/plain:
                     schema:
                       type: string
-                      example: ok
             """
-            return "ok"
+            return "Presidio Analyzer service is up"
 
         @self.app.route("/analyze", methods=["POST"])
         def analyze() -> Tuple[str, int]:

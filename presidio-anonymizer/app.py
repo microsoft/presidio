@@ -37,9 +37,6 @@ class Server:
         fileConfig(Path(Path(__file__).parent, LOGGING_CONF_FILE))
         self.logger = logging.getLogger("presidio-anonymizer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
-        self.logger.info("Starting anonymizer engine")
-        self.engine = AnonymizerEngine()
-
         self.app = Flask(__name__)
         self.swagger = Swagger(
             self.app, template={"info": {"title": "Presidio Anonymizer API"}}
@@ -60,9 +57,8 @@ class Server:
                   text/plain:
                     schema:
                       type: string
-                      example: ok
             """
-            return "ok"
+            return "Presidio Anonymizer service is up"
 
         @self.app.route("/anonymize", methods=["POST"])
         def anonymize():

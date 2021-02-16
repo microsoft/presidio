@@ -16,6 +16,17 @@ from presidio_image_anonymizer.entities.api_request_convertor import (
 
 DEFAULT_PORT = "3000"
 
+WELCOME_MESSAGE = r"""
+ _______  _______  _______  _______ _________ ______  _________ _______
+(  ____ )(  ____ )(  ____ \(  ____ \\__   __/(  __  \ \__   __/(  ___  )
+| (    )|| (    )|| (    \/| (    \/   ) (   | (  \  )   ) (   | (   ) |
+| (____)|| (____)|| (__    | (_____    | |   | |   ) |   | |   | |   | |
+|  _____)|     __)|  __)   (_____  )   | |   | |   | |   | |   | |   | |
+| (      | (\ (   | (            ) |   | |   | |   ) |   | |   | |   | |
+| )      | ) \ \__| (____/\/\____) |___) (___| (__/  )___) (___| (___) |
+|/       |/   \__/(_______/\_______)\_______/(______/ \_______/(_______)
+"""
+
 
 class Server:
     """Flask server for image anonymizer."""
@@ -26,7 +37,9 @@ class Server:
         self.swagger = Swagger(
             self.app, template={"info": {"title": "Presidio Image Anonymizer API"}}
         )
+        self.logger.info("Starting image anonymizer engine")
         self.engine = ImageAnonymizerEngine()
+        self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
         def health() -> str:
@@ -40,9 +53,8 @@ class Server:
                   text/plain:
                     schema:
                       type: string
-                      example: ok
             """
-            return "ok"
+            return "Presidio Image Anonymizer service is up"
 
         @self.app.route("/anonymize", methods=["POST"])
         def anonymize():
