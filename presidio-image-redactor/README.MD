@@ -1,8 +1,8 @@
-# Presidio Image redactor
+# Presidio Image Redactor
 
 ## Description
 
-The Presidio Image Redactor is a Python based module for redacting and detecting PII text
+The Presidio Image Redactor is a Python based module for detecting and redacting PII text
 entities in images.
 
 ## Usage

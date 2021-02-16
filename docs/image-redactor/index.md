@@ -1,4 +1,4 @@
-# Presidio Image redactor
+# Presidio Image Redactor
 
 ## Description
 
