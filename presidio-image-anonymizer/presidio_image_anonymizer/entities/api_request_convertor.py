@@ -1,6 +1,7 @@
+import io
 import json
 import logging
-from typing import Tuple, Union, io
+from typing import Tuple, Union
 
 from PIL import Image
 
