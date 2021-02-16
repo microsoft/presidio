@@ -7,7 +7,7 @@ Presidio can be extended to support detection of new types of PII entities, and 
 - [Introduction to recognizer development](#introduction-to-recognizer-development)
 - [Types of recognizer classes in Presidio](#types-of-recognizer-classes-in-presidio)
 - [Extending the analyzer for additional PII entities](#extending-the-analyzer-for-additional-pii-entities)
-- [Extending to additional languages](#extending-to-additional-languages)
+- [PII detection in different languages](#pii-detection-in-different-languages)
 
 ## Introduction to recognizer development
 
@@ -118,129 +118,21 @@ To create a new recognizer via code:
 
 A remote recognizer is an `EntityRecognizer` object interacting with an external service. The external service could be a 3rd party PII detection service or a custom service deployed in parallel to Presidio.
 
-<details>
-  <summary>Click here for a reference implementation of a `RemoteRecognizer`</summary>
-
-Here's an illustrative example of how a `RemoteRecognizer` should be implemented. In this example, an external PII detection service exposes two APIs: `detect` and `supported_entities`. The class implemented here, `MyRemoteRecognizer`, uses the `requests` package to call the external service via HTTP.
+[Click here for an example implementation of a `RemoteRecognizer`](../samples/python/example_remote_recognizer.py).
+In this example, an external PII detection service exposes two APIs: `detect` and `supported_entities`. The class implemented here, `MyRemoteRecognizer`, uses the `requests` package to call the external service via HTTP.
 
 In this code snippet, we simulate the external PII detector by using the Presidio analyzer. In reality, we would adapt this code to fit the external PII detector we have in hand.
 
-```python
-import json
-import logging
-from typing import List
+### Creating pre-defined recognizers
 
-import requests
+Once a recognizer is created, it can either be added to the `RecognizerRegistry` via the `add_recognizer` method, or it could be added into the list of predefined recognizers.
+To add a recognizer to the list of pre-defined recognizers:
 
-from presidio_analyzer import RemoteRecognizer, RecognizerResult
-from presidio_analyzer.nlp_engine import NlpArtifacts
+1. Clone the repo
+2. Create a file containing the new recognizer Python class
+3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
+4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
-logger = logging.getLogger("presidio-analyzer")
-
-import json
-import logging
-from typing import List
-
-import requests
-
-from presidio_analyzer import RemoteRecognizer, RecognizerResult
-from presidio_analyzer.nlp_engine import NlpArtifacts
-
-logger = logging.getLogger("presidio-analyzer")
-
-
-class ExampleRemoteRecognizer(RemoteRecognizer):
-    """
-    A reference implementation of a remote recognizer.
-
-    Calls Presidio analyzer as if it was an external remote PII detector
-    :param pii_identification_url: Service URL for detecting PII
-    :param supported_entities_url: Service URL for getting the supported entities
-    by this service
-    """
-
-    def __init__(
-        self,
-        pii_identification_url: str = "https://MYPIISERVICE_URL/detect",
-        supported_entities_url: str = "https://MYPIISERVICE_URL/supported_entities",
-    ):
-        self.pii_identification_url = pii_identification_url
-        self.supported_entities_url = supported_entities_url
-
-        super().__init__(
-            supported_entities=[], name=None, supported_language="en", version="1.0"
-        )
-
-    def load(self) -> None:
-        """Call the get_supported_entities API of the external service."""
-        try:
-            response = requests.get(
-                self.supported_entities_url,
-                params={"language": self.supported_language},
-            )
-            self.supported_entities = self._supported_entities_from_response(response)
-
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Failed to get supported entities from external service. {e}")
-            self.supported_language = []
-
-    def analyze(
-        self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts
-    ) -> List[RecognizerResult]:
-        """Call an external service for PII detection."""
-
-        payload = {"text": text, "language": self.supported_language}
-
-        response = requests.post(
-            self.pii_identification_url,
-            json=payload,
-            timeout=200,
-        )
-
-        results = self._recognizer_results_from_response(response)
-
-        return results
-
-    def get_supported_entities(self) -> List[str]:
-        """Return the list of supported entities."""
-        return self.supported_entities
-
-    @staticmethod
-    def _recognizer_results_from_response(
-        response: requests.Response,
-    ) -> List[RecognizerResult]:
-        """Translate the service's response to a list of RecognizerResult."""
-        results = json.loads(response.text)
-        recognizer_results = [RecognizerResult(**result) for result in results]
-
-        return recognizer_results
-
-    @staticmethod
-    def _supported_entities_from_response(response: requests.Response) -> List[str]:
-        """Translate the service's supported entities list to Presidio's."""
-        return json.loads(response.text)
-```
-
-To call just this recognizer:
-
-```python
-if __name__ == "__main__":
-
-    # Illustrative example only: Run Presidio analyzer
-    # as if it was an external PII detection mechanism.
-    rec = ExampleRemoteRecognizer(
-        pii_identification_url="http://localhost:3000/analyze",
-        supported_entities_url="http://localhost:3000/supportedentities",
-    )
-
-    remote_results = rec.analyze(
-        text="My name is David", entities=["PERSON"], nlp_artifacts=None
-    )
-    print(remote_results)
-```
-
-</details>
-
-## Extending to additional languages
+## PII detection in different languages
 
 For recognizers in new languages, refer to the [languages documentation](languages.md).

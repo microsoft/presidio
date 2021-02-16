@@ -1,3 +1,28 @@
+"""
+This is an example implementation of a RemoteRecognizer.
+
+Remote recognizers call external APIs
+to get additional PII identification capabilities.
+These results are added to all the other results
+gathered by the different recognizers.
+
+The actual call logic (e.g., HTTP or gRPC)
+should be implemented within this class.
+In this example, we use the `requests` package to perform a POST request.
+Flow:
+1. During `load`, call `supported_entities`
+to get a list of what this service can detect
+2. Translate the response coming from the `supported_entities` endpoint
+3. During `analyze`, perform a POST request to the PII detector endpoint
+4. Translate the response coming from the
+PII detector endpoint into a List[RecognizerResult]
+5. Return results
+
+Note: In this example we mimic an external PII detector
+by using Presidio Analyzer itself.
+
+"""
+
 import json
 import logging
 from typing import List
