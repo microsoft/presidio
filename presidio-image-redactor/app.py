@@ -1,22 +1,21 @@
-"""REST API server for anonymizer."""
-import json
+"""REST API server for image redactor."""
 import logging
 import os
-from logging.config import fileConfig
-from pathlib import Path
-from typing import Tuple
 
-from flask import Flask, request, jsonify
+from PIL import Image
+from flask import Flask, request, make_response
 from flasgger import Swagger
 
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import AnonymizerRequest
-from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.error_response import ErrorResponse
+from presidio_image_redactor import ImageRedactorEngine
+from presidio_image_redactor.entities import ErrorResponse
+from presidio_image_redactor.entities import InvalidParamException
+from presidio_image_redactor.entities.api_request_convertor import (
+    get_json_data,
+    image_to_byte_array,
+    color_fill_string_to_value,
+)
 
 DEFAULT_PORT = "3000"
-
-LOGGING_CONF_FILE = "logging.ini"
 
 WELCOME_MESSAGE = r"""
  _______  _______  _______  _______ _________ ______  _________ _______
@@ -31,18 +30,16 @@ WELCOME_MESSAGE = r"""
 
 
 class Server:
-    """Flask server for anonymizer."""
+    """Flask server for image redactor."""
 
     def __init__(self):
-        fileConfig(Path(Path(__file__).parent, LOGGING_CONF_FILE))
-        self.logger = logging.getLogger("presidio-anonymizer")
-        self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
+        self.logger = logging.getLogger("presidio-image-redactor")
         self.app = Flask(__name__)
         self.swagger = Swagger(
-            self.app, template={"info": {"title": "Presidio Anonymizer API"}}
+            self.app, template={"info": {"title": "Presidio Image Redactor API"}}
         )
-        self.logger.info("Starting anonymizer engine")
-        self.engine = AnonymizerEngine()
+        self.logger.info("Starting image redactor engine")
+        self.engine = ImageRedactorEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -58,27 +55,25 @@ class Server:
                     schema:
                       type: string
             """
-            return "Presidio Anonymizer service is up"
+            return "Presidio Image Redactor service is up"
 
-        @self.app.route("/anonymize", methods=["POST"])
-        def anonymize():
-            content = request.get_json()
-            if not content:
-                return ErrorResponse("Invalid request json").to_json(), 400
+        @self.app.route("/redact", methods=["POST"])
+        def redact():
+            """Return a redacted image."""
+            params = get_json_data(request.form.get("data"))
+            color_fill = color_fill_string_to_value(params)
+            image_file = request.files.get("image")
+            im = Image.open(image_file)
 
-            data = AnonymizerRequest(content, self.engine.builtin_anonymizers)
-            text = self.engine.anonymize(data)
-            return jsonify(result=text)
+            redacted_image = self.engine.redact(im, color_fill)
 
-        @self.app.route("/anonymizers", methods=["GET"])
-        def anonymizers() -> Tuple[str, int]:
-            """Return a list of supported anonymizers."""
-            return json.dumps(self.engine.anonymizers()), 200
+            img_byte_arr = image_to_byte_array(redacted_image, im.format)
+            return make_response(img_byte_arr)
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
             self.logger.warning(
-                f"failed to anonymize text with validation error: {err.err_msg}"
+                f"failed to redact image with validation error: {err.err_msg}"
             )
             return ErrorResponse(err.err_msg).to_json(), 422
 
