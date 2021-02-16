@@ -33,7 +33,7 @@ class ImageAnalyzerEngine:
     ) -> List[ImageRecognizerResult]:
         """Map extracted PII entities to image bounding boxes.
 
-        Matching is based on the position of the recognised entity from analyzer
+        Matching is based on the position of the recognized entity from analyzer
         and word (in ocr dict) in the text.
 
         :param text_analyzer_results: PII entities recognized by presidio analyzer
@@ -57,7 +57,7 @@ class ImageAnalyzerEngine:
             else:
                 for element in text_analyzer_results:
                     text_element = text[element.start : element.end]
-                    # check position and text of ocr word matches recognised entity
+                    # check position and text of ocr word matches recognized entity
                     if (
                         max(pos, element.start) < min(element.end, pos + len(word))
                     ) and ((text_element in word) or (word in text_element)):
@@ -75,7 +75,7 @@ class ImageAnalyzerEngine:
                         )
 
                         # add bounding boxes for all words in ocr dict
-                        # contained within the text of recognised entity
+                        # contained within the text of recognized entity
                         # based on relative position in the full text
                         while pos + len(word) < element.end:
                             index, word = next(iter_ocr)
