@@ -71,8 +71,11 @@ class AnonymizerRequest:
             raise InvalidParamException(
                 "Invalid input, " "analyzer results can not be empty"
             )
+        text_len = len(data.get("text"))
         for analyzer_result in analyzer_results:
-            self._analysis_results.append(AnalyzerResult(analyzer_result))
+            analyzer_result = AnalyzerResult(analyzer_result)
+            analyzer_result.validate_position_in_text(text_len)
+            self._analysis_results.append(analyzer_result)
 
     def __handle_transformations(self, data):
         """

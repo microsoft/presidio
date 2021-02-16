@@ -108,3 +108,8 @@ class AnalyzerResult:
             raise InvalidParamException(
                 f"Invalid input, analyzer result start index '{start}' "
                 f"must be smaller than end index '{end}'")
+
+    def validate_position_in_text(self, text_len: int):
+        if text_len < self.start or self.end > text_len:
+            raise InvalidParamException(
+                f"Invalid analyzer result: '{self}', original text length is only {text_len}.")

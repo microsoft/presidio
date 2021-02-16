@@ -3,7 +3,7 @@ from presidio_anonymizer.entities import InvalidParamException
 
 
 # TODO awful name! - PR people any ideas?
-class TextManipulator:
+class TextBuilder:
     """Creates new text according to users request."""
 
     def __init__(self,
@@ -13,14 +13,7 @@ class TextManipulator:
         self.text_len = len(original_text)
         self.last_replacement_point = self.text_len
 
-    def __validate_position_over_text(self, start: int, end: int):
-        if start > self.text_len or end > self.text_len:
-            raise InvalidParamException(
-                f"Invalid text position start with {start} and end with {end}, "
-                f"original text length is only {self.text_len}."
-            )
-
-    def validate_and_get_text_in_position(self, start: int, end: int):
+    def get_text_in_position(self, start: int, end: int):
         """
         Validate and get part of the text inside the original text.
 
@@ -28,7 +21,6 @@ class TextManipulator:
         :param end: end position of inner text
         :return: str - part of the original text
         """
-        self.__validate_position_over_text(start, end)
         return self.output_text[start: end]
 
     def replace_text(self, anonymized_text: str, start: int, end: int):
