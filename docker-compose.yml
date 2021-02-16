@@ -21,7 +21,7 @@ services:
     ports:
       - "5002:5001"
   presidio-image-redactor:
-    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor{TAG}
+    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-image-redactor${TAG}
     build:
       context: ./presidio-image-redactor
       args:
