@@ -9,41 +9,151 @@ each one in charge of detecting one or more PII entities using different mechani
 
 Presidio analyzer comes with a set of predefined recognizers,
 but can easily be extended with other types of custom recognizers.
-Predefined and custom recognizers leverage regex, Named Entity Recognition and other types of logic to detect PII in unstructured text.
-  
+Predefined and custom recognizers leverage regex,
+Named Entity Recognition and other types of logic to detect PII in unstructured text.
+
 ## Table of contents
 
 - [Installation](#installation)
+  - [Using pip](#using-pip)
+  - [Using Docker](#using-docker)
+  - [From source](#from-source)
 - [Getting started](#getting-started)
   - [Running in Python](#running-in-python)
-  - [Running using Docker](#running-using-docker)
+  - [Running Presidio as an HTTP server](#running-presidio-as-an-http-server)
+    - [Using docker container](#using-docker-container)
+    - [Using python runtime](#using-python-runtime)
 - [Creating PII recognizers](#creating-pii-recognizers)
+- [Outputting the analyzer decision process](#outputting-the-analyzer-decision-process)
+- [Supported entities](#supported-entities)
 - [API reference](#api-reference)
 
 ## Installation
 
-## Getting started
+### Using pip
 
+> Consider installing the Presidio python packages on a virtual environment like venv or conda.
+
+To get started with Presidio-analyzer,
+download the package and the `en_core_web_lg` spaCy model:
+
+```sh
+pip install presidio-analyzer
+python -m spacy download en_core_web_lg
+```
+
+### Using Docker
+
+> This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
+
+```sh
+# Download image from Dockerhub
+docker pull mcr.microsoft.com/presidio-analyzer
+
+# Run the container with the default port
+docker run -d -p 5001:5001 mcr.microsoft.com/presidio-analyzer:latest
+```
+
+### From source
+
+First, clone the Presidio repo. [See here for instructions](../installation.md#install-from-source).
+
+Then, build the presidio-analyzer container:
+
+```sh
+cd presidio-analyzer
+docker build . -t presidio/presidio-analyzer
+```
+
+## Getting started
 ### Running in Python
 
-### Running using Docker
+Once the Presidio-analyzer package is installed, run this simple analysis script:
 
-### Additional languages
+```python
+from presidio_analyzer import AnalyzerEngine
 
-See [supporting additional languages and ML models](languages.md).
+# Set up the engine, loads the NLP module (spaCy model by default) and other PII recognizers
+analyzer = AnalyzerEngine()
 
-### Explaining the presidio-analyzer decision process
+# Call analyzer to get results
+results = analyzer.analyze(text="My phone number is 212-555-5555",
+                           entities=["PHONE_NUMBER"],
+                           language='en')
+print(results)
 
-See [tracking the analyzer decision process](decision_process.md).
+```
+
+### Running Presidio as an HTTP server
+
+You can run presidio analyzer as an http server using either python runtime or using a docker container.
+
+#### Using docker container
+
+```sh
+cd presidio-analyzer
+docker run -p 5001:5001 presidio-analyzer 
+```
+
+#### Using python runtime
+
+> This requires the Presidio Github repository to be cloned.
+
+```sh
+cd presidio-analyzer
+python app.py
+curl -d '{"text":"John Smith drivers license is AC432223", "language":"en"}' -H "Content-Type: application/json" -X POST http://localhost:3000/analyze
+```
 
 ## Creating PII recognizers
 
-### How to add a new recognizer
+- [Tutorial on adding new PII recognizers](adding_recognizers.md).
+- [Best practices for developing new recognizers](developing_recognizers.md).
+- [Multi-language support](languages.md).
 
-TODO AZDO 2856: copy from analyzer README
+## Outputting the analyzer decision process
 
-### Best practices for developing new recognizers
+Presidio analyzer has a built in mechanism for tracing each decision made. This can be useful when attempting to understand a specific PII detection. For more info, see the [decision process](decision_process.md) documentation.
 
-See [the documentation here](developing_recognizers.md)
+## Supported entities
+
+[Supported entities](../supported_entities.md).
 
 ## API reference
+
+`/analyze`
+
+Analyzes a text. Method: `POST`
+
+Parameters
+
+| Name | Type | Optional | Description|
+| --- | --- | ---| ---|
+| text|string|no|the text to analyze|
+| language|string|no|two characters for the desired language [ISO_639-1 language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). E.g en, de|
+| correlation_id|string|yes|a correlation id to append to headers and traces|
+| score_threshold|float|yes|the the minimal detection score threshold|
+| entities|string[]|yes|a list of entities to analyze|
+| trace|bool|yes|whether to trace the request|
+| remove_interpretability_response|bool|yes|whether to include analysis explanation in the response |
+
+`/recognizers`
+
+Returns a list of supported recognizers.
+Method: `GET`
+
+Parameters
+
+| Name | Type | Optional | Description|
+| --- | --- | ---| ---|
+| language|string|yes|2 characters of the desired language code. e.g., en, de. |
+
+`/supportedentities`
+
+Returns a list of supported entities. Method: `GET`
+
+Parameters
+
+| Name | Type | Optional | Description|
+| --- | --- | ---| ---|
+| language|string|yes|2 characters of the desired language code. e.g., en, de. |
