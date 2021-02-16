@@ -119,7 +119,7 @@ To create a new recognizer via code:
 A remote recognizer is an `EntityRecognizer` object interacting with an external service. The external service could be a 3rd party PII detection service or a custom service deployed in parallel to Presidio.
 
 [Click here for an example implementation of a `RemoteRecognizer`](../samples/python/example_remote_recognizer.py).
-In this example, an external PII detection service exposes two APIs: `detect` and `supported_entities`. The class implemented here, `MyRemoteRecognizer`, uses the `requests` package to call the external service via HTTP.
+In this example, an external PII detection service exposes two APIs: `detect` and `supported_entities`. The class implemented here, `ExampleRemoteRecognizer`, uses the `requests` package to call the external service via HTTP.
 
 In this code snippet, we simulate the external PII detector by using the Presidio analyzer. In reality, we would adapt this code to fit the external PII detector we have in hand.
 
