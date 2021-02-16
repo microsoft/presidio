@@ -25,25 +25,32 @@ Once installed, to start presidio cluster with all of its services in HTTP mode,
 ```bash
 docker-compose up --build -d
 ```
-> Building for the first time might take some time, mainly on downloading the default spacy models.  
 
-To validate that the services were built and started successfully, and to see the designated port for each, 
+!!! note "Note" 
+    Building for the first time might take some time, 
+    mainly on downloading the default spacy models.  
+
+To validate that the services were built and started successfuly, 
+and to see the designated port for each, 
 use docker ps:
 
 ```bash
-➜ docker ps
+>docker ps
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                    NAMES
 6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'pipenv …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
 9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'pipenv …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
 1448dfb3ec2b   presidio-image-redactor     "/bin/sh -c 'pipenv …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-redactor_1
 ```
+
 Edit docker-compose.yml configuration file to change the default ports.
  
 Starting part of the cluster, or one service only, can be done by stating its image name as argument for docker-compose. 
 For example for analyzer service:
- ```bash
- docker-compose up --build -d presidio-analyzer
- ```
+
+```bash
+docker-compose up --build -d presidio-analyzer
+```
+
 ### Testing
 
 We strive to have a full test coverage in Presidio, and expect every pull request to
@@ -72,9 +79,10 @@ See the pytest [documentation](https://docs.pytest.org/en/latest/contents.html) 
 Running the tests locally can be done in two ways:
 1. Using cli, from each service directory, run:
 
-    ```shell
+   ```sh
    pipenv run pytest
    ```
+   
 2. Using your IDE. See configuration examples for [JetBrains PyCharm / IntelliJ IDEA](https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html)
     and [Visual Studio Code](https://code.visualstudio.com/docs/python/testing)
 
@@ -90,31 +98,31 @@ Running the e2e-tests locally can be done in two ways:
 1. Using cli, from e2e-tests directory, run:
 
    On Mac / Linux / WSL:
-     ```shell
-     # Create a virtualenv named presidio-e2e (needs to be done only on the first run)
-     python -m venv presidio-e2e
-     # Activate the virtualenv
-     source presidio-e2e/bin/activate
-     # Install e2e-tests requirements using pip
-     pip install -r requirements.txt
-     # Run pytest
-     pytest
-      # Deactivate the virtualenv
-     deactivate
-     ```
-
-   On Windows CMD / Powershell:
-    ```shell
+    ```sh
     # Create a virtualenv named presidio-e2e (needs to be done only on the first run)
-    py -m venv presidio-e2e
+    python -m venv presidio-e2e
     # Activate the virtualenv
-    presidio-e2e\Scripts\activate
+    source presidio-e2e/bin/activate
     # Install e2e-tests requirements using pip
     pip install -r requirements.txt
     # Run pytest
     pytest
-     # Deactivate the virtualenv
+    # Deactivate the virtualenv
     deactivate
+    ```
+
+   On Windows CMD / Powershell:
+   ```shell
+   # Create a virtualenv named presidio-e2e (needs to be done only on the first run)
+   py -m venv presidio-e2e
+   # Activate the virtualenv
+   presidio-e2e\Scripts\activate
+   # Install e2e-tests requirements using pip
+   pip install -r requirements.txt
+   # Run pytest
+   pytest
+   # Deactivate the virtualenv
+   deactivate
     ```
 2. Using your IDE, see references in the section above.
   
@@ -128,16 +136,16 @@ that might have introduced during development.
 As an easier method to build and automatically run end-to-end tests, is to use the `run.bat` script found in the project root:
 
 On Mac / Linux / WSL:
- ```bash
- chmod +x run.bat
- ./run.bat
- ```
+```sh
+chmod +x run.bat
+./run.bat
+```
 
 
 On Windows CMD / Powershell:
- ```bash
- .\run.bat
- ```
+```shell
+.\run.bat
+```
 ### Linting
 
 Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using `flake8`.
@@ -157,21 +165,22 @@ To make the linting process easier, you can use pre-commit hooks to verify and a
 
 2. From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
 
-3. Commit non PEP8 compliant code will cause commit failure and automatically format your code using `black`, as well as checking code formatting using `flake8`
+3. Commit non PEP8 compliant code will cause commit failure and automatically 
+format your code using `black`, as well as checking code formatting using `flake8`
 
-    ```sh
-   > git commit -m 'autoformat' presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
-   
-    black....................................................................Failed
-    - hook id: black
-    - files were modified by this hook
-    
-    reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
-    All done! ✨ 🍰 ✨
-    1 file reformatted.
-    
-    flake8...................................................................Passed
+```sh
+>git commit -m 'autoformat' presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
 
-    ```
+black....................................................................Failed
+- hook id: black
+- files were modified by this hook
+
+reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
+All done!
+1 file reformatted.
+
+flake8...................................................................Passed
+
+```
 
 4. Committing again will finish successfully, with a well-formatted code.

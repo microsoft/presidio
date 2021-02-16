@@ -20,14 +20,27 @@ nav:
       - Docker: samples/docker/index.md
       - Sample Deployments: samples/deployments/index.md
     - Installation: installation.md
-    - Development: development.md
     - Supported entities: supported_entities.md
-    - Read more:
+    - Development and design:
+      - Setting up a development environment: development.md
       - API reference: api.md
       - Build and release process: build_release.md
       - Architecture and design: design.md
 theme:
   name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
 
 plugins:
 - search
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences

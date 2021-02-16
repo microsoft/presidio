@@ -1,12 +1,11 @@
-# Presidio - Data Protection and Anonymization API
+# **Presidio**: Data Protection and Anonymization SDK
 
-**Context aware, pluggable and customizable PII anonymization service for text and images.**
-
----
-
-## What is Presidio
-
-Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.
+Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ 
+helps to ensure sensitive data is properly managed and governed. 
+It provides fast **_identification_** and **_anonymization_** 
+modules for private entities in text and images such as 
+credit card numbers, names, locations, social security numbers, 
+bitcoin wallets, US phone numbers, financial data and more.
 
 ### Goals
 
@@ -22,7 +21,8 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 4. **Customizability** in PII identification and anonymization.
 5. Module for **redacting PII text in images**.
 
-:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
+!!! warning "Warning"
+    Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
 ### Demo
 
