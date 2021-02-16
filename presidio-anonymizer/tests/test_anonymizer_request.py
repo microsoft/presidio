@@ -24,7 +24,7 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
                      "entity_type": "NUMBER"
                  }
              ],
-             "transformations": {
+             "anonymizers": {
                  "default": {
                      "type": "none"
                  }
@@ -63,15 +63,15 @@ def test_given_invalid_json_then_request_creation_should_fail(
     assert result_text == e.value.err_msg
 
 
-def test_given_no_transformations_then_we_get_the_default():
+def test_given_no_anonymizers_then_we_get_the_default():
     content = get_content()
     request = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
-    request._transformations = {}
+    request._anonymizers = {}
     analyzer_result = Mock()
     analyzer_result.entity_type = "PHONE"
-    transformation = request.get_transformation(analyzer_result.entity_type)
-    assert transformation.get("type") == "replace"
-    assert type(transformation.get("anonymizer")) == type(Replace)
+    anonymizers = request.get_anonymizer_dto(analyzer_result.entity_type)
+    assert anonymizers.get("type") == "replace"
+    assert type(anonymizers.get("anonymizer")) == type(Replace)
 
 
 def test_given_valid_json_then_request_creation_should_succeed():
@@ -79,7 +79,7 @@ def test_given_valid_json_then_request_creation_should_succeed():
     data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
     assert data.get_text() == content.get("text")
     assert data._text == content.get("text")
-    assert data._transformations == content.get("transformations")
+    assert data._anonymizers == content.get("anonymizers")
     assert len(data._analysis_results) == len(content.get("analyzer_results"))
     assert data._analysis_results == data.get_analysis_results()
     for result_a in data._analysis_results:
@@ -90,26 +90,26 @@ def test_given_valid_json_then_request_creation_should_succeed():
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
         assert result_a.end == same_result_in_content.get("end")
-        assert data.get_transformation(result_a.entity_type)
+        assert data.get_anonymizer_dto(result_a.entity_type)
 
 
-def test_given_valid_anonymizer_request_then_get_transformations_successfully():
+def test_given_valid_anonymizer_request_then_get_anonymizers_successfully():
     content = get_content()
     data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
     replace_result = data.get_analysis_results()[0]
-    default_replace_transformation = data.get_transformation(replace_result.entity_type)
-    assert default_replace_transformation.get("type") == "replace"
-    assert default_replace_transformation.get("new_value") == "ANONYMIZED"
-    assert type(default_replace_transformation.get("anonymizer")) == type(Replace)
-    mask_transformation = data.get_transformation(
+    default_replace_anonymizer = data.get_anonymizer_dto(replace_result.entity_type)
+    assert default_replace_anonymizer.get("type") == "replace"
+    assert default_replace_anonymizer.get("new_value") == "ANONYMIZED"
+    assert type(default_replace_anonymizer.get("anonymizer")) == type(Replace)
+    mask_anonymizer = data.get_anonymizer_dto(
         data.get_analysis_results()[3].entity_type
     )
-    assert mask_transformation.get("type") == "mask"
-    assert mask_transformation.get("from_end")
-    assert mask_transformation.get("chars_to_mask") == 4
-    assert mask_transformation.get("masking_char") == "*"
-    assert mask_transformation.get("anonymizer")
-    assert type(mask_transformation.get("anonymizer")) == type(Mask)
+    assert mask_anonymizer.get("type") == "mask"
+    assert mask_anonymizer.get("from_end")
+    assert mask_anonymizer.get("chars_to_mask") == 4
+    assert mask_anonymizer.get("masking_char") == "*"
+    assert mask_anonymizer.get("anonymizer")
+    assert type(mask_anonymizer.get("anonymizer")) == type(Mask)
 
 
 @pytest.mark.parametrize(
@@ -146,7 +146,7 @@ def __find_element(content: List, entity_type: str):
 def get_content():
     return {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
             "PHONE_NUMBER": {
                 "type": "mask",
