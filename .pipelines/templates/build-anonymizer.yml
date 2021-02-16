@@ -1,14 +1,5 @@
 steps:
     - task: Bash@3
-      displayName: 'Install Tesseract'
-      inputs:
-          targetType: 'inline'
-          script: |
-              set -eux  # fail on error
-              apt-get update 
-              apt-get install tesseract-ocr -y
-
-    - task: Bash@3
       displayName: 'Setup pipenv'
       inputs:
           targetType: 'inline'
