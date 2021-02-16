@@ -20,7 +20,7 @@ class AnonymizerEngine:
     }
 
     def __init__(
-        self,
+            self,
     ):
         """Handle text replacement for PIIs with requested transformations.
 
@@ -58,9 +58,8 @@ class AnonymizerEngine:
 
             anonymized_text = self.__extract_anonymizer_and_anonymize(transformation,
                                                                       text_to_anonymize)
-
             text_builder.replace_text(anonymized_text, analyzer_result.start,
-                                          analyzer_result.end)
+                                      analyzer_result.end)
 
         return text_builder.output_text
 
