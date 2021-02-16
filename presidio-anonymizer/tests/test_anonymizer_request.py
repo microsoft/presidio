@@ -121,7 +121,8 @@ def test_given_valid_anonymizer_request_then_get_transformations_successfully():
     ],
     # fmt: on
 )
-def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_to_get_text(original_text, start, end):
+def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_(
+        original_text, start, end):
     content = {
         "text": original_text,
         "analyzer_results": [
@@ -129,7 +130,8 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_to_
         ],
     }
     content.get("analyzer_results")
-    err_msg = f"Invalid analyzer result text position start with {start} and end with {end}, original text length is only 11."
+    err_msg = f"Invalid analyzer result text position start with {start} " \
+              f"and end with {end}, original text length is only 11."
     with pytest.raises(InvalidParamException, match=err_msg):
         AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
 

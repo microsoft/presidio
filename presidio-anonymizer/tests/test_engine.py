@@ -1,9 +1,7 @@
 from unittest.mock import Mock
 
-import pytest
-
 from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
-from presidio_anonymizer.entities import AnalyzerResult, InvalidParamException
+from presidio_anonymizer.entities import AnalyzerResult
 
 
 def test_given_several_transformations_then_we_use_the_correct_one():
