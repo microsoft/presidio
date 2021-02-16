@@ -110,7 +110,7 @@ class AnalyzerResult:
                 f"must be smaller than end index '{end}'")
 
     def validate_position_in_text(self, text_len: int):
-        """Validate the start and end position match the text length"""
+        """Validate the start and end position match the text length."""
         if text_len < self.start or self.end > text_len:
             err_msg = f"Invalid analyzer result, start: {self.start} and end: " \
                       f"{self.end}, while text length is only {text_len}."
