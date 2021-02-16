@@ -10,4 +10,4 @@
 
 - Presidio analyzer
 - Presidio anonymizer
-- Presidio image anonymizer
+- Presidio image redactor

@@ -1,8 +1,10 @@
 import pytest
 
-from presidio_image_anonymizer.entities import InvalidParamException
-from presidio_image_anonymizer.entities.api_request_convertor import get_json_data, \
-    color_fill_string_to_value
+from presidio_image_redactor.entities import InvalidParamException
+from presidio_image_redactor.entities.api_request_convertor import (
+    get_json_data,
+    color_fill_string_to_value,
+)
 
 
 def test_given_no_data_then_we_get_default_dict():
@@ -20,7 +22,7 @@ def test_given_no_data_then_we_get_default_dict():
     # fmt: on
 )
 def test_given_json_string_then_we_get_json_back(str_json):
-    assert get_json_data(str_json) == {'color_fill': '0, 0, 1'}
+    assert get_json_data(str_json) == {"color_fill": "0, 0, 1"}
 
 
 def test_given_invalid_json_string_then_we_get_an_invalid_param_exception():
@@ -41,8 +43,9 @@ def test_given_empty_json_params_then_we_send_default_color_fill():
     ],
     # fmt: on
 )
-def test_given_json_params_then_we_extract_properly_color_fill(json_params,
-                                                               expected_result):
+def test_given_json_params_then_we_extract_properly_color_fill(
+    json_params, expected_result
+):
     assert color_fill_string_to_value(json_params) == expected_result
 
 
@@ -55,8 +58,9 @@ def test_given_json_params_then_we_extract_properly_color_fill(json_params,
     ],
     # fmt: on
 )
-def test_given_json_params_then_we_fail_to_extract_properly_color_fill(json_params,
-                                                                       data):
+def test_given_json_params_then_we_fail_to_extract_properly_color_fill(
+    json_params, data
+):
     with pytest.raises(InvalidParamException, match=f"Invalid color fill '{data}'"):
         color_fill_string_to_value(json_params)
 

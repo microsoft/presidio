@@ -32,7 +32,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 1. [Presidio analyzer](analyzer/index.md): PII identification in text
 2. [Presidio anonymizer](anonymizer/index.md): Anonymize detected PII entities using different transformations
-3. [Presidio image anonymizer](image-anonymizer/index.md): Redact PII entities from images using OCR and PII identification
+3. [Presidio image redactor](image-redactor/index.md): Redact PII entities from images using OCR and PII identification
 
 ## Installing Presidio
 
@@ -47,7 +47,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 3. [Setting up a development environment](development.md)
 4. [Perform PII identification using presidio-analyzer](analyzer/index.md)
 5. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
-6. [Perform PII identification and anonymization in images using presidio-image-anonymizer](image-anonymizer/index.md)
+6. [Perform PII identification and anonymization in images using presidio-image-redactor](image-redactor/index.md)
 7. [Example deployments](samples/deployments/index.md)
 
 ---
