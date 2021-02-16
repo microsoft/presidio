@@ -6,6 +6,8 @@ from presidio_image_redactor.entities import ImageRecognizerResult
 
 @pytest.mark.skip(reason="different results with tesseract 4.0 vs 5.0")
 def test_given_image_then_text_entities_are_recognized_correctly():
+    # TODO fix in bug #2897
+
     # Image with PII entities
     image = get_resource_image("ocr_test.png")
     analyzer_results = ImageAnalyzerEngine().analyze(image)
