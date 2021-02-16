@@ -32,18 +32,18 @@ For a more detailed installation of each package, refer to the specific document
 - [presidio-analyzer](analyzer/index.md).
 - [presidio-anonymizer](anonymizer/index.md).
 
-### PII anonymization on images
+### PII redaction in images
 
-For PII anonymization on images, install the `presidio-image-anonymizer` package:
+For PII redaction in images, install the `presidio-image-redactor` package:
 
 ```sh
-pip install presidio_image_anonymizer
+pip install presidio_image_redactor
 
-# Presidio image anonymizer uses the presidio-analyzer which requires a spaCy language model:
+# Presidio image redactor uses the presidio-analyzer which requires a spaCy language model:
 python -m spacy download en_core_web_lg
 ```
 
-[Click here](image-anonymizer/index.md) for more information on the presidio-image-anonymizer package.
+[Click here](image-redactor/index.md) for more information on the presidio-image-redactor package.
 
 ## Using Docker
 
@@ -66,16 +66,16 @@ docker run -d -p 5001:5001 mcr.microsoft.com/presidio-analyzer:latest
 docker run -d -p 5002:5001 mcr.microsoft.com/presidio-anonymizer:latest
 ```
 
-### For PII anonymization in images
+### For PII redaction in images
 
-For PII detection in images, the `presidio-image-anonymizer` is required.
+For PII detection in images, the `presidio-image-redactor` is required.
 
 ```sh
 # Download image
-docker pull mcr.microsoft.com/presidio-image-anonymizer
+docker pull mcr.microsoft.com/presidio-image-redactor
 
 # Run container with the default port
-docker run -d -p 5003:5001 mcr.microsoft.com/presidio-image-anonymizer:latest
+docker run -d -p 5003:5001 mcr.microsoft.com/presidio-image-redactor:latest
 ```
 
 Once the services are running, their APIs are available. API reference and example calls can be found [here](api.md).
