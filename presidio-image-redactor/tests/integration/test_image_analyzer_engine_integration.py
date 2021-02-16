@@ -10,7 +10,8 @@ def test_given_image_then_text_entities_are_recognized_correctly():
     assert len(analyzer_results) == 7
     results = __get_expected_ocr_test_image_analysis_results()
     for i in range(7):
-        assert analyzer_results[i] == results[i]
+        assert analyzer_results[i] in results
+
 
 
 def test_given_image_without_text_then_no_entities_recognized():
