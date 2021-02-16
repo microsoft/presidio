@@ -2,13 +2,6 @@ stages:
     - stage: LintBuildTest
       displayName: Presidio Build
       jobs:
-          #- job: validate
-          #  displayName: 'Validate PR pre-requisites'
-          #  steps:
-          #    - template: .pipelines/templates/validate-version.yml
-          #      parameters:
-          #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
-
           - job: Inclusivelint
             displayName: 'Inclusive linting validation'
             steps:
@@ -25,7 +18,6 @@ stages:
           - job: TestAnalyzer
             displayName: Test Analyzer
             dependsOn:
-                #- 'validate'
                 - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-16.04'
@@ -48,7 +40,6 @@ stages:
           - job: TestAnonymizer
             displayName: Test Anonymizer
             dependsOn:
-                #- 'validate'
                 - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-16.04'

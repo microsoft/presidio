@@ -19,7 +19,6 @@ steps:
               pipenv sync --dev --sequential
               pipenv run python -m spacy download en_core_web_lg
 
-              apt-get update 
               apt-get install tesseract-ocr -y
 
     - template: ./build-python.yml
