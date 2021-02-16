@@ -128,8 +128,8 @@ In this code snippet, we simulate the external PII detector by using the Presidi
 Once a recognizer is created, it can either be added to the `RecognizerRegistry` via the `add_recognizer` method, or it could be added into the list of predefined recognizers.
 To add a recognizer to the list of pre-defined recognizers:
 
-1. Clone the repo
-2. Create a file containing the new recognizer Python class
+1. Clone the repo.
+2. Create a file containing the new recognizer Python class.
 3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
