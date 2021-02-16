@@ -18,5 +18,5 @@ def compare_images(image_one: Image, image_two: Image):
 
 def get_resource_image(file_name: str) -> Image:
     script_dir = os.path.dirname(__file__)
-    file_path = f"{script_dir}\\resources\\{file_name}"
+    file_path = os.path.join(script_dir, "resources", file_name)
     return Image.open(file_path)
