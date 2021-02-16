@@ -32,7 +32,7 @@ class AnonymizerEngine:
 
         :return: the anonymized text
         """
-        text_manipulator = AnonymizedTextBuilder(original_text=engine_request.get_text())
+        text_builder = AnonymizedTextBuilder(original_text=engine_request.get_text())
 
         analyzer_results = (
             engine_request.get_analysis_results().to_sorted_unique_results(True)
@@ -45,7 +45,7 @@ class AnonymizerEngine:
 
         # concat the anonymized string into the output string
         for analyzer_result in analyzer_results:
-            text_to_anonymize = text_manipulator.get_text_in_position(
+            text_to_anonymize = text_builder.get_text_in_position(
                 analyzer_result.start, analyzer_result.end)
 
             transformation = engine_request.get_transformation(
@@ -59,10 +59,10 @@ class AnonymizerEngine:
             anonymized_text = self.__extract_anonymizer_and_anonymize(transformation,
                                                                       text_to_anonymize)
 
-            text_manipulator.replace_text(anonymized_text, analyzer_result.start,
+            text_builder.replace_text(anonymized_text, analyzer_result.start,
                                           analyzer_result.end)
 
-        return text_manipulator.output_text
+        return text_builder.output_text
 
     def anonymizers(self):
         """Return a list of supported anonymizers."""
