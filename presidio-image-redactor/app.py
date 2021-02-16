@@ -4,6 +4,7 @@ import os
 
 from PIL import Image
 from flask import Flask, request, make_response
+from flasgger import Swagger
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor.entities import ErrorResponse
@@ -16,6 +17,17 @@ from presidio_image_redactor.entities.api_request_convertor import (
 
 DEFAULT_PORT = "3000"
 
+WELCOME_MESSAGE = r"""
+ _______  _______  _______  _______ _________ ______  _________ _______
+(  ____ )(  ____ )(  ____ \(  ____ \\__   __/(  __  \ \__   __/(  ___  )
+| (    )|| (    )|| (    \/| (    \/   ) (   | (  \  )   ) (   | (   ) |
+| (____)|| (____)|| (__    | (_____    | |   | |   ) |   | |   | |   | |
+|  _____)|     __)|  __)   (_____  )   | |   | |   | |   | |   | |   | |
+| (      | (\ (   | (            ) |   | |   | |   ) |   | |   | |   | |
+| )      | ) \ \__| (____/\/\____) |___) (___| (__/  )___) (___| (___) |
+|/       |/   \__/(_______/\_______)\_______/(______/ \_______/(_______)
+"""
+
 
 class Server:
     """Flask server for image redactor."""
@@ -23,12 +35,27 @@ class Server:
     def __init__(self):
         self.logger = logging.getLogger("presidio-image-redactor")
         self.app = Flask(__name__)
+        self.swagger = Swagger(
+            self.app, template={"info": {"title": "Presidio Image Redactor API"}}
+        )
+        self.logger.info("Starting image redactor engine")
         self.engine = ImageRedactorEngine()
+        self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.  get ok + 200."""
-            return "ok"
+            """Return basic health probe result.
+
+            ---
+            responses:
+              200:
+                description: OK
+                content:
+                  text/plain:
+                    schema:
+                      type: string
+            """
+            return "Presidio Image Redactor service is up"
 
         @self.app.route("/redact", methods=["POST"])
         def redact():
