@@ -10,6 +10,7 @@ tldextract = "*"
 numpy = "==1.19.3"
 flask = "==1.1.2"
 pyyaml = "*"
+flasgger = "==0.9.5"
 
 [dev-packages]
 pytest = "*"
