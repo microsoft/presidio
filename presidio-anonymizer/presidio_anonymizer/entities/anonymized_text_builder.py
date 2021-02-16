@@ -1,8 +1,6 @@
 """Handles the original text and creates a new one according to changes requests."""
-from presidio_anonymizer.entities import InvalidParamException
 
 
-# TODO awful name! - PR people any ideas?
 class AnonymizedTextBuilder:
     """Creates new text according to users request."""
 

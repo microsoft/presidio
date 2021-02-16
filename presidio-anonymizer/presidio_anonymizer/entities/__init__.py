@@ -4,7 +4,7 @@ from .invalid_exception import InvalidParamException
 from .analyzer_result import AnalyzerResult
 from .analyzer_results import AnalyzerResults
 from .anonymizer_request import AnonymizerRequest
-from .text_manipulator import AnonymizedTextBuilder
+from .anonymized_text_builder import AnonymizedTextBuilder
 
 __all__ = [
     "InvalidParamException",
