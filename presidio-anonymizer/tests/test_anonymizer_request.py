@@ -130,8 +130,8 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_(
         ],
     }
     content.get("analyzer_results")
-    err_msg = f"Invalid analyzer result text position start with {start} " \
-              f"and end with {end}, original text length is only 11."
+    err_msg = f"Invalid analyzer result, start: {start} and end: " \
+                      f"{end}, while text length is only 11."
     with pytest.raises(InvalidParamException, match=err_msg):
         AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
 
