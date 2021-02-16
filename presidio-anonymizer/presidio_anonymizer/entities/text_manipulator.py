@@ -3,7 +3,7 @@ from presidio_anonymizer.entities import InvalidParamException
 
 
 # TODO awful name! - PR people any ideas?
-class TextBuilder:
+class AnonymizedTextBuilder:
     """Creates new text according to users request."""
 
     def __init__(self,

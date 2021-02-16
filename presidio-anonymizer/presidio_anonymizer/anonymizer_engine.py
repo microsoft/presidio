@@ -3,7 +3,7 @@ import logging
 
 from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import AnonymizerRequest
-from presidio_anonymizer.entities import TextBuilder
+from presidio_anonymizer.entities import AnonymizedTextBuilder
 
 
 class AnonymizerEngine:
@@ -32,7 +32,7 @@ class AnonymizerEngine:
 
         :return: the anonymized text
         """
-        text_manipulator = TextBuilder(original_text=engine_request.get_text())
+        text_manipulator = AnonymizedTextBuilder(original_text=engine_request.get_text())
 
         analyzer_results = (
             engine_request.get_analysis_results().to_sorted_unique_results(True)
