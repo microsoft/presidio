@@ -62,7 +62,6 @@ stages:
           - job: TestImageAnonymizer
             displayName: Test Image Anonymizer
             dependsOn:
-                #- 'validate'
                 - 'Inclusivelint'
             pool:
                 vmImage: 'ubuntu-16.04'
