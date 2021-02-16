@@ -1,14 +1,15 @@
-"""REST API server for image anonymizer."""
+"""REST API server for image redactor."""
 import logging
 import os
 
 from PIL import Image
 from flask import Flask, request, make_response
 from flasgger import Swagger
-from presidio_image_anonymizer import ImageAnonymizerEngine
-from presidio_image_anonymizer.entities import ErrorResponse
-from presidio_image_anonymizer.entities import InvalidParamException
-from presidio_image_anonymizer.entities.api_request_convertor import (
+
+from presidio_image_redactor import ImageRedactorEngine
+from presidio_image_redactor.entities import ErrorResponse
+from presidio_image_redactor.entities import InvalidParamException
+from presidio_image_redactor.entities.api_request_convertor import (
     get_json_data,
     image_to_byte_array,
     color_fill_string_to_value,
@@ -29,16 +30,16 @@ WELCOME_MESSAGE = r"""
 
 
 class Server:
-    """Flask server for image anonymizer."""
+    """Flask server for image redactor."""
 
     def __init__(self):
-        self.logger = logging.getLogger("presidio-image-anonymizer")
+        self.logger = logging.getLogger("presidio-image-redactor")
         self.app = Flask(__name__)
         self.swagger = Swagger(
-            self.app, template={"info": {"title": "Presidio Image Anonymizer API"}}
+            self.app, template={"info": {"title": "Presidio Image Redactor API"}}
         )
-        self.logger.info("Starting image anonymizer engine")
-        self.engine = ImageAnonymizerEngine()
+        self.logger.info("Starting image redactor engine")
+        self.engine = ImageRedactorEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -54,25 +55,25 @@ class Server:
                     schema:
                       type: string
             """
-            return "Presidio Image Anonymizer service is up"
+            return "Presidio Image Redactor service is up"
 
-        @self.app.route("/anonymize", methods=["POST"])
-        def anonymize():
-            """Return an anonymized image."""
+        @self.app.route("/redact", methods=["POST"])
+        def redact():
+            """Return a redacted image."""
             params = get_json_data(request.form.get("data"))
             color_fill = color_fill_string_to_value(params)
             image_file = request.files.get("image")
             im = Image.open(image_file)
 
-            anonymized_image = self.engine.anonymize(im, color_fill)
+            redacted_image = self.engine.redact(im, color_fill)
 
-            img_byte_arr = image_to_byte_array(anonymized_image, im.format)
+            img_byte_arr = image_to_byte_array(redacted_image, im.format)
             return make_response(img_byte_arr)
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
             self.logger.warning(
-                f"failed to anonymize image with validation error: {err.err_msg}"
+                f"failed to redact image with validation error: {err.err_msg}"
             )
             return ErrorResponse(err.err_msg).to_json(), 422
 

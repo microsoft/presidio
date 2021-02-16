@@ -47,7 +47,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 3. [Setting up a development environment](docs/development.md)
 4. [Perform PII identification using presidio-analyzer](docs/analyzer/index.md)
 5. [Perform PII anonymization using presidio-anonymizer](docs/anonymizer/index.md)
-6. [Perform PII identification and anonymization in images using presidio-image-anonymizer](docs/image-anonymizer/index.md)
+6. [Perform PII identification and anonymization in images using presidio-image-redactor](docs/image-redactor/index.md)
 7. [Example deployments](docs/samples/deployments/index.md)
 
 ---

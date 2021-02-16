@@ -1,4 +1,4 @@
-# Presidio Image anonymizer
+# Presidio Image Redactor
 
 ## Description
 

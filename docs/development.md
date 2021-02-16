@@ -35,7 +35,7 @@ use docker ps:
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                    NAMES
 6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'pipenv …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
 9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'pipenv …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
-1448dfb3ec2b   presidio-image-anonymizer   "/bin/sh -c 'pipenv …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-anonymizer_1
+1448dfb3ec2b   presidio-image-redactor     "/bin/sh -c 'pipenv …"   2 seconds ago   Up 2 seconds   0.0.0.0:5003->5001/tcp   presidio_presidio-image-redactor_1
 ```
 Edit docker-compose.yml configuration file to change the default ports.
  
