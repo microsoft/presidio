@@ -36,7 +36,7 @@ def install_models(conf_file: str) -> None:
     logger.info("finished installing models")
 
 
-def _download_model(engine_name: str, model_name: str):
+def _download_model(engine_name: str, model_name: str) -> None:
     if engine_name not in ("spacy", "stanza"):
         raise ValueError(f"Unsupported nlp engine: {engine_name}")
 
