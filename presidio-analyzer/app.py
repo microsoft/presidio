@@ -8,6 +8,7 @@ from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.error_response import ErrorResponse
 from flask import Flask, request
+from flasgger import Swagger
 import json
 import os
 
@@ -35,13 +36,27 @@ class Server:
         self.logger = logging.getLogger("presidio-analyzer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
+        self.swagger = Swagger(
+            self.app, template={"info": {"title": "Presidio Analyzer API"}}
+        )
         self.logger.info("Starting analyzer engine")
         self.engine = AnalyzerEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.  get ok + 200."""
+            """Return basic health probe result.
+
+            ---
+            responses:
+              200:
+                description: OK
+                content:
+                  text/plain:
+                    schema:
+                      type: string
+                      example: ok
+            """
             return "ok"
 
         @self.app.route("/analyze", methods=["POST"])

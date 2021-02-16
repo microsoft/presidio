@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Tuple
 
 from flask import Flask, request, jsonify
+from flasgger import Swagger
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnonymizerRequest
@@ -40,13 +41,27 @@ class Server:
         self.engine = AnonymizerEngine()
 
         self.app = Flask(__name__)
+        self.swagger = Swagger(
+            self.app, template={"info": {"title": "Presidio Anonymizer API"}}
+        )
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.  get ok + 200."""
+            """Return basic health probe result.
+
+            ---
+            responses:
+              200:
+                description: OK
+                content:
+                  text/plain:
+                    schema:
+                      type: string
+                      example: ok
+            """
             return "ok"
 
         @self.app.route("/anonymize", methods=["POST"])
