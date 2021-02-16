@@ -13,9 +13,9 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
     # fmt: off
     "request_json, result_text",
     [
-        ({}, "Invalid input, analyzer results can not be empty",),
+        ({}, "Invalid input, text can not be empty",),
         ({
-             "text": "Hello world",
+             "text": "hello world, my name is Jane Doe. My number is: 034453334",
              "analyzer_results": [
                  {
                      "start": 28,
@@ -56,7 +56,7 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
     # fmt: on
 )
 def test_given_invalid_json_then_request_creation_should_fail(
-    request_json, result_text
+        request_json, result_text
 ):
     with pytest.raises(InvalidParamException) as e:
         AnonymizerRequest(request_json, AnonymizerEngine().builtin_anonymizers)
@@ -110,6 +110,28 @@ def test_given_valid_anonymizer_request_then_get_transformations_successfully():
     assert mask_transformation.get("masking_char") == "*"
     assert mask_transformation.get("anonymizer")
     assert type(mask_transformation.get("anonymizer")) == type(Mask)
+
+
+@pytest.mark.parametrize(
+    # fmt: off
+    "original_text,start,end",
+    [
+        ("hello world", 5, 12),
+        ("hello world", 12, 16),
+    ],
+    # fmt: on
+)
+def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_to_get_text(original_text, start, end):
+    content = {
+        "text": original_text,
+        "analyzer_results": [
+            {"start": start, "end": end, "score": 0.8, "entity_type": "NAME"},
+        ],
+    }
+    content.get("analyzer_results")
+    err_msg = f"Invalid analyzer result text position start with {start} and end with {end}, original text length is only 11."
+    with pytest.raises(InvalidParamException, match=err_msg):
+        AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
 
 
 def __find_element(content: List, entity_type: str):

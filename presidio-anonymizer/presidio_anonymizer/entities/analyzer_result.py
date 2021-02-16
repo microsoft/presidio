@@ -112,4 +112,4 @@ class AnalyzerResult:
     def validate_position_in_text(self, text_len: int):
         if text_len < self.start or self.end > text_len:
             raise InvalidParamException(
-                f"Invalid analyzer result: '{self}', original text length is only {text_len}.")
+                f"Invalid analyzer result text position start with {self.start} and end with {self.end}, original text length is only {text_len}.")

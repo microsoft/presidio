@@ -54,8 +54,8 @@ class AnonymizerRequest:
         return self._analysis_results
 
     def __validate_and_insert_input(self, data: dict):
-        self.__handle_analyzer_results(data)
         self.__handle_text(data)
+        self.__handle_analyzer_results(data)
         self.__handle_transformations(data)
 
     def __handle_analyzer_results(self, data):

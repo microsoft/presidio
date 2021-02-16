@@ -36,17 +36,3 @@ def test_given_text_then_we_get_correct_indices_text_from_it(original_text, star
     assert text_in_position == expected
 
 
-@pytest.mark.parametrize(
-    # fmt: off
-    "original_text,start,end",
-    [
-        ("hello world", 5, 12),
-        ("hello world", 12, 10),
-    ],
-    # fmt: on
-)
-def test_given_text_and_incorrect_positions_then_we_fail_to_get_text(original_text, start, end):
-    text_builder = AnonymizedTextBuilder(original_text)
-    err_msg = f"Invalid text position start with {start} and end with {end}, original text length is only 11."
-    with pytest.raises(InvalidParamException, match=err_msg):
-        text_builder.get_text_in_position(start, end)
