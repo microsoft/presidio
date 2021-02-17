@@ -22,7 +22,7 @@ class AnonymizedTextBuilder:
 
     def get_text_in_position(self, start: int, end: int):
         """
-        Validate and get part of the text inside the original text.
+        Get part of the text inside the original text.
 
         :param start: start position of inner text
         :param end: end position of inner text

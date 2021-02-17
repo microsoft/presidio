@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.entities import AnonymizerDTO, InvalidParamException
+from presidio_anonymizer.entities import AnonymizerConfig, InvalidParamException
 
 
 @pytest.mark.parametrize(
@@ -11,15 +11,15 @@ from presidio_anonymizer.entities import AnonymizerDTO, InvalidParamException
     ],
     # fmt: on
 )
-def test_given_json_then_anonymizer_dto_is_created_properly(class_name):
+def test_given_json_then_anonymizer_config_is_created_properly(class_name):
     json = {
         "type": class_name,
         "param_1": "my_parameter"
     }
-    anonymizer_dto = AnonymizerDTO.from_json(json)
-    assert anonymizer_dto.anonymizer_class
-    assert anonymizer_dto.anonymizer_class().anonymizer_name() == class_name
-    assert anonymizer_dto.params == {"param_1": "my_parameter"}
+    anonymizer_config = AnonymizerConfig.from_json(json)
+    assert anonymizer_config.anonymizer_class
+    assert anonymizer_config.anonymizer_class().anonymizer_name() == class_name
+    assert anonymizer_config.params == {"param_1": "my_parameter"}
 
 
 @pytest.mark.parametrize(
@@ -37,4 +37,4 @@ def test_given_json_with_bad_anonymizer_name_then_we_fail(class_name):
     }
     with pytest.raises(InvalidParamException,
                        match=f"Invalid anonymizer class '{class_name}'."):
-        AnonymizerDTO.from_json(json)
+        AnonymizerConfig.from_json(json)

@@ -5,8 +5,7 @@ from .analyzer_result import AnalyzerResult
 from .analyzer_results import AnalyzerResults
 from .anonymizer_request import AnonymizerRequest
 from .anonymized_text_builder import AnonymizedTextBuilder
-from .anonymizer_dto import AnonymizerDTO
-from .anonymizers_dto import AnonymizersDTO
+from .anonymizer_config import AnonymizerConfig
 
 __all__ = [
     "InvalidParamException",
@@ -14,6 +13,5 @@ __all__ = [
     "AnalyzerResults",
     "AnonymizerRequest",
     "AnonymizedTextBuilder",
-    "AnonymizerDTO",
-    "AnonymizersDTO"
+    "AnonymizerConfig",
 ]

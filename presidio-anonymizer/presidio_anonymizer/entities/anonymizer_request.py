@@ -8,7 +8,7 @@ import logging
 from presidio_anonymizer.entities import AnalyzerResult
 from presidio_anonymizer.entities import AnalyzerResults
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.anonymizer_dto import AnonymizerDTO
+from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
 
 
 class AnonymizerRequest:
@@ -21,7 +21,7 @@ class AnonymizerRequest:
 
         :param data: a map which contains the anonymizers, analyzer_results and text
         """
-        self._anonymizers_dto = {}
+        self._anonymizers_config = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
 
@@ -29,9 +29,9 @@ class AnonymizerRequest:
         """Get the analysis results."""
         return self._analysis_results
 
-    def get_anonymizers_dto(self):
+    def get_anonymizers_config(self):
         """Get the anonymizers data transfer objects."""
-        return self._anonymizers_dto
+        return self._anonymizers_config
 
     def __validate_and_insert_input(self, data: dict):
         self.__handle_text(data)
@@ -69,9 +69,9 @@ class AnonymizerRequest:
         if anonymizers is not None:
             for key, anonymizer_json in anonymizers.items():
                 self.logger.debug(
-                    f"converting {anonymizer_json} to anonymizer dto class")
-                anonymizer_dto = AnonymizerDTO.from_json(anonymizer_json)
-                self._anonymizers_dto[key] = anonymizer_dto
+                    f"converting {anonymizer_json} to anonymizer config class")
+                anonymizer_config = AnonymizerConfig.from_json(anonymizer_json)
+                self._anonymizers_config[key] = anonymizer_config
 
     def __handle_text(self, data):
         self._text = data.get("text")

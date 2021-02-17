@@ -65,15 +65,15 @@ def test_given_invalid_json_then_request_creation_should_fail(
 def test_given_valid_json_then_request_creation_should_succeed():
     content = get_content()
     data = AnonymizerRequest(content)
-    assert len(data._anonymizers_dto) == 2
-    phone_number_anonymizer = data.get_anonymizers_dto().get("PHONE_NUMBER")
+    assert len(data._anonymizers_config) == 2
+    phone_number_anonymizer = data.get_anonymizers_config().get("PHONE_NUMBER")
     assert phone_number_anonymizer.params == {
         "masking_char": "*",
         "chars_to_mask": 4,
         "from_end": True,
     }
     assert phone_number_anonymizer.anonymizer_class == Mask
-    default_anonymizer = data.get_anonymizers_dto().get("DEFAULT")
+    default_anonymizer = data.get_anonymizers_config().get("DEFAULT")
     assert default_anonymizer.params == {"new_value": "ANONYMIZED"}
     assert default_anonymizer.anonymizer_class == Replace
     assert len(data._analysis_results) == len(content.get("analyzer_results"))

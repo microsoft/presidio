@@ -5,13 +5,13 @@ from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import InvalidParamException
 
 
-class AnonymizerDTO:
+class AnonymizerConfig:
     """Handle the anonymizers data - anonymizer class and params."""
 
     @classmethod
     def from_json(cls, params: dict):
         """
-        Create AnonymizerDTO from json.
+        Create AnonymizerConfig from json.
 
         :param params: json with struct of {
             "type": "mask",
@@ -19,7 +19,7 @@ class AnonymizerDTO:
             "chars_to_mask": 4,
             "from_end": true
         }
-        :return: AnonymizerDTO
+        :return: AnonymizerConfig
         """
         anonymizer_name = params.get("type")
         params.pop("type")
@@ -47,7 +47,7 @@ class AnonymizerDTO:
         return anonymizer_class
 
     def __eq__(self, other):
-        """Verify two AnonymizerDTO are equal."""
+        """Verify two AnonymizerConfig are equal."""
 
         anonymizer_class_equals = self.anonymizer_class == other.anonymizer_class
         return self.params == other.params and anonymizer_class_equals
