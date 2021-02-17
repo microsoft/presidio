@@ -6,6 +6,7 @@ WORKDIR /usr/bin/${NAME}
 
 RUN apt-get update 
 RUN apt-get install tesseract-ocr -y 
+RUN tesseract -v
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv
