@@ -9,7 +9,8 @@ def test_given_request_anonymizers_return_list():
 
     assert anon_list == expected_list
 
-#TODO SHIRANR enable this tests next commit.
+
+# TODO SHIRANR enable this tests next commit.
 def given_anonymizers_config_then_we_get_correct_anonymizer_with_default():
     engine = AnonymizerEngine()
     phone_number_config = AnonymizerConfig("fpe", {})
@@ -19,8 +20,9 @@ def given_anonymizers_config_then_we_get_correct_anonymizer_with_default():
                    "NUMBER": default_config,
                    "PHONE_NUM": default_config}
     assert engine.__get_anonymizer_by_entity_type(anonymizers,
-                                 "PHONE_NUMBER") == phone_number_config
-    assert engine.__get_anonymizer_by_entity_type(anonymizers, "NONE_EXISTING") == default_config
+                                                  "PHONE_NUMBER") == phone_number_config
+    assert engine.__get_anonymizer_by_entity_type(anonymizers,
+                                                  "NONE_EXISTING") == default_config
 
 
 def given_anonymizers_config_then_we_get_correct_anonymizer_without_default():
@@ -28,6 +30,7 @@ def given_anonymizers_config_then_we_get_correct_anonymizer_without_default():
     phone_number_config = AnonymizerConfig("fpe", {})
     anonymizers = {"PHONE_NUMBER": phone_number_config}
     assert engine.__get_anonymizer_by_entity_type(anonymizers,
-                                 "PHONE_NUMBER") == phone_number_config
-    assert engine.__get_anonymizer_by_entity_type(anonymizers, "NONE_EXISTING") == AnonymizerConfig(
+                                                  "PHONE_NUMBER") == phone_number_config
+    assert engine.__get_anonymizer_by_entity_type(anonymizers,
+                                                  "NONE_EXISTING") == AnonymizerConfig(
         "replace", {})
