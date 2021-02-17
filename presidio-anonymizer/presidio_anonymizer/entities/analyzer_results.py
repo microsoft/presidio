@@ -11,7 +11,7 @@ class AnalyzerResults(list):
 
      It includes removal of unused results and sort by indices order.
      Additional information about the rational of this class:
-    - One PII - uses a given or default transformation to anonymize and replace the PII
+    - One PII - uses a given or default anonymizer to anonymize and replace the PII
     text entity.
     - Full overlap of PIIs - When one text have several PIIs, the PII with the higher
     score will be taken.
@@ -29,7 +29,7 @@ class AnalyzerResults(list):
         _remove_conflicts method - removes results which impact the same text and
         should be ignored.
         using the logic:
-        - One PII - uses a given or default transformation to anonymize and
+        - One PII - uses a given or default anonymizer to anonymize and
         replace the PII text entity.
         - Full overlap of PIIs - When one text have several PIIs,
         the PII with the higher score will be taken.
