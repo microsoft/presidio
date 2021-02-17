@@ -23,41 +23,27 @@ To get started, refer to the documentation for [setting up a development environ
 
 ### General contribution guidelines
 
-- A Github issue suggesting the change should be opened prior to a PR.
-- All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.
-- In order for a pull request to be accepted, the CI (containing unit tests, e2e tests and linting) needs to succeed, in addition to approvals from two maintainers.
-- PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
-- Every PR must bump the presidio version by changing the VERSION file to the appropriate [semver](https://semver.org/).
-
-#### Versioning guidelines
-
-- A typical pull request with a new feature bumps the minor version.
-- Bug fix, documentation change and operational code (i.e. devops) change bump the patch version.
-- A breaking change bumps the major version. Please consult with the Presidio team prior to opening such PRs.
+-   A Github issue suggesting the change should be opened prior to a PR.
+-   All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.
+-   To make the linting process easier, you can use [pre-commit hooks](docs/development.md#automatically-format-code-and-check-for-code-styling) to verify and automatically format code upon a git commit
+-   In order for a pull request to be accepted, the CI (containing unit tests, e2e tests and linting) needs to succeed, in addition to approvals from two maintainers.
+-   PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
 
 ### How can I contribute?
 
-- [Testing](#how-to-test)
-- [Adding new recognizers for new PII types](#adding-new-recognizers-for-new-pii-types)
-- [Adding new connectors](#adding-new-connectors)
-- [Bug fixing and general improvement](#bug-fixing-and-general-improvement)
-
+-   [Testing](#how-to-test)
+-   [Adding new recognizers for new PII types](#adding-new-recognizers-for-new-pii-types)
+-   [Bug fixing and general improvement](#bug-fixing-and-general-improvement)
 
 ### How to test?
 
-- For Go, the official methods for testing are used. see https://golang.org/pkg/testing/
-- For Python, Presidio leverages `pytest` and `flake8`. See [this tutorial](docs/development.md#dev-python) on more information on testing the presidio-analyzer module.
+For Python, Presidio leverages `pytest` and `flake8`. See [this tutorial](docs/development.md#testing) on more information on testing presidio modules.
 
 ### Adding new recognizers for new PII types
 
 Adding a new recognizer is a great way to improve Presidio. A new capability to detect a new type of PII entity improves Presidio's coverage and makes private data less accessible.
 
-Best practices for recognizers development [are described here](docs/developing_recognizers.md). Please follow these guidelines when proposing new recognizers.
-
-### Adding new connectors
-
-Presidio's strength lies in its ability to be completely pluggable and customizable. Adding new types of databases, stream-analytics engines and data stores is extremely useful for many users.
-Use the following [developer guide](docs/tutorial_connector.md) for adding new connectors.
+Best practices for recognizers development [are described here](docs/analyzer/developing_recognizers.md). Please follow these guidelines when proposing new recognizers.
 
 ### Bug fixing and general improvement
 
