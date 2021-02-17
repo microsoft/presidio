@@ -33,7 +33,7 @@ class AnonymizerRequest:
         """Get the anonymizers data transfer objects."""
         return self._anonymizers_config
 
-    def __validate_and_insert_input(self, data: dict):
+    def __handle_input(self, data: dict):
         self.__handle_text(data)
         self.__handle_analyzer_results(data)
         self.__handle_anonymizers(data)
