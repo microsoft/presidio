@@ -9,7 +9,6 @@ from presidio_anonymizer.entities import AnonymizedTextBuilder
 class AnonymizerEngine:
     """
     AnonymizerEngine class.
-
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
     and replaces the PII entities with the desired anonymizers.
     """
