@@ -4,9 +4,9 @@ from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
 from presidio_anonymizer.entities import AnalyzerResult
 
 
-def test_given_several_transformations_then_we_use_the_correct_one():
-    transformation = Mock()
-    transformation.get = get_transformation
+def test_given_several_anonymizers_then_we_use_the_correct_one():
+    anonymizer = Mock()
+    anonymizer.get = get_anonymizer_dto
     mock = Mock()
     mock.get_text = lambda: "Number: 0554555556"
     analyzer_results = Mock()
@@ -15,7 +15,7 @@ def test_given_several_transformations_then_we_use_the_correct_one():
     )
     analyzer_results.to_sorted_unique_results = lambda reverse: [analyzer_result]
     mock.get_analysis_results = lambda: analyzer_results
-    mock.get_transformation = lambda result: transformation
+    mock.get_anonymizer_dto = lambda result: anonymizer
     text = AnonymizerEngine().anonymize(mock)
     assert text == "Number: I am your new text!"
 
@@ -28,6 +28,6 @@ class Anonymizer:
         pass
 
 
-def get_transformation(arg):
+def get_anonymizer_dto(arg):
     assert arg == "anonymizer"
     return Anonymizer

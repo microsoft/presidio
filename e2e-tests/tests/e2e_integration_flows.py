@@ -51,7 +51,7 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
 
     anonymizer_request = {
         "text": analyzer_request["text"],
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
             "US_DRIVER_LICENSE": {"type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": True},
             "PERSON": {"type": "replace", "new_value": "<PERSON>"}
@@ -87,7 +87,7 @@ def test_given_a_correct_analyze_input_high_threashold_then_anonymize_partially(
 
     anonymizer_request = {
         "text": analyzer_request["text"],
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
             "US_DRIVER_LICENSE": {"type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": True},
             "PERSON": {"type": "replace", "new_value": "<PERSON>"}
@@ -131,7 +131,7 @@ def test_given_a_correct_analyze_input_with_high_threshold_and_unmatched_entitie
 
     anonymizer_request = {
         "text": analyzer_request["text"],
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
             "US_DRIVER_LICENSE": {"type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": True},
             "PERSON": {"type": "replace", "new_value": "<PERSON>"}
@@ -180,7 +180,7 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
 
     anonymizer_request = {
         "text": analyzer_request["text"],
-        "transformations": {
+        "anonymizers": {
             "ABC": {"type": "replace", "new_value": "<PERSON>"}
         },
         "analyzer_results": analyzer_data
