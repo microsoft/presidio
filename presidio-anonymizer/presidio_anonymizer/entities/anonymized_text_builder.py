@@ -15,7 +15,7 @@ class AnonymizedTextBuilder:
         self.text_len = len(original_text)
         self.last_replacement_point = self.text_len
 
-    def __validate_text(self, text: str):
+    def __validate_text_not_empty(self, text: str):
         if not text:
             self.logger.debug("invalid input, json is missing text field")
             raise InvalidParamException("Invalid input, text can not be empty")
