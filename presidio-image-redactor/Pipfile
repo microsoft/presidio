@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+numpy = "==1.19.3"
 flask = "==1.1.2"
 pytesseract = "==0.3.7"
 presidio-analyzer = ">=1.9.0"
