@@ -6,7 +6,7 @@ from presidio_anonymizer.entities import AnonymizerRequest
 from presidio_anonymizer.entities import AnonymizedTextBuilder
 from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
 
-REPLACE = "replace"
+DEFAULT = "replace"
 
 
 class AnonymizerEngine:
@@ -100,5 +100,5 @@ class AnonymizerEngine:
         if not anonymizer:
             anonymizer = anonymizers.get("DEFAULT")
             if not anonymizer:
-                anonymizer = AnonymizerConfig(REPLACE, {})
+                anonymizer = AnonymizerConfig(DEFAULT, {})
         return anonymizer
