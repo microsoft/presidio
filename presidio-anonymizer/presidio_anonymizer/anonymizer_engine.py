@@ -48,7 +48,7 @@ class AnonymizerEngine:
             text_to_anonymize = text_builder.get_text_in_position(
                 analyzer_result.start, analyzer_result.end)
 
-            anonymizer_config = self.get_anonymizer(
+            anonymizer_config = self.__get_anonymizer_by_entity_type(
                 engine_request.get_anonymizers_config(),
                 analyzer_result.entity_type)
 
@@ -84,7 +84,7 @@ class AnonymizerEngine:
         return anonymized_text
 
     @staticmethod
-    def get_anonymizer_by_entity_type(anonymizers: dict, entity_type: str):
+    def __get_anonymizer_by_entity_type(anonymizers: dict, entity_type: str):
         """
         Get the right anonymizer from the list.
 

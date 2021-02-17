@@ -12,7 +12,7 @@ class AnonymizerConfig:
     def from_json(cls, params: dict):
         """
         Create AnonymizerConfig from json.
-example input json
+
         :param params: json with struct of {
             "type": "mask",
             "masking_char": "*",

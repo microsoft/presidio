@@ -23,7 +23,9 @@ class AnonymizerRequest:
         """
         self._anonymizers_config = {}
         self._analysis_results = AnalyzerResults()
-        self.__validate_and_insert_input(data)
+        self.__handle_text(data)
+        self.__handle_analyzer_results(data)
+        self.__handle_anonymizers(data)
 
     def get_analysis_results(self):
         """Get the analysis results."""
@@ -32,11 +34,6 @@ class AnonymizerRequest:
     def get_anonymizers_config(self):
         """Get the anonymizers data transfer objects."""
         return self._anonymizers_config
-
-    def __handle_input(self, data: dict):
-        self.__handle_text(data)
-        self.__handle_analyzer_results(data)
-        self.__handle_anonymizers(data)
 
     def __handle_analyzer_results(self, data):
         """

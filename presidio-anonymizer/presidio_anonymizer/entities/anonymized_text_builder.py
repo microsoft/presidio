@@ -10,7 +10,7 @@ class AnonymizedTextBuilder:
     def __init__(self,
                  original_text: str):
         self.logger = logging.getLogger("presidio-anonymizer")
-        self.__validate_text(original_text)
+        self.__validate_text_not_empty(original_text)
         self.output_text = original_text
         self.text_len = len(original_text)
         self.last_replacement_point = self.text_len
