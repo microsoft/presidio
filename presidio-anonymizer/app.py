@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Tuple
 
 from flask import Flask, request, jsonify
-from flasgger import Swagger, swag_from
+from flasgger import Swagger
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnonymizerRequest
@@ -16,7 +16,7 @@ from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
 
-SWAGGER_CONFIG = {"uiversion": 3, "openapi": "3.0.2"}
+SWAGGER_CONFIG = {"uiversion": 3, "openapi": "3.0.2", "doc_dir": "api-docs"}
 
 LOGGING_CONF_FILE = "logging.ini"
 
@@ -47,13 +47,11 @@ class Server:
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
-        @swag_from("api-docs/health.yml")
         def health() -> str:
             """Return basic health probe result."""
             return "Presidio Anonymizer service is up"
 
         @self.app.route("/anonymize", methods=["POST"])
-        @swag_from("api-docs/anonymize.yml")
         def anonymize():
             content = request.get_json()
             if not content:
@@ -64,7 +62,6 @@ class Server:
             return jsonify(result=text)
 
         @self.app.route("/anonymizers", methods=["GET"])
-        @swag_from("api-docs/anonymizers.yml")
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
             return json.dumps(self.engine.anonymizers()), 200

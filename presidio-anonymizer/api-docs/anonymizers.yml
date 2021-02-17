@@ -4,7 +4,7 @@ consumes:
   - application/json
 produces:
   - application/json
-summary: "Get Supported Anonymizers"
+summary: "Get supported anonymizers"
 
 responses:
   200:
@@ -19,6 +19,7 @@ responses:
 definitions:
   responses:
     AnonymizersResponse:
+      description: "A list of all built-in supported anonymizers"
       type: array
       items:
         description: "The Anonymizer name"
