@@ -6,6 +6,8 @@ from presidio_anonymizer.entities import AnonymizerRequest
 from presidio_anonymizer.entities import AnonymizedTextBuilder
 from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
 
+REPLACE = "replace"
+
 
 class AnonymizerEngine:
     """
@@ -15,15 +17,15 @@ class AnonymizerEngine:
     and replaces the PII entities with the desired anonymizers.
     """
 
-    logger = logging.getLogger("presidio-anonymizer")
-
     def __init__(
             self,
+
     ):
         """Handle text replacement for PIIs with requested anonymizers.
 
         :param data: a map which contains the anonymizers, analyzer_results and text
         """
+        self.logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(self, text: str, engine_request: AnonymizerRequest) -> str:
         """Anonymize method to anonymize the given text.
@@ -98,5 +100,5 @@ class AnonymizerEngine:
         if not anonymizer:
             anonymizer = anonymizers.get("DEFAULT")
             if not anonymizer:
-                anonymizer = AnonymizerConfig("replace", {})
+                anonymizer = AnonymizerConfig(REPLACE, {})
         return anonymizer

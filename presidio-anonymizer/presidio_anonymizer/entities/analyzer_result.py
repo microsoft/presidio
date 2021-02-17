@@ -15,9 +15,8 @@ class AnalyzerResult:
     Validate and compare an recognizer result object.
     """
 
-    logger = logging.getLogger("presidio-anonymizer")
-
     def __init__(self, content: dict):
+        self.logger = logging.getLogger("presidio-anonymizer")
         self.__validate_fields(content)
         self.score = content.get("score")
         self.entity_type = content.get("entity_type")

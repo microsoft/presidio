@@ -14,13 +14,12 @@ from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
 class AnonymizerRequest:
     """Input validation for the anonymize process."""
 
-    logger = logging.getLogger("presidio-anonymizer")
-
     def __init__(self, data: dict):
         """Handle and validate data for the text replacement.
 
         :param data: a map which contains the anonymizers, analyzer_results and text
         """
+        self.logger = logging.getLogger("presidio-anonymizer")
         self._anonymizers_config = {}
         self._analysis_results = AnalyzerResults()
         self.__handle_text(data)
