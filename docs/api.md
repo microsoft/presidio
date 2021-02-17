@@ -11,3 +11,9 @@
 - Presidio analyzer
 - Presidio anonymizer
 - Presidio image redactor
+
+
+::: collections.Counter
+    handler: python
+    selection:
+      docstring_style: resturctured-text

@@ -10,7 +10,11 @@ Recognizers define the logic for detection, as well as the confidence a predicti
 Each recognizer, regardless of its complexity, could have false positives and false negatives. When adding new recognizers, we try to balance the effect of each recognizer on the entire system. A recognizer with many false positives would affect the system's usability, while a recognizer with many false negatives might require more work before it can be integrated. For reproducibility purposes, it is be best to note how the recognizer's accuracy was tested, and on which datasets.
 For tools and documentation on evaluating and analyzing recognizers, refer to the [presidio-research Github repository](https://github.com/microsoft/presidio-research).
 
-> When contributing recognizers to the Presidio OSS, new predefined recognizers should be added to the [supported entities list](../supported_entities.md), and follow the [contribution guidelines](../../CONTRIBUTING.MD).
+!!! note "Note"
+    When contributing recognizers to the Presidio OSS, 
+    new predefined recognizers should be added to the 
+    [supported entities list](../supported_entities.md), 
+    and follow the [contribution guidelines](../../CONTRIBUTING.MD).
 
 ### Performance
 

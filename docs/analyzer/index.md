@@ -1,7 +1,5 @@
 # Presidio Analyzer
 
-## Description
-
 The Presidio analyzer is a Python based service for detecting PII entities in text.
 
 During analysis, it runs a set of different *PII Recognizers*,
@@ -32,7 +30,8 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
 
 ### Using pip
 
-> Consider installing the Presidio python packages on a virtual environment like venv or conda.
+!!! note "Note"
+    Consider installing the Presidio python packages on a virtual environment like venv or conda.
 
 To get started with Presidio-analyzer,
 download the package and the `en_core_web_lg` spaCy model:
@@ -44,7 +43,8 @@ python -m spacy download en_core_web_lg
 
 ### Using Docker
 
-> This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
+!!! note "Note"
+    This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
 
 ```sh
 # Download image from Dockerhub
@@ -66,6 +66,7 @@ docker build . -t presidio/presidio-analyzer
 ```
 
 ## Getting started
+
 ### Running in Python
 
 Once the Presidio-analyzer package is installed, run this simple analysis script:
@@ -97,7 +98,8 @@ docker run -p 5001:5001 presidio-analyzer
 
 #### Using python runtime
 
-> This requires the Presidio Github repository to be cloned.
+!!! note "Note"
+    This requires the Presidio Github repository to be cloned.
 
 ```sh
 cd presidio-analyzer

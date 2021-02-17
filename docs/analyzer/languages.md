@@ -11,7 +11,8 @@ To extend Presidio to detect PII in an additional language, these modules requir
 lemmatization, Named Entity Recognition and other NLP tasks.
 2. PII recognizers (different `EntityRecognizer` objects) should be adapted or created.
 
-!!! note While different detection mechanisms such as regular expressions are language agnostic, the context words used to increase the PII detection confidence aren't. Consider updating the list of context words for each recognizer to leverage context words in additional languages.
+!!! note "Note"
+    While different detection mechanisms such as regular expressions are language agnostic, the context words used to increase the PII detection confidence aren't. Consider updating the list of context words for each recognizer to leverage context words in additional languages.
 
 ## Table of contents
 
