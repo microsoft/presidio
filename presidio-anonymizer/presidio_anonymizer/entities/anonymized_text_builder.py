@@ -28,6 +28,7 @@ class AnonymizedTextBuilder:
         :param end: end position of inner text
         :return: str - part of the original text
         """
+        self.__validate_position_in_text(start, end)
         return self.output_text[start: end]
 
     def replace_text(self, anonymized_text: str, start: int, end: int):
@@ -44,3 +45,11 @@ class AnonymizedTextBuilder:
 
         self.output_text = self.output_text[
                            : start] + anonymized_text + self.output_text[end_of_text:]
+
+    def __validate_position_in_text(self, start: int, end: int):
+        """Validate the start and end position match the text length."""
+        if self.text_len < start or end > self.text_len:
+            err_msg = f"Invalid analyzer result, start: {start} and end: " \
+                      f"{end}, while text length is only {self.text_len}."
+            raise InvalidParamException(
+                err_msg)
