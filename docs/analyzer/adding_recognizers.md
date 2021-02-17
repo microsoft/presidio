@@ -2,13 +2,6 @@
 
 Presidio can be extended to support detection of new types of PII entities, and to support additional languages.
 
-## Table of contents
-
-- [Introduction to recognizer development](#introduction-to-recognizer-development)
-- [Types of recognizer classes in Presidio](#types-of-recognizer-classes-in-presidio)
-- [Extending the analyzer for additional PII entities](#extending-the-analyzer-for-additional-pii-entities)
-- [PII detection in different languages](#pii-detection-in-different-languages)
-
 ## Introduction to recognizer development
 
 Entity recognizers are Python objects capable of detecting one or more entities in a specific language.
@@ -136,3 +129,6 @@ To add a recognizer to the list of pre-defined recognizers:
 ## PII detection in different languages
 
 For recognizers in new languages, refer to the [languages documentation](languages.md).
+
+## Considerations when creating recognizers
+[Best practices for developing PII recognizers](developing_recognizers.md).

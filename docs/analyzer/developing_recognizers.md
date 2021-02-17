@@ -37,7 +37,7 @@ See [this documentation](index.md#how-to-add-a-new-recognizer) on adding a new r
 ### Pattern Based
 
 Pattern based recognizers use regular expressions to identify entities in text.
-See [this documentation](../custom_fields.md#via-code) on adding a new recognizer via code.
+See [this documentation](adding_recognizers.md) on adding a new recognizer via code.
 The [`PatternRecognizer`](../../presidio-analyzer/presidio_analyzer/pattern_recognizer.py) class should be extended.
 See some examples here:
 
@@ -74,4 +74,9 @@ When creating a DL based method for PII detection, there are two main alternativ
 1. Create an external endpoint (either local or remote) which is isolated from the `presidio-analyzer` process. On the `presidio-analyzer` side, one would extend the [`RemoteRecognizer`](../../presidio-analyzer/presidio_analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 2. Integrate the model as an additional [`EntityRecognizer`](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) within the `presidio-analyzer` flow.
 
-> Considerations for selecting one option over another are: Ease of integration, runtime considerations (For example if the new model requires a GPU) and the 3rd party dependencies of the new model vs. the existing `presidio-analyzer` package.
+!!! note "Note"
+    Considerations for selecting one option over another are: 
+    
+    - Ease of integration.
+    - Runtime considerations (For example if the new model requires a GPU).
+    - 3rd party dependencies of the new model vs. the existing `presidio-analyzer` package.

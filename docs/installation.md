@@ -7,12 +7,6 @@ As Presidio is comprised of several packages/services,
 this document describes the installation of the entire 
 Presidio suite using `pip` (as Python packages) or using `Docker` (As containerized services).
 
-## Table of contents
-
-- [Download packages using pip](#using-pip)
-- [Download and run Docker containers](#using-docker)
-- [Install from source](#install-from-source)
-
 ## Using pip
 
 !!! note "Note" 

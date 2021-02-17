@@ -12,4 +12,5 @@
 
 ## Usage
 
+TODO: reference full path on GH
 [Jupiter notebook](presidio_notebook.ipynb)

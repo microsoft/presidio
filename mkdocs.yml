@@ -8,9 +8,12 @@ edit_uri: ""
 nav:
     - Home: index.md
     - Installation: installation.md
+    - Getting Started: getting_started.md
     - Text Analysis:
       - Home: analyzer/index.md
-      - Tutorial on adding new PII recognizers: analyzer/adding_recognizers.md
+      - Developing PII recognizers:
+        - Tutorial : analyzer/adding_recognizers.md
+        - Best practices : analyzer/developing_recognizers.md
       - Multi-language support: analyzer/languages.md
       - Tracing the decision process: analyzer/decision_process.md
     - Text Anonymization: anonymizer/index.md
@@ -40,15 +43,6 @@ theme:
 
 plugins:
 - search
-- mkdocstrings:
-    handlers:
-      python:
-        setup_commands:
-          - import sys
-          - sys.path.append("presidio-analyzer/presidio_analyzer")
-          - sys.path.append("presidio-anonymizer/presidio_anonymizer")
-          - sys.path.append("presidio-image-redactor/presidio_image_redactor")
-          - from presidio_analyzer import AnalyzerEngine
 
 
 markdown_extensions:
@@ -57,3 +51,4 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
   - pymdownx.pathconverter
+  - pymdownx.tabbed
