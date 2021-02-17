@@ -84,7 +84,7 @@ class AnonymizerEngine:
         return anonymized_text
 
     @staticmethod
-    def get_anonymizer(anonymizers: dict, entity_type: str):
+    def get_anonymizer_by_entity_type(anonymizers: dict, entity_type: str):
         """
         Get the right anonymizer from the list.
 
