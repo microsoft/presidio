@@ -29,7 +29,7 @@ class AnonymizerEngine:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
-        :param engine_request: DEPRECATED ABOUT OT BE REMOVED.
+        :param engine_request: DEPRECATED ABOUT TO BE REMOVED.
         :return: the anonymized text
         """
         text_builder = AnonymizedTextBuilder(original_text=text)
@@ -89,8 +89,10 @@ class AnonymizerEngine:
         Get the right anonymizer from the list.
 
         When anonymizer does not exist, we fall back to default.
+        :param anonymizers: a dictionary - key - entity_type we are replacing
+        value - AnonymizerConfig
         :param entity_type: the type of the text we want to do anonymizer over
-        :return: anonymizer
+        :return: AnonymizerConfig class
         """
         anonymizer = anonymizers.get(entity_type)
         if not anonymizer:
