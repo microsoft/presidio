@@ -1,4 +1,7 @@
 """Handles the original text and creates a new one according to changes requests."""
+import logging
+
+from presidio_anonymizer.entities import InvalidParamException
 
 
 class AnonymizedTextBuilder:
@@ -6,10 +9,16 @@ class AnonymizedTextBuilder:
 
     def __init__(self,
                  original_text: str):
-        self.original_text = original_text
+        self.logger = logging.getLogger("presidio-anonymizer")
+        self.__validate_text(original_text)
         self.output_text = original_text
         self.text_len = len(original_text)
         self.last_replacement_point = self.text_len
+
+    def __validate_text(self, text: str):
+        if not text:
+            self.logger.debug("invalid input, json is missing text field")
+            raise InvalidParamException("Invalid input, text can not be empty")
 
     def get_text_in_position(self, start: int, end: int):
         """

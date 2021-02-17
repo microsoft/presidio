@@ -1,5 +1,5 @@
 import pytest
-from presidio_anonymizer.entities import AnonymizedTextBuilder
+from presidio_anonymizer.entities import AnonymizedTextBuilder, InvalidParamException
 
 
 @pytest.mark.parametrize(
@@ -9,7 +9,6 @@ from presidio_anonymizer.entities import AnonymizedTextBuilder
         ("hello world", 0, 5, "", " world"),
         ("hello world", 5, 5, "bla", "hellobla world"),
         ("hello world", 5, 12, "bla", "hellobla"),
-        ("", 5, 12, "bla", "bla"),
     ],
     # fmt: on
 )
@@ -18,6 +17,12 @@ def test_given_text_then_we_replace_the_original_with_anonymized_correctly(
     text_builder = AnonymizedTextBuilder(original_text)
     text_builder.replace_text(anonymized_text, start, end)
     assert text_builder.output_text == expected
+
+
+def test_given_empty_text_then_we_fail():
+    with pytest.raises(InvalidParamException,
+                       match="Invalid input, text can not be empty"):
+        AnonymizedTextBuilder("")
 
 
 @pytest.mark.parametrize(

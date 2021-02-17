@@ -1,9 +1,8 @@
 from typing import List
-from unittest.mock import Mock
+
 
 import pytest
 
-from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.anonymizers import Replace, Mask
 from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
@@ -59,27 +58,24 @@ def test_given_invalid_json_then_request_creation_should_fail(
         request_json, result_text
 ):
     with pytest.raises(InvalidParamException) as e:
-        AnonymizerRequest(request_json, AnonymizerEngine().builtin_anonymizers)
+        AnonymizerRequest(request_json)
     assert result_text == e.value.err_msg
-
-
-def test_given_no_anonymizers_then_we_get_the_default():
-    content = get_content()
-    request = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
-    request._anonymizers = {}
-    analyzer_result = Mock()
-    analyzer_result.entity_type = "PHONE"
-    anonymizers = request.get_anonymizer_dto(analyzer_result.entity_type)
-    assert anonymizers.get("type") == "replace"
-    assert type(anonymizers.get("anonymizer")) == type(Replace)
 
 
 def test_given_valid_json_then_request_creation_should_succeed():
     content = get_content()
-    data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
-    assert data.get_text() == content.get("text")
-    assert data._text == content.get("text")
-    assert data._anonymizers == content.get("anonymizers")
+    data = AnonymizerRequest(content)
+    assert len(data._anonymizers_dto) == 2
+    phone_number_anonymizer = data.get_anonymizers_dto().get("PHONE_NUMBER")
+    assert phone_number_anonymizer.params == {
+        "masking_char": "*",
+        "chars_to_mask": 4,
+        "from_end": True,
+    }
+    assert phone_number_anonymizer.anonymizer_class == Mask
+    default_anonymizer = data.get_anonymizers_dto().get("DEFAULT")
+    assert default_anonymizer.params == {"new_value": "ANONYMIZED"}
+    assert default_anonymizer.anonymizer_class == Replace
     assert len(data._analysis_results) == len(content.get("analyzer_results"))
     assert data._analysis_results == data.get_analysis_results()
     for result_a in data._analysis_results:
@@ -90,26 +86,6 @@ def test_given_valid_json_then_request_creation_should_succeed():
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
         assert result_a.end == same_result_in_content.get("end")
-        assert data.get_anonymizer_dto(result_a.entity_type)
-
-
-def test_given_valid_anonymizer_request_then_get_anonymizers_successfully():
-    content = get_content()
-    data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
-    replace_result = data.get_analysis_results()[0]
-    default_replace_anonymizer = data.get_anonymizer_dto(replace_result.entity_type)
-    assert default_replace_anonymizer.get("type") == "replace"
-    assert default_replace_anonymizer.get("new_value") == "ANONYMIZED"
-    assert type(default_replace_anonymizer.get("anonymizer")) == type(Replace)
-    mask_anonymizer = data.get_anonymizer_dto(
-        data.get_analysis_results()[3].entity_type
-    )
-    assert mask_anonymizer.get("type") == "mask"
-    assert mask_anonymizer.get("from_end")
-    assert mask_anonymizer.get("chars_to_mask") == 4
-    assert mask_anonymizer.get("masking_char") == "*"
-    assert mask_anonymizer.get("anonymizer")
-    assert type(mask_anonymizer.get("anonymizer")) == type(Mask)
 
 
 @pytest.mark.parametrize(
@@ -133,7 +109,7 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
     err_msg = f"Invalid analyzer result, start: {start} and end: " \
               f"{end}, while text length is only 11."
     with pytest.raises(InvalidParamException, match=err_msg):
-        AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
+        AnonymizerRequest(content)
 
 
 @pytest.mark.parametrize(
@@ -157,7 +133,7 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_(
     err_msg = f"Invalid analyzer result, start: {start} and end: " \
               f"{end}, while text length is only 11."
     with pytest.raises(InvalidParamException, match=err_msg):
-        AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
+        AnonymizerRequest(content)
 
 
 def __find_element(content: List, entity_type: str):

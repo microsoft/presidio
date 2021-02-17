@@ -8,6 +8,7 @@ import logging
 from presidio_anonymizer.entities import AnalyzerResult
 from presidio_anonymizer.entities import AnalyzerResults
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities.anonymizer_dto import AnonymizerDTO
 
 
 class AnonymizerRequest:
@@ -15,43 +16,22 @@ class AnonymizerRequest:
 
     logger = logging.getLogger("presidio-anonymizer")
 
-    def __init__(self, data: dict, anonymizers):
+    def __init__(self, data: dict):
         """Handle and validate data for the text replacement.
 
         :param data: a map which contains the anonymizers, analyzer_results and text
         """
-        self.anonymizers = anonymizers
-        self._anonymizers = {}
+        self._anonymizers_dto = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
-        self.default_anonymizer = {
-            "type": "replace",
-            "anonymizer": self.anonymizers["replace"],
-        }
-
-    def get_anonymizer_dto(self, entity_type: str):
-        """
-        Get the right anonymizer_dto from the list.
-
-        When anonymizer_dto does not exist, we fall back to default.
-        :param analyzer_result: the result we are going to do the anonymization on
-        :return: anonymizer_dto
-        """
-        anonymizer_dto = self._anonymizers.get(entity_type)
-        if not anonymizer_dto:
-            anonymizer_dto = self._anonymizers.get("DEFAULT")
-            if not anonymizer_dto:
-                anonymizer_dto = self.default_anonymizer
-        anonymizer_dto["entity_type"] = entity_type
-        return anonymizer_dto
-
-    def get_text(self):
-        """Get the text we are working on."""
-        return self._text
 
     def get_analysis_results(self):
         """Get the analysis results."""
         return self._analysis_results
+
+    def get_anonymizers_dto(self):
+        """Get the anonymizers data transfer objects."""
+        return self._anonymizers_dto
 
     def __validate_and_insert_input(self, data: dict):
         self.__handle_text(data)
@@ -87,31 +67,14 @@ class AnonymizerRequest:
         """
         anonymizers = data.get("anonymizers")
         if anonymizers is not None:
-            for key, anonymizer_dto in anonymizers.items():
-                self.logger.debug(f"converting {anonymizer_dto} to anonymizer class")
-                anonymizer = self.__get_anonymizer(anonymizer_dto)
-                self.logger.debug(f"applying class {anonymizer} to {anonymizer_dto}")
-                anonymizer_dto["anonymizer"] = anonymizer
-                self._anonymizers[key] = anonymizer_dto
+            for key, anonymizer_json in anonymizers.items():
+                self.logger.debug(
+                    f"converting {anonymizer_json} to anonymizer dto class")
+                anonymizer_dto = AnonymizerDTO.from_json(anonymizer_json)
+                self._anonymizers_dto[key] = anonymizer_dto
 
     def __handle_text(self, data):
         self._text = data.get("text")
         if not self._text:
             self.logger.debug("invalid input, json is missing text field")
             raise InvalidParamException("Invalid input, text can not be empty")
-
-    def __get_anonymizer(self, anonymizer):
-        """
-        Extract the anonymizer class from the anonymizers list.
-
-        :param anonymizer: a single anonymizer value
-        :return: Anonymizer
-        """
-        anonymizer_type = anonymizer.get("type").lower()
-        anonymizer = self.anonymizers.get(anonymizer_type)
-        if not anonymizer:
-            self.logger.error(f"No such anonymizer class {anonymizer_type}")
-            raise InvalidParamException(
-                f"Invalid anonymizer class '{anonymizer_type}'."
-            )
-        return anonymizer

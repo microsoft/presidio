@@ -6,6 +6,8 @@ from abc import abstractmethod, ABC
 class Anonymizer(ABC):
     """Anonymizer abstract class to be implemented by each anonymizer."""
 
+    _anonymizers = None
+
     logger = logging.getLogger("presidio-anonymizer")
 
     @abstractmethod
@@ -22,3 +24,13 @@ class Anonymizer(ABC):
     def anonymizer_name(self) -> str:
         """Return anonymizer name."""
         pass
+
+    @staticmethod
+    def get_anonymizers():
+        """Return all anonymizers classes currently available."""
+        if not Anonymizer._anonymizers:
+            Anonymizer._anonymizers = {
+                cls.anonymizer_name(cls): cls
+                for cls in Anonymizer.__subclasses__()
+            }
+        return Anonymizer._anonymizers

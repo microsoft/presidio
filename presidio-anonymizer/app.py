@@ -66,8 +66,8 @@ class Server:
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
 
-            data = AnonymizerRequest(content, self.engine.builtin_anonymizers)
-            text = self.engine.anonymize(data)
+            data = AnonymizerRequest(content)
+            text = self.engine.anonymize(content.get("text"), data)
             return jsonify(result=text)
 
         @self.app.route("/anonymizers", methods=["GET"])

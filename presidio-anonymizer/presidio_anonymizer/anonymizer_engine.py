@@ -4,6 +4,8 @@ import logging
 from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import AnonymizerRequest
 from presidio_anonymizer.entities import AnonymizedTextBuilder
+from presidio_anonymizer.entities.anonymizer_dto import AnonymizerDTO
+from presidio_anonymizer.entities.anonymizers_dto import AnonymizersDTO
 
 
 class AnonymizerEngine:
@@ -15,9 +17,6 @@ class AnonymizerEngine:
     """
 
     logger = logging.getLogger("presidio-anonymizer")
-    builtin_anonymizers = {
-        cls.anonymizer_name(cls): cls for cls in Anonymizer.__subclasses__()
-    }
 
     def __init__(
             self,
@@ -27,19 +26,20 @@ class AnonymizerEngine:
         :param data: a map which contains the anonymizers, analyzer_results and text
         """
 
-    def anonymize(self, engine_request: AnonymizerRequest) -> str:
+    def anonymize(self, text: str, engine_request: AnonymizerRequest) -> str:
         """Anonymize method to anonymize the given text.
 
         :return: the anonymized text
         """
-        text_builder = AnonymizedTextBuilder(original_text=engine_request.get_text())
+        text_builder = AnonymizedTextBuilder(original_text=text)
+        anonymizers = AnonymizersDTO(engine_request.get_anonymizers_dto())
 
         analyzer_results = (
             engine_request.get_analysis_results().to_sorted_unique_results(True)
         )
 
         # loop over each analyzer result
-        # get anonymizer type class for the analyzer result (replace, redact etc.)
+        # get AnonymizerDTO type class for the analyzer result (replace, redact etc.)
         # trigger the anonymizer method on the section of the text
         # perform the anonymization
 
@@ -48,16 +48,16 @@ class AnonymizerEngine:
             text_to_anonymize = text_builder.get_text_in_position(
                 analyzer_result.start, analyzer_result.end)
 
-            anonymizer_dto = engine_request.get_anonymizer_dto(
-                analyzer_result.entity_type
-            )
+            anonymizer_dto = anonymizers.get_anonymizer(analyzer_result.entity_type)
+
             self.logger.debug(
                 f"for analyzer result {analyzer_result} received anonymizer "
                 f"{str(anonymizer_dto)}"
             )
 
-            anonymized_text = self.__extract_anonymizer_and_anonymize(anonymizer_dto,
-                                                                      text_to_anonymize)
+            anonymized_text = self.__extract_anonymizer_and_anonymize(
+                analyzer_result.entity_type, anonymizer_dto,
+                text_to_anonymize)
             text_builder.replace_text(anonymized_text, analyzer_result.start,
                                       analyzer_result.end)
 
@@ -65,14 +65,18 @@ class AnonymizerEngine:
 
     def anonymizers(self):
         """Return a list of supported anonymizers."""
-        names = [p for p in self.builtin_anonymizers.keys()]
+        names = [p for p in Anonymizer.get_anonymizers().keys()]
         return names
 
-    def __extract_anonymizer_and_anonymize(self, anonymizer_dto, text_to_anonymize):
-        anonymizer = anonymizer_dto.get("anonymizer")()
+    def __extract_anonymizer_and_anonymize(self, entity_type: str,
+                                           anonymizer_dto: AnonymizerDTO,
+                                           text_to_anonymize: str):
+        anonymizer = anonymizer_dto.anonymizer_class()
         # if the anonymizer is not valid, a InvalidParamException
-        anonymizer.validate(params=anonymizer_dto)
+        anonymizer.validate(params=anonymizer_dto.params)
+        params = anonymizer_dto.params
+        params["entity_type"] = entity_type
         anonymized_text = anonymizer.anonymize(
-            params=anonymizer_dto, text=text_to_anonymize
+            params=params, text=text_to_anonymize
         )
         return anonymized_text
