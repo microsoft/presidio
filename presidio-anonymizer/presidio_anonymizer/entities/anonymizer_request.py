@@ -18,32 +18,32 @@ class AnonymizerRequest:
     def __init__(self, data: dict, anonymizers):
         """Handle and validate data for the text replacement.
 
-        :param data: a map which contains the transformations, analyzer_results and text
+        :param data: a map which contains the anonymizers, analyzer_results and text
         """
         self.anonymizers = anonymizers
-        self._transformations = {}
+        self._anonymizers = {}
         self._analysis_results = AnalyzerResults()
         self.__validate_and_insert_input(data)
-        self.default_transformation = {
+        self.default_anonymizer = {
             "type": "replace",
             "anonymizer": self.anonymizers["replace"],
         }
 
-    def get_transformation(self, entity_type: str):
+    def get_anonymizer_dto(self, entity_type: str):
         """
-        Get the right transformation from the list.
+        Get the right anonymizer_dto from the list.
 
-        When transformation does not exist, we fall back to default.
-        :param analyzer_result: the result we are going to do the transformation on
-        :return: transformation
+        When anonymizer_dto does not exist, we fall back to default.
+        :param analyzer_result: the result we are going to do the anonymization on
+        :return: anonymizer_dto
         """
-        transformation = self._transformations.get(entity_type)
-        if not transformation:
-            transformation = self._transformations.get("DEFAULT")
-            if not transformation:
-                transformation = self.default_transformation
-        transformation["entity_type"] = entity_type
-        return transformation
+        anonymizer_dto = self._anonymizers.get(entity_type)
+        if not anonymizer_dto:
+            anonymizer_dto = self._anonymizers.get("DEFAULT")
+            if not anonymizer_dto:
+                anonymizer_dto = self.default_anonymizer
+        anonymizer_dto["entity_type"] = entity_type
+        return anonymizer_dto
 
     def get_text(self):
         """Get the text we are working on."""
@@ -56,13 +56,13 @@ class AnonymizerRequest:
     def __validate_and_insert_input(self, data: dict):
         self.__handle_text(data)
         self.__handle_analyzer_results(data)
-        self.__handle_transformations(data)
+        self.__handle_anonymizers(data)
 
     def __handle_analyzer_results(self, data):
         """
         Go over analyzer results, check they are valid and convert to AnalyzeResult.
 
-        :param data: contains the text, transformations and analyzer_results
+        :param data: contains the text, anonymizers and analyzer_results
         :return: None
         """
         analyzer_results = data.get("analyzer_results")
@@ -77,22 +77,22 @@ class AnonymizerRequest:
             analyzer_result.validate_position_in_text(text_len)
             self._analysis_results.append(analyzer_result)
 
-    def __handle_transformations(self, data):
+    def __handle_anonymizers(self, data):
         """
-        Go over the transformations and get the relevant anonymizer class for it.
+        Go over the anonymizers and get the relevant anonymizer class for it.
 
-        Inserts the class to the transformation so the engine will use it.
-        :param data: contains the text, transformations and analyzer_results
+        Inserts the class to the anonymizer so the engine will use it.
+        :param data: contains the text, anonymizers and analyzer_results
         :return: None
         """
-        transformations = data.get("transformations")
-        if transformations is not None:
-            for key, transformation in transformations.items():
-                self.logger.debug(f"converting {transformation} to anonymizer class")
-                anonymizer = self.__get_anonymizer(transformation)
-                self.logger.debug(f"applying class {anonymizer} to {transformation}")
-                transformation["anonymizer"] = anonymizer
-                self._transformations[key] = transformation
+        anonymizers = data.get("anonymizers")
+        if anonymizers is not None:
+            for key, anonymizer_dto in anonymizers.items():
+                self.logger.debug(f"converting {anonymizer_dto} to anonymizer class")
+                anonymizer = self.__get_anonymizer(anonymizer_dto)
+                self.logger.debug(f"applying class {anonymizer} to {anonymizer_dto}")
+                anonymizer_dto["anonymizer"] = anonymizer
+                self._anonymizers[key] = anonymizer_dto
 
     def __handle_text(self, data):
         self._text = data.get("text")
@@ -100,14 +100,14 @@ class AnonymizerRequest:
             self.logger.debug("invalid input, json is missing text field")
             raise InvalidParamException("Invalid input, text can not be empty")
 
-    def __get_anonymizer(self, transformation):
+    def __get_anonymizer(self, anonymizer):
         """
         Extract the anonymizer class from the anonymizers list.
 
-        :param transformation: a single transformation value
+        :param anonymizer: a single anonymizer value
         :return: Anonymizer
         """
-        anonymizer_type = transformation.get("type").lower()
+        anonymizer_type = anonymizer.get("type").lower()
         anonymizer = self.anonymizers.get(anonymizer_type)
         if not anonymizer:
             self.logger.error(f"No such anonymizer class {anonymizer_type}")

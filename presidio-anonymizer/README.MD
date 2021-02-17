@@ -36,7 +36,7 @@ Presidio anonymizer comes by default with the following anonymizers:
     -   "masking_char" - the character to be replaced with.
     -   "from_end" - Whether to mask the PII from it's end.
 
-Please notice: if default value is not stated in transformations object, the default
+Please notice: if default value is not stated in anonymizers object, the default
 anonymizer is "replace" for all entities. The replacing value will be the entity type
 e.g.: <PHONE_NUMBER>
 
@@ -44,7 +44,7 @@ As the input text could potentially have overlapping PII entities, there are dif
 anonymization scenarios:
 
 -   No overlap (single PII) - single PII over text entity, uses a given or default
-    transformation to anonymize and replace the PII text entity.
+    anonymizer to anonymize and replace the PII text entity.
 -   Full overlap of PIIs - When one text have several PIIs, the PII with the higher score
     will be taken. Between PIIs with identical scores, the selection will be arbitrary.
 -   One PII is contained in another - anonymizer will use the PII with larger text.
@@ -109,7 +109,7 @@ Payload:
 ```json
 {
     "text": "hello world, my name is Jane Doe. My number is: 034453334",
-    "transformations": {
+    "anonymizers": {
         "PHONE_NUMBER": {
             "type": "mask",
             "masking_char": "*",

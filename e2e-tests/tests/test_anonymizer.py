@@ -9,7 +9,7 @@ def test_given_anonymize_called_with_valid_request_then_expected_valid_response_
     request_body = """
     {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": { "type": "replace", "new_value": "ANONYMIZED" },
             "PHONE_NUMBER": { "type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": true }
         },
@@ -37,7 +37,7 @@ def test_given_anonymize_called_with_empty_text_then_invalid_input_message_retur
     request_body = """
     {
         "text": "",
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": { "type": "replace", "new_value": "ANONYMIZED" }
         },
         "analyzer_results": [
@@ -58,7 +58,7 @@ def test_given_anonymize_called_with_empty_analyzer_results_then_invalid_input_m
     request_body = """
     {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": { "type": "replace", "new_value": "ANONYMIZED" },
             "PHONE_NUMBER": { "type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": true }
         },
@@ -79,7 +79,7 @@ def test_given_anonymize_called_with_deformed_body_then_internal_server_error_re
     request_body = """
     {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
-        "transformations": {
+        "anonymizers": {
             "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
         },
         "analyzer_results": [
