@@ -8,8 +8,7 @@ def test_given_empty_list_then_analyzer_result_creation_is_not_failing():
 
 def test_given_conflicting_analyzer_results_then_none_conflicting_results_returned():
     payload = get_dup_payload()
-    data = AnonymizerRequest(payload)
-    analyze_results = data.get_analysis_results()
+    analyze_results = AnonymizerRequest.handle_analyzer_results_json(payload)
     assert len(analyze_results) == len(payload.get("analyzer_results"))
     sorted_results = analyze_results.to_sorted_unique_results()
     assert len(sorted_results) == 2
@@ -19,8 +18,7 @@ def test_given_conflicting_analyzer_results_then_none_conflicting_results_return
 
 def test_given_conflict_analyzer_results_then_reversed_none_conflict_list_returned():
     payload = get_dup_payload()
-    data = AnonymizerRequest(payload)
-    analyze_results = data.get_analysis_results()
+    analyze_results = AnonymizerRequest.handle_analyzer_results_json(payload)
     assert len(analyze_results) == len(payload.get("analyzer_results"))
     sorted_results = analyze_results.to_sorted_unique_results(True)
     assert len(sorted_results) == 2

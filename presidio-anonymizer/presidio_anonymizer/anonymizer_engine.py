@@ -2,7 +2,8 @@
 import logging
 
 from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.entities import AnonymizerRequest
+from presidio_anonymizer.entities import AnonymizerRequest, AnalyzerResult, \
+    AnalyzerResults
 from presidio_anonymizer.entities import AnonymizedTextBuilder
 from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
 
@@ -27,17 +28,21 @@ class AnonymizerEngine:
         """
         self.logger = logging.getLogger("presidio-anonymizer")
 
-    def anonymize(self, text: str, engine_request: AnonymizerRequest) -> str:
+    def anonymize(self, text: str, analyzer_results: list[AnalyzerResult],
+                  anonymizers_config: dict) -> str:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
-        :param engine_request: DEPRECATED ABOUT TO BE REMOVED.
+        :param analyzer_results: A list of AnalyzerResult class -> The results we
+        :param anonymizers_config: The configuration of the anonymizers we would like
+        to use for each entity
+        received from the analyzer
         :return: the anonymized text
         """
         text_builder = AnonymizedTextBuilder(original_text=text)
 
         analyzer_results = (
-            engine_request.get_analysis_results().to_sorted_unique_results(True)
+            AnalyzerResults(analyzer_results).to_sorted_unique_results(True)
         )
 
         # loop over each analyzer result
@@ -51,7 +56,7 @@ class AnonymizerEngine:
                 analyzer_result.start, analyzer_result.end)
 
             anonymizer_config = self.__get_anonymizer_by_entity_type(
-                engine_request.get_anonymizers_config(),
+                anonymizers_config,
                 analyzer_result.entity_type)
 
             self.logger.debug(
