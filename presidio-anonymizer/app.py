@@ -64,6 +64,7 @@ class Server:
             return jsonify(result=text)
 
         @self.app.route("/anonymizers", methods=["GET"])
+        @swag_from("api-docs/anonymizers.yml")
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
             return json.dumps(self.engine.anonymizers()), 200

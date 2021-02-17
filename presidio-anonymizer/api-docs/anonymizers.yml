@@ -1,0 +1,26 @@
+tags:
+  - Anonymizer
+consumes:
+  - application/json
+produces:
+  - application/json
+summary: "Get Supported Anonymizers"
+
+responses:
+  200:
+    description: OK
+    content:
+      application/json:
+        schema:
+          $ref: "#/definitions/responses/AnonymizersResponse"
+        example:
+          ["fpe", "hash", "mask", "redact", "replace"]
+
+definitions:
+  responses:
+    AnonymizersResponse:
+      type: array
+      items:
+        description: "The Anonymizer name"
+        type: string
+        example: "fpe"
