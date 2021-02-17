@@ -136,6 +136,30 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_(
         AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
 
 
+@pytest.mark.parametrize(
+    # fmt: off
+    "original_text,start,end",
+    [
+        ("hello world", 5, 12),
+        ("hello world", 12, 16),
+    ],
+    # fmt: on
+)
+def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_(
+        original_text, start, end):
+    content = {
+        "text": original_text,
+        "analyzer_results": [
+            {"start": start, "end": end, "score": 0.8, "entity_type": "NAME"},
+        ],
+    }
+    content.get("analyzer_results")
+    err_msg = f"Invalid analyzer result, start: {start} and end: " \
+              f"{end}, while text length is only 11."
+    with pytest.raises(InvalidParamException, match=err_msg):
+        AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
+
+
 def __find_element(content: List, entity_type: str):
     for result in content:
         if result.get("entity_type") == entity_type:
