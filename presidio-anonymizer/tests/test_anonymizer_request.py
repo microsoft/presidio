@@ -121,7 +121,7 @@ def test_given_valid_anonymizer_request_then_get_anonymizers_successfully():
     ],
     # fmt: on
 )
-def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail_(
+def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
         original_text, start, end):
     content = {
         "text": original_text,
