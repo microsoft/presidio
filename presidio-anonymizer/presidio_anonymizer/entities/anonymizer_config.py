@@ -22,7 +22,8 @@ class AnonymizerConfig:
         :return: AnonymizerConfig
         """
         anonymizer_name = params.get("type")
-        params.pop("type")
+        if anonymizer_name:
+            params.pop("type")
         return cls(anonymizer_name, params)
 
     def __init__(self, anonymizer_name: str, params: dict = {}):
