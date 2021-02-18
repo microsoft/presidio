@@ -18,7 +18,7 @@ TODO: update links once V2 is merged
     * Security and compliance analysis
     * Unit tests
     * E2E tests
-    * deploys the aritfacts to an interenal dev environment.
+    * deploys the artifacts to an internal dev environment.
 * [Release](https://github.com/microsoft/presidio/blob/V2/azure-pipelines.yml) - manually triggered.
     * releases presidio official artifacts
         * pypi
