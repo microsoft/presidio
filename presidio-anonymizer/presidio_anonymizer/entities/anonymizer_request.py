@@ -4,6 +4,7 @@ Engine request entity.
 It get the data and validate it before the engine receives it.
 """
 import logging
+from typing import List
 
 from presidio_anonymizer.entities import AnalyzerResult
 from presidio_anonymizer.entities import AnalyzerResults
@@ -17,7 +18,7 @@ class AnonymizerRequest:
     logger = logging.getLogger("presidio-anonymizer")
 
     @classmethod
-    def handle_analyzer_results_json(cls, data):
+    def handle_analyzer_results_json(cls, data) -> List[AnalyzerResult]:
         """
         Go over analyzer results, check they are valid and convert to AnalyzeResult.
 

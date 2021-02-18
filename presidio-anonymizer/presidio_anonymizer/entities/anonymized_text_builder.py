@@ -20,7 +20,7 @@ class AnonymizedTextBuilder:
             self.logger.debug("invalid input, json is missing text field")
             raise InvalidParamException("Invalid input, text can not be empty")
 
-    def get_text_in_position(self, start: int, end: int):
+    def get_text_in_position(self, start: int, end: int) -> str:
         """
         Get part of the text inside the original text.
 
