@@ -98,6 +98,7 @@ See [this tutorial on adding new PII recognizers](adding_recognizers.md)
 for more information.
 
 ## Multi-language support
+
 Presidio can be used to detect PII entities in multiple languages.
 Refer to the [multi-language support](languages.md) for more information.
 
