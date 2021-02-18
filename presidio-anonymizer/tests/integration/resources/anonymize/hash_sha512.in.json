@@ -1,6 +1,6 @@
 {
     "text": "hello world, my name is Jane Doe. My number is: 034453334",
-    "transformations": {
+    "anonymizers": {
         "DEFAULT": { "type": "hash", "hash_type": "sha512" }
     },
     "analyzer_results": [
