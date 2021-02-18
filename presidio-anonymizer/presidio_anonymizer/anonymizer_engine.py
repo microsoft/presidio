@@ -76,12 +76,12 @@ class AnonymizerEngine:
         self.logger.debug(f"getting anonymizer for {entity_type}")
         anonymizer = anonymizer_config.anonymizer_class()
         self.logger.debug(
-            f"validating anonymizer {anonymizer.anonymizer_name()} for {entity_type}")
+            f"validating anonymizer {anonymizer} for {entity_type}")
         anonymizer.validate(params=anonymizer_config.params)
         params = anonymizer_config.params
         params["entity_type"] = entity_type
         self.logger.debug(
-            f"anonymizing {entity_type} with {anonymizer.anonymizer_name()}")
+            f"anonymizing {entity_type} with {anonymizer}")
         anonymized_text = anonymizer.anonymize(
             params=params, text=text_to_anonymize
         )
