@@ -16,6 +16,8 @@ from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
 
+SWAGGER_CONFIG = {"uiversion": 3, "openapi": "3.0.2", "doc_dir": "api-docs"}
+
 LOGGING_CONF_FILE = "logging.ini"
 
 WELCOME_MESSAGE = r"""
@@ -38,26 +40,15 @@ class Server:
         self.logger = logging.getLogger("presidio-anonymizer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
-        self.swagger = Swagger(
-            self.app, template={"info": {"title": "Presidio Anonymizer API"}}
-        )
+        self.app.config["SWAGGER"] = SWAGGER_CONFIG
+        self.swagger = Swagger(self.app, template_file="api-docs/template.yml")
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.
-
-            ---
-            responses:
-              200:
-                description: OK
-                content:
-                  text/plain:
-                    schema:
-                      type: string
-            """
+            """Return basic health probe result."""
             return "Presidio Anonymizer service is up"
 
         @self.app.route("/anonymize", methods=["POST"])
