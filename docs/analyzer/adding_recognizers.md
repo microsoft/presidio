@@ -131,4 +131,5 @@ To add a recognizer to the list of pre-defined recognizers:
 For recognizers in new languages, refer to the [languages documentation](languages.md).
 
 ## Considerations when creating recognizers
+
 [Best practices for developing PII recognizers](developing_recognizers.md).
