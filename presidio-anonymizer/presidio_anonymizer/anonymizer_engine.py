@@ -18,14 +18,7 @@ class AnonymizerEngine:
     and replaces the PII entities with the desired anonymizers.
     """
 
-    def __init__(
-            self,
-
-    ):
-        """Handle text replacement for PIIs with requested anonymizers.
-
-        :param data: a map which contains the anonymizers, analyzer_results and text
-        """
+    def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(self, text: str, analyzer_results: list[AnalyzerResult],
@@ -34,8 +27,9 @@ class AnonymizerEngine:
 
         :param text: the text we are anonymizing
         :param analyzer_results: A list of AnalyzerResult class -> The results we
+        received from the analyzer
         :param anonymizers_config: The configuration of the anonymizers we would like
-        to use for each entity
+        to use for each entity e.g.: {"PHONE_NUMBER":AnonymizerConfig("redact", {})}
         received from the analyzer
         :return: the anonymized text
         """
@@ -46,16 +40,15 @@ class AnonymizerEngine:
         )
 
         # loop over each analyzer result
-        # get AnonymizerConfig type class for the analyzer result (replace, redact etc.)
-        # trigger the anonymizer method on the section of the text
+        # get AnonymizerConfig for the analyzer result
+        # trigger the anonymize method on the section of the text
         # perform the anonymization
-
         # concat the anonymized string into the output string
         for analyzer_result in analyzer_results:
             text_to_anonymize = text_builder.get_text_in_position(
                 analyzer_result.start, analyzer_result.end)
 
-            anonymizer_config = self.__get_anonymizer_by_entity_type(
+            anonymizer_config = self.__get_anonymizer_config_by_entity_type(
                 anonymizers_config,
                 analyzer_result.entity_type)
 
@@ -80,27 +73,25 @@ class AnonymizerEngine:
     def __extract_anonymizer_and_anonymize(self, entity_type: str,
                                            anonymizer_config: AnonymizerConfig,
                                            text_to_anonymize: str):
+        self.logger.debug(f"getting anonymizer for {entity_type}")
         anonymizer = anonymizer_config.anonymizer_class()
-        # if the anonymizer is not valid, a InvalidParamException
+        self.logger.debug(
+            f"validating anonymizer {anonymizer.anonymizer_name()} for {entity_type}")
         anonymizer.validate(params=anonymizer_config.params)
         params = anonymizer_config.params
         params["entity_type"] = entity_type
+        self.logger.debug(
+            f"anonymizing {entity_type} with {anonymizer.anonymizer_name()}")
         anonymized_text = anonymizer.anonymize(
             params=params, text=text_to_anonymize
         )
         return anonymized_text
 
     @staticmethod
-    def __get_anonymizer_by_entity_type(anonymizers: dict, entity_type: str):
-        """
-        Get the right anonymizer from the list.
-
-        When anonymizer does not exist, we fall back to default.
-        :param anonymizers: a dictionary - key - entity_type we are replacing
-        value - AnonymizerConfig
-        :param entity_type: the type of the text we want to do anonymizer over
-        :return: AnonymizerConfig class
-        """
+    def __get_anonymizer_config_by_entity_type(anonymizers: dict, entity_type: str):
+        # We try to get the anonymizer from the list by entity_type.
+        # If it does not exist, we try to get the default from the list.
+        # If there is no default we fallback into the current DEFAULT which is replace.
         anonymizer = anonymizers.get(entity_type)
         if not anonymizer:
             anonymizer = anonymizers.get("DEFAULT")
