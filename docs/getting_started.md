@@ -63,6 +63,7 @@ Using Presidio's modules as Python packages to get started
 ---
 
 ## Read more
+
 - [Installing Presidio](installation.md)
 - [PII detection in text](analyzer/index.md)
 - [PII anonymization in text](anonymizer/index.md)
