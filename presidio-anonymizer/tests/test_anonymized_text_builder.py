@@ -32,6 +32,7 @@ def test_given_empty_text_then_we_fail():
         ("hello world", 0, 5, "hello"),
         ("hello world", 5, 5, ""),
         ("hello world", 6, 11, "world"),
+        ("hello world", 0, 0, ""),
     ],
     # fmt: on
 )
@@ -40,3 +41,22 @@ def test_given_text_then_we_get_correct_indices_text_from_it(original_text, star
     text_builder = AnonymizedTextBuilder(original_text)
     text_in_position = text_builder.get_text_in_position(start, end)
     assert text_in_position == expected
+
+
+@pytest.mark.parametrize(
+    # fmt: off
+    "original_text,start,end",
+    [
+        ("hello world", 0, 15),
+        ("hello world", 12, 5),
+        ("hello world", 15, 16),
+    ],
+    # fmt: on
+)
+def test_given_text_and_bad_indices_then_we_get_fail(original_text, start, end):
+    text_builder = AnonymizedTextBuilder(original_text)
+    err_msg = f"Invalid analyzer result, start: {start} and end: {end}, while text length is only 11."
+    with pytest.raises(InvalidParamException,
+                       match=err_msg):
+        text_builder.get_text_in_position(start, end)
+
