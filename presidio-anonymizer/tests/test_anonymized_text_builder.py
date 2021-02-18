@@ -55,8 +55,8 @@ def test_given_text_then_we_get_correct_indices_text_from_it(original_text, star
 )
 def test_given_text_and_bad_indices_then_we_get_fail(original_text, start, end):
     text_builder = AnonymizedTextBuilder(original_text)
-    err_msg = f"Invalid analyzer result, start: {start} and end: {end}, while text length is only 11."
+    err_msg = f"Invalid analyzer result, start: {start} and end: {end}, " \
+              f"while text length is only 11."
     with pytest.raises(InvalidParamException,
                        match=err_msg):
         text_builder.get_text_in_position(start, end)
-

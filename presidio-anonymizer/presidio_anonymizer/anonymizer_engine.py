@@ -2,7 +2,7 @@
 import logging
 
 from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.entities import AnonymizerRequest, AnalyzerResult, \
+from presidio_anonymizer.entities import AnalyzerResult, \
     AnalyzerResults
 from presidio_anonymizer.entities import AnonymizedTextBuilder
 from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
