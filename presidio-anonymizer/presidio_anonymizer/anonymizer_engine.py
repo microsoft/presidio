@@ -1,6 +1,6 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 import logging
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import AnalyzerResult, \
