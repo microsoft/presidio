@@ -1,6 +1,7 @@
 # Getting started with Presidio
 
-## Simple flow 
+## Simple flow
+
 Using Presidio's modules as Python packages to get started
 
 === "Anonymize PII in text"
