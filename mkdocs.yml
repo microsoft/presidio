@@ -26,7 +26,10 @@ nav:
     - Supported entities: supported_entities.md
     - Development and design:
       - Setting up a development environment: development.md
-      - API reference: api.md
+      - API reference:
+        - Presidio Analyzer: api/analyzer.md
+        - Presidio Anonymizer: api/anonymizer.md
+        - Presidio Image Redactor: api/image-redactor.md
       - Build and release process: build_release.md
       - Architecture and design: design.md
 theme:
@@ -40,10 +43,12 @@ theme:
     code: Roboto Mono
   hide:
     - toc
-
+  features:
+    - navigation.expand
+    - navigation.instant
 plugins:
 - search
-
+- mkdocstrings
 
 markdown_extensions:
   - meta

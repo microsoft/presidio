@@ -41,7 +41,8 @@ See [this documentation](adding_recognizers.md) on adding a new recognizer via c
 The [`PatternRecognizer`](../../presidio-analyzer/presidio_analyzer/pattern_recognizer.py) class should be extended.
 See some examples here:
 
-> Examples of pattern based recognizers are the [`CreditCardRecognizer`](../../presidio-analyzer/presidio_analyzer/predefined_recognizers/credit_card_recognizer.py) and [`EmailRecognizer`](../../presidio-analyzer/presidio_analyzer/predefined_recognizers/email_recognizer.py).
+!!! example "Examples" 
+    Examples of pattern based recognizers are the [`CreditCardRecognizer`](../../presidio-analyzer/presidio_analyzer/predefined_recognizers/credit_card_recognizer.py) and [`EmailRecognizer`](../../presidio-analyzer/presidio_analyzer/predefined_recognizers/email_recognizer.py).
 
 ### Machine Learning (ML) Based or Rule-Based
 
@@ -74,8 +75,7 @@ When creating a DL based method for PII detection, there are two main alternativ
 1. Create an external endpoint (either local or remote) which is isolated from the `presidio-analyzer` process. On the `presidio-analyzer` side, one would extend the [`RemoteRecognizer`](../../presidio-analyzer/presidio_analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 2. Integrate the model as an additional [`EntityRecognizer`](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) within the `presidio-analyzer` flow.
 
-!!! note "Note"
-    Considerations for selecting one option over another are: 
+!!! attention "Considerations for selecting one option over another"
     
     - Ease of integration.
     - Runtime considerations (For example if the new model requires a GPU).

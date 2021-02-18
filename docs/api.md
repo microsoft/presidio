@@ -1,5 +1,8 @@
 # Presidio API
 
-- Presidio analyzer
-- Presidio anonymizer
-- Presidio image redactor
+Api reference for Presidio's main python modules
+
+- [Presidio analyzer API reference](api/analyzer.md)
+- [Presidio anonymizer API reference](api/anonymizer.md)
+- [Presidio image redactor API reference](api/image-redactor.md)
+
