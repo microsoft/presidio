@@ -19,7 +19,10 @@ tags:
   - name: Analyzer
     description: Detecting PII entities in text
   - name: Anonymizer
-    description:  Anonymizing detected PII text entities with desired values.
+    description: Anonymizing detected PII text entities with desired values.
+  - name: Image Redactor
+    description: Detecting and redacting PII text entities in images.
+
 paths:
 
   /analyze:
@@ -76,9 +79,6 @@ paths:
                         "start": 30
                       }
                     ]
-
-
-
 
   /recognizers:
     get:
@@ -197,6 +197,29 @@ paths:
               example:
                 ["fpe", "hash", "mask", "redact", "replace"]
 
+  /redact:
+    post:
+      servers:
+        - url: http://localhost:5003
+      tags:
+        - Image Redactor
+      summary: "Redact Image from its PIIs"
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: "The redacted image"
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+
+
   /health:
     get:
       servers:
@@ -204,6 +227,7 @@ paths:
       tags:
         - Anonymizer
         - Analyzer
+        - Image Redactor
       summary: "Healthcheck"
       responses:
         200:
@@ -253,11 +277,11 @@ components:
                 {
                   "text": "hello world, my name is Jane Doe. My number is: 034453334",
                   "anonymizers": {
-                    "NAME": { "type": "redact" },
+                    "PERSON": { "type": "redact" },
                     "PHONE_NUMBER": { "type": "replace", "new_value": "ANONYMIZED" }
                   },
                   "analyzer_results": [
-                    { "start": 24, "end": 32, "score": 0.8, "entity_type": "NAME" },
+                    { "start": 24, "end": 32, "score": 0.8, "entity_type": "PERSON" },
                     { "start": 48, "end": 57,  "score": 0.95, "entity_type": "PHONE_NUMBER" }
                   ]
                 }
@@ -269,7 +293,7 @@ components:
                     "DEFAULT": { "type": "replace", "new_value": "ANONYMIZED" },
                   },
                   "analyzer_results": [
-                    { "start": 24, "end": 32, "score": 0.8, "entity_type": "NAME" },
+                    { "start": 24, "end": 32, "score": 0.8, "entity_type": "PERSON" },
                   ]
                 }
 
@@ -409,9 +433,6 @@ components:
       description: "The PII detection type"
       type: string
       enum:
-        - NAME
-        - FIRST_NAME
-        - LAST_NAME
         - CREDIT_CARD
         - CRYPTO
         - DATE_TIME
@@ -431,7 +452,7 @@ components:
         - UK_NHS
         - NIF
         - FIN/NRIC
-      example: NAME
+      example: PERSON
 
     Replace:
       title: Replace
