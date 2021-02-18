@@ -33,7 +33,7 @@ To get started, refer to the documentation for [setting up a development environ
 
 -   [Testing](#how-to-test)
 -   [Adding new recognizers for new PII types](#adding-new-recognizers-for-new-pii-types)
--   [Bug fixing and general improvement](#bug-fixing-and-general-improvement)
+-   [Fixing Bugs and improving the code](#fixing-bugs-and-improving-the-code)
 
 ### How to test?
 
@@ -43,8 +43,8 @@ For Python, Presidio leverages `pytest` and `flake8`. See [this tutorial](docs/d
 
 Adding a new recognizer is a great way to improve Presidio. A new capability to detect a new type of PII entity improves Presidio's coverage and makes private data less accessible.
 
-Best practices for recognizers development [are described here](docs/analyzer/developing_recognizers.md). Please follow these guidelines when proposing new recognizers.
+Best practices for developing recognizers [are described here](docs/analyzer/developing_recognizers.md). Please follow these guidelines when proposing new recognizers.
 
-### Bug fixing and general improvement
+### Fixing Bugs and improving the code
 
 Please review the open [issues on Github](https://github.com/microsoft/presidio/issues) for known bugs and feature requests. We sometimes add 'good first issue' labels on those we believe are simpler, and 'advanced' labels on those which require more work or multiple changes across the solution.
