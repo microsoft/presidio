@@ -1,19 +1,19 @@
 # **Presidio**: Data Protection and Anonymization SDK
 
-Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ 
-helps to ensure sensitive data is properly managed and governed. 
-It provides fast **_identification_** and **_anonymization_** 
-modules for private entities in text and images such as 
-credit card numbers, names, locations, social security numbers, 
+Presidio _(Origin from Latin praesidium ‘protection, garrison’)_
+helps to ensure sensitive data is properly managed and governed.
+It provides fast **_identification_** and **_anonymization_**
+modules for private entities in text and images such as
+credit card numbers, names, locations, social security numbers,
 bitcoin wallets, US phone numbers, financial data and more.
 
-### Goals
+## Goals
 
 - Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
 - Embrace extensibility and customizability to a specific business need.
 - Facilitate both fully automated and semi-automated PII de-identification flows on multiple platforms.
 
-### Main features
+## Main features
 
 1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
