@@ -93,7 +93,7 @@ class AnonymizerEngine:
     @staticmethod
     def __get_anonymizer_config_by_entity_type(
             entity_type: str,
-            anonymizers_config: dict[str, AnonymizerConfig]) -> AnonymizerConfig:
+            anonymizers_config: Dict[str, AnonymizerConfig]) -> AnonymizerConfig:
         # We try to get the anonymizer from the list by entity_type.
         # If it does not exist, we try to get the default from the list.
         # If there is no default we fallback into the current DEFAULT which is replace.
