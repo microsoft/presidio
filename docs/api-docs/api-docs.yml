@@ -20,8 +20,6 @@ tags:
     description: Detecting PII entities in text
   - name: Anonymizer
     description: Anonymizing detected PII text entities with desired values.
-  - name: Image Redactor
-    description: Detecting and redacting PII text entities in images.
 
 paths:
 
@@ -197,28 +195,6 @@ paths:
               example:
                 ["fpe", "hash", "mask", "redact", "replace"]
 
-  /redact:
-    post:
-      servers:
-        - url: http://localhost:5003
-      tags:
-        - Image Redactor
-      summary: "Redact Image from its PIIs"
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
-      responses:
-        '200':
-          description: "The redacted image"
-          content:
-            image/png:
-              schema:
-                type: string
-                format: binary
-
 
   /health:
     get:
@@ -227,7 +203,6 @@ paths:
       tags:
         - Anonymizer
         - Analyzer
-        - Image Redactor
       summary: "Healthcheck"
       responses:
         200:
