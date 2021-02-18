@@ -1,5 +1,6 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 import logging
+from typing import List
 
 from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import AnalyzerResult, \
@@ -21,7 +22,7 @@ class AnonymizerEngine:
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
 
-    def anonymize(self, text: str, analyzer_results: list[AnalyzerResult],
+    def anonymize(self, text: str, analyzer_results: List[AnalyzerResult],
                   anonymizers_config: dict) -> str:
         """Anonymize method to anonymize the given text.
 
