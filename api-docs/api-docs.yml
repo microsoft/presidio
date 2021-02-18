@@ -1,0 +1,496 @@
+openapi: 3.0.0
+info:
+  description: Context aware, pluggable and customizable PII anonymization service for text and images.
+  version: "2.0"
+  title: Presidio
+  contact:
+    name: Presidio support
+    email: presidio@microsoft.com
+    url: https://github.com/microsoft/presidio
+  x-logo:
+    url: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+  license:
+    name: MIT
+    url: 'https://github.com/microsoft/presidio/blob/master/LICENSE'
+externalDocs:
+  description: Presidio documentation.
+  url: 'https://github.com/microsoft/presidio/' #TODO: Link to GH pages mkdocs
+tags:
+  - name: Analyzer
+    description: Detecting PII entities in text
+  - name: Anonymizer
+    description:  Anonymizing detected PII text entities with desired values.
+paths:
+
+  /analyze:
+    post:
+      servers:
+        - url: https://presidio-analyzer-prod.azurewebsites.net
+      tags:
+        - Analyzer
+      summary: "Analyze Text"
+      description: "Analyzes a text"
+      requestBody:
+        $ref: "#/components/requestBodies/AnalyzeRequest"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: "A list analysis results"
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnalyzerResultWithAnaysisExplanation"
+
+              example:
+
+  /recognizers:
+    get:
+      servers:
+        - url: https://presidio-analyzer-prod.azurewebsites.net
+      tags:
+        - Analyzer
+      summary: "Get Recognizers"
+      description: "Returns a list of supported recognizers"
+      parameters:
+        - in: query
+          name: langauge
+          schema:
+            type: string
+            example: en
+          description: "Two characters for the desired language in ISO_639-1 format"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: "A list of supported recognizers"
+                type: array
+                items:
+                  type: string
+                  description: "Recognizer name"
+              example:
+                [
+                    "CryptoRecognizer", "CreditCardRecognizer", "IbanRecognizer", "UsPhoneRecognizer",
+                    "EmailRecognizer","UsPassportRecognizer", "NhsRecognizer", "IpRecognizer",
+                    "SpacyRecognizer","SgFinRecognizer", "UsSsnRecognizer","UsBankRecognizer",
+                    "DomainRecognizer", "UsLicenseRecognizer", "UsItinRecognizer"
+                ]
+
+  /supportedentities:
+    get:
+      servers:
+        - url: https://presidio-analyzer-prod.azurewebsites.net
+      tags:
+        - Analyzer
+      summary: "Get Supported Entities"
+      description: "Returns a list of supported entities"
+      parameters:
+        - in: query
+          name: langauge
+          schema:
+            type: string
+            example: en
+          description: "Two characters for the desired language in ISO_639-1 format"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: "A list of supported entities"
+                type: array
+                items:
+                  $ref: "#/components/schemas/EntityTypes"
+              example:
+                [ "PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO",
+                  "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE",
+                  "NRP", "US_ITIN", "DOMAIN_NAME" ]
+
+
+
+  /anonymize:
+    post:
+      servers:
+        - url: https://presidio-anonymizer-prod.azurewebsites.net
+      tags:
+        - Anonymizer
+      summary: "Anonymize Text"
+      requestBody:
+        $ref: "#/components/requestBodies/AnonymizeRequest"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnonymizeResponse"
+              examples:
+                Replace and Redact Anonymizers:
+                  value:
+                    { "result": "hello world, my name is . My number is: ANONYMIZED" }
+                Replace as default Anonymizer:
+                  value:
+                    { "result": "hello world, my name is ANONYMIZED." }
+        400:
+          $ref: "#/components/responses/400BadRequest"
+
+        422:
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /anonymizers:
+    get:
+      servers:
+        - url: https://presidio-anonymizer-prod.azurewebsites.net
+      tags:
+        - Anonymizer
+      summary: "Get supported anonymizers"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: "A list of all built-in supported anonymizers"
+                type: array
+                items:
+                  description: "The Anonymizer name"
+                  type: string
+                  example: "mask"
+              example:
+                ["fpe", "hash", "mask", "redact", "replace"]
+
+  /health:
+    get:
+      servers:
+        - url: https://presidio-anonymizer-prod.azurewebsites.net
+      tags:
+        - Anonymizer
+        - Analyzer
+      summary: "Healthcheck"
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Presidio Anonymizer service is up
+
+components:
+  requestBodies:
+    AnalyzeRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AnalyzeRequest"
+          example:
+            {
+              "text": "John Smith drivers license is AC432223",
+              "language": "en"
+            }
+
+    AnonymizeRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AnonymizeRequest"
+          examples:
+            Replace and Redact Anonymizers:
+              value:
+                {
+                  "text": "hello world, my name is Jane Doe. My number is: 034453334",
+                  "anonymizers": {
+                    "NAME": { "type": "redact" },
+                    "PHONE_NUMBER": { "type": "replace", "new_value": "ANONYMIZED" }
+                  },
+                  "analyzer_results": [
+                    { "start": 24, "end": 32, "score": 0.8, "entity_type": "NAME" },
+                    { "start": 48, "end": 57,  "score": 0.95, "entity_type": "PHONE_NUMBER" }
+                  ]
+                }
+            Replace as default Anonymizer:
+              value:
+                {
+                  "text": "hello world, my name is Jane Doe.",
+                  "anonymizers": {
+                    "DEFAULT": { "type": "replace", "new_value": "ANONYMIZED" },
+                  },
+                  "analyzer_results": [
+                    { "start": 24, "end": 32, "score": 0.8, "entity_type": "NAME" },
+                  ]
+                }
+
+  schemas:
+    AnalyzeRequest:
+      type: object
+      required:
+        - text
+        - langauge
+      properties:
+        text:
+          type: string
+          description: "The text to analyze"
+          example: "hello world, my name is Jane Doe. My number is: 034453334"
+        langauge:
+          type: string
+          description: "Two characters for the desired language in ISO_639-1 format"
+          example: "en"
+        correlation_id:
+          type: string
+          description: "A correlation id to append to headers and traces"
+        score_threshold:
+          type: number
+          format: double
+          description: "The minimal detection score threshold"
+        entities:
+          type: array
+          items:
+            $ref: "#/components/schemas/EntityTypes"
+          description: "A list of entities to analyze"
+        trace:
+          type: boolean
+          description: "Whether to trace the request"
+        remove_interpretability_response:
+          type: boolean
+          description: "Whether to include analysis explanation in the response"
+
+    AnonymizeRequest:
+      type: object
+      required:
+        - text
+        - analyzer_results
+      properties:
+        text:
+          type: string
+          description: "The text to anonymize"
+          example: "hello world, my name is Jane Doe. My number is: 034453334"
+        anonymizers:
+          description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition"
+          type: object
+          additionalProperties:
+              x-additionalPropertiesName: <ENTITY_TYPE> or DEFAULT
+              type: object
+              anyOf:
+                - $ref: "#/components/schemas/Replace"
+                - $ref: "#/components/schemas/Redact"
+                - $ref: "#/components/schemas/Mask"
+                - $ref: "#/components/schemas/Hash"
+          default:
+            {"DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" }}
+
+        analyzer_results:
+          type: array
+          description: "Array of analyzer detections"
+          items:
+            $ref: "#/components/schemas/AnalyzerResult"
+
+    AnalyzerResult:
+      type: object
+      required:
+        - start
+        - end
+        - score
+        - entity_type
+      properties:
+        start:
+          type: integer
+          description: "Where the PII starts"
+          example: 24
+        end:
+          type: integer
+          description: "Where the PII ends"
+          example: 32
+        score:
+          type: number
+          format: double
+          description: "The PII detection score"
+          example: 0.8
+        entity_type:
+          $ref: "#/components/schemas/EntityTypes"
+
+    AnalyzerResultWithAnaysisExplanation:
+      allOf:
+        - $ref: '#/components/schemas/AnalyzerResult'
+        - type: object
+          properties:
+            analysis_explanation:
+              $ref: "#/components/schemas/AnalysisExplanation"
+
+    AnalysisExplanation:
+      type: object
+      properties:
+        recognizer:
+          type: string
+          description: "Name of recognizer that made the decision"
+        pattern_name:
+          type: string
+          description: "name of pattern (if decision was made by a PatternRecognizer)"
+        pattern:
+          type: string
+          description: "Regex pattern that was applied (if PatternRecognizer)"
+        original_score:
+          type: number
+          format: double
+          description: "Recognizer's confidence in result"
+        score:
+          type: number
+          format: double
+          description: "The PII detection score"
+        textual_explanation:
+          type: string
+          description: "Free text for describing a decision of a logic or model"
+        score_context_improvement:
+          type: number
+          format: double
+          # TODO: description: "TODO"
+        supportive_context_word:
+          type: string
+          description: "The context word which helped increase the score"
+        validation_result:
+          type: number
+          format: double
+          description: "Result of a validation (e.g. checksum)"
+
+
+    EntityTypes:
+      description: "The PII detection type"
+      type: string
+      enum:
+        - NAME
+        - FIRST_NAME
+        - LAST_NAME
+        - CREDIT_CARD
+        - CRYPTO
+        - DATE_TIME
+        - DOMAIN_NAME
+        - EMAIL_ADDRESS
+        - IBAN_CODE
+        - IP_ADDRESS
+        - NRP
+        - LOCATION
+        - PERSON
+        - PHONE_NUMBER
+        - US_BANK_NUMBER
+        - US_DRIVER_LICENSE
+        - US_ITIN
+        - US_PASSPORT
+        - US_SSN
+        - UK_NHS
+        - NIF
+        - FIN/NRIC
+      example: NAME
+
+    Replace:
+      title: Replace
+      description: "Replace with a given value"
+      type: object
+      required:
+        - type
+        - new_value
+      properties:
+        type:
+          type: string
+          description: "replace"
+          example: replace
+        new_value:
+          type: string
+          description: "The string to replace with"
+          example: VALUE
+
+    Redact:
+      title: Redact
+      description: "Replace with an empty string"
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description: "redact"
+          example: redact
+
+    Mask:
+      title: Mask
+      description: "Replace with a given character"
+      type: object
+      required:
+        - type
+        - masking_char
+        - chars_to_mask
+      properties:
+        type:
+          type: string
+          description: "mask"
+          example: mask
+        masking_char:
+          type: string
+          description: "The replacement character"
+          example: "*"
+        chars_to_mask:
+          type: integer
+          description: "The amount of characters that should be replaced"
+          example: 4
+        from_end:
+          type: boolean
+          description: "Whether to mask the PII from it's end"
+          example: true
+          default: false
+
+    Hash:
+      title: Hash
+      description: "Replace with hashed value"
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description: "hash"
+          example: hash
+        hash_type:
+          type: string
+          description: "The hashing algorithm"
+          enum:
+            - md5
+            - sha256
+            - sha512
+          example: md5
+          default: md5
+
+    AnonymizeResponse:
+      type: object
+      properties:
+        result:
+          type: string
+
+
+  responses:
+    400BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid request json"
+
+    422UnprocessableEntity:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid input, text can not be empty"
