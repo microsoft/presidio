@@ -23,7 +23,7 @@ class AnonymizerEngine:
         self.logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(self, text: str, analyzer_results: List[AnalyzerResult],
-                  anonymizers_config: dict) -> str:
+                  anonymizers_config: dict[str, AnonymizerConfig]) -> str:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
