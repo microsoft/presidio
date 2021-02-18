@@ -99,7 +99,7 @@ This e2e test framework is located under 'e2e-tests' directory.
 In it, you can also find test scenarios testing the integration between
 Presidio services through REST API.
 These tests should be annotated with 'integration' pytest marker `@pytest.mark.integration`,
-while tests calling a single servcie API layer should be annotated with 'api'
+while tests calling a single service API layer should be annotated with 'api'
 pytest marker `@pytest.mark.api`.
 
 Running the e2e-tests locally can be done in two ways:
