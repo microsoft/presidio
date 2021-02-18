@@ -1,0 +1,54 @@
+site_name: Microsoft Presidio
+site_url: https://microsoft.github.io/presidio
+site_description: PII anonymization for text and images.
+site_author: Microsoft
+
+repo_url: https://github.com/microsoft/presidio/
+edit_uri: ""
+nav:
+    - Home: index.md
+    - Installation: installation.md
+    - Getting Started: getting_started.md
+    - Text Analysis:
+      - Home: analyzer/index.md
+      - Developing PII recognizers:
+        - Tutorial : analyzer/adding_recognizers.md
+        - Best practices : analyzer/developing_recognizers.md
+      - Multi-language support: analyzer/languages.md
+      - Tracing the decision process: analyzer/decision_process.md
+    - Text Anonymization: anonymizer/index.md
+    - Image Redaction: image-redactor/index.md
+
+    - Samples:
+      - Python: samples/python/index.md
+      - Docker: samples/docker/index.md
+      - Sample Deployments: samples/deployments/index.md
+    - Supported entities: supported_entities.md
+    - Development and design:
+      - Setting up a development environment: development.md
+      - API reference: api.md
+      - Build and release process: build_release.md
+      - Architecture and design: design.md
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+  hide:
+    - toc
+
+plugins:
+- search
+
+
+markdown_extensions:
+  - meta
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.pathconverter
+  - pymdownx.tabbed

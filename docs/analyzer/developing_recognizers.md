@@ -10,7 +10,11 @@ Recognizers define the logic for detection, as well as the confidence a predicti
 Each recognizer, regardless of its complexity, could have false positives and false negatives. When adding new recognizers, we try to balance the effect of each recognizer on the entire system. A recognizer with many false positives would affect the system's usability, while a recognizer with many false negatives might require more work before it can be integrated. For reproducibility purposes, it is be best to note how the recognizer's accuracy was tested, and on which datasets.
 For tools and documentation on evaluating and analyzing recognizers, refer to the [presidio-research Github repository](https://github.com/microsoft/presidio-research).
 
-> When contributing recognizers to the Presidio OSS, new predefined recognizers should be added to the [supported entities list](../supported_entities.md), and follow the [contribution guidelines](../../CONTRIBUTING.MD).
+!!! note "Note"
+    When contributing recognizers to the Presidio OSS, 
+    new predefined recognizers should be added to the 
+    [supported entities list](../supported_entities.md), 
+    and follow the [contribution guidelines](../../CONTRIBUTING.MD).
 
 ### Performance
 
@@ -33,7 +37,7 @@ See [this documentation](index.md#how-to-add-a-new-recognizer) on adding a new r
 ### Pattern Based
 
 Pattern based recognizers use regular expressions to identify entities in text.
-See [this documentation](../custom_fields.md#via-code) on adding a new recognizer via code.
+See [this documentation](adding_recognizers.md) on adding a new recognizer via code.
 The [`PatternRecognizer`](../../presidio-analyzer/presidio_analyzer/pattern_recognizer.py) class should be extended.
 See some examples here:
 
@@ -70,4 +74,9 @@ When creating a DL based method for PII detection, there are two main alternativ
 1. Create an external endpoint (either local or remote) which is isolated from the `presidio-analyzer` process. On the `presidio-analyzer` side, one would extend the [`RemoteRecognizer`](../../presidio-analyzer/presidio_analyzer/remote_recognizer.py) class and implement the network interface between `presidio-analyzer` and the endpoint of the model's container.
 2. Integrate the model as an additional [`EntityRecognizer`](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) within the `presidio-analyzer` flow.
 
-> Considerations for selecting one option over another are: Ease of integration, runtime considerations (For example if the new model requires a GPU) and the 3rd party dependencies of the new model vs. the existing `presidio-analyzer` package.
+!!! note "Note"
+    Considerations for selecting one option over another are: 
+    
+    - Ease of integration.
+    - Runtime considerations (For example if the new model requires a GPU).
+    - 3rd party dependencies of the new model vs. the existing `presidio-analyzer` package.
