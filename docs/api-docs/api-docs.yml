@@ -90,7 +90,7 @@ paths:
       description: "Returns a list of supported recognizers"
       parameters:
         - in: query
-          name: langauge
+          name: language
           schema:
             type: string
             example: en
@@ -124,7 +124,7 @@ paths:
       description: "Returns a list of supported entities"
       parameters:
         - in: query
-          name: langauge
+          name: language
           schema:
             type: string
             example: en
@@ -140,7 +140,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/EntityTypes"
               example:
-                [ "PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO",
+                [ "PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "LOCATION", "CREDIT_CARD", "CRYPTO",
                   "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE",
                   "NRP", "US_ITIN", "DOMAIN_NAME" ]
 
@@ -302,13 +302,13 @@ components:
       type: object
       required:
         - text
-        - langauge
+        - language
       properties:
         text:
           type: string
           description: "The text to analyze"
           example: "hello world, my name is Jane Doe. My number is: 034453334"
-        langauge:
+        language:
           type: string
           description: "Two characters for the desired language in ISO_639-1 format"
           example: "en"
