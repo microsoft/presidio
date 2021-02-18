@@ -13,7 +13,7 @@ class AnonymizerConfig:
         """
         Create AnonymizerConfig from json.
 
-        :param params: json with struct of {
+        :param params: json e.g.: {
             "type": "mask",
             "masking_char": "*",
             "chars_to_mask": 4,
@@ -26,12 +26,14 @@ class AnonymizerConfig:
             params.pop("type")
         return cls(anonymizer_name, params)
 
-    def __init__(self, anonymizer_name: str, params: dict = {}):
+    def __init__(self, anonymizer_name: str, params: dict = None):
         self.logger = logging.getLogger("presidio-anonymizer")
         self.anonymizer_class = self.__get_anonymizer_class(anonymizer_name)
         self.params = params
+        if not params:
+            self.params = {}
 
-    def __get_anonymizer_class(self, anonymizer_name: str):
+    def __get_anonymizer_class(self, anonymizer_name: str) -> Anonymizer:
         """
         Extract the anonymizer class from the anonymizers list.
 

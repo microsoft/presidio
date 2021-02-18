@@ -4,7 +4,7 @@ Engine request entity.
 It get the data and validate it before the engine receives it.
 """
 import logging
-from typing import List
+from typing import List, Dict
 
 from presidio_anonymizer.entities import AnalyzerResult
 from presidio_anonymizer.entities import AnalyzerResults
@@ -39,7 +39,7 @@ class AnonymizerRequest:
         return analyzer_results
 
     @classmethod
-    def handle_anonymizers_json(cls, data) -> Dict[str, AnonymizerConfig]:
+    def get_anonymizer_configs_from_json(cls, data) -> Dict[str, AnonymizerConfig]:
         """
         Go over the anonymizers and get the relevant anonymizer class for it.
 

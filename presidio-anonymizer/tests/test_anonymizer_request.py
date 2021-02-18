@@ -59,13 +59,13 @@ def test_given_invalid_json_for_anonymizers_then_we_fail(
         request_json, result_text
 ):
     with pytest.raises(InvalidParamException) as e:
-        AnonymizerRequest.handle_anonymizers_json(request_json)
+        AnonymizerRequest.get_anonymizer_configs_from_json(request_json)
     assert result_text == e.value.err_msg
 
 
 def test_given_valid_json_then_anonymizers_config_list_created_successfully():
     content = get_content()
-    anonymizers_config = AnonymizerRequest.handle_anonymizers_json(content)
+    anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(content)
     assert len(anonymizers_config) == 2
     phone_number_anonymizer = anonymizers_config.get("PHONE_NUMBER")
     assert phone_number_anonymizer.params == {

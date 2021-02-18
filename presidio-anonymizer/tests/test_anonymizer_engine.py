@@ -35,6 +35,14 @@ def test_given_empty_anonymziers_list_then_we_fall_to_default():
     assert result == "please <SSN>."
 
 
+def test_given_none_as_anonymziers_list_then_we_fall_to_default():
+    engine = AnonymizerEngine()
+    text = "please REPLACE ME."
+    analyzer_result = AnalyzerResult("SSN", 7, 17, 0.8)
+    result = engine.anonymize(text, [analyzer_result])
+    assert result == "please <SSN>."
+
+
 def test_given_default_anonymizer_then_we_use_it():
     engine = AnonymizerEngine()
     text = "please REPLACE ME."
@@ -79,20 +87,15 @@ def test_given_several_anonymizers_then_we_use_the_correct_one():
         {"score": 0.5, "entity_type": "PHONE_NUMBER", "start": 8, "end": 18}
     )
     anonymizer_config = AnonymizerConfig("replace", {})
-    anonymizer_config.anonymizer_class = Anonymizer
+    anonymizer_config.anonymizer_class = MockAnonymizer
     text = AnonymizerEngine().anonymize("Number: 0554555556", [analyzer_result],
                                         {"PHONE_NUMBER": anonymizer_config})
     assert text == "Number: I am your new text!"
 
 
-class Anonymizer:
+class MockAnonymizer:
     def anonymize(self, text: str, params: dict = None):
         return "I am your new text!"
 
     def validate(self, params):
         pass
-
-
-def get_anonymizer_config(arg):
-    assert arg == "anonymizer"
-    return Anonymizer

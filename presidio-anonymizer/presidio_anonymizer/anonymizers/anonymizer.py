@@ -1,6 +1,7 @@
 """Anonymizers abstraction - each anonymizer should implement this class."""
 import logging
 from abc import abstractmethod, ABC
+from typing import List
 
 
 class Anonymizer(ABC):
@@ -26,7 +27,7 @@ class Anonymizer(ABC):
         pass
 
     @staticmethod
-    def get_anonymizers():
+    def get_anonymizers() -> List[str]:
         """Return all anonymizers classes currently available."""
         if not Anonymizer._anonymizers:
             Anonymizer._anonymizers = {

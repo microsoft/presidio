@@ -23,7 +23,7 @@ class AnonymizerEngine:
         self.logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(self, text: str, analyzer_results: List[AnalyzerResult],
-                  anonymizers_config: dict[str, AnonymizerConfig]) -> str:
+                  anonymizers_config: dict[str, AnonymizerConfig] = None) -> str:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
@@ -35,6 +35,8 @@ class AnonymizerEngine:
         :return: the anonymized text
         """
         text_builder = AnonymizedTextBuilder(original_text=text)
+        if not anonymizers_config:
+            anonymizers_config = {}
 
         analyzer_results = (
             AnalyzerResults(analyzer_results).to_sorted_unique_results(True)
@@ -50,12 +52,12 @@ class AnonymizerEngine:
                 analyzer_result.start, analyzer_result.end)
 
             anonymizer_config = self.__get_anonymizer_config_by_entity_type(
-                anonymizers_config,
-                analyzer_result.entity_type)
+                analyzer_result.entity_type,
+                anonymizers_config)
 
             self.logger.debug(
                 f"for analyzer result {analyzer_result} received anonymizer "
-                f"{str(anonymizer_config)}"
+                f"{anonymizer_config}"
             )
 
             anonymized_text = self.__extract_anonymizer_and_anonymize(
@@ -66,14 +68,14 @@ class AnonymizerEngine:
 
         return text_builder.output_text
 
-    def anonymizers(self):
+    def anonymizers(self) -> List[str]:
         """Return a list of supported anonymizers."""
         names = [p for p in Anonymizer.get_anonymizers().keys()]
         return names
 
     def __extract_anonymizer_and_anonymize(self, entity_type: str,
                                            anonymizer_config: AnonymizerConfig,
-                                           text_to_anonymize: str):
+                                           text_to_anonymize: str) -> str:
         self.logger.debug(f"getting anonymizer for {entity_type}")
         anonymizer = anonymizer_config.anonymizer_class()
         self.logger.debug(
@@ -89,13 +91,15 @@ class AnonymizerEngine:
         return anonymized_text
 
     @staticmethod
-    def __get_anonymizer_config_by_entity_type(anonymizers: dict, entity_type: str) -> AnonymizerConfig:
+    def __get_anonymizer_config_by_entity_type(
+            entity_type: str,
+            anonymizers_config: dict[str, AnonymizerConfig]) -> AnonymizerConfig:
         # We try to get the anonymizer from the list by entity_type.
         # If it does not exist, we try to get the default from the list.
         # If there is no default we fallback into the current DEFAULT which is replace.
-        anonymizer = anonymizers.get(entity_type)
+        anonymizer = anonymizers_config.get(entity_type)
         if not anonymizer:
-            anonymizer = anonymizers.get("DEFAULT")
+            anonymizer = anonymizers_config.get("DEFAULT")
             if not anonymizer:
                 anonymizer = AnonymizerConfig(DEFAULT, {})
         return anonymizer
