@@ -26,7 +26,7 @@ class Anonymizer(ABC):
         pass
 
     @staticmethod
-    def get_anonymizers():
+    def get_anonymizers() -> 'Anonymizer':
         """Return all anonymizers classes currently available."""
         if not Anonymizer._anonymizers:
             Anonymizer._anonymizers = {
