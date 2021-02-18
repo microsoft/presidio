@@ -89,7 +89,7 @@ class AnonymizerEngine:
         return anonymized_text
 
     @staticmethod
-    def __get_anonymizer_config_by_entity_type(anonymizers: dict, entity_type: str):
+    def __get_anonymizer_config_by_entity_type(anonymizers: dict, entity_type: str) -> AnonymizerConfig:
         # We try to get the anonymizer from the list by entity_type.
         # If it does not exist, we try to get the default from the list.
         # If there is no default we fallback into the current DEFAULT which is replace.
