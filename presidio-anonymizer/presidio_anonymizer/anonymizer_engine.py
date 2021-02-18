@@ -2,7 +2,8 @@
 import logging
 
 from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.entities import AnonymizerRequest, InvalidParamException
+from presidio_anonymizer.entities import AnonymizerRequest
+from presidio_anonymizer.entities import AnonymizedTextBuilder
 
 
 class AnonymizerEngine:
@@ -10,7 +11,7 @@ class AnonymizerEngine:
     AnonymizerEngine class.
 
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
-    and replaces the PII entities with the desired transformations.
+    and replaces the PII entities with the desired anonymizers.
     """
 
     logger = logging.getLogger("presidio-anonymizer")
@@ -19,11 +20,11 @@ class AnonymizerEngine:
     }
 
     def __init__(
-        self,
+            self,
     ):
-        """Handle text replacement for PIIs with requested transformations.
+        """Handle text replacement for PIIs with requested anonymizers.
 
-        :param data: a map which contains the transformations, analyzer_results and text
+        :param data: a map which contains the anonymizers, analyzer_results and text
         """
 
     def anonymize(self, engine_request: AnonymizerRequest) -> str:
@@ -31,10 +32,8 @@ class AnonymizerEngine:
 
         :return: the anonymized text
         """
-        original_full_text = engine_request.get_text()
-        text_len = len(original_full_text)
-        last_replacement_point = text_len
-        output_text = original_full_text
+        text_builder = AnonymizedTextBuilder(original_text=engine_request.get_text())
+
         analyzer_results = (
             engine_request.get_analysis_results().to_sorted_unique_results(True)
         )
@@ -43,64 +42,37 @@ class AnonymizerEngine:
         # get anonymizer type class for the analyzer result (replace, redact etc.)
         # trigger the anonymizer method on the section of the text
         # perform the anonymization
+
         # concat the anonymized string into the output string
         for analyzer_result in analyzer_results:
-            self.__validate_position_over_text(analyzer_result, text_len)
+            text_to_anonymize = text_builder.get_text_in_position(
+                analyzer_result.start, analyzer_result.end)
 
-            transformation = engine_request.get_transformation(
+            anonymizer_dto = engine_request.get_anonymizer_dto(
                 analyzer_result.entity_type
             )
             self.logger.debug(
-                f"for analyzer result {analyzer_result} received transformation "
-                f"{str(transformation)}"
+                f"for analyzer result {analyzer_result} received anonymizer "
+                f"{str(anonymizer_dto)}"
             )
 
-            anonymizer = self.__extract_anonymizer(transformation)
+            anonymized_text = self.__extract_anonymizer_and_anonymize(anonymizer_dto,
+                                                                      text_to_anonymize)
+            text_builder.replace_text(anonymized_text, analyzer_result.start,
+                                      analyzer_result.end)
 
-            anonymized_text = self.__anonymize_section(
-                anonymizer, output_text, analyzer_result, transformation
-            )
-
-            output_text = self.__update_output_with_anonymized_section(
-                analyzer_result, last_replacement_point, output_text, anonymized_text
-            )
-
-            last_replacement_point = analyzer_result.start
-        return output_text
+        return text_builder.output_text
 
     def anonymizers(self):
         """Return a list of supported anonymizers."""
         names = [p for p in self.builtin_anonymizers.keys()]
         return names
 
-    def __validate_position_over_text(self, analyzer_result, text_len):
-        if text_len < analyzer_result.start or analyzer_result.end > text_len:
-            raise InvalidParamException(
-                f"Invalid analyzer result: '{analyzer_result}', "
-                f"original text length is only {text_len}."
-            )
-
-    def __extract_anonymizer(self, transformation):
-        anonymizer = transformation.get("anonymizer")()
+    def __extract_anonymizer_and_anonymize(self, anonymizer_dto, text_to_anonymize):
+        anonymizer = anonymizer_dto.get("anonymizer")()
         # if the anonymizer is not valid, a InvalidParamException
-        anonymizer.validate(params=transformation)
-        return anonymizer
-
-    def __anonymize_section(
-        self, anonymizer, output_text, analyzer_result, transformation
-    ):
-        text_to_anonymize = output_text[analyzer_result.start : analyzer_result.end]
+        anonymizer.validate(params=anonymizer_dto)
         anonymized_text = anonymizer.anonymize(
-            params=transformation, text=text_to_anonymize
+            params=anonymizer_dto, text=text_to_anonymize
         )
         return anonymized_text
-
-    def __update_output_with_anonymized_section(
-        self, analyzer_result, last_replacement_point, output_text, anonymized_text
-    ):
-        end_of_text = min(analyzer_result.end, last_replacement_point)
-        return (
-            output_text[: analyzer_result.start]
-            + anonymized_text
-            + output_text[end_of_text:]
-        )
