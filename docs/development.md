@@ -27,13 +27,16 @@ Once installed, to start presidio cluster with all of its services in HTTP mode,
 docker-compose up --build -d
 ```
 
-> Building for the first time might take some time, mainly on downloading the default spacy models.
+!!! note "Note"
+Building for the first time might take some time,
+mainly on downloading the default spacy models.
 
-To validate that the services were built and started successfully, and to see the designated port for each,
+To validate that the services were built and started successfuly,
+and to see the designated port for each,
 use docker-compose ps:
 
 ```bash
-➜ docker-compose ps
+>docker-compose ps
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                    NAMES
 6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'pipenv …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
 9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'pipenv …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
@@ -72,17 +75,20 @@ For tests to be consistent and predictable, we use the following basic conventio
 #### Running tests
 
 Presidio uses the [pytest](http://doc.pytest.org/) framework for testing.
-See the pytest [documentation](https://docs.pytest.org/en/latest/contents.html) for more information.
+See the pytest [documentation](https://docs.pytest.org/en/latest/contents.html)
+for more information.
 
 Running the tests locally can be done in two ways:
 
 1. Using cli, from each service directory, run:
 
-    ```shell
+    ```sh
     pipenv run pytest
     ```
 
-2. Using your IDE. See configuration examples for [JetBrains PyCharm / IntelliJ IDEA](https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html)
+2. Using your IDE.
+   See configuration examples for
+   [JetBrains PyCharm / IntelliJ IDEA](https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html)
    and [Visual Studio Code](https://code.visualstudio.com/docs/python/testing)
 
 #### End-to-end tests
@@ -90,16 +96,19 @@ Running the tests locally can be done in two ways:
 Since Presidio services can function as HTTP servers, Presidio uses an additional
 end-to-end (e2e) testing layer to test their REST APIs.
 This e2e test framework is located under 'e2e-tests' directory.
-In it, you can also find test scenarios testing the integration between Presidio services through REST API.
-These tests should be annotated with 'integration' pytest marker `@pytest.mark.integration`, while
-tests calling a single servcie API layer should be annotated with 'api' pytest marker `@pytest.mark.api`.
+In it, you can also find test scenarios testing the integration between
+Presidio services through REST API.
+These tests should be annotated with 'integration' pytest marker `@pytest.mark.integration`,
+while tests calling a single service API layer should be annotated with 'api'
+pytest marker `@pytest.mark.api`.
+
 Running the e2e-tests locally can be done in two ways:
 
 1. Using cli, from e2e-tests directory, run:
 
     On Mac / Linux / WSL:
 
-    ```shell
+    ```sh
     # Create a virtualenv named presidio-e2e (needs to be done only on the first run)
     python -m venv presidio-e2e
     # Activate the virtualenv
@@ -108,7 +117,7 @@ Running the e2e-tests locally can be done in two ways:
     pip install -r requirements.txt
     # Run pytest
     pytest
-     # Deactivate the virtualenv
+    # Deactivate the virtualenv
     deactivate
     ```
 
@@ -123,14 +132,16 @@ Running the e2e-tests locally can be done in two ways:
     pip install -r requirements.txt
     # Run pytest
     pytest
-     # Deactivate the virtualenv
+    # Deactivate the virtualenv
     deactivate
     ```
 
-2. Using your IDE, see references in the section above.
+2. Using your IDE
 
-> Note: The e2e tests require a Presidio cluster to be up, for example using the
-> containerized cluster with docker-compose.
+    See references in the section above.
+
+!!! note Note
+The e2e tests require a Presidio cluster to be up, for example using the containerized cluster with docker-compose.
 
 ### Build and run end-to-end tests locally
 
@@ -140,15 +151,15 @@ As an easier method to build and automatically run end-to-end tests, is to use t
 
 On Mac / Linux / WSL:
 
-```bash
+```sh
 chmod +x run.bat
 ./run.bat
 ```
 
 On Windows CMD / Powershell:
 
-```bash
-.\run.bat
+```shell
+run.bat
 ```
 
 ### Linting
@@ -166,25 +177,26 @@ In addition to the basic `flake8` functionality, Presidio uses the following ext
 
 To make the linting process easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using `black`:
 
-1. [Install pre-commit package manager locally.](https://pre-commit.com/#install)
+1.  [Install pre-commit package manager locally.](https://pre-commit.com/#install)
 
-2. From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
+2.  From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
 
-3. Commit non PEP8 compliant code will cause commit failure and automatically format your code using `black`, as well as checking code formatting using `flake8`
+3.  Commit non PEP8 compliant code will cause commit failure and automatically
+    format your code using `black`, as well as checking code formatting using `flake8`
 
-    ```sh
-    > git commit -m 'autoformat' presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
+        ```sh
+        >git commit -m 'autoformat' presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
 
-    black....................................................................Failed
-    - hook id: black
-    - files were modified by this hook
+        black....................................................................Failed
+        - hook id: black
+        - files were modified by this hook
 
-    reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
-    All done! ✨ 🍰 ✨
-    1 file reformatted.
+        reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
+        All done!
+        1 file reformatted.
 
-    flake8...................................................................Passed
+        flake8...................................................................Passed
 
-    ```
+        ```
 
-4. Committing again will finish successfully, with a well-formatted code.
+4.  Committing again will finish successfully, with a well-formatted code.
