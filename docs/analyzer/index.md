@@ -107,6 +107,7 @@ Refer to the [multi-language support](languages.md) for more information.
 Presidio analyzer has a built in mechanism for tracing each decision made. This can be useful when attempting to understand a specific PII detection. For more info, see the [decision process](decision_process.md) documentation.
 
 ## Supported entities
+
 For a list of the current supported entities: 
 [Supported entities](../supported_entities.md).
 
