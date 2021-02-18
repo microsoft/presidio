@@ -39,7 +39,7 @@ class AnonymizerRequest:
         return analyzer_results
 
     @classmethod
-    def handle_anonymizers_json(cls, data):
+    def handle_anonymizers_json(cls, data) -> Dict[str, AnonymizerConfig]:
         """
         Go over the anonymizers and get the relevant anonymizer class for it.
 
