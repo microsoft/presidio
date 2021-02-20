@@ -7,7 +7,7 @@ from typing import Dict
 class Anonymizer(ABC):
     """Anonymizer abstract class to be implemented by each anonymizer."""
 
-    _anonymizers = None
+    _anonymizers: Dict = None
 
     logger = logging.getLogger("presidio-anonymizer")
 

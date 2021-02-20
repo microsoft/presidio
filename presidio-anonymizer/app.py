@@ -68,7 +68,7 @@ class Server:
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
-            return json.dumps(self.engine.anonymizers()), 200
+            return json.dumps(self.engine.get_anonymizers()), 200
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):

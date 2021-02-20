@@ -68,7 +68,8 @@ class AnonymizerEngine:
 
         return text_builder.output_text
 
-    def anonymizers(self) -> List[str]:
+    @staticmethod
+    def get_anonymizers() -> List[str]:
         """Return a list of supported anonymizers."""
         names = [p for p in Anonymizer.get_anonymizers().keys()]
         return names
