@@ -1,10 +1,14 @@
 import os
 import requests
-from common.constants import ANONYMIZER_BASE_URL, ANALYZER_BASE_URL
+from common.constants import ANONYMIZER_BASE_URL, ANALYZER_BASE_URL, \
+    IMAGE_REDACTOR_BASE_URL
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
+MULTIPART_HEADERS = {"Content-Type": "multipart/form-data"}
 ANALYZER_BASE_URL = os.environ.get("ANALYZER_BASE_URL", ANALYZER_BASE_URL)
 ANONYMIZER_BASE_URL = os.environ.get("ANONYMIZER_BASE_URL", ANONYMIZER_BASE_URL)
+IMAGE_REDACTOR_BASE_URL = os.environ.get("IMAGE_REDACTOR_BASE_URL",
+                                         IMAGE_REDACTOR_BASE_URL)
 
 
 def anonymize(data):
@@ -31,5 +35,12 @@ def analyze(data):
 def analyzer_supported_entities(data):
     response = requests.get(
         f"{ANALYZER_BASE_URL}/supportedentities?{data}", headers=DEFAULT_HEADERS
+    )
+    return response.status_code, response.content
+
+
+def image_redactor():
+    response = requests.post(
+        f"{ANALYZER_BASE_URL}/redact", data=data, headers=MULTIPART_HEADERS
     )
     return response.status_code, response.content
