@@ -1,4 +1,6 @@
 """Mask some or all given text entity PII with given character."""
+from typing import Dict
+
 from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.anonymizers.validators import validate_parameter
 from presidio_anonymizer.entities import InvalidParamException
@@ -11,7 +13,7 @@ class Mask(Anonymizer):
     FROM_END = "from_end"
     MASKING_CHAR = "masking_char"
 
-    def anonymize(self, text: str = None, params: dict = None) -> str:
+    def anonymize(self, text: str = None, params: Dict = None) -> str:
         """
         Mask a given amount of text with a given character.
 
@@ -31,7 +33,7 @@ class Mask(Anonymizer):
             text, effective_chars_to_mask, from_end, masking_char
         )
 
-    def validate(self, params: dict = None) -> None:
+    def validate(self, params: Dict = None) -> None:
         """
         Validate the parameters for mask.
 

@@ -18,12 +18,11 @@ class AnonymizerRequest:
     logger = logging.getLogger("presidio-anonymizer")
 
     @classmethod
-    def handle_analyzer_results_json(cls, data) -> List[AnalyzerResult]:
+    def handle_analyzer_results_json(cls, data: Dict) -> List[AnalyzerResult]:
         """
-        Go over analyzer results, check they are valid and convert to AnalyzeResult.
+        Go over analyzer results, validate them and convert to List[AnalyzeResult].
 
         :param data: contains the anonymizers and analyzer_results_json
-        :return: None
         """
         analyzer_results = AnalyzerResults()
         analyzer_results_json = data.get("analyzer_results")
@@ -39,13 +38,13 @@ class AnonymizerRequest:
         return analyzer_results
 
     @classmethod
-    def get_anonymizer_configs_from_json(cls, data) -> Dict[str, AnonymizerConfig]:
+    def get_anonymizer_configs_from_json(cls, data: Dict) -> \
+            Dict[str, AnonymizerConfig]:
         """
         Go over the anonymizers and get the relevant anonymizer class for it.
 
         Inserts the class to the anonymizer so the engine will use it.
-        :param data: contains the text, anonymizers and analyzer_results
-        :return: dict: key - entity_type of the anonymizer
+        :param data: contains the text, configuration and analyzer_results
         value - AnonynmizerConfig
         """
         anonymizers_config = {}

@@ -7,17 +7,17 @@ from typing import Dict
 class Anonymizer(ABC):
     """Anonymizer abstract class to be implemented by each anonymizer."""
 
-    _anonymizers = None
+    _anonymizers: Dict = None
 
     logger = logging.getLogger("presidio-anonymizer")
 
     @abstractmethod
-    def anonymize(self, text: str, params: dict = None) -> str:
+    def anonymize(self, text: str, params: Dict = None) -> str:
         """Anonymize method to be implemented in each anonymizer."""
         pass
 
     @abstractmethod
-    def validate(self, params: dict = None) -> None:
+    def validate(self, params: Dict = None) -> None:
         """Validate each anonymizer parameters."""
         pass
 

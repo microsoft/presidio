@@ -1,6 +1,6 @@
 """Handles the entire logic of the Presidio-anonymizer and text anonymizing."""
 import logging
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import AnalyzerResult, \
@@ -23,7 +23,8 @@ class AnonymizerEngine:
         self.logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(self, text: str, analyzer_results: List[AnalyzerResult],
-                  anonymizers_config: Dict[str, AnonymizerConfig] = None) -> str:
+                  anonymizers_config: Optional[
+                      Dict[str, AnonymizerConfig]] = None) -> str:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
@@ -56,7 +57,7 @@ class AnonymizerEngine:
                 anonymizers_config)
 
             self.logger.debug(
-                f"for analyzer result {analyzer_result} received anonymizer "
+                f"for analyzer result {analyzer_result} received config "
                 f"{anonymizer_config}"
             )
 
@@ -68,7 +69,8 @@ class AnonymizerEngine:
 
         return text_builder.output_text
 
-    def anonymizers(self) -> List[str]:
+    @staticmethod
+    def get_anonymizers() -> List[str]:
         """Return a list of supported anonymizers."""
         names = [p for p in Anonymizer.get_anonymizers().keys()]
         return names

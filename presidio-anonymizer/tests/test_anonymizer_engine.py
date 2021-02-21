@@ -1,3 +1,5 @@
+from typing import Dict
+
 import pytest
 
 from presidio_anonymizer import AnonymizerEngine
@@ -8,7 +10,7 @@ from presidio_anonymizer.entities import AnonymizerConfig, InvalidParamException
 def test_given_request_anonymizers_return_list():
     engine = AnonymizerEngine()
     expected_list = ["fpe", "hash", "mask", "redact", "replace"]
-    anon_list = engine.anonymizers()
+    anon_list = engine.get_anonymizers()
 
     assert anon_list == expected_list
 
@@ -94,7 +96,7 @@ def test_given_several_anonymizers_then_we_use_the_correct_one():
 
 
 class MockAnonymizer:
-    def anonymize(self, text: str, params: dict = None):
+    def anonymize(self, text: str, params: Dict = None):
         return "I am your new text!"
 
     def validate(self, params):
