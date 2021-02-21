@@ -7,17 +7,17 @@ repo_url: https://github.com/microsoft/presidio/
 edit_uri: ""
 nav:
     - Home: index.md
-    - Installation: installation.md
     - Getting Started: getting_started.md
-    - Text Analysis:
+    - Installation: installation.md
+    - PII Detection in Text:
       - Home: analyzer/index.md
       - Developing PII recognizers:
         - Tutorial : analyzer/adding_recognizers.md
-        - Best practices : analyzer/developing_recognizers.md
+        - Best practices in developing recognizers : analyzer/developing_recognizers.md
       - Multi-language support: analyzer/languages.md
       - Tracing the decision process: analyzer/decision_process.md
-    - Text Anonymization: anonymizer/index.md
-    - Image Redaction: image-redactor/index.md
+    - PII Anonymization in Text: anonymizer/index.md
+    - PII Redaction in Images: image-redactor/index.md
 
     - Samples:
       - Python: samples/python/index.md
@@ -26,7 +26,10 @@ nav:
     - Supported entities: supported_entities.md
     - Development and design:
       - Setting up a development environment: development.md
-      - API reference: api.md
+      - API reference:
+        - Presidio Analyzer Python API: api/analyzer_python.md
+        - Presidio Anonymizer Python API: api/anonymizer_python.md
+        - Presidio Image Redactor Python API: api/image-redactor_python.md
       - Build and release process: build_release.md
       - Architecture and design: design.md
 theme:
@@ -40,10 +43,12 @@ theme:
     code: Roboto Mono
   hide:
     - toc
-
+  features:
+    - navigation.expand
+    - navigation.instant
 plugins:
 - search
-
+- mkdocstrings
 
 markdown_extensions:
   - meta
