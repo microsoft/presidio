@@ -1,3 +1,5 @@
+from typing import Dict
+
 import pytest
 
 from presidio_anonymizer import AnonymizerEngine
@@ -94,7 +96,7 @@ def test_given_several_anonymizers_then_we_use_the_correct_one():
 
 
 class MockAnonymizer:
-    def anonymize(self, text: str, params: dict = None):
+    def anonymize(self, text: str, params: Dict = None):
         return "I am your new text!"
 
     def validate(self, params):

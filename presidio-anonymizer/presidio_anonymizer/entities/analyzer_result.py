@@ -4,6 +4,7 @@ AnalyzerResult is the exact copy of the recognizer result.
 Represents the findings of detected entity.
 """
 import logging
+from typing import Dict
 
 from presidio_anonymizer.entities import InvalidParamException
 
@@ -18,7 +19,7 @@ class AnalyzerResult:
     logger = logging.getLogger("presidio-anonymizer")
 
     @classmethod
-    def from_json(cls, data: dict):
+    def from_json(cls, data: Dict):
         """
         Create AnalyzerResult from json.
 
