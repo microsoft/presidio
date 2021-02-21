@@ -126,7 +126,7 @@ jobs:
                     echo anonymizer status code is $ANONYMIZER_STATUS_CODE
                     echo image redactor status code is $IMAGE_REDACTOR_STATUS_CODE
 
-                    while [ ! $ANALYZER_STATUS_CODE == 200 ] || [ ! $ANONYMIZER_STATUS_CODE == 200 ] || [ ! $IMAGE_REDACTOR_STATUS_CODE == 200]
+                    while [ ! $ANALYZER_STATUS_CODE == 200 ] || [ ! $ANONYMIZER_STATUS_CODE == 200 ] || [ ! $IMAGE_REDACTOR_STATUS_CODE == 200 ]
                     do
                         sleep 30
                         ANALYZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANALYZER_STAGING_URI/health)
