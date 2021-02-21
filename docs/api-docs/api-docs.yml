@@ -30,7 +30,7 @@ paths:
       tags:
         - Analyzer
       summary: "Analyze Text"
-      description: "Analyzes a text"
+      description: "Recognizes PII entities in a given text and returns their types, locations and score"
       requestBody:
         $ref: "#/components/requestBodies/AnalyzeRequest"
 
@@ -85,7 +85,7 @@ paths:
       tags:
         - Analyzer
       summary: "Get Recognizers"
-      description: "Returns a list of supported recognizers"
+      description: "Get the available PII recognizers for a given language"
       parameters:
         - in: query
           name: language
@@ -118,8 +118,8 @@ paths:
         - url: https://presidio-analyzer-prod.azurewebsites.net
       tags:
         - Analyzer
-      summary: "Get Supported Entities"
-      description: "Returns a list of supported entities"
+      summary: "Get supported entities"
+      description: "Get the list of PII entities Presidio-Analyzer is capable of detecting"
       parameters:
         - in: query
           name: language
@@ -405,7 +405,7 @@ components:
 
 
     EntityTypes:
-      description: "The PII detection type"
+      description: "The PII detection type predifined list. This list is dynamic as Presidio allows you to add custom entity recognizers."
       type: string
       enum:
         - CREDIT_CARD
