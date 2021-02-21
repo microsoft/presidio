@@ -18,11 +18,11 @@ class AnalyzerResult:
     logger = logging.getLogger("presidio-anonymizer")
 
     @classmethod
-    def from_json(cls, json: dict):
+    def from_json(cls, data: dict):
         """
         Create AnalyzerResult from json.
 
-        :param json: e.g. {
+        :param data: e.g. {
             "start": 24,
             "end": 32,
             "score": 0.8,
@@ -30,10 +30,10 @@ class AnalyzerResult:
         }
         :return: AnalyzerResult
         """
-        score = json.get("score")
-        entity_type = json.get("entity_type")
-        start = json.get("start")
-        end = json.get("end")
+        score = data.get("score")
+        entity_type = data.get("entity_type")
+        start = data.get("start")
+        end = data.get("end")
         return cls(entity_type, start, end, score)
 
     def __init__(self, entity_type: str, start: int, end: int, score: float):
