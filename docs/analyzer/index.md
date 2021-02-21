@@ -1,7 +1,5 @@
 # Presidio Analyzer
 
-## Description
-
 The Presidio analyzer is a Python based service for detecting PII entities in text.
 
 During analysis, it runs a set of different *PII Recognizers*,
@@ -12,104 +10,97 @@ but can easily be extended with other types of custom recognizers.
 Predefined and custom recognizers leverage regex,
 Named Entity Recognition and other types of logic to detect PII in unstructured text.
 
-## Table of contents
-
-- [Installation](#installation)
-  - [Using pip](#using-pip)
-  - [Using Docker](#using-docker)
-  - [From source](#from-source)
-- [Getting started](#getting-started)
-  - [Running in Python](#running-in-python)
-  - [Running Presidio as an HTTP server](#running-presidio-as-an-http-server)
-    - [Using docker container](#using-docker-container)
-    - [Using python runtime](#using-python-runtime)
-- [Creating PII recognizers](#creating-pii-recognizers)
-- [Outputting the analyzer decision process](#outputting-the-analyzer-decision-process)
-- [Supported entities](#supported-entities)
-- [API reference](#api-reference)
-
 ## Installation
 
-### Using pip
+=== "Using pip"
+    
+    !!! note "Note"
+        Consider installing the Presidio python packages on a virtual environment like venv or conda.
+    
+    To get started with Presidio-analyzer,
+    download the package and the `en_core_web_lg` spaCy model:
+    
+    ```sh
+    pip install presidio-analyzer
+    python -m spacy download en_core_web_lg
+    ```
 
-> Consider installing the Presidio python packages on a virtual environment like venv or conda.
+=== "Using Docker"
+    
+    !!! note "Note"
+        This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
+    
+    ```sh
+    # Download image from Dockerhub
+    docker pull mcr.microsoft.com/presidio-analyzer
+    
+    # Run the container with the default port
+    docker run -d -p 5001:5001 mcr.microsoft.com/presidio-analyzer:latest
+    ```
 
-To get started with Presidio-analyzer,
-download the package and the `en_core_web_lg` spaCy model:
-
-```sh
-pip install presidio-analyzer
-python -m spacy download en_core_web_lg
-```
-
-### Using Docker
-
-> This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
-
-```sh
-# Download image from Dockerhub
-docker pull mcr.microsoft.com/presidio-analyzer
-
-# Run the container with the default port
-docker run -d -p 5001:5001 mcr.microsoft.com/presidio-analyzer:latest
-```
-
-### From source
-
-First, clone the Presidio repo. [See here for instructions](../installation.md#install-from-source).
-
-Then, build the presidio-analyzer container:
-
-```sh
-cd presidio-analyzer
-docker build . -t presidio/presidio-analyzer
-```
+=== "From source"
+    
+    First, clone the Presidio repo. [See here for instructions](../installation.md#install-from-source).
+    
+    Then, build the presidio-analyzer container:
+    
+    ```sh
+    cd presidio-analyzer
+    docker build . -t presidio/presidio-analyzer
+    ```
 
 ## Getting started
-### Running in Python
 
-Once the Presidio-analyzer package is installed, run this simple analysis script:
+=== "Python"
+    
+    Once the Presidio-analyzer package is installed, run this simple analysis script:
+    
+    ```python
+    from presidio_analyzer import AnalyzerEngine
+    
+    # Set up the engine, loads the NLP module (spaCy model by default) and other PII recognizers
+    analyzer = AnalyzerEngine()
+    
+    # Call analyzer to get results
+    results = analyzer.analyze(text="My phone number is 212-555-5555",
+                               entities=["PHONE_NUMBER"],
+                               language='en')
+    print(results)
+    
+    ```
 
-```python
-from presidio_analyzer import AnalyzerEngine
-
-# Set up the engine, loads the NLP module (spaCy model by default) and other PII recognizers
-analyzer = AnalyzerEngine()
-
-# Call analyzer to get results
-results = analyzer.analyze(text="My phone number is 212-555-5555",
-                           entities=["PHONE_NUMBER"],
-                           language='en')
-print(results)
-
-```
-
-### Running Presidio as an HTTP server
-
-You can run presidio analyzer as an http server using either python runtime or using a docker container.
-
-#### Using docker container
-
-```sh
-cd presidio-analyzer
-docker run -p 5001:5001 presidio-analyzer 
-```
-
-#### Using python runtime
-
-> This requires the Presidio Github repository to be cloned.
-
-```sh
-cd presidio-analyzer
-python app.py
-curl -d '{"text":"John Smith drivers license is AC432223", "language":"en"}' -H "Content-Type: application/json" -X POST http://localhost:3000/analyze
-```
+=== "As an HTTP server"
+    
+    You can run presidio analyzer as an http server using either python runtime or using a docker container.
+    
+    #### Using docker container
+    
+    ```sh
+    cd presidio-analyzer
+    docker run -p 5001:5001 presidio-analyzer 
+    ```
+    
+    #### Using python runtime
+    
+    !!! note "Note"
+        This requires the Presidio Github repository to be cloned.
+    
+    ```sh
+    cd presidio-analyzer
+    python app.py
+    curl -d '{"text":"John Smith drivers license is AC432223", "language":"en"}' -H "Content-Type: application/json" -X POST http://localhost:3000/analyze
+    ```
 
 ## Creating PII recognizers
 
-- [Tutorial on adding new PII recognizers](adding_recognizers.md).
-- [Best practices for developing new recognizers](developing_recognizers.md).
-- [Multi-language support](languages.md).
+Presidio can be easily extended to support additional PII entities. 
+See [this tutorial on adding new PII recognizers](adding_recognizers.md) 
+for more information.
+
+## Multi-language support
+
+Presidio can be used to detect PII entities in multiple languages.
+Refer to the [multi-language support](languages.md) for more information.
 
 ## Outputting the analyzer decision process
 
@@ -117,9 +108,12 @@ Presidio analyzer has a built in mechanism for tracing each decision made. This 
 
 ## Supported entities
 
+For a list of the current supported entities: 
 [Supported entities](../supported_entities.md).
 
 ## API reference
+
+### Calling Presidio Analyzer via HTTP
 
 `/analyze`
 

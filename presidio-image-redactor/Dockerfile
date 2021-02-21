@@ -16,4 +16,4 @@ RUN pipenv run python -m spacy download en_core_web_lg
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pipenv run python app.py --host 0.0.0.0
+CMD pipenv run python app.py
