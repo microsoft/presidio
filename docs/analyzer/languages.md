@@ -1,7 +1,5 @@
 # PII detection in different languages
 
-## Description
-
 Presidio supports PII detection in multiple languages.
 In its default configuration, it contains recognizers and models for English.
 
@@ -42,7 +40,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         stanza.download("en") # where en is the language code of the model.
         ```
 
-   For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
+    For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
 
 2. Update the models configuration in one of two ways:
     - **Via code**: Create an `NlpEngine` using the `NlpEnginerProvider` class, and pass it to the `AnalyzerEngine` as input:
