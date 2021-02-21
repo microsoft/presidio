@@ -28,15 +28,15 @@ docker-compose up --build -d
 ```
 
 !!! note "Note"
-    Building for the first time might take some time,
-    mainly on downloading the default spacy models.  
+Building for the first time might take some time,
+mainly on downloading the default spacy models.
 
 To validate that the services were built and started successfuly,
 and to see the designated port for each,
-use docker ps:
+use docker-compose ps:
 
 ```bash
->docker ps
+>docker-compose ps
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                    NAMES
 6d5a258d19c2   presidio-anonymizer         "/bin/sh -c 'pipenv …"   6 minutes ago   Up 6 minutes   0.0.0.0:5001->5001/tcp   presidio_presidio-anonymizer_1
 9aad2b68f93c   presidio-analyzer           "/bin/sh -c 'pipenv …"   2 days ago      Up 6 minutes   0.0.0.0:5002->5001/tcp   presidio_presidio-analyzer_1
@@ -68,9 +68,9 @@ For tests to be consistent and predictable, we use the following basic conventio
 1. Treat tests as production code. Keep the tests concise and readable, with descriptive namings.
 2. Assert on one behavior at a time in each test.
 3. Test names should follow a pattern of `test_when_[condition_to_test]_then_[expected_behavior]`.
-For example: test_when_no_interpretability_requested_then_response_contains_no_analysis.
+   For example: test_when_no_interpretability_requested_then_response_contains_no_analysis.
 4. Use [test doubles and mocks](https://docs.pytest.org/en/stable/monkeypatch.html)
-when writing unit tests. Make less use of them when writing integration tests.
+   when writing unit tests. Make less use of them when writing integration tests.
 
 #### Running tests
 
@@ -87,9 +87,9 @@ Running the tests locally can be done in two ways:
     ```
 
 2. Using your IDE.
-    See configuration examples for
-    [JetBrains PyCharm / IntelliJ IDEA](https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html)
-    and [Visual Studio Code](https://code.visualstudio.com/docs/python/testing)
+   See configuration examples for
+   [JetBrains PyCharm / IntelliJ IDEA](https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html)
+   and [Visual Studio Code](https://code.visualstudio.com/docs/python/testing)
 
 #### End-to-end tests
 
@@ -139,9 +139,9 @@ Running the e2e-tests locally can be done in two ways:
 2. Using your IDE
 
     See references in the section above.
-  
+
 !!! note Note
-    The e2e tests require a Presidio cluster to be up, for example using the containerized cluster with docker-compose.
+The e2e tests require a Presidio cluster to be up, for example using the containerized cluster with docker-compose.
 
 ### Build and run end-to-end tests locally
 
@@ -170,33 +170,33 @@ Running flake8 locally, using `pipenv run flake8`, you can check for those issue
 
 In addition to the basic `flake8` functionality, Presidio uses the following extensions:
 
-- *pep8-naming*: To check that variable names are PEP8 compliant.
-- *flake8-docstrings*: To check that docstrings are compliant.
+-   _pep8-naming_: To check that variable names are PEP8 compliant.
+-   _flake8-docstrings_: To check that docstrings are compliant.
 
 ### Automatically format code and check for code styling
 
 To make the linting process easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using `black`:
 
-1. [Install pre-commit package manager locally.](https://pre-commit.com/#install)
+1.  [Install pre-commit package manager locally.](https://pre-commit.com/#install)
 
-2. From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
+2.  From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
 
-3. Commit non PEP8 compliant code will cause commit failure and automatically
-format your code using `black`, as well as checking code formatting using `flake8`
+3.  Commit non PEP8 compliant code will cause commit failure and automatically
+    format your code using `black`, as well as checking code formatting using `flake8`
 
-    ```sh
-    >git commit -m 'autoformat' presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
+        ```sh
+        >git commit -m 'autoformat' presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
 
-    black....................................................................Failed
-    - hook id: black
-    - files were modified by this hook
+        black....................................................................Failed
+        - hook id: black
+        - files were modified by this hook
 
-    reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
-    All done!
-    1 file reformatted.
+        reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
+        All done!
+        1 file reformatted.
 
-    flake8...................................................................Passed
+        flake8...................................................................Passed
 
-    ```
+        ```
 
-4. Committing again will finish successfully, with a well-formatted code.
+4.  Committing again will finish successfully, with a well-formatted code.

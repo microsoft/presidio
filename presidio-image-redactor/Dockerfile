@@ -6,6 +6,7 @@ WORKDIR /usr/bin/${NAME}
 
 RUN apt-get update 
 RUN apt-get install tesseract-ocr -y 
+RUN tesseract -v
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv
@@ -15,4 +16,4 @@ RUN pipenv run python -m spacy download en_core_web_lg
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pipenv run python app.py --host 0.0.0.0
+CMD pipenv run python app.py
