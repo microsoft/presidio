@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Tuple
 
 from flask import Flask, request, jsonify
-from flasgger import Swagger
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnonymizerRequest
@@ -15,8 +14,6 @@ from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
-
-SWAGGER_CONFIG = {"uiversion": 3, "openapi": "3.0.2", "doc_dir": "api-docs"}
 
 LOGGING_CONF_FILE = "logging.ini"
 
@@ -40,8 +37,6 @@ class Server:
         self.logger = logging.getLogger("presidio-anonymizer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
-        self.app.config["SWAGGER"] = SWAGGER_CONFIG
-        self.swagger = Swagger(self.app, template_file="api-docs/template.yml")
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
         self.logger.info(WELCOME_MESSAGE)
