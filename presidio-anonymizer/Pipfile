@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 flask = "==1.1.2"
-flasgger = "==0.9.5"
 
 [dev-packages]
 pytest = "*"

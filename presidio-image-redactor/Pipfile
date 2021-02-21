@@ -9,7 +9,6 @@ flask = "==1.1.2"
 pytesseract = "==0.3.7"
 presidio-analyzer = ">=1.9.0"
 pillow = "==8.1.0"
-flasgger = "==0.9.5"
 
 [dev-packages]
 pytest = "*"
