@@ -14,8 +14,6 @@ stages:
                   persistCredentials: true
                 - task: UsePythonVersion@0
                 - script: |
-                      set -eux  # fail on error                      
-                      pip install mkdocs
-                      pip install mkdocstrings
+                      set -eux  # fail on error                                            
                       pip install -r docs/requirements-docs.txt
                       mkdocs gh-deploy
