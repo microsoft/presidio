@@ -405,28 +405,8 @@ components:
 
 
     EntityTypes:
-      description: "The PII detection type predifined list. This list is dynamic as Presidio allows you to add custom entity recognizers."
+      description: "The supported PII entity types."
       type: string
-      enum:
-        - CREDIT_CARD
-        - CRYPTO
-        - DATE_TIME
-        - DOMAIN_NAME
-        - EMAIL_ADDRESS
-        - IBAN_CODE
-        - IP_ADDRESS
-        - NRP
-        - LOCATION
-        - PERSON
-        - PHONE_NUMBER
-        - US_BANK_NUMBER
-        - US_DRIVER_LICENSE
-        - US_ITIN
-        - US_PASSPORT
-        - US_SSN
-        - UK_NHS
-        - NIF
-        - FIN/NRIC
       example: PERSON
 
     Replace:
