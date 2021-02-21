@@ -1,5 +1,8 @@
 import os
+from typing import Dict
+
 import requests
+
 from common.constants import ANONYMIZER_BASE_URL, ANALYZER_BASE_URL, \
     IMAGE_REDACTOR_BASE_URL
 
@@ -39,8 +42,13 @@ def analyzer_supported_entities(data):
     return response.status_code, response.content
 
 
-def image_redactor():
+def image_redactor(file_name: str, color_fill):
+    multipart_form_data = (
+        ('image', open(f"../resources/{file_name}", 'rb')),
+        ('color_fill', color_fill),
+    )
     response = requests.post(
-        f"{ANALYZER_BASE_URL}/redact", data=data, headers=MULTIPART_HEADERS
+        f"{ANALYZER_BASE_URL}/redact", data=multipart_form_data,
+        headers=MULTIPART_HEADERS
     )
     return response.status_code, response.content
