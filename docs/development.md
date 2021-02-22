@@ -6,11 +6,71 @@
 
 ### Cloning the repo
 
-TODO: Describe how to clone, folder structure etc.
+To create a local copy of Presidio repository, follow [Github instructions](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository)
+on how to clone a project using git.
+The project is structured so that:
+ - Each Preisio service has a designated directory. In it, the source code for its
+logic and tests, as well as the source code for serving it as an HTTP service and
+as a python package.
+ - In the project root directory, you will find common code for using, serving and testing Presidio
+as a cluster of services, as well as CI/CD pipelines codebase and documentation.
 
 ### Setting up Pipenv
 
-TODO: Add Pipenv documentation from V1.
+[Pipenv](https://pipenv.pypa.io/en/latest/) is a Python workflow manager, handling
+dependencies and environment for Python packages. It is used by each Presidio service
+as the dependencies manager, to avoid dependencies issues when switching between different
+Python projects. Follow these steps when starting to work on a Presidio service with Pipenv:
+
+1. Install pipenv
+
+   #### Using Pip3:
+
+   ```
+   pip3 install --user pipenv
+   ```
+
+   #### Using Homebrew (in MacOS)
+
+   ```
+   brew install pipenv
+   ```
+
+   Additional installation instructions: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
+
+2. Create virtualenv for the project and install all requirements in the Pipfile, 
+including dev requirements. For example, in the `presidio-analyzer` folder, run:
+
+    ```
+    pipenv install --dev --sequential --skip-lock
+    ```
+
+3. Run all tests
+    ```
+    pipenv run pytest
+    ```
+
+4. To run arbitrary scripts within the virtual env, start the command with
+`pipenv run`. For example:
+    1. `pipenv run flake8"`
+    2. `pipenv run pip freeze`
+    3. `pipenv run python -m spacy download en_core_web_lg` - To download the
+default spacy model needed for Presidio Analyzer.
+
+#### Alternatively, activate the virtual environment and use the commands by starting a pipenv shell:
+
+1. Start shell:
+
+   ```
+   pipenv shell
+   ```
+
+2. Run commands in the shell
+
+   ```
+   pytest
+   pip freeze
+   ```
 
 ## Development guidelines
 
