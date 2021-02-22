@@ -6,7 +6,7 @@ red_fill = (255, 0, 0)
 
 def test_given_image_with_text_and_fill_then_text_is_greyed_out():
     # Image with PII entities
-    image = get_resource_image("original_image.png")
+    image = get_resource_image("ocr_test.png")
     result_image = get_resource_image("ocr_test_redacted.png")
     redacted_image = ImageRedactorEngine().redact(image, 1)
     assert compare_images(redacted_image, result_image)
@@ -14,7 +14,7 @@ def test_given_image_with_text_and_fill_then_text_is_greyed_out():
 
 def test_given_image_with_text_and_matrix_fill_then_text_is_colored_out():
     # Image with PII entities
-    image = get_resource_image("original_image.png")
+    image = get_resource_image("ocr_test.png")
 
     redacted_image = ImageRedactorEngine().redact(image, red_fill)
     expected_result_image = get_resource_image("ocr_test_redacted_matrix.png")
