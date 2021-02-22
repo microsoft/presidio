@@ -43,12 +43,15 @@ def analyzer_supported_entities(data):
 
 
 def image_redactor(file_name: str, color_fill):
-    multipart_form_data = (
-        ('image', open(f"../resources/{file_name}", 'rb')),
-        ('color_fill', color_fill),
-    )
-    response = requests.post(
-        f"{ANALYZER_BASE_URL}/redact", data=multipart_form_data,
-        headers=MULTIPART_HEADERS
-    )
+    current_dir = os.path.dirname(__file__)
+    file_path = os.path.join(current_dir, "..", "resources", file_name)
+    multipart_form_data = {
+        "image": (file_name, open(file_path, "rb"), "multipart/form-data"),
+    }
+    payload = {}
+    if color_fill:
+        payload = {"data": "{'color_fill':'" + str(color_fill) + "'}"}
+    response = requests.post(f"{IMAGE_REDACTOR_BASE_URL}/redact",
+                             files=multipart_form_data, data=payload
+                             )
     return response.status_code, response.content
