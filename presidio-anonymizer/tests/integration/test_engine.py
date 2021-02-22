@@ -21,7 +21,7 @@ from tests.integration.file_utils import get_scenario_file_content
     ],
 )
 def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_returned(
-    anonymize_scenario,
+        anonymize_scenario,
 ):
     anonymizer_request_dict = json.loads(
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.in.json")
@@ -30,12 +30,16 @@ def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_ret
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.out.json")
     )
     engine = AnonymizerEngine()
-    anonymizer_request = AnonymizerRequest(
-        anonymizer_request_dict, engine.builtin_anonymizers
+    anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
+        anonymizer_request_dict
+    )
+    analyzer_results = AnonymizerRequest.handle_analyzer_results_json(
+        anonymizer_request_dict
     )
 
     try:
-        actual_anonymize_result = engine.anonymize(anonymizer_request)
+        actual_anonymize_result = engine.anonymize(anonymizer_request_dict.get("text"),
+                                                   analyzer_results, anonymizers_config)
     except Exception as e:
         actual_anonymize_result = str(e)
 

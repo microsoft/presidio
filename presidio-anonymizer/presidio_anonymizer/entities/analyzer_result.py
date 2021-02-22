@@ -4,6 +4,7 @@ AnalyzerResult is the exact copy of the recognizer result.
 Represents the findings of detected entity.
 """
 import logging
+from typing import Dict
 
 from presidio_anonymizer.entities import InvalidParamException
 
@@ -17,12 +18,31 @@ class AnalyzerResult:
 
     logger = logging.getLogger("presidio-anonymizer")
 
-    def __init__(self, content: dict):
-        self.__validate_fields(content)
-        self.score = content.get("score")
-        self.entity_type = content.get("entity_type")
-        self.start = content.get("start")
-        self.end = content.get("end")
+    @classmethod
+    def from_json(cls, data: Dict):
+        """
+        Create AnalyzerResult from json.
+
+        :param data: e.g. {
+            "start": 24,
+            "end": 32,
+            "score": 0.8,
+            "entity_type": "NAME"
+        }
+        :return: AnalyzerResult
+        """
+        score = data.get("score")
+        entity_type = data.get("entity_type")
+        start = data.get("start")
+        end = data.get("end")
+        return cls(entity_type, start, end, score)
+
+    def __init__(self, entity_type: str, start: int, end: int, score: float):
+        self.score = score
+        self.entity_type = entity_type
+        self.start = start
+        self.end = end
+        self.__validate_fields()
 
     def contains(self, other):
         """
@@ -93,26 +113,24 @@ class AnalyzerResult:
             return self.score <= other.score
         return other.contains(self)
 
-    def __validate_fields(self, content):
-        for field in ("start", "end", "score", "entity_type"):
-            if content.get(field) is None:
-                self.logger.debug(f"invalid input, no field {field} for {content}")
-                raise InvalidParamException(
-                    f"Invalid input, analyzer result must contain {field}")
-        start = content.get("start")
-        end = content.get("end")
-        if start < 0 or end < 0:
+    def __validate_fields(self):
+        if self.start is None:
+            self.__validate_field("start")
+        if self.end is None:
+            self.__validate_field("end")
+        if self.entity_type is None:
+            self.__validate_field("entity_type")
+        if self.score is None:
+            self.__validate_field("score")
+        if self.start < 0 or self.end < 0:
             raise InvalidParamException(
                 f"Invalid input, analyzer result start and end must be positive")
-        if start >= end:
+        if self.start >= self.end:
             raise InvalidParamException(
-                f"Invalid input, analyzer result start index '{start}' "
-                f"must be smaller than end index '{end}'")
+                f"Invalid input, analyzer result start index '{self.start}' "
+                f"must be smaller than end index '{self.end}'")
 
-    def validate_position_in_text(self, text_len: int):
-        """Validate the start and end position match the text length."""
-        if text_len < self.start or self.end > text_len:
-            err_msg = f"Invalid analyzer result, start: {self.start} and end: " \
-                      f"{self.end}, while text length is only {text_len}."
-            raise InvalidParamException(
-                err_msg)
+    def __validate_field(self, field_name: str):
+        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
+        raise InvalidParamException(
+            f"Invalid input, analyzer result must contain {field_name}")
