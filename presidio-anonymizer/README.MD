@@ -15,24 +15,23 @@ TODO: change this link to main branch once merged (#2765).
 
 ### Anonymizer
 
-[comment]: shiranr '#TODO need to fill this once the the functionality is done 2656 - 2659'
-
 Presidio anonymizer comes by default with the following anonymizers:
 
-- Replace - replaces the PII with desired value 
-  
-  Parameters: ```new_value``` - replaces existing text with the given value. 
-  
+- Replace - replaces the PII with desired value
+
+  Parameters: ```new_value``` - replaces existing text with the given value.
+
   If ```new_value``` is not supplied or empty, default behavior will be: <entity_type>
   e.g: <PHONE_NUMBER>
 - Redact - removes the PII completely from text Parameters: None
 - Hash - hash the PII using either sha256, sha512 or md5. Parameters:
-    - ```hash_type``` - sets the type of hashing. can be either sha256, sha512 or md5. The
-      default hash type is sha256.
-- Mask - replaces the PII with a given character. 
-  
+    - ```hash_type``` - sets the type of hashing. can be either sha256, sha512 or md5.
+      The default hash type is sha256.
+- Mask - replaces the PII with a given character.
+
   Parameters:
-    - ```chars_to_mask``` - the amount of characters out of the PII that should be replaced.
+    - ```chars_to_mask``` - the amount of characters out of the PII that should be
+      replaced.
     - ```masking_char``` - the character to be replaced with.
     - ```from_end``` - Whether to mask the PII from it's end.
 
