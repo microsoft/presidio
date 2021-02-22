@@ -4,7 +4,6 @@ import os
 
 from PIL import Image
 from flask import Flask, request, make_response
-from flasgger import Swagger
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor.entities import ErrorResponse
@@ -35,9 +34,6 @@ class Server:
     def __init__(self):
         self.logger = logging.getLogger("presidio-image-redactor")
         self.app = Flask(__name__)
-        self.swagger = Swagger(
-            self.app, template={"info": {"title": "Presidio Image Redactor API"}}
-        )
         self.logger.info("Starting image redactor engine")
         self.engine = ImageRedactorEngine()
         self.logger.info(WELCOME_MESSAGE)

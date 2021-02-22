@@ -6,7 +6,7 @@ class ErrorResponse:
     """
     Error Response.
 
-    :param msg - the error message to return
+    :param msg: the error message to return
     """
 
     def __init__(self, msg):

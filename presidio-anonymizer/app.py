@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Tuple
 
 from flask import Flask, request, jsonify
-from flasgger import Swagger
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnonymizerRequest
@@ -15,8 +14,6 @@ from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
-
-SWAGGER_CONFIG = {"uiversion": 3, "openapi": "3.0.2", "doc_dir": "api-docs"}
 
 LOGGING_CONF_FILE = "logging.ini"
 
@@ -40,8 +37,6 @@ class Server:
         self.logger = logging.getLogger("presidio-anonymizer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
-        self.app.config["SWAGGER"] = SWAGGER_CONFIG
-        self.swagger = Swagger(self.app, template_file="api-docs/template.yml")
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
         self.logger.info(WELCOME_MESSAGE)
@@ -57,14 +52,18 @@ class Server:
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
 
-            data = AnonymizerRequest(content, self.engine.builtin_anonymizers)
-            text = self.engine.anonymize(data)
+            anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
+                content)
+            analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
+            text = self.engine.anonymize(text=content.get("text"),
+                                         analyzer_results=analyzer_results,
+                                         anonymizers_config=anonymizers_config)
             return jsonify(result=text)
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
-            return json.dumps(self.engine.anonymizers()), 200
+            return json.dumps(self.engine.get_anonymizers()), 200
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
