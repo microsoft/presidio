@@ -9,7 +9,7 @@
 To create a local copy of Presidio repository, follow [Github instructions](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository)
 on how to clone a project using git.
 The project is structured so that:
- - Each Preisio service has a designated directory. In it, the source code for its
+ - Each Presidio service has a designated directory. In it, the source code for its
 logic and tests, as well as the source code for serving it as an HTTP service and
 as a python package.
  - In the project root directory, you will find common code for using, serving and testing Presidio
