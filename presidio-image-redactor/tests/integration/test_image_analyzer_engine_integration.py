@@ -9,7 +9,7 @@ def test_given_image_then_text_entities_are_recognized_correctly():
     # TODO fix in bug #2897
 
     # Image with PII entities
-    image = get_resource_image("ocr_test.png")
+    image = get_resource_image("original_image.png")
     analyzer_results = ImageAnalyzerEngine().analyze(image)
     assert len(analyzer_results) == 7
     results = __get_expected_ocr_test_image_analysis_results()
