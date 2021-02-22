@@ -19,8 +19,7 @@ For more details follow the [Build and Release documentation](docs/build_release
 
 ## Getting started with the code
 
-To get started, refer to the documentation for [setting up a development environment](docs/development.md)
-and go over the [development guidelines](docs/development.md#development-guidelines).
+To get started, refer to the documentation on [setting up a development environment](docs/development.md).
 
 ### How can I contribute?
 
