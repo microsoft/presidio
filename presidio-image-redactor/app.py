@@ -61,7 +61,7 @@ class Server:
             image_file = request.files.get("image")
             if not image_file:
                 raise InvalidParamException(
-                    "Invalid parameter, please insert image data")
+                    "Invalid parameter, please add image data")
             im = Image.open(image_file)
 
             redacted_image = self.engine.redact(im, color_fill)

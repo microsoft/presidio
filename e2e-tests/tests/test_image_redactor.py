@@ -16,7 +16,7 @@ def test_given_image_with_tuple_color_filling_then_we_get_redact_image():
 @pytest.mark.api
 def test_given_no_image_then_we_fail():
     # black redact
-    expected_response = '{"error": "Invalid parameter, please insert image data"}'
+    expected_response = '{"error": "Invalid parameter, please add image data"}'
     response = redact("")
     assert response.status_code == 422
     assert response.content.decode() == expected_response
