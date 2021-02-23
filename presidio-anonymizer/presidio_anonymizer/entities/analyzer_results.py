@@ -54,11 +54,12 @@ class AnalyzerResults(list):
         :return: List
         """
         unique_elements = []
+        other_elements = AnalyzerResults(self)
         for result_a in self:
-            other_elements = AnalyzerResults(self)
             other_elements.remove(result_a)
             if not any([result_a.has_conflict(other_element) for other_element in
                         other_elements]):
+                other_elements.append(result_a)
                 unique_elements.append(result_a)
             else:
                 self.logger.debug(
