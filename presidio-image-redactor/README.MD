@@ -6,6 +6,7 @@
 
 The Presidio Image Redactor is a Python based module for detecting and redacting PII
 text entities in images.
+![img.png](img.png)
 
 ## Installation
 
@@ -15,14 +16,6 @@ Pre-requisites:
   instructions on how to install it for your operating system.
 
   The Image-Redactor was tested with a minimal version of 4.0.0
-- Install [Spacy model](https://spacy.io/usage/models) to use with the
-  presidio-analyzer.
-
-  Once Installed, run the following command to download the default spacy model needed
-  for Presidio Analyzer:
-  ```sh
-  python -m spacy download en_core_web_lg
-  ```
 
 ### As package:
 
@@ -30,6 +23,13 @@ To get started with Presidio-image-redactor, run the following:
 
 ```sh
 pip install presidio-image-redactor
+```
+
+Once Installed, run the following command to download the default spacy model needed for
+Presidio Analyzer:
+
+```sh
+python -m spacy download en_core_web_lg
 ```
 
 ## Getting started
@@ -68,6 +68,11 @@ docker-compose up -d
 ```
 
 ### HTTP API
+
+### redact
+
+Receives an image and color fill (optional, default is black). Redact the image PII text
+and returns a new redacted image.
 
 ```
 POST /redact
