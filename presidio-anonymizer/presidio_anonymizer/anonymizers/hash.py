@@ -1,5 +1,7 @@
 """Hashes the PII text entity."""
 from hashlib import sha256, sha512, md5
+from typing import Dict
+
 from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.anonymizers.validators import validate_parameter_in_range
 
@@ -12,7 +14,7 @@ class Hash(Anonymizer):
     SHA512 = "sha512"
     MD5 = "md5"
 
-    def anonymize(self, text: str = None, params: dict = None) -> str:
+    def anonymize(self, text: str = None, params: Dict = None) -> str:
         """
         Hash given value using sha256.
 
@@ -26,7 +28,7 @@ class Hash(Anonymizer):
         }
         return hash_switcher.get(hash_type)(text.encode()).hexdigest()
 
-    def validate(self, params: dict = None) -> None:
+    def validate(self, params: Dict = None) -> None:
         """Validate the hash type is string and in range of allowed hash types."""
         validate_parameter_in_range(
             [self.SHA256, self.SHA512, self.MD5],
@@ -36,5 +38,9 @@ class Hash(Anonymizer):
         )
         pass
 
-    def _get_hash_type_or_default(self, params: dict = None):
+    def anonymizer_name(self) -> str:
+        """Return anonymizer name."""
+        return "hash"
+
+    def _get_hash_type_or_default(self, params: Dict = None):
         return params.get(self.HASH_TYPE, self.SHA256)

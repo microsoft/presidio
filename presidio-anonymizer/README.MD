@@ -5,28 +5,37 @@
 The Presidio anonymizer is a Python based module for anonymizing detected PII text
 entities with desired values.
 
-[comment]: <shiranr> (#TODO need to fill this once the the functionality is done 2656 - 2659)
+### Deploy Presidio anonymizer to Azure
+
+Use the following button to deploy presidio anonymizer to your Azure subscription.
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-anonymizer%2Fdeploytoazure.json)
+
+TODO: change this link to main branch once merged (#2765).
+
+### Anonymizer
+
 Presidio anonymizer comes by default with the following anonymizers:
 
-- Replace - replaces the PII with desired value <br>
-  Parameters: "new_value" - replaces existing text with the given value. <br>
-  If "new_value" is not supplied or empty, default behavior will be: <entity_type>
+- Replace - replaces the PII with desired value
+
+  Parameters: ```new_value``` - replaces existing text with the given value.
+
+  If ```new_value``` is not supplied or empty, default behavior will be: <entity_type>
   e.g: <PHONE_NUMBER>
 - Redact - removes the PII completely from text Parameters: None
-- Hash - hash the PII using either sha256, sha512 or md5.
+- Hash - hash the PII using either sha256, sha512 or md5. Parameters:
+    - ```hash_type``` - sets the type of hashing. can be either sha256, sha512 or md5.
+      The default hash type is sha256.
+- Mask - replaces the PII with a given character.
+
   Parameters:
-  * "hash_type" - sets the type of hashing. can be either sha256, sha512 or md5.
-    The default hash type is sha256. 
-- FPE - using ff1 algorithm for formatting-Preserving Encryption on the PII
-- Mask - replaces the PII with a given character. <br>
-  Parameters: 
-  * "chars_to_mask" - the amount of characters out of the PII that should
-   be replaced. 
-  * "masking_char" - the character to be replaced with. 
-  * "from_end" - Whether to mask the PII from it's end.
+    - ```chars_to_mask``` - the amount of characters out of the PII that should be
+      replaced.
+    - ```masking_char``` - the character to be replaced with.
+    - ```from_end``` - Whether to mask the PII from it's end.
 
-
-Please notice: if default value is not stated in transformations object, the default
+Please notice: if default value is not stated in anonymizers object, the default
 anonymizer is "replace" for all entities. The replacing value will be the entity type
 e.g.: <PHONE_NUMBER>
 
@@ -34,7 +43,7 @@ As the input text could potentially have overlapping PII entities, there are dif
 anonymization scenarios:
 
 - No overlap (single PII) - single PII over text entity, uses a given or default
-  transformation to anonymize and replace the PII text entity.
+  anonymizer to anonymize and replace the PII text entity.
 - Full overlap of PIIs - When one text have several PIIs, the PII with the higher score
   will be taken. Between PIIs with identical scores, the selection will be arbitrary.
 - One PII is contained in another - anonymizer will use the PII with larger text.
@@ -55,8 +64,8 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
 - One PII is contained is another - Inigo was recognized as FIRST_NAME and Inigo Montoya
   was recognized as NAME, we will take the larger one:
   My name is <NAME>. You Killed my Father. Prepare to die. BTW my number is: 03-232323.
-- Partial intersection - the number 03-2323 is recognized as a PHONE_NUMBER but 232323 is
-  recognized as SSN:
+- Partial intersection - the number 03-2323 is recognized as a PHONE_NUMBER but 232323
+  is recognized as SSN:
   My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is: <
   PHONE_NUMBER><SSN>.
 
@@ -72,18 +81,24 @@ pip install presidio-anonymizer
 
 #### Getting started
 
-AnonymizerRequest receives a json (e.g. test/payload.json), validate the json format and
-returns an object the engine can use and anonymize.
-
 ```python
-import os
-from presidio_anonymizer.anonymizer_engine import AnonymizerEngine
-from presidio_anonymizer.entities import AnonymizerRequest
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import AnalyzerResult, AnonymizerConfig
 
-json_path = os.path.dirname(__file__) + "/test/resources/payload.json"
-with open(json_path) as json_file:
-  data = AnonymizerRequest(json_file)
-  text = AnonymizerEngine().anonymize(data)
+# Initialize the engine with logger.
+engine = AnonymizerEngine()
+
+# Class the anonymize function with the text, analyzer results and
+# Anonymizers config to define the anonymization type.
+result = engine.anonymize(
+    text="My name is Bond, James Bond",
+    analyzer_results=[AnalyzerResult("PERSON", 11, 15, 0.8),
+                      AnalyzerResult("PERSON", 17, 27, 0.8)],
+    anonymizers_config={"PERSON": AnonymizerConfig("replace", {"new_value": "BIP"})}
+)
+
+print(result)
+
 ```
 
 ### As service:
@@ -94,7 +109,7 @@ In folder presidio/presidio-anonymizer run:
 pipenv sync
 ```
 
-Start the server with flask (***this is a test server please do not use in prod***):
+Start the server with flask (**_this is a test server please do not use in prod_**):
 
 ```
 pipenv run app.py
@@ -107,10 +122,11 @@ POST /anonymize
 ```
 
 Payload:
+
 ```json
 {
   "text": "hello world, my name is Jane Doe. My number is: 034453334",
-  "transformations": {
+  "anonymizers": {
     "PHONE_NUMBER": {
       "type": "mask",
       "masking_char": "*",
@@ -146,16 +162,18 @@ Payload:
   ]
 }
 ```
+
 Result:
+
 ```
 200 OK
 hello world, my name is <NAME>. My number is: 03445****
 ```
 
-
 ### HTTP API
 
 #### /anonymizers
+
 Returns a list of supported anonymizers.
 
 Method: GET
@@ -163,11 +181,14 @@ Method: GET
 No paramaters are required.
 
 Response sample:
+
 ```json
-["mask", "fpe", "replace", "hash", "redact"]
+[
+  "fpe",
+  "hash",
+  "mask",
+  "redact",
+  "replace"
+]
 ```
 
-### Deploy Presidio Anonymizer to Azure
-
-TODO: change this link to main branch once merged (#2765).
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fpresidio-anonymizer%2Fdeploytoazure.json)

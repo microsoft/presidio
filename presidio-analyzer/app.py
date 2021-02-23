@@ -1,6 +1,9 @@
+"""REST API server for analyzer."""
+import logging
+from logging.config import fileConfig
+from pathlib import Path
 from typing import Tuple
 
-from presidio_analyzer.presidio_logger import PresidioLogger
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.error_response import ErrorResponse
@@ -9,6 +12,8 @@ import json
 import os
 
 DEFAULT_PORT = "3000"
+
+LOGGING_CONF_FILE = "logging.ini"
 
 WELCOME_MESSAGE = r"""
  _______  _______  _______  _______ _________ ______  _________ _______
@@ -26,7 +31,9 @@ class Server:
     """HTTP Server for calling Presidio Analyzer."""
 
     def __init__(self):
-        self.logger = PresidioLogger(os.environ.get("PRESIDIO_LOGGER"))
+        fileConfig(Path(Path(__file__).parent, LOGGING_CONF_FILE))
+        self.logger = logging.getLogger("presidio-analyzer")
+        self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
         self.logger.info("Starting analyzer engine")
         self.engine = AnalyzerEngine()
@@ -34,8 +41,18 @@ class Server:
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.  get ok + 200."""
-            return "ok"
+            """Return basic health probe result.
+
+            ---
+            responses:
+              200:
+                description: OK
+                content:
+                  text/plain:
+                    schema:
+                      type: string
+            """
+            return "Presidio Analyzer service is up"
 
         @self.app.route("/analyze", methods=["POST"])
         def analyze() -> Tuple[str, int]:
@@ -69,9 +86,8 @@ class Server:
                 )
             except Exception as e:
                 self.logger.error(
-                    "A fatal error occurred "
-                    "during execution of "
-                    "AnalyzerEngine.analyze(). {}".format(e)
+                    f"A fatal error occurred during execution of "
+                    f"AnalyzerEngine.analyze(). {e}"
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
 
@@ -85,9 +101,8 @@ class Server:
                 return json.dumps(names), 200
             except Exception as e:
                 self.logger.error(
-                    "A fatal error occurred "
-                    "during execution of "
-                    "AnalyzerEngine.get_recognizers(). {}".format(e)
+                    f"A fatal error occurred during execution of "
+                    f"AnalyzerEngine.get_recognizers(). {e}"
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
 
@@ -100,9 +115,8 @@ class Server:
                 return json.dumps(entities_list), 200
             except Exception as e:
                 self.logger.error(
-                    "A fatal error occurred "
-                    "during execution of "
-                    "AnalyzerEngine.supported_entities(). {}".format(e)
+                    f"A fatal error occurred during execution of "
+                    f"AnalyzerEngine.supported_entities(). {e}"
                 )
                 return ErrorResponse(e.args[0]).to_json(), 500
 

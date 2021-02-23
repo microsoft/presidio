@@ -1,6 +1,7 @@
+import logging
 from typing import Optional, List, Iterable, Union, Type
 
-from presidio_analyzer import EntityRecognizer, PresidioLogger
+from presidio_analyzer import EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, StanzaNlpEngine
 from presidio_analyzer.predefined_recognizers import (
     CreditCardRecognizer,
@@ -22,7 +23,7 @@ from presidio_analyzer.predefined_recognizers import (
     StanzaRecognizer,
 )
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class RecognizerRegistry:

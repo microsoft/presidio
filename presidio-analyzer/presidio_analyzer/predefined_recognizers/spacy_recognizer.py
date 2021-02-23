@@ -1,13 +1,13 @@
+import logging
 from typing import Optional, List, Tuple, Set
 
 from presidio_analyzer import (
     RecognizerResult,
     LocalRecognizer,
     AnalysisExplanation,
-    PresidioLogger,
 )
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class SpacyRecognizer(LocalRecognizer):

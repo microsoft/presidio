@@ -185,7 +185,7 @@ def test_given_analyzer_results_with_no_conflicting_indices_then_there_is_no_con
 def test_given_json_for_creating_analyzer_result_without_text_then_creation_fails(
         request_json, result_text):
     with pytest.raises(InvalidParamException) as e:
-        AnalyzerResult(request_json)
+        AnalyzerResult.from_json(request_json)
     assert result_text == e.value.err_msg
 
 
@@ -264,4 +264,4 @@ def test_given_negative_start_or_endpoint_then_we_fail(start, end):
 
 def create_analayzer_result(entity_type: str, score: float, start: int, end: int):
     data = {"entity_type": entity_type, "score": score, "start": start, "end": end}
-    return AnalyzerResult(data)
+    return AnalyzerResult.from_json(data)

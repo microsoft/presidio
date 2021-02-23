@@ -47,7 +47,7 @@ def nlp_engine(nlp_engines):
     return nlp_engines["spacy_en"]
 
 
-def test_analyze_with_predefined_recognizers_return_results(
+def test_when_analyze_with_predefined_recognizers_then_return_results(
     loaded_analyzer_engine, unit_test_guid, max_score
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -64,7 +64,7 @@ def test_analyze_with_predefined_recognizers_return_results(
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
 
 
-def test_analyze_with_multiple_predefined_recognizers(
+def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     loaded_registry, unit_test_guid, nlp_engine, max_score
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -89,7 +89,9 @@ def test_analyze_with_multiple_predefined_recognizers(
     assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
 
-def test_analyze_with_empty_text(loaded_analyzer_engine, unit_test_guid):
+def test_when_analyze_with_empty_text_then_no_results(
+    loaded_analyzer_engine, unit_test_guid
+):
     language = "en"
     text = ""
     entities = ["CREDIT_CARD", "PHONE_NUMBER"]
@@ -103,7 +105,9 @@ def test_analyze_with_empty_text(loaded_analyzer_engine, unit_test_guid):
     assert len(results) == 0
 
 
-def test_analyze_with_unsupported_language(loaded_analyzer_engine, unit_test_guid):
+def test_when_analyze_with_unsupported_language_then_fail(
+    loaded_analyzer_engine, unit_test_guid
+):
     with pytest.raises(ValueError):
         language = "de"
         text = ""
@@ -116,7 +120,7 @@ def test_analyze_with_unsupported_language(loaded_analyzer_engine, unit_test_gui
         )
 
 
-def test_analyze_two_entities_embedded(nlp_engine):
+def test_when_analyze_two_entities_embedded_then_return_results(nlp_engine):
     analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
 
     # Name with driver license in it
@@ -127,7 +131,7 @@ def test_analyze_two_entities_embedded(nlp_engine):
     assert len(results) == 2
 
 
-def test_analyze_added_pattern_recognizer_works(unit_test_guid):
+def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "ROCKET", name="Rocket recognizer", patterns=[pattern]
@@ -167,7 +171,7 @@ def test_analyze_added_pattern_recognizer_works(unit_test_guid):
     assert_result(results[0], "ROCKET", 0, 7, 0.8)
 
 
-def test_removed_pattern_recognizer_doesnt_work(unit_test_guid):
+def test_when_removed_pattern_recognizer_then_doesnt_work(unit_test_guid):
     pattern = Pattern("spaceship pattern", r"\W*(spaceship)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "SPACESHIP", name="Spaceship recognizer", patterns=[pattern]
@@ -217,7 +221,9 @@ def test_removed_pattern_recognizer_doesnt_work(unit_test_guid):
     assert len(results) == 0
 
 
-def test_analyze_with_language_returns_correct_response(loaded_analyzer_engine):
+def test_when_analyze_with_language_then_returns_correct_response(
+    loaded_analyzer_engine,
+):
     language = "en"
     entities = ["CREDIT_CARD"]
     min_score = 0.5
@@ -232,7 +238,7 @@ def test_analyze_with_language_returns_correct_response(loaded_analyzer_engine):
     assert response is not None
 
 
-def test_analyze_when_entities_is_none_return_all_fields(loaded_registry):
+def test_when_entities_is_none_then_return_all_fields(loaded_registry):
     analyze_engine = AnalyzerEngine(
         registry=loaded_registry, nlp_engine=NlpEngineMock()
     )
@@ -252,7 +258,7 @@ def test_analyze_when_entities_is_none_return_all_fields(loaded_registry):
     assert "DOMAIN_NAME" in returned_entities
 
 
-def test_analyze_when_entities_is_none_all_recognizers_loaded_return_all_fields(
+def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
     nlp_engine,
 ):
     analyze_engine = AnalyzerEngine(
@@ -271,7 +277,7 @@ def test_analyze_when_entities_is_none_all_recognizers_loaded_return_all_fields(
     assert "DOMAIN_NAME" in returned_entities
 
 
-def test_analyze_when_analyze_then_apptracer_has_value(
+def test_when_analyze_then_apptracer_has_value(
     loaded_registry, unit_test_guid, nlp_engine
 ):
     text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"  # noqa E501
@@ -298,7 +304,7 @@ def test_analyze_when_analyze_then_apptracer_has_value(
     assert app_tracer_mock.get_last_trace() is not None
 
 
-def test_when_threshold_is_zero_all_results_pass(loaded_registry, unit_test_guid):
+def test_when_threshold_is_zero_then_all_results_pass(loaded_registry, unit_test_guid):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
     language = "en"
     entities = ["CREDIT_CARD", "PHONE_NUMBER"]
@@ -320,7 +326,7 @@ def test_when_threshold_is_zero_all_results_pass(loaded_registry, unit_test_guid
     assert len(results) == 2
 
 
-def test_when_threshold_is_more_than_half_only_credit_card_passes(
+def test_when_threshold_is_more_than_half_then_only_credit_card_passes(
     loaded_registry, unit_test_guid
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -344,7 +350,7 @@ def test_when_threshold_is_more_than_half_only_credit_card_passes(
     assert len(results) == 1
 
 
-def test_when_default_threshold_is_more_than_half_only_one_passes(
+def test_when_default_threshold_is_more_than_half_then_only_one_passes(
     loaded_registry, unit_test_guid
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -369,7 +375,7 @@ def test_when_default_threshold_is_more_than_half_only_one_passes(
     assert len(results) == 1
 
 
-def test_when_default_threshold_is_zero_all_results_pass(
+def test_when_default_threshold_is_zero_then_all_results_pass(
     loaded_registry, unit_test_guid
 ):
     text = " Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"
@@ -393,7 +399,7 @@ def test_when_default_threshold_is_zero_all_results_pass(
 
 
 @pytest.mark.slow
-def test_demo_text(unit_test_guid, nlp_engine):
+def test_when_demo_text_then_return_results(unit_test_guid, nlp_engine):
     dir_path = Path(__file__).resolve().parent
     with open(Path(dir_path, "data", "demo.txt"), encoding="utf-8") as f:
         text_into_rows = f.read().split("\n")
@@ -457,7 +463,9 @@ def test_demo_text(unit_test_guid, nlp_engine):
     assert expected_anonymized_text == actual_anonymized_text
 
 
-def test_get_supported_fields_all_languages(mock_registry, unit_test_guid, nlp_engine):
+def test_when_get_supported_fields_then_return_all_languages(
+    mock_registry, unit_test_guid, nlp_engine
+):
     analyzer = AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
     entities = analyzer.get_supported_entities()
 
@@ -467,7 +475,7 @@ def test_get_supported_fields_all_languages(mock_registry, unit_test_guid, nlp_e
     assert "PHONE_NUMBER" in entities
 
 
-def test_get_supported_fields_specific_language(
+def test_when_get_supported_fields_specific_language_then_return_single_result(
     loaded_registry, unit_test_guid, nlp_engine
 ):
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
@@ -486,7 +494,7 @@ def test_get_supported_fields_specific_language(
     assert "ROCKET" in entities
 
 
-def test_get_recognizers_returns_supported_language():
+def test_when_get_recognizers_then_returns_supported_language():
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "ROCKET",
@@ -505,7 +513,7 @@ def test_get_recognizers_returns_supported_language():
     assert len(response) == 1
 
 
-def test_add_recognizer_also_outputs_others(nlp_engine):
+def test_when_add_recognizer_then_also_outputs_others(nlp_engine):
     pattern = Pattern("rocket pattern", r"\W*(rocket)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
         "ROCKET",
@@ -527,7 +535,7 @@ def test_add_recognizer_also_outputs_others(nlp_engine):
     assert len(results) == 2
 
 
-def test_given_no_interpretability_requested_then_response_contains_no_analysis(
+def test_when_given_no_interpretability_requested_then_response_contains_no_analysis(
     loaded_analyzer_engine, unit_test_guid
 ):
     text = "John Smith drivers license is AC432223"
@@ -561,7 +569,9 @@ def test_given_interpretability_requested_then_response_contains_analysis(
     assert results[0].analysis_explanation is not None
 
 
-def test_read_test_spacy_nlp_conf_file_returns_spacy_nlp_engine(mock_registry):
+def test_when_read_test_spacy_nlp_conf_file_then_returns_spacy_nlp_engine(
+    mock_registry,
+):
     engine = AnalyzerEngine(registry=mock_registry)
 
     assert isinstance(engine.nlp_engine, SpacyNlpEngine)

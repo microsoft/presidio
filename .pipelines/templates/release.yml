@@ -1,24 +1,86 @@
+# Presidio Release: Push to Github Releases, pypi, and to ACR twice (with verison, latest) with 'public' tag for MCR release.
+
 trigger: none
 pr: none
-jobs:
-- job: version
-  displayName: 'Get the version number'
-  steps:
-    - bash: |
-        set -eux  # exit on error
-        ver=$(cat VERSION)
-        echo $ver
-        echo "##vso[task.setvariable variable=version;isOutput=true]$ver"
-      displayName: Set Version
-      name: setVer
-- job: githubRelease
-  displayName: GitHub Release
-  dependsOn: version
-  variables:
-    version: $[ dependencies.Version.outputs['setVer.version'] ]
-  steps:
-    - task: GitHubRelease@0
-      inputs:
-        gitHubConnection: $(GITHUB_CONNECTION)
-        tagSource: manual
-        tag: $(version)
+
+variables:
+  - group: Presidio-V2-CI
+stages:
+  - stage: Release
+    displayName: Release
+    jobs:
+    - job: version
+      displayName: 'Get the version number'
+      steps:
+        - bash: |
+            set -eux  # exit on error
+            ver=$(cat VERSION)
+            echo $ver
+            echo "##vso[task.setvariable variable=version;isOutput=true]$ver"
+          displayName: Set Version
+          name: setVer
+
+    - job: githubRelease
+      displayName: GitHub Release
+      dependsOn: version
+      variables:
+        version: $[ dependencies.Version.outputs['setVer.version'] ]
+      steps:
+        - task: GitHubRelease@0
+          inputs:
+            gitHubConnection: $(GITHUB_CONNECTION)
+            tagSource: manual
+            tag: $(version)
+
+    - job: PublishToPyPi
+      displayName: Publish to PyPi
+      dependsOn: version
+      strategy:
+        matrix:
+          Analyzer:
+            WORKING_FOLDER: 'presidio-analyzer'
+          Anonymizer:
+            WORKING_FOLDER: 'presidio-anonymizer'
+      steps:
+        - template: ./publish-to-pypi.yml
+          parameters:
+            WORKING_FOLDER: '$(WORKING_FOLDER)'
+
+    - job: BuildAndPushContainers
+      displayName: Build and Push Containers
+      dependsOn: version
+      pool:
+        vmImage: 'ubuntu-16.04'
+      variables:
+        version: $[ dependencies.Version.outputs['setVer.version'] ]
+        REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+        IMAGE_PREFIX: "public/"
+      steps:
+        - template: ./build-and-push-containers.yml
+          parameters:
+            REGISTRY_NAME: $(REGISTRY_NAME)
+            IMAGE_PREFIX: $(IMAGE_PREFIX)
+            TAG: ":$(version)"
+            AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+        - template: ./build-and-push-containers.yml
+          parameters:
+            REGISTRY_NAME: $(REGISTRY_NAME)
+            IMAGE_PREFIX: $(IMAGE_PREFIX)
+            TAG: ":v2-latest"
+            AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+  - stage: DeployProd
+    dependsOn: Release
+    variables:
+      REGISTRY_NAME: 'mcr.microsoft.com/'
+      VERSION: $[ stageDependencies.Release.version.outputs['setVer.version'] ]
+    displayName: Deploy
+    jobs:
+      - template: ./deploy-stage.yml
+        parameters:
+          ENVIRONMNT_NAME: Prod
+          REGISTRY_NAME: $(REGISTRY_NAME)
+          AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION)
+          ANALYZER_APP_NAME: $(ANALYZER_PROD_APP_NAME)
+          ANONYMIZER_APP_NAME: $(ANONYMIZER_PROD_APP_NAME)
+          RESOURCE_GROUP_NAME: $(PROD_RESOURCE_GROUP_NAME)
+          TAG: $(VERSION)

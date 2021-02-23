@@ -1,6 +1,7 @@
-# Presidio CI: lint, build, unit test, functional tests, push to private Azure Container registry, deploy to dev demo
+# Presidio CI: lint, build, unit test, e2e tests, push to private Azure Container registry, deploy to dev demo
 
 trigger:
+  batch: true
   branches:
     include:
       - V2
@@ -10,7 +11,8 @@ variables:
 
 stages:
   - template: .pipelines/templates/lint-build-test.yml
-  - stage: PushContainersAndFunctionalTests
+  - stage: PushContainersAndE2ETests
+    displayName: E2E Tests
     dependsOn: LintBuildTest
     jobs:
       - job: BuildAndPushContainers
@@ -21,14 +23,14 @@ stages:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
         steps:
-          - template: .pipelines/templates/build-containers.yml
+          - template: .pipelines/templates/build-and-push-containers.yml
             parameters:
               REGISTRY_NAME: $(REGISTRY_NAME)
               TAG: $(TAG)
               AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
 
-      - job: FunctionalTests
-        displayName: Functional Tests
+      - job: E2ETests
+        displayName: E2E Tests
         dependsOn:
           - 'BuildAndPushContainers'
         pool:
@@ -49,148 +51,21 @@ stages:
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
                 TAG=$(TAG)
-          - template: .pipelines/templates/functional-tests.yml
+          - template: .pipelines/templates/e2e-tests.yml
 
   - stage: DeployDev
-    dependsOn: PushContainersAndFunctionalTests
+    dependsOn: PushContainersAndE2ETests
     variables:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-    displayName: Deploy to Dev environment
+    displayName: Deploy
     jobs:
-      - job: DeployAnalyzerToDev
-        displayName: Deploy Analyzer to Dev Environment
-        pool:
-          vmImage: 'ubuntu-16.04'
-        steps:
-          - checkout: none
-          - task: AzureCLI@2
-            displayName: Create staging slot
-            name: createStagingSlot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                set -eux  # fail on error
-
-                az webapp deployment slot create --name $(ANALYZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --configuration-source $(ANALYZER_DEV_APP_NAME) --slot staging
-                URI=https://$(az webapp config hostname list --webapp-name $(ANALYZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --slot staging --query '[0].name' -o tsv)
-                echo $URI
-                echo "##vso[task.setvariable variable=STAGING_URI;isOutput=true]$URI"
-          - task: AzureWebAppContainer@1
-            displayName: Deploy to staging slot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              deployToSlotOrASE: true
-              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
-              appName: $(ANALYZER_DEV_APP_NAME)
-              slotName: staging
-              imageName: $(REGISTRY_NAME)presidio-analyzer:$(Build.BuildId)
-
-      - job: DeployAnonymizerToDev
-        displayName: Deploy Anonymizer to Dev Environment
-        pool:
-          vmImage: 'ubuntu-16.04'
-        steps:
-          - checkout: none
-          - task: AzureCLI@2
-            displayName: Create staging slot
-            name: createStagingSlot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                set -eux  # fail on error
-
-                az webapp deployment slot create --name $(ANONYMIZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --configuration-source $(ANONYMIZER_DEV_APP_NAME) --slot staging
-                URI=https://$(az webapp config hostname list --webapp-name $(ANONYMIZER_DEV_APP_NAME) --resource-group $(DEV_RESOURCE_GROUP_NAME) --slot staging --query '[0].name' -o tsv)
-                echo $URI
-                echo "##vso[task.setvariable variable=STAGING_URI;isOutput=true]$URI"
-          - task: AzureWebAppContainer@1
-            displayName: Deploy to staging slot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              deployToSlotOrASE: true
-              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
-              appName: $(ANONYMIZER_DEV_APP_NAME)
-              slotName: staging
-              imageName: $(REGISTRY_NAME)presidio-anonymizer:$(Build.BuildId)
-
-      - job: TestDeployment
-        displayName: Smoke and E2E Tests on the deployement
-        dependsOn:
-          - DeployAnalyzerToDev
-          - DeployAnonymizerToDev
-        variables:
-          ANALYZER_STAGING_URI: $[ dependencies.DeployAnalyzerToDev.outputs['createStagingSlot.STAGING_URI'] ]
-          ANONYMIZER_STAGING_URI: $[ dependencies.DeployAnonymizerToDev.outputs['createStagingSlot.STAGING_URI'] ]
-        steps:
-          - task: Bash@3
-            displayName: 'Wait and Smoke test'
-            timeoutInMinutes: 10
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -ux  # do not fail on error
-
-                ANALYZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANALYZER_STAGING_URI/health)
-                ANONYMIZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANONYMIZER_STAGING_URI/health)
-                echo analyzer status code is $ANALYZER_STATUS_CODE
-                echo anonymizer status code is $ANONYMIZER_STATUS_CODE
-
-                while [ ! $ANALYZER_STATUS_CODE == 200 ] || [ ! $ANONYMIZER_STATUS_CODE == 200 ]
-                do
-                    sleep 30
-                    ANALYZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANALYZER_STAGING_URI/health)
-                    ANONYMIZER_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 10 $ANONYMIZER_STAGING_URI/health)
-                    echo analyzer status code is $ANALYZER_STATUS_CODE
-                    echo anonymizer status code is $ANONYMIZER_STATUS_CODE
-                done
-
-      - job: SwapBothSlots
-        condition: eq(dependencies.TestDeployment.result, 'Succeeded')
-        strategy:
-          matrix:
-            Analyzer:
-              Name: 'Analyzer'
-              AppServiceName: $(ANALYZER_DEV_APP_NAME)
-            Anonymizer:
-              Name: 'Anonymizer'
-              AppServiceName: $(ANONYMIZER_DEV_APP_NAME)
-        displayName: Swap slots from staging to production
-        dependsOn: TestDeployment
-        steps:
-          - checkout: none
-          - task: AzureAppServiceManage@0
-            displayName: Swap $(Name) slot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              action: Swap Slots
-              webAppName: $(AppServiceName)
-              sourceSlot: staging
-              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
-
-      - job: DeleteBothSlots
-        condition: always()
-        dependsOn:
-          - SwapBothSlots
-        strategy:
-          matrix:
-            Analyzer:
-              Name: 'Analyzer'
-              AppServiceName: $(ANALYZER_DEV_APP_NAME)
-            Anonymizer:
-              Name: 'Anonymizer'
-              AppServiceName: $(ANONYMIZER_DEV_APP_NAME)
-        displayName: Delete staging slot
-        steps:
-          - checkout: none
-          - task: AzureAppServiceManage@0
-            displayName: Delete $(Name) staging slot
-            inputs:
-              azureSubscription: $(DEV_AZURE_SUBSCRIPTION)
-              action: Delete Slot
-              webAppName: $(AppServiceName)
-              slot: staging
-              resourceGroupName: $(DEV_RESOURCE_GROUP_NAME)
+      - template: .pipelines/templates/deploy-stage.yml
+        parameters:
+          ENVIRONMNT_NAME: Dev
+          REGISTRY_NAME: $(REGISTRY_NAME)
+          AZURE_SUBSCRIPTION: $(DEV_AZURE_SUBSCRIPTION)
+          ANALYZER_APP_NAME: $(ANALYZER_DEV_APP_NAME)
+          ANONYMIZER_APP_NAME: $(ANONYMIZER_DEV_APP_NAME)
+          IMAGE_REDACTOR_APP_NAME: $(IMAGE_REDACTOR_DEV_APP_NAME)
+          RESOURCE_GROUP_NAME: $(DEV_RESOURCE_GROUP_NAME)
+          TAG: $(Build.BuildId)

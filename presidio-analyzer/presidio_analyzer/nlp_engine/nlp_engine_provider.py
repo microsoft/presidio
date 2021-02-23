@@ -1,12 +1,12 @@
+import logging
 from pathlib import Path
 from typing import Optional, Dict, Union, Tuple
 
 import yaml
 
-from presidio_analyzer import PresidioLogger
 from presidio_analyzer.nlp_engine import StanzaNlpEngine, SpacyNlpEngine, NlpEngine
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class NlpEngineProvider:

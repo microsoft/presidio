@@ -1,11 +1,7 @@
-import json
-import os
 from typing import List
-from unittest.mock import Mock
 
 import pytest
 
-from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.anonymizers import Replace, Mask
 from presidio_anonymizer.entities.anonymizer_request import AnonymizerRequest
 from presidio_anonymizer.entities.invalid_exception import InvalidParamException
@@ -15,25 +11,7 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
     # fmt: off
     "request_json, result_text",
     [
-        ({}, "Invalid input, analyzer results can not be empty",),
         ({
-             "text": "Hello world",
-             "analyzer_results": [
-                 {
-                     "start": 28,
-                     "end": 32,
-                     "score": 0.8,
-                     "entity_type": "NUMBER"
-                 }
-             ],
-             "transformations": {
-                 "default": {
-                     "type": "none"
-                 }
-             }
-         }, "Invalid anonymizer class 'none'.",),
-        ({
-             "text": "hello world, my name is Jane Doe. My number is: 034453334",
              "analyzer_results": [
                  {
                      "end": 32,
@@ -42,72 +20,77 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
              ]
          }, "Invalid input, analyzer result must contain start",),
         ({
-             "text": "hello world, my name is Jane Doe. My number is: 034453334",
-         }, "Invalid input, analyzer results can not be empty",),
-        ({
-             "analyzer_results": [
-                 {
-                     "start": 28,
-                     "end": 32,
-                     "score": 0.8,
-                     "entity_type": "NUMBER"
-                 }
-             ]
-         }, "Invalid input, text can not be empty",)
+             "analyzer_results": []
+         }, "Invalid input, analyzer results can not be empty"),
+        ({}, "Invalid input, analyzer results can not be empty")
     ],
     # fmt: on
 )
-def test_given_invalid_json_then_request_creation_should_fail(request_json,
-                                                              result_text):
+def test_given_invalid_json_for_analyzer_result_then_we_fail(
+        request_json, result_text
+):
     with pytest.raises(InvalidParamException) as e:
-        AnonymizerRequest(request_json, AnonymizerEngine().builtin_anonymizers)
+        AnonymizerRequest.handle_analyzer_results_json(request_json)
     assert result_text == e.value.err_msg
 
 
-def test_given_no_transformations_then_we_get_the_default():
-    content = get_content()
-    request = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
-    request._transformations = {}
-    analyzer_result = Mock()
-    analyzer_result.entity_type = "PHONE"
-    transformation = request.get_transformation(analyzer_result)
-    assert transformation.get("type") == "replace"
-    assert type(transformation.get("anonymizer")) == type(Replace)
+@pytest.mark.parametrize(
+    # fmt: off
+    "request_json, result_text",
+    [
+        ({
+             "anonymizers": {
+                 "default": {
+                     "type": "none"
+                 }
+             }
+         }, "Invalid anonymizer class 'none'.",),
+        ({
+             "anonymizers": {
+                 "number": {
+
+                 }
+             }
+         }, "Invalid anonymizer class 'None'.",),
+    ],
+    # fmt: on
+)
+def test_given_invalid_json_for_anonymizers_then_we_fail(
+        request_json, result_text
+):
+    with pytest.raises(InvalidParamException) as e:
+        AnonymizerRequest.get_anonymizer_configs_from_json(request_json)
+    assert result_text == e.value.err_msg
 
 
-def test_given_valid_json_then_request_creation_should_succeed():
+def test_given_valid_json_then_anonymizers_config_list_created_successfully():
     content = get_content()
-    data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
-    assert data.get_text() == content.get("text")
-    assert data._text == content.get("text")
-    assert data._transformations == content.get("transformations")
-    assert len(data._analysis_results) == len(content.get("analyzer_results"))
-    assert data._analysis_results == data.get_analysis_results()
-    for result_a in data._analysis_results:
-        same_result_in_content = __find_element(content.get("analyzer_results"),
-                                                result_a.entity_type)
+    anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(content)
+    assert len(anonymizers_config) == 2
+    phone_number_anonymizer = anonymizers_config.get("PHONE_NUMBER")
+    assert phone_number_anonymizer.params == {
+        "masking_char": "*",
+        "chars_to_mask": 4,
+        "from_end": True,
+    }
+    assert phone_number_anonymizer.anonymizer_class == Mask
+    default_anonymizer = anonymizers_config.get("DEFAULT")
+    assert default_anonymizer.params == {"new_value": "ANONYMIZED"}
+    assert default_anonymizer.anonymizer_class == Replace
+
+
+def test_given_valid_json_then_analyzer_results_list_created_successfully():
+    content = get_content()
+    analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
+    assert len(analyzer_results) == len(content.get("analyzer_results"))
+    for result_a in analyzer_results:
+        same_result_in_content = __find_element(
+            content.get("analyzer_results"), result_a.entity_type
+        )
         assert same_result_in_content
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
         assert result_a.end == same_result_in_content.get("end")
-        assert data.get_transformation(result_a)
-
-
-def test_given_valid_anonymizer_request_then_get_transformations_successfully():
-    content = get_content()
-    data = AnonymizerRequest(content, AnonymizerEngine().builtin_anonymizers)
-    replace_result = data.get_analysis_results()[0]
-    default_replace_transformation = data.get_transformation(replace_result)
-    assert default_replace_transformation.get('type') == 'replace'
-    assert default_replace_transformation.get('new_value') == 'ANONYMIZED'
-    assert type(default_replace_transformation.get('anonymizer')) == type(Replace)
-    mask_transformation = data.get_transformation(data.get_analysis_results()[3])
-    assert mask_transformation.get('type') == 'mask'
-    assert mask_transformation.get('from_end')
-    assert mask_transformation.get('chars_to_mask') == 4
-    assert mask_transformation.get('masking_char') == '*'
-    assert mask_transformation.get('anonymizer')
-    assert type(mask_transformation.get('anonymizer')) == type(Mask)
 
 
 def __find_element(content: List, entity_type: str):
@@ -117,17 +100,22 @@ def __find_element(content: List, entity_type: str):
     return None
 
 
-def file_path(file_name: str):
-    return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), f"resources/{file_name}"))
-
-
-content = {}
-
-
 def get_content():
-    global content
-    json_path = file_path("payload.json")
-    with open(json_path) as json_file:
-        content = json.load(json_file)
-        return content
+    return {
+        "text": "hello world, my name is Jane Doe. My number is: 034453334",
+        "anonymizers": {
+            "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
+            "PHONE_NUMBER": {
+                "type": "mask",
+                "masking_char": "*",
+                "chars_to_mask": 4,
+                "from_end": True,
+            },
+        },
+        "analyzer_results": [
+            {"start": 24, "end": 32, "score": 0.8, "entity_type": "NAME"},
+            {"start": 24, "end": 28, "score": 0.8, "entity_type": "FIRST_NAME"},
+            {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
+            {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"},
+        ],
+    }

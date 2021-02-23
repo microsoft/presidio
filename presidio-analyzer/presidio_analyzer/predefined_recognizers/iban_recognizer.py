@@ -1,23 +1,23 @@
+import logging
 import string
 from typing import Tuple, List, Dict, Optional
 
 import regex as re
 
+from presidio_analyzer import (
+    Pattern,
+    PatternRecognizer,
+    RecognizerResult,
+    EntityRecognizer,
+)
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.predefined_recognizers.iban_patterns import (
     regex_per_country,
     BOS,
     EOS,
 )
-from presidio_analyzer import (
-    Pattern,
-    PatternRecognizer,
-    RecognizerResult,
-    EntityRecognizer,
-    PresidioLogger,
-)
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class IbanRecognizer(PatternRecognizer):

@@ -1,5 +1,5 @@
-from abc import ABC
-from typing import List
+from abc import ABC, abstractmethod
+from typing import List, Optional
 
 from presidio_analyzer import EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -18,15 +18,17 @@ class RemoteRecognizer(ABC, EntityRecognizer):
     def __init__(
         self,
         supported_entities: List[str],
-        name: str,
+        name: Optional[str],
         supported_language: str,
         version: str,
     ):
         super().__init__(supported_entities, name, supported_language, version)
 
+    @abstractmethod
     def load(self):  # noqa D102
         pass
 
+    @abstractmethod
     def analyze(
         self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts
     ):  # noqa ANN201
@@ -39,8 +41,10 @@ class RemoteRecognizer(ABC, EntityRecognizer):
         :return: List of identified PII entities
         """
 
-        # Add code here to connect to the side car
+        # 1. Call the external service.
+        # 2. Translate results into List[RecognizerResult]
         pass
 
+    @abstractmethod
     def get_supported_entities(self) -> List[str]:  # noqa D102
         pass
