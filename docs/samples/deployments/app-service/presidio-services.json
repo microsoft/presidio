@@ -5,14 +5,14 @@
         "analyzer": {
             "type": "bool",
             "defaultValue": true,
-            "metadata":{
+            "metadata": {
                 "description": "Choose if to deploy the Analyzer service"
             }
         },
         "anonymizer": {
             "type": "bool",
             "defaultValue": true,
-            "metadata":{
+            "metadata": {
                 "description": "Choose if to deploy the Anonymizer service"
             }
         },
@@ -45,13 +45,7 @@
             "metadata": {
                 "description": "The SKU of App Service Plan."
             },
-            "allowedValues": [
-                "F2",
-                "B2",
-                "S2",
-                "P2V2",
-                "I2"
-            ]
+            "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
         },
         "anonymizerSku": {
             "type": "string",
@@ -59,13 +53,7 @@
             "metadata": {
                 "description": "The SKU of App Service Plan."
             },
-            "allowedValues": [
-                "F1",
-                "B1",
-                "S1",
-                "P1V2",
-                "I1"
-            ]
+            "allowedValues": ["F1", "B1", "S1", "P1V2", "I1"]
         },
         "imagesArePublic": {
             "type": "bool",
@@ -76,14 +64,14 @@
         },
         "analyzerImage": {
             "type": "string",
-            "defaultValue": "mcr.microsoft.com/presidio-analyzer:v2-latest",
+            "defaultValue": "mcr.microsoft.com/presidio-analyzer:latest",
             "metadata": {
                 "description": "The full analyzer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "anonymizerImage": {
             "type": "string",
-            "defaultValue": "mcr.microsoft.com/presidio-anonymizer:v2-latest",
+            "defaultValue": "mcr.microsoft.com/presidio-anonymizer:latest",
             "metadata": {
                 "description": "The full anonymizer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
@@ -127,7 +115,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/V2/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -169,7 +157,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/V2/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

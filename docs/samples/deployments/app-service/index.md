@@ -7,7 +7,7 @@ Azure App Service provides a managed production environment, which supports dock
 
 Use the following button to deploy presidio services to your Azure subscription.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2FV2%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
 
 TODO: change this link to main branch once merged (#2765).
 
@@ -17,7 +17,7 @@ The following script can be used alternatively to the ARM template deployment ab
 
 ## Basic setup
 
-``` bash
+```bash
 RESOURCE_GROUP=<resource group name>
 APP_SERVICE_NAME=<name of app service>
 LOCATION=<location>
@@ -46,7 +46,7 @@ az webapp create --name $APP_SERVICE_NAME --plan $APP_SERVICE_NAME-plan \
 
 Use the following script to restrict network access for a specific ip such as your computer, a front-end website or an API management.
 
-``` bash
+```bash
 FRONT_END_IP_RANGE=[front end ip range]
 az webapp config access-restriction add --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME \
   --rule-name 'Front-end allow rule' --action Allow --ip-address $FRONT_END_IP_RANGE --priority 100
@@ -58,7 +58,7 @@ Further network isolation, using virtual networks, is possible using an Isolated
 
 ### Logging to the App Service File System
 
-``` bash
+```bash
 az webapp log config --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP \
 --application-logging filesystem --detailed-error-messages true \
 --docker-container-logging filesystem --level information
@@ -66,7 +66,7 @@ az webapp log config --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP \
 
 ### Logging to Log Analytics Workspace
 
-``` bash
+```bash
 LOG_ANALYTICS_WORKSPACE_RESROUCE_GROUP=<resource group of log analytics>
 LOG_ANALYTICS_WORKSPACE_NAME=<log analytics name>
 
@@ -93,4 +93,3 @@ To deploy the app services using the provided ARM template, fill in the provided
 az deployment group create --resource-group $RESOURCE_GROUP --template-file presidio-services.json --parameters @values.json
 
 ```
-

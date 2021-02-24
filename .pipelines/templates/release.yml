@@ -66,7 +66,7 @@ stages:
           parameters:
             REGISTRY_NAME: $(REGISTRY_NAME)
             IMAGE_PREFIX: $(IMAGE_PREFIX)
-            TAG: ":v2-latest"
+            TAG: ":latest"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
   - stage: DeployProd
     dependsOn: Release
