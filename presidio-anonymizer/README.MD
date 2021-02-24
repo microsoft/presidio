@@ -176,5 +176,5 @@ No paramaters are required.
 Response sample:
 
 ```json
-["fpe", "hash", "mask", "redact", "replace"]
+["hash", "mask", "redact", "replace"]
 ```
