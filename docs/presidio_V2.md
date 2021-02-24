@@ -11,6 +11,7 @@ The main changes introduced in **V2** are:
 5. Presidio Analyzer - removed use of templates and external recognizer store
 
 Notes:
+#TODO:check link update master branch update
 The legacy V1 code base will continue to be available under branch [V1](https://github.com/microsoft/presidio/tree/V1) but will no longer be officially supported.
 
 ## API Changes
