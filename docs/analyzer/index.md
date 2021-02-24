@@ -13,7 +13,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
 ## Installation
 
 === "Using pip"
-    
+
     !!! note "Note"
         Consider installing the Presidio python packages on a virtual environment like venv or conda.
     
@@ -26,7 +26,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
     ```
 
 === "Using Docker"
-    
+
     !!! note "Note"
         This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
     
@@ -39,7 +39,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
     ```
 
 === "From source"
-    
+
     First, clone the Presidio repo. [See here for instructions](../installation.md#install-from-source).
     
     Then, build the presidio-analyzer container:
@@ -52,7 +52,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
 ## Getting started
 
 === "Python"
-    
+
     Once the Presidio-analyzer package is installed, run this simple analysis script:
     
     ```python
@@ -70,7 +70,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
     ```
 
 === "As an HTTP server"
-    
+
     You can run presidio analyzer as an http server using either python runtime or using a docker container.
     
     #### Using docker container
@@ -93,8 +93,8 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
 
 ## Creating PII recognizers
 
-Presidio can be easily extended to support additional PII entities. 
-See [this tutorial on adding new PII recognizers](adding_recognizers.md) 
+Presidio can be easily extended to support additional PII entities.
+See [this tutorial on adding new PII recognizers](adding_recognizers.md)
 for more information.
 
 ## Multi-language support
@@ -108,7 +108,7 @@ Presidio analyzer has a built in mechanism for tracing each decision made. This 
 
 ## Supported entities
 
-For a list of the current supported entities: 
+For a list of the current supported entities:
 [Supported entities](../supported_entities.md).
 
 ## API reference
@@ -129,7 +129,7 @@ Parameters
 | score_threshold|float|yes|the the minimal detection score threshold|
 | entities|string[]|yes|a list of entities to analyze|
 | trace|bool|yes|whether to trace the request|
-| remove_interpretability_response|bool|yes|whether to include analysis explanation in the response |
+| return_decision_process|bool|yes|whether to include analysis explanation in the response |
 
 `/recognizers`
 

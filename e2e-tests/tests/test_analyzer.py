@@ -16,8 +16,8 @@ def test_given_a_correct_analyze_input_then_return_full_response():
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85},
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999}
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
+        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null}
     ]
     """
     assert response_status == 200
@@ -29,7 +29,7 @@ def test_given_analyze_threshold_input_then_return_result_above_threshold():
     request_body = """
     {
         "text": "John Smith drivers license is AC432223", 
-        "language": "en", "score_threshold": 0.7,"return_decision_process":true
+        "language": "en", "score_threshold": 0.7
     }
     """
 
@@ -38,13 +38,7 @@ def test_given_analyze_threshold_input_then_return_result_above_threshold():
     expected_response = """
     [
         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
-        "analysis_explanation": {
-            "recognizer": "SpacyRecognizer", "pattern_name": null, 
-            "pattern": null, "original_score": 0.85, "score": 0.85, 
-            "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition", 
-            "score_context_improvement": 0, "supportive_context_word": "", 
-            "validation_result": null
-            }
+        "analysis_explanation": null
         }
     ]
     """
@@ -157,7 +151,7 @@ def test_given_a_trace_invalid_value_analyze_input_then_return_normal_response()
 
 
 @pytest.mark.api
-def test_given_no_interpretability_for_analyze_input_then_return_response_without_analysis():
+def test_given_return_decision_process_false_for_analyze_input_then_return_response_without_analysis():
     request_body = """  
     {
         "text": "John Smith drivers license is AC432223", 
@@ -177,10 +171,10 @@ def test_given_no_interpretability_for_analyze_input_then_return_response_withou
 
 
 @pytest.mark.api
-def test_given_interpretability_enabled_for_analyze_input_then_return_response_with_anlysis():
+def test_given_decision_process_enabled_for_analyze_input_then_return_response_with_decision_process():
     request_body = """
     {
-        "text": "John Smith drivers license is AC432223", "language": "en", "remove_interpretability_response": 0
+        "text": "John Smith drivers license is AC432223", "language": "en", "return_decision_process": true
     }
     """
     response_status, response_content = analyze(request_body)
@@ -220,12 +214,7 @@ def test_given_analyze_entities_input_then_return_results_only_with_those_entiti
     expected_response = """
     [ 
         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
-        "analysis_explanation": {
-            "recognizer": "SpacyRecognizer", "pattern_name": null, "pattern": null, 
-            "original_score": 0.85, "score": 0.85, 
-            "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition", 
-            "score_context_improvement": 0, "supportive_context_word": "", "validation_result": null
-            }
+        "analysis_explanation": null
         }
     ]
     """

@@ -22,7 +22,7 @@ from tests.mocks import NlpEngineMock, AppTracerMock, RecognizerRegistryMock
 
 @pytest.fixture(scope="module")
 def app_tracer():
-    return AppTracerMock(enable_interpretability=True)
+    return AppTracerMock(enable_decision_process=True)
 
 
 @pytest.fixture(scope="module")
@@ -283,7 +283,7 @@ def test_when_analyze_then_apptracer_has_value(
     text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"  # noqa E501
     language = "en"
     entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
-    app_tracer_mock = AppTracerMock(enable_interpretability=True)
+    app_tracer_mock = AppTracerMock(enable_decision_process=True)
     analyzer_engine_with_spacy = AnalyzerEngine(
         loaded_registry,
         app_tracer=app_tracer_mock,
@@ -535,7 +535,7 @@ def test_when_add_recognizer_then_also_outputs_others(nlp_engine):
     assert len(results) == 2
 
 
-def test_when_given_no_interpretability_requested_then_response_contains_no_analysis(
+def test_when_given_no_decision_process_requested_then_response_contains_no_analysis(
     loaded_analyzer_engine, unit_test_guid
 ):
     text = "John Smith drivers license is AC432223"
@@ -552,7 +552,7 @@ def test_when_given_no_interpretability_requested_then_response_contains_no_anal
     assert results[0].analysis_explanation is None
 
 
-def test_given_interpretability_requested_then_response_contains_analysis(
+def test_given_decision_process_requested_then_response_contains_analysis(
     loaded_analyzer_engine, unit_test_guid
 ):
     text = "John Smith drivers license is AC432223"
