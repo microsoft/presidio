@@ -101,21 +101,15 @@ print(result)
 
 ```
 
-### As service:
+### As docker service:
 
 In folder presidio/presidio-anonymizer run:
 
 ```
-pipenv sync
+docker-compose up -d
 ```
 
-Start the server with flask (**_this is a test server please do not use in prod_**):
-
-```
-pipenv run app.py
-```
-
-The request should be:
+### HTTP API
 
 ```
 POST /anonymize
@@ -170,7 +164,7 @@ Result:
 hello world, my name is <NAME>. My number is: 03445****
 ```
 
-### HTTP API
+
 
 #### /anonymizers
 
