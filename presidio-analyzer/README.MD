@@ -18,7 +18,6 @@ Use the following button to deploy presidio analyzer to your Azure subscription.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fpresidio-analyzer%2Fdeploytoazure.json)
 
-TODO: change this link to main branch once merged (#2765).
 
 ## Simple usage example
 
