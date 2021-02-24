@@ -2,7 +2,7 @@
 pr:
   branches:
     include:
-      - V2
+      - main
 
 variables:
   - group: Presidio-V2-CI

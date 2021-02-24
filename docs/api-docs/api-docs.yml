@@ -193,7 +193,7 @@ paths:
                   type: string
                   example: "mask"
               example:
-                ["fpe", "hash", "mask", "redact", "replace"]
+                ["hash", "mask", "redact", "replace"]
 
 
   /health:

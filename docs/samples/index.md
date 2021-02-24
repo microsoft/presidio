@@ -1,7 +1,10 @@
-# Usage samples
+# Samples
 
-## Table of contents
+## Usage Samples
+
+1. [Running in a Python pipeline](python/index.md)
+2. [Running using Flask in Docker](docker/index.md)
+
+## Deployment Samples
 
 1. [Azure App service](deployments/app-service/index.md)
-2. [Running in a Python pipeline](python/index.md)
-3. [Running using Flask in Docker](docker/index.md)

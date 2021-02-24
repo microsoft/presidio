@@ -21,14 +21,6 @@ For more details follow the [Build and Release documentation](docs/build_release
 
 To get started, refer to the documentation for [setting up a development environment](docs/development.md).
 
-### General contribution guidelines
-
--   A Github issue suggesting the change should be opened prior to a PR.
--   All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.
--   To make the linting process easier, you can use [pre-commit hooks](docs/development.md#automatically-format-code-and-check-for-code-styling) to verify and automatically format code upon a git commit
--   In order for a pull request to be accepted, the CI (containing unit tests, e2e tests and linting) needs to succeed, in addition to approvals from two maintainers.
--   PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
-
 ### How can I contribute?
 
 -   [Testing](#how-to-test)
