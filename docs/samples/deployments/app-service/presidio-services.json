@@ -64,14 +64,14 @@
         },
         "analyzerImage": {
             "type": "string",
-            "defaultValue": "mcr.microsoft.com/presidio-analyzer:v2-latest",
+            "defaultValue": "mcr.microsoft.com/presidio-analyzer:latest",
             "metadata": {
                 "description": "The full analyzer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "anonymizerImage": {
             "type": "string",
-            "defaultValue": "mcr.microsoft.com/presidio-anonymizer:v2-latest",
+            "defaultValue": "mcr.microsoft.com/presidio-anonymizer:latest",
             "metadata": {
                 "description": "The full anonymizer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
