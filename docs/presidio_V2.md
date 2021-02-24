@@ -5,13 +5,18 @@ As of March 2021, Presidio had undergo a revamp to a new version refereed to as 
 The main changes introduced in **V2** are:
 
 1. gRPC replaced with HTTP to allow more customizable APIs and easier debugging
-2. Presidio Anonymizer is Python based and pip installable.
-3. Focus on the Analyzer and Anonymizer services. Other services are deprecated and potentially be migrated over time to **V2** with the help of the community.
-4. Improved documentation, samples and build flows.
-5. Presidio Analyzer - removed use of templates and external recognizer store
+2. Focus on the Analyzer and Anonymizer services.
+
+    1. Presidio Anonymizer is now Python based and pip installable.
+    2. Presidio Analyzer does not use templates and external recognizer store.
+    3. Image Redactor (formerly presidio-image-anonymizer) is in early beta and is Python based and pip installable.
+    4. Other services are deprecated and potentially be migrated over time to **V2** with the help of the community.
+
+3. Improved documentation, samples and build flows.
+
+#TODO:check link update master branch update
 
 Notes:
-#TODO:check link update master branch update
 The legacy V1 code base will continue to be available under branch [V1](https://github.com/microsoft/presidio/tree/V1) but will no longer be officially supported.
 
 ## API Changes
@@ -21,9 +26,9 @@ The move from gRPC to HTTP based APIs included changes to the API requests.
 1. Change in payload - moving from structures to jsons.
 
 2. Removing templates from the API - includes flattening the json.
-3. Using snake_case instead of camel_case.
+3. Using snake_case instead of camelCase .
 
-Bellow is a detailed outline of all the changes done to the Analyzer and Anonymizer.
+Below is a detailed outline of all the changes done to the Analyzer and Anonymizer.
 
 ### Analyzer API Changes
 
@@ -60,7 +65,7 @@ Bellow is a detailed outline of all the changes done to the Analyzer and Anonymi
     "correlation_id": "213",
     "score_threshold": 0.5,
     "trace": true,
-    "remove_interpretability_response": true
+    "return_decision_process": true
 }
 ```
 
