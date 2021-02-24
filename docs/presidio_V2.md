@@ -165,4 +165,3 @@ Bellow is a detailed outline of all the changes done to the Analyzer and Anonymi
 | Redact             | NONE                                                                                    | NONE                                                                                       |
 | Mask               | <pre>string maskingCharacter = 1;<br>int32 charsToMask = 2; <br>bool fromEnd = 3;</pre> | <pre>{<br> "chars_to_mask": 10,<br> "from_end": true,<br> "masking_char": "\*" <br>}</pre> |
 | Hash               | NONE                                                                                    | <pre>{"hash_type": "VALUE"}</pre>                                                          |
-| FPE                | <pre>string key = 1;<br>string tweak = 2;<br>bool decrypt = 3;</pre>                    | <pre>{<br> "key":"VALUE",<br> "tweak":"VALUE",<br> "decrypt":true<br>}</pre>               |
