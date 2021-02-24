@@ -101,7 +101,7 @@ def test_given_anonymizers_called_then_expected_anonymizers_list_returned():
     response_status, response_content = anonymizers()
 
     expected_response = """
-        ["fpe", "hash", "mask", "redact", "replace"]
+        ["hash", "mask", "redact", "replace"]
     """
 
     assert response_status == 200
