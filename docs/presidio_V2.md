@@ -81,34 +81,39 @@ Bellow is a detailed outline of all the changes done to the Analyzer and Anonymi
       "mask_value": {...},
       "fpe_value": {...}
     },
-    "field_type_transformations": [{
-      "fields":[{
-        "name": "FIRST_NAME",
-        "min_score": "0.2"
-      }],
-      "transfomarion": {
-        "replace_value": {...},
-      "redact_value": {...},
-      "hash_value": {...},
-      "mask_value": {...},
-      "fpe_value": {...}
-      },]
-  },
-  "analyze_results": [
-    {
-      "text": "Jane",
-      "field": {
-        "name": "FIRST_NAME",
-        "min_score": "0.5"
-      },
-      "location": {
-        "start": 24,
-        "end": 32,
-        "length": 6
-      },
-      "score": 0.8
-    }
-  ]
+    "field_type_transformations": [
+      {
+        "fields": [
+          {
+            "name": "FIRST_NAME",
+            "min_score": "0.2"
+          }
+        ],
+        "transfomarion": {
+          "replace_value": {...},
+          "redact_value": {...},
+          "hash_value": {...},
+          "mask_value": {...},
+          "fpe_value": {...}
+        }
+      }
+    ],
+    "analyze_results": [
+      {
+        "text": "Jane",
+        "field": {
+          "name": "FIRST_NAME",
+          "min_score": "0.5"
+        },
+        "location": {
+          "start": 24,
+          "end": 32,
+          "length": 6
+        },
+        "score": 0.8
+      }
+    ]
+  }
 }
 ```
 
