@@ -9,78 +9,77 @@
 To create a local copy of Presidio repository, follow [Github instructions](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository)
 on how to clone a project using git.
 The project is structured so that:
-- Each Preisio service has a designated directory. In it, the source code for:
-    - The service logic.
-    - Tests, both unit and integration.
-    - Serving it as an HTTP service (found in app.py).
-    - Python Packaging setup script (setup.py).
-- In the project root directory, you will find common code for using, serving and testing Presidio
-as a cluster of services, as well as CI/CD pipelines codebase and documentation.
+
+-   Each Preisio service has a designated directory. In it, the source code for:
+    -   The service logic.
+    -   Tests, both unit and integration.
+    -   Serving it as an HTTP service (found in app.py).
+    -   Python Packaging setup script (setup.py).
+-   In the project root directory, you will find common code for using, serving and testing Presidio
+    as a cluster of services, as well as CI/CD pipelines codebase and documentation.
 
 ### Setting up Pipenv
 
 [Pipenv](https://pipenv.pypa.io/en/latest/) is a Python workflow manager, handling
 dependencies and environment for Python packages. It is used by each Presidio service
-as the dependencies manager, to be aligned with the specific requirements versions. 
+as the dependencies manager, to be aligned with the specific requirements versions.
 Follow these steps when starting to work on a Presidio service with Pipenv:
 
-1. Install pipenv
+1.  Install pipenv
 
-   #### Using Pip3:
-
-   ```
-   pip3 install --user pipenv
-   ```
-
-   #### Using Homebrew (in MacOS)
-
-   ```
-   brew install pipenv
-   ```
-
-   Additional installation instructions: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
-
-2. Create virtualenv for the project and install all requirements in the Pipfile, 
-including dev requirements. For example, in the `presidio-analyzer` folder, run:
+    #### Using Pip3:
 
     ```
-    pipenv install --dev --sequential --skip-lock
+    pip3 install --user pipenv
     ```
 
-3. Run all tests
+    #### Using Homebrew (in MacOS)
+
+    ```
+    brew install pipenv
+    ```
+
+    Additional installation instructions: https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv
+
+2.  Create virtualenv for the project and install all requirements in the Pipfile,
+    including dev requirements. For example, in the `presidio-analyzer` folder, run:
+
+        ```
+        pipenv install --dev --sequential --skip-lock
+        ```
+
+3.  Run all tests
+
     ```
     pipenv run pytest
     ```
 
-4. To run arbitrary scripts within the virtual env, start the command with
-`pipenv run`. For example:
-    1. `pipenv run flake8`
-    2. `pipenv run pip freeze`
-    3. `pipenv run python -m spacy download en_core_web_lg` - To download the
-default spacy model needed for Presidio Analyzer.
+4.  To run arbitrary scripts within the virtual env, start the command with
+    `pipenv run`. For example: 1. `pipenv run flake8` 2. `pipenv run pip freeze` 3. `pipenv run python -m spacy download en_core_web_lg` - To download the
+    default spacy model needed for Presidio Analyzer.
 
 #### Alternatively, activate the virtual environment and use the commands by starting a pipenv shell:
 
 1. Start shell:
 
-   ```
-   pipenv shell
-   ```
+    ```
+    pipenv shell
+    ```
 
 2. Run commands in the shell
 
-   ```
-   pytest
-   pip freeze
-   ```
+    ```
+    pytest
+    pip freeze
+    ```
 
 ### Development guidelines
 
-- A Github issue suggesting the change should be opened prior to a PR.
-- All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.
-- To make the linting process easier, you can use [pre-commit hooks](docs/development.md#automatically-format-code-and-check-for-code-styling) to verify and automatically format code upon a git commit
-- In order for a pull request to be accepted, the CI (containing unit tests, e2e tests and linting) needs to succeed, in addition to approvals from two maintainers.
-- PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
+-   A Github issue suggesting the change should be opened prior to a PR.
+-   All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.
+-   To make the linting process easier, you can use [pre-commit hooks](#automatically-format-code-and-check-for-code-styling) to verify and automatically format code upon a git commit
+-   In order for a pull request to be accepted, the CI (containing unit tests, e2e tests and linting) needs to succeed, in addition to approvals from two maintainers.
+-   PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.
 
 ### Local build process
 
