@@ -178,7 +178,6 @@ Response sample:
 
 ```json
 [
-  "fpe",
   "hash",
   "mask",
   "redact",
