@@ -17,7 +17,8 @@ The legacy V1 code base will continue to be available under branch [V1](https://
 
 The move from gRPC to HTTP based APIs included changes to the API requests.
 
-1. Moving from GRPC to HTTP - moving from structures to jsons.
+1. Change in payload - moving from structures to jsons.
+
 2. Removing templates from the API - includes flattening the json.
 3. Using snake_case instead of camel_case.
 
