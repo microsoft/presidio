@@ -7,7 +7,7 @@ from presidio_anonymizer.entities import AnonymizerConfig, InvalidParamException
     # fmt: off
     "class_name",
     [
-        "fpe", "hash", "mask", "redact", "replace"
+        "hash", "mask", "redact", "replace"
     ],
     # fmt: on
 )

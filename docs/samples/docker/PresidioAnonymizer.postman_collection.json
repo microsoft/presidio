@@ -1,0 +1,75 @@
+{
+	"info": {
+		"_postman_id": "312f87ce-5278-4649-98ad-6be1b135b4ad",
+		"name": "Presidio Anonymizer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Presidio Anonymizer health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5001/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Anonymizers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5001/anonymizers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"anonymizers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Simple Anonymize request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"text\": \"hello world, my name is Jane Doe. My number is: 034453334\",\r\n        \"anonymizers\": {\r\n            \"DEFAULT\": { \"type\": \"replace\", \"new_value\": \"ANONYMIZED\" },\r\n            \"PHONE_NUMBER\": { \"type\": \"mask\", \"masking_char\": \"*\", \"chars_to_mask\": 4, \"from_end\": true }\r\n        },\r\n        \"analyzer_results\": [\r\n            { \"start\": 24, \"end\": 32, \"score\": 0.8, \"entity_type\": \"NAME\" },\r\n            { \"start\": 24, \"end\": 28, \"score\": 0.8, \"entity_type\": \"FIRST_NAME\" },\r\n            { \"start\": 29, \"end\": 32, \"score\": 0.6, \"entity_type\": \"LAST_NAME\" },\r\n            { \"start\": 48, \"end\": 57,  \"score\": 0.95,\r\n                \"entity_type\": \"PHONE_NUMBER\" }\r\n        ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5001/anonymize",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"anonymize"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
