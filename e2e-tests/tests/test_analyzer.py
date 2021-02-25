@@ -16,22 +16,8 @@ def test_given_a_correct_analyze_input_then_return_full_response():
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
-        "analysis_explanation": {
-            "recognizer": "SpacyRecognizer", "pattern_name": null, "pattern": null, "original_score": 0.85, 
-            "score": 0.85, "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition", 
-            "score_context_improvement": 0, "supportive_context_word": "", "validation_result": null 
-            }
-        },
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, 
-        "analysis_explanation": {
-            "recognizer": "UsLicenseRecognizer", "pattern_name": "Driver License - Alphanumeric (weak)", 
-            "pattern": "\\\\b([A-Z][0-9]{3,6}|[A-Z][0-9]{5,9}|[A-Z][0-9]{6,8}|[A-Z][0-9]{4,8}|[A-Z][0-9]{9,11}|[A-Z]{1,2}[0-9]{5,6}|H[0-9]{8}|V[0-9]{6}|X[0-9]{8}|A-Z]{2}[0-9]{2,5}|[A-Z]{2}[0-9]{3,7}|[0-9]{2}[A-Z]{3}[0-9]{5,6}|[A-Z][0-9]{13,14}|[A-Z][0-9]{18}|[A-Z][0-9]{6}R|[A-Z][0-9]{9}|[A-Z][0-9]{1,12}|[0-9]{9}[A-Z]|[A-Z]{2}[0-9]{6}[A-Z]|[0-9]{8}[A-Z]{2}|[0-9]{3}[A-Z]{2}[0-9]{4}|[A-Z][0-9][A-Z][0-9][A-Z]|[0-9]{7,8}[A-Z])\\\\b", 
-            "original_score": 0.3, "score": 0.6499999999999999, "textual_explanation": null, 
-            "score_context_improvement": 0.3499999999999999, "supportive_context_word": "driver", 
-            "validation_result": null 
-            }
-        }
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
+        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null}
     ]
     """
     assert response_status == 200
@@ -52,13 +38,7 @@ def test_given_analyze_threshold_input_then_return_result_above_threshold():
     expected_response = """
     [
         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
-        "analysis_explanation": {
-            "recognizer": "SpacyRecognizer", "pattern_name": null, 
-            "pattern": null, "original_score": 0.85, "score": 0.85, 
-            "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition", 
-            "score_context_improvement": 0, "supportive_context_word": "", 
-            "validation_result": null
-            }
+        "analysis_explanation": null
         }
     ]
     """
@@ -171,11 +151,11 @@ def test_given_a_trace_invalid_value_analyze_input_then_return_normal_response()
 
 
 @pytest.mark.api
-def test_given_no_interpretability_for_analyze_input_then_return_response_without_anlysis():
+def test_given_return_decision_process_false_for_analyze_input_then_return_response_without_analysis():
     request_body = """  
     {
         "text": "John Smith drivers license is AC432223", 
-        "language": "en", "remove_interpretability_response": 1
+        "language": "en", "return_decision_process": 0
     }
     """
     response_status, response_content = analyze(request_body)
@@ -191,10 +171,10 @@ def test_given_no_interpretability_for_analyze_input_then_return_response_withou
 
 
 @pytest.mark.api
-def test_given_interpretability_enabled_for_analyze_input_then_return_response_with_anlysis():
+def test_given_decision_process_enabled_for_analyze_input_then_return_response_with_decision_process():
     request_body = """
     {
-        "text": "John Smith drivers license is AC432223", "language": "en", "remove_interpretability_response": 0
+        "text": "John Smith drivers license is AC432223", "language": "en", "return_decision_process": true
     }
     """
     response_status, response_content = analyze(request_body)
@@ -234,12 +214,7 @@ def test_given_analyze_entities_input_then_return_results_only_with_those_entiti
     expected_response = """
     [ 
         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
-        "analysis_explanation": {
-            "recognizer": "SpacyRecognizer", "pattern_name": null, "pattern": null, 
-            "original_score": 0.85, "score": 0.85, 
-            "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition", 
-            "score_context_improvement": 0, "supportive_context_word": "", "validation_result": null
-            }
+        "analysis_explanation": null
         }
     ]
     """
