@@ -128,7 +128,6 @@ Parameters
 | correlation_id|string|yes|a correlation id to append to headers and traces|
 | score_threshold|float|yes|the the minimal detection score threshold|
 | entities|string[]|yes|a list of entities to analyze|
-| trace|bool|yes|whether to trace the request|
 | return_decision_process|bool|yes|whether to include analysis explanation in the response |
 
 `/recognizers`
