@@ -5,8 +5,8 @@
 ---
 
 ## DEPRECATED: 
-- This is the V1 version of Presidio. For the most recent version, go to [the `main` branch](https://github.com/microsoft/presidio/tree/main).
-- Note that support for services in this version is ceased . 
+- This is the V1 version of Presidio. For the most recent version, go to [the main branch](https://github.com/microsoft/presidio/tree/main).
+- Note that support for services in this version is ceased. 
 - The services in this version are still available to download:
   - PyPI: `pip install presidio-analyzer==0.95`
   - Docker: `tag=v1`
