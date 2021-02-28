@@ -46,13 +46,13 @@ Persidio anonymizer comes with predefined anonymizers but can easily be extended
 
 ## Getting started
 
-Presidio anonymizer comes by default with the following anonymizers:
+### Built-in anonymizers:
 
 | Anonymizer type | Description | Parameters
 | --- | ---| ---|
 | replace | replaces the PII with desired value | `new_value` - replaces existing text with the given value.<br> If `new_value` is not supplied or empty, default behavior will be: <entity_type\> e.g: <PHONE_NUMBER\> |
 | redact | removes the PII completely from text | None |
-| hash | hash the PII using either sha256, sha512 or md5 | `hash_type` - sets the type of hashing. can be either sha256, sha512 or md5. <br> The default hash type is sha256. | 
+| hash | hash the PII using either sha256, sha512 or md5 | `hash_type` - sets the type of hashing. Can be either `sha256`, `sha512` or `md5`. <br> The default hash type is `sha256`. | 
 | mask | replaces the PII with a given character | `chars_to_mask` - the amount of characters out of the PII that should be replaced. <br> `masking_char` - the character to be replaced with. <br> `from_end` - Whether to mask the PII from it's end. |
 
 !!! note "Note"
