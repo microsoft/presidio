@@ -391,7 +391,7 @@ components:
         score_context_improvement:
           type: number
           format: double
-          # TODO: description: "TODO"
+          description: "Difference from the original score"
         supportive_context_word:
           type: string
           description: "The context word which helped increase the score"

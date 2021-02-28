@@ -55,7 +55,6 @@ theme:
   logo: assets/ms_icon.png
   favicon: assets/ms_icon.png
   features:
-    #- navigation.expand
     - navigation.instant
     - navigation.tabs
 plugins:
