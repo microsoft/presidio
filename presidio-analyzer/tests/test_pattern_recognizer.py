@@ -29,7 +29,7 @@ def test_when_no_entity_for_pattern_recognizer_then_error():
         )
 
 
-def test_when_black_list_then_keywords_found():
+def test_when_deny_list_then_keywords_found():
     test_recognizer = MockRecognizer(
         patterns=[],
         entity="ENTITY_1",
@@ -47,7 +47,7 @@ def test_when_black_list_then_keywords_found():
     assert_result(results[1], "ENTITY_1", 36, 40, 1.0)
 
 
-def test_when_black_list_then_keywords_not_found():
+def test_when_deny_list_then_keywords_not_found():
     test_recognizer = MockRecognizer(
         patterns=[],
         entity="ENTITY_1",
@@ -57,7 +57,7 @@ def test_when_black_list_then_keywords_not_found():
     )
 
     results = test_recognizer.analyze(
-        "No blacklist words, though includes PII entities: 555-1234, John", ["ENTITY_1"]
+        "No deny list words, though includes PII entities: 555-1234, John", ["ENTITY_1"]
     )
 
     assert len(results) == 0
