@@ -13,6 +13,9 @@
 
 - For information on migrating from V1 to V2, [See this documentation](https://microsoft.github.io/presidio/presidio_V2.html).
 
+---
+---
+
 ## What is Presidio
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_analytics_** and **_anonymization_** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
