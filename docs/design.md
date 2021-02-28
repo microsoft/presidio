@@ -8,4 +8,3 @@
 
 ## Image Redactor
 [![Image Redactor Design](assets/image-redactor-design.png)](image-redactor/index.md)
-
