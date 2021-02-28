@@ -56,7 +56,7 @@ Presidio anonymizer comes by default with the following anonymizers:
 | mask | replaces the PII with a given character | `chars_to_mask` - the amount of characters out of the PII that should be replaced. <br> `masking_char` - the character to be replaced with. <br> `from_end` - Whether to mask the PII from it's end. |
 
 !!! note "Note"
-    If anonymizers map is empty of "DEFAULT" key is not stated, the default
+    If anonymizers map is empty or "DEFAULT" key is not stated, the default
     anonymizer is "replace" for all entities. The replacing value will be the entity type
     e.g.: <PHONE_NUMBER\>
 
