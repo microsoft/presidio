@@ -48,29 +48,17 @@ Persidio anonymizer comes with a predefined anonymizers but can easily be extend
 
 Presidio anonymizer comes by default with the following anonymizers:
 
-- Replace - replaces the PII with desired value
-
-  Parameters: `new_value` - replaces existing text with the given value.
-
-  If `new_value` is not supplied or empty, default behavior will be: <entity_type>
-  e.g: <PHONE_NUMBER>
-
-- Redact - removes the PII completely from text Parameters: None
-- Hash - hash the PII using either sha256, sha512 or md5. Parameters:
-    - `hash_type` - sets the type of hashing. can be either sha256, sha512 or md5. The
-      default hash type is sha256.
-- Mask - replaces the PII with a given character.
-
-  Parameters:
-
-    - `chars_to_mask` - the amount of characters out of the PII that should be replaced.
-    - `masking_char` - the character to be replaced with.
-    - `from_end` - Whether to mask the PII from it's end.
+| Anonymizer type | Description | Parameters
+| --- | ---| ---|
+| replace | replaces the PII with desired value | `new_value` - replaces existing text with the given value.<br> If `new_value` is not supplied or empty, default behavior will be: <entity_type\> e.g: <PHONE_NUMBER\> |
+| redact | removes the PII completely from text | None |
+| hash | hash the PII using either sha256, sha512 or md5 | `hash_type` - sets the type of hashing. can be either sha256, sha512 or md5. <br> The default hash type is sha256. | 
+| mask | replaces the PII with a given character | `chars_to_mask` - the amount of characters out of the PII that should be replaced. <br> `masking_char` - the character to be replaced with. <br> `from_end` - Whether to mask the PII from it's end. |
 
 !!! note "Note"
-If "DEFAULT" value is not stated or the anonymizers list is empty, the default
-anonymizer is "replace" for all entities. The replacing value will be the entity type
-e.g.: <PHONE_NUMBER>
+    If anonymizers map is empty of "DEFAULT" key is not stated, the default
+    anonymizer is "replace" for all entities. The replacing value will be the entity type
+    e.g.: <PHONE_NUMBER\>
 
 As the input text could potentially have overlapping PII entities, there are different
 anonymization scenarios:
