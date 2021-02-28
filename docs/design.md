@@ -1,5 +1,3 @@
 # Presidio design
 
-## Table of contents
-
-## Description
+This document is WIP
