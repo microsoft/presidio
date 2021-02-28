@@ -4,7 +4,7 @@ Presidio anonymizer can be easily extended to support additional anonnymization 
 
 ## Extending the anonymizer for additional PII anonymizations:
 
-1. Under the path presidio_anonymizr/anonymizers
+1. Under the path presidio_anonymizr/anonymizers create  new python class implemeting the abstract [Anonymizer](https://github.com/microsoft/presidio/blob/main/presidio-anonymizer/presidio_anonymizer/anonymizers/anonymizer.py) class 
 2. Create a new file based on `Anonymizer`
 3. Implement the methods: 
     - `anonymize` - gets the data and returns a new text expected to replace the old one.
@@ -14,6 +14,5 @@ Presidio anonymizer can be easily extended to support additional anonnymization 
 
 !!! note "Note"
     The list of anonymizers is being loaded dynamically each time Presidio Anonymizer is started.
-
 
 
