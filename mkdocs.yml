@@ -5,6 +5,7 @@ site_author: Microsoft
 
 repo_url: https://github.com/microsoft/presidio/
 edit_uri: ""
+
 nav:
     - Home: index.md
     - Getting Started: getting_started.md
@@ -30,6 +31,7 @@ nav:
         - Presidio Analyzer Python API: api/analyzer_python.md
         - Presidio Anonymizer Python API: api/anonymizer_python.md
         - Presidio Image Redactor Python API: api/image-redactor_python.md
+        - Changes from V1 to V2: presidio_V2.md
       - Build and release process: build_release.md
       - Architecture and design: design.md
 theme:
@@ -44,11 +46,22 @@ theme:
   hide:
     - toc
   features:
-    - navigation.expand
+    #- navigation.expand
     - navigation.instant
+    - tabs: true
 plugins:
 - search
 - mkdocstrings
+
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/microsoft/presidio
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/_/microsoft-presidio
+    - icon: fontawesome/solid/envelope
+      link: mailto:presidio@microsoft.com
 
 markdown_extensions:
   - meta

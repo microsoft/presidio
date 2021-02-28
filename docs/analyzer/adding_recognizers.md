@@ -81,8 +81,8 @@ print(results)
 
 To create a new recognizer via code:
 
-1. Create a new Python class which implements [LocalRecognizer](../../presidio-analyzer/presidio_analyzer/local_recognizer.py).
-(`LocalRecognizer` implements the base [EntityRecognizer](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) class)
+1. Create a new Python class which implements [LocalRecognizer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/local_recognizer.py).
+(`LocalRecognizer` implements the base [EntityRecognizer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/entity_recognizer.py) class)
 
     This class has the following functions:
 
@@ -101,9 +101,9 @@ To create a new recognizer via code:
     Notes:
     1. Each recognizer has access to different NLP assets such as tokens, [lemmas](https://en.wikipedia.org/wiki/Lemma_(morphology)), and more.
     These are given through the `nlp_artifacts` parameter.
-    Refer to the [source code](../../presidio-analyzer/presidio_analyzer/entity_recognizer.py) for more information.
+    Refer to the [source code](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/entity_recognizer.py) for more information.
 
-    2. The `analyze` method should return a list of [RecognizerResult](../../presidio-analyzer/presidio_analyzer/recognizer_result.py).
+    2. The `analyze` method should return a list of [RecognizerResult](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/recognizer_result.py).
 
 2. Add it to the recognizer registry using `registry.add_recognizer(my_recognizer)`.
 

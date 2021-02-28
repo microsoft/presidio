@@ -13,6 +13,10 @@ bitcoin wallets, US phone numbers, financial data and more.
 - Embrace extensibility and customizability to a specific business need.
 - Facilitate both fully automated and semi-automated PII de-identification flows on multiple platforms.
 
+## How it works
+
+![Presidio demo gif](assets/detection_flow.gif)
+
 ## Main features
 
 1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
