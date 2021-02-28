@@ -10,9 +10,9 @@ Presidio suite using `pip` (as Python packages) or using `Docker` (As containeri
 ## Using pip
 
 !!! note "Note"
-Consider installing the Presidio python packages
-on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
-or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
+	Consider installing the Presidio python packages
+	on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
+	or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
 ### PII anonymization on text
 
@@ -51,7 +51,7 @@ Presidio can expose REST endpoints for each service using Flask and Docker.
 To download the Presidio Docker containers, run the following command:
 
 !!! note "Note"
-This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
+	This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
 
 ### For PII anonymization in text
 
@@ -103,7 +103,7 @@ git clone git@github.com:microsoft/presidio.git
 Then, build the containers locally.
 
 !!! note "Note"
-Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
+	Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
 
 From the root folder of the repo:
 
