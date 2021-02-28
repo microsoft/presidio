@@ -41,8 +41,6 @@ stages:
             WORKING_FOLDER: 'presidio-analyzer'
           Anonymizer:
             WORKING_FOLDER: 'presidio-anonymizer'
-          Image-Redactor:
-            WORKING_FOLDER: 'presidio-image-redactor'
       steps:
         - template: ./publish-to-pypi.yml
           parameters:
@@ -64,12 +62,14 @@ stages:
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":$(version)"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+            DOCKER_COMPOSE_FILE: '../docker-compose-release.yml'
         - template: ./build-and-push-containers.yml
           parameters:
             REGISTRY_NAME: $(REGISTRY_NAME)
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":latest"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+            DOCKER_COMPOSE_FILE: '../docker-compose-release.yml'
   - stage: DeployProd
     dependsOn: Release
     variables:
