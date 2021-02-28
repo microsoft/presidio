@@ -24,8 +24,8 @@ class AnalyzerEngine:
     (for example SpacyNlpEngine)
     :param app_tracer: instance of type AppTracer, used to trace the logic
     used during each request for interpretability reasons.
-    :param enable_trace_pii: bool,
-    defines whether PII values should be traced or not.
+    :param log_decision_process: bool,
+    defines whether the decision process within the analyzer should be logged or not.
     :param default_score_threshold: Minimum confidence value
     for detected entities to be returned
     :param supported_languages: List of possible languages this engine could be run on.
@@ -37,7 +37,7 @@ class AnalyzerEngine:
         registry: RecognizerRegistry = None,
         nlp_engine: NlpEngine = None,
         app_tracer: AppTracer = None,
-        enable_trace_pii: bool = False,
+        log_decision_process: bool = False,
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
     ):
@@ -67,7 +67,7 @@ class AnalyzerEngine:
                 nlp_engine=self.nlp_engine, languages=self.supported_languages
             )
 
-        self.enable_trace_pii = enable_trace_pii
+        self.log_decision_process = log_decision_process
         self.default_score_threshold = default_score_threshold
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
@@ -112,8 +112,7 @@ class AnalyzerEngine:
         entities: Optional[List[str]] = None,
         correlation_id: Optional[str] = None,
         score_threshold: Optional[float] = None,
-        trace: Optional[bool] = False,
-        remove_interpretability_response: Optional[bool] = False,
+        return_decision_process: Optional[bool] = False,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -125,10 +124,22 @@ class AnalyzerEngine:
         :param correlation_id: cross call ID for this request
         :param score_threshold: A minimum value for which
         to return an identified entity
-        :param trace: Should tracing of the response occur or not
-        :param remove_interpretability_response:
-        Should the interpretability text be returned in the response.
+        :param return_decision_process: Whether the analysis decision process steps
+        returned in the response.
         :return: an array of the found entities in the text
+
+        :example:
+
+        >>> from presidio_analyzer import AnalyzerEngine
+
+        >>> # Set up the engine, loads the NLP module (spaCy model by default)
+        >>> # and other PII recognizers
+        >>> analyzer = AnalyzerEngine()
+
+        >>> # Call analyzer to get results
+        >>> results = analyzer.analyze(text='My phone number is 212-555-5555', entities=['PHONE_NUMBER'], language='en') # noqa D501
+        >>> print(results)
+        [type: PHONE_NUMBER, start: 19, end: 31, score: 0.85]
         """
         all_fields = not entities
 
@@ -145,7 +156,7 @@ class AnalyzerEngine:
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
-        if self.enable_trace_pii and trace:
+        if self.log_decision_process:
             self.app_tracer.trace(
                 correlation_id, "nlp artifacts:" + nlp_artifacts.to_json()
             )
@@ -164,7 +175,7 @@ class AnalyzerEngine:
             if current_results:
                 results.extend(current_results)
 
-        if trace:
+        if self.log_decision_process:
             self.app_tracer.trace(
                 correlation_id,
                 json.dumps([str(result.to_dict()) for result in results]),
@@ -173,9 +184,9 @@ class AnalyzerEngine:
         # Remove duplicates or low score results
         results = EntityRecognizer.remove_duplicates(results)
         results = self.__remove_low_scores(results, score_threshold)
-        results = self.__remove_analysis_explanation(
-            results, remove_interpretability_response
-        )
+
+        if not return_decision_process:
+            results = self.__remove_decision_process(results)
 
         return results
 
@@ -195,19 +206,13 @@ class AnalyzerEngine:
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
 
-    def __remove_analysis_explanation(
-        self,
+    @staticmethod
+    def __remove_decision_process(
         results: List[RecognizerResult],
-        remove_interpretability_response: bool = None,
     ) -> List[RecognizerResult]:
-        """Remove interpretability from response."""
+        """Remove decision process / analysis explanation from response."""
 
-        if not remove_interpretability_response:
-            return results
+        for result in results:
+            result.analysis_explanation = None
 
-        new_results = []
-        for recognizer in results:
-            recognizer.analysis_explanation = None
-            new_results.append(recognizer)
-
-        return new_results
+        return results
