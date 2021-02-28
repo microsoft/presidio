@@ -14,7 +14,7 @@ stages:
       steps:
         - bash: |
             set -eux  # exit on error
-            ver=$(cat VERSION)
+            ver=0.95
             echo $ver
             echo "##vso[task.setvariable variable=version;isOutput=true]$ver"
           displayName: Set Version
@@ -32,55 +32,3 @@ stages:
             tagSource: manual
             tag: $(version)
 
-    - job: PublishToPyPi
-      displayName: Publish to PyPi
-      dependsOn: version
-      strategy:
-        matrix:
-          Analyzer:
-            WORKING_FOLDER: 'presidio-analyzer'
-          Anonymizer:
-            WORKING_FOLDER: 'presidio-anonymizer'
-      steps:
-        - template: ./publish-to-pypi.yml
-          parameters:
-            WORKING_FOLDER: '$(WORKING_FOLDER)'
-
-    - job: BuildAndPushContainers
-      displayName: Build and Push Containers
-      dependsOn: version
-      pool:
-        vmImage: 'ubuntu-16.04'
-      variables:
-        version: $[ dependencies.Version.outputs['setVer.version'] ]
-        REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-        IMAGE_PREFIX: "public/"
-      steps:
-        - template: ./build-and-push-containers.yml
-          parameters:
-            REGISTRY_NAME: $(REGISTRY_NAME)
-            IMAGE_PREFIX: $(IMAGE_PREFIX)
-            TAG: ":$(version)"
-            AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-        - template: ./build-and-push-containers.yml
-          parameters:
-            REGISTRY_NAME: $(REGISTRY_NAME)
-            IMAGE_PREFIX: $(IMAGE_PREFIX)
-            TAG: ":latest"
-            AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-  - stage: DeployProd
-    dependsOn: Release
-    variables:
-      REGISTRY_NAME: 'mcr.microsoft.com/'
-      VERSION: $[ stageDependencies.Release.version.outputs['setVer.version'] ]
-    displayName: Deploy
-    jobs:
-      - template: ./deploy-stage.yml
-        parameters:
-          ENVIRONMNT_NAME: Prod
-          REGISTRY_NAME: $(REGISTRY_NAME)
-          AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION)
-          ANALYZER_APP_NAME: $(ANALYZER_PROD_APP_NAME)
-          ANONYMIZER_APP_NAME: $(ANONYMIZER_PROD_APP_NAME)
-          RESOURCE_GROUP_NAME: $(PROD_RESOURCE_GROUP_NAME)
-          TAG: $(VERSION)
