@@ -10,6 +10,5 @@ RUN pipenv sync
 
 COPY . /usr/bin/${NAME}/
 
-# TODO: [ADO-2680] Use FLASK_RUN_PORT and flask run --host 0.0.0.0
 EXPOSE ${PORT}
 CMD pipenv run python app.py

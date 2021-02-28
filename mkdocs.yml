@@ -8,6 +8,7 @@ edit_uri: ""
 nav:
     - Home: index.md
     - Getting Started: getting_started.md
+    - Presidio Revamp (V2): presidio_V2.md
     - Installation: installation.md
     - PII Detection in Text:
       - Home: analyzer/index.md
