@@ -133,7 +133,7 @@ For tests to be consistent and predictable, we use the following basic conventio
 1. Treat tests as production code. Keep the tests concise and readable, with descriptive namings.
 2. Assert on one behavior at a time in each test.
 3. Test names should follow a pattern of `test_when_[condition_to_test]_then_[expected_behavior]`.
-   For example: test_when_no_interpretability_requested_then_response_contains_no_analysis.
+   For example: `test_given_an_unknown_entity_then_anonymize_uses_defaults`.
 4. Use [test doubles and mocks](https://docs.pytest.org/en/stable/monkeypatch.html)
    when writing unit tests. Make less use of them when writing integration tests.
 
@@ -235,18 +235,18 @@ Running flake8 locally, using `pipenv run flake8`, you can check for those issue
 
 In addition to the basic `flake8` functionality, Presidio uses the following extensions:
 
--   _pep8-naming_: To check that variable names are PEP8 compliant.
--   _flake8-docstrings_: To check that docstrings are compliant.
+- _pep8-naming_: To check that variable names are PEP8 compliant.
+- _flake8-docstrings_: To check that docstrings are compliant.
 
 ### Automatically format code and check for code styling
 
 To make the linting process easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using `black`:
 
-1.  [Install pre-commit package manager locally.](https://pre-commit.com/#install)
+1. [Install pre-commit package manager locally.](https://pre-commit.com/#install)
 
-2.  From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
+2. From the project's root, enable pre-commit, installing git hooks in the `.git/` directory by running: `pre-commit install`.
 
-3.  Commit non PEP8 compliant code will cause commit failure and automatically
+3. Commit non PEP8 compliant code will cause commit failure and automatically
     format your code using `black`, as well as checking code formatting using `flake8`
 
         ```sh
@@ -264,4 +264,4 @@ To make the linting process easier, you can use pre-commit hooks to verify and a
 
         ```
 
-4.  Committing again will finish successfully, with a well-formatted code.
+4. Committing again will finish successfully, with a well-formatted code.
