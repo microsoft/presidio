@@ -1,11 +1,11 @@
 # Presidio Anonymizer
 
-## Description
-
 The Presidio anonymizer is a Python based module for anonymizing detected PII text
 entities with desired values.
 
 Persidio anonymizer comes with predefined anonymizers but can easily be extended.
+
+![Anonymizer Design](../assets/anonymizer-design.png)
 
 ## Installation
 
@@ -45,53 +45,6 @@ Persidio anonymizer comes with predefined anonymizers but can easily be extended
     ```
 
 ## Getting started
-
-### Built-in anonymizers:
-
-| Anonymizer type | Description | Parameters
-| --- | ---| ---|
-| replace | replaces the PII with desired value | `new_value` - replaces existing text with the given value.<br> If `new_value` is not supplied or empty, default behavior will be: <entity_type\> e.g: <PHONE_NUMBER\> |
-| redact | removes the PII completely from text | None |
-| hash | hash the PII using either sha256, sha512 or md5 | `hash_type` - sets the type of hashing. Can be either `sha256`, `sha512` or `md5`. <br> The default hash type is `sha256`. | 
-| mask | replaces the PII with a given character | `chars_to_mask` - the amount of characters out of the PII that should be replaced. <br> `masking_char` - the character to be replaced with. <br> `from_end` - Whether to mask the PII from it's end. |
-
-!!! note "Note"
-    If anonymizers map is empty or "DEFAULT" key is not stated, the default
-    anonymizer is "replace" for all entities. The replacing value will be the entity type
-    e.g.: <PHONE_NUMBER\>
-
-
-### Overlapping Anonymization Scenarios
-
-As the input text could potentially have overlapping PII entities, there are different
-anonymization scenarios:
-
-- No overlap (single PII) - single PII over text entity, uses a given or default
-  anonymizer to anonymize and replace the PII text entity.
-- Full overlap of PIIs - When one text have several PIIs, the PII with the higher score
-  will be taken. Between PIIs with identical scores, the selection will be arbitrary.
-- One PII is contained in another - anonymizer will use the PII with larger text.
-- Partial intersection - both will be returned concatenated.
-
-Example of how each scenario would work. Our text will be:
-
-My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
-03-232323.
-
-- No overlaps - only Inigo was recognized as NAME:
-  My name is <NAME\> Montoya. You Killed my Father. Prepare to die. BTW my number is:
-  03-232323.
-- Full overlap - the number was recognized as PHONE_NUMBER with score of 0.7 and as SSN
-  with score of 0.6, we will take the higher score:
-  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
-  <PHONE_NUMBER\>
-- One PII is contained is another - Inigo was recognized as FIRST_NAME and Inigo Montoya
-  was recognized as NAME, we will take the larger one:
-  My name is <NAME\>. You Killed my Father. Prepare to die. BTW my number is: 03-232323.
-- Partial intersection - the number 03-2323 is recognized as a PHONE_NUMBER but 232323
-  is recognized as SSN:
-  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
-  <PHONE_NUMBER\><SSN\>.
 
 === "Python"
 
@@ -179,14 +132,60 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
         }
     ]}
     ```
+## Built-in anonymizers:
 
-### Creating new anonymizers
+| Anonymizer type | Description | Parameters
+| --- | ---| ---|
+| replace | replaces the PII with desired value | `new_value` - replaces existing text with the given value.<br> If `new_value` is not supplied or empty, default behavior will be: <entity_type\> e.g: <PHONE_NUMBER\> |
+| redact | removes the PII completely from text | None |
+| hash | hash the PII using either sha256, sha512 or md5 | `hash_type` - sets the type of hashing. Can be either `sha256`, `sha512` or `md5`. <br> The default hash type is `sha256`. | 
+| mask | replaces the PII with a given character | `chars_to_mask` - the amount of characters out of the PII that should be replaced. <br> `masking_char` - the character to be replaced with. <br> `from_end` - Whether to mask the PII from it's end. |
+
+!!! note "Note"
+    If anonymizers map is empty or "DEFAULT" key is not stated, the default
+    anonymizer is "replace" for all entities. The replacing value will be the entity type
+    e.g.: <PHONE_NUMBER\>
+
+
+## Overlapping Anonymization Scenarios
+
+As the input text could potentially have overlapping PII entities, there are different
+anonymization scenarios:
+
+- No overlap (single PII) - single PII over text entity, uses a given or default
+  anonymizer to anonymize and replace the PII text entity.
+- Full overlap of PIIs - When one text have several PIIs, the PII with the higher score
+  will be taken. Between PIIs with identical scores, the selection will be arbitrary.
+- One PII is contained in another - anonymizer will use the PII with larger text.
+- Partial intersection - both will be returned concatenated.
+
+Example of how each scenario would work. Our text will be:
+
+My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
+03-232323.
+
+- No overlaps - only Inigo was recognized as NAME:
+  My name is <NAME\> Montoya. You Killed my Father. Prepare to die. BTW my number is:
+  03-232323.
+- Full overlap - the number was recognized as PHONE_NUMBER with score of 0.7 and as SSN
+  with score of 0.6, we will take the higher score:
+  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
+  <PHONE_NUMBER\>
+- One PII is contained is another - Inigo was recognized as FIRST_NAME and Inigo Montoya
+  was recognized as NAME, we will take the larger one:
+  My name is <NAME\>. You Killed my Father. Prepare to die. BTW my number is: 03-232323.
+- Partial intersection - the number 03-2323 is recognized as a PHONE_NUMBER but 232323
+  is recognized as SSN:
+  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
+  <PHONE_NUMBER\><SSN\>.
+
+## Creating new anonymizers
 
 Presidio anonymizer can be easily extended to support additional anonnymization methods.
 See [this tutorial on adding new anonymization methods](adding_anonymizers.md)
 for more information.
 
-### API reference
+## API reference
 
 Follow
 the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Anonymizer)
