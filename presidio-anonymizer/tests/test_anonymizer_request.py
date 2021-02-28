@@ -19,10 +19,7 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
                  }
              ]
          }, "Invalid input, analyzer result must contain start",),
-        ({
-             "analyzer_results": []
-         }, "Invalid input, analyzer results can not be empty"),
-        ({}, "Invalid input, analyzer results can not be empty")
+        ({}, "Invalid input, request must contain analyzer results")
     ],
     # fmt: on
 )
