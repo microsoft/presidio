@@ -10,6 +10,8 @@ but can easily be extended with other types of custom recognizers.
 Predefined and custom recognizers leverage regex,
 Named Entity Recognition and other types of logic to detect PII in unstructured text.
 
+![Analyzer Design](../assets/analyzer-design.png)
+
 ## Installation
 
 === "Using pip"
