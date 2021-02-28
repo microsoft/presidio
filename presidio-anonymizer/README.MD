@@ -5,6 +5,8 @@
 The Presidio anonymizer is a Python based module for anonymizing detected PII text
 entities with desired values.
 
+![Anonymizer Design](../docs/assets/anonymizer-design.png)
+
 ### Deploy Presidio anonymizer to Azure
 
 Use the following button to deploy presidio anonymizer to your Azure subscription.
