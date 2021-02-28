@@ -44,11 +44,11 @@ stages:
                       IMAGE_PREFIX: $(IMAGE_PREFIX)
                       TAG: ':$(version)'
                       AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-                      DOCKER_COMPOSE_FILE: '../docker-compose-image-redactor.yml'
+                      DOCKER_COMPOSE_FILE: '../docker-compose-image.yml'
                 - template: ./build-and-push-containers.yml
                   parameters:
                       REGISTRY_NAME: $(REGISTRY_NAME)
                       IMAGE_PREFIX: $(IMAGE_PREFIX)
                       TAG: ':latest'
                       AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)  
-                      DOCKER_COMPOSE_FILE: '../docker-compose-image-redactor.yml'  
+                      DOCKER_COMPOSE_FILE: '../docker-compose-image.yml'  
