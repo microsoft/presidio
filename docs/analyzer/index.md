@@ -35,7 +35,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
     docker pull mcr.microsoft.com/presidio-analyzer
     
     # Run the container with the default port
-    docker run -d -p 5001:5001 mcr.microsoft.com/presidio-analyzer:latest
+    docker run -d -p 5002:5002 mcr.microsoft.com/presidio-analyzer:latest
     ```
 
 === "From source"
@@ -77,7 +77,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
     
     ```sh
     cd presidio-analyzer
-    docker run -p 5001:5001 presidio-analyzer 
+    docker run -p 5002:5002 presidio-analyzer 
     ```
     
     #### Using python runtime
@@ -93,7 +93,7 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
 
 ## Creating PII recognizers
 
-Presidio can be easily extended to support additional PII entities.
+Presidio analyzer can be easily extended to support additional PII entities.
 See [this tutorial on adding new PII recognizers](adding_recognizers.md)
 for more information.
 

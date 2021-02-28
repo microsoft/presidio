@@ -16,7 +16,9 @@ nav:
         - Best practices in developing recognizers : analyzer/developing_recognizers.md
       - Multi-language support: analyzer/languages.md
       - Tracing the decision process: analyzer/decision_process.md
-    - PII Anonymization in Text: anonymizer/index.md
+    - PII Anonymization in Text:
+      - Home: anonymizer/index.md
+      - Developing PII anonymizers: anonymizer/adding_anonymizers.md
     - PII Redaction in Images: image-redactor/index.md
 
     - Samples:
