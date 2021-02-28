@@ -9,7 +9,7 @@ Presidio can expose REST endpoints for each service using Flask and Docker. Foll
 This repository contains a postman collection with sample REST API request for each service. Follow [this tutorial](https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman) to learn how to export the sample requests into postman
 
 1. <a href="PresidioAnalyzer.postman_collection.json" download>Download Presidio Analyzer postman requests</a>
-2. <a href="PresidioAnonymizer.postman_collection.jso" download>Download Presidio Anonymizer postman requests</a>
+2. <a href="PresidioAnonymizer.postman_collection.json" download>Download Presidio Anonymizer postman requests</a>
 
 ## Sample API Calls
 

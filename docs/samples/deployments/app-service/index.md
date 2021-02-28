@@ -9,8 +9,6 @@ Use the following button to deploy presidio services to your Azure subscription.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fapp-service%2Fpresidio-services.json)
 
-TODO: change this link to main branch once merged (#2765).
-
 ## Deploy using command-line script
 
 The following script can be used alternatively to the ARM template deployment above. It sets up the same components which are required for each of the presidio services (analyzer and anonymizer) as the template.
