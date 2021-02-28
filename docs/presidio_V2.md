@@ -14,10 +14,8 @@ The main changes introduced in **V2** are:
 
 3. Improved documentation, samples and build flows.
 
-#TODO:check link update master branch update
-
-Notes:
-The legacy V1 code base will continue to be available under branch [V1](https://github.com/microsoft/presidio/tree/V1) but will no longer be officially supported.
+!!! note "Note"
+	The legacy V1 code base will continue to be available under branch [V1](https://github.com/microsoft/presidio/tree/V1) but will no longer be officially supported.
 
 ## API Changes
 
