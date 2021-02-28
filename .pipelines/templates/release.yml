@@ -41,6 +41,8 @@ stages:
             WORKING_FOLDER: 'presidio-analyzer'
           Anonymizer:
             WORKING_FOLDER: 'presidio-anonymizer'
+          Image-Redactor:
+            WORKING_FOLDER: 'presidio-image-redactor'
       steps:
         - template: ./publish-to-pypi.yml
           parameters:
