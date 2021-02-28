@@ -33,6 +33,7 @@ nav:
         - Presidio Image Redactor Python API: api/image-redactor_python.md
       - Build and release process: build_release.md
       - Architecture and design: design.md
+    - REST API reference: api-docs/api-docs.html
 theme:
   name: material
   palette:
