@@ -113,4 +113,4 @@ For a list of the current supported entities:
 
 ## API reference
 
-Follow the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html) for Presidio API reference details
+Follow the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Analyzer) for Presidio API reference details
