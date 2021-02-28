@@ -48,30 +48,29 @@ Persidio anonymizer comes with a predefined anonymizers but can easily be extend
 
 Presidio anonymizer comes by default with the following anonymizers:
 
--   Replace - replaces the PII with desired value
+- Replace - replaces the PII with desired value
 
-    Parameters: `new_value` - replaces existing text with the given value.
+  Parameters: `new_value` - replaces existing text with the given value.
 
-    If `new_value` is not supplied or empty, default behavior will be: <entity_type>
-    e.g: <PHONE_NUMBER>
+  If `new_value` is not supplied or empty, default behavior will be: <entity_type>
+  e.g: <PHONE_NUMBER>
 
--   Redact - removes the PII completely from text Parameters: None
--   Hash - hash the PII using either sha256, sha512 or md5. Parameters:
-    -   `hash_type` - sets the type of hashing. can be either sha256, sha512 or md5.
-        The default hash type is sha256.
--   Mask - replaces the PII with a given character.
+- Redact - removes the PII completely from text Parameters: None
+- Hash - hash the PII using either sha256, sha512 or md5. Parameters:
+    - `hash_type` - sets the type of hashing. can be either sha256, sha512 or md5. The
+      default hash type is sha256.
+- Mask - replaces the PII with a given character.
 
-    Parameters:
+  Parameters:
 
-    -   `chars_to_mask` - the amount of characters out of the PII that should be
-        replaced.
-    -   `masking_char` - the character to be replaced with.
-    -   `from_end` - Whether to mask the PII from it's end.
+    - `chars_to_mask` - the amount of characters out of the PII that should be replaced.
+    - `masking_char` - the character to be replaced with.
+    - `from_end` - Whether to mask the PII from it's end.
 
 !!! note "Note"
-    If "DEFAULT" value is not stated or the anonymizers list is empty, the default
-    anonymizer is "replace" for all entities. The replacing value will be the entity type
-    e.g.: <PHONE_NUMBER>
+If "DEFAULT" value is not stated or the anonymizers list is empty, the default
+anonymizer is "replace" for all entities. The replacing value will be the entity type
+e.g.: <PHONE_NUMBER>
 
 As the input text could potentially have overlapping PII entities, there are different
 anonymization scenarios:
@@ -93,14 +92,14 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
   03-232323.
 - Full overlap - the number was recognized as PHONE_NUMBER with score of 0.7 and as SSN
   with score of 0.6, we will take the higher score:
-  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is: 
+  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
   <PHONE_NUMBER\>
 - One PII is contained is another - Inigo was recognized as FIRST_NAME and Inigo Montoya
   was recognized as NAME, we will take the larger one:
   My name is <NAME\>. You Killed my Father. Prepare to die. BTW my number is: 03-232323.
 - Partial intersection - the number 03-2323 is recognized as a PHONE_NUMBER but 232323
   is recognized as SSN:
-  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is: 
+  My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
   <PHONE_NUMBER\><SSN\>.
 
 === "Python"
@@ -198,6 +197,7 @@ for more information.
 
 ### API reference
 
-
-
-
+Follow
+the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Anonymizer)
+for the Anonymizer REST API reference details
+and [Anonymizer Python API](../api/anonymizer_python.md) for Python API reference
