@@ -1,0 +1,34 @@
+# Presidio Release: Push to Github Releases, pypi, and to ACR twice (with verison, latest) with 'public' tag for MCR release.
+
+trigger: none
+pr: none
+
+variables:
+  - group: Presidio-V2-CI
+stages:
+  - stage: Release
+    displayName: Release
+    jobs:
+    - job: version
+      displayName: 'Get the version number'
+      steps:
+        - bash: |
+            set -eux  # exit on error
+            ver=0.95
+            echo $ver
+            echo "##vso[task.setvariable variable=version;isOutput=true]$ver"
+          displayName: Set Version
+          name: setVer
+
+    - job: githubRelease
+      displayName: GitHub Release
+      dependsOn: version
+      variables:
+        version: $[ dependencies.Version.outputs['setVer.version'] ]
+      steps:
+        - task: GitHubRelease@0
+          inputs:
+            gitHubConnection: $(GITHUB_CONNECTION)
+            tagSource: manual
+            tag: $(version)
+
