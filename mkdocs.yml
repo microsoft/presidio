@@ -5,7 +5,7 @@ site_author: Microsoft
 
 repo_url: https://github.com/microsoft/presidio/
 edit_uri: ""
-
+use_directory_urls: false
 nav:
     - Home: index.md
     - Getting Started: getting_started.md
