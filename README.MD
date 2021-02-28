@@ -4,10 +4,17 @@
 
 ---
 
-[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI/Presidio-CI?branchName=master)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=129&branchName=master)
-[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
+## DEPRECATED: 
+- This is the V1 version of Presidio. For the most recent version, go to [the `main` branch](https://github.com/microsoft/presidio/tree/main).
+- Note that support for services in this version is ceased . 
+- The services in this version are still available to download:
+  - PyPI: `pip install presidio-analyzer==0.95`
+  - Docker: `tag=v1`
 
+- For information on migrating from V1 to V2, [See this documentation](https://microsoft.github.io/presidio/presidio_V2.html).
+
+---
+---
 
 ## What is Presidio
 
