@@ -14,7 +14,36 @@
     </style>
 </head>
 <body>
-<redoc spec-url='./api-docs.yml'></redoc>
-<script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
+<div id="redoc-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+<script type="text/javascript">
+    (function() {
+        Redoc.init(
+            "./api-docs.yml",
+            {
+                "untrustedSpec": true,
+                "theme": {
+                    "colors": {
+                        "primary": {
+                            "main": "rgba(69, 69, 98, 1)"
+                        }
+                    },
+                    "typography": {
+                        "fontSize": "16px",
+                        "headings":{
+                            "fontFamily": "Roboto",
+                            "fontWeight": "400",
+                            "lineHeight": '2em'
+                        },
+                        "fontFamily": "Roboto"
+                    },
+                    "rightPanel": {
+                        "backgroundColor": "rgba(84, 109, 120, 1)"
+                    }
+                }
+            },
+            document.getElementById('redoc-container'));
+    })();
+</script>
 </body>
 </html>
