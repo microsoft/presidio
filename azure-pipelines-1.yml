@@ -11,7 +11,6 @@ stages:
     jobs:
     - job: githubRelease
       displayName: GitHub Release
-      dependsOn: version
       steps:
         - task: GitHubRelease@0
           inputs:
