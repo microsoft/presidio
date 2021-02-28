@@ -60,6 +60,9 @@ Presidio anonymizer comes by default with the following anonymizers:
     anonymizer is "replace" for all entities. The replacing value will be the entity type
     e.g.: <PHONE_NUMBER\>
 
+
+### Overlapping Anonymization Scenarios
+
 As the input text could potentially have overlapping PII entities, there are different
 anonymization scenarios:
 
