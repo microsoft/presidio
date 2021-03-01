@@ -16,7 +16,7 @@ Pre-requisites:
 - Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) by following the
   instructions on how to install it for your operating system.
 
-  The Image-Redactor was tested with a minimal version of 4.0.0
+  For now, image redactor only supports version 4.0.0
 
 ### As package:
 
@@ -100,7 +100,7 @@ curl example:
 ```
 # use ocr_test.png as the image to redact, and 255 as the color fill. 
 # out.png is the new redacted image received from the server.
-curl -XPOST "http://localhost:3000/anonymize" -H "content-type: multipart/form-data" -F "image=@ocr_test.png" -F "data=\"{'color_fill':'255'}\"" > out.png
+curl -XPOST "http://localhost:3000/redact" -H "content-type: multipart/form-data" -F "image=@ocr_test.png" -F "data=\"{'color_fill':'255'}\"" > out.png
 ```
 
 Python script example can be found under:

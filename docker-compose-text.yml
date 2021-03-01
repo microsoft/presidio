@@ -1,0 +1,22 @@
+version: '3'
+services:
+  presidio-anonymizer:
+    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-anonymizer${TAG}
+    build:
+      context: ./presidio-anonymizer
+      args:
+        - NAME=presidio-anonymizer
+    environment:
+      - PORT=5001
+    ports:
+      - "5001:5001"
+  presidio-analyzer:
+    image: ${REGISTRY_NAME}${IMAGE_PREFIX}presidio-analyzer${TAG}
+    build:
+      context: ./presidio-analyzer
+      args:
+        - NAME=presidio-analyzer
+    environment:
+      - PORT=5001
+    ports:
+      - "5002:5001"

@@ -1,0 +1,38 @@
+{{ $fullname := include "presidio.anonymizerimage.fullname" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullname }}
+  labels:
+    app: {{ $fullname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.anonymizerimage.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $fullname }}
+  template:
+    metadata:
+      labels:
+        app: {{ $fullname }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.registry }}/{{ .Values.anonymizerimage.name }}:{{ default .Chart.AppVersion .Values.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.anonymizerimage.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.anonymizerimage.service.internalPort }}
+        resources:
+          requests:
+            memory: {{ .Values.anonymizerimage.container.resources.requests.memory }}
+            cpu: {{ .Values.anonymizerimage.container.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.anonymizerimage.container.resources.limits.memory }}
+            cpu: {{ .Values.anonymizerimage.container.resources.limits.cpu }}
+        env:
+          - name: PORT
+            value: {{ .Values.anonymizerimage.service.internalPort | quote }}
+      {{ if .Values.privateRegistry }}imagePullSecrets:
+        - name: {{.Values.privateRegistry}}{{ end }}

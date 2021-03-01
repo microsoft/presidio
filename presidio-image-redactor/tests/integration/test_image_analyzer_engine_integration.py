@@ -1,13 +1,9 @@
-import pytest
 from methods import get_resource_image
 from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
 
 
-@pytest.mark.skip(reason="different results with tesseract 4.0 vs 5.0")
 def test_given_image_then_text_entities_are_recognized_correctly():
-    # TODO fix in bug #2897
-
     # Image with PII entities
     image = get_resource_image("ocr_test.png")
     analyzer_results = ImageAnalyzerEngine().analyze(image)
@@ -31,6 +27,6 @@ def __get_expected_ocr_test_image_analysis_results():
         ImageRecognizerResult("DOMAIN_NAME", 303, 320, 1.0, 28, 299, 438, 38),
         ImageRecognizerResult("PHONE_NUMBER", 332, 346, 0.7, 666, 298, 88, 40),
         ImageRecognizerResult("PHONE_NUMBER", 332, 346, 0.7, 769, 301, 169, 29),
-        ImageRecognizerResult("EMAIL_ADDRESS", 772, 794, 1.0, 27, 912, 458, 39),
-        ImageRecognizerResult("DOMAIN_NAME", 781, 794, 1.0, 27, 912, 458, 39),
+        ImageRecognizerResult("EMAIL_ADDRESS", 773, 795, 1.0, 27, 912, 458, 39),
+        ImageRecognizerResult("DOMAIN_NAME", 782, 795, 1.0, 27, 912, 458, 39),
     ]
