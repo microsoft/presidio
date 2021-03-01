@@ -1,49 +1,48 @@
 # Presidio Analyzer API Reference
 
-### AnalyzerEngine
+## AnalyzerEngine
 
 ::: presidio_analyzer.AnalyzerEngine
     handler: python
     selection:
       docstring_style: restructured-text
 
-### RecognizerRegistry
+## RecognizerRegistry
 
 ::: presidio_analyzer.RecognizerRegistry
     handler: python
     selection:
       docstring_style: restructured-text
 
-### EntityRecognizer
+## EntityRecognizer
 
 ::: presidio_analyzer.EntityRecognizer
     handler: python
     selection:
       docstring_style: restructured-text
 
-### RemoteRecognizer
+## RemoteRecognizer
 
 ::: presidio_analyzer.RemoteRecognizer
     handler: python
     selection:
       docstring_style: restructured-text
 
-### LocalRecognizer
+## LocalRecognizer
 
 ::: presidio_analyzer.LocalRecognizer
     handler: python
     selection:
       docstring_style: restructured-text
 
-### PatternRecognizer
+## PatternRecognizer
 
 ::: presidio_analyzer.PatternRecognizer
     handler: python
     selection:
       docstring_style: restructured-text
 
-
-### NlpArtifacts
+## NlpArtifacts
 
 ::: presidio_analyzer.nlp_engine.NlpArtifacts
     handler: python
@@ -65,15 +64,14 @@
     selection:
       docstring_style: restructured-text
 
-
-### RecognizerResult
+## RecognizerResult
 
 ::: presidio_analyzer.recognizer_result.RecognizerResult
     handler: python
     selection:
       docstring_style: restructured-text
 
-### Pattern
+## Pattern
 
 ::: presidio_analyzer.Pattern
     handler: python

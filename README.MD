@@ -7,10 +7,14 @@
 [![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=V2)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=207&branchName=V2)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
+[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
+[![PyPI package version](https://badge.fury.io/py/presidio-analyzer.svg)](https://badge.fury.io/py/presidio-analyzer.svg)
 
 ## What is Presidio
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.
+
+![Presidio demo gif](docs/assets/changing_text.gif)
 
 ### Goals
 
@@ -31,8 +35,6 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 ### Demo
 
 [Try Presidio with your own data](https://aka.ms/presidio-demo)
-
-![Presidio demo gif](docs/assets/demo.gif)
 
 ## Installing Presidio
 

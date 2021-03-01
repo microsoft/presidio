@@ -2,22 +2,80 @@
 
 ## Background
 
-Presidio-analyzer traces its decision process, which allows you to investigate a specific api request, by exposing a `correlation-id` as part of the api response headers.
+Presidio-analyzer's decision process exposes information on why a specific PII was detected. Such information could contain:
 
-The decision process traces explain why a specific PII was detected. For example: Which recognizer detected the entity, which regex / ML model were used, which context words improved the score, etc.
+- Which recognizer detected the entity
+- Which regex pattern was used
+- Interpretability mechanisms in ML models
+- Which context words improved the score
+- Confidence scores before and after each step
 
-## How it works
+And more.
 
-The decision process can either be returned together with the Presidio-analyzer `/analyze` response, or logged into a dedicated logger.
+## Usage
+
+The decision process can be leveraged in two ways:
+
+1. Presidio-analyzer can log its decision process into a designated logger, which allows you to investigate a specific api request, by exposing a `correlation-id` as part of the api response headers.
+2. The decision process can be returned as part of the `/analyze`  response.
 
 ### Getting the decision process as part of the response
 
-The decision process result is added to the response automatically.
-To enable/disable it, call the `analyze` method with `remove_interpretability_response` as False and True, respectively.
+The decision process result can be added to the response.
+To enable it, call the `analyze` method with `return_decision_process` set as True.
+
+For example:
+
+=== "HTTP"
+
+    ```sh
+    curl -d '{
+        "text": "John Smith drivers license is AC432223", 
+        "language": "en", 
+        "return_decision_process": true}' -H "Content-Type: application/json" -X POST http://localhost:3000/analyze
+    ```
+
+=== "Python"
+
+    ```python
+    from presidio_analyzer import AnalyzerEngine
+
+    # Set up the engine, loads the NLP module (spaCy model by default)
+    # and other PII recognizers
+    analyzer = AnalyzerEngine()
+
+    # Call analyzer to get results
+    results = analyzer.analyze(text='My phone number is 212-555-5555', 
+                            entities=['PHONE_NUMBER'], 
+                            language='en', 
+                            return_decision_process=True)
+    
+    # Get the decision process results for the first result
+    print(results[0].analysis_explanation)
+    ```
 
 ### Logging the decision process
 
-Each api request contains a `correlation-id` which is the trace identification. It will help you to query the stdout logs.
+Logging of the decision process is turned off by default. To turn it on, create the `AnalyzerEngine` object with `log_decision_process=True`.
+
+For example:
+
+```python
+from presidio_analyzer import AnalyzerEngine
+
+# Set up the engine, loads the NLP module (spaCy model by default)
+# and other PII recognizers
+analyzer = AnalyzerEngine(log_decision_process=True)
+
+# Call analyzer to get results
+results = analyzer.analyze(text='My phone number is 212-555-5555', 
+                           entities=['PHONE_NUMBER'], 
+                           language='en', 
+                           correlation_id="xyz")
+```
+
+The decision process logs will be written to standard output.
+Note that it is possible to define a `correlation-id` which is the trace identification. It will help you to query the stdout logs.
 The id can be retrieved from each API response header: `x-correlation-id`.
 
 By having the traces written into the `stdout` it's very easy to configure a monitoring solution to ease the process of reading processing the tracing logs in a distributed system.
@@ -30,7 +88,7 @@ For the a request with the following text:
 My name is Bart Simpson, my Credit card is: 4095-2609-9393-4932,  my phone is 425 8829090 
 ```
 
-The following traces will be written to log, with this format: 
+The following traces will be written to log, with this format:
 
 `[Date Time][decision_process][Log Level][Unique Correlation ID][Trace Message]`
 
@@ -42,11 +100,9 @@ The following traces will be written to log, with this format:
 
 ## Writing custom decision process for a recognizer
 
-When setting up the AnalyzerEngine with `enable_trace_pii=True`, the traces are written automatically. It means that when you add a new recognizer, a generic decision process trace will be written.
+When creating new PII recognizers, it is possible to add information about the recognizer's decision process. This information will be traced or returned to the user, depending on the configuration.
 
-However, it's possible to append custom information to the decision process if you wish to.
-
-For example, the [spacy_recognizer.py](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/presidio_analyzer/predefined_recognizers/spacy_recognizer.py) implements a custom trace as follows:
+For example, the [spacy_recognizer.py](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/predefined_recognizers/spacy_recognizer.py) implements a custom trace as follows:
 
 ```python
 SPACY_DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
@@ -61,26 +117,9 @@ def build_spacy_explanation(recognizer_name, original_score, entity):
 
 The `textual_explanation` field in `AnalysisExplanation` class allows you to add your own custom text into the final trace which will be written.
 
-## Enabling/Disabling Traces
-
-Decision-process traces are controlled by the `enable_trace_pii` parameter.
-
-```python
-from presidio_analyzer import AnalyzerEngine
-
-# Set up the engine, loads the NLP module (spaCy model by default) and other PII recognizers
-analyzer = AnalyzerEngine(enable_trace_pii=True)
-
-# Call analyzer to get results
-results = analyzer.analyze(text="My phone number is 212-555-5555",
-                           entities=["PHONE_NUMBER"],
-                           language='en')
-print(results)
-```
-
-!!! note "Note" 
+!!! note "Note"
     These traces leverage the Python `logging` mechanisms. In the default configuration, A `StreamHandler` is used to write these logs to `sys.stdout`.
 
 !!! warning "Warning"
-    Decision-process traces explain why PIIs were detected, 
+    Decision-process traces explain why PIIs were detected,
     but not why they were not detected!
