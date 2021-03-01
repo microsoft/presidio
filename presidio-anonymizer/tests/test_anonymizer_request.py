@@ -89,7 +89,9 @@ def test_given_valid_json_then_analyzer_results_list_created_successfully():
         assert result_a.start == same_result_in_content.get("start")
         assert result_a.end == same_result_in_content.get("end")
 
-def test_given_valid_json_with_no_analyzer_results_then_analyzer_results_list_created_successfully():
+
+def test_given_empty_analyzer_results_then_list_created_successfully():
+
     content = get_no_analyzer_results_content()
     analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
     assert len(analyzer_results) == len(content.get("analyzer_results"))
@@ -101,6 +103,7 @@ def test_given_valid_json_with_no_analyzer_results_then_analyzer_results_list_cr
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
         assert result_a.end == same_result_in_content.get("end")
+
 
 def __find_element(content: List, entity_type: str):
     for result in content:
@@ -129,6 +132,7 @@ def get_content():
         ],
     }
 
+
 def get_no_analyzer_results_content():
     return {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
@@ -144,4 +148,3 @@ def get_no_analyzer_results_content():
         "analyzer_results": [            
         ],
     }
-    
