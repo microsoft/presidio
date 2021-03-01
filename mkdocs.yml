@@ -22,7 +22,7 @@ nav:
       - Presidio Anonymizer:
         - Home: anonymizer/index.md
         - Developing PII anonymizers: anonymizer/adding_anonymizers.md
-    - Image redaction:
+    - Image Redactor:
         - Home: image-redactor/index.md
 
     - Samples:
