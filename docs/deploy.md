@@ -62,7 +62,7 @@ Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes 
    - [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls)
 
    **Note** that presidio is not deployed with an ingress controller by default.  
-   to change this behavior, deploy the helm chart with ingress.enabled=true_ and specify they type of ingress controller to be used with _api.ingress.class=nginx_ (supported classes are: nginx).
+   to change this behavior, deploy the helm chart with ingress.enabled=true_ and specify they type of ingress controller to be used with _ingress.class=nginx_ (supported classes are: nginx).
 
 3. Deploy from `/charts/presidio`
 
