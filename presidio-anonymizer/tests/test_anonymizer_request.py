@@ -89,6 +89,18 @@ def test_given_valid_json_then_analyzer_results_list_created_successfully():
         assert result_a.start == same_result_in_content.get("start")
         assert result_a.end == same_result_in_content.get("end")
 
+def test_given_valid_json_with_no_analyzer_results_then_analyzer_results_list_created_successfully():
+    content = get_no_analyzer_results_content()
+    analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
+    assert len(analyzer_results) == len(content.get("analyzer_results"))
+    for result_a in analyzer_results:
+        same_result_in_content = __find_element(
+            content.get("analyzer_results"), result_a.entity_type
+        )
+        assert same_result_in_content
+        assert result_a.score == same_result_in_content.get("score")
+        assert result_a.start == same_result_in_content.get("start")
+        assert result_a.end == same_result_in_content.get("end")
 
 def __find_element(content: List, entity_type: str):
     for result in content:
@@ -114,5 +126,21 @@ def get_content():
             {"start": 24, "end": 28, "score": 0.8, "entity_type": "FIRST_NAME"},
             {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
             {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"},
+        ],
+    }
+
+def get_no_analyzer_results_content():
+    return {
+        "text": "hello world, my name is Jane Doe. My number is: 034453334",
+        "anonymizers": {
+            "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
+            "PHONE_NUMBER": {
+                "type": "mask",
+                "masking_char": "*",
+                "chars_to_mask": 4,
+                "from_end": True,
+            },
+        },
+        "analyzer_results": [            
         ],
     }

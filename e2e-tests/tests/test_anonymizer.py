@@ -54,7 +54,7 @@ def test_given_anonymize_called_with_empty_text_then_invalid_input_message_retur
 
 
 @pytest.mark.api
-def test_given_anonymize_called_with_empty_analyzer_results_then_invalid_input_message_returned():
+def test_given_anonymize_called_with_empty_analyzer_results_then_unchanged_text_is_returned():
     request_body = """
     {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
@@ -69,8 +69,8 @@ def test_given_anonymize_called_with_empty_analyzer_results_then_invalid_input_m
     """
     response_status, response_content = anonymize(request_body)
 
-    expected_response = '{"error": "Invalid input, analyzer results can not be empty"}'
-    assert response_status == 422
+    expected_response = """{"result":"hello world, my name is Jane Doe. My number is: 034453334"}"""
+    assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
 
 
