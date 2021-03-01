@@ -26,11 +26,11 @@ class AnonymizerRequest:
         """
         analyzer_results = AnalyzerResults()
         analyzer_results_json = data.get("analyzer_results")
-        if not analyzer_results_json:
+        if analyzer_results_json is None:
             cls.logger.debug(
                 "invalid input, json missing field: analyzer_results_json")
             raise InvalidParamException(
-                "Invalid input, " "analyzer results can not be empty"
+                "Invalid input, " "request must contain analyzer results"
             )
         for analyzer_result in analyzer_results_json:
             analyzer_result = AnalyzerResult.from_json(analyzer_result)
