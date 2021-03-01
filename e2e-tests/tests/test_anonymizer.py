@@ -57,7 +57,7 @@ def test_given_anonymize_called_with_empty_text_then_invalid_input_message_retur
 def test_given_anonymize_called_with_empty_analyzer_results_then_unchanged_text_is_returned():
     request_body = """
     {
-        "text": "hello world, my name is Jane Doe. My number is: 034453334",
+        "text": "hello world! nice to meet you!",
         "anonymizers": {
             "DEFAULT": { "type": "replace", "new_value": "ANONYMIZED" },
             "PHONE_NUMBER": { "type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": true }
@@ -69,7 +69,7 @@ def test_given_anonymize_called_with_empty_analyzer_results_then_unchanged_text_
     """
     response_status, response_content = anonymize(request_body)
 
-    expected_response = """{"result":"hello world, my name is Jane Doe. My number is: 034453334"}"""
+    expected_response = """{"result":"hello world! nice to meet you!"}"""
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
 
