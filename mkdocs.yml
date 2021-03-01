@@ -29,7 +29,7 @@ nav:
       - Home: samples/index.md
       - Python: samples/python/index.md
       - Docker: samples/docker/index.md
-      - Sample Deployments: samples/deployments/index.md
+      - Sample Deployments:
         - Azure App Service: samples/deployments/app-service/index.md
         - Kubernetes: samples/deployments/k8s/index.md
     - Supported entities: supported_entities.md
