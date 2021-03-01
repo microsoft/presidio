@@ -35,6 +35,14 @@ anonymizer:
   name: presidio-anonymizer
   replicas: 1
   imagePullPolicy: Always
+  container:
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "125m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
   service:
     type: ClusterIP
     externalPort: 80
@@ -45,6 +53,14 @@ anonymizerimage:
   name: presidio-image-redactor
   replicas: 1
   imagePullPolicy: Always
+  container:
+    resources:
+      requests:
+        memory: "1500Mi"
+        cpu: "1500m"
+      limits:
+        memory: "3000Mi"
+        cpu: "2000m"
   service:
     type: ClusterIP
     externalPort: 80
