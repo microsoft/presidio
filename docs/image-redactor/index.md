@@ -106,7 +106,7 @@ Pre-requisites:
 Python script example can be found under:
 /presidio/e2e-tests/tests/test_image_redactor.py
 
-### API reference
+## API reference
 
 the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Image-redactor)
 for the Image Redactor REST API reference details
