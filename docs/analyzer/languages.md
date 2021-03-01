@@ -1,7 +1,5 @@
 # PII detection in different languages
 
-## Description
-
 Presidio supports PII detection in multiple languages.
 In its default configuration, it contains recognizers and models for English.
 
@@ -11,8 +9,8 @@ To extend Presidio to detect PII in an additional language, these modules requir
 lemmatization, Named Entity Recognition and other NLP tasks.
 2. PII recognizers (different `EntityRecognizer` objects) should be adapted or created.
 
-Note:
-> While different detection mechanisms such as regular expressions are language agnostic, the context words used to increase the PII detection confidence aren't. Consider updating the list of context words for each recognizer to leverage context words in additional languages.
+!!! note "Note"
+    While different detection mechanisms such as regular expressions are language agnostic, the context words used to increase the PII detection confidence aren't. Consider updating the list of context words for each recognizer to leverage context words in additional languages.
 
 ## Table of contents
 
@@ -42,7 +40,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         stanza.download("en") # where en is the language code of the model.
         ```
 
-   For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
+    For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
 
 2. Update the models configuration in one of two ways:
     - **Via code**: Create an `NlpEngine` using the `NlpEnginerProvider` class, and pass it to the `AnalyzerEngine` as input:
@@ -76,7 +74,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         print(results_english)
         ```
 
-    - **Via configuration**: Set up the models which should be used in the [default `conf` file](conf/default.yaml).
+    - **Via configuration**: Set up the models which should be used in the [default `conf` file](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/conf/default.yaml).
 
         An example Conf file:
 
@@ -154,5 +152,5 @@ analyzer.analyze(...)
 
 When packaging the code into a Docker container, NLP models are automatically installed.
 To define which models should be installed,
-update the [conf/default.yaml](conf/default.yaml) file. This file is read during
+update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/conf/default.yaml) file. This file is read during
 the `docker build` phase and the models defined in it are installed automatically.

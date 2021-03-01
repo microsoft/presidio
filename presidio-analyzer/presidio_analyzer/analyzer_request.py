@@ -12,8 +12,10 @@ class AnalyzerRequest:
         If entities=None then all entities are looked for.
         correlation_id: cross call ID for this request
         score_threshold: A minimum value for which to return an identified entity
-        trace: Should tracing of the response occur or not. Tracing is used
-        for results interpretability reasons.
+        log_decision_process: Should the decision points within the analysis
+        be logged
+        return_decision_process: Should the decision points within the analysis
+        returned as part of the response
     """
 
     def __init__(self, req_data: Dict):
@@ -22,7 +24,4 @@ class AnalyzerRequest:
         self.entities = req_data.get("entities")
         self.correlation_id = req_data.get("correlation_id")
         self.score_threshold = req_data.get("score_threshold")
-        self.trace = req_data.get("trace")
-        self.remove_interpretability_response = req_data.get(
-            "remove_interpretability_response"
-        )
+        self.return_decision_process = req_data.get("return_decision_process")

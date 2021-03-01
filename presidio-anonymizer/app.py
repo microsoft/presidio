@@ -36,9 +36,6 @@ class Server:
         fileConfig(Path(Path(__file__).parent, LOGGING_CONF_FILE))
         self.logger = logging.getLogger("presidio-anonymizer")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
-        self.logger.info("Starting anonymizer engine")
-        self.engine = AnonymizerEngine()
-
         self.app = Flask(__name__)
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
@@ -46,8 +43,8 @@ class Server:
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.  get ok + 200."""
-            return "ok"
+            """Return basic health probe result."""
+            return "Presidio Anonymizer service is up"
 
         @self.app.route("/anonymize", methods=["POST"])
         def anonymize():
@@ -55,14 +52,18 @@ class Server:
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
 
-            data = AnonymizerRequest(content, self.engine.builtin_anonymizers)
-            text = self.engine.anonymize(data)
+            anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
+                content)
+            analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
+            text = self.engine.anonymize(text=content.get("text"),
+                                         analyzer_results=analyzer_results,
+                                         anonymizers_config=anonymizers_config)
             return jsonify(result=text)
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
-            return json.dumps(self.engine.anonymizers()), 200
+            return json.dumps(self.engine.get_anonymizers()), 200
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):

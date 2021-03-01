@@ -11,7 +11,7 @@ class AnalyzerResults(list):
 
      It includes removal of unused results and sort by indices order.
      Additional information about the rational of this class:
-    - One PII - uses a given or default transformation to anonymize and replace the PII
+    - One PII - uses a given or default anonymizer to anonymize and replace the PII
     text entity.
     - Full overlap of PIIs - When one text have several PIIs, the PII with the higher
     score will be taken.
@@ -29,7 +29,7 @@ class AnalyzerResults(list):
         _remove_conflicts method - removes results which impact the same text and
         should be ignored.
         using the logic:
-        - One PII - uses a given or default transformation to anonymize and
+        - One PII - uses a given or default anonymizer to anonymize and
         replace the PII text entity.
         - Full overlap of PIIs - When one text have several PIIs,
         the PII with the higher score will be taken.
@@ -54,11 +54,15 @@ class AnalyzerResults(list):
         :return: List
         """
         unique_elements = []
+        # This list contains all elements which we need to check a single result
+        # against. If a result is dropped, it can also be dropped from this list
+        # since it is intersecting with another result and we selected the other one.
+        other_elements = AnalyzerResults(self)
         for result_a in self:
-            other_elements = AnalyzerResults(self)
             other_elements.remove(result_a)
             if not any([result_a.has_conflict(other_element) for other_element in
                         other_elements]):
+                other_elements.append(result_a)
                 unique_elements.append(result_a)
             else:
                 self.logger.debug(

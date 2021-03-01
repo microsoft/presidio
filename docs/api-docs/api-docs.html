@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ReDoc</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="redoc-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+<script type="text/javascript">
+    (function() {
+        Redoc.init(
+            "./api-docs.yml",
+            {
+                "untrustedSpec": true,
+                "theme": {
+                    "colors": {
+                        "primary": {
+                            "main": "rgba(69, 69, 98, 1)"
+                        }
+                    },
+                    "typography": {
+                        "fontSize": "16px",
+                        "headings":{
+                            "fontFamily": "Roboto",
+                            "fontWeight": "400",
+                            "lineHeight": '2em'
+                        },
+                        "fontFamily": "Roboto"
+                    },
+                    "rightPanel": {
+                        "backgroundColor": "rgba(84, 109, 120, 1)"
+                    }
+                }
+            },
+            document.getElementById('redoc-container'));
+    })();
+</script>
+</body>
+</html>

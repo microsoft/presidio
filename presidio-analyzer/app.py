@@ -41,8 +41,18 @@ class Server:
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.  get ok + 200."""
-            return "ok"
+            """Return basic health probe result.
+
+            ---
+            responses:
+              200:
+                description: OK
+                content:
+                  text/plain:
+                    schema:
+                      type: string
+            """
+            return "Presidio Analyzer service is up"
 
         @self.app.route("/analyze", methods=["POST"])
         def analyze() -> Tuple[str, int]:
@@ -62,8 +72,7 @@ class Server:
                     correlation_id=req_data.correlation_id,
                     score_threshold=req_data.score_threshold,
                     entities=req_data.entities,
-                    trace=req_data.trace,
-                    remove_interpretability_response=req_data.remove_interpretability_response,  # noqa E501
+                    return_decision_process=req_data.return_decision_process,
                 )
 
                 return (

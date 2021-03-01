@@ -1,3 +1,7 @@
 # Package dependency changes should be approved by a member of 'presidio-administrators' team
-presidio-analyzer/Pipfile* @microsoft/presidio-administrators
-presidio-anonymizer/Pipfile* @microsoft/presidio-administrators
+*/Pipfile* @microsoft/presidio-administrators
+
+# Version change should be approved by a member of 'presidio-administrators' team
+VERSION @microsoft/presidio-administrators
+VERSION-IMAGE-REDACTOR @microsoft/presidio-administrators
+

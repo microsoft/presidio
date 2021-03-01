@@ -22,7 +22,7 @@ from tests.mocks import NlpEngineMock, AppTracerMock, RecognizerRegistryMock
 
 @pytest.fixture(scope="module")
 def app_tracer():
-    return AppTracerMock(enable_interpretability=True)
+    return AppTracerMock(enable_decision_process=True)
 
 
 @pytest.fixture(scope="module")
@@ -32,7 +32,7 @@ def loaded_analyzer_engine(loaded_registry, app_tracer):
         loaded_registry,
         NlpEngineMock(stopwords=[], punct_words=[], nlp_artifacts=mock_nlp_artifacts),
         app_tracer=app_tracer,
-        enable_trace_pii=True,
+        log_decision_process=True,
     )
     return analyzer_engine
 
@@ -89,7 +89,9 @@ def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     assert_result(results[1], "PHONE_NUMBER", 48, 59, expected_score)
 
 
-def test_when_analyze_with_empty_text_then_no_results(loaded_analyzer_engine, unit_test_guid):
+def test_when_analyze_with_empty_text_then_no_results(
+    loaded_analyzer_engine, unit_test_guid
+):
     language = "en"
     text = ""
     entities = ["CREDIT_CARD", "PHONE_NUMBER"]
@@ -103,7 +105,9 @@ def test_when_analyze_with_empty_text_then_no_results(loaded_analyzer_engine, un
     assert len(results) == 0
 
 
-def test_when_analyze_with_unsupported_language_then_fail(loaded_analyzer_engine, unit_test_guid):
+def test_when_analyze_with_unsupported_language_then_fail(
+    loaded_analyzer_engine, unit_test_guid
+):
     with pytest.raises(ValueError):
         language = "de"
         text = ""
@@ -217,7 +221,9 @@ def test_when_removed_pattern_recognizer_then_doesnt_work(unit_test_guid):
     assert len(results) == 0
 
 
-def test_when_analyze_with_language_then_returns_correct_response(loaded_analyzer_engine):
+def test_when_analyze_with_language_then_returns_correct_response(
+    loaded_analyzer_engine,
+):
     language = "en"
     entities = ["CREDIT_CARD"]
     min_score = 0.5
@@ -277,11 +283,11 @@ def test_when_analyze_then_apptracer_has_value(
     text = "My name is Bart Simpson, and Credit card: 4095-2609-9393-4932,  my phone is 425 8829090"  # noqa E501
     language = "en"
     entities = ["CREDIT_CARD", "PHONE_NUMBER", "PERSON"]
-    app_tracer_mock = AppTracerMock(enable_interpretability=True)
+    app_tracer_mock = AppTracerMock(enable_decision_process=True)
     analyzer_engine_with_spacy = AnalyzerEngine(
         loaded_registry,
         app_tracer=app_tracer_mock,
-        enable_trace_pii=True,
+        log_decision_process=True,
         nlp_engine=nlp_engine,
     )
     results = analyzer_engine_with_spacy.analyze(
@@ -289,7 +295,7 @@ def test_when_analyze_then_apptracer_has_value(
         text=text,
         entities=entities,
         language=language,
-        trace=True,
+        return_decision_process=True,
     )
     assert len(results) == 3
     for result in results:
@@ -457,7 +463,9 @@ def test_when_demo_text_then_return_results(unit_test_guid, nlp_engine):
     assert expected_anonymized_text == actual_anonymized_text
 
 
-def test_when_get_supported_fields_then_return_all_languages(mock_registry, unit_test_guid, nlp_engine):
+def test_when_get_supported_fields_then_return_all_languages(
+    mock_registry, unit_test_guid, nlp_engine
+):
     analyzer = AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
     entities = analyzer.get_supported_entities()
 
@@ -527,16 +535,16 @@ def test_when_add_recognizer_then_also_outputs_others(nlp_engine):
     assert len(results) == 2
 
 
-def test_when_given_no_interpretability_requested_then_response_contains_no_analysis(
+def test_when_given_no_decision_process_requested_then_response_contains_no_analysis(
     loaded_analyzer_engine, unit_test_guid
 ):
     text = "John Smith drivers license is AC432223"
     language = "en"
-    remove_interpretability_response = True
+    return_decision_process = False
     results = loaded_analyzer_engine.analyze(
         correlation_id=unit_test_guid,
         text=text,
-        remove_interpretability_response=remove_interpretability_response,
+        return_decision_process=return_decision_process,
         language=language,
     )
 
@@ -544,16 +552,16 @@ def test_when_given_no_interpretability_requested_then_response_contains_no_anal
     assert results[0].analysis_explanation is None
 
 
-def test_given_interpretability_requested_then_response_contains_analysis(
+def test_given_decision_process_requested_then_response_contains_analysis(
     loaded_analyzer_engine, unit_test_guid
 ):
     text = "John Smith drivers license is AC432223"
     language = "en"
-    remove_interpretability_response = False
+    return_decision_process = True
     results = loaded_analyzer_engine.analyze(
         correlation_id=unit_test_guid,
         text=text,
-        remove_interpretability_response=remove_interpretability_response,
+        return_decision_process=return_decision_process,
         language=language,
     )
 
@@ -561,7 +569,9 @@ def test_given_interpretability_requested_then_response_contains_analysis(
     assert results[0].analysis_explanation is not None
 
 
-def test_when_read_test_spacy_nlp_conf_file_then_returns_spacy_nlp_engine(mock_registry):
+def test_when_read_test_spacy_nlp_conf_file_then_returns_spacy_nlp_engine(
+    mock_registry,
+):
     engine = AnalyzerEngine(registry=mock_registry)
 
     assert isinstance(engine.nlp_engine, SpacyNlpEngine)

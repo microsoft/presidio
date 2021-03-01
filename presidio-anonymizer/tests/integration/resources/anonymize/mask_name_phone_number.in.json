@@ -1,6 +1,6 @@
 {
   "text": "hello world, my name is Jane Doe. My number is: 03-4453334",
-  "transformations": {
+  "anonymizers": {
     "DEFAULT": {
       "type": "mask",
       "masking_char": "*",

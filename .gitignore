@@ -132,6 +132,3 @@ vendor/
 #pycharm
 .idea/*
 .idea
-
-# temporary ignore VERSION file
-VERSION

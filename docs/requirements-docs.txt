@@ -1,0 +1,7 @@
+mkdocs
+mkdocs-material
+pymdown-extensions
+markdown
+mkdocstrings
+presidio_analyzer
+presidio_anonymizer

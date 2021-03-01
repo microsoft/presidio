@@ -4,7 +4,7 @@ trigger:
   batch: true
   branches:
     include:
-      - V2
+      - main
 
 variables:
   - group: Presidio-V2-CI
@@ -66,5 +66,6 @@ stages:
           AZURE_SUBSCRIPTION: $(DEV_AZURE_SUBSCRIPTION)
           ANALYZER_APP_NAME: $(ANALYZER_DEV_APP_NAME)
           ANONYMIZER_APP_NAME: $(ANONYMIZER_DEV_APP_NAME)
+          IMAGE_REDACTOR_APP_NAME: $(IMAGE_REDACTOR_DEV_APP_NAME)
           RESOURCE_GROUP_NAME: $(DEV_RESOURCE_GROUP_NAME)
           TAG: $(Build.BuildId)
