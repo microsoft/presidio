@@ -75,14 +75,14 @@ stages:
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":$(version)"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-            DOCKER_COMPOSE_FILE: '../docker-compose-text.yml'
+            DOCKER_COMPOSE_FILE: 'docker-compose-text.yml'
         - template: ./build-and-push-containers.yml
           parameters:
             REGISTRY_NAME: $(REGISTRY_NAME)
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":latest"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-            DOCKER_COMPOSE_FILE: '../docker-compose-text.yml'
+            DOCKER_COMPOSE_FILE: 'docker-compose-text.yml'
 
     - job: BuildAndPushImageRedactorContainer
       displayName: Build and Push Image Redactor Container
@@ -100,14 +100,14 @@ stages:
                 IMAGE_PREFIX: $(IMAGE_PREFIX)
                 TAG: ':$(version)'
                 AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-                DOCKER_COMPOSE_FILE: '../../docker-compose-image.yml'
+                DOCKER_COMPOSE_FILE: 'docker-compose-image.yml'
           - template: ./build-and-push-containers.yml
             parameters:
                 REGISTRY_NAME: $(REGISTRY_NAME)
                 IMAGE_PREFIX: $(IMAGE_PREFIX)
                 TAG: ':latest'
                 AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)  
-                DOCKER_COMPOSE_FILE: '../../docker-compose-image.yml'
+                DOCKER_COMPOSE_FILE: 'docker-compose-image.yml'
 
   - stage: DeployProd
     dependsOn: Release
