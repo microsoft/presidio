@@ -5,7 +5,7 @@ site_author: Microsoft
 
 repo_url: https://github.com/microsoft/presidio/
 edit_uri: ""
-use_directory_urls: false
+
 nav:
   - Home: index.md
   - Getting Started: getting_started.md
@@ -42,8 +42,7 @@ nav:
       - Presidio Analyzer Python API: api/analyzer_python.md
       - Presidio Anonymizer Python API: api/anonymizer_python.md
       - Presidio Image Redactor Python API: api/image_redactor_python.md
-    - REST API reference: api-docs/api-docs.html
-
+    - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html
 
 theme:
   name: material
