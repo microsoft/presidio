@@ -54,11 +54,15 @@ class AnalyzerResults(list):
         :return: List
         """
         unique_elements = []
+        # This list contains all elements which we need to check a single result
+        # against. If a result is dropped, it can also be dropped from this list
+        # since it is intersecting with another result and we selected the other one.
+        other_elements = AnalyzerResults(self)
         for result_a in self:
-            other_elements = AnalyzerResults(self)
             other_elements.remove(result_a)
             if not any([result_a.has_conflict(other_element) for other_element in
                         other_elements]):
+                other_elements.append(result_a)
                 unique_elements.append(result_a)
             else:
                 self.logger.debug(
