@@ -145,6 +145,7 @@ def get_no_analyzer_results_content():
                 "from_end": True,
             },
         },
-        "analyzer_results": [            
+        "analyzer_results": [
         ],
     }
+    
