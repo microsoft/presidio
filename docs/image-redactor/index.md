@@ -1,6 +1,6 @@
 # Presidio Image Redactor
 
-***Please notice, this package is still in alpha and not production ready.***
+***Please notice, this package is still in beta and not production ready.***
 
 ## Description
 
