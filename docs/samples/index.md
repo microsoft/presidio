@@ -8,3 +8,4 @@
 ## Deployment Samples
 
 1. [Azure App service](deployments/app-service/index.md)
+2. [Kubernetes](deployments/k8s/index.md)
