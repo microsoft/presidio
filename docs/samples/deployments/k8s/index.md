@@ -60,7 +60,7 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 2. Optional - Ingress controller for presidio API, e.g., [NGINX](https://docs.microsoft.com/en-us/azure/aks/ingress-tls).
 
    > Note: Presidio is not deployed with an ingress controller by default.  
-   to change this behavior, deploy the helm chart with ingress.enabled=true_and specify they type of ingress controller to be used with_ingress.class=nginx_ (supported classes are: nginx).
+   to change this behavior, deploy the helm chart with ingress.enabled=true and specify they type of ingress controller to be used with_ingress.class=nginx_ (supported classes are: nginx).
 
 3. Deploy from `/docs/samples/deployments/k8s/charts/presidio`
 
