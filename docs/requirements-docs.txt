@@ -5,3 +5,4 @@ markdown
 mkdocstrings
 presidio_analyzer
 presidio_anonymizer
+presidio_image_redactor
