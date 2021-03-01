@@ -15,7 +15,8 @@ Pre-requisites:
 - Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract#installing-tesseract) by following the
   instructions on how to install it for your operating system.
 
-  The Image-Redactor was tested with a minimal version of 4.0.0
+  !!! note "Note"
+    For now, image redactor only supports version 4.0.0
 
 === "Using pip"
     
