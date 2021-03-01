@@ -75,14 +75,14 @@ stages:
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":$(version)"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-            DOCKER_COMPOSE_FILE: '../docker-compose-text.yml'
+            DOCKER_COMPOSE_FILE: 'docker-compose-text.yml'
         - template: ./build-and-push-containers.yml
           parameters:
             REGISTRY_NAME: $(REGISTRY_NAME)
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":latest"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-            DOCKER_COMPOSE_FILE: '../docker-compose-text.yml'
+            DOCKER_COMPOSE_FILE: 'docker-compose-text.yml'
 
     - job: BuildAndPushImageRedactorContainer
       displayName: Build and Push Image Redactor Container
@@ -90,7 +90,7 @@ stages:
       pool:
           vmImage: 'ubuntu-16.04'
       variables:
-          version: $[ dependencies.Version.outputs['setImageVer.imageVersion'] ]
+          version: $[ dependencies.ImageVersion.outputs['setImageVer.imageVersion'] ]
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           IMAGE_PREFIX: 'public/'
       steps:
@@ -98,16 +98,16 @@ stages:
             parameters:
                 REGISTRY_NAME: $(REGISTRY_NAME)
                 IMAGE_PREFIX: $(IMAGE_PREFIX)
-                TAG: ':$(version)'
+                TAG: ":$(version)"
                 AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-                DOCKER_COMPOSE_FILE: '../../docker-compose-image.yml'
+                DOCKER_COMPOSE_FILE: 'docker-compose-image.yml'
           - template: ./build-and-push-containers.yml
             parameters:
                 REGISTRY_NAME: $(REGISTRY_NAME)
                 IMAGE_PREFIX: $(IMAGE_PREFIX)
-                TAG: ':latest'
+                TAG: ":latest"
                 AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)  
-                DOCKER_COMPOSE_FILE: '../../docker-compose-image.yml'
+                DOCKER_COMPOSE_FILE: 'docker-compose-image.yml'
 
   - stage: DeployProd
     dependsOn: Release
@@ -123,5 +123,6 @@ stages:
           AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION)
           ANALYZER_APP_NAME: $(ANALYZER_PROD_APP_NAME)
           ANONYMIZER_APP_NAME: $(ANONYMIZER_PROD_APP_NAME)
+          IMAGE_REDACTOR_APP_NAME: $(IMAGE_REDACTOR_PROD_APP_NAME)
           RESOURCE_GROUP_NAME: $(PROD_RESOURCE_GROUP_NAME)
-          TAG: $(VERSION)
+          TAG: "latest"
