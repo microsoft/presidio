@@ -28,5 +28,5 @@ def __get_expected_ocr_test_image_analysis_results():
         ImageRecognizerResult("PHONE_NUMBER", 332, 346, 0.7, 666, 298, 88, 40),
         ImageRecognizerResult("PHONE_NUMBER", 332, 346, 0.7, 769, 301, 169, 29),
         ImageRecognizerResult("EMAIL_ADDRESS", 773, 795, 1.0, 27, 912, 458, 39),
-        ImageRecognizerResult("DOMAIN_NAME", 781, 794, 1.0, 27, 912, 458, 39),
+        ImageRecognizerResult("DOMAIN_NAME", 782, 795, 1.0, 27, 912, 458, 39),
     ]
