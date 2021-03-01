@@ -16,4 +16,9 @@ stages:
                 - script: |
                       set -eux  # fail on error                                            
                       pip install -r docs/requirements-docs.txt
+
+                      # Install Presidio modules for generating API references
+                      pip install presidio-analyzer --no-dependencies
+                      pip install presidio-anonymizer --no-dependencies
+                      pip install presidio-image-redactor --no-dependencies
                       mkdocs gh-deploy

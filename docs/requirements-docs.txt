@@ -3,6 +3,7 @@ mkdocs-material
 pymdown-extensions
 markdown
 mkdocstrings
-presidio_analyzer
-presidio_anonymizer
-presidio_image_redactor
+
+# presidio_analyzer 
+# presidio_anonymizer 
+# presidio_image_redactor 
