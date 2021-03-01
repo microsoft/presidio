@@ -20,6 +20,17 @@ stages:
           displayName: Set Version
           name: setVer
 
+    - job: imageVersion
+      displayName: 'Get image-redactor version number'
+      steps:
+        - bash: |
+            set -eux  # exit on error
+            imageVer=$(cat VERSION-IMAGE-REDACTOR)
+            echo $imageVer
+            echo "##vso[task.setvariable variable=imageVersion;isOutput=true]$imageVer"
+          displayName: Set Image Version
+          name: setImageVer
+
     - job: githubRelease
       displayName: GitHub Release
       dependsOn: version
@@ -41,6 +52,8 @@ stages:
             WORKING_FOLDER: 'presidio-analyzer'
           Anonymizer:
             WORKING_FOLDER: 'presidio-anonymizer'
+          Image-Redactor:
+            WORKING_FOLDER: 'presidio-image-redactor'
       steps:
         - template: ./publish-to-pypi.yml
           parameters:
@@ -62,12 +75,40 @@ stages:
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":$(version)"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+            DOCKER_COMPOSE_FILE: '../docker-compose-text.yml'
         - template: ./build-and-push-containers.yml
           parameters:
             REGISTRY_NAME: $(REGISTRY_NAME)
             IMAGE_PREFIX: $(IMAGE_PREFIX)
             TAG: ":latest"
             AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+            DOCKER_COMPOSE_FILE: '../docker-compose-text.yml'
+
+    - job: BuildAndPushImageRedactorContainer
+      displayName: Build and Push Image Redactor Container
+      dependsOn: imageVersion
+      pool:
+          vmImage: 'ubuntu-16.04'
+      variables:
+          version: $[ dependencies.Version.outputs['setImageVer.imageVersion'] ]
+          REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
+          IMAGE_PREFIX: 'public/'
+      steps:
+          - template: ./build-and-push-containers.yml
+            parameters:
+                REGISTRY_NAME: $(REGISTRY_NAME)
+                IMAGE_PREFIX: $(IMAGE_PREFIX)
+                TAG: ':$(version)'
+                AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
+                DOCKER_COMPOSE_FILE: '../docker-compose-image.yml'
+          - template: ./build-and-push-containers.yml
+            parameters:
+                REGISTRY_NAME: $(REGISTRY_NAME)
+                IMAGE_PREFIX: $(IMAGE_PREFIX)
+                TAG: ':latest'
+                AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)  
+                DOCKER_COMPOSE_FILE: '../docker-compose-image.yml'
+
   - stage: DeployProd
     dependsOn: Release
     variables:
