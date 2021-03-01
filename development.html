@@ -1,0 +1,1550 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="PII anonymization for text and images.">
+      
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+        <link rel="canonical" href="https://microsoft.github.io/presidio/development.html">
+      
+      <link rel="shortcut icon" href="assets/ms_icon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.3">
+    
+    
+      
+        <title>Setting up a development environment - Microsoft Presidio</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.1655a90d.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.7fa14f5b.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#setting-up-a-development-environment" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://microsoft.github.io/presidio" title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio">
+      
+  <img src="assets/ms_icon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Microsoft Presidio
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Setting up a development environment
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="md-header__options">
+      
+    </div>
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="index.html" class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="getting_started.html" class="md-tabs__link">
+      Getting Started
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="installation.html" class="md-tabs__link">
+      Installation
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="text_anonymization.html" class="md-tabs__link">
+        Text anonymization
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="image-redactor/index.html" class="md-tabs__link">
+        Image Redactor
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="samples/index.html" class="md-tabs__link">
+        Samples
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="supported_entities.html" class="md-tabs__link">
+      Supported entities
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="design.html" class="md-tabs__link md-tabs__link--active">
+        Development and design
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://microsoft.github.io/presidio" title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio">
+      
+  <img src="assets/ms_icon.png" alt="logo">
+
+    </a>
+    Microsoft Presidio
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting_started.html" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="installation.html" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      <label class="md-nav__link" for="__nav_4">
+        Text anonymization
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Text anonymization" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Text anonymization
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="text_anonymization.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      <label class="md-nav__link" for="__nav_4_2">
+        Presidio Analyzer
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Presidio Analyzer" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Presidio Analyzer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="analyzer/index.html" class="md-nav__link">
+        Analyzer Home
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_2" type="checkbox" id="__nav_4_2_2" >
+      
+      <label class="md-nav__link" for="__nav_4_2_2">
+        Developing PII recognizers
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Developing PII recognizers" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Developing PII recognizers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="analyzer/adding_recognizers.html" class="md-nav__link">
+        Tutorial
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="analyzer/developing_recognizers.html" class="md-nav__link">
+        Best practices in developing recognizers
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="analyzer/languages.html" class="md-nav__link">
+        Multi-language support
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="analyzer/decision_process.html" class="md-nav__link">
+        Tracing the decision process
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
+      
+      <label class="md-nav__link" for="__nav_4_3">
+        Presidio Anonymizer
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Presidio Anonymizer" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          Presidio Anonymizer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="anonymizer/index.html" class="md-nav__link">
+        Anonymizer Home
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="anonymizer/adding_anonymizers.html" class="md-nav__link">
+        Developing PII anonymizers
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      <label class="md-nav__link" for="__nav_5">
+        Image Redactor
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Image Redactor" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Image Redactor
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="image-redactor/index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      <label class="md-nav__link" for="__nav_6">
+        Samples
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Samples" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Samples
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/index.html" class="md-nav__link">
+        Samples Home
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/python/index.html" class="md-nav__link">
+        Python
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/docker/index.html" class="md-nav__link">
+        Docker
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" type="checkbox" id="__nav_6_4" >
+      
+      <label class="md-nav__link" for="__nav_6_4">
+        Sample Deployments
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Sample Deployments" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_4">
+          <span class="md-nav__icon md-icon"></span>
+          Sample Deployments
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/deployments/app-service/index.html" class="md-nav__link">
+        Azure App Service
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/deployments/k8s/index.html" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="supported_entities.html" class="md-nav__link">
+        Supported entities
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" checked>
+      
+      <label class="md-nav__link" for="__nav_8">
+        Development and design
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Development and design" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Development and design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design.html" class="md-nav__link">
+        Design
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Setting up a development environment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="development.html" class="md-nav__link md-nav__link--active">
+        Setting up a development environment
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    Getting started
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting started">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloning-the-repo" class="md-nav__link">
+    Cloning the repo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-pipenv" class="md-nav__link">
+    Setting up Pipenv
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up Pipenv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alternatively-activate-the-virtual-environment-and-use-the-commands-by-starting-a-pipenv-shell" class="md-nav__link">
+    Alternatively, activate the virtual environment and use the commands by starting a pipenv shell
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-guidelines" class="md-nav__link">
+    Development guidelines
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-build-process" class="md-nav__link">
+    Local build process
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-conventions" class="md-nav__link">
+    Basic conventions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    Running tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#end-to-end-tests" class="md-nav__link">
+    End-to-end tests
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-and-run-end-to-end-tests-locally" class="md-nav__link">
+    Build and run end-to-end tests locally
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linting" class="md-nav__link">
+    Linting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatically-format-code-and-check-for-code-styling" class="md-nav__link">
+    Automatically format code and check for code styling
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build_release.html" class="md-nav__link">
+        Build and release process
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="presidio_V2.html" class="md-nav__link">
+        Changes from V1 to V2
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_5" type="checkbox" id="__nav_8_5" >
+      
+      <label class="md-nav__link" for="__nav_8_5">
+        Python API reference
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Python API reference" data-md-level="2">
+        <label class="md-nav__title" for="__nav_8_5">
+          <span class="md-nav__icon md-icon"></span>
+          Python API reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/analyzer_python.html" class="md-nav__link">
+        Presidio Analyzer Python API
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/anonymizer_python.html" class="md-nav__link">
+        Presidio Anonymizer Python API
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/image_redactor_python.html" class="md-nav__link">
+        Presidio Image Redactor Python API
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api-docs/api-docs.html" class="md-nav__link">
+        REST API reference
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    Getting started
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting started">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloning-the-repo" class="md-nav__link">
+    Cloning the repo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-pipenv" class="md-nav__link">
+    Setting up Pipenv
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up Pipenv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alternatively-activate-the-virtual-environment-and-use-the-commands-by-starting-a-pipenv-shell" class="md-nav__link">
+    Alternatively, activate the virtual environment and use the commands by starting a pipenv shell
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-guidelines" class="md-nav__link">
+    Development guidelines
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-build-process" class="md-nav__link">
+    Local build process
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-conventions" class="md-nav__link">
+    Basic conventions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    Running tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#end-to-end-tests" class="md-nav__link">
+    End-to-end tests
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-and-run-end-to-end-tests-locally" class="md-nav__link">
+    Build and run end-to-end tests locally
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linting" class="md-nav__link">
+    Linting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatically-format-code-and-check-for-code-styling" class="md-nav__link">
+    Automatically format code and check for code styling
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="setting-up-a-development-environment">Setting Up a Development Environment</h1>
+<h2 id="table-of-contents">Table of contents</h2>
+<h2 id="getting-started">Getting started</h2>
+<h3 id="cloning-the-repo">Cloning the repo</h3>
+<p>To create a local copy of Presidio repository, follow <a href="https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository">Github instructions</a>
+on how to clone a project using git.
+The project is structured so that:</p>
+<ul>
+<li>Each Presidio service has a designated directory:</li>
+<li>The service logic.</li>
+<li>Tests, both unit and integration.</li>
+<li>Serving it as an HTTP service (found in app.py).</li>
+<li>Python Packaging setup script (setup.py).</li>
+<li>In the project root directory, you will find common code for using, serving and testing Presidio
+    as a cluster of services, as well as CI/CD pipelines codebase and documentation.</li>
+</ul>
+<h3 id="setting-up-pipenv">Setting up Pipenv</h3>
+<p><a href="https://pipenv.pypa.io/en/latest/">Pipenv</a> is a Python workflow manager, handling
+dependencies and environment for Python packages. It is used by each Presidio service
+as the dependencies manager, to be aligned with the specific requirements versions.
+Follow these steps when starting to work on a Presidio service with Pipenv:</p>
+<ol>
+<li>
+<p>Install Pipenv</p>
+<ul>
+<li>
+<p>Using Pip</p>
+<div class="highlight"><pre><span></span><code>pip install --user pipenv
+</code></pre></div>
+</li>
+<li>
+<p>Using Homebrew (in MacOS)</p>
+<div class="highlight"><pre><span></span><code>brew install pipenv
+</code></pre></div>
+</li>
+</ul>
+<p>Additional installation instructions for Pipenv: <a href="https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv">https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv</a></p>
+</li>
+<li>
+<p>Have Pipenv create a virtualenv for the project and install all requirements in the Pipfile,
+    including dev requirements.</p>
+<p>For example, in the <code>presidio-analyzer</code> folder, run:</p>
+<div class="highlight"><pre><span></span><code>pipenv install --dev --sequential --skip-lock
+</code></pre></div>
+</li>
+<li>
+<p>Run all tests:</p>
+<div class="highlight"><pre><span></span><code>pipenv run pytest
+</code></pre></div>
+</li>
+<li>
+<p>To run arbitrary scripts within the virtual env, start the command with
+    <code>pipenv run</code>. For example:</p>
+<ol>
+<li><code>pipenv run flake8</code></li>
+<li><code>pipenv run pip freeze</code></li>
+<li><code>pipenv run python -m spacy download en_core_web_lg</code></li>
+</ol>
+<p>Command 3 downloads the default spacy model needed for Presidio Analyzer.`</p>
+</li>
+</ol>
+<h4 id="alternatively-activate-the-virtual-environment-and-use-the-commands-by-starting-a-pipenv-shell">Alternatively, activate the virtual environment and use the commands by starting a pipenv shell</h4>
+<ol>
+<li>
+<p>Start shell:</p>
+<div class="highlight"><pre><span></span><code>pipenv shell
+</code></pre></div>
+</li>
+<li>
+<p>Run commands in the shell</p>
+<div class="highlight"><pre><span></span><code>pytest
+pip freeze
+</code></pre></div>
+</li>
+</ol>
+<h3 id="development-guidelines">Development guidelines</h3>
+<ul>
+<li>A Github issue suggesting the change should be opened prior to a PR.</li>
+<li>All contributions should be documented, tested and linted. Please verify that all tests and lint checks pass successfully before proposing a change.</li>
+<li>To make the linting process easier, you can use <a href="#automatically-format-code-and-check-for-code-styling">pre-commit hooks</a> to verify and automatically format code upon a git commit</li>
+<li>In order for a pull request to be accepted, the CI (containing unit tests, e2e tests and linting) needs to succeed, in addition to approvals from two maintainers.</li>
+<li>PRs should be small and solve/improve one issue at a time. If you have multiple suggestions for improvement, please open multiple PRs.</li>
+</ul>
+<h3 id="local-build-process">Local build process</h3>
+<p>After modifying presidio codebase, you might want to build presidio cluster locally, and run tests to spot regressions.
+The recommended way of doing so is using docker-compose (bundled with 'Docker Desktop' for Windows and Mac systems,
+more information can be found <a href="https://docs.docker.com/compose/install/">here</a>).
+Once installed, to start presidio cluster with all of its services in HTTP mode, run from the project root:</p>
+<div class="highlight"><pre><span></span><code>docker-compose up --build -d
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Building for the first time might take some time,
+mainly on downloading the default spacy models.</p>
+</div>
+<p>To validate that the services were built and started successfully,
+and to see the designated port for each,
+use docker-compose ps:</p>
+<div class="highlight"><pre><span></span><code>&gt;docker-compose ps
+CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                    NAMES
+6d5a258d19c2   presidio-anonymizer         <span class="s2">&quot;/bin/sh -c &#39;pipenv …&quot;</span>   <span class="m">6</span> minutes ago   Up <span class="m">6</span> minutes   <span class="m">0</span>.0.0.0:5001-&gt;5001/tcp   presidio_presidio-anonymizer_1
+9aad2b68f93c   presidio-analyzer           <span class="s2">&quot;/bin/sh -c &#39;pipenv …&quot;</span>   <span class="m">2</span> days ago      Up <span class="m">6</span> minutes   <span class="m">0</span>.0.0.0:5002-&gt;5001/tcp   presidio_presidio-analyzer_1
+1448dfb3ec2b   presidio-image-redactor     <span class="s2">&quot;/bin/sh -c &#39;pipenv …&quot;</span>   <span class="m">2</span> seconds ago   Up <span class="m">2</span> seconds   <span class="m">0</span>.0.0.0:5003-&gt;5001/tcp   presidio_presidio-image-redactor_1
+</code></pre></div>
+<p>Edit docker-compose.yml configuration file to change the default ports.</p>
+<p>Starting part of the cluster, or one service only, can be done by stating its image name as argument for docker-compose.
+For example for analyzer service:</p>
+<div class="highlight"><pre><span></span><code>docker-compose up --build -d presidio-analyzer
+</code></pre></div>
+<h3 id="testing">Testing</h3>
+<p>We strive to have a full test coverage in Presidio, and expect every pull request to
+include tests.</p>
+<p>In each service directory, a 'test' directory can be found. In it, both unit tests,
+for testing single files or classes, and integration tests, for testing integration
+between the service components, or integration with external packages.</p>
+<h4 id="basic-conventions">Basic conventions</h4>
+<p>For tests to be consistent and predictable, we use the following basic conventions:</p>
+<ol>
+<li>Treat tests as production code. Keep the tests concise and readable, with descriptive namings.</li>
+<li>Assert on one behavior at a time in each test.</li>
+<li>Test names should follow a pattern of <code>test_when_[condition_to_test]_then_[expected_behavior]</code>.
+   For example: <code>test_given_an_unknown_entity_then_anonymize_uses_defaults</code>.</li>
+<li>Use <a href="https://docs.pytest.org/en/stable/monkeypatch.html">test doubles and mocks</a>
+   when writing unit tests. Make less use of them when writing integration tests.</li>
+</ol>
+<h4 id="running-tests">Running tests</h4>
+<p>Presidio uses the <a href="http://doc.pytest.org/">pytest</a> framework for testing.
+See the pytest <a href="https://docs.pytest.org/en/latest/contents.html">documentation</a>
+for more information.</p>
+<p>Running the tests locally can be done in two ways:</p>
+<ol>
+<li>
+<p>Using cli, from each service directory, run:</p>
+<div class="highlight"><pre><span></span><code>pipenv run pytest
+</code></pre></div>
+</li>
+<li>
+<p>Using your IDE.
+   See configuration examples for
+   <a href="https://www.jetbrains.com/help/pycharm/creating-run-debug-configuration-for-tests.html">JetBrains PyCharm / IntelliJ IDEA</a>
+   and <a href="https://code.visualstudio.com/docs/python/testing">Visual Studio Code</a></p>
+</li>
+</ol>
+<h4 id="end-to-end-tests">End-to-end tests</h4>
+<p>Since Presidio services can function as HTTP servers, Presidio uses an additional
+end-to-end (e2e) testing layer to test their REST APIs.
+This e2e test framework is located under 'e2e-tests' directory.
+In it, you can also find test scenarios testing the integration between
+Presidio services through REST API.
+These tests should be annotated with 'integration' pytest marker <code>@pytest.mark.integration</code>,
+while tests calling a single service API layer should be annotated with 'api'
+pytest marker <code>@pytest.mark.api</code>.</p>
+<p>Running the e2e-tests locally can be done in two ways:</p>
+<ol>
+<li>
+<p>Using cli, from e2e-tests directory, run:</p>
+<p>On Mac / Linux / WSL:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a virtualenv named presidio-e2e (needs to be done only on the first run)</span>
+python -m venv presidio-e2e
+<span class="c1"># Activate the virtualenv</span>
+<span class="nb">source</span> presidio-e2e/bin/activate
+<span class="c1"># Install e2e-tests requirements using pip</span>
+pip install -r requirements.txt
+<span class="c1"># Run pytest</span>
+pytest
+<span class="c1"># Deactivate the virtualenv</span>
+deactivate
+</code></pre></div>
+<p>On Windows CMD / Powershell:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a virtualenv named presidio-e2e (needs to be done only on the first run)</span>
+py -m venv presidio-e2e
+<span class="c1"># Activate the virtualenv</span>
+presidio-e2e<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+<span class="c1"># Install e2e-tests requirements using pip</span>
+pip install -r requirements.txt
+<span class="c1"># Run pytest</span>
+pytest
+<span class="c1"># Deactivate the virtualenv</span>
+deactivate
+</code></pre></div>
+</li>
+<li>
+<p>Using your IDE</p>
+<p>See references in the section above.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The e2e tests require a Presidio cluster to be up, for example using the containerized cluster with docker-compose.</p>
+</div>
+<h3 id="build-and-run-end-to-end-tests-locally">Build and run end-to-end tests locally</h3>
+<p>Building and testing presidio locally, as explained above, can give good assurance on new changes and on regressions
+that might have introduced during development.
+As an easier method to build and automatically run end-to-end tests, is to use the <code>run.bat</code> script found in the project root:</p>
+<p>On Mac / Linux / WSL:</p>
+<div class="highlight"><pre><span></span><code>chmod +x run.bat
+./run.bat
+</code></pre></div>
+<p>On Windows CMD / Powershell:</p>
+<div class="highlight"><pre><span></span><code>run.bat
+</code></pre></div>
+<h3 id="linting">Linting</h3>
+<p>Presidio services are PEP8 compliant and continuously enforced on style guide issues during the build process using <code>flake8</code>.</p>
+<p>Running flake8 locally, using <code>pipenv run flake8</code>, you can check for those issues prior to committing a change.</p>
+<p>In addition to the basic <code>flake8</code> functionality, Presidio uses the following extensions:</p>
+<ul>
+<li><em>pep8-naming</em>: To check that variable names are PEP8 compliant.</li>
+<li><em>flake8-docstrings</em>: To check that docstrings are compliant.</li>
+</ul>
+<h3 id="automatically-format-code-and-check-for-code-styling">Automatically format code and check for code styling</h3>
+<p>To make the linting process easier, you can use pre-commit hooks to verify and automatically format code upon a git commit, using <code>black</code>:</p>
+<ol>
+<li>
+<p><a href="https://pre-commit.com/#install">Install pre-commit package manager locally.</a></p>
+</li>
+<li>
+<p>From the project's root, enable pre-commit, installing git hooks in the <code>.git/</code> directory by running: <code>pre-commit install</code>.</p>
+</li>
+<li>
+<p>Commit non PEP8 compliant code will cause commit failure and automatically
+    format your code using <code>black</code>, as well as checking code formatting using <code>flake8</code></p>
+<div class="highlight"><pre><span></span><code>```sh
+&gt;git commit -m &#39;autoformat&#39; presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
+
+black....................................................................Failed
+- hook id: black
+- files were modified by this hook
+
+reformatted presidio-analyzer/presidio_analyzer/predefined_recognizers/us_ssn_recognizer.py
+All done!
+1 file reformatted.
+
+flake8...................................................................Passed
+
+```
+</code></pre></div>
+</li>
+<li>
+<p>Committing again will finish successfully, with a well-formatted code.</p>
+</li>
+</ol>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="design.html" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Design
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="build_release.html" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Build and release process
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/microsoft/presidio" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://hub.docker.com/_/microsoft-presidio" target="_blank" rel="noopener" title="hub.docker.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+      </a>
+    
+      
+      
+      <a href="mailto:presidio@microsoft.com" target="_blank" rel="noopener" title="" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.ca5457b8.min.js"></script>
+      
+    
+  </body>
+</html>
