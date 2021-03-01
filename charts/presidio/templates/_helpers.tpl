@@ -36,7 +36,5 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "presidio.anonymizerimage.address" -}}
 {{template "presidio.anonymizerimage.fullname" .}}:{{.Values.anonymizerimage.service.externalPort}}
 {{- end -}}
-{{- define "presidio.api.fullname" -}}
-{{ include "presidio.fullname" . | printf "%s-api" }}
-{{- end -}}
+
 {{- define "presidio.rbac.version" }}rbac.authorization.k8s.io/v1{{ end -}}
