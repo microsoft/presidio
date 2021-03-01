@@ -1,8 +1,8 @@
-registry: presidio.azurecr.io
+registry: mcr.microsoft.com
  
 # Image pull secret
-privateRegistry: acr-auth
-tag: 11092
+# privateRegistry: acr-auth
+tag: latest
 
 # supported types are nginx (wip: traefik and istio)
 ingress:
