@@ -22,7 +22,8 @@ nav:
       - Presidio Anonymizer:
         - Home: anonymizer/index.md
         - Developing PII anonymizers: anonymizer/adding_anonymizers.md
-    - Image anonymization: image-redactor/index.md
+    - Image Redactor:
+        - Home: image-redactor/index.md
 
     - Samples:
       - Home: samples/index.md
@@ -38,7 +39,7 @@ nav:
       - Python API reference:
         - Presidio Analyzer Python API: api/analyzer_python.md
         - Presidio Anonymizer Python API: api/anonymizer_python.md
-        - Presidio Image Redactor Python API: api/image-redactor_python.md
+        - Presidio Image Redactor Python API: api/image_redactor_python.md
       - REST API reference: api-docs/api-docs.html
       - Changes from V1 to V2: presidio_V2.md
       - Build and release process: build_release.md
