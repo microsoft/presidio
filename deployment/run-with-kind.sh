@@ -20,5 +20,4 @@ bin/kind create cluster
 kubectl create namespace presidio
 
 # Install Presidio
-cd ..
 ./deploy-presidio.sh

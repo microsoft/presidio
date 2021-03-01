@@ -68,7 +68,7 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 
    ```sh
    # Based on the DOCKER_REGISTRY and PRESIDIO_LABEL from the previous steps
-   helm install --name presidio-demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
+   helm install --name demo --set registry=${DOCKER_REGISTRY},tag=${PRESIDIO_LABEL} . --namespace presidio
    ```
 
 4. For more deployment options, follow the [Development guide](development.md)
