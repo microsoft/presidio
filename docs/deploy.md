@@ -10,7 +10,7 @@ You can install Presidio locally using [KIND](https://github.com/kubernetes-sigs
 
 ## Deploy locally with KIND
 
-Presidio is built for Kubernetes, you can give it a try using [KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
+[KIND (Kubernetes IN Docker)](https://github.com/kubernetes-sigs/kind).
 
 1. Install [Docker](https://docs.docker.com/install/).
 
