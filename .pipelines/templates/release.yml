@@ -33,6 +33,8 @@ stages:
 
     - job: githubRelease
       displayName: GitHub Release
+      # Don't fail the job and continue to the deployment, if the version already exists
+      continueOnError: true
       dependsOn: version
       variables:
         version: $[ dependencies.Version.outputs['setVer.version'] ]
