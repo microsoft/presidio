@@ -38,16 +38,16 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ## Installing Presidio
 
-1. [Using pip](https://microsoft.github.io/presidio/installation.html#using-pip)
-2. [Using Docker](https://microsoft.github.io/presidio/installation.html#using-docker)
-3. [From source](https://microsoft.github.io/presidio/installation.html#install-from-source)
+1. [Using pip](https://microsoft.github.io/presidio/installation/#using-pip)
+2. [Using Docker](https://microsoft.github.io/presidio/installation/#using-docker)
+3. [From source](https://microsoft.github.io/presidio/installation/#install-from-source)
 
 ## Running Presidio
-1. [Getting started[(https://microsoft.github.io/presidio/getting_started.html)
-2. [Setting up a development environment](https://microsoft.github.io/presidio/development.html)
-3. [Text Anonymization](https://microsoft.github.io/presidio/text_anonymization.html)
-4. [Image Redaction](https://microsoft.github.io/presidio/image-redactor/index.html)
-5. [Usage samples and example deployments](https://microsoft.github.io/presidio/samples/index.html)
+1. [Getting started](https://microsoft.github.io/presidio/getting_started)
+2. [Setting up a development environment](https://microsoft.github.io/presidio/development)
+3. [PII anonymization in text](https://microsoft.github.io/presidio/text_anonymization)
+4. [PII anonymization in images](https://microsoft.github.io/presidio/image-redactor)
+5. [Usage samples and example deployments](https://microsoft.github.io/presidio/samples)
 
 ---
 
