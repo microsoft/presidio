@@ -14,8 +14,15 @@ The main changes introduced in **V2** are:
 
 3. Improved documentation, samples and build flows.
 
+## V1 Availability
+
+Version 1 is still available for download. To continue using the previous version:
+-	For docker containers, use tag=v1 
+-	For python packages, download version < 2 (e.g. pip install presidio-analyzer==0.95)
+
 !!! note "Note"
 	The legacy V1 code base will continue to be available under branch [V1](https://github.com/microsoft/presidio/tree/V1) but will no longer be officially supported.
+
 
 ## API Changes
 
