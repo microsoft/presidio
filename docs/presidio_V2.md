@@ -16,7 +16,7 @@ The main changes introduced in **V2** are:
 
 ## V1 Availability
 
-Version 1 is still available for download. To continue using the previous version:
+Version V1 (legacy) is still available for download. To continue using the previous version:
 -	For docker containers, use tag=v1 
 -	For python packages, download version < 2 (e.g. pip install presidio-analyzer==0.95)
 
