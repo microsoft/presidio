@@ -27,7 +27,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
 
     - To download a new model with spaCy:
 
-        ```shell script
+        ```sh
         python -m spacy download es_core_news_md
         ```
 
