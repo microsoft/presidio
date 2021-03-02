@@ -3,6 +3,8 @@
 trigger: none
 pr: none
 
+pool:
+  vmImage: 'ubuntu-latest'
 stages:
     - stage: Release
       displayName: Release Docs to Github Pages
@@ -14,6 +16,8 @@ stages:
                   persistCredentials: true
                 - task: UsePythonVersion@0
                 - script: |
-                      set -eux  # fail on error                                            
+                      set -eux  # fail on error     
+                      pip install --upgrade pip      
+                      pip install wheel                                 
                       pip install -r docs/requirements-docs.txt
                       mkdocs gh-deploy
