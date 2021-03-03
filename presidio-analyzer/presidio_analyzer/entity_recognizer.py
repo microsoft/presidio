@@ -387,8 +387,7 @@ class EntityRecognizer:
         :param results: List[RecognizerResult]
         :return: List[RecognizerResult]
         """
-        # bug# 597: Analyzer remove duplicates doesn't handle all cases of one
-        # result as a substring of the other
+        results = list(set(results))
         results = sorted(results, key=lambda x: (-x.score, x.start, x.end - x.start))
         filtered_results = []
 
@@ -396,20 +395,18 @@ class EntityRecognizer:
             if result.score == 0:
                 continue
 
-            valid_result = True
-            if result not in filtered_results:
+            to_keep = result not in filtered_results  # equals based comparison
+            if to_keep:
                 for filtered in filtered_results:
-                    # If result is equal to or substring of
-                    # one of the other results
-
+                    # If result is contained in one of the other results
                     if (
                         result.contained_in(filtered)
                         and result.entity_type == filtered.entity_type
                     ):
-                        valid_result = False
+                        to_keep = False
                         break
 
-            if valid_result:
+            if to_keep:
                 filtered_results.append(result)
 
         return filtered_results

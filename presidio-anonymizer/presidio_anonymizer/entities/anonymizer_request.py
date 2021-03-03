@@ -4,9 +4,9 @@ Engine request entity.
 It get the data and validate it before the engine receives it.
 """
 import logging
-from typing import List, Dict
+from typing import Dict
 
-from presidio_anonymizer.entities import AnalyzerResult
+from presidio_anonymizer.entities import RecognizerResult
 from presidio_anonymizer.entities import AnalyzerResults
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
@@ -18,7 +18,7 @@ class AnonymizerRequest:
     logger = logging.getLogger("presidio-anonymizer")
 
     @classmethod
-    def handle_analyzer_results_json(cls, data: Dict) -> List[AnalyzerResult]:
+    def handle_analyzer_results_json(cls, data: Dict) -> AnalyzerResults:
         """
         Go over analyzer results, validate them and convert to List[AnalyzeResult].
 
@@ -27,19 +27,19 @@ class AnonymizerRequest:
         analyzer_results = AnalyzerResults()
         analyzer_results_json = data.get("analyzer_results")
         if analyzer_results_json is None:
-            cls.logger.debug(
-                "invalid input, json missing field: analyzer_results_json")
+            cls.logger.debug("invalid input, json missing field: analyzer_results_json")
             raise InvalidParamException(
                 "Invalid input, " "request must contain analyzer results"
             )
         for analyzer_result in analyzer_results_json:
-            analyzer_result = AnalyzerResult.from_json(analyzer_result)
+            analyzer_result = RecognizerResult.from_json(analyzer_result)
             analyzer_results.append(analyzer_result)
         return analyzer_results
 
     @classmethod
-    def get_anonymizer_configs_from_json(cls, data: Dict) -> \
-            Dict[str, AnonymizerConfig]:
+    def get_anonymizer_configs_from_json(
+        cls, data: Dict
+    ) -> Dict[str, AnonymizerConfig]:
         """
         Go over the anonymizers and get the relevant anonymizer class for it.
 
@@ -52,7 +52,8 @@ class AnonymizerRequest:
         if anonymizers is not None:
             for key, anonymizer_json in anonymizers.items():
                 cls.logger.debug(
-                    f"converting {anonymizer_json} to anonymizer config class")
+                    f"converting {anonymizer_json} to anonymizer config class"
+                )
                 anonymizer_config = AnonymizerConfig.from_json(anonymizer_json)
                 anonymizers_config[key] = anonymizer_config
         return anonymizers_config

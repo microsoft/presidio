@@ -126,7 +126,7 @@ class RecognizerRegistry:
         all_possible_recognizers = self.recognizers
 
         # filter out unwanted recognizers
-        to_return = []
+        to_return = set()
         if all_fields:
             to_return = [
                 rec
@@ -150,7 +150,7 @@ class RecognizerRegistry:
                         language,
                     )
                 else:
-                    to_return.extend(subset)
+                    to_return.update(set(subset))
 
         logger.debug(
             "Returning a total of %s recognizers",
@@ -160,7 +160,7 @@ class RecognizerRegistry:
         if not to_return:
             raise ValueError("No matching recognizers were found to serve the request.")
 
-        return to_return
+        return list(to_return)
 
     def add_recognizer(self, recognizer: EntityRecognizer) -> None:
         """

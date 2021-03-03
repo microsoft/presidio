@@ -66,9 +66,6 @@ def test_when_remove_duplicates_duplicates_removed():
     results = EntityRecognizer.remove_duplicates(arr)
     assert len(results) == 1
     assert results[0].score == 0.5
-    # TODO: add more cases with bug:
-    # bug# 597: Analyzer remove duplicates doesn't handle all cases of one
-    #           result as a substring of the other
 
 
 def test_when_remove_duplicates_different_then_entity_not_removed():
