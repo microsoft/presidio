@@ -43,7 +43,7 @@ paths:
                 description: "A list analysis results"
                 type: array
                 items:
-                  $ref: "#/components/schemas/AnalyzerResultWithAnaysisExplanation"
+                  $ref: "#/components/schemas/RecognizerResultWithAnaysisExplanation"
 
               examples:
                 Enhanced response:
@@ -331,9 +331,9 @@ components:
           type: array
           description: "Array of analyzer detections"
           items:
-            $ref: "#/components/schemas/AnalyzerResult"
+            $ref: "#/components/schemas/RecognizerResult"
 
-    AnalyzerResult:
+    RecognizerResult:
       type: object
       required:
         - start
@@ -357,9 +357,9 @@ components:
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
 
-    AnalyzerResultWithAnaysisExplanation:
+    RecognizerResultWithAnaysisExplanation:
       allOf:
-        - $ref: '#/components/schemas/AnalyzerResult'
+        - $ref: '#/components/schemas/RecognizerResult'
         - type: object
           properties:
             analysis_explanation:
