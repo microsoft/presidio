@@ -1,13 +1,9 @@
-from pathlib import Path
-from typing import List
-
 import pytest
 
 from presidio_analyzer import (
     AnalyzerEngine,
     PatternRecognizer,
     Pattern,
-    RecognizerResult,
     RecognizerRegistry,
 )
 from presidio_analyzer.nlp_engine import (
@@ -408,71 +404,6 @@ def test_when_default_threshold_is_zero_then_all_results_pass(
     )
 
     assert len(results) == 2
-
-
-@pytest.mark.slow
-def test_when_demo_text_then_return_results(unit_test_guid, nlp_engine):
-    dir_path = Path(__file__).resolve().parent
-    with open(Path(dir_path, "data", "demo.txt"), encoding="utf-8") as f:
-        text_into_rows = f.read().split("\n")
-
-    text_into_rows = [txt.strip() for txt in text_into_rows]
-    text = " ".join(text_into_rows)
-    language = "en"
-
-    analyzer_engine = AnalyzerEngine(
-        default_score_threshold=0.35, nlp_engine=nlp_engine
-    )
-    results = analyzer_engine.analyze(
-        correlation_id=unit_test_guid,
-        text=text,
-        entities=None,
-        language=language,
-    )
-
-    def replace_with_entity_name(original_text: str, responses: List[RecognizerResult]):
-        """
-        Performs replacements for every entity with its entity type
-        """
-        delta = 0
-        new_text = original_text
-        responses = sorted(responses, key=lambda x: x.start)
-        for i, resp in enumerate(responses):
-            # check if this response is already contained in a previous one
-            if len([prev for prev in responses[:i] if resp.contained_in(prev)]) > 0:
-                continue
-            start = resp.start + delta
-            end = resp.end + delta
-            entity_text = original_text[resp.start : resp.end]
-            entity_type = resp.entity_type
-
-            new_text = f"{new_text[:start]}<{entity_type}>{new_text[end:]}"
-            delta += len(entity_type) + 2 - len(entity_text)
-
-        return new_text
-
-    actual_anonymized_text = replace_with_entity_name(text, results)
-
-    for result in results:
-        text_slice = slice(result.start, result.end)
-        print(
-            "Entity = {}, Text = {}, Score={}, Start={}, End={}".format(
-                result.entity_type,
-                text[text_slice],
-                result.score,
-                result.start,
-                result.end,
-            )
-        )
-
-    with open(Path(dir_path, "data", "demo_anonymized.txt"), encoding="utf-8") as f_exp:
-        text_into_rows = f_exp.read().split("\n")
-
-    text_into_rows = [txt.strip() for txt in text_into_rows]
-    expected_anonymized_text = " ".join(text_into_rows)
-
-    #    assert len(results) == 19
-    assert expected_anonymized_text == actual_anonymized_text
 
 
 def test_when_get_supported_fields_then_return_all_languages(

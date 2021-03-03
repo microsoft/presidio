@@ -49,7 +49,7 @@ class RecognizerResult:
         return self.__dict__
 
     @classmethod
-    def from_json(cls, data: Dict):
+    def from_json(cls, data: Dict) -> "RecognizerResult":
         """
         Create RecognizerResult from json.
 
@@ -94,7 +94,7 @@ class RecognizerResult:
         """
         return self.start >= other.start and self.end <= other.end
 
-    def contains(self, other):
+    def contains(self, other: "RecognizerResult") -> bool:
         """
         Check if one result is contained or equal to another result.
 
@@ -103,7 +103,7 @@ class RecognizerResult:
         """
         return self.start <= other.start and self.end >= other.end
 
-    def equal_indices(self, other):
+    def equal_indices(self, other: "RecognizerResult") -> bool:
         """
         Check if the indices are equal between two results.
 
@@ -112,7 +112,7 @@ class RecognizerResult:
         """
         return self.start == other.start and self.end == other.end
 
-    def __gt__(self, other):
+    def __gt__(self, other: "RecognizerResult") -> bool:
         """
         Check if one result is greater by using the results indices in the text.
 
@@ -123,7 +123,7 @@ class RecognizerResult:
             return self.end > other.end
         return self.start > other.start
 
-    def __eq__(self, other):
+    def __eq__(self, other: "RecognizerResult") -> bool:
         """
         Check two results are equal by using all class fields.
 
@@ -153,7 +153,7 @@ class RecognizerResult:
             f"score: {self.score}"
         )
 
-    def has_conflict(self, other):
+    def has_conflict(self, other: "RecognizerResult") -> bool:
         """
         Check if two recognizer results are conflicted or not.
 
