@@ -47,6 +47,18 @@ def nlp_engine(nlp_engines):
     return nlp_engines["spacy_en"]
 
 
+def test_simple():
+    dic = {
+        "text": "John Smith drivers license is AC432223",
+        "language": "en",
+        "score_threshold": 0.7,
+        "entities": ["CRYPTO", "NRP", "DATE_TIME", "LOCATION", "PERSON"],
+    }
+
+    analyzer = AnalyzerEngine()
+    analyzer.analyze(**dic)
+
+
 def test_when_analyze_with_predefined_recognizers_then_return_results(
     loaded_analyzer_engine, unit_test_guid, max_score
 ):
