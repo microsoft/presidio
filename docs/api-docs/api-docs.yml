@@ -498,7 +498,7 @@ components:
           example: encrypt
         key:
           type: string
-          description: "Cryptographic of length 128, 192 or 256 bits, in a string format"
+          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
           example: "3t6w9z$C&F)J@NcR"
 
     AnonymizeResponse:
