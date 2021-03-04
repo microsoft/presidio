@@ -1138,7 +1138,7 @@ docker build . -t presidio/presidio-anonymizer
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Python</label><div class="tabbed-content">
 <p>Once the Presidio-anonymizer package is installed, run this simple script:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">AnonymizerEngine</span>
-<span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">AnalyzerResult</span><span class="p">,</span> <span class="n">AnonymizerConfig</span>
+<span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">RecognizerResult</span><span class="p">,</span> <span class="n">AnonymizerConfig</span>
 
 <span class="c1"># Initialize the engine with logger.</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">AnonymizerEngine</span><span class="p">()</span>
@@ -1147,8 +1147,8 @@ docker build . -t presidio/presidio-anonymizer
 <span class="c1"># Anonymizers config to define the anonymization type.</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span>
     <span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is Bond, James Bond&quot;</span><span class="p">,</span>
-    <span class="n">analyzer_results</span><span class="o">=</span><span class="p">[</span><span class="n">AnalyzerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
-                      <span class="n">AnalyzerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)],</span>
+    <span class="n">analyzer_results</span><span class="o">=</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
+                      <span class="n">RecognizerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)],</span>
     <span class="n">anonymizers_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="n">AnonymizerConfig</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;new_value&quot;</span><span class="p">:</span> <span class="s2">&quot;BIP&quot;</span><span class="p">})}</span>
 <span class="p">)</span>
 

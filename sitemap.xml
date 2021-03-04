@@ -1,103 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
      <loc>https://microsoft.github.io/presidio/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/getting_started/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/installation/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/text_anonymization/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/analyzer/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/analyzer/adding_recognizers/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/analyzer/developing_recognizers/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/analyzer/languages/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/analyzer/decision_process/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/anonymizer/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/anonymizer/adding_anonymizers/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/image-redactor/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/samples/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/samples/python/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/samples/docker/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/samples/deployments/app-service/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/samples/deployments/k8s/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/supported_entities/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/design/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/development/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/build_release/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/presidio_V2/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/api/analyzer_python/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/api/anonymizer_python/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://microsoft.github.io/presidio/api/image_redactor_python/</loc>
-     <lastmod>2021-03-02</lastmod>
+     <lastmod>2021-03-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
