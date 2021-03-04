@@ -193,7 +193,7 @@ paths:
                   type: string
                   example: "mask"
               example:
-                ["hash", "mask", "redact", "replace"]
+                ["hash", "mask", "redact", "replace", "encrypt"]
 
 
   /health:
@@ -324,6 +324,7 @@ components:
                 - $ref: "#/components/schemas/Redact"
                 - $ref: "#/components/schemas/Mask"
                 - $ref: "#/components/schemas/Hash"
+                - $ref: "#/components/schemas/Encrypt"
           default:
             {"DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" }}
 
@@ -482,6 +483,23 @@ components:
             - sha512
           example: md5
           default: md5
+
+    Encrypt:
+      title: Encrypt
+      description: "Replace with an encrypted value"
+      type: object
+      required:
+        - type
+        - key
+      properties:
+        type:
+          type: string
+          description: "encrypt"
+          example: encrypt
+        key:
+          type: string
+          description: "Cryptographic of length 128, 192 or 256 bits, in a string format"
+          example: "3t6w9z$C&F)J@NcR"
 
     AnonymizeResponse:
       type: object
