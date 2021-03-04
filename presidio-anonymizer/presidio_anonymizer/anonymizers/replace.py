@@ -2,7 +2,7 @@
 from typing import Dict
 
 from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.anonymizers.validators import validate_type
+from presidio_anonymizer.services.validators import validate_type
 
 
 class Replace(Anonymizer):

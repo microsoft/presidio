@@ -2,7 +2,7 @@
 from typing import Dict
 
 from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.anonymizers.validators import validate_parameter
+from presidio_anonymizer.services.validators import validate_parameter
 from presidio_anonymizer.entities import InvalidParamException
 
 
