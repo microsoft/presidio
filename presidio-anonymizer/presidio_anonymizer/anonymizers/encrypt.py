@@ -42,7 +42,7 @@ class Encrypt(Anonymizer):
             )
 
     def anonymizer_name(self) -> str:
-        """Return   anonymizer name."""
+        """Return anonymizer name."""
         return "encrypt"
 
     @staticmethod
