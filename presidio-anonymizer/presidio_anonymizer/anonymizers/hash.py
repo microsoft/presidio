@@ -3,7 +3,7 @@ from hashlib import sha256, sha512, md5
 from typing import Dict
 
 from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.anonymizers.validators import validate_parameter_in_range
+from presidio_anonymizer.services.validators import validate_parameter_in_range
 
 
 class Hash(Anonymizer):
