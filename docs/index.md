@@ -43,6 +43,8 @@ bitcoin wallets, US phone numbers, financial data and more.
 1. [Using pip](installation.md#using-pip)
 2. [Using Docker](installation.md#using-docker)
 3. [From source](installation.md#install-from-source)
+4. [Supported Python Versions](installation/#supported-python-versions)
+5. [Migrating from V1 to V2](presidio_V2.md)
 
 ## Running Presidio
 
