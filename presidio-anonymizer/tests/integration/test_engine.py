@@ -68,5 +68,5 @@ def test_when_anonymize_with_encrypt_then_text_returned_with_encrypted_content()
 
     assert actual_anonymize_result[:start_index] == unencrypted_text
     actual_encrypted_text = actual_anonymize_result[start_index:]
-    actual_decrypted_text = AESCipher(key.encode()).decrypt(actual_encrypted_text)
+    actual_decrypted_text = AESCipher.decrypt(key.encode(), actual_encrypted_text)
     assert actual_decrypted_text == expected_encrypted_text

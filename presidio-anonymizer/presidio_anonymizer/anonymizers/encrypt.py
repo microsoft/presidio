@@ -21,8 +21,7 @@ class Encrypt(Anonymizer):
         :return: The encrypted text
         """
         encoded_key = params.get(self.KEY).encode("utf8")
-        aes_cipher = AESCipher(encoded_key)
-        encrypted_text = aes_cipher.encrypt(text)
+        encrypted_text = AESCipher.encrypt(encoded_key, text)
         return encrypted_text
 
     def validate(self, params: Dict = None) -> None:
