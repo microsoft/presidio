@@ -20,17 +20,16 @@ from presidio_anonymizer.services.aes_cipher import AESCipher
 def test_given_valid_key_and_text_then_text_encryption_and_decryption_returns_same_text(
     key, text
 ):
+    encrypted_text = AESCipher.encrypt(key, text)
 
-    encrypted_text = AESCipher(key).encrypt(text)
-
-    decrypted_text = AESCipher(key).decrypt(encrypted_text)
+    decrypted_text = AESCipher.decrypt(key, encrypted_text)
     assert text == decrypted_text
 
 
 def test_given_invalid_key_length_then_value_error_raised():
     invalid_length_key = b"1111"
     with pytest.raises(ValueError, match="Incorrect AES key length"):
-        AESCipher(invalid_length_key).encrypt("text")
+        AESCipher.encrypt(invalid_length_key, "text")
 
 
 def test_given_get_valid_key_sizes_called_then_aes_valid_key_sizes_returned():
