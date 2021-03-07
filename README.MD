@@ -41,7 +41,8 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 1. [Using pip](https://microsoft.github.io/presidio/installation/#using-pip)
 2. [Using Docker](https://microsoft.github.io/presidio/installation/#using-docker)
 3. [From source](https://microsoft.github.io/presidio/installation/#install-from-source)
-4. [Migrating from V1 to V2](./docs/presidio_V2.md)
+4. [Supported Python Versions](https://microsoft.github.io/presidio/installation/#supported-python-versions)
+5. [Migrating from V1 to V2](./docs/presidio_V2.md)
 
 ## Running Presidio
 1. [Getting started](https://microsoft.github.io/presidio/getting_started)
