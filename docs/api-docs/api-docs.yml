@@ -195,6 +195,32 @@ paths:
               example:
                 ["hash", "mask", "redact", "replace", "encrypt"]
 
+  /decrypt:
+    post:
+      servers:
+        - url: https://presidio-anonymizer-prod.azurewebsites.net
+      tags:
+        - Anonymizer
+      summary: "Decrypt Anonymized Text"
+      requestBody:
+        $ref: "#/components/requestBodies/DecryptRequest"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DecryptResponse"
+              examples:
+                Decrypt Single PII:
+                  value:
+                    { "result": "encrypted_text" }
+        400:
+          $ref: "#/components/responses/400BadRequest"
+
+        422:
+          $ref: "#/components/responses/422UnprocessableEntity"
 
   /health:
     get:
@@ -272,6 +298,21 @@ components:
                   ]
                 }
 
+    DecryptRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DecryptRequest"
+          examples:
+            Decrypt Single PII:
+              value:
+                {
+                  "text": "04Sw4HmhqHA3pX9fwQ9FFJEJtnoIYK+vPvvzCV864Tw=",
+                  "key": "AAECAwQFBgcICQoLDA0ODw=="
+                }
+
+
   schemas:
     AnalyzeRequest:
       type: object
@@ -333,6 +374,20 @@ components:
           description: "Array of analyzer detections"
           items:
             $ref: "#/components/schemas/RecognizerResult"
+
+    DecryptRequest:
+      type: object
+      required:
+        - text
+        - key
+      properties:
+        text:
+          type: string
+          description: "The text for decryption"
+        key:
+          type: string
+          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
+          example: "AAECAwQFBgcICQoLDA0ODw=="
 
     RecognizerResult:
       type: object
@@ -502,6 +557,12 @@ components:
           example: "3t6w9z$C&F)J@NcR"
 
     AnonymizeResponse:
+      type: object
+      properties:
+        result:
+          type: string
+
+    DecryptResponse:
       type: object
       properties:
         result:

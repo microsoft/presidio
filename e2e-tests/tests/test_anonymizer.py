@@ -1,7 +1,7 @@
 import pytest
 
 from common.assertions import equal_json_strings
-from common.methods import anonymize, anonymizers
+from common.methods import anonymize, anonymizers, decrypt
 
 
 @pytest.mark.api
@@ -105,4 +105,109 @@ def test_given_anonymizers_called_then_expected_anonymizers_list_returned():
     """
 
     assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned():
+
+    request_body = """
+    {
+        "key": "1111111111111111",
+        "text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "result": "text_for_encryption"
+    }
+    """
+
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_returned():
+
+    request_body = """
+    {
+        "key": "invalidkey",
+        "text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Invalid input, key must of length 128, 192 or 256 bits"
+    }
+    """
+
+    assert response_status == 422
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_missing_key_then_invalid_input_response_returned():
+
+    request_body = """
+    {
+        "text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Invalid input, missing decryption 'key'"
+    }
+    """
+
+    assert response_status == 422
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_missing_text_then_invalid_input_response_returned():
+
+    request_body = """
+    {
+        "key": "1111111111111111"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Invalid input, missing decryption 'text'"
+    }
+    """
+
+    assert response_status == 422
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_missing_payload_then_bad_request_response_returned():
+
+    request_body = """
+    { }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Invalid request json"
+    }
+    """
+
+    assert response_status == 400
     assert equal_json_strings(expected_response, response_content)
