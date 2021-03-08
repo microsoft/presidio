@@ -11,8 +11,8 @@ class AnonymizerDecryptor:
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
 
-    # TODO: [ADO-3006] Method to receive optional argument 'indices',
-    #  serving as 'text' replacement points
+    # TODO: [ADO-3006] Method to receive optional argument for the
+    #  indices serving as 'text' replacement points
     def decrypt(self, key: str, text: str) -> str:
         """
         Decrypts a previously AES-CBC encrypted Anonymized text.
