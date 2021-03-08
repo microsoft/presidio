@@ -37,6 +37,14 @@ Presidio anonymizer comes by default with the following anonymizers:
         replaced.
     -   `masking_char` - the character to be replaced with.
     -   `from_end` - Whether to mask the PII from it's end.
+    
+-   Encrypt - replaced the PII with an encrypted text. 
+Anonymizer currently uses Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 
+
+    Parameters:
+
+    -   `key` - a cryptographic key used for the encryption.
+    The length of the key needs to be of 128, 192 or 256 bits, in a string format.
 
 Please notice: if default value is not stated in anonymizers object, the default
 anonymizer is "replace" for all entities. The replacing value will be the entity type
@@ -178,5 +186,5 @@ No paramaters are required.
 Response sample:
 
 ```json
-["hash", "mask", "redact", "replace"]
+["hash", "mask", "redact", "replace", "encrypt"]
 ```
