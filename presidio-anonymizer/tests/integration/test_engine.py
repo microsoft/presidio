@@ -25,7 +25,7 @@ from tests.integration.file_utils import get_scenario_file_content
         "hash_sha256_default",
     ],
 )
-def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_returned(
+def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_returned(
     anonymize_scenario,
 ):
     anonymizer_request_dict = json.loads(
@@ -52,7 +52,7 @@ def test_when_anonymize_called_with_multiple_scenarios_then_expected_results_ret
     assert actual_anonymize_result == expected_anonymize_result
 
 
-def test_when_anonymize_with_encrypt_then_text_returned_with_encrypted_content():
+def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content():
     unencrypted_text = "My name is "
     expected_encrypted_text = "Chloë"
     text = unencrypted_text + expected_encrypted_text
@@ -68,5 +68,6 @@ def test_when_anonymize_with_encrypt_then_text_returned_with_encrypted_content()
 
     assert actual_anonymize_result[:start_index] == unencrypted_text
     actual_encrypted_text = actual_anonymize_result[start_index:]
+    assert actual_encrypted_text != expected_encrypted_text
     actual_decrypted_text = AESCipher.decrypt(key.encode(), actual_encrypted_text)
     assert actual_decrypted_text == expected_encrypted_text
