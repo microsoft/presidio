@@ -165,7 +165,7 @@ def test_given_decrypt_called_with_missing_key_then_invalid_input_response_retur
 
     expected_response = """
     {
-        "error": "Invalid input, missing decryption 'key'"
+        "error": "Expected parameter key"
     }
     """
 
@@ -186,7 +186,7 @@ def test_given_decrypt_called_with_missing_text_then_invalid_input_response_retu
 
     expected_response = """
     {
-        "error": "Invalid input, missing decryption 'text'"
+        "error": "Expected parameter text"
     }
     """
 
