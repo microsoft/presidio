@@ -14,6 +14,16 @@ Presidio suite using `pip` (as Python packages) or using `Docker` (As containeri
 	on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
 	or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
+### Supported Python Versions
+
+Presidio is supported for the following python versions:
+
+* 3.6
+* 3.7
+* 3.8
+
+We may drop support for Python 3.6 in the future
+
 ### PII anonymization on text
 
 For PII anonymization on text, install the `presidio-analyzer` and `presidio-anonymizer` packages:
