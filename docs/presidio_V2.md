@@ -14,6 +14,8 @@ The main changes introduced in **V2** are:
 
 3. Improved documentation, samples and build flows.
 
+4. Format Preserving Encryption replaced with Advanced Encryption Standard (AES) 
+
 ## V1 Availability
 
 Version V1 (legacy) is still available for download. To continue using the previous version:
@@ -182,3 +184,4 @@ Below is a detailed outline of all the changes done to the Analyzer and Anonymiz
 | Redact             | NONE                                                                                    | NONE                                                                                       |
 | Mask               | <pre>string maskingCharacter = 1;<br>int32 charsToMask = 2; <br>bool fromEnd = 3;</pre> | <pre>{<br> "chars_to_mask": 10,<br> "from_end": true,<br> "masking_char": "\*" <br>}</pre> |
 | Hash               | NONE                                                                                    | <pre>{"hash_type": "VALUE"}</pre>                                                          |
+| FPE (now Encrypt)  | <pre>string key = 3t6w9z$C&F)J@NcR;<br>int32 tweak = D8E7920AFA330A73</pre>             | <pre>{"key": "3t6w9z$C&F)J@NcR"}</pre>                                                          |
