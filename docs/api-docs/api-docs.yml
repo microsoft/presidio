@@ -215,7 +215,7 @@ paths:
               examples:
                 Decrypt Single PII:
                   value:
-                    { "result": "encrypted_text" }
+                    { "result": "decrypted_text" }
         400:
           $ref: "#/components/responses/400BadRequest"
 

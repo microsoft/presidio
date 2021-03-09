@@ -15,7 +15,7 @@ class AnonymizerDecryptor:
     #  indices serving as 'text' replacement points
     def decrypt(self, key: str, text: str) -> str:
         """
-        Decrypts a previously AES-CBC encrypted Anonymized text.
+        Decrypts a previously AES-CBC encrypted anonymized text.
 
         :param key: AES encryption key.
         :param text: The text for decryption.
@@ -25,7 +25,7 @@ class AnonymizerDecryptor:
         validate_parameter(text, "text", str)
         encoded_key = key.encode("utf8")
         if not AESCipher.is_valid_key_size(encoded_key):
-            message = "Invalid input, key must of length 128, 192 or 256 bits"
+            message = "Invalid input, key must be of length 128, 192 or 256 bits"
             self.logger.info(message)
             raise InvalidParamException(message)
 
