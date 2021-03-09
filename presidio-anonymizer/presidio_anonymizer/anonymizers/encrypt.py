@@ -37,7 +37,7 @@ class Encrypt(Anonymizer):
         validate_parameter(key, self.KEY, str)
         if not AESCipher.is_valid_key_size(key.encode("utf8")):
             raise InvalidParamException(
-                f"Invalid input, {self.KEY} must of length 128, 192 or 256 bits"
+                f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
             )
 
     def anonymizer_name(self) -> str:
