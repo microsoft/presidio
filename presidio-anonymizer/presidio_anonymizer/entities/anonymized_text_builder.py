@@ -31,14 +31,15 @@ class AnonymizedTextBuilder:
         self.__validate_position_in_text(start, end)
         return self.output_text[start: end]
 
-    def replace_text(self, anonymized_text: str, start: int, end: int) -> int:
+    def replace_text_get_insertion_index(self, anonymized_text: str,
+                                         start: int, end: int) -> int:
         """
         Replace text in a specific position with the anonymized text.
 
         :param anonymized_text:
         :param start: the startpoint to replace the text
         :param end: the endpoint to replace the text
-        :return:
+        :return: The index of inserted text
         """
         end_of_text_index = min(end, self.last_replacement_index)
         self.last_replacement_index = start

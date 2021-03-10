@@ -1,13 +1,14 @@
 """Handle a serializable anonymizer result."""
 import json
 
-from presidio_anonymizer.entities.anonymizer_result_item import AnonymizerResultItem
+from presidio_anonymizer.entities.anonymized_text_index_item \
+    import AnonymizedTextIndexItem
 
 
 class AnonymizerResult:
     """Anonymizer result."""
 
-    def __init__(self, text: str = None, items: list[AnonymizerResultItem] = None):
+    def __init__(self, text: str = None, items: list[AnonymizedTextIndexItem] = None):
         """Create AnonymizerResult entity.
 
         :param text: The anonymized text.
@@ -22,7 +23,7 @@ class AnonymizerResult:
         """Set a text."""
         self.text = text
 
-    def add_item(self, item: AnonymizerResultItem):
+    def add_item(self, item: AnonymizedTextIndexItem):
         """Add an item.
 
         :param item: an item to add to the list.
@@ -40,8 +41,11 @@ class AnonymizerResult:
         """Return a json string serializing this instance."""
         return json.dumps(self, default=lambda x: x.__dict__)
 
-    def __eq__(self, other):
-        """Verify two instances are equal."""
+    def __eq__(self, other) -> bool:
+        """Verify two instances are equal.
+
+        :return true if the two instances are equal, false otherwise.
+        """
 
         return self.text == other.text and all(
             map(lambda x, y: x == y, self.items, other.items))

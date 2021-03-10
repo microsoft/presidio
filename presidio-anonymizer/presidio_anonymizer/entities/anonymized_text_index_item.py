@@ -1,4 +1,4 @@
-class AnonymizerResultItem:
+class AnonymizedTextIndexItem:
     """Anonymizer result item."""
 
     def __init__(self, anonymizer: str, entity_type: str,
@@ -17,10 +17,11 @@ class AnonymizerResultItem:
         self.end = end
         self.anonymized_text = anonymized_text
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """Verify two instances are equal.
 
         :param other: the other instance to compare.
+        :return true if the two instances are equal, false otherwise.
         """
 
         return self.anonymizer == other.anonymizer and \

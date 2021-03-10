@@ -15,7 +15,7 @@ from presidio_anonymizer.entities import AnonymizedTextBuilder, InvalidParamExce
 def test_given_text_then_we_replace_the_original_with_anonymized_correctly(
         original_text, start, end, anonymized_text, expected):
     text_builder = AnonymizedTextBuilder(original_text)
-    text_builder.replace_text(anonymized_text, start, end)
+    text_builder.replace_text_get_insertion_index(anonymized_text, start, end)
     assert text_builder.output_text == expected
 
 

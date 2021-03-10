@@ -3,11 +3,12 @@ import logging
 from typing import List, Dict, Optional
 
 from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.entities import RecognizerResult, AnalyzerResults
+from presidio_anonymizer.entities import \
+    RecognizerResult, AnalyzerResults, AnonymizerResult
 from presidio_anonymizer.entities import AnonymizedTextBuilder
 from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
-from presidio_anonymizer.entities.anonymizer_result import AnonymizerResult
-from presidio_anonymizer.entities.anonymizer_result_item import AnonymizerResultItem
+from presidio_anonymizer.entities.anonymized_text_index_item \
+    import AnonymizedTextIndexItem
 
 DEFAULT = "replace"
 
@@ -71,15 +72,16 @@ class AnonymizerEngine:
             anonymized_text = self.__extract_anonymizer_and_anonymize(
                 analyzer_result.entity_type, anonymizer_config, text_to_anonymize
             )
-            index_from_end = text_builder.replace_text(
+            index_from_end = text_builder.replace_text_get_insertion_index(
                 anonymized_text, analyzer_result.start, analyzer_result.end
             )
 
-            result_item = AnonymizerResultItem(anonymizer_config.anonymizer_name,
-                                               analyzer_result.entity_type,
-                                               0,
-                                               index_from_end,
-                                               anonymized_text)
+            result_item = \
+                AnonymizedTextIndexItem(anonymizer=anonymizer_config.anonymizer_name,
+                                        entity_type=analyzer_result.entity_type,
+                                        start=0,
+                                        end=index_from_end,
+                                        anonymized_text=anonymized_text)
 
             anonymizer_result.add_item(result_item)
 
