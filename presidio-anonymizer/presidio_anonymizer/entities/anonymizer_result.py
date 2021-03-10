@@ -18,11 +18,11 @@ class AnonymizerResult:
         self.text = text
         self.items = items
 
-    def set_text(self, text):
+    def set_text(self, text: str):
         """Set a text."""
         self.text = text
 
-    def add_item(self, item):
+    def add_item(self, item: AnonymizerResultItem):
         """Add an item.
 
         :param item: an item to add to the list.
