@@ -43,7 +43,7 @@ paths:
                 description: "A list analysis results"
                 type: array
                 items:
-                  $ref: "#/components/schemas/AnalyzerResultWithAnaysisExplanation"
+                  $ref: "#/components/schemas/RecognizerResultWithAnaysisExplanation"
 
               examples:
                 Enhanced response:
@@ -193,8 +193,34 @@ paths:
                   type: string
                   example: "mask"
               example:
-                ["hash", "mask", "redact", "replace"]
+                ["hash", "mask", "redact", "replace", "encrypt"]
 
+  /decrypt:
+    post:
+      servers:
+        - url: https://presidio-anonymizer-prod.azurewebsites.net
+      tags:
+        - Anonymizer
+      summary: "Decrypt Anonymized Text"
+      requestBody:
+        $ref: "#/components/requestBodies/DecryptRequest"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DecryptResponse"
+              examples:
+                Decrypt Single PII:
+                  value:
+                    { "result": "decrypted_text" }
+        400:
+          $ref: "#/components/responses/400BadRequest"
+
+        422:
+          $ref: "#/components/responses/422UnprocessableEntity"
 
   /health:
     get:
@@ -272,6 +298,21 @@ components:
                   ]
                 }
 
+    DecryptRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DecryptRequest"
+          examples:
+            Decrypt Single PII:
+              value:
+                {
+                  "text": "04Sw4HmhqHA3pX9fwQ9FFJEJtnoIYK+vPvvzCV864Tw=",
+                  "key": "AAECAwQFBgcICQoLDA0ODw=="
+                }
+
+
   schemas:
     AnalyzeRequest:
       type: object
@@ -324,6 +365,7 @@ components:
                 - $ref: "#/components/schemas/Redact"
                 - $ref: "#/components/schemas/Mask"
                 - $ref: "#/components/schemas/Hash"
+                - $ref: "#/components/schemas/Encrypt"
           default:
             {"DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" }}
 
@@ -331,9 +373,23 @@ components:
           type: array
           description: "Array of analyzer detections"
           items:
-            $ref: "#/components/schemas/AnalyzerResult"
+            $ref: "#/components/schemas/RecognizerResult"
 
-    AnalyzerResult:
+    DecryptRequest:
+      type: object
+      required:
+        - text
+        - key
+      properties:
+        text:
+          type: string
+          description: "The text for decryption"
+        key:
+          type: string
+          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
+          example: "AAECAwQFBgcICQoLDA0ODw=="
+
+    RecognizerResult:
       type: object
       required:
         - start
@@ -357,9 +413,9 @@ components:
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
 
-    AnalyzerResultWithAnaysisExplanation:
+    RecognizerResultWithAnaysisExplanation:
       allOf:
-        - $ref: '#/components/schemas/AnalyzerResult'
+        - $ref: '#/components/schemas/RecognizerResult'
         - type: object
           properties:
             analysis_explanation:
@@ -483,7 +539,30 @@ components:
           example: md5
           default: md5
 
+    Encrypt:
+      title: Encrypt
+      description: "Replace with an encrypted value"
+      type: object
+      required:
+        - type
+        - key
+      properties:
+        type:
+          type: string
+          description: "encrypt"
+          example: encrypt
+        key:
+          type: string
+          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
+          example: "3t6w9z$C&F)J@NcR"
+
     AnonymizeResponse:
+      type: object
+      properties:
+        result:
+          type: string
+
+    DecryptResponse:
       type: object
       properties:
         result:

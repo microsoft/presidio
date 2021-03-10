@@ -1,7 +1,9 @@
+import json
+
 import pytest
 
 from common.assertions import equal_json_strings
-from common.methods import anonymize, anonymizers
+from common.methods import anonymize, anonymizers, decrypt
 
 
 @pytest.mark.api
@@ -101,8 +103,140 @@ def test_given_anonymizers_called_then_expected_anonymizers_list_returned():
     response_status, response_content = anonymizers()
 
     expected_response = """
-        ["hash", "mask", "redact", "replace"]
+        ["hash", "mask", "redact", "replace", "encrypt"]
     """
 
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned():
+
+    request_body = """
+    {
+        "key": "1111111111111111",
+        "text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "result": "text_for_encryption"
+    }
+    """
+
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_returned():
+
+    request_body = """
+    {
+        "key": "invalidkey",
+        "text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Invalid input, key must be of length 128, 192 or 256 bits"
+    }
+    """
+
+    assert response_status == 422
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_missing_key_then_invalid_input_response_returned():
+
+    request_body = """
+    {
+        "text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Expected parameter key"
+    }
+    """
+
+    assert response_status == 422
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_missing_text_then_invalid_input_response_returned():
+
+    request_body = """
+    {
+        "key": "1111111111111111"
+    }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Expected parameter text"
+    }
+    """
+
+    assert response_status == 422
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_missing_payload_then_bad_request_response_returned():
+
+    request_body = """
+    { }
+    """
+
+    response_status, response_content = decrypt(request_body)
+
+    expected_response = """
+    {
+        "error": "Invalid request json"
+    }
+    """
+
+    assert response_status == 400
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text():
+    text_for_encryption = "text_for_encryption"
+    key = "1111111111111111"
+    anonymize_request = {
+        "text": text_for_encryption,
+        "anonymizers": {"DEFAULT": {"type": "encrypt", "key": key}},
+        "analyzer_results": [
+            {
+                "start": 0,
+                "end": len(text_for_encryption),
+                "score": 0.8,
+                "entity_type": "NAME",
+            }
+        ],
+    }
+    _, anonymize_response_content = anonymize(json.dumps(anonymize_request))
+    encrypted_text = json.loads(anonymize_response_content)["result"]
+    decrypt_request = {"text": encrypted_text, "key": key}
+
+    _, decrypt_response_content = decrypt(json.dumps(decrypt_request))
+
+    decrypted_text = json.loads(decrypt_response_content)["result"]
+    assert encrypted_text != text_for_encryption
+    assert decrypted_text == text_for_encryption

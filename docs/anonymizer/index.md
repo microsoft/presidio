@@ -52,7 +52,7 @@ Persidio anonymizer comes with predefined anonymizers but can easily be extended
     
     ```python
     from presidio_anonymizer import AnonymizerEngine
-    from presidio_anonymizer.entities import AnalyzerResult, AnonymizerConfig
+    from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
     
     # Initialize the engine with logger.
     engine = AnonymizerEngine()
@@ -61,8 +61,8 @@ Persidio anonymizer comes with predefined anonymizers but can easily be extended
     # Anonymizers config to define the anonymization type.
     result = engine.anonymize(
         text="My name is Bond, James Bond",
-        analyzer_results=[AnalyzerResult("PERSON", 11, 15, 0.8),
-                          AnalyzerResult("PERSON", 17, 27, 0.8)],
+        analyzer_results=[RecognizerResult("PERSON", 11, 15, 0.8),
+                          RecognizerResult("PERSON", 17, 27, 0.8)],
         anonymizers_config={"PERSON": AnonymizerConfig("replace", {"new_value": "BIP"})}
     )
     
@@ -140,6 +140,7 @@ Persidio anonymizer comes with predefined anonymizers but can easily be extended
 | redact | removes the PII completely from text | None |
 | hash | hash the PII using either sha256, sha512 or md5 | `hash_type` - sets the type of hashing. Can be either `sha256`, `sha512` or `md5`. <br> The default hash type is `sha256`. | 
 | mask | replaces the PII with a given character | `chars_to_mask` - the amount of characters out of the PII that should be replaced. <br> `masking_char` - the character to be replaced with. <br> `from_end` - Whether to mask the PII from it's end. |
+| encrypt | encrypts the PII using a given key | `key` - a cryptographic key used for the encryption. |
 
 !!! note "Note"
     If anonymizers map is empty or "DEFAULT" key is not stated, the default

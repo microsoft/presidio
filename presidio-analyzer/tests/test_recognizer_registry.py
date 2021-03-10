@@ -62,22 +62,43 @@ def test_when_get_recognizers_then_return_all_fields(mock_recognizer_registry):
     assert len(recognizers) == 2
 
 
-def test_when_get_recognizers_one_language_then_return_one_entity(mock_recognizer_registry):
+def test_when_get_recognizers_one_language_then_return_one_entity(
+    mock_recognizer_registry,
+):
     registry = mock_recognizer_registry
     recognizers = registry.get_recognizers(language="de", entities=["PERSON"])
     assert len(recognizers) == 1
 
 
-def test_when_get_recognizers_unsupported_language_then_return(mock_recognizer_registry):
+def test_when_get_recognizers_unsupported_language_then_return(
+    mock_recognizer_registry,
+):
     with pytest.raises(ValueError):
         registry = mock_recognizer_registry
         registry.get_recognizers(language="brrrr", entities=["PERSON"])
 
 
-def test_when_get_recognizers_specific_language_and_entity_then_return_one_result(mock_recognizer_registry):
+def test_when_get_recognizers_specific_language_and_entity_then_return_one_result(
+    mock_recognizer_registry,
+):
     registry = mock_recognizer_registry
     recognizers = registry.get_recognizers(language="he", entities=["PERSON"])
     assert len(recognizers) == 1
+
+
+def test_when_multiple_entities_from_same_recognizer_only_one_is_returned():
+    registry = RecognizerRegistry()
+
+    recognizer_supporting_two_ents = EntityRecognizer(
+        supported_entities=["A", "B"], name="MyReco"
+    )
+    registry.add_recognizer(recognizer_supporting_two_ents)
+    recognizers = registry.get_recognizers(
+        language="en", entities=["A", "B"], all_fields=False
+    )
+
+    assert len(recognizers) == 1
+    assert recognizers[0].name == "MyReco"
 
 
 def test_when_add_pattern_recognizer_then_item_added():

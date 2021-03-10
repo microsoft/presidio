@@ -37,6 +37,14 @@ Presidio anonymizer comes by default with the following anonymizers:
         replaced.
     -   `masking_char` - the character to be replaced with.
     -   `from_end` - Whether to mask the PII from it's end.
+    
+-   Encrypt - replaced the PII with an encrypted text. 
+Anonymizer currently uses Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 
+
+    Parameters:
+
+    -   `key` - a cryptographic key used for the encryption.
+    The length of the key needs to be of 128, 192 or 256 bits, in a string format.
 
 Please notice: if default value is not stated in anonymizers object, the default
 anonymizer is "replace" for all entities. The replacing value will be the entity type
@@ -86,7 +94,7 @@ pip install presidio-anonymizer
 
 ```python
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import AnalyzerResult, AnonymizerConfig
+from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
 
 # Initialize the engine with logger.
 engine = AnonymizerEngine()
@@ -95,8 +103,8 @@ engine = AnonymizerEngine()
 # Anonymizers config to define the anonymization type.
 result = engine.anonymize(
     text="My name is Bond, James Bond",
-    analyzer_results=[AnalyzerResult("PERSON", 11, 15, 0.8),
-                      AnalyzerResult("PERSON", 17, 27, 0.8)],
+    analyzer_results=[RecognizerResult("PERSON", 11, 15, 0.8),
+                      RecognizerResult("PERSON", 17, 27, 0.8)],
     anonymizers_config={"PERSON": AnonymizerConfig("replace", {"new_value": "BIP"})}
 )
 
@@ -114,69 +122,5 @@ docker-compose up -d
 
 ### HTTP API
 
-```
-POST /anonymize
-```
-
-Payload:
-
-```json
-{
-    "text": "hello world, my name is Jane Doe. My number is: 034453334",
-    "anonymizers": {
-        "PHONE_NUMBER": {
-            "type": "mask",
-            "masking_char": "*",
-            "chars_to_mask": 4,
-            "from_end": true
-        }
-    },
-    "analyzer_results": [
-        {
-            "start": 24,
-            "end": 32,
-            "score": 0.8,
-            "entity_type": "NAME"
-        },
-        {
-            "start": 24,
-            "end": 28,
-            "score": 0.8,
-            "entity_type": "FIRST_NAME"
-        },
-        {
-            "start": 29,
-            "end": 32,
-            "score": 0.6,
-            "entity_type": "LAST_NAME"
-        },
-        {
-            "start": 48,
-            "end": 57,
-            "score": 0.95,
-            "entity_type": "PHONE_NUMBER"
-        }
-    ]
-}
-```
-
-Result:
-
-```
-200 OK
-hello world, my name is <NAME>. My number is: 03445****
-```
-
-#### /anonymizers
-
-Returns a list of supported anonymizers.
-
-Method: GET
-
-No paramaters are required.
-
-Response sample:
-
-```json
-["hash", "mask", "redact", "replace"]
-```
+Follow the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Anonymizer) for the
+Anonymizer REST API reference details

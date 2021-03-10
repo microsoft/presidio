@@ -1,5 +1,5 @@
 """
-AnalyzerResult is the exact copy of the recognizer result.
+RecognizerResult is an exact copy of the RecognizerResult object from presidio-analyzer.
 
 Represents the findings of detected entity.
 """
@@ -9,33 +9,21 @@ from typing import Dict
 from presidio_anonymizer.entities import InvalidParamException
 
 
-class AnalyzerResult:
+class RecognizerResult:
     """
-    AnalyzerResult is the output of the analyze process.
+    Recognizer Result represents the findings of the detected entity.
 
-    Validate and compare an recognizer result object.
+    Result of a recognizer analyzing the text.
+
+    :param entity_type: the type of the entity
+    :param start: the start location of the detected entity
+    :param end: the end location of the detected entity
+    :param score: the score of the detection
+    :param analysis_explanation: contains the explanation of why this
+                                 entity was identified
     """
 
     logger = logging.getLogger("presidio-anonymizer")
-
-    @classmethod
-    def from_json(cls, data: Dict):
-        """
-        Create AnalyzerResult from json.
-
-        :param data: e.g. {
-            "start": 24,
-            "end": 32,
-            "score": 0.8,
-            "entity_type": "NAME"
-        }
-        :return: AnalyzerResult
-        """
-        score = data.get("score")
-        entity_type = data.get("entity_type")
-        start = data.get("start")
-        end = data.get("end")
-        return cls(entity_type, start, end, score)
 
     def __init__(self, entity_type: str, start: int, end: int, score: float):
         self.score = score
@@ -44,11 +32,30 @@ class AnalyzerResult:
         self.end = end
         self.__validate_fields()
 
+    @classmethod
+    def from_json(cls, data: Dict):
+        """
+        Create RecognizerResult from json.
+
+        :param data: e.g. {
+            "start": 24,
+            "end": 32,
+            "score": 0.8,
+            "entity_type": "NAME"
+        }
+        :return: RecognizerResult
+        """
+        score = data.get("score")
+        entity_type = data.get("entity_type")
+        start = data.get("start")
+        end = data.get("end")
+        return cls(entity_type, start, end, score)
+
     def contains(self, other):
         """
         Check if one result is contained or equal to another result.
 
-        :param other: another analyzer_result
+        :param other: another RecognizerResult
         :return: bool
         """
         return self.start <= other.start and self.end >= other.end
@@ -57,7 +64,7 @@ class AnalyzerResult:
         """
         Check if the indices are equal between two results.
 
-        :param other: another analyzer_result
+        :param other: another RecognizerResult
         :return:
         """
         return self.start == other.start and self.end == other.end
@@ -66,7 +73,7 @@ class AnalyzerResult:
         """
         Check if one result is greater by using the results indices in the text.
 
-        :param other: another analyzer_result
+        :param other: another RecognizerResult
         :return: bool
         """
         if self.start == other.start:
@@ -77,7 +84,7 @@ class AnalyzerResult:
         """
         Check two results are equal by using all class fields.
 
-        :param other: another analyzer_result
+        :param other: another RecognizerResult
         :return: bool
         """
         equal_type = self.entity_type == other.entity_type
@@ -91,22 +98,27 @@ class AnalyzerResult:
         :return: int
         """
         return hash(
-            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}")
+            f"{str(self.start)} {str(self.end)} {str(self.score)} {self.entity_type}"
+        )
 
-    def __str__(self):
-        """Analyzer_result class data to string."""
-        return f"start: {str(self.start)}, end: {str(self.end)}, " \
-               f"score: {str(self.score)}, entity_type: {self.entity_type}"
+    def __str__(self) -> str:
+        """Return a string representation of the instance."""
+        return (
+            f"type: {self.entity_type}, "
+            f"start: {self.start}, "
+            f"end: {self.end}, "
+            f"score: {self.score}"
+        )
 
     def has_conflict(self, other):
         """
-        Check if two analyzer results are conflicted or not.
+        Check if two recognizer results are conflicted or not.
 
         I have a conflict if:
         1. My indices are the same as the other and my score is lower.
         2. If my indices are contained in another.
 
-        :param other: AnalyzerResult
+        :param other: RecognizerResult
         :return:
         """
         if self.equal_indices(other):
@@ -124,13 +136,16 @@ class AnalyzerResult:
             self.__validate_field("score")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
-                f"Invalid input, analyzer result start and end must be positive")
+                f"Invalid input, analyzer result start and end must be positive"
+            )
         if self.start >= self.end:
             raise InvalidParamException(
                 f"Invalid input, analyzer result start index '{self.start}' "
-                f"must be smaller than end index '{self.end}'")
+                f"must be smaller than end index '{self.end}'"
+            )
 
     def __validate_field(self, field_name: str):
         self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
         raise InvalidParamException(
-            f"Invalid input, analyzer result must contain {field_name}")
+            f"Invalid input, analyzer result must contain {field_name}"
+        )
