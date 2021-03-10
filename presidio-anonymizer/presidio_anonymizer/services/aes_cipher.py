@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from Crypto.Util.Padding import pad, unpad
 
 import base64
@@ -45,10 +43,11 @@ class AESCipher:
         return decrypted_text.decode("utf-8")
 
     @staticmethod
-    def get_valid_key_sizes() -> Tuple[int, ...]:
+    def is_valid_key_size(key: bytes) -> bool:
         """
-        Get the valid key size for AES.
+        Validate key size for AES.
 
-        :returns: A tuple of valid key sizes.
+        :param key: AES encryption key in bytes.
+        :returns: True if the key is of valid size, False otherwise.
         """
-        return AES.key_size
+        return len(key) in AES.key_size
