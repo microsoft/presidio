@@ -83,13 +83,8 @@ class AnonymizerEngine:
 
             anonymizer_result.add_item(result_item)
 
-        # normalize the indexes to be index from start
-        text_len = len(text_builder.output_text)
-        for result_item in anonymizer_result.items:
-            result_item.start = text_len - result_item.end
-            result_item.end = result_item.start + len(result_item.anonymized_text)
-
         anonymizer_result.set_text(text_builder.output_text)
+        anonymizer_result.normalize_item_indexes()
         return anonymizer_result
 
     @staticmethod

@@ -6,7 +6,10 @@ class AnonymizerResult:
     """Anonymizer result."""
 
     def __init__(self, text=None, items=None):
-        """Create AnonymizerResult entity."""
+        """Create AnonymizerResult entity.
+        :param text: The anonymized text.
+        :param items: List of PII entities and their indexes in the anonymized text.
+        """
         if items is None:
             items = []
         self.text = text
@@ -17,8 +20,17 @@ class AnonymizerResult:
         self.text = text
 
     def add_item(self, item):
-        """Add an item."""
+        """Add an item.
+        :param item: an item to add to the list.
+        """
         self.items.append(item)
+
+    def normalize_item_indexes(self):
+        """normalize the indexes to be index from start"""
+        text_len = len(self.text)
+        for result_item in self.items:
+            result_item.start = text_len - result_item.end
+            result_item.end = result_item.start + len(result_item.anonymized_text)
 
     def to_json(self) -> str:
         """Return a json string serializing this instance."""
