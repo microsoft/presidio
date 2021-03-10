@@ -32,5 +32,21 @@ def test_given_invalid_key_length_then_value_error_raised():
         AESCipher.encrypt(invalid_length_key, "text")
 
 
-def test_given_get_valid_key_sizes_called_then_aes_valid_key_sizes_returned():
-    assert AESCipher.get_valid_key_sizes() == (16, 24, 32)
+@pytest.mark.parametrize(
+    # fmt: off
+    "key,is_valid",
+    [
+        (b'', False),  # Empty bit-string key
+        (b'1111111111111111', True),  # 16 bits key
+        (b'11111111111111111', False),  # 17 bits key
+        (b'111111111111111111111111', True),  # 24 bits key
+        (b'1111111111111111111111111', False),  # 25 bits key
+        (b'11111111111111111111111111111111', True),  # 32 bits key
+        (b'111111111111111111111111111111111', False),  # 33 bits key
+    ],
+    # fmt: on
+)
+def test_given_is_valid_key_size_called_then_aes_valid_key_sizes_returned(
+    key, is_valid
+):
+    assert AESCipher.is_valid_key_size(key) == is_valid

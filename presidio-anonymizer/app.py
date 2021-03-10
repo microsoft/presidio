@@ -4,11 +4,12 @@ import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 from flask import Flask, request, jsonify
 
 from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.anonymizer_decryptor import AnonymizerDecryptor
 from presidio_anonymizer.entities import AnonymizerRequest
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.error_response import ErrorResponse
@@ -39,6 +40,7 @@ class Server:
         self.app = Flask(__name__)
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
+        self.decryptor = AnonymizerDecryptor()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -53,12 +55,25 @@ class Server:
                 return ErrorResponse("Invalid request json").to_json(), 400
 
             anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
-                content)
+                content
+            )
             analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
-            text = self.engine.anonymize(text=content.get("text"),
-                                         analyzer_results=analyzer_results,
-                                         anonymizers_config=anonymizers_config)
+            text = self.engine.anonymize(
+                text=content.get("text"),
+                analyzer_results=analyzer_results,
+                anonymizers_config=anonymizers_config,
+            )
             return jsonify(result=text)
+
+        @self.app.route("/decrypt", methods=["POST"])
+        def decrypt() -> Union[str, Tuple[str, int]]:
+            content = request.get_json()
+            if not content:
+                return ErrorResponse("Invalid request json").to_json(), 400
+            decrypted_text = self.decryptor.decrypt(
+                key=content.get("key"), text=content.get("text")
+            )
+            return jsonify(result=decrypted_text)
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
