@@ -46,6 +46,7 @@ nav:
 
 theme:
   name: material
+  custom_dir: overrides
   palette:
     - scheme: default
       primary: blue grey
