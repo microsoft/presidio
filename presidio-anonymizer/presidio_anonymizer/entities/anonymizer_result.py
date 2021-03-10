@@ -1,5 +1,6 @@
 """Handle a serializable anonymizer result."""
 import json
+from typing import List
 
 from presidio_anonymizer.entities.anonymized_text_index_item \
     import AnonymizedTextIndexItem
@@ -8,7 +9,7 @@ from presidio_anonymizer.entities.anonymized_text_index_item \
 class AnonymizerResult:
     """Anonymizer result."""
 
-    def __init__(self, text: str = None, items: list[AnonymizedTextIndexItem] = None):
+    def __init__(self, text: str = None, items: List[AnonymizedTextIndexItem] = None):
         """Create AnonymizerResult entity.
 
         :param text: The anonymized text.
