@@ -54,7 +54,8 @@ def test_given_default_anonymizer_then_we_use_it():
     text = "please REPLACE ME."
     analyzer_result = RecognizerResult("SSN", 7, 17, 0.8)
     anonymizer_config = AnonymizerConfig("replace", {"new_value": "and thank you"})
-    result = engine.anonymize(text, [analyzer_result], {"DEFAULT": anonymizer_config}).text
+    result = engine.anonymize(text, [analyzer_result],
+                              {"DEFAULT": anonymizer_config}).text
     assert result == "please and thank you."
 
 

@@ -1,10 +1,8 @@
 class AnonymizerResultItem:
-    """
-    Anonymizer result item.
-
-    """
+    """Anonymizer result item."""
 
     def __init__(self, anonymizer, entity_type, start, end, anonymized_text):
+        """Create AnonymizerResultItem."""
         self.anonymizer = anonymizer
         self.entity_type = entity_type
         self.start = start
@@ -18,4 +16,4 @@ class AnonymizerResultItem:
                self.entity_type == other.entity_type and \
                self.start == other.start and \
                self.end == other.end and \
-               self.anonymized_text == other.anonymized_text
+               self.anonymized_text == other.anonymized_text  # noqa: E127

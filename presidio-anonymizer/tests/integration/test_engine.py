@@ -41,7 +41,8 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
                                           item['start'],
                                           item['end'],
                                           item['anonymized_text'],))
-    expected_anonymize_result = AnonymizerResult(expected_anonymize_result_json['text'], items)
+    expected_anonymize_result = AnonymizerResult(
+        expected_anonymize_result_json['text'], items)
     engine = AnonymizerEngine()
     anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
         anonymizer_request_dict

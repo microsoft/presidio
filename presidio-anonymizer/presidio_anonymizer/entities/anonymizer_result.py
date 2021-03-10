@@ -3,21 +3,21 @@ import json
 
 
 class AnonymizerResult:
-    """
-    Anonymizer result.
-
-    """
+    """Anonymizer result."""
 
     def __init__(self, text=None, items=None):
+        """Create AnonymizerResult entity."""
         if items is None:
             items = []
         self.text = text
         self.items = items
 
     def set_text(self, text):
+        """Set a text."""
         self.text = text
 
     def add_item(self, item):
+        """Add an item."""
         self.items.append(item)
 
     def to_json(self) -> str:
@@ -27,4 +27,5 @@ class AnonymizerResult:
     def __eq__(self, other):
         """Verify two instances are equal."""
 
-        return self.text == other.text and all(map(lambda x, y: x == y, self.items, other.items))
+        return self.text == other.text and all(
+            map(lambda x, y: x == y, self.items, other.items))
