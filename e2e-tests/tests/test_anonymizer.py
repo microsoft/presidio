@@ -232,7 +232,7 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
         ],
     }
     _, anonymize_response_content = anonymize(json.dumps(anonymize_request))
-    encrypted_text = json.loads(anonymize_response_content)["result"]
+    encrypted_text = json.loads(anonymize_response_content)["text"]
     decrypt_request = {"text": encrypted_text, "key": key}
 
     _, decrypt_response_content = decrypt(json.dumps(decrypt_request))
