@@ -3,6 +3,7 @@ class AnonymizerResultItem:
 
     def __init__(self, anonymizer, entity_type, start, end, anonymized_text):
         """Create AnonymizerResultItem.
+
         :param anonymizer: name of the anonymizer.
         :param entity_type: type of the PII entity.
         :param start: start index in the anonymized text.
@@ -17,6 +18,7 @@ class AnonymizerResultItem:
 
     def __eq__(self, other):
         """Verify two instances are equal.
+
         :param other: the other instance to compare.
         """
 
