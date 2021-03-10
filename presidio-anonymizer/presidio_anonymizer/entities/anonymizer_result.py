@@ -1,11 +1,13 @@
 """Handle a serializable anonymizer result."""
 import json
 
+from presidio_anonymizer.entities.anonymizer_result_item import AnonymizerResultItem
+
 
 class AnonymizerResult:
     """Anonymizer result."""
 
-    def __init__(self, text=None, items=None):
+    def __init__(self, text: str = None, items: list[AnonymizerResultItem] = None):
         """Create AnonymizerResult entity.
 
         :param text: The anonymized text.

@@ -1,7 +1,8 @@
 class AnonymizerResultItem:
     """Anonymizer result item."""
 
-    def __init__(self, anonymizer, entity_type, start, end, anonymized_text):
+    def __init__(self, anonymizer: str, entity_type: str,
+                 start: int, end: int, anonymized_text: str):
         """Create AnonymizerResultItem.
 
         :param anonymizer: name of the anonymizer.
