@@ -7,7 +7,8 @@ from presidio_anonymizer.entities import (
     AnonymizerRequest,
     RecognizerResult,
     AnonymizerConfig,
-)
+    AnonymizerResult)
+from presidio_anonymizer.entities.anonymizer_result_item import AnonymizerResultItem
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from tests.integration.file_utils import get_scenario_file_content
 
@@ -15,8 +16,6 @@ from tests.integration.file_utils import get_scenario_file_content
 @pytest.mark.parametrize(
     "anonymize_scenario",
     [
-        "mask_name_phone_number",
-        "mask_phone_number_with_bad_masking_char",
         "redact_and_replace",
         "replace_with_intersecting_entities",
         "hash_md5",
@@ -31,9 +30,17 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
     anonymizer_request_dict = json.loads(
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.in.json")
     )
-    expected_anonymize_result = json.loads(
+    expected_anonymize_result_json = json.loads(
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.out.json")
     )
+    items = []
+    for item in expected_anonymize_result_json['items']:
+        items.append(AnonymizerResultItem(item['anonymizer'],
+                                          item['entity_type'],
+                                          item['start'],
+                                          item['end'],
+                                          item['anonymized_text'],))
+    expected_anonymize_result = AnonymizerResult(expected_anonymize_result_json['text'], items)
     engine = AnonymizerEngine()
     anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
         anonymizer_request_dict

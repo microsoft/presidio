@@ -55,10 +55,10 @@ class Server:
             anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
                 content)
             analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
-            text = self.engine.anonymize(text=content.get("text"),
+            anoymizer_result = self.engine.anonymize(text=content.get("text"),
                                          analyzer_results=analyzer_results,
                                          anonymizers_config=anonymizers_config)
-            return jsonify(result=text)
+            return anoymizer_result.to_json()
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:

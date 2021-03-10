@@ -6,6 +6,8 @@ from presidio_anonymizer.anonymizers import Anonymizer
 from presidio_anonymizer.entities import RecognizerResult, AnalyzerResults
 from presidio_anonymizer.entities import AnonymizedTextBuilder
 from presidio_anonymizer.entities.anonymizer_config import AnonymizerConfig
+from presidio_anonymizer.entities.anonymizer_result import AnonymizerResult
+from presidio_anonymizer.entities.anonymizer_result_item import AnonymizerResultItem
 
 DEFAULT = "replace"
 
@@ -22,11 +24,11 @@ class AnonymizerEngine:
         self.logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(
-        self,
-        text: str,
-        analyzer_results: List[RecognizerResult],
-        anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
-    ) -> str:
+            self,
+            text: str,
+            analyzer_results: List[RecognizerResult],
+            anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
+    ) -> AnonymizerResult:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
@@ -44,6 +46,8 @@ class AnonymizerEngine:
         analyzer_results = AnalyzerResults(analyzer_results).to_sorted_unique_results(
             True
         )
+
+        anonymizer_result = AnonymizerResult()
 
         # loop over each analyzer result
         # get AnonymizerConfig for the analyzer result
@@ -67,11 +71,26 @@ class AnonymizerEngine:
             anonymized_text = self.__extract_anonymizer_and_anonymize(
                 analyzer_result.entity_type, anonymizer_config, text_to_anonymize
             )
-            text_builder.replace_text(
+            index_from_end = text_builder.replace_text(
                 anonymized_text, analyzer_result.start, analyzer_result.end
             )
 
-        return text_builder.output_text
+            result_item = AnonymizerResultItem(anonymizer_config.anonymizer_name,
+                                               analyzer_result.entity_type,
+                                               0,
+                                               index_from_end,
+                                               anonymized_text)
+
+            anonymizer_result.add_item(result_item)
+
+        # normalize the indexes to be index from start
+        text_len = len(text_builder.output_text)
+        for result_item in anonymizer_result.items:
+            result_item.start = text_len - result_item.end
+            result_item.end = result_item.start + len(result_item.anonymized_text)
+
+        anonymizer_result.set_text(text_builder.output_text)
+        return anonymizer_result
 
     @staticmethod
     def get_anonymizers() -> List[str]:
@@ -80,10 +99,10 @@ class AnonymizerEngine:
         return names
 
     def __extract_anonymizer_and_anonymize(
-        self,
-        entity_type: str,
-        anonymizer_config: AnonymizerConfig,
-        text_to_anonymize: str,
+            self,
+            entity_type: str,
+            anonymizer_config: AnonymizerConfig,
+            text_to_anonymize: str,
     ) -> str:
         self.logger.debug(f"getting anonymizer for {entity_type}")
         anonymizer = anonymizer_config.anonymizer_class()
@@ -97,7 +116,7 @@ class AnonymizerEngine:
 
     @staticmethod
     def __get_anonymizer_config_by_entity_type(
-        entity_type: str, anonymizers_config: Dict[str, AnonymizerConfig]
+            entity_type: str, anonymizers_config: Dict[str, AnonymizerConfig]
     ) -> AnonymizerConfig:
         # We try to get the anonymizer from the list by entity_type.
         # If it does not exist, we try to get the default from the list.
