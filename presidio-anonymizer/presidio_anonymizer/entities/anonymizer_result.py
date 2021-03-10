@@ -1,8 +1,6 @@
 """Handle a serializable anonymizer result."""
 import json
 
-from presidio_anonymizer.entities.anonymizer_result_item import AnonymizerResultItem
-
 
 class AnonymizerResult:
     """
@@ -10,7 +8,9 @@ class AnonymizerResult:
 
     """
 
-    def __init__(self, text=None, items: list[AnonymizerResultItem]=[]):
+    def __init__(self, text=None, items=None):
+        if items is None:
+            items = []
         self.text = text
         self.items = items
 

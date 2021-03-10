@@ -16,6 +16,7 @@ from tests.integration.file_utils import get_scenario_file_content
 @pytest.mark.parametrize(
     "anonymize_scenario",
     [
+        "mask_name_phone_number",
         "redact_and_replace",
         "replace_with_intersecting_entities",
         "hash_md5",
@@ -59,6 +60,39 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
     assert actual_anonymize_result == expected_anonymize_result
 
 
+@pytest.mark.parametrize(
+    "anonymize_scenario",
+    [
+        "mask_phone_number_with_bad_masking_char",
+    ],
+)
+def test_given_anonymize_called_with_error_scenarios_then_expected_errors_returned(
+    anonymize_scenario,
+):
+    anonymizer_request_dict = json.loads(
+        get_scenario_file_content("anonymize", f"{anonymize_scenario}.in.json")
+    )
+    expected_anonymize_result_json = json.loads(
+        get_scenario_file_content("anonymize", f"{anonymize_scenario}.out.json")
+    )
+    engine = AnonymizerEngine()
+    anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
+        anonymizer_request_dict
+    )
+    analyzer_results = AnonymizerRequest.handle_analyzer_results_json(
+        anonymizer_request_dict
+    )
+
+    try:
+        actual_anonymize_result = engine.anonymize(
+            anonymizer_request_dict.get("text"), analyzer_results, anonymizers_config
+        )
+    except Exception as e:
+        actual_anonymize_result = str(e)
+
+    assert actual_anonymize_result == expected_anonymize_result_json
+
+
 def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content():
     unencrypted_text = "My name is "
     expected_encrypted_text = "Chloë"
@@ -71,7 +105,7 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
 
     actual_anonymize_result = AnonymizerEngine().anonymize(
         text, analyzer_results, anonymizers_config
-    )
+    ).text
 
     assert actual_anonymize_result[:start_index] == unencrypted_text
     actual_encrypted_text = actual_anonymize_result[start_index:]
