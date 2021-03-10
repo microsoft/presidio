@@ -2,15 +2,19 @@ import os
 
 import requests
 
-from common.constants import ANONYMIZER_BASE_URL, ANALYZER_BASE_URL, \
-    IMAGE_REDACTOR_BASE_URL
+from common.constants import (
+    ANONYMIZER_BASE_URL,
+    ANALYZER_BASE_URL,
+    IMAGE_REDACTOR_BASE_URL,
+)
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
 MULTIPART_HEADERS = {"Content-Type": "multipart/form-data"}
 ANALYZER_BASE_URL = os.environ.get("ANALYZER_BASE_URL", ANALYZER_BASE_URL)
 ANONYMIZER_BASE_URL = os.environ.get("ANONYMIZER_BASE_URL", ANONYMIZER_BASE_URL)
-IMAGE_REDACTOR_BASE_URL = os.environ.get("IMAGE_REDACTOR_BASE_URL",
-                                         IMAGE_REDACTOR_BASE_URL)
+IMAGE_REDACTOR_BASE_URL = os.environ.get(
+    "IMAGE_REDACTOR_BASE_URL", IMAGE_REDACTOR_BASE_URL
+)
 
 
 def anonymize(data):
@@ -44,10 +48,17 @@ def analyzer_supported_entities(data):
 def redact(file, color_fill=None):
     multipart_form_data = __get_multipart_form_data(file)
     payload = __get_redact_payload(color_fill)
-    response = requests.post(f"{IMAGE_REDACTOR_BASE_URL}/redact",
-                             files=multipart_form_data, data=payload
-                             )
+    response = requests.post(
+        f"{IMAGE_REDACTOR_BASE_URL}/redact", files=multipart_form_data, data=payload
+    )
     return response
+
+
+def decrypt(data):
+    response = requests.post(
+        f"{ANONYMIZER_BASE_URL}/decrypt", data=data, headers=DEFAULT_HEADERS
+    )
+    return response.status_code, response.content
 
 
 def __get_redact_payload(color_fill):

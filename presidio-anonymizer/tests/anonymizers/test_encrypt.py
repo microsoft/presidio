@@ -26,6 +26,6 @@ def test_given_verifying_an_valid_length_key_no_exceptions_raised():
 def test_given_verifying_an_invalid_length_key_then_ipe_raised():
     with pytest.raises(
         InvalidParamException,
-        match="Invalid input, key must of length 128, 192 or 256 bits",
+        match="Invalid input, key must be of length 128, 192 or 256 bits",
     ):
         Encrypt().validate(params={"key": "key"})
