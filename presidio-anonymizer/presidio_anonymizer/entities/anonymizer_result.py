@@ -13,7 +13,8 @@ class AnonymizerResult:
         """Create AnonymizerResult entity.
 
         :param text: The anonymized text.
-        :param items: List of PII entities and the indices of their replacements in the anonymized text.
+        :param items: List of PII entities and the indices
+         of their replacements in the anonymized text.
         """
         if items is None:
             items = []
