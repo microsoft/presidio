@@ -1,7 +1,5 @@
 class AnonymizedEntity:
-    """
-    Information about the anonymized entity.
-    """
+    """Information about the anonymized entity."""
 
     def __init__(
         self,
