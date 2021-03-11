@@ -2,14 +2,13 @@
 import json
 from typing import List
 
-from presidio_anonymizer.entities.anonymized_text_index_item \
-    import AnonymizedTextIndexItem
+from presidio_anonymizer.entities import AnonymizedEntity
 
 
 class AnonymizerResult:
     """Anonymizer result."""
 
-    def __init__(self, text: str = None, items: List[AnonymizedTextIndexItem] = None):
+    def __init__(self, text: str = None, items: List[AnonymizedEntity] = None):
         """Create AnonymizerResult entity.
 
         :param text: The anonymized text.
@@ -25,7 +24,7 @@ class AnonymizerResult:
         """Set a text."""
         self.text = text
 
-    def add_item(self, item: AnonymizedTextIndexItem):
+    def add_item(self, item: AnonymizedEntity):
         """Add an item.
 
         :param item: an item to add to the list.
@@ -50,4 +49,5 @@ class AnonymizerResult:
         """
 
         return self.text == other.text and all(
-            map(lambda x, y: x == y, self.items, other.items))
+            map(lambda x, y: x == y, self.items, other.items)
+        )

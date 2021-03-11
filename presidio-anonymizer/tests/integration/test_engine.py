@@ -7,9 +7,9 @@ from presidio_anonymizer.entities import (
     AnonymizerRequest,
     RecognizerResult,
     AnonymizerConfig,
-    AnonymizerResult)
-from presidio_anonymizer.entities.anonymized_text_index_item \
-    import AnonymizedTextIndexItem
+    AnonymizerResult,
+)
+from presidio_anonymizer.entities.anonymized_entity import AnonymizedEntity
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from tests.integration.file_utils import get_scenario_file_content
 
@@ -36,14 +36,19 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.out.json")
     )
     items = []
-    for item in expected_anonymize_result_json['items']:
-        items.append(AnonymizedTextIndexItem(item['anonymizer'],
-                                             item['entity_type'],
-                                             item['start'],
-                                             item['end'],
-                                             item['anonymized_text'], ))
+    for item in expected_anonymize_result_json["items"]:
+        items.append(
+            AnonymizedEntity(
+                item["anonymizer"],
+                item["entity_type"],
+                item["start"],
+                item["end"],
+                item["anonymized_text"],
+            )
+        )
     expected_anonymize_result = AnonymizerResult(
-        expected_anonymize_result_json['text'], items)
+        expected_anonymize_result_json["text"], items
+    )
     engine = AnonymizerEngine()
     anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
         anonymizer_request_dict
@@ -105,9 +110,9 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     analyzer_results = [RecognizerResult("PERSON", start_index, end_index, 0.8)]
     anonymizers_config = {"PERSON": AnonymizerConfig("encrypt", {"key": key})}
 
-    actual_anonymize_result = AnonymizerEngine().anonymize(
-        text, analyzer_results, anonymizers_config
-    ).text
+    actual_anonymize_result = (
+        AnonymizerEngine().anonymize(text, analyzer_results, anonymizers_config).text
+    )
 
     assert actual_anonymize_result[:start_index] == unencrypted_text
     actual_encrypted_text = actual_anonymize_result[start_index:]

@@ -7,8 +7,7 @@ from presidio_anonymizer.entities import InvalidParamException
 class AnonymizedTextBuilder:
     """Creates new text according to users request."""
 
-    def __init__(self,
-                 original_text: str):
+    def __init__(self, original_text: str):
         self.logger = logging.getLogger("presidio-anonymizer")
         self.__validate_text_not_empty(original_text)
         self.output_text = original_text
@@ -29,10 +28,11 @@ class AnonymizedTextBuilder:
         :return: str - part of the original text
         """
         self.__validate_position_in_text(start, end)
-        return self.output_text[start: end]
+        return self.output_text[start:end]
 
-    def replace_text_get_insertion_index(self, anonymized_text: str,
-                                         start: int, end: int) -> int:
+    def replace_text_get_insertion_index(
+        self, anonymized_text: str, start: int, end: int
+    ) -> int:
         """
         Replace text in a specific position with the anonymized text.
 
@@ -44,7 +44,7 @@ class AnonymizedTextBuilder:
         end_of_text_index = min(end, self.last_replacement_index)
         self.last_replacement_index = start
 
-        before_text = self.output_text[: start]
+        before_text = self.output_text[:start]
         after_text = self.output_text[end_of_text_index:]
         self.output_text = before_text + anonymized_text + after_text
 
@@ -55,7 +55,8 @@ class AnonymizedTextBuilder:
     def __validate_position_in_text(self, start: int, end: int):
         """Validate the start and end position match the text length."""
         if self.text_len < start or end > self.text_len:
-            err_msg = f"Invalid analyzer result, start: {start} and end: " \
-                      f"{end}, while text length is only {self.text_len}."
-            raise InvalidParamException(
-                err_msg)
+            err_msg = (
+                f"Invalid analyzer result, start: {start} and end: "
+                f"{end}, while text length is only {self.text_len}."
+            )
+            raise InvalidParamException(err_msg)

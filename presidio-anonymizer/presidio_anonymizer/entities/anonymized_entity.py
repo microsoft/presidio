@@ -1,8 +1,16 @@
-class AnonymizedTextIndexItem:
-    """Anonymizer result item."""
+class AnonymizedEntity:
+    """
+    Information about the anonymized entity.
+    """
 
-    def __init__(self, anonymizer: str, entity_type: str,
-                 start: int, end: int, anonymized_text: str):
+    def __init__(
+        self,
+        anonymizer: str,
+        entity_type: str,
+        start: int,
+        end: int,
+        anonymized_text: str,
+    ):
         """Create AnonymizerResultItem.
 
         :param anonymizer: name of the anonymizer.
@@ -24,8 +32,10 @@ class AnonymizedTextIndexItem:
         :return true if the two instances are equal, false otherwise.
         """
 
-        return self.anonymizer == other.anonymizer and \
-               self.entity_type == other.entity_type and \
-               self.start == other.start and \
-               self.end == other.end and \
-               self.anonymized_text == other.anonymized_text  # noqa: E127
+        return (
+            self.anonymizer == other.anonymizer
+            and self.entity_type == other.entity_type
+            and self.start == other.start
+            and self.end == other.end
+            and self.anonymized_text == other.anonymized_text
+        )  # noqa: E127

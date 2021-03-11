@@ -61,7 +61,8 @@ class Server:
             anoymizer_result = self.engine.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
-                anonymizers_config=anonymizers_config)
+                anonymizers_config=anonymizers_config,
+            )
             return anoymizer_result.to_json()
 
         @self.app.route("/decrypt", methods=["POST"])
