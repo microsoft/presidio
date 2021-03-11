@@ -162,10 +162,9 @@ paths:
               examples:
                 Replace and Redact Anonymizers:
                   value:
-                    { "result": "hello world, my name is . My number is: ANONYMIZED" }
-                Replace as default Anonymizer:
+                    {"text": "hello world, my name is ANONYMIZED. My number is: ", "items": [{"anonymizer": "redact", "entity_type": "PHONE_NUMBER", "start": 50, "end": 50, "anonymized_text": ""}, {"anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED"}]}                Replace as default Anonymizer:
                   value:
-                    { "result": "hello world, my name is ANONYMIZED." }
+                    {"text": "hello world, my name is ANONYMIZED. My number is: ANONYMIZED", "items": [{"anonymizer": "replace", "entity_type": "PHONE_NUMBER", "start": 50, "end": 60, "anonymized_text": "ANONYMIZED"}, {"anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED"}]}
         400:
           $ref: "#/components/responses/400BadRequest"
 
