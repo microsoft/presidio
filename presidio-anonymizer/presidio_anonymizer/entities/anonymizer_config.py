@@ -36,6 +36,7 @@ class AnonymizerConfig:
         :param params: the parameters to use in the selected anonymizer class
         """
         self.logger = logging.getLogger("presidio-anonymizer")
+        self.anonymizer_name = anonymizer_name
         self.anonymizer_class = self.__get_anonymizer_class(anonymizer_name)
         self.params = params
         if not params:

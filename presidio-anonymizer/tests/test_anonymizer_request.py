@@ -23,9 +23,7 @@ from presidio_anonymizer.entities.invalid_exception import InvalidParamException
     ],
     # fmt: on
 )
-def test_given_invalid_json_for_analyzer_result_then_we_fail(
-        request_json, result_text
-):
+def test_given_invalid_json_for_analyzer_result_then_we_fail(request_json, result_text):
     with pytest.raises(InvalidParamException) as e:
         AnonymizerRequest.handle_analyzer_results_json(request_json)
     assert result_text == e.value.err_msg
@@ -52,9 +50,7 @@ def test_given_invalid_json_for_analyzer_result_then_we_fail(
     ],
     # fmt: on
 )
-def test_given_invalid_json_for_anonymizers_then_we_fail(
-        request_json, result_text
-):
+def test_given_invalid_json_for_anonymizers_then_we_fail(request_json, result_text):
     with pytest.raises(InvalidParamException) as e:
         AnonymizerRequest.get_anonymizer_configs_from_json(request_json)
     assert result_text == e.value.err_msg
@@ -145,6 +141,5 @@ def get_no_analyzer_results_content():
                 "from_end": True,
             },
         },
-        "analyzer_results": [
-        ],
+        "analyzer_results": [],
     }

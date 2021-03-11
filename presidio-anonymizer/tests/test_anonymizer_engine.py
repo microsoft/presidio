@@ -30,14 +30,14 @@ def test_given_empty_text_to_engine_then_we_fail():
 def test_given_empty_analyzers_list_then_we_get_same_text_back():
     engine = AnonymizerEngine()
     text = "one two three"
-    assert engine.anonymize(text, [], {}) == text
+    assert engine.anonymize(text, [], {}).text == text
 
 
 def test_given_empty_anonymziers_list_then_we_fall_to_default():
     engine = AnonymizerEngine()
     text = "please REPLACE ME."
     analyzer_result = RecognizerResult("SSN", 7, 17, 0.8)
-    result = engine.anonymize(text, [analyzer_result], {})
+    result = engine.anonymize(text, [analyzer_result], {}).text
     assert result == "please <SSN>."
 
 
@@ -45,7 +45,7 @@ def test_given_none_as_anonymziers_list_then_we_fall_to_default():
     engine = AnonymizerEngine()
     text = "please REPLACE ME."
     analyzer_result = RecognizerResult("SSN", 7, 17, 0.8)
-    result = engine.anonymize(text, [analyzer_result])
+    result = engine.anonymize(text, [analyzer_result]).text
     assert result == "please <SSN>."
 
 
@@ -54,7 +54,9 @@ def test_given_default_anonymizer_then_we_use_it():
     text = "please REPLACE ME."
     analyzer_result = RecognizerResult("SSN", 7, 17, 0.8)
     anonymizer_config = AnonymizerConfig("replace", {"new_value": "and thank you"})
-    result = engine.anonymize(text, [analyzer_result], {"DEFAULT": anonymizer_config})
+    result = engine.anonymize(
+        text, [analyzer_result], {"DEFAULT": anonymizer_config}
+    ).text
     assert result == "please and thank you."
 
 
@@ -68,7 +70,7 @@ def test_given_specific_anonymizer_then_we_use_it():
         text,
         [analyzer_result],
         {"DEFAULT": anonymizer_config, "SSN": ssn_anonymizer_config},
-    )
+    ).text
     assert result == "please ."
 
 
@@ -100,8 +102,12 @@ def test_given_several_anonymizers_then_we_use_the_correct_one():
     )
     anonymizer_config = AnonymizerConfig("replace", {})
     anonymizer_config.anonymizer_class = MockAnonymizer
-    text = AnonymizerEngine().anonymize(
-        "Number: 0554555556", [analyzer_result], {"PHONE_NUMBER": anonymizer_config}
+    text = (
+        AnonymizerEngine()
+        .anonymize(
+            "Number: 0554555556", [analyzer_result], {"PHONE_NUMBER": anonymizer_config}
+        )
+        .text
     )
     assert text == "Number: I am your new text!"
 

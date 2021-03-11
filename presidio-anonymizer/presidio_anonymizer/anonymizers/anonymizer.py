@@ -27,11 +27,10 @@ class Anonymizer(ABC):
         pass
 
     @staticmethod
-    def get_anonymizers() -> Dict[str, 'Anonymizer']:
+    def get_anonymizers() -> Dict[str, "Anonymizer"]:
         """Return all anonymizers classes currently available."""
         if not Anonymizer._anonymizers:
             Anonymizer._anonymizers = {
-                cls.anonymizer_name(cls): cls
-                for cls in Anonymizer.__subclasses__()
+                cls.anonymizer_name(cls): cls for cls in Anonymizer.__subclasses__()
             }
         return Anonymizer._anonymizers
