@@ -64,6 +64,7 @@ theme:
 plugins:
 - search
 - mkdocstrings
+- mkdocs-jupyter
 
 
 extra:
