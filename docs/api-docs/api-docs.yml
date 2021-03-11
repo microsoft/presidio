@@ -565,9 +565,9 @@ components:
           type: array
           description: "Array of anonymized entities"
           items:
-            $ref: "#/components/schemas/AnonymizedEntitiy"
+            $ref: "#/components/schemas/AnonymizedEntity"
 
-    AnonymizedEntitiy:
+    AnonymizedEntity:
       type: object
       properties:
         anonymizer:
