@@ -10,7 +10,6 @@ from .anonymized_text_builder import AnonymizedTextBuilder
 from .anonymizer_config import AnonymizerConfig
 
 
-
 __all__ = [
     "InvalidParamException",
     "RecognizerResult",

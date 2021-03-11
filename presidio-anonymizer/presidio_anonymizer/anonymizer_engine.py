@@ -9,7 +9,7 @@ from presidio_anonymizer.entities import (
     AnonymizerResult,
     AnonymizedTextBuilder,
     AnonymizerConfig,
-    AnonymizedEntity
+    AnonymizedEntity,
 )
 
 DEFAULT = "replace"
