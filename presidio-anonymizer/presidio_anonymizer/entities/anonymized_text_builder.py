@@ -31,12 +31,12 @@ class AnonymizedTextBuilder:
         return self.output_text[start:end]
 
     def replace_text_get_insertion_index(
-        self, anonymized_text: str, start: int, end: int
+        self, new_text: str, start: int, end: int
     ) -> int:
         """
-        Replace text in a specific position with the anonymized text.
+        Replace text in a specific position with the text.
 
-        :param anonymized_text:
+        :param new_text:
         :param start: the startpoint to replace the text
         :param end: the endpoint to replace the text
         :return: The index of inserted text
@@ -46,11 +46,11 @@ class AnonymizedTextBuilder:
 
         before_text = self.output_text[:start]
         after_text = self.output_text[end_of_text_index:]
-        self.output_text = before_text + anonymized_text + after_text
+        self.output_text = before_text + new_text + after_text
 
         # The replace algorithm is replacing the text from end to start.
         # calculate and return the start point from the end.
-        return len(after_text) + len(anonymized_text)
+        return len(after_text) + len(new_text)
 
     def __validate_position_in_text(self, start: int, end: int):
         """Validate the start and end position match the text length."""

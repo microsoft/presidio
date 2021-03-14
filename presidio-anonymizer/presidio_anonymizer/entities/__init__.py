@@ -9,7 +9,6 @@ from .anonymizer_request import AnonymizerRequest
 from .anonymized_text_builder import AnonymizedTextBuilder
 from .anonymizer_config import AnonymizerConfig
 
-
 __all__ = [
     "InvalidParamException",
     "RecognizerResult",
@@ -18,5 +17,5 @@ __all__ = [
     "AnonymizedTextBuilder",
     "AnonymizerRequest",
     "AnonymizerResult",
-    "AnonymizedEntity",
+    "AnonymizedEntity"
 ]

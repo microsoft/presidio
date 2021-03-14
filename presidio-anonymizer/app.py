@@ -10,8 +10,10 @@ from flask import Flask, request, jsonify
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.anonymizer_decryptor import AnonymizerDecryptor
-from presidio_anonymizer.entities import AnonymizerRequest
+from presidio_anonymizer.entities import AnonymizerRequest, AnonymizerResult
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities.decrypt.request import DecryptRequest
+from presidio_anonymizer.entities.decrypt.response import DecryptResult
 from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
@@ -66,14 +68,15 @@ class Server:
             return anoymizer_result.to_json()
 
         @self.app.route("/decrypt", methods=["POST"])
-        def decrypt() -> Union[str, Tuple[str, int]]:
+        def decrypt() -> DecryptResult:
             content = request.get_json()
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
-            decrypted_text = self.decryptor.decrypt(
-                key=content.get("key"), text=content.get("text")
+            decrypt_request = DecryptRequest.from_json(content)
+            decrypt_response = self.decryptor.decrypt(
+                decrypt_request
             )
-            return jsonify(result=decrypted_text)
+            return decrypt_response.to_json()
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:

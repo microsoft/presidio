@@ -9,7 +9,7 @@ class AnonymizedEntity:
         end: int,
         anonymized_text: str,
     ):
-        """Create AnonymizerResultItem.
+        """Create AnonymizerResult.
 
         :param anonymizer: name of the anonymizer.
         :param entity_type: type of the PII entity.

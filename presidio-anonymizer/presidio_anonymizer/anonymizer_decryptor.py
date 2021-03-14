@@ -1,6 +1,10 @@
 import logging
 
-from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities import InvalidParamException, \
+    AnonymizedTextBuilder
+from presidio_anonymizer.entities.decrypt.request import DecryptRequest
+from presidio_anonymizer.entities.decrypt.response import \
+    DecryptedEntity, DecryptResult
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
 
@@ -11,9 +15,7 @@ class AnonymizerDecryptor:
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
 
-    # TODO: [ADO-3006] Method to receive optional argument for the
-    #  indices serving as 'text' replacement points
-    def decrypt(self, key: str, text: str) -> str:
+    def decrypt_text(self, key: str, text: str) -> str:
         """
         Decrypts a previously AES-CBC encrypted anonymized text.
 
@@ -31,3 +33,33 @@ class AnonymizerDecryptor:
 
         decrypted_text = AESCipher.decrypt(key=encoded_key, text=text)
         return decrypted_text
+
+    def decrypt(self, decrypt_request: DecryptRequest) -> DecryptResult:
+        text_builder = AnonymizedTextBuilder(original_text=decrypt_request.text)
+        decryption_result = DecryptResult()
+        for decrypted_item in decrypt_request.sorted_items(True):
+            self.logger.debug(f"decrypting text in position %d-%d",
+                              decrypted_item.start, decrypted_item.end)
+            encrypted_text = text_builder.get_text_in_position(
+                decrypted_item.start,
+                decrypted_item.end)
+            decrypted_text = self.decrypt_text(decrypted_item.key,
+                                               encrypted_text)
+            index_from_end = text_builder.replace_text_get_insertion_index(
+                decrypted_text,
+                decrypted_item.start,
+                decrypted_item.end)
+            # The following creates an intermediate list of anonymized entities,
+            # ordered from end to start, and the indexes will be normalized
+            # from start to end once the loop ends and the text length is deterministic.
+            result_item = DecryptedEntity(
+                entity_type=decrypted_item.entity_type,
+                start=0,
+                end=index_from_end,
+                decrypted_text=decrypted_text,
+            )
+            decryption_result.add_item(result_item)
+
+        decryption_result.set_text(text_builder.output_text)
+        decryption_result.normalize_item_indexes()
+        return decryption_result
