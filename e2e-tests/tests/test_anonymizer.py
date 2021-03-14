@@ -99,7 +99,6 @@ def test_given_anonymize_called_with_deformed_body_then_internal_server_error_re
 
 @pytest.mark.api
 def test_given_anonymizers_called_then_expected_anonymizers_list_returned():
-
     response_status, response_content = anonymizers()
 
     expected_response = """
@@ -112,7 +111,6 @@ def test_given_anonymizers_called_then_expected_anonymizers_list_returned():
 
 @pytest.mark.api
 def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned():
-
     request_body = """
     {
         "key": "1111111111111111",
@@ -134,7 +132,6 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
 
 @pytest.mark.api
 def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_returned():
-
     request_body = """
     {
         "key": "invalidkey",
@@ -156,7 +153,6 @@ def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_retur
 
 @pytest.mark.api
 def test_given_decrypt_called_with_missing_key_then_invalid_input_response_returned():
-
     request_body = """
     {
         "text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
@@ -177,7 +173,6 @@ def test_given_decrypt_called_with_missing_key_then_invalid_input_response_retur
 
 @pytest.mark.api
 def test_given_decrypt_called_with_missing_text_then_invalid_input_response_returned():
-
     request_body = """
     {
         "key": "1111111111111111"
@@ -198,7 +193,6 @@ def test_given_decrypt_called_with_missing_text_then_invalid_input_response_retu
 
 @pytest.mark.api
 def test_given_decrypt_called_with_missing_payload_then_bad_request_response_returned():
-
     request_body = """
     { }
     """
@@ -240,3 +234,57 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
     decrypted_text = json.loads(decrypt_response_content)["result"]
     assert encrypted_text != text_for_encryption
     assert decrypted_text == text_for_encryption
+
+#TODO need to fix this!
+@pytest.mark.api
+def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text():
+    text_for_encryption = "Shiran Rubin is a Software Engineer"
+    key = "1111111111111111"
+    anonymize_request = {
+        "text": text_for_encryption,
+        "anonymizers": {"DEFAULT": {"type": "encrypt", "key": key},
+                        "TITLE": {"type": "encrypt", "key": "2222222222222222"}},
+        "analyzer_results": [
+            {
+                "start": 0,
+                "end": 12,
+                "score": 0.8,
+                "entity_type": "NAME",
+            },
+            {
+                "start": 18,
+                "end": len(text_for_encryption),
+                "score": 0.8,
+                "entity_type": "TITLE",
+            }
+        ],
+    }
+    _, anonymize_response_content = anonymize(json.dumps(anonymize_request))
+    encrypted_text = json.loads(anonymize_response_content)["text"]
+
+    decrypt_request = {
+        "text": encrypted_text,
+        "anonymizers": {"DEFAULT": {"type": "decrypt", "key": key},
+                        "TITLE": {"type": "decrypt", "key": "2222222222222222"}},
+        "analyzer_results": [
+            {
+                "start": 0,
+                "end": 44,
+                "score": 0.8,
+                "entity_type": "NAME",
+            },
+            {
+                "start": 50,
+                "end": 114,
+                "score": 0.8,
+                "entity_type": "TITLE",
+            }
+        ],
+    }
+
+    _, decrypted_text_response = anonymize(json.dumps(decrypt_request))
+
+
+    decrypted_text = json.loads(decrypted_text_response)["text"]
+    assert decrypted_text
+
