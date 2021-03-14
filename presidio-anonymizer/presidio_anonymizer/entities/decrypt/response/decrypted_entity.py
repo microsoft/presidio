@@ -1,21 +1,21 @@
+""""Result from the /decrypt method."""
+
+
 class DecryptedEntity:
     """Information about the decrypted entity."""
 
     def __init__(
             self,
-            entity_type: str,
             start: int,
             end: int,
             decrypted_text: str,
     ):
         """Create DecryptedEntity.
 
-        :param entity_type: type of the PII entity.
         :param start: start index in the decrypted text.
         :param end: end index in the decrypted text.
         :param decrypted_text: the PII decrypted text.
         """
-        self.entity_type = entity_type
         self.start = start
         self.end = end
         self.decrypted_text = decrypted_text

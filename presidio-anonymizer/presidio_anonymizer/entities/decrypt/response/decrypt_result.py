@@ -1,8 +1,7 @@
-"""Handle a serializable anonymizer result."""
+"""Handle a serializable decryption result."""
 import json
 from typing import List
 
-from presidio_anonymizer.entities.decrypt.request import DecryptEntity
 from presidio_anonymizer.entities.decrypt.response import DecryptedEntity
 
 
@@ -13,8 +12,7 @@ class DecryptResult:
         """Create DecryptResult entity.
 
         :param text: The anonymized text.
-        :param items: List of PII entities and the indices
-         of their replacements in the anonymized text.
+        :param items: List of decrypted text entities.
         """
         if items is None:
             items = []

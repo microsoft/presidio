@@ -6,25 +6,22 @@ from presidio_anonymizer.entities import InvalidParamException, AnonymizedEntity
 class DecryptEntity:
     """Information about the decrypt entity."""
 
-    def __init__(self, key: str, entity_type: str, start: int,
-                 end: int, anonymized_text: str):
-        """Create DecryptEntity.
+    def __init__(self, key: str, start: int,
+                 end: int) -> 'DecryptEntity':
+        """
+        Create DecryptEntity.
 
-        :param anonymizer: name of the anonymizer.
-        :param entity_type: type of the PII entity.
+        :param key: the key used to anonymize/encrypt the text.
         :param start: start index in the anonymized text.
         :param end: end index in the anonymized text.
-        :param anonymized_text: the PII anonymized text.
         """
         self.logger = logging.getLogger("presidio-anonymizer")
-        self.entity_type = entity_type
         self.start = start
         self.end = end
-        self.anonymized_text = anonymized_text
         self.key = key
         self.__validate_fields()
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         return self.start > other.start
 
     def __validate_fields(self):
@@ -51,15 +48,31 @@ class DecryptEntity:
         )
 
     @classmethod
-    def from_json(cls, json: dict):
+    def from_json(cls, json: dict) -> 'DecryptEntity':
+        """
+        Create DecryptEntity from user json.
+
+        :param json e.g.:
+        {
+            "start": 0,
+            "end": len(text),
+            "key": "1111111111111111",
+        }
+        :return: DecryptEntity object
+        """
         key = json.get("key")
         start = json.get("start")
         end = json.get("end")
-        entity_type = json.get("entity_type")
-        anonymized_text = json.get("anonymized_text")
-        return cls(key, entity_type, start, end, anonymized_text)
+        return cls(key, start, end)
 
     @classmethod
-    def from_anonymizer_entity(cls, key: str, entity: AnonymizedEntity):
-        return cls(key, entity.entity_type, entity.start, entity.end,
-                   entity.anonymized_text)
+    def from_anonymizer_entity(cls, key: str,
+                               entity: AnonymizedEntity) -> 'DecryptEntity':
+        """
+        Create DecryptEntity from AnonymizerEntity.
+
+        :param key: key yo decrypt the text with (the one which encrypted the text).
+        :param entity: AnonymizedEntity returned from the anonymizer /anonymize method.
+        :return: DecryptEntity.
+        """
+        return cls(key, entity.start, entity.end)

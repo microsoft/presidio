@@ -53,7 +53,6 @@ class AnonymizerDecryptor:
             # ordered from end to start, and the indexes will be normalized
             # from start to end once the loop ends and the text length is deterministic.
             result_item = DecryptedEntity(
-                entity_type=decrypted_item.entity_type,
                 start=0,
                 end=index_from_end,
                 decrypted_text=decrypted_text,
