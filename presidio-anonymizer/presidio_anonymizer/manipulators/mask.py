@@ -1,19 +1,19 @@
 """Mask some or all given text entity PII with given character."""
 from typing import Dict
 
-from presidio_anonymizer.anonymizers import Anonymizer
+from presidio_anonymizer.manipulators import Manipulator, ManipulatorType
 from presidio_anonymizer.services.validators import validate_parameter
 from presidio_anonymizer.entities import InvalidParamException
 
 
-class Mask(Anonymizer):
+class Mask(Manipulator):
     """Mask the given text with given value."""
 
     CHARS_TO_MASK = "chars_to_mask"
     FROM_END = "from_end"
     MASKING_CHAR = "masking_char"
 
-    def anonymize(self, text: str = None, params: Dict = None) -> str:
+    def manipulate(self, text: str = None, params: Dict = None) -> str:
         """
         Mask a given amount of text with a given character.
 
@@ -52,7 +52,7 @@ class Mask(Anonymizer):
         validate_parameter(params.get(self.CHARS_TO_MASK), self.CHARS_TO_MASK, int)
         validate_parameter(params.get(self.FROM_END), self.FROM_END, bool)
 
-    def anonymizer_name(self) -> str:
+    def manipulator_name(self) -> str:
         """Return anonymizer name."""
         return "mask"
 
@@ -67,3 +67,7 @@ class Mask(Anonymizer):
         else:
             mask_from_index = len(text) - chars_to_mask
             return text[:mask_from_index] + masking_char * chars_to_mask
+
+    def manipulator_type(self) -> ManipulatorType:
+        """Return anonymizer name."""
+        return ManipulatorType.Anonymize

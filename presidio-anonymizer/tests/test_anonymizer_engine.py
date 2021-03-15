@@ -22,7 +22,7 @@ def test_given_empty_text_to_engine_then_we_fail():
     engine = AnonymizerEngine()
     analyzer_result = RecognizerResult("SSN", 0, 1, 0.5)
     with pytest.raises(
-        InvalidParamException, match="Invalid input, text can not be empty"
+            InvalidParamException, match="Invalid input, text can not be empty"
     ):
         engine.anonymize("", [analyzer_result], {})
 
@@ -84,7 +84,7 @@ def test_given_specific_anonymizer_then_we_use_it():
     # fmt: on
 )
 def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
-    original_text, start, end
+        original_text, start, end
 ):
     engine = AnonymizerEngine()
     analyzer_result = RecognizerResult("type", start, end, 0.5)
@@ -104,17 +104,20 @@ def test_given_several_anonymizers_then_we_use_the_correct_one():
     anonymizer_config.anonymizer_class = MockAnonymizer
     text = (
         AnonymizerEngine()
-        .anonymize(
+            .anonymize(
             "Number: 0554555556", [analyzer_result], {"PHONE_NUMBER": anonymizer_config}
         )
-        .text
+            .text
     )
     assert text == "Number: I am your new text!"
 
 
 class MockAnonymizer:
-    def anonymize(self, text: str, params: Dict = None):
+    def manipulate(self, text: str, params: Dict = None):
         return "I am your new text!"
 
     def validate(self, params):
         pass
+
+    def manipulator_name(self):
+        return "name"

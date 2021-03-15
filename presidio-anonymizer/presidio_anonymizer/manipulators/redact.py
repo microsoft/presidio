@@ -1,13 +1,13 @@
 """Replaces the PII text entity with empty string."""
 from typing import Dict
 
-from presidio_anonymizer.anonymizers import Anonymizer
+from presidio_anonymizer.manipulators import Manipulator, ManipulatorType
 
 
-class Redact(Anonymizer):
+class Redact(Manipulator):
     """Redact the string - empty value."""
 
-    def anonymize(self, text: str = None, params: Dict = None) -> str:
+    def manipulate(self, text: str = None, params: Dict = None) -> str:
         """:return: an empty value."""
         return ""
 
@@ -15,6 +15,10 @@ class Redact(Anonymizer):
         """Redact does not require any paramters so no validation is needed."""
         pass
 
-    def anonymizer_name(self) -> str:
+    def manipulator_name(self) -> str:
         """Return anonymizer name."""
         return "redact"
+
+    def manipulator_type(self) -> ManipulatorType:
+        """Return anonymizer name."""
+        return ManipulatorType.Anonymize

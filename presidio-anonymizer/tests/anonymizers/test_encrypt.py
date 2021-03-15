@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from presidio_anonymizer.anonymizers.encrypt import Encrypt
+from presidio_anonymizer.manipulators.encrypt import Encrypt
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.services.aes_cipher import AESCipher
 
@@ -14,7 +14,7 @@ def test_given_anonymize_then_aes_encrypt_called_and_its_result_is_returned(
     expected_anonymized_text = "encrypted_text"
     mock_encrypt.return_value = expected_anonymized_text
 
-    anonymized_text = Encrypt().anonymize(text="text", params={"key": "key"})
+    anonymized_text = Encrypt().manipulate(text="text", params={"key": "key"})
 
     assert anonymized_text == expected_anonymized_text
 

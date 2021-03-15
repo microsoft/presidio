@@ -2,7 +2,7 @@
 import json
 from typing import List
 
-from presidio_anonymizer.entities.decrypt.response import DecryptedEntity
+from presidio_anonymizer.entities.decrypt.decrypted_entity import DecryptedEntity
 
 
 class DecryptResult:

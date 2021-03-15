@@ -2,15 +2,16 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.anonymizers import Anonymizer
+from presidio_anonymizer.entities.manipulator.manipulated_result import \
+    ManipulatedResult
+from presidio_anonymizer.entities.manipulator.text_manipulation_data import \
+    TextManipulationData
+from presidio_anonymizer.manipulators import Manipulator
 from presidio_anonymizer.entities import (
     RecognizerResult,
-    AnalyzerResults,
-    AnonymizerResult,
-    AnonymizedTextBuilder,
     AnonymizerConfig,
-    AnonymizedEntity,
 )
+from presidio_anonymizer.services.text_manipulator import TextManipulator
 
 DEFAULT = "replace"
 
@@ -27,11 +28,11 @@ class AnonymizerEngine:
         self.logger = logging.getLogger("presidio-anonymizer")
 
     def anonymize(
-        self,
-        text: str,
-        analyzer_results: List[RecognizerResult],
-        anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
-    ) -> AnonymizerResult:
+            self,
+            text: str,
+            analyzer_results: List[RecognizerResult],
+            anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
+    ) -> ManipulatedResult:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
@@ -43,91 +44,66 @@ class AnonymizerEngine:
         :return: the anonymized text and a list of information
         about the anonymized entities.
         """
-        text_builder = AnonymizedTextBuilder(original_text=text)
-        if not anonymizers_config:
-            anonymizers_config = {}
+        manipulation_entities = self._remove_conflicts_and_get_text_manipulation_data(
+            analyzer_results,
+            anonymizers_config)
 
-        analyzer_results = AnalyzerResults(analyzer_results).to_sorted_unique_results(
-            True
-        )
+        return TextManipulator().manipulate_text(text, manipulation_entities)
 
-        anonymizer_result = AnonymizerResult()
+    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results,
+                                                         anonymizers_config: Dict):
+        """
+        Iterate the list and create a sorted unique results list from it.
 
-        # loop over each analyzer result
-        # get AnonymizerConfig for the analyzer result
-        # trigger the anonymize method on the section of the text
-        # perform the anonymization
-        # concat the anonymized string into the output string
-        for analyzer_result in analyzer_results:
-            text_to_anonymize = text_builder.get_text_in_position(
-                analyzer_result.start, analyzer_result.end
-            )
-
-            anonymizer_config = self.__get_anonymizer_config_by_entity_type(
-                analyzer_result.entity_type, anonymizers_config
-            )
-
-            self.logger.debug(
-                f"for analyzer result {analyzer_result} received config "
-                f"{anonymizer_config}"
-            )
-
-            anonymized_text = self.__extract_anonymizer_and_anonymize(
-                analyzer_result.entity_type, anonymizer_config, text_to_anonymize
-            )
-            index_from_end = text_builder.replace_text_get_insertion_index(
-                anonymized_text, analyzer_result.start, analyzer_result.end
-            )
-
-            # The following creates an intermediate list of anonymized entities,
-            # ordered from end to start, and the indexes will be normalized
-            # from start to end once the loop ends and the text length is deterministic.
-            result_item = AnonymizedEntity(
-                anonymizer=anonymizer_config.anonymizer_name,
-                entity_type=analyzer_result.entity_type,
-                start=0,
-                end=index_from_end,
-                anonymized_text=anonymized_text,
-            )
-
-            anonymizer_result.add_item(result_item)
-
-        anonymizer_result.set_text(text_builder.output_text)
-        anonymizer_result.normalize_item_indexes()
-        return anonymizer_result
+        Only insert results which are:
+        1. Indices are not contained in other result.
+        2. Have the same indices as other results but with larger score.
+        :return: List
+        """
+        unique_manipulation_elements = []
+        # This list contains all elements which we need to check a single result
+        # against. If a result is dropped, it can also be dropped from this list
+        # since it is intersecting with another result and we selected the other one.
+        other_elements = analyzer_results.copy()
+        for result in analyzer_results:
+            other_elements.remove(result)
+            result_conflicted = self.__is_result_conflicted_with_other_elements(
+                other_elements, result)
+            if not result_conflicted:
+                other_elements.append(result)
+                anonymizer = self.__get_anonymizer_config(result.entity_type,
+                                                          anonymizers_config)
+                manipulation_entity = TextManipulationData.create_from_anonymizer_data(
+                    result, anonymizer)
+                unique_manipulation_elements.append(manipulation_entity)
+            else:
+                self.logger.debug(
+                    f"removing element {result} from results list due to conflict"
+                )
+        return unique_manipulation_elements
 
     @staticmethod
     def get_anonymizers() -> List[str]:
         """Return a list of supported anonymizers."""
-        names = [p for p in Anonymizer.get_anonymizers().keys()]
+        names = [p for p in Manipulator.get_anonymizers().keys()]
         return names
 
-    def __extract_anonymizer_and_anonymize(
-        self,
-        entity_type: str,
-        anonymizer_config: AnonymizerConfig,
-        text_to_anonymize: str,
-    ) -> str:
-        self.logger.debug(f"getting anonymizer for {entity_type}")
-        anonymizer = anonymizer_config.anonymizer_class()
-        self.logger.debug(f"validating anonymizer {anonymizer} for {entity_type}")
-        anonymizer.validate(params=anonymizer_config.params)
-        params = anonymizer_config.params
-        params["entity_type"] = entity_type
-        self.logger.debug(f"anonymizing {entity_type} with {anonymizer}")
-        anonymized_text = anonymizer.anonymize(params=params, text=text_to_anonymize)
-        return anonymized_text
+    @staticmethod
+    def __is_result_conflicted_with_other_elements(other_elements, result):
+        return any([result.has_conflict(other_element) for other_element in
+                    other_elements])
 
     @staticmethod
-    def __get_anonymizer_config_by_entity_type(
-        entity_type: str, anonymizers_config: Dict[str, AnonymizerConfig]
+    def __get_anonymizer_config(
+            entity_type: str, anonymizers_config: Dict[str, AnonymizerConfig] = {}
     ) -> AnonymizerConfig:
         # We try to get the anonymizer from the list by entity_type.
         # If it does not exist, we try to get the default from the list.
         # If there is no default we fallback into the current DEFAULT which is replace.
-        anonymizer = anonymizers_config.get(entity_type)
-        if not anonymizer:
-            anonymizer = anonymizers_config.get("DEFAULT")
-            if not anonymizer:
-                anonymizer = AnonymizerConfig(DEFAULT, {})
-        return anonymizer
+        if anonymizers_config:
+            anonymizer = anonymizers_config.get(entity_type)
+            if anonymizer:
+                return anonymizer
+            else:
+                return anonymizers_config.get("DEFAULT")
+        return AnonymizerConfig(DEFAULT, {})

@@ -4,16 +4,17 @@ import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple, Union, Dict, List
 
 from flask import Flask, request, jsonify
 
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.anonymizer_decryptor import AnonymizerDecryptor
-from presidio_anonymizer.entities import AnonymizerRequest, AnonymizerResult
+from presidio_anonymizer.decryptor_engine import AnonymizerDecryptor
+from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.decrypt.request import DecryptRequest
-from presidio_anonymizer.entities.decrypt.response import DecryptResult
+from presidio_anonymizer.entities.decrypt.decrypt_entity import DecryptEntity
+from presidio_anonymizer.entities.decrypt.decrypt_result import DecryptResult
+
 from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
@@ -56,10 +57,10 @@ class Server:
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
 
-            anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
+            anonymizers_config = AnonymizerConfig.get_anonymizer_configs_from_json(
                 content
             )
-            analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
+            analyzer_results = RecognizerResult.handle_analyzer_results_json(content)
             anoymizer_result = self.engine.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
@@ -72,9 +73,10 @@ class Server:
             content = request.get_json()
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
-            decrypt_request = DecryptRequest.from_json(content)
+            text = content.get("text")
+            decrypt_entities = DecryptEntity.multiple_from_json(content)
             decrypt_response = self.decryptor.decrypt(
-                decrypt_request
+                text, decrypt_entities
             )
             return decrypt_response.to_json()
 

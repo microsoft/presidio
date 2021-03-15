@@ -1,28 +1,29 @@
 from typing import Dict
 
-from presidio_anonymizer.anonymizers import Anonymizer
+from presidio_anonymizer.manipulators import Manipulator
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.manipulators import ManipulatorType
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
 
 
-class Encrypt(Anonymizer):
+class Decrypt(Manipulator):
     """Anonymizes text to an encrypted form, or it to be restored using decrypted."""
 
     KEY = "key"
 
-    def anonymize(self, text: str = None, params: Dict = None) -> str:
+    def manipulate(self, text: str = None, params: Dict = None) -> str:
         """
-        Anonymize the text with an encrypted text.
+        Decrypt the text.
 
-        :param text: The text for encryption.
+        :param text: The text for decryption.
         :param params:
             * *key* The key supplied by the user for the encryption.
         :return: The encrypted text
         """
         encoded_key = params.get(self.KEY).encode("utf8")
-        encrypted_text = AESCipher.encrypt(encoded_key, text)
-        return encrypted_text
+        decrypted_text = AESCipher.decrypt(key=encoded_key, text=text)
+        return decrypted_text
 
     def validate(self, params: Dict = None) -> None:
         """
@@ -40,6 +41,10 @@ class Encrypt(Anonymizer):
                 f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
             )
 
-    def anonymizer_name(self) -> str:
-        """Return anonymizer name."""
+    def manipulator_name(self) -> str:
+        """Return decryptor name."""
         return "encrypt"
+
+    def manipulator_type(self) -> ManipulatorType:
+        """Return decryptor type."""
+        return ManipulatorType.Decrypt

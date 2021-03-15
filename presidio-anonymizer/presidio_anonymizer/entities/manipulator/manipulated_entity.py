@@ -1,9 +1,9 @@
-class AnonymizedEntity:
+class ManipulatedEntity:
     """Information about the anonymized entity."""
 
     def __init__(
         self,
-        anonymizer: str,
+        manipulator: str,
         entity_type: str,
         start: int,
         end: int,
@@ -11,13 +11,13 @@ class AnonymizedEntity:
     ):
         """Create AnonymizerResult.
 
-        :param anonymizer: name of the anonymizer.
+        :param manipulator: name of the anonymizer.
         :param entity_type: type of the PII entity.
         :param start: start index in the anonymized text.
         :param end: end index in the anonymized text.
         :param anonymized_text: the PII anonymized text.
         """
-        self.anonymizer = anonymizer
+        self.anonymizer = manipulator
         self.entity_type = entity_type
         self.start = start
         self.end = end

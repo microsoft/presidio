@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.anonymizers import Mask
+from presidio_anonymizer.manipulators import Mask
 from presidio_anonymizer.entities import InvalidParamException
 
 
@@ -38,7 +38,7 @@ def test_when_given_valid_value_then_expected_string_returned(
         "from_end": from_end,
     }
 
-    actual_anonymized_text = Mask().anonymize(text=text, params=params)
+    actual_anonymized_text = Mask().manipulate(text=text, params=params)
 
     assert anonymized_text == actual_anonymized_text
 
@@ -118,4 +118,4 @@ def _get_default_mask_parameters():
 
 
 def test_when_validate_anonymizer_then_correct_name():
-    assert Mask().anonymizer_name() == "mask"
+    assert Mask().manipulator_name() == "mask"

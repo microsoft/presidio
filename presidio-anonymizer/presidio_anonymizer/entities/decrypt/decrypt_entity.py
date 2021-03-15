@@ -1,6 +1,9 @@
 import logging
+from typing import Dict, List
 
-from presidio_anonymizer.entities import InvalidParamException, AnonymizedEntity
+from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities.manipulator.manipulated_entity import \
+    ManipulatedEntity
 
 
 class DecryptEntity:
@@ -66,8 +69,31 @@ class DecryptEntity:
         return cls(key, start, end)
 
     @classmethod
+    def multiple_from_json(cls, json: Dict) -> List['DecryptEntity']:
+        """
+        Create DecryptEntity list.
+
+        :param json e.g.:
+        {
+            "text": text,
+            "items": [{
+                "start": 0,
+                "end": len(text),
+                "key": "1111111111111111",
+            }],
+        }
+        :return: DecryptRequest
+        """
+        items = []
+        decrypt_entity = json.get("items")
+        if decrypt_entity:
+            for result in decrypt_entity:
+                items.append(DecryptEntity.from_json(result))
+        return items
+
+    @classmethod
     def from_anonymizer_entity(cls, key: str,
-                               entity: AnonymizedEntity) -> 'DecryptEntity':
+                               entity: ManipulatedEntity) -> 'DecryptEntity':
         """
         Create DecryptEntity from AnonymizerEntity.
 
