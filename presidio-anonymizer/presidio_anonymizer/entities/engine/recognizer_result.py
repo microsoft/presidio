@@ -7,9 +7,10 @@ import logging
 from typing import Dict, List
 
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities.engine.text_metadata import TextMetadata
 
 
-class RecognizerResult:
+class RecognizerResult(TextMetadata):
     """
     Recognizer Result represents the findings of the detected entity.
 
@@ -149,6 +150,15 @@ class RecognizerResult:
         raise InvalidParamException(
             f"Invalid input, analyzer result must contain {field_name}"
         )
+
+    def get_start(self):
+        return self.entity_type
+
+    def get_end(self):
+        return self.entity_type
+
+    def get_entity_type(self):
+        return self.entity_type
 
     @classmethod
     def handle_analyzer_results_json(cls, data: List[Dict]) -> List['RecognizerResult']:

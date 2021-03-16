@@ -8,13 +8,13 @@ from presidio_anonymizer.entities import (
     InvalidParamException,
     RecognizerResult,
 )
-from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
-    ManipulatedResultItem
-from presidio_anonymizer.entities.manipulator.manipulator_result import \
-    ManipulatorResult
-from presidio_anonymizer.entities.manipulator.operator_metadata import OperatorMetadata
-from presidio_anonymizer.entities.manipulator.text_metadata import \
+from presidio_anonymizer.entities.engine.result.anonymize_result_item import \
+    AnonymizeResultItem
+from presidio_anonymizer.entities.engine.result.engine_result import \
+    EngineResult
+from presidio_anonymizer.entities.engine.text_metadata import \
     TextMetadata
+from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 
 
 def test_given_request_anonymizers_return_list():
@@ -153,18 +153,19 @@ def test_given_several_analyzer_results_then_check_we_filter_them_properly_and_g
 class MockTextManipulator:
     def operate(self, text: str,
                 text_metadata: List[TextMetadata],
-                operators: Dict[str, OperatorMetadata]) -> ManipulatorResult:
+                operators: Dict[str, OperatorMetadata]) -> EngineResult:
         assert text == "hello world, my name is Jane Doe. My number is: 034453334"
         assert len(text_metadata) == 4
-        expected = [TextMetadata(start=48, end=57, entity_type="PHONE_NUMBER"),
-                    TextMetadata(start=18, end=32, entity_type="BLA"),
-                    TextMetadata(start=23, end=35, entity_type="BLA"),
-                    TextMetadata(start=28, end=36, entity_type="BLA")]
+        expected = [
+            RecognizerResult(start=48, end=57, entity_type="PHONE_NUMBER", score=0.95),
+            RecognizerResult(start=18, end=32, entity_type="BLA", score=0.8),
+            RecognizerResult(start=23, end=35, entity_type="BLA", score=0.8),
+            RecognizerResult(start=28, end=36, entity_type="BLA", score=0.8)]
         assert all(elem in text_metadata for elem in expected)
         assert len(operators) == 1
         assert operators["DEFAULT"]
-        return ManipulatorResult("Number: I am your new text!",
-                                 [ManipulatedResultItem("hash", "type", 0, 35, "text")])
+        return EngineResult("Number: I am your new text!",
+                            [AnonymizeResultItem(0, 35, "text", "type", "hash")])
 
 
 class MockAnonymizer:

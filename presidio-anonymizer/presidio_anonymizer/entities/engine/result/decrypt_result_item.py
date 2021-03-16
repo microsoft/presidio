@@ -1,7 +1,6 @@
 """"Result item from the /decrypt method."""
-from presidio_anonymizer.entities.engine.engine_result_item import EngineResultItem
-from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
-    ManipulatedResultItem
+from presidio_anonymizer.entities.engine.result.engine_result_item import \
+    EngineResultItem
 
 
 class DecryptResultItem(EngineResultItem):
@@ -11,6 +10,7 @@ class DecryptResultItem(EngineResultItem):
             self,
             start: int,
             end: int,
+            entity_type: str,
             decrypted_text: str,
     ):
         """Create DecryptedEntity.
@@ -22,14 +22,13 @@ class DecryptResultItem(EngineResultItem):
         self.start = start
         self.end = end
         self.decrypted_text = decrypted_text
+        self.entity_type = entity_type
 
     def __eq__(self, other: 'DecryptResultItem') -> bool:
         return self.start == other.start \
                and self.end == other.end \
+               and self.entity_type == other.entity_type \
                and self.decrypted_text == other.decrypted_text
 
-    @classmethod
-    def from_manipulated_entity(cls,
-                                manipulated_entity: ManipulatedResultItem) -> 'DecryptResultItem':
-        return cls(manipulated_entity.start, manipulated_entity.end,
-                   manipulated_entity.manipulated_text)
+    def get_operated_text(self):
+        return self.decrypted_text

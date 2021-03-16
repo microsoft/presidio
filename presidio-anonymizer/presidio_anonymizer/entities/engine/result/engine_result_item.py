@@ -7,3 +7,6 @@ class EngineResultItem(ABC):
     def __eq__(self, other):
         pass
 
+    @abstractmethod
+    def get_operated_text(self):
+        pass

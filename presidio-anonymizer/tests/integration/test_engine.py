@@ -7,9 +7,9 @@ from presidio_anonymizer.entities import (
     RecognizerResult,
     AnonymizerConfig,
 )
-from presidio_anonymizer.entities.engine.anonymize_result_item import \
+from presidio_anonymizer.entities.engine.result.anonymize_result_item import \
     AnonymizeResultItem
-from presidio_anonymizer.entities.engine.engine_result import EngineResult
+from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from tests.integration.file_utils import get_scenario_file_content
 

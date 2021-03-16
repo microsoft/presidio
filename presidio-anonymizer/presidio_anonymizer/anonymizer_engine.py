@@ -2,17 +2,13 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.entities.engine.anonymize_result_item import \
-    AnonymizeResultItem
-from presidio_anonymizer.entities.engine.engine_result import EngineResult
-from presidio_anonymizer.entities.manipulator.operator_metadata import OperatorMetadata
-from presidio_anonymizer.entities.manipulator.text_metadata import \
-    TextMetadata
-from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.entities import (
     RecognizerResult,
     AnonymizerConfig, InvalidParamException,
 )
+from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
+from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
+from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.operators.operators_factory import OperatorsFactory
 from presidio_anonymizer.services.text_engine import TextEngine
 
@@ -48,23 +44,16 @@ class AnonymizerEngine:
         :return: the anonymized text and a list of information
         about the anonymized entities.
         """
-        text_metadata_entities = self._remove_conflicts_and_get_text_manipulation_data(
-            analyzer_results,
-            anonymizers_config)
+        analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
+            analyzer_results)
 
         operators_metadata = self.__get_operators_metadata(anonymizers_config)
 
-        manipulation_result = self.text_engine.operate(text,
-                                                       text_metadata_entities,
-                                                       operators_metadata)
-        engine_result = EngineResult(manipulation_result.text)
-        for entity in manipulation_result.items:
-            anonymized_entity = AnonymizeResultItem.from_manipulated_entity(entity)
-            engine_result.append_item(anonymized_entity)
-        return engine_result
+        return self.text_engine.operate(text,
+                                        analyzer_results,
+                                        operators_metadata)
 
-    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results,
-                                                         anonymizers_config: Dict):
+    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results):
         """
         Iterate the list and create a sorted unique results list from it.
 
@@ -84,8 +73,7 @@ class AnonymizerEngine:
                 other_elements, result)
             if not result_conflicted:
                 other_elements.append(result)
-                text_metadata = TextMetadata(result.start, result.end, result.entity_type)
-                unique_text_metadata_elements.append(text_metadata)
+                unique_text_metadata_elements.append(result)
             else:
                 self.logger.debug(
                     f"removing element {result} from results list due to conflict"
@@ -106,12 +94,13 @@ class AnonymizerEngine:
     def __get_operators_metadata(self,
                                  anonymizers_config: Dict[str, AnonymizerConfig]) -> \
             Dict[str, OperatorMetadata]:
-        operators_metadata = {"DEFAULT":  OperatorMetadata(OperatorType.Anonymize, {},
-                                                             DEFAULT)}
+        operators_metadata = {"DEFAULT": OperatorMetadata(OperatorType.Anonymize, {},
+                                                          DEFAULT)}
         if anonymizers_config:
             for entity_type, anonymizer_config in anonymizers_config.items():
                 if not anonymizer_config:
-                    raise InvalidParamException(f"Invalid anonymizer data for '{entity_type}'")
+                    raise InvalidParamException(
+                        f"Invalid anonymizer data for '{entity_type}'")
                 operator_metadata = OperatorMetadata.from_anonymizer_data(
                     anonymizer_config)
                 operators_metadata[entity_type] = operator_metadata

@@ -2,13 +2,11 @@ import logging
 from typing import Dict, List
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
-    ManipulatedResultItem
+from presidio_anonymizer.entities.engine.text_metadata import TextMetadata
 
 
-class DecryptEntity:
+class DecryptEntity(TextMetadata):
     """Information about the decrypt entity."""
-
     def __init__(self, key: str, start: int,
                  end: int, entity_type: str) -> 'DecryptEntity':
         """
@@ -35,7 +33,7 @@ class DecryptEntity:
             self.__validate_field("start")
         if self.end is None:
             self.__validate_field("end")
-        if self.entity_type in None:
+        if self.entity_type is None:
             self.__validate_field("entity_type")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
@@ -53,6 +51,15 @@ class DecryptEntity:
             f"Invalid input, decrypt entity must contain {field_name}"
         )
 
+    def get_start(self):
+        return self.entity_type
+
+    def get_end(self):
+        return self.entity_type
+
+    def get_entity_type(self):
+        return self.entity_type
+
     @classmethod
     def from_json(cls, json: dict) -> 'DecryptEntity':
         """
@@ -69,7 +76,8 @@ class DecryptEntity:
         key = json.get("key")
         start = json.get("start")
         end = json.get("end")
-        return cls(key, start, end)
+        entity_type = json.get("entity_type")
+        return cls(key, start, end, entity_type)
 
     @classmethod
     def multiple_from_json(cls, json: Dict) -> List['DecryptEntity']:
@@ -94,14 +102,4 @@ class DecryptEntity:
                 items.append(DecryptEntity.from_json(result))
         return items
 
-    @classmethod
-    def from_anonymizer_entity(cls, key: str,
-                               entity: ManipulatedResultItem) -> 'DecryptEntity':
-        """
-        Create DecryptEntity from AnonymizerEntity.
 
-        :param key: key yo decrypt the text with (the one which encrypted the text).
-        :param entity: AnonymizedEntity returned from the anonymizer /anonymize method.
-        :return: DecryptEntity.
-        """
-        return cls(key, entity.start, entity.end)

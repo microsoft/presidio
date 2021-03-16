@@ -118,12 +118,13 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
             "start": 0,
             "end": len(text),
             "key": "1111111111111111",
+            "entity_type": "NUMBER"
         }],
     }
 
     response_status, response_content = decrypt(json.dumps(request_body))
 
-    expected_response = """{"text": "text_for_encryption", "items": [{"start": 0, "end": 19, "decrypted_text": "text_for_encryption"}]}"""
+    expected_response = """{"text": "text_for_encryption", "items": [{"start": 0, "end": 19, "decrypted_text": "text_for_encryption","entity_type":"NUMBER"}]}"""
 
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
@@ -137,6 +138,7 @@ def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_retur
         "items": [{
             "start": 0,
             "end": len(text),
+            "entity_type": "number",
             "key": "invalidkey",
         }],
     }

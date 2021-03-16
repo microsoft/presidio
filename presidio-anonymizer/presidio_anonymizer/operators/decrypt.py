@@ -9,7 +9,7 @@ from presidio_anonymizer.services.validators import validate_parameter
 
 class Decrypt(Operator):
     """Anonymizes text to an encrypted form, or it to be restored using decrypted."""
-
+    NAME = "decrypt"
     KEY = "key"
 
     def operate(self, text: str = None, params: Dict = None) -> str:
@@ -43,7 +43,7 @@ class Decrypt(Operator):
 
     def operator_name(self) -> str:
         """Return decryptor name."""
-        return "decrypt"
+        return self.NAME
 
     def operator_type(self) -> OperatorType:
         """Return decryptor type."""

@@ -4,15 +4,15 @@ import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
-from typing import Tuple, Union, Dict, List
+from typing import Tuple
 
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.decryptor_engine import DecryptEngine
 from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.decrypt.decrypt_entity import DecryptEntity
+from presidio_anonymizer.entities.engine.decrypt_entity import DecryptEntity
 
 from presidio_anonymizer.entities.error_response import ErrorResponse
 

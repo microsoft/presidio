@@ -2,9 +2,6 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.operators import Operator
-from presidio_anonymizer.entities import InvalidParamException
-
 
 class AnonymizerConfig:
     """Handle the anonymizers data - anonymizer class and params."""

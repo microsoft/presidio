@@ -1,7 +1,6 @@
 """"Result item from the /anonymizer method."""
-from presidio_anonymizer.entities.engine.engine_result_item import EngineResultItem
-from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
-    ManipulatedResultItem
+from presidio_anonymizer.entities.engine.result.engine_result_item import \
+    EngineResultItem
 
 
 class AnonymizeResultItem(EngineResultItem):
@@ -34,9 +33,5 @@ class AnonymizeResultItem(EngineResultItem):
                and self.anonymized_text == other.anonymized_text \
                and self.entity_type == other.entity_type
 
-    @classmethod
-    def from_manipulated_entity(cls,
-                                manipulated_entity: ManipulatedResultItem) -> 'AnonymizeResultItem':
-        return cls(manipulated_entity.start, manipulated_entity.end,
-                   manipulated_entity.manipulated_text, manipulated_entity.entity_type,
-                   manipulated_entity.manipulator)
+    def get_operated_text(self):
+        return self.anonymized_text

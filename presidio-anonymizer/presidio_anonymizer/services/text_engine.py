@@ -1,13 +1,13 @@
 import logging
 from typing import List, Dict
 
-from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
-    ManipulatedResultItem
-from presidio_anonymizer.entities.manipulator.manipulator_result import \
-    ManipulatorResult
-from presidio_anonymizer.entities.manipulator.operator_metadata import OperatorMetadata
-from presidio_anonymizer.entities.manipulator.text_metadata import \
+from presidio_anonymizer.entities.engine.result.engine_result import \
+    EngineResult
+from presidio_anonymizer.entities.engine.result.result_item_builder import \
+    ResultItemBuilder
+from presidio_anonymizer.entities.engine.text_metadata import \
     TextMetadata
+from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 from presidio_anonymizer.operators.operators_factory import OperatorsFactory
 from presidio_anonymizer.services.text_interpolator import TextInterpolator
 
@@ -21,9 +21,9 @@ class TextEngine:
     def operate(self, text: str,
                 text_metadata: List[TextMetadata],
                 operators_metadata: Dict[
-                            str, OperatorMetadata]) -> ManipulatorResult:
+                    str, OperatorMetadata]) -> EngineResult:
         text_interpolator = TextInterpolator(original_text=text)
-        manipulation_result = ManipulatorResult()
+        manipulation_result = EngineResult()
         for manipulation in sorted(text_metadata, reverse=True):
             text_to_manipulate = text_interpolator.get_text_in_position(
                 manipulation.start, manipulation.end
@@ -41,17 +41,14 @@ class TextEngine:
                 manipulated_text, manipulation.start, manipulation.end
             )
 
-            # The following creates an intermediate list of anonymized entities,
+            # The following creates an intermediate list of result entities,
             # ordered from end to start, and the indexes will be normalized
             # from start to end once the loop ends and the text length is deterministic.
-            result_item = ManipulatedResultItem(
-                manipulator=operator_metadata.operator_name,
-                entity_type=manipulation.entity_type,
-                start=0,
-                end=index_from_end,
-                manipulated_text=manipulated_text,
-            )
-
+            result_item_builder = ResultItemBuilder(operator_metadata.operator_type)
+            result_item = result_item_builder.set_operator_name(
+            operator_metadata.operator_name).set_entity_type(
+            manipulation.get_entity_type()).set_end(
+            index_from_end).manipulated_text(manipulated_text).build()
             manipulation_result.add_item(result_item)
 
         manipulation_result.set_text(text_interpolator.output_text)

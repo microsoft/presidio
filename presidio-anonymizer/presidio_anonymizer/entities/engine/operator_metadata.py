@@ -1,9 +1,8 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities import AnonymizerConfig, InvalidParamException
-from presidio_anonymizer.entities.decrypt.decrypt_entity import DecryptEntity
-from presidio_anonymizer.operators import Operator, Encrypt, OperatorType
+from presidio_anonymizer.entities import AnonymizerConfig
+from presidio_anonymizer.operators import Encrypt, OperatorType
 from presidio_anonymizer.operators.decrypt import Decrypt
 
 
@@ -34,6 +33,4 @@ class OperatorMetadata:
 
     @classmethod
     def from_decrypt_entity(cls, key: str):
-        return cls(OperatorType.Decrypt, {Encrypt.KEY: key}, Decrypt)
-
-
+        return cls(OperatorType.Decrypt, {Decrypt.KEY: key}, Decrypt.NAME)
