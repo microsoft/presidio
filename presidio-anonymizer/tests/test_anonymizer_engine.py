@@ -12,8 +12,9 @@ from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
     ManipulatedResultItem
 from presidio_anonymizer.entities.manipulator.manipulator_result import \
     ManipulatorResult
-from presidio_anonymizer.entities.manipulator.text_manipulation_item import \
-    TextManipulationItem
+from presidio_anonymizer.entities.manipulator.operator_metadata import OperatorMetadata
+from presidio_anonymizer.entities.manipulator.text_metadata import \
+    TextMetadata
 
 
 def test_given_request_anonymizers_return_list():
@@ -102,26 +103,43 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
         engine.anonymize(original_text, [analyzer_result], {})
 
 
-def test_given_several_anonymizers_then_we_use_the_correct_one():
+@pytest.mark.parametrize(
+    # fmt: off
+    "anonymizers, result_text",
+    [
+        ({"number": AnonymizerConfig("fake")}, "Invalid operator class 'fake'."),
+        ({"number": None}, "Invalid anonymizer data for 'number'"),
+    ],
+    # fmt: on
+)
+def test_given_invalid_json_for_anonymizers_then_we_fail(anonymizers, result_text):
+    with pytest.raises(InvalidParamException, match=result_text):
+        AnonymizerEngine().anonymize("this is my text",
+                                     [RecognizerResult("number", 0, 4, 0)],
+                                     anonymizers)
+
+
+def test_given_several_analyzer_results_then_check_we_filter_them_properly_and_get_correct_mocked_result():
     analyzer_results = RecognizerResult.handle_analyzer_results_json(
-        [{"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"},
+        [{"start": 48, "end": 57, "score": 0.55, "entity_type": "SSN"},
          {"start": 24, "end": 32, "score": 0.6, "entity_type": "FULL_NAME"},
          {"start": 24, "end": 28, "score": 0.9, "entity_type": "FIRST_NAME"},
          {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
          {"start": 24, "end": 30, "score": 0.8, "entity_type": "NAME"},
          {"start": 18, "end": 32, "score": 0.8, "entity_type": "BLA"},
          {"start": 23, "end": 35, "score": 0.8, "entity_type": "BLA"},
-         {"start": 28, "end": 36, "score": 0.8, "entity_type": "BLA"}],
+         {"start": 28, "end": 36, "score": 0.8, "entity_type": "BLA"},
+         {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"}],
     )
     anonymizer_config = AnonymizerConfig("replace", {})
-    anonymizer_config.anonymizer_class = MockAnonymizer
+    anonymizer_config.anonymizer_name = ""
     engine = AnonymizerEngine()
-    engine.text_manipulator = MockTextManipulator()
+    engine.text_engine = MockTextManipulator()
     result = engine.anonymize(
-            "hello world, my name is Jane Doe. My number is: 034453334",
-            analyzer_results,
-            {"DEFAULT": anonymizer_config}
-        )
+        "hello world, my name is Jane Doe. My number is: 034453334",
+        analyzer_results,
+        {"DEFAULT": anonymizer_config}
+    )
 
     assert result.text == "Number: I am your new text!"
     assert len(result.items) == 1
@@ -133,16 +151,20 @@ def test_given_several_anonymizers_then_we_use_the_correct_one():
 
 
 class MockTextManipulator:
-    def manipulate_text(self, text: str,
-                        manipulations: List[TextManipulationItem]) -> ManipulatorResult:
+    def operate(self, text: str,
+                text_metadata: List[TextMetadata],
+                operators: Dict[str, OperatorMetadata]) -> ManipulatorResult:
         assert text == "hello world, my name is Jane Doe. My number is: 034453334"
-        assert len(manipulations) == 4
-        expected = [RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER"),
-             RecognizerResult(start=18, end=32, score=0.8, entity_type="BLA"),
-             RecognizerResult(start=23, end=35, score=0.8, entity_type="BLA"),
-             RecognizerResult(start=28, end=36, score=0.8, entity_type="BLA")]
-        assert all(elem in manipulations for elem in expected)
-        return ManipulatorResult("Number: I am your new text!", [ManipulatedResultItem("hash", "type", 0, 35, "text")])
+        assert len(text_metadata) == 4
+        expected = [TextMetadata(start=48, end=57, entity_type="PHONE_NUMBER"),
+                    TextMetadata(start=18, end=32, entity_type="BLA"),
+                    TextMetadata(start=23, end=35, entity_type="BLA"),
+                    TextMetadata(start=28, end=36, entity_type="BLA")]
+        assert all(elem in text_metadata for elem in expected)
+        assert len(operators) == 1
+        assert operators["DEFAULT"]
+        return ManipulatorResult("Number: I am your new text!",
+                                 [ManipulatedResultItem("hash", "type", 0, 35, "text")])
 
 
 class MockAnonymizer:

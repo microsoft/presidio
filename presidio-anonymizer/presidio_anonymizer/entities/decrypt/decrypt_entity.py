@@ -10,7 +10,7 @@ class DecryptEntity:
     """Information about the decrypt entity."""
 
     def __init__(self, key: str, start: int,
-                 end: int) -> 'DecryptEntity':
+                 end: int, entity_type: str) -> 'DecryptEntity':
         """
         Create DecryptEntity.
 
@@ -22,6 +22,7 @@ class DecryptEntity:
         self.start = start
         self.end = end
         self.key = key
+        self.entity_type = entity_type
         self.__validate_fields()
 
     def __gt__(self, other) -> bool:
@@ -34,6 +35,8 @@ class DecryptEntity:
             self.__validate_field("start")
         if self.end is None:
             self.__validate_field("end")
+        if self.entity_type in None:
+            self.__validate_field("entity_type")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
                 f"Invalid input, decrypt entity start and end must be positive"

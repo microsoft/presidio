@@ -19,7 +19,6 @@ class AnonymizerConfig:
         :param params: the parameters to use in the selected anonymizer class
         """
         self.anonymizer_name = anonymizer_name
-        self.anonymizer_class = self.__get_anonymizer_class(anonymizer_name)
         self.params = params
         if not params:
             self.params = {}
@@ -42,26 +41,11 @@ class AnonymizerConfig:
             params.pop("type")
         return cls(anonymizer_name, params)
 
-    def __get_anonymizer_class(self, anonymizer_name: str) -> Operator:
-        """
-        Extract the anonymizer class from the anonymizers list.
-
-        :param anonymizer_name: a single anonymizer value
-        :return: Anonymizer
-        """
-        anonymizer_class = Operator.get_anonymizers().get(anonymizer_name)
-        if not anonymizer_class:
-            self.logger.error(f"No such anonymizer class {anonymizer_name}")
-            raise InvalidParamException(
-                f"Invalid anonymizer class '{anonymizer_name}'."
-            )
-        self.logger.debug(f"applying class {anonymizer_class}")
-        return anonymizer_class
 
     def __eq__(self, other):
         """Verify two AnonymizerConfig are equal."""
 
-        anonymizer_class_equals = self.anonymizer_class == other.anonymizer_class
+        anonymizer_class_equals = self.anonymizer_name == other.anonymizer_name
         return self.params == other.params and anonymizer_class_equals
 
     @classmethod

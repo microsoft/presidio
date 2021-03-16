@@ -5,14 +5,16 @@ from typing import List, Dict, Optional
 from presidio_anonymizer.entities.engine.anonymize_result_item import \
     AnonymizeResultItem
 from presidio_anonymizer.entities.engine.engine_result import EngineResult
-from presidio_anonymizer.entities.manipulator.text_manipulation_item import \
-    TextManipulationItem
-from presidio_anonymizer.operators import Operator
+from presidio_anonymizer.entities.manipulator.operator_metadata import OperatorMetadata
+from presidio_anonymizer.entities.manipulator.text_metadata import \
+    TextMetadata
+from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.entities import (
     RecognizerResult,
-    AnonymizerConfig,
+    AnonymizerConfig, InvalidParamException,
 )
-from presidio_anonymizer.services.text_manipulator import TextManipulator
+from presidio_anonymizer.operators.operators_factory import OperatorsFactory
+from presidio_anonymizer.services.text_engine import TextEngine
 
 DEFAULT = "replace"
 
@@ -27,7 +29,7 @@ class AnonymizerEngine:
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
-        self.text_manipulator = TextManipulator()
+        self.text_engine = TextEngine()
 
     def anonymize(
             self,
@@ -46,12 +48,15 @@ class AnonymizerEngine:
         :return: the anonymized text and a list of information
         about the anonymized entities.
         """
-        manipulation_entities = self._remove_conflicts_and_get_text_manipulation_data(
+        text_metadata_entities = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results,
             anonymizers_config)
 
-        manipulation_result = self.text_manipulator.manipulate_text(text,
-                                                                manipulation_entities)
+        operators_metadata = self.__get_operators_metadata(anonymizers_config)
+
+        manipulation_result = self.text_engine.operate(text,
+                                                       text_metadata_entities,
+                                                       operators_metadata)
         engine_result = EngineResult(manipulation_result.text)
         for entity in manipulation_result.items:
             anonymized_entity = AnonymizeResultItem.from_manipulated_entity(entity)
@@ -68,7 +73,7 @@ class AnonymizerEngine:
         2. Have the same indices as other results but with larger score.
         :return: List
         """
-        unique_manipulation_elements = []
+        unique_text_metadata_elements = []
         # This list contains all elements which we need to check a single result
         # against. If a result is dropped, it can also be dropped from this list
         # since it is intersecting with another result and we selected the other one.
@@ -79,21 +84,18 @@ class AnonymizerEngine:
                 other_elements, result)
             if not result_conflicted:
                 other_elements.append(result)
-                anonymizer = self.__get_anonymizer_config(result.entity_type,
-                                                          anonymizers_config)
-                manipulation_entity = TextManipulationItem.from_anonymizer_data(
-                    result, anonymizer)
-                unique_manipulation_elements.append(manipulation_entity)
+                text_metadata = TextMetadata(result.start, result.end, result.entity_type)
+                unique_text_metadata_elements.append(text_metadata)
             else:
                 self.logger.debug(
                     f"removing element {result} from results list due to conflict"
                 )
-        return unique_manipulation_elements
+        return unique_text_metadata_elements
 
     @staticmethod
     def get_anonymizers() -> List[str]:
         """Return a list of supported anonymizers."""
-        names = [p for p in Operator.get_anonymizers().keys()]
+        names = [p for p in OperatorsFactory.get_anonymizers().keys()]
         return names
 
     @staticmethod
@@ -101,17 +103,16 @@ class AnonymizerEngine:
         return any([result.has_conflict(other_element) for other_element in
                     other_elements])
 
-    @staticmethod
-    def __get_anonymizer_config(
-            entity_type: str, anonymizers_config: Dict[str, AnonymizerConfig] = {}
-    ) -> AnonymizerConfig:
-        # We try to get the anonymizer from the list by entity_type.
-        # If it does not exist, we try to get the default from the list.
-        # If there is no default we fallback into the current DEFAULT which is replace.
+    def __get_operators_metadata(self,
+                                 anonymizers_config: Dict[str, AnonymizerConfig]) -> \
+            Dict[str, OperatorMetadata]:
+        operators_metadata = {"DEFAULT":  OperatorMetadata(OperatorType.Anonymize, {},
+                                                             DEFAULT)}
         if anonymizers_config:
-            anonymizer = anonymizers_config.get(entity_type)
-            if anonymizer:
-                return anonymizer
-            else:
-                return anonymizers_config.get("DEFAULT")
-        return AnonymizerConfig(DEFAULT, {})
+            for entity_type, anonymizer_config in anonymizers_config.items():
+                if not anonymizer_config:
+                    raise InvalidParamException(f"Invalid anonymizer data for '{entity_type}'")
+                operator_metadata = OperatorMetadata.from_anonymizer_data(
+                    anonymizer_config)
+                operators_metadata[entity_type] = operator_metadata
+        return operators_metadata

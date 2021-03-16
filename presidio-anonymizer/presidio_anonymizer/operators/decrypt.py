@@ -43,7 +43,7 @@ class Decrypt(Operator):
 
     def operator_name(self) -> str:
         """Return decryptor name."""
-        return "encrypt"
+        return "decrypt"
 
     def operator_type(self) -> OperatorType:
         """Return decryptor type."""
