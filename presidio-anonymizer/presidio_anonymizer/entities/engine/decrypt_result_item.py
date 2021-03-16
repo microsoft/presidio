@@ -23,6 +23,11 @@ class DecryptResultItem(EngineResultItem):
         self.end = end
         self.decrypted_text = decrypted_text
 
+    def __eq__(self, other: 'DecryptResultItem') -> bool:
+        return self.start == other.start \
+               and self.end == other.end \
+               and self.decrypted_text == other.decrypted_text
+
     @classmethod
     def from_manipulated_entity(cls,
                                 manipulated_entity: ManipulatedEntity) -> 'DecryptResultItem':

@@ -9,7 +9,7 @@ from typing import Tuple, Union, Dict, List
 from flask import Flask, request, jsonify
 
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.decryptor_engine import AnonymizerDecryptor
+from presidio_anonymizer.decryptor_engine import DecryptEngine
 from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.decrypt.decrypt_entity import DecryptEntity
@@ -42,7 +42,7 @@ class Server:
         self.app = Flask(__name__)
         self.logger.info("Starting anonymizer engine")
         self.engine = AnonymizerEngine()
-        self.decryptor = AnonymizerDecryptor()
+        self.decryptor = DecryptEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")

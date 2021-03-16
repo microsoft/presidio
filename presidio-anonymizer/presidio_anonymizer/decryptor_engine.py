@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities.decrypt.decrypt_entity import DecryptEntity
 from presidio_anonymizer.entities.engine.decrypt_result_item import DecryptResultItem
 from presidio_anonymizer.entities.engine.engine_result import EngineResult
 from presidio_anonymizer.entities.manipulator.text_manipulation_data import \
@@ -11,7 +12,7 @@ from presidio_anonymizer.services.text_manipulator import TextManipulator
 from presidio_anonymizer.services.validators import validate_parameter
 
 
-class AnonymizerDecryptor:
+class DecryptEngine:
     """Decrypting text that was previously anonymized using a 'decrypt' anonymizer."""
 
     def __init__(self):
@@ -36,7 +37,7 @@ class AnonymizerDecryptor:
         decrypted_text = AESCipher.decrypt(key=encoded_key, text=text)
         return decrypted_text
 
-    def decrypt(self, text: str, entities: List[DecryptResultItem]) -> EngineResult:
+    def decrypt(self, text: str, entities: List[DecryptEntity]) -> EngineResult:
         manipulation_entities = []
         for entity in entities:
             manipulation_data = TextManipulationData.from_decrypt_entity(entity)
