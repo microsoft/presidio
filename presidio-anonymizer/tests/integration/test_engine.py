@@ -7,10 +7,9 @@ from presidio_anonymizer.entities import (
     RecognizerResult,
     AnonymizerConfig,
 )
-from presidio_anonymizer.entities.manipulator.manipulated_entity import \
-    ManipulatedEntity
-from presidio_anonymizer.entities.manipulator.manipulated_result import \
-    ManipulatedResult
+from presidio_anonymizer.entities.engine.anonymize_result_item import \
+    AnonymizeResultItem
+from presidio_anonymizer.entities.engine.engine_result import EngineResult
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from tests.integration.file_utils import get_scenario_file_content
 
@@ -39,15 +38,15 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
     items = []
     for item in expected_anonymize_result_json["items"]:
         items.append(
-            ManipulatedEntity(
-                item["anonymizer"],
-                item["entity_type"],
-                item["start"],
-                item["end"],
-                item["anonymized_text"],
+            AnonymizeResultItem(
+                anonymizer=item["anonymizer"],
+                entity_type=item["entity_type"],
+                start=item["start"],
+                end=item["end"],
+                anonynmized_text=item["anonymized_text"],
             )
         )
-    expected_anonymize_result = ManipulatedResult(
+    expected_anonymize_result = EngineResult(
         expected_anonymize_result_json["text"], items
     )
     engine = AnonymizerEngine()

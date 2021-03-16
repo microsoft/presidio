@@ -7,7 +7,7 @@ class ManipulatedEntity:
         entity_type: str,
         start: int,
         end: int,
-        anonymized_text: str,
+        manipulated_text: str,
     ):
         """Create AnonymizerResult.
 
@@ -15,13 +15,13 @@ class ManipulatedEntity:
         :param entity_type: type of the PII entity.
         :param start: start index in the anonymized text.
         :param end: end index in the anonymized text.
-        :param anonymized_text: the PII anonymized text.
+        :param manipulated_text: the PII anonymized text.
         """
-        self.anonymizer = manipulator
+        self.manipulator = manipulator
         self.entity_type = entity_type
         self.start = start
         self.end = end
-        self.anonymized_text = anonymized_text
+        self.manipulated_text = manipulated_text
 
     def __eq__(self, other) -> bool:
         """Verify two instances are equal.
@@ -31,9 +31,9 @@ class ManipulatedEntity:
         """
 
         return (
-            self.anonymizer == other.anonymizer
-            and self.entity_type == other.entity_type
-            and self.start == other.start
-            and self.end == other.end
-            and self.anonymized_text == other.anonymized_text
+                self.manipulator == other.manipulator
+                and self.entity_type == other.entity_type
+                and self.start == other.start
+                and self.end == other.end
+                and self.manipulated_text == other.manipulated_text
         )  # noqa: E127

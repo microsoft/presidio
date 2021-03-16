@@ -2,6 +2,9 @@
 import logging
 from typing import List, Dict, Optional
 
+from presidio_anonymizer.entities.engine.anonymize_result_item import \
+    AnonymizeResultItem
+from presidio_anonymizer.entities.engine.engine_result import EngineResult
 from presidio_anonymizer.entities.manipulator.manipulated_result import \
     ManipulatedResult
 from presidio_anonymizer.entities.manipulator.text_manipulation_data import \
@@ -48,7 +51,13 @@ class AnonymizerEngine:
             analyzer_results,
             anonymizers_config)
 
-        return TextManipulator().manipulate_text(text, manipulation_entities)
+        manipulation_result = TextManipulator().manipulate_text(text,
+                                                                manipulation_entities)
+        engine_result = EngineResult(manipulation_result.text, [])
+        for entity in manipulation_result.items:
+            anonymized_entity = AnonymizeResultItem.from_manipulated_entity(entity)
+            engine_result.append_item(anonymized_entity)
+        return engine_result
 
     def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results,
                                                          anonymizers_config: Dict):
@@ -73,7 +82,7 @@ class AnonymizerEngine:
                 other_elements.append(result)
                 anonymizer = self.__get_anonymizer_config(result.entity_type,
                                                           anonymizers_config)
-                manipulation_entity = TextManipulationData.create_from_anonymizer_data(
+                manipulation_entity = TextManipulationData.from_anonymizer_data(
                     result, anonymizer)
                 unique_manipulation_elements.append(manipulation_entity)
             else:

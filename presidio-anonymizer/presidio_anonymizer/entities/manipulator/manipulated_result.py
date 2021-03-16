@@ -2,7 +2,7 @@
 import json
 from typing import List
 
-from presidio_anonymizer.entities.manipulator.manipulated_entity import \
+from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
     ManipulatedEntity
 
 
@@ -37,7 +37,7 @@ class ManipulatedResult:
         text_len = len(self.text)
         for result_item in self.items:
             result_item.start = text_len - result_item.end
-            result_item.end = result_item.start + len(result_item.anonymized_text)
+            result_item.end = result_item.start + len(result_item.manipulated_text)
 
     def to_json(self) -> str:
         """Return a json string serializing this instance."""

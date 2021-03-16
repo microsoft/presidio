@@ -2,7 +2,7 @@ import logging
 from typing import Dict, List
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.manipulator.manipulated_entity import \
+from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
     ManipulatedEntity
 
 

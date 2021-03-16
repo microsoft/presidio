@@ -1,7 +1,7 @@
 import logging
 from typing import List
 
-from presidio_anonymizer.entities.manipulator.manipulated_entity import \
+from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
     ManipulatedEntity
 from presidio_anonymizer.entities.manipulator.manipulated_result import \
     ManipulatedResult
@@ -41,7 +41,7 @@ class TextManipulator:
                 entity_type=manipulation.entity_type,
                 start=0,
                 end=index_from_end,
-                anonymized_text=manipulated_text,
+                manipulated_text=manipulated_text,
             )
 
             manipulation_result.add_item(result_item)

@@ -32,11 +32,11 @@ class TextManipulationData:
         return self.end > other.end
 
     @classmethod
-    def create_from_anonymizer_data(cls, result: RecognizerResult,
-                                    anonymizer: AnonymizerConfig):
+    def from_anonymizer_data(cls, result: RecognizerResult,
+                             anonymizer: AnonymizerConfig):
         return cls(result.start, result.end, result.entity_type, result.score,
                    anonymizer.params, anonymizer.anonymizer_class)
 
     @classmethod
-    def create_from_decrypt_entity(cls, entity: DecryptEntity):
+    def from_decrypt_entity(cls, entity: DecryptEntity):
         return cls(entity.start, entity.end, "", 0, {Encrypt.KEY: entity.key}, Decrypt)

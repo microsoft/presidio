@@ -13,7 +13,6 @@ from presidio_anonymizer.decryptor_engine import AnonymizerDecryptor
 from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.decrypt.decrypt_entity import DecryptEntity
-from presidio_anonymizer.entities.decrypt.decrypt_result import DecryptResult
 
 from presidio_anonymizer.entities.error_response import ErrorResponse
 
@@ -69,7 +68,7 @@ class Server:
             return anoymizer_result.to_json()
 
         @self.app.route("/decrypt", methods=["POST"])
-        def decrypt() -> DecryptResult:
+        def decrypt():
             content = request.get_json()
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400

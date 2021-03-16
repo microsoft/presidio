@@ -1,4 +1,4 @@
-from presidio_anonymizer.entities.manipulator.manipulated_entity import \
+from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
     ManipulatedEntity
 from presidio_anonymizer.entities.manipulator.manipulated_result import \
     ManipulatedResult
