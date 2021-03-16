@@ -264,7 +264,7 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     expected_response.set_text("<PERSON> drivers license is <US_DRIVER_LICENSE>")
     expected_response.add_item(AnonymizedEntity("replace", "US_DRIVER_LICENSE", 28, 47, "<US_DRIVER_LICENSE>"))
     expected_response.add_item(AnonymizedEntity("replace", "PERSON", 0, 8, "<PERSON>"))
-    
+
     anonymizer = AnonymizerEngine()
     anonymizer_results = anonymizer.anonymize(analyzer_request["text"], analyzer_results)
     assert anonymizer_results == expected_response
