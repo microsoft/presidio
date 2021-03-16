@@ -3,8 +3,9 @@ from pathlib import Path
 import pytest
 import json
 
-from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, RecognizerResult
 from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import AnonymizerResult, AnonymizedEntity
 
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
@@ -250,20 +251,20 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
         "language": "en",
     }
 
-    expected_response = [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85},
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999}
-    ]
+    expected_response = [RecognizerResult("PERSON", 0, 10, 0.85),
+                         RecognizerResult("US_DRIVER_LICENSE", 30, 38, 0.6499999999999999)
+                         ]
 
     analyzer = AnalyzerEngine()
     analyzer_results = analyzer.analyze(analyzer_request["text"], analyzer_request["language"])
     for i in range(len(analyzer_results)):
-        assert analyzer_results[i].entity_type == expected_response[i]['entity_type']
-        assert analyzer_results[i].start == expected_response[i]['start']
-        assert analyzer_results[i].end == expected_response[i]['end']
-        assert analyzer_results[i].score == expected_response[i]['score']
+        assert analyzer_results[i] == expected_response[i]
 
-    expected_response = """{"text": "<PERSON> drivers license is <US_DRIVER_LICENSE>", "items": [{"anonymizer": "replace", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 47, "anonymized_text": "<US_DRIVER_LICENSE>"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
+    expected_response = AnonymizerResult()
+    expected_response.set_text("<PERSON> drivers license is <US_DRIVER_LICENSE>")
+    expected_response.add_item(AnonymizedEntity("replace", "US_DRIVER_LICENSE", 28, 47, "<US_DRIVER_LICENSE>"))
+    expected_response.add_item(AnonymizedEntity("replace", "PERSON", 0, 8, "<PERSON>"))
+    
     anonymizer = AnonymizerEngine()
     anonymizer_results = anonymizer.anonymize(analyzer_request["text"], analyzer_results)
-    assert anonymizer_results.to_json() == expected_response
+    assert anonymizer_results == expected_response
