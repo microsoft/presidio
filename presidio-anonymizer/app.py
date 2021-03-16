@@ -75,7 +75,7 @@ class Server:
             text = content.get("text")
             decrypt_entities = DecryptEntity.multiple_from_json(content)
             decrypt_response = self.decryptor.decrypt(
-                text, decrypt_entities
+                text=text, entities=decrypt_entities
             )
             return decrypt_response.to_json()
 
