@@ -60,7 +60,7 @@ def test_given_recognizer_results_with_same_indices_then_indices_are_equal():
     # fmt: on
 )
 def test_given_recognizer_results_with_different_indices_then_indices_are_not_equal(
-    start, end
+        start, end
 ):
     first = create_recognizer_result("", 0, 5, 10)
     second = create_recognizer_result("", 0, start, end)
@@ -87,7 +87,7 @@ def test_given_identical_recognizer_results_then_they_are_equal():
     # fmt: on
 )
 def test_given_different_recognizer_result_then_they_are_not_equal(
-    entity_type, score, start, end
+        entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 0, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -114,7 +114,7 @@ def test_given_recognizer_result_then_their_hash_is_equal():
     # fmt: on
 )
 def test_given_different_recognizer_results_then_hash_is_not_equal(
-    entity_type, score, start, end
+        entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 0, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -134,7 +134,7 @@ def test_given_different_recognizer_results_then_hash_is_not_equal(
     # fmt: on
 )
 def test_given_recognizer_results_with_conflicting_indices_then_there_is_a_conflict(
-    entity_type, score, start, end
+        entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 2, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -153,7 +153,7 @@ def test_given_recognizer_results_with_conflicting_indices_then_there_is_a_confl
     # fmt: on
 )
 def test_given_recognizer_results_with_no_conflicting_indices_then_there_is_no_conflict(
-    entity_type, score, start, end
+        entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 2, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -190,7 +190,7 @@ def test_given_recognizer_results_with_no_conflicting_indices_then_there_is_no_c
     # fmt: on
 )
 def test_given_json_for_creating_recognizer_result_without_text_then_creation_fails(
-    request_json, result_text
+        request_json, result_text
 ):
     with pytest.raises(InvalidParamException) as e:
         RecognizerResult.from_json(request_json)
@@ -244,8 +244,8 @@ def test_given_endpoint_larger_then_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_recognizer_result("", 0, 10, 0)
     assert (
-        e.value.err_msg == "Invalid input, analyzer result start index '10' "
-        "must be smaller than end index '0'"
+            e.value.err_msg == "Invalid input, analyzer result start index '10' "
+                               "must be smaller than end index '0'"
     )
 
 
@@ -253,8 +253,8 @@ def test_given_endpoint_equal_to_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_recognizer_result("", 0, 0, 0)
     assert (
-        e.value.err_msg == "Invalid input, analyzer result start index '0' "
-        "must be smaller than end index '0'"
+            e.value.err_msg == "Invalid input, analyzer result start index '0' "
+                               "must be smaller than end index '0'"
     )
 
 
@@ -270,8 +270,8 @@ def test_given_endpoint_equal_to_start_point_then_we_fail():
 )
 def test_given_negative_start_or_endpoint_then_we_fail(start, end):
     with pytest.raises(
-        InvalidParamException,
-        match="Invalid input, analyzer result " "start and end must be positive",
+            InvalidParamException,
+            match="Invalid input, analyzer result " "start and end must be positive",
     ):
         create_recognizer_result("", 0, start, end)
 
@@ -285,15 +285,15 @@ def create_recognizer_result(entity_type: str, score: float, start: int, end: in
     # fmt: off
     "request_json, result_text",
     [
-        ({
-             "analyzer_results": [
-                 {
-                     "end": 32,
-                     "score": 0.8,
-                 }
-             ]
-         }, "Invalid input, analyzer result must contain start",),
-        ({}, "Invalid input, request must contain analyzer results")
+        (
+                [
+                    {
+                        "end": 32,
+                        "score": 0.8,
+                    }
+                ]
+                , "Invalid input, analyzer result must contain start",),
+        (None, "Invalid input, request must contain analyzer results")
     ],
     # fmt: on
 )
@@ -303,14 +303,13 @@ def test_given_invalid_json_for_analyzer_result_then_we_fail(request_json, resul
     assert result_text == e.value.err_msg
 
 
-
 def test_given_valid_json_then_analyzer_results_list_created_successfully():
     content = get_content()
     analyzer_results = RecognizerResult.handle_analyzer_results_json(content)
-    assert len(analyzer_results) == len(content.get("analyzer_results"))
+    assert len(analyzer_results) == len(content)
     for result_a in analyzer_results:
         same_result_in_content = __find_element(
-            content.get("analyzer_results"), result_a.entity_type
+            content, result_a.entity_type
         )
         assert same_result_in_content
         assert result_a.score == same_result_in_content.get("score")
@@ -319,12 +318,11 @@ def test_given_valid_json_then_analyzer_results_list_created_successfully():
 
 
 def test_given_empty_analyzer_results_then_list_created_successfully():
-    content = get_no_analyzer_results_content()
-    analyzer_results = RecognizerResult.handle_analyzer_results_json(content)
-    assert len(analyzer_results) == len(content.get("analyzer_results"))
+    analyzer_results = RecognizerResult.handle_analyzer_results_json([])
+    assert len(analyzer_results) == len([])
     for result_a in analyzer_results:
         same_result_in_content = __find_element(
-            content.get("analyzer_results"), result_a.entity_type
+            [], result_a.entity_type
         )
         assert same_result_in_content
         assert result_a.score == same_result_in_content.get("score")
@@ -340,37 +338,9 @@ def __find_element(content: List, entity_type: str):
 
 
 def get_content():
-    return {
-        "text": "hello world, my name is Jane Doe. My number is: 034453334",
-        "anonymizers": {
-            "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
-            "PHONE_NUMBER": {
-                "type": "mask",
-                "masking_char": "*",
-                "chars_to_mask": 4,
-                "from_end": True,
-            },
-        },
-        "analyzer_results": [
-            {"start": 24, "end": 32, "score": 0.8, "entity_type": "NAME"},
-            {"start": 24, "end": 28, "score": 0.8, "entity_type": "FIRST_NAME"},
-            {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
-            {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"},
-        ],
-    }
-
-
-def get_no_analyzer_results_content():
-    return {
-        "text": "hello world, my name is Jane Doe. My number is: 034453334",
-        "anonymizers": {
-            "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
-            "PHONE_NUMBER": {
-                "type": "mask",
-                "masking_char": "*",
-                "chars_to_mask": 4,
-                "from_end": True,
-            },
-        },
-        "analyzer_results": [],
-    }
+    return [
+        {"start": 24, "end": 32, "score": 0.8, "entity_type": "NAME"},
+        {"start": 24, "end": 28, "score": 0.8, "entity_type": "FIRST_NAME"},
+        {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
+        {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"},
+    ]

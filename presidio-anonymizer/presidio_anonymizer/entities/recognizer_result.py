@@ -151,20 +151,19 @@ class RecognizerResult:
         )
 
     @classmethod
-    def handle_analyzer_results_json(cls, data: Dict) -> List['RecognizerResult']:
+    def handle_analyzer_results_json(cls, data: List[Dict]) -> List['RecognizerResult']:
         """
         Go over analyzer results, validate them and convert to List[AnalyzeResult].
 
         :param data: contains the anonymizers and analyzer_results_json
         """
         analyzer_results = []
-        analyzer_results_json = data.get("analyzer_results")
-        if analyzer_results_json is None:
+        if data is None:
             cls.logger.debug("invalid input, json missing field: analyzer_results_json")
             raise InvalidParamException(
                 "Invalid input, " "request must contain analyzer results"
             )
-        for analyzer_result in analyzer_results_json:
+        for analyzer_result in data:
             analyzer_result = RecognizerResult.from_json(analyzer_result)
             analyzer_results.append(analyzer_result)
         return analyzer_results

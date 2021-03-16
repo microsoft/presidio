@@ -5,8 +5,10 @@ from presidio_anonymizer.entities.engine.engine_result_item import EngineResultI
 
 
 class EngineResult:
-    def __init__(self, text: str, items: List[EngineResultItem]):
+    def __init__(self, text: str, items: List[EngineResultItem] = None):
         self.text = text
+        if not items:
+            items = []
         self.items = items
 
     def append_item(self, entity: EngineResultItem):

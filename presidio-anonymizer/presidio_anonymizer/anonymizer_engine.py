@@ -27,6 +27,7 @@ class AnonymizerEngine:
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
+        self.text_manipulator = TextManipulator()
 
     def anonymize(
             self,
@@ -49,9 +50,9 @@ class AnonymizerEngine:
             analyzer_results,
             anonymizers_config)
 
-        manipulation_result = TextManipulator().manipulate_text(text,
+        manipulation_result = self.text_manipulator.manipulate_text(text,
                                                                 manipulation_entities)
-        engine_result = EngineResult(manipulation_result.text, [])
+        engine_result = EngineResult(manipulation_result.text)
         for entity in manipulation_result.items:
             anonymized_entity = AnonymizeResultItem.from_manipulated_entity(entity)
             engine_result.append_item(anonymized_entity)

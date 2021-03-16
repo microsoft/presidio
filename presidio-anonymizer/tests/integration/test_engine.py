@@ -54,7 +54,7 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
         anonymizer_request_dict
     )
     analyzer_results = RecognizerResult.handle_analyzer_results_json(
-        anonymizer_request_dict
+        anonymizer_request_dict.get("analyzer_results")
     )
 
     try:
@@ -87,7 +87,7 @@ def test_given_anonymize_called_with_error_scenarios_then_expected_errors_return
         anonymizer_request_dict
     )
     analyzer_results = RecognizerResult.handle_analyzer_results_json(
-        anonymizer_request_dict
+        anonymizer_request_dict.get("analyzer_results")
     )
 
     try:

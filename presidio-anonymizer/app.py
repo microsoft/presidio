@@ -59,7 +59,8 @@ class Server:
             anonymizers_config = AnonymizerConfig.get_anonymizer_configs_from_json(
                 content
             )
-            analyzer_results = RecognizerResult.handle_analyzer_results_json(content)
+            analyzer_results = RecognizerResult.handle_analyzer_results_json(
+                content.get("analyzer_results"))
             anoymizer_result = self.engine.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
