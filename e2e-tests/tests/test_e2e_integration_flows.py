@@ -3,6 +3,9 @@ from pathlib import Path
 import pytest
 import json
 
+from presidio_analyzer import AnalyzerEngine
+from presidio_anonymizer import AnonymizerEngine
+
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
 
@@ -186,7 +189,6 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
 
 @pytest.mark.integration
 def test_demo_website_text_returns_correct_anonymized_version():
-
     # Analyzer request info
 
     dir_path = Path(__file__).resolve().parent.parent
@@ -229,7 +231,7 @@ def test_demo_website_text_returns_correct_anonymized_version():
     # Expected output:
 
     with open(
-        Path(dir_path, "resources", "demo_anonymized.txt"), encoding="utf-8"
+            Path(dir_path, "resources", "demo_anonymized.txt"), encoding="utf-8"
     ) as f_exp:
         text_into_rows = f_exp.read().split("\n")
 
@@ -239,3 +241,29 @@ def test_demo_website_text_returns_correct_anonymized_version():
     # Assert equal
 
     assert expected_anonymized_text == actual_anonymized_text
+
+
+@pytest.mark.package
+def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_successfully():
+    analyzer_request = {
+        "text": "John Smith drivers license is AC432223",
+        "language": "en",
+    }
+
+    expected_response = [
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85},
+        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999}
+    ]
+
+    analyzer = AnalyzerEngine()
+    analyzer_results = analyzer.analyze(analyzer_request["text"], analyzer_request["language"])
+    for i in range(len(analyzer_results)):
+        assert analyzer_results[i].entity_type == expected_response[i]['entity_type']
+        assert analyzer_results[i].start == expected_response[i]['start']
+        assert analyzer_results[i].end == expected_response[i]['end']
+        assert analyzer_results[i].score == expected_response[i]['score']
+
+    expected_response = """{"text": "<PERSON> drivers license is <US_DRIVER_LICENSE>", "items": [{"anonymizer": "replace", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 47, "anonymized_text": "<US_DRIVER_LICENSE>"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
+    anonymizer = AnonymizerEngine()
+    anonymizer_results = anonymizer.anonymize(analyzer_request["text"], analyzer_results)
+    assert anonymizer_results.to_json() == expected_response
