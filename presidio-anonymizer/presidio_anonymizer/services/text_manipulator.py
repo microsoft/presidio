@@ -53,7 +53,7 @@ class TextManipulator:
     def __manipulate_text(
             self,
             manipulator_entity: TextManipulationItem,
-            text_to_anonymize: str,
+            text_to_manipulate: str,
     ) -> str:
         entity_type = manipulator_entity.entity_type
         self.logger.debug(f"getting operator for {entity_type}")
@@ -63,5 +63,5 @@ class TextManipulator:
         params = manipulator_entity.params
         params["entity_type"] = entity_type
         self.logger.debug(f"operating on {entity_type} with {operator}")
-        anonymized_text = operator.operate(params=params, text=text_to_anonymize)
+        anonymized_text = operator.operate(params=params, text=text_to_manipulate)
         return anonymized_text

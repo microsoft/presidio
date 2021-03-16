@@ -103,21 +103,19 @@ def test_given_several_anonymizers_then_we_use_the_correct_one():
     anonymizer_config = AnonymizerConfig("replace", {})
     anonymizer_config.anonymizer_class = MockAnonymizer
     text = (
-        AnonymizerEngine()
-            .anonymize(
+        AnonymizerEngine().anonymize(
             "Number: 0554555556", [analyzer_result], {"PHONE_NUMBER": anonymizer_config}
-        )
-            .text
+        ).text
     )
     assert text == "Number: I am your new text!"
 
 
 class MockAnonymizer:
-    def manipulate(self, text: str, params: Dict = None):
+    def operate(self, text: str, params: Dict = None):
         return "I am your new text!"
 
     def validate(self, params):
         pass
 
-    def manipulator_name(self):
+    def operator_name(self):
         return "name"
