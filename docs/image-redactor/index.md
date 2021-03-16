@@ -41,7 +41,7 @@ Pre-requisites:
     docker pull mcr.microsoft.com/presidio-image-redactor
     
     # Run the container with the default port
-    docker run -d -p 5003:5003 mcr.microsoft.com/presidio-image-redactor:latest
+    docker run -d -p 5003:3000 mcr.microsoft.com/presidio-image-redactor:latest
     ```
 
 === "From source"
@@ -89,7 +89,7 @@ Pre-requisites:
     
     ```sh
     cd presidio-image-redactor
-    docker run -p 5003:5003 presidio-image-redactor 
+    docker run -p 5003:3000 presidio-image-redactor 
     ```
     
     #### Using python runtime
