@@ -247,7 +247,7 @@ def test_demo_website_text_returns_correct_anonymized_version():
 def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_successfully():
     analyzer_request = {
         "text": "John Smith drivers license is AC432223",
-        "language": "en",
+        "language": "en",ƒ
     }
 
     expected_response = [
