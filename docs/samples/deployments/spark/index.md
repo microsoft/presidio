@@ -1,7 +1,7 @@
 # Anonymize PII using Presidio on Spark
 
 You can leverages presidio to perform data anonymization as part of spark notebooks.
-The following sample uses [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) and simple text files hosted on [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/), However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.
+The following sample uses [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) and simple text files hosted on [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/). However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.
 
 ## Pre-requisites
 
