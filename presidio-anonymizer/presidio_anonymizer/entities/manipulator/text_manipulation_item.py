@@ -2,8 +2,8 @@ from typing import Dict
 
 from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities.decrypt.decrypt_entity import DecryptEntity
-from presidio_anonymizer.manipulators import Manipulator, Encrypt
-from presidio_anonymizer.manipulators.decrypt import Decrypt
+from presidio_anonymizer.operators import Operator, Encrypt
+from presidio_anonymizer.operators.decrypt import Decrypt
 
 
 class TextManipulationItem:
@@ -14,7 +14,7 @@ class TextManipulationItem:
             entity_type: str,
             score: float,
             params: Dict,
-            manipulator_class: Manipulator
+            manipulator_class: Operator
     ):
         """Create DecryptedEntity.
 

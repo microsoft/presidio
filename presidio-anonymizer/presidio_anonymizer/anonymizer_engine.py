@@ -7,7 +7,7 @@ from presidio_anonymizer.entities.engine.anonymize_result_item import \
 from presidio_anonymizer.entities.engine.engine_result import EngineResult
 from presidio_anonymizer.entities.manipulator.text_manipulation_item import \
     TextManipulationItem
-from presidio_anonymizer.manipulators import Manipulator
+from presidio_anonymizer.operators import Operator
 from presidio_anonymizer.entities import (
     RecognizerResult,
     AnonymizerConfig,
@@ -92,7 +92,7 @@ class AnonymizerEngine:
     @staticmethod
     def get_anonymizers() -> List[str]:
         """Return a list of supported anonymizers."""
-        names = [p for p in Manipulator.get_anonymizers().keys()]
+        names = [p for p in Operator.get_anonymizers().keys()]
         return names
 
     @staticmethod

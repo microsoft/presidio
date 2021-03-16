@@ -1,10 +1,10 @@
 """Initializing all the existing anonymizers."""
-from .manipulator import ManipulatorType, Manipulator
+from .operator import OperatorType, Operator
 from .hash import Hash
 from .mask import Mask
 from .redact import Redact
 from .replace import Replace
 from .encrypt import Encrypt
 
-__all__ = ["ManipulatorType", "Manipulator", "Hash", "Mask", "Redact", "Replace",
+__all__ = ["OperatorType", "Operator", "Hash", "Mask", "Redact", "Replace",
            "Encrypt"]

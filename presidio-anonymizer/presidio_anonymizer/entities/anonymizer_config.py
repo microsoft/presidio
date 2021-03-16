@@ -2,7 +2,7 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.manipulators import Manipulator
+from presidio_anonymizer.operators import Operator
 from presidio_anonymizer.entities import InvalidParamException
 
 
@@ -42,14 +42,14 @@ class AnonymizerConfig:
             params.pop("type")
         return cls(anonymizer_name, params)
 
-    def __get_anonymizer_class(self, anonymizer_name: str) -> Manipulator:
+    def __get_anonymizer_class(self, anonymizer_name: str) -> Operator:
         """
         Extract the anonymizer class from the anonymizers list.
 
         :param anonymizer_name: a single anonymizer value
         :return: Anonymizer
         """
-        anonymizer_class = Manipulator.get_anonymizers().get(anonymizer_name)
+        anonymizer_class = Operator.get_anonymizers().get(anonymizer_name)
         if not anonymizer_class:
             self.logger.error(f"No such anonymizer class {anonymizer_name}")
             raise InvalidParamException(

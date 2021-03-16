@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.manipulators import Hash
+from presidio_anonymizer.operators import Hash
 from presidio_anonymizer.entities import InvalidParamException
 
 
@@ -28,7 +28,7 @@ def test_when_given_valid_value_without_hash_type_then_expected_sha256_string_re
     text, anonymized_text
 ):
     params = {}
-    actual_anonymized_text = Hash().manipulate(text=text, params=params)
+    actual_anonymized_text = Hash().operate(text=text, params=params)
 
     assert anonymized_text == actual_anonymized_text
 
@@ -87,7 +87,7 @@ def test_when_given_valid_value_with_hash_type_then_expected_string_returned(
     params = {
         "hash_type": hash_type,
     }
-    actual_anonymized_text = Hash().manipulate(text=text, params=params)
+    actual_anonymized_text = Hash().operate(text=text, params=params)
 
     assert anonymized_text == actual_anonymized_text
 
@@ -124,7 +124,7 @@ def test_when_hash_type_is_empty_string_then_ipe_raised():
 
 
 def test_when_validate_anonymizer_then_correct_name():
-    assert Hash().manipulator_name() == "hash"
+    assert Hash().operator_name() == "hash"
 
 
 def _get_default_hash_parameters():

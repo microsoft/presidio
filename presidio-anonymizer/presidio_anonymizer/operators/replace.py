@@ -1,16 +1,16 @@
 """Replaces the PII text entity with new string."""
 from typing import Dict
 
-from presidio_anonymizer.manipulators import Manipulator, ManipulatorType
+from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.services.validators import validate_type
 
 
-class Replace(Manipulator):
+class Replace(Operator):
     """Receives new text to replace old PII text entity with."""
 
     NEW_VALUE = "new_value"
 
-    def manipulate(self, text: str = None, params: Dict = None) -> str:
+    def operate(self, text: str = None, params: Dict = None) -> str:
         """:return: new_value."""
         new_val = params.get(self.NEW_VALUE)
         if not new_val:
@@ -22,10 +22,10 @@ class Replace(Manipulator):
         validate_type(params.get(self.NEW_VALUE), self.NEW_VALUE, str)
         pass
 
-    def manipulator_name(self) -> str:
+    def operator_name(self) -> str:
         """Return anonymizer name."""
         return "replace"
 
-    def manipulator_type(self) -> ManipulatorType:
+    def operator_type(self) -> OperatorType:
         """Return anonymizer name."""
-        return ManipulatorType.Anonymize
+        return OperatorType.Anonymize

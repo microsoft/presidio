@@ -37,7 +37,7 @@ class TextManipulator:
             # ordered from end to start, and the indexes will be normalized
             # from start to end once the loop ends and the text length is deterministic.
             result_item = ManipulatedResultItem(
-                manipulator=manipulation.manipulator_class().manipulator_name(),
+                manipulator=manipulation.manipulator_class().operator_name(),
                 entity_type=manipulation.entity_type,
                 start=0,
                 end=index_from_end,
@@ -56,12 +56,12 @@ class TextManipulator:
             text_to_anonymize: str,
     ) -> str:
         entity_type = manipulator_entity.entity_type
-        self.logger.debug(f"getting manipulator for {entity_type}")
-        manipulator = manipulator_entity.manipulator_class()
-        self.logger.debug(f"validating manipulator {manipulator} for {entity_type}")
-        manipulator.validate(params=manipulator_entity.params)
+        self.logger.debug(f"getting operator for {entity_type}")
+        operator = manipulator_entity.manipulator_class()
+        self.logger.debug(f"validating operator {operator} for {entity_type}")
+        operator.validate(params=manipulator_entity.params)
         params = manipulator_entity.params
         params["entity_type"] = entity_type
-        self.logger.debug(f"anonymizing {entity_type} with {manipulator}")
-        anonymized_text = manipulator.manipulate(params=params, text=text_to_anonymize)
+        self.logger.debug(f"operating on {entity_type} with {operator}")
+        anonymized_text = operator.operate(params=params, text=text_to_anonymize)
         return anonymized_text

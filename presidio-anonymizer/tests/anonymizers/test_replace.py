@@ -1,10 +1,10 @@
 import pytest
 
-from presidio_anonymizer.manipulators import Replace
+from presidio_anonymizer.operators import Replace
 
 
 def test_given_value_for_replace_then_we_get_the_value_back():
-    text = Replace().manipulate("", {"new_value": "bla"})
+    text = Replace().operate("", {"new_value": "bla"})
     assert text == "bla"
 
 
@@ -22,9 +22,9 @@ def test_given_value_for_replace_then_we_get_the_value_back():
 def test_given_no_value_for_replace_then_we_return_default_value_from_entity_type(
     params, result
 ):
-    text = Replace().manipulate("", params)
+    text = Replace().operate("", params)
     assert text == result
 
 
 def test_when_validate_anonymizer_then_correct_name():
-    assert Replace().manipulator_name() == "replace"
+    assert Replace().operator_name() == "replace"

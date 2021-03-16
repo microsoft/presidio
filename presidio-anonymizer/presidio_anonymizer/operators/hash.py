@@ -2,11 +2,11 @@
 from hashlib import sha256, sha512, md5
 from typing import Dict
 
-from presidio_anonymizer.manipulators import Manipulator, ManipulatorType
+from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.services.validators import validate_parameter_in_range
 
 
-class Hash(Manipulator):
+class Hash(Operator):
     """Hash given text with sha256/sha512/md5 algorithm."""
 
     HASH_TYPE = "hash_type"
@@ -14,7 +14,7 @@ class Hash(Manipulator):
     SHA512 = "sha512"
     MD5 = "md5"
 
-    def manipulate(self, text: str = None, params: Dict = None) -> str:
+    def operate(self, text: str = None, params: Dict = None) -> str:
         """
         Hash given value using sha256.
 
@@ -38,13 +38,13 @@ class Hash(Manipulator):
         )
         pass
 
-    def manipulator_name(self) -> str:
+    def operator_name(self) -> str:
         """Return anonymizer name."""
         return "hash"
 
     def _get_hash_type_or_default(self, params: Dict = None):
         return params.get(self.HASH_TYPE, self.SHA256)
 
-    def manipulator_type(self) -> ManipulatorType:
+    def operator_type(self) -> OperatorType:
         """Return anonymizer name."""
-        return ManipulatorType.Anonymize
+        return OperatorType.Anonymize

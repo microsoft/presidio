@@ -1,18 +1,18 @@
 from typing import Dict
 
-from presidio_anonymizer.manipulators import Manipulator
+from presidio_anonymizer.operators import Operator
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.manipulators import ManipulatorType
+from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
 
 
-class Decrypt(Manipulator):
+class Decrypt(Operator):
     """Anonymizes text to an encrypted form, or it to be restored using decrypted."""
 
     KEY = "key"
 
-    def manipulate(self, text: str = None, params: Dict = None) -> str:
+    def operate(self, text: str = None, params: Dict = None) -> str:
         """
         Decrypt the text.
 
@@ -41,10 +41,10 @@ class Decrypt(Manipulator):
                 f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
             )
 
-    def manipulator_name(self) -> str:
+    def operator_name(self) -> str:
         """Return decryptor name."""
         return "encrypt"
 
-    def manipulator_type(self) -> ManipulatorType:
+    def operator_type(self) -> OperatorType:
         """Return decryptor type."""
-        return ManipulatorType.Decrypt
+        return OperatorType.Decrypt
