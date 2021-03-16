@@ -1,12 +1,12 @@
 import logging
 from typing import List
 
-from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
-    ManipulatedEntity
-from presidio_anonymizer.entities.manipulator.manipulated_result import \
-    ManipulatedResult
-from presidio_anonymizer.entities.manipulator.text_manipulation_data import \
-    TextManipulationData
+from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
+    ManipulatedResultItem
+from presidio_anonymizer.entities.manipulator.manipulator_result import \
+    ManipulatorResult
+from presidio_anonymizer.entities.manipulator.text_manipulation_item import \
+    TextManipulationItem
 from presidio_anonymizer.services.text_builder import TextBuilder
 
 
@@ -14,9 +14,9 @@ class TextManipulator:
     logger = logging.getLogger("presidio-anonymizer")
 
     def manipulate_text(self, text: str,
-                        manipulations: List[TextManipulationData]) -> ManipulatedResult:
+                        manipulations: List[TextManipulationItem]) -> ManipulatorResult:
         text_builder = TextBuilder(original_text=text)
-        manipulation_result = ManipulatedResult()
+        manipulation_result = ManipulatorResult()
         for manipulation in sorted(manipulations, reverse=True):
             text_to_manipulate = text_builder.get_text_in_position(
                 manipulation.start, manipulation.end
@@ -36,7 +36,7 @@ class TextManipulator:
             # The following creates an intermediate list of anonymized entities,
             # ordered from end to start, and the indexes will be normalized
             # from start to end once the loop ends and the text length is deterministic.
-            result_item = ManipulatedEntity(
+            result_item = ManipulatedResultItem(
                 manipulator=manipulation.manipulator_class().manipulator_name(),
                 entity_type=manipulation.entity_type,
                 start=0,
@@ -52,7 +52,7 @@ class TextManipulator:
 
     def __manipulate_text(
             self,
-            manipulator_entity: TextManipulationData,
+            manipulator_entity: TextManipulationItem,
             text_to_anonymize: str,
     ) -> str:
         entity_type = manipulator_entity.entity_type

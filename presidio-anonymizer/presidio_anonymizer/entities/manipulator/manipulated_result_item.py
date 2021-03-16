@@ -1,4 +1,4 @@
-class ManipulatedEntity:
+class ManipulatedResultItem:
     """Information about the anonymized entity."""
 
     def __init__(

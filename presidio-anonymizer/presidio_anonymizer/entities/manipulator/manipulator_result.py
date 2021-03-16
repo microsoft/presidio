@@ -2,14 +2,14 @@
 import json
 from typing import List
 
-from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
-    ManipulatedEntity
+from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
+    ManipulatedResultItem
 
 
-class ManipulatedResult:
+class ManipulatorResult:
     """Anonymizer result."""
 
-    def __init__(self, text: str = None, items: List[ManipulatedEntity] = None):
+    def __init__(self, text: str = None, items: List[ManipulatedResultItem] = None):
         """Create AnonymizerResult entity.
 
         :param text: The anonymized text.
@@ -25,7 +25,7 @@ class ManipulatedResult:
         """Set a text."""
         self.text = text
 
-    def add_item(self, item: ManipulatedEntity):
+    def add_item(self, item: ManipulatedResultItem):
         """Add an item.
 
         :param item: an item to add to the list.

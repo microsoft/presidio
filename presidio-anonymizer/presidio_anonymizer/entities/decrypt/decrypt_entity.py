@@ -2,8 +2,8 @@ import logging
 from typing import Dict, List
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
-    ManipulatedEntity
+from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
+    ManipulatedResultItem
 
 
 class DecryptEntity:
@@ -93,7 +93,7 @@ class DecryptEntity:
 
     @classmethod
     def from_anonymizer_entity(cls, key: str,
-                               entity: ManipulatedEntity) -> 'DecryptEntity':
+                               entity: ManipulatedResultItem) -> 'DecryptEntity':
         """
         Create DecryptEntity from AnonymizerEntity.
 

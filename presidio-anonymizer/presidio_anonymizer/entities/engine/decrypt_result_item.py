@@ -1,7 +1,7 @@
 """"Result item from the /decrypt method."""
 from presidio_anonymizer.entities.engine.engine_result_item import EngineResultItem
-from presidio_anonymizer.entities.manipulator.manipulated_result_entity import \
-    ManipulatedEntity
+from presidio_anonymizer.entities.manipulator.manipulated_result_item import \
+    ManipulatedResultItem
 
 
 class DecryptResultItem(EngineResultItem):
@@ -30,6 +30,6 @@ class DecryptResultItem(EngineResultItem):
 
     @classmethod
     def from_manipulated_entity(cls,
-                                manipulated_entity: ManipulatedEntity) -> 'DecryptResultItem':
+                                manipulated_entity: ManipulatedResultItem) -> 'DecryptResultItem':
         return cls(manipulated_entity.start, manipulated_entity.end,
                    manipulated_entity.manipulated_text)

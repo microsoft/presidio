@@ -5,10 +5,8 @@ from typing import List, Dict, Optional
 from presidio_anonymizer.entities.engine.anonymize_result_item import \
     AnonymizeResultItem
 from presidio_anonymizer.entities.engine.engine_result import EngineResult
-from presidio_anonymizer.entities.manipulator.manipulated_result import \
-    ManipulatedResult
-from presidio_anonymizer.entities.manipulator.text_manipulation_data import \
-    TextManipulationData
+from presidio_anonymizer.entities.manipulator.text_manipulation_item import \
+    TextManipulationItem
 from presidio_anonymizer.manipulators import Manipulator
 from presidio_anonymizer.entities import (
     RecognizerResult,
@@ -35,7 +33,7 @@ class AnonymizerEngine:
             text: str,
             analyzer_results: List[RecognizerResult],
             anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
-    ) -> ManipulatedResult:
+    ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
@@ -82,7 +80,7 @@ class AnonymizerEngine:
                 other_elements.append(result)
                 anonymizer = self.__get_anonymizer_config(result.entity_type,
                                                           anonymizers_config)
-                manipulation_entity = TextManipulationData.from_anonymizer_data(
+                manipulation_entity = TextManipulationItem.from_anonymizer_data(
                     result, anonymizer)
                 unique_manipulation_elements.append(manipulation_entity)
             else:

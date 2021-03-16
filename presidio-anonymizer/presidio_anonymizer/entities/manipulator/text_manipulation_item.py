@@ -6,7 +6,7 @@ from presidio_anonymizer.manipulators import Manipulator, Encrypt
 from presidio_anonymizer.manipulators.decrypt import Decrypt
 
 
-class TextManipulationData:
+class TextManipulationItem:
     def __init__(
             self,
             start: int,
