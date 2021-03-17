@@ -6,8 +6,8 @@ from presidio_anonymizer.entities import (
     RecognizerResult,
     AnonymizerConfig, InvalidParamException,
 )
-from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
+from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.operators.operators_factory import OperatorsFactory
 from presidio_anonymizer.text_engine import TextEngine
@@ -47,11 +47,11 @@ class AnonymizerEngine:
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results)
 
-        operators_metadata = self.__get_operators_metadata(anonymizers_config)
+        anonymizers_config = self.__check_or_add_default_anonymizer(anonymizers_config)
 
         return self.text_engine.operate(text,
                                         analyzer_results,
-                                        operators_metadata)
+                                        anonymizers_config)
 
     def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results):
         """
@@ -91,17 +91,12 @@ class AnonymizerEngine:
         return any([result.has_conflict(other_element) for other_element in
                     other_elements])
 
-    def __get_operators_metadata(self,
-                                 anonymizers_config: Dict[str, AnonymizerConfig]) -> \
+    def __check_or_add_default_anonymizer(self,
+                                          anonymizers_config: Dict[str, AnonymizerConfig]) -> \
             Dict[str, OperatorMetadata]:
-        operators_metadata = {"DEFAULT": OperatorMetadata(OperatorType.Anonymize, {},
-                                                          DEFAULT)}
-        if anonymizers_config:
-            for entity_type, anonymizer_config in anonymizers_config.items():
-                if not anonymizer_config:
-                    raise InvalidParamException(
-                        f"Invalid anonymizer data for '{entity_type}'")
-                operator_metadata = OperatorMetadata.from_anonymizer_data(
-                    anonymizer_config)
-                operators_metadata[entity_type] = operator_metadata
-        return operators_metadata
+        default_anonymizer = {"DEFAULT": AnonymizerConfig(DEFAULT)}
+        if not anonymizers_config:
+            return default_anonymizer
+        if not anonymizers_config.get("DEFAULT"):
+            anonymizers_config["DEFAULT"] = default_anonymizer
+        return anonymizers_config

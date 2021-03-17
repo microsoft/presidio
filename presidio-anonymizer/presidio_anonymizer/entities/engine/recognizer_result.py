@@ -4,7 +4,7 @@ RecognizerResult is an exact copy of the RecognizerResult object from presidio-a
 Represents the findings of detected entity.
 """
 import logging
-from typing import Dict, List
+from typing import Dict
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine.text_metadata import TextMetadata

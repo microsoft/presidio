@@ -19,10 +19,10 @@ def test_given_valid_json_then_anonymizers_config_list_created_successfully():
         "chars_to_mask": 4,
         "from_end": True,
     }
-    assert phone_number_anonymizer.anonymizer_name == "mask"
+    assert phone_number_anonymizer.operator_name == "mask"
     default_anonymizer = anonymizers_config.get("DEFAULT")
     assert default_anonymizer.params == {"new_value": "ANONYMIZED"}
-    assert default_anonymizer.anonymizer_name == "replace"
+    assert default_anonymizer.operator_name == "replace"
 
 
 @pytest.mark.parametrize(

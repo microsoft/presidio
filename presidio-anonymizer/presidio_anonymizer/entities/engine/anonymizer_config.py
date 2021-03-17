@@ -2,9 +2,13 @@
 import logging
 from typing import Dict
 
+from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
+from presidio_anonymizer.operators import OperatorType
 
-class AnonymizerConfig:
+
+class AnonymizerConfig(OperatorMetadata):
     """Handle the anonymizers data - anonymizer class and params."""
+
     logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self, anonymizer_name: str, params: Dict = None):
@@ -15,10 +19,9 @@ class AnonymizerConfig:
         of the anonymizer in lower case letters. e.g.: redact
         :param params: the parameters to use in the selected anonymizer class
         """
-        self.anonymizer_name = anonymizer_name
-        self.params = params
         if not params:
-            self.params = {}
+            params = {}
+        OperatorMetadata.__init__(self, OperatorType.Anonymize, params, anonymizer_name)
 
     @classmethod
     def from_json(cls, params: dict):
@@ -40,8 +43,7 @@ class AnonymizerConfig:
 
     def __eq__(self, other):
         """Verify two AnonymizerConfig are equal."""
-
-        anonymizer_class_equals = self.anonymizer_name == other.anonymizer_name
-        return self.params == other.params and anonymizer_class_equals
-
-
+        anonymizer_class_equals = self.operator_name == other.operator_name
+        return self.params == other.params \
+               and anonymizer_class_equals \
+               and self.operator_type == other.operator_type

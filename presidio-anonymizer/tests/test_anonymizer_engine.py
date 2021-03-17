@@ -108,7 +108,6 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
     "anonymizers, result_text",
     [
         ({"number": AnonymizerConfig("fake")}, "Invalid operator class 'fake'."),
-        ({"number": None}, "Invalid anonymizer data for 'number'"),
     ],
     # fmt: on
 )
@@ -131,7 +130,7 @@ def test_given_several_analyzer_results_then_check_we_filter_them_properly_and_g
          RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER")]
         
     anonymizer_config = AnonymizerConfig("replace", {})
-    anonymizer_config.anonymizer_name = ""
+    anonymizer_config.operator_name = ""
     engine = AnonymizerEngine()
     engine.text_engine = MockTextManipulator()
     result = engine.anonymize(
