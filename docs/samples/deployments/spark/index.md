@@ -42,6 +42,7 @@ az databricks workspace create --resource-group $RESOURCE_GROUP  --name $DATABRI
 ```
 
 Initialze a cluster, either using the [Azure databricks UI](https://docs.microsoft.com/en-us/azure/databricks/clusters/create) or by following up the next script using [databricks cli](https://docs.microsoft.com/en-us/azure/databricks/clusters/create).
+Note that the provided template uses a memory optimized VM type Standard DS12 v2. That allows spark to have enough memory per CPU core to parallelize the Presidio Analyzer.
 
 ```bash
 # Configure databricks token. for host name use https://[databricks region name].azuredatabricks.net. for token acquire a PAT using the following guide: https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/authentication#--generate-a-personal-access-token
@@ -60,8 +61,8 @@ databricks clusters create --json "{
         \"availability\": \"ON_DEMAND_AZURE\", 
         \"spot_bid_max_price\": -1 
     }, 
-    \"node_type_id\": \"Standard_F4s_v2\", 
-    \"driver_node_type_id\": \"Standard_F4s_v2\", 
+    \"node_type_id\": \"Standard_DS12_v2\", 
+    \"driver_node_type_id\": \"Standard_DS12_v2\", 
     \"spark_env_vars\": { 
         \"PYSPARK_PYTHON\": \"/databricks/python3/bin/python3\" 
     }, 
@@ -92,8 +93,8 @@ databricks clusters edit --json "{
         \"availability\": \"ON_DEMAND_AZURE\", 
         \"spot_bid_max_price\": -1 
     }, 
-    \"node_type_id\": \"Standard_F4s_v2\", 
-    \"driver_node_type_id\": \"Standard_F4s_v2\", 
+    \"node_type_id\": \"Standard_DS12_v2\", 
+    \"driver_node_type_id\": \"Standard_DS12_v2\", 
     \"spark_env_vars\": { 
         \"PYSPARK_PYTHON\": \"/databricks/python3/bin/python3\" 
     }, 
