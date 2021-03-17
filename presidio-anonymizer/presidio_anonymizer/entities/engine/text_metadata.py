@@ -33,7 +33,7 @@ class TextMetadata(ABC):
             self.__validate_field("entity_type")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
-                f"Invalid input, result start and end must be positive"
+                "Invalid input, result start and end must be positive"
             )
         if self.start >= self.end:
             raise InvalidParamException(
