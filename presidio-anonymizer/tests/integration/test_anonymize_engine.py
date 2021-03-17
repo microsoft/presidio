@@ -1,11 +1,33 @@
 import pytest
 
 from presidio_anonymizer import AnonymizeEngine
+from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import AnonymizeConfig, RecognizerResult
 from presidio_anonymizer.services.aes_cipher import AESCipher
 
 
-def test_given_name_and_phone_number_then_we_anonymize_successfully():
+def test_given_operator_decrypt_then_we_fail():
+    text = "hello world, my name is Jane Doe. My number is: 03-4453334"
+    anonymizers_config = {"DEFAULT": AnonymizeConfig("decrypt", {"key": "key"})}
+    analyzer_results = [
+        RecognizerResult(
+            start=24,
+            end=32,
+            score=0.8,
+            entity_type="NAME"
+        ),
+    ]
+    engine = AnonymizeEngine()
+    with pytest.raises(
+            InvalidParamException,
+            match="Invalid operator class 'decrypt'.",
+    ):
+        engine.anonymize(
+            text, analyzer_results, anonymizers_config
+        )
+
+
+def test_given_name_and_phone_number_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {"DEFAULT": AnonymizeConfig("mask", {"masking_char": "*",
                                                              "chars_to_mask": 20,

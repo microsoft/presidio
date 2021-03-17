@@ -19,7 +19,7 @@ class AnonymizeResultItem(EngineResultItem):
         :param start: start index of the anonymized text in the general text.
         :param end: end index of the anonymized text in the general text.
         :param anonynmized_text: the text after the anonymization.
-        :param entity_typeF: the entity type of the text.
+        :param entity_type: the entity type of the text.
         :param anonymizer: the name of the anonymizer we used.
         """
         EngineResultItem.__init__(self, start, end, entity_type)
