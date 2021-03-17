@@ -10,3 +10,4 @@
 1. [Azure App service](deployments/app-service/index.md)
 2. [Kubernetes](deployments/k8s/index.md)
 3. [Spark/Azure Databricks](deployments/spark/index.md)
+4. [Azure Data Factory](deployments/data-factory/index.md)
