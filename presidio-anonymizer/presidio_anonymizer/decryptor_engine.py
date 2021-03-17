@@ -3,7 +3,7 @@ from typing import List
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine.decrypt_config import DecryptConfig
-from presidio_anonymizer.entities.engine.decrypt_entity import DecryptEntity
+from presidio_anonymizer.entities.engine.decrypt_entity import EncryptResult
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
@@ -35,7 +35,7 @@ class DecryptEngine:
         decrypted_text = AESCipher.decrypt(key=encoded_key, text=text)
         return decrypted_text
 
-    def decrypt(self, text: str, entities: List[DecryptEntity]) -> EngineResult:
+    def decrypt(self, text: str, entities: List[EncryptResult]) -> EngineResult:
         operators_metadata = {}
         for entity in entities:
             operators_metadata[entity.entity_type] = DecryptConfig(entity.key)

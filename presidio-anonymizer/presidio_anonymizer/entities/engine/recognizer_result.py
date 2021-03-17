@@ -27,10 +27,8 @@ class RecognizerResult(TextMetadata):
     logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self, entity_type: str, start: int, end: int, score: float):
+        TextMetadata.__init__(self, start, end, entity_type)
         self.score = score
-        self.entity_type = entity_type
-        self.start = start
-        self.end = end
         self.__validate_fields()
 
     @classmethod
@@ -52,23 +50,7 @@ class RecognizerResult(TextMetadata):
         end = data.get("end")
         return cls(entity_type, start, end, score)
 
-    def contains(self, other):
-        """
-        Check if one result is contained or equal to another result.
 
-        :param other: another RecognizerResult
-        :return: bool
-        """
-        return self.start <= other.start and self.end >= other.end
-
-    def equal_indices(self, other):
-        """
-        Check if the indices are equal between two results.
-
-        :param other: another RecognizerResult
-        :return:
-        """
-        return self.start == other.start and self.end == other.end
 
     def __gt__(self, other):
         """
@@ -126,37 +108,30 @@ class RecognizerResult(TextMetadata):
             return self.score <= other.score
         return other.contains(self)
 
+    def contains(self, other):
+        """
+        Check if one result is contained or equal to another result.
+
+        :param other: another RecognizerResult
+        :return: bool
+        """
+        return self.start <= other.start and self.end >= other.end
+
+    def equal_indices(self, other):
+        """
+        Check if the indices are equal between two results.
+
+        :param other: another RecognizerResult
+        :return:
+        """
+        return self.start == other.start and self.end == other.end
+
     def __validate_fields(self):
-        if self.start is None:
-            self.__validate_field("start")
-        if self.end is None:
-            self.__validate_field("end")
-        if self.entity_type is None:
-            self.__validate_field("entity_type")
         if self.score is None:
             self.__validate_field("score")
-        if self.start < 0 or self.end < 0:
-            raise InvalidParamException(
-                f"Invalid input, analyzer result start and end must be positive"
-            )
-        if self.start >= self.end:
-            raise InvalidParamException(
-                f"Invalid input, analyzer result start index '{self.start}' "
-                f"must be smaller than end index '{self.end}'"
-            )
 
     def __validate_field(self, field_name: str):
         self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
         raise InvalidParamException(
             f"Invalid input, analyzer result must contain {field_name}"
         )
-
-    def get_start(self):
-        return self.entity_type
-
-    def get_end(self):
-        return self.entity_type
-
-    def get_entity_type(self):
-        return self.entity_type
-

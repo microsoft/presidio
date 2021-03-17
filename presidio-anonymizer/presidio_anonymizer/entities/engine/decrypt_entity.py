@@ -1,14 +1,14 @@
 import logging
-from typing import Dict, List
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine.text_metadata import TextMetadata
 
 
-class DecryptEntity(TextMetadata):
+class EncryptResult(TextMetadata):
     """Information about the decrypt entity."""
+
     def __init__(self, key: str, start: int,
-                 end: int, entity_type: str) -> 'DecryptEntity':
+                 end: int, entity_type: str) -> 'EncryptResult':
         """
         Create DecryptEntity.
 
@@ -17,10 +17,8 @@ class DecryptEntity(TextMetadata):
         :param end: end index in the anonymized text.
         """
         self.logger = logging.getLogger("presidio-anonymizer")
-        self.start = start
-        self.end = end
+        TextMetadata.__init__(self, start, end, entity_type)
         self.key = key
-        self.entity_type = entity_type
         self.__validate_fields()
 
     def __gt__(self, other) -> bool:
@@ -29,21 +27,6 @@ class DecryptEntity(TextMetadata):
     def __validate_fields(self):
         if self.key is None:
             self.__validate_field("key")
-        if self.start is None:
-            self.__validate_field("start")
-        if self.end is None:
-            self.__validate_field("end")
-        if self.entity_type is None:
-            self.__validate_field("entity_type")
-        if self.start < 0 or self.end < 0:
-            raise InvalidParamException(
-                f"Invalid input, decrypt entity start and end must be positive"
-            )
-        if self.start >= self.end:
-            raise InvalidParamException(
-                f"Invalid input, decrypt entity start index '{self.start}' "
-                f"must be smaller than end index '{self.end}'"
-            )
 
     def __validate_field(self, field_name: str):
         self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
@@ -51,17 +34,8 @@ class DecryptEntity(TextMetadata):
             f"Invalid input, decrypt entity must contain {field_name}"
         )
 
-    def get_start(self):
-        return self.entity_type
-
-    def get_end(self):
-        return self.entity_type
-
-    def get_entity_type(self):
-        return self.entity_type
-
     @classmethod
-    def from_json(cls, json: dict) -> 'DecryptEntity':
+    def from_json(cls, json: dict) -> 'EncryptResult':
         """
         Create DecryptEntity from user json.
 
@@ -78,7 +52,3 @@ class DecryptEntity(TextMetadata):
         end = json.get("end")
         entity_type = json.get("entity_type")
         return cls(key, start, end, entity_type)
-
-
-
-

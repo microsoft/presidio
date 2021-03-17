@@ -165,17 +165,17 @@ def test_given_recognizer_results_with_no_conflicting_indices_then_there_is_no_c
     # fmt: off
     "request_json, result_text",
     [
-        ({}, "Invalid input, analyzer result must contain start",),
+        ({}, "Invalid input, result must contain start",),
         ({
              "end": 32,
              "score": 0.8,
              "entity_type": "NUMBER"
-         }, "Invalid input, analyzer result must contain start",),
+         }, "Invalid input, result must contain start",),
         ({
              "start": 28,
              "score": 0.8,
              "entity_type": "NUMBER"
-         }, "Invalid input, analyzer result must contain end",),
+         }, "Invalid input, result must contain end",),
         ({
              "start": 28,
              "end": 32,
@@ -185,7 +185,7 @@ def test_given_recognizer_results_with_no_conflicting_indices_then_there_is_no_c
              "start": 28,
              "end": 32,
              "score": 0.8,
-         }, "Invalid input, analyzer result must contain entity_type",),
+         }, "Invalid input, result must contain entity_type",),
     ],
     # fmt: on
 )
@@ -244,7 +244,7 @@ def test_given_endpoint_larger_then_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_recognizer_result("", 0, 10, 0)
     assert (
-            e.value.err_msg == "Invalid input, analyzer result start index '10' "
+            e.value.err_msg == "Invalid input, start index '10' "
                                "must be smaller than end index '0'"
     )
 
@@ -253,7 +253,7 @@ def test_given_endpoint_equal_to_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_recognizer_result("", 0, 0, 0)
     assert (
-            e.value.err_msg == "Invalid input, analyzer result start index '0' "
+            e.value.err_msg == "Invalid input, start index '0' "
                                "must be smaller than end index '0'"
     )
 
@@ -271,7 +271,7 @@ def test_given_endpoint_equal_to_start_point_then_we_fail():
 def test_given_negative_start_or_endpoint_then_we_fail(start, end):
     with pytest.raises(
             InvalidParamException,
-            match="Invalid input, analyzer result " "start and end must be positive",
+            match="Invalid input, result start and end must be positive",
     ):
         create_recognizer_result("", 0, start, end)
 

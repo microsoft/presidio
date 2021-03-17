@@ -36,7 +36,7 @@ def test_given_valid_json_then_anonymizers_config_list_created_successfully():
                         "score": 0.8,
                     }
                 ]
-                , "Invalid input, analyzer result must contain start",),
+                , "Invalid input, result must contain start",),
         (None, "Invalid input, request must contain analyzer results")
     ],
     # fmt: on

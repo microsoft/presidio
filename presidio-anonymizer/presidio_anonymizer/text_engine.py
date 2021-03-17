@@ -47,7 +47,7 @@ class TextEngine:
             result_item_builder = ResultItemBuilder(operator_metadata.operator_type)
             result_item = result_item_builder.set_operator_name(
             operator_metadata.operator_name).set_entity_type(
-            manipulation.get_entity_type()).set_end(
+            manipulation.entity_type).set_end(
             index_from_end).manipulated_text(manipulated_text).build()
             manipulation_result.add_item(result_item)
 
