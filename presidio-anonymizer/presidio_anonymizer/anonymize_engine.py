@@ -2,20 +2,18 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.entities import (
-    RecognizerResult,
-    AnonymizerConfig)
-from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
-from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
-from presidio_anonymizer.operators.operators_factory import OperatorsFactory
+from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
+from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.entities.engine.result import EngineResult
+from presidio_anonymizer.operators import OperatorsFactory
 from presidio_anonymizer.text_engine import TextEngine
 
 DEFAULT = "replace"
 
 
-class AnonymizerEngine:
+class AnonymizeEngine:
     """
-    AnonymizerEngine class.
+    AnonymizeEngine class.
 
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
     and replaces the PII entities with the desired anonymizers.
@@ -29,7 +27,7 @@ class AnonymizerEngine:
             self,
             text: str,
             analyzer_results: List[RecognizerResult],
-            anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
+            anonymizers_config: Optional[Dict[str, AnonymizeConfig]] = None,
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -91,9 +89,9 @@ class AnonymizerEngine:
 
     def __check_or_add_default_anonymizer(self,
                                           anonymizers_config: Dict[
-                                              str, AnonymizerConfig]) -> \
+                                              str, AnonymizeConfig]) -> \
             Dict[str, OperatorMetadata]:
-        default_anonymizer = {"DEFAULT": AnonymizerConfig(DEFAULT)}
+        default_anonymizer = {"DEFAULT": AnonymizeConfig(DEFAULT)}
         if not anonymizers_config:
             return default_anonymizer
         if not anonymizers_config.get("DEFAULT"):

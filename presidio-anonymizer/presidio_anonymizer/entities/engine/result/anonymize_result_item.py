@@ -1,6 +1,5 @@
 """"Result item from the /anonymizer method."""
-from presidio_anonymizer.entities.engine.result.engine_result_item import \
-    EngineResultItem
+from presidio_anonymizer.entities.engine.result import EngineResultItem
 
 
 class AnonymizeResultItem(EngineResultItem):

@@ -1,9 +1,6 @@
-from presidio_anonymizer.entities.engine.result.anonymize_result_item import \
-    AnonymizeResultItem
-from presidio_anonymizer.entities.engine.result.decrypt_result_item import \
-    DecryptResultItem
-from presidio_anonymizer.entities.engine.result.engine_result_item import \
-    EngineResultItem
+from presidio_anonymizer.entities.engine.result import AnonymizeResultItem
+from presidio_anonymizer.entities.engine.result import DecryptResultItem
+from presidio_anonymizer.entities.engine.result import EngineResultItem
 from presidio_anonymizer.operators import OperatorType
 
 
@@ -29,7 +26,7 @@ class ResultItemBuilder:
         self.__end = index_from_end
         return self
 
-    def manipulated_text(self, operated_on_text: str):
+    def operated_on_text(self, operated_on_text: str):
         self.__operated_on_text = operated_on_text
         return self
 

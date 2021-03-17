@@ -2,7 +2,8 @@ from typing import List
 
 import pytest
 
-from presidio_anonymizer.entities import RecognizerResult, InvalidParamException
+from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities.engine import RecognizerResult
 
 
 @pytest.mark.parametrize(

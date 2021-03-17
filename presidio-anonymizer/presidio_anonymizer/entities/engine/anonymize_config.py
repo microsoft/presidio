@@ -2,11 +2,11 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
+from presidio_anonymizer.entities.engine import OperatorMetadata
 from presidio_anonymizer.operators import OperatorType
 
 
-class AnonymizerConfig(OperatorMetadata):
+class AnonymizeConfig(OperatorMetadata):
     """Handle the anonymizers data - anonymizer class and params."""
 
     logger = logging.getLogger("presidio-anonymizer")

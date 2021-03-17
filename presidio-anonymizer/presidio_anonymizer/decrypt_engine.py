@@ -3,7 +3,7 @@ from typing import List
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine.decrypt_config import DecryptConfig
-from presidio_anonymizer.entities.engine.decrypt_entity import EncryptResult
+from presidio_anonymizer.entities.engine.encrypt_result import EncryptResult
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter

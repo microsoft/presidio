@@ -1,6 +1,6 @@
-from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
+from presidio_anonymizer.entities.engine import OperatorMetadata
 from presidio_anonymizer.operators import OperatorType
-from presidio_anonymizer.operators.decrypt import Decrypt
+from presidio_anonymizer.operators import Decrypt
 
 
 class DecryptConfig(OperatorMetadata):

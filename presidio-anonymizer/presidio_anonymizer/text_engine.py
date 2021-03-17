@@ -1,14 +1,11 @@
 import logging
 from typing import List, Dict
 
-from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
-from presidio_anonymizer.entities.engine.result.engine_result import \
-    EngineResult
-from presidio_anonymizer.entities.engine.result.result_item_builder import \
-    ResultItemBuilder
-from presidio_anonymizer.entities.engine.text_metadata import \
-    TextMetadata
-from presidio_anonymizer.operators.operators_factory import OperatorsFactory
+from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.entities.engine import TextMetadata
+from presidio_anonymizer.entities.engine.result import EngineResult
+from presidio_anonymizer.entities.engine.result import ResultItemBuilder
+from presidio_anonymizer.operators import OperatorsFactory
 from presidio_anonymizer.services.text_interpolator import TextInterpolator
 
 
@@ -23,22 +20,22 @@ class TextEngine:
                 operators_metadata: Dict[
                     str, OperatorMetadata]) -> EngineResult:
         text_interpolator = TextInterpolator(original_text=text)
-        manipulation_result = EngineResult()
-        for manipulation in sorted(text_metadata, reverse=True):
-            text_to_manipulate = text_interpolator.get_text_in_position(
-                manipulation.start, manipulation.end
+        engine_result = EngineResult()
+        for operator in sorted(text_metadata, reverse=True):
+            text_to_operate_on = text_interpolator.get_text_in_position(
+                operator.start, operator.end
             )
 
             self.logger.debug(
-                f"performing manipulation {manipulation}"
+                f"performing operation {operator}"
             )
             operator_metadata = self.__get_entity_operator_metadata(
-                manipulation.entity_type, operators_metadata)
-            manipulated_text = self.__manipulate_text(
-                manipulation, text_to_manipulate, operator_metadata
+                operator.entity_type, operators_metadata)
+            changed_text = self.__operate_on_text(
+                operator, text_to_operate_on, operator_metadata
             )
             index_from_end = text_interpolator.replace_text_get_insertion_index(
-                manipulated_text, manipulation.start, manipulation.end
+                changed_text, operator.start, operator.end
             )
 
             # The following creates an intermediate list of result entities,
@@ -47,18 +44,18 @@ class TextEngine:
             result_item_builder = ResultItemBuilder(operator_metadata.operator_type)
             result_item = result_item_builder.set_operator_name(
                 operator_metadata.operator_name).set_entity_type(
-                manipulation.entity_type).set_end(
-                index_from_end).manipulated_text(manipulated_text).build()
-            manipulation_result.add_item(result_item)
+                operator.entity_type).set_end(
+                index_from_end).operated_on_text(changed_text).build()
+            engine_result.add_item(result_item)
 
-        manipulation_result.set_text(text_interpolator.output_text)
-        manipulation_result.normalize_item_indexes()
-        return manipulation_result
+        engine_result.set_text(text_interpolator.output_text)
+        engine_result.normalize_item_indexes()
+        return engine_result
 
-    def __manipulate_text(
+    def __operate_on_text(
             self,
             text_metadata: TextMetadata,
-            text_to_manipulate: str,
+            text_to_operate_on: str,
             operator_metadata: OperatorMetadata
     ) -> str:
         entity_type = text_metadata.entity_type
@@ -70,17 +67,17 @@ class TextEngine:
         params = operator_metadata.params
         params["entity_type"] = entity_type
         self.logger.debug(f"operating on {entity_type} with {operator}")
-        anonymized_text = operator.operate(params=params, text=text_to_manipulate)
-        return anonymized_text
+        operated_on_text = operator.operate(params=params, text=text_to_operate_on)
+        return operated_on_text
 
     @staticmethod
     def __get_entity_operator_metadata(
             entity_type: str, operators_metadata: Dict[str, OperatorMetadata] = {}
     ) -> OperatorMetadata:
-        # We try to get the anonymizer from the list by entity_type.
+        # We try to get the operator from the list by entity_type.
         # If it does not exist, we get the default from the list.
-        anonymizer = operators_metadata.get(entity_type)
-        if anonymizer:
-            return anonymizer
+        operator = operators_metadata.get(entity_type)
+        if operator:
+            return operator
         else:
             return operators_metadata.get("DEFAULT")

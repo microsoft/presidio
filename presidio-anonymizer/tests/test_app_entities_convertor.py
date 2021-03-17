@@ -4,8 +4,8 @@ from typing import List
 
 import pytest
 
-from presidio_anonymizer.entities import InvalidParamException, AnonymizerConfig, \
-    RecognizerResult
+from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.entities.engine import AnonymizeConfig, RecognizerResult
 from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
 
 
@@ -80,11 +80,11 @@ def test_given_empty_analyzer_results_then_list_created_successfully():
         ({"anonymizers": {}}, {}),
         ({}, {}),
         ({"anonymizers": {"PHONE": {"type": "replace"}}},
-         {"PHONE": AnonymizerConfig("replace")}),
+         {"PHONE": AnonymizeConfig("replace")}),
         ({"anonymizers": {
             "PHONE": {"type": "redact", "param": "param", "param_1": "param_1"}}},
-         {"PHONE": AnonymizerConfig("redact",
-                                    {"param": "param", "param_1": "param_1"})})
+         {"PHONE": AnonymizeConfig("redact",
+                                   {"param": "param", "param_1": "param_1"})})
     ],
 )
 def test_given_anonymizers_json_then_we_create_properties_properly(

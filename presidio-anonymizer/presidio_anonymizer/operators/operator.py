@@ -1,5 +1,4 @@
 """Operator abstraction - each operator should implement this class."""
-import logging
 from abc import abstractmethod, ABC
 from enum import Enum
 from typing import Dict
@@ -12,8 +11,6 @@ class OperatorType(Enum):
 
 class Operator(ABC):
     """Operator abstract class to be implemented by each operator."""
-
-    logger = logging.getLogger("presidio-anonymizer")
 
     @abstractmethod
     def operate(self, text: str, params: Dict = None) -> str:

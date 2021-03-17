@@ -1,5 +1,5 @@
 """"Result item from the /decrypt method."""
-from presidio_anonymizer.entities.engine.result.engine_result_item import \
+from presidio_anonymizer.entities.engine.result import \
     EngineResultItem
 
 

@@ -8,8 +8,8 @@ from typing import Tuple
 
 from flask import Flask, request
 
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.decryptor_engine import DecryptEngine
+from presidio_anonymizer import AnonymizeEngine
+from presidio_anonymizer.decrypt_engine import DecryptEngine
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.error_response import ErrorResponse
 from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
@@ -39,7 +39,7 @@ class Server:
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
         self.logger.info("Starting anonymizer engine")
-        self.engine = AnonymizerEngine()
+        self.engine = AnonymizeEngine()
         self.decryptor = DecryptEngine()
         self.logger.info(WELCOME_MESSAGE)
 
