@@ -5,6 +5,7 @@ from presidio_anonymizer.operators import OperatorType
 
 
 class OperatorMetadata(ABC):
+    """Abstract class to hold the data of the required operator."""
 
     def __init__(
             self,

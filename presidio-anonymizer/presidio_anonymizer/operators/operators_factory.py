@@ -6,6 +6,8 @@ from presidio_anonymizer.operators import OperatorType, Operator
 
 
 class OperatorsFactory:
+    """Operators factory to get the correct operator class."""
+
     _anonymizers: Dict = None
     _decryptors: Dict = None
 
@@ -17,7 +19,9 @@ class OperatorsFactory:
         """
         Extract the operator class from the operators list.
 
-        :return: operator class
+        :param operator_type: Either Anonymize or Decrypt to defer between operators.
+        :type operator_name: operator name.
+        :return: operator class entity.
         """
         if operator_type == OperatorType.Anonymize:
             operator_class = OperatorsFactory.get_anonymizers().get(operator_name)

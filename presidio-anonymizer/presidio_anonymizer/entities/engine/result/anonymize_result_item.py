@@ -1,4 +1,4 @@
-""""Result item for the /anonymizer method."""
+"""Result item for the /anonymizer method."""
 from presidio_anonymizer.entities.engine.result import EngineResultItem
 
 
@@ -27,14 +27,16 @@ class AnonymizeResultItem(EngineResultItem):
         self.anonymizer = anonymizer
 
     def __eq__(self, other: 'AnonymizeResultItem') -> bool:
-        return self.start == other.start \
-               and self.end == other.end \
-               and self.anonymizer == other.anonymizer \
-               and self.anonymized_text == other.anonymized_text \
-               and self.entity_type == other.entity_type
+        """Check two objects from this class is equal."""
+        return (self.start == other.start
+                and self.end == other.end
+                and self.anonymizer == other.anonymizer
+                and self.anonymized_text == other.anonymized_text
+                and self.entity_type == other.entity_type)
 
     def get_operated_text(self):
         """
+        Get the text we performed the operation on.
 
         :return: the text we operated over and this anonymize result represent.
         """

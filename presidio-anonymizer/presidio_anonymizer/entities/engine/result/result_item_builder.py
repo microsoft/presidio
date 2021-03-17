@@ -5,6 +5,8 @@ from presidio_anonymizer.operators import OperatorType
 
 
 class ResultItemBuilder:
+    """Build a result item for the engine result according to the operator type."""
+
     def __init__(self,
                  operator_type: OperatorType):
         self.__operator_type = operator_type
@@ -15,22 +17,27 @@ class ResultItemBuilder:
         self.__entity_type = ""
 
     def set_operator_name(self, operator_name: str) -> 'ResultItemBuilder':
+        """Set operator name of the result item."""
         self.__operator_name = operator_name
         return self
 
     def set_entity_type(self, entity_type: str) -> 'ResultItemBuilder':
+        """Set entity type of the result item."""
         self.__entity_type = entity_type
         return self
 
     def set_end(self, index_from_end: int) -> 'ResultItemBuilder':
+        """Set end index of the text result item."""
         self.__end = index_from_end
         return self
 
-    def operated_on_text(self, operated_on_text: str):
+    def set_operated_on_text(self, operated_on_text: str):
+        """Set the text we operated over."""
         self.__operated_on_text = operated_on_text
         return self
 
     def build(self) -> EngineResultItem:
+        """Create a EngineResultItem either for Anonymize or Decrypt."""
         if self.__operator_type == OperatorType.Anonymize:
             return AnonymizeResultItem(self.__start, self.__end,
                                        self.__operated_on_text,

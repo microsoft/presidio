@@ -22,6 +22,7 @@ class EncryptResult(TextMetadata):
         self.__validate_fields()
 
     def __gt__(self, other) -> bool:
+        """Check result is greater by the text index start location."""
         return self.start > other.start
 
     def __validate_fields(self):

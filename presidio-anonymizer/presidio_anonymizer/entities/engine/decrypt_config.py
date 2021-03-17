@@ -4,6 +4,8 @@ from presidio_anonymizer.operators import Decrypt
 
 
 class DecryptConfig(OperatorMetadata):
+    """Decrypt configuration for each text entity of the decryption."""
+
     def __init__(self, key: str = None):
         """
         Create AnonymizerConfig entity.

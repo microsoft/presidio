@@ -1,3 +1,4 @@
+"""Engine request entities."""
 from .text_metadata import TextMetadata
 from .operator_metadata import OperatorMetadata
 from .recognizer_result import RecognizerResult

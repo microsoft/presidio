@@ -56,7 +56,7 @@ class TextEngine:
             result_item = result_item_builder.set_operator_name(
                 operator_metadata.operator_name).set_entity_type(
                 operator.entity_type).set_end(
-                index_from_end).operated_on_text(changed_text).build()
+                index_from_end).set_operated_on_text(changed_text).build()
             engine_result.add_item(result_item)
 
         engine_result.set_text(text_interpolator.output_text)

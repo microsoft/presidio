@@ -6,6 +6,8 @@ from presidio_anonymizer.entities.engine import EncryptResult
 
 
 class AppEntitiesConvertor:
+    """Assisting class to convert API json entities to engine entities."""
+
     @staticmethod
     def analyzer_results_from_json(data: List[Dict]) -> List['RecognizerResult']:
         """

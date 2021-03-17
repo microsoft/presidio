@@ -4,6 +4,7 @@ from presidio_anonymizer.entities import InvalidParamException
 
 
 class TextMetadata(ABC):
+    """Abstract class to hold the text we are going to operate on metadata."""
 
     def __init__(self, start: int, end: int, entity_type: str):
         self.start = start
@@ -12,12 +13,14 @@ class TextMetadata(ABC):
         self.__validate_fields()
 
     def __gt__(self, other):
+        """Check one entity is greater then other by the text end index."""
         return self.end > other.end
 
     def __eq__(self, other):
-        return self.start == other.start \
-               and self.end == other.end \
-               and self.entity_type == other.entity_type
+        """Check two text metadata entities are equal."""
+        return (self.start == other.start
+                and self.end == other.end
+                and self.entity_type == other.entity_type)
 
     def __validate_fields(self):
         if self.start is None:

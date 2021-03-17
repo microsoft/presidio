@@ -31,12 +31,13 @@ class DecryptResultItem(EngineResultItem):
         :return: bool
         """
         return (self.start == other.start
-               and self.end == other.end
-               and self.entity_type == other.entity_type
-               and self.decrypted_text == other.decrypted_text)
+                and self.end == other.end
+                and self.entity_type == other.entity_type
+                and self.decrypted_text == other.decrypted_text)
 
     def get_operated_text(self):
         """
+        Get the text after we performed the operator over it.
 
         :return: the text we operated over and this decrypt result represent.
         """
