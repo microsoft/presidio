@@ -1,4 +1,4 @@
-""""Result item from the /anonymizer method."""
+""""Result item for the /anonymizer method."""
 from presidio_anonymizer.entities.engine.result import EngineResultItem
 
 
@@ -13,16 +13,17 @@ class AnonymizeResultItem(EngineResultItem):
             entity_type: str,
             anonymizer: str,
     ):
-        """Create DecryptedEntity.
-
-        :param start: start index in the anonymized text.
-        :param end: end index in the anonymized text.
-        :param anonynmized_text: the PII anonymized text.
         """
-        self.start = start
-        self.end = end
+        Anonymized text data item.
+
+        :param start: start index of the anonymized text in the general text.
+        :param end: end index of the anonymized text in the general text.
+        :param anonynmized_text: the text after the anonymization.
+        :param entity_typeF: the entity type of the text.
+        :param anonymizer: the name of the anonymizer we used.
+        """
+        EngineResultItem.__init__(self, start, end, entity_type)
         self.anonymized_text = anonynmized_text
-        self.entity_type = entity_type
         self.anonymizer = anonymizer
 
     def __eq__(self, other: 'AnonymizeResultItem') -> bool:
@@ -33,4 +34,8 @@ class AnonymizeResultItem(EngineResultItem):
                and self.entity_type == other.entity_type
 
     def get_operated_text(self):
+        """
+
+        :return: the text we operated over and this anonymize result represent.
+        """
         return self.anonymized_text

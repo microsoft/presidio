@@ -5,6 +5,8 @@ from typing import Dict
 
 
 class OperatorType(Enum):
+    """Operator type either anonymize or decrypt to separate the operators."""
+
     Anonymize = 1
     Decrypt = 2
 

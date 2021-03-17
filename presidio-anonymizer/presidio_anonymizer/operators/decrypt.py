@@ -8,7 +8,8 @@ from presidio_anonymizer.services.validators import validate_parameter
 
 
 class Decrypt(Operator):
-    """Anonymizes text to an encrypted form, or it to be restored using decrypted."""
+    """Decrypt text to from its encrypted form."""
+
     NAME = "decrypt"
     KEY = "key"
 
@@ -18,7 +19,7 @@ class Decrypt(Operator):
 
         :param text: The text for decryption.
         :param params:
-            * *key* The key supplied by the user for the encryption.
+            **key* The key supplied by the user for the encryption.
         :return: The encrypted text
         """
         encoded_key = params.get(self.KEY).encode("utf8")
@@ -27,7 +28,7 @@ class Decrypt(Operator):
 
     def validate(self, params: Dict = None) -> None:
         """
-        Validate Encrypt parameters.
+        Validate Decrypt parameters.
 
         :param params:
             * *key* The key supplied by the user for the encryption.
@@ -42,9 +43,9 @@ class Decrypt(Operator):
             )
 
     def operator_name(self) -> str:
-        """Return decryptor name."""
+        """Return decrypt name."""
         return self.NAME
 
     def operator_type(self) -> OperatorType:
-        """Return decryptor type."""
+        """Return decrypt type."""
         return OperatorType.Decrypt

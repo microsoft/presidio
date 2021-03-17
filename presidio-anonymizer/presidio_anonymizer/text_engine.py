@@ -1,3 +1,4 @@
+"""Handle the entire text operations using the operators."""
 import logging
 from typing import List, Dict
 
@@ -10,6 +11,7 @@ from presidio_anonymizer.services.text_interpolator import TextInterpolator
 
 
 class TextEngine:
+    """Handle the logic of operations over the text using the operators."""
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
@@ -19,6 +21,15 @@ class TextEngine:
                 text_metadata: List[TextMetadata],
                 operators_metadata: Dict[
                     str, OperatorMetadata]) -> EngineResult:
+        """
+        Operate will do the operations required by the user over the text.
+
+        :param text: the text we need to operate on.
+        :param text_metadata: data about the text entities we want to operate over.
+        :param operators_metadata: dictionary where the key is the entity_type and what
+        we want to perform over this entity_type.
+        :return:
+        """
         text_interpolator = TextInterpolator(original_text=text)
         engine_result = EngineResult()
         for operator in sorted(text_metadata, reverse=True):

@@ -1,7 +1,7 @@
 import logging
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine.text_metadata import TextMetadata
+from presidio_anonymizer.entities.engine import TextMetadata
 
 
 class EncryptResult(TextMetadata):

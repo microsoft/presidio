@@ -1,4 +1,3 @@
-from presidio_anonymizer.operators import Operator
 from presidio_anonymizer.operators.operators_factory import OperatorsFactory
 
 

@@ -115,7 +115,7 @@ def test_given_invalid_json_for_anonymizers_then_we_fail(anonymizers, result_tex
                                     anonymizers)
 
 
-def test_given_several_analyzer_results_then_check_we_filter_them_properly_and_get_correct_mocked_result():
+def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result():
     analyzer_results = [
         RecognizerResult(start=48, end=57, score=0.55, entity_type="SSN"),
         RecognizerResult(start=24, end=32, score=0.6, entity_type="FULL_NAME"),

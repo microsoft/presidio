@@ -16,5 +16,3 @@ def test_given_json_then_anonymizer_config_is_created_properly(class_name):
     anonymizer_config = AnonymizeConfig.from_json(json)
     assert anonymizer_config.operator_name == class_name
     assert anonymizer_config.params == {"param_1": "my_parameter"}
-
-

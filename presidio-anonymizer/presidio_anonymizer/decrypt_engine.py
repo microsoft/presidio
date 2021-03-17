@@ -1,3 +1,4 @@
+"""Decrypt encrypted text by the 'encrypt' anonymizer."""
 import logging
 from typing import List
 
@@ -36,6 +37,13 @@ class DecryptEngine:
         return decrypted_text
 
     def decrypt(self, text: str, entities: List[EncryptResult]) -> EngineResult:
+        """
+        Receive the text and the entities and decrypt accordingly.
+
+        :param text: the full text with the encrypted entities
+        :param entities: list of encrypted entities
+        :return: EngineResult - the new text and data about the decrypted entities.
+        """
         operators_metadata = {}
         for entity in entities:
             operators_metadata[entity.entity_type] = DecryptConfig(entity.key)

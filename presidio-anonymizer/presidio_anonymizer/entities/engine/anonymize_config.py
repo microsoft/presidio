@@ -44,6 +44,7 @@ class AnonymizeConfig(OperatorMetadata):
     def __eq__(self, other):
         """Verify two AnonymizerConfig are equal."""
         anonymizer_class_equals = self.operator_name == other.operator_name
-        return self.params == other.params \
-               and anonymizer_class_equals \
-               and self.operator_type == other.operator_type
+        operator_types_equal = self.operator_type == other.operator_type
+        return (self.params == other.params
+                and anonymizer_class_equals
+                and operator_types_equal)
