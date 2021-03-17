@@ -22,20 +22,11 @@ from pyspark.sql.functions import input_file_name, regexp_replace
 from pyspark.sql.functions import col, pandas_udf
 import pandas as pd
 
-dbutils.widgets.text(
-    "storage_account_name", "", "Blob Storage Account Name"
-)  # noqa: F821
-dbutils.widgets.text("storage_container_name", "", "Blob Container Name")  # noqa: F821
-dbutils.widgets.text(
-    "storage_account_access_key", "", "Storage Account Access Key"
-)  # noqa: F821
-dbutils.widgets.text(
-    "storage_input_folder", "input", "Storage Account Access Key"
-)  # noqa: F821
-dbutils.widgets.text(
-    "storage_output_folder", "output", "Storage Account Access Key"
-)  # noqa: F821
-
+dbutils.widgets.text("storage_account_name", "", "Blob Storage Account Name")
+dbutils.widgets.text("storage_container_name", "", "Blob Container Name")
+dbutils.widgets.text("storage_account_access_key", "", "Storage Account Access Key")
+dbutils.widgets.text("storage_input_folder", "input", "Input Folder Name")
+dbutils.widgets.text("storage_output_folder", "output", "Output Folder Name")
 
 # COMMAND ----------
 
@@ -44,39 +35,34 @@ dbutils.widgets.text(
 
 # COMMAND ----------
 
-storage_account_name = dbutils.widgets.get("storage_account_name")  # noqa F821
-storage_container_name = dbutils.widgets.get("storage_container_name")  # noqa F821
-storage_account_access_key = dbutils.widgets.get(
-    "storage_account_access_key"
-)  # noqa F821
+storage_account_name = dbutils.widgets.get("storage_account_name")
+storage_container_name = dbutils.widgets.get("storage_container_name")
+storage_account_access_key = dbutils.widgets.get("storage_account_access_key")
 
-
-blob_service_client = BlobServiceClient(
-    account_url="https://" + storage_account_name + ".blob.core.windows.net/",
-    credential=storage_account_access_key,
-)
-container_client = blob_service_client.get_container_client(storage_container_name)
-
-blob_names = container_client.list_blobs(
-    name_starts_with=dbutils.widgets.get("storage_input_folder") + "/"
-)
-blobs = []
-for blob in blob_names:
-    blobs.append(
-        "wasbs://"
-        + storage_container_name
-        + "@"
-        + storage_account_name
-        + ".blob.core.windows.net/"
-        + blob.name
-    )
-
+# mount the container
 spark.conf.set(
     "fs.azure.account.key." + storage_account_name + ".blob.core.windows.net",
     storage_account_access_key,
 )
 
-input_df = spark.read.text(blobs).withColumn("filename", input_file_name())
+dbutils.fs.mount(
+    source="wasbs://"
+    + storage_container_name
+    + "@"
+    + storage_account_name
+    + ".blob.core.windows.net",
+    mount_point="/mnt/files",
+    extra_configs={
+        "fs.azure.account.key."
+        + storage_account_name
+        + ".blob.core.windows.net": storage_account_access_key
+    },
+)
+
+# load the files
+input_df = spark.read.text("/mnt/files/input/*").withColumn(
+    "filename", input_file_name()
+)
 display(input_df)
 
 
@@ -87,7 +73,10 @@ display(input_df)
 
 # COMMAND ----------
 
-
+# define a pandas UDF function and a series function over it.
+# Note that analyzer is loaded within the UDF and not broadcasted.
+# This is due to spacy limitation of loading models in multiple threads as
+# described here: https://github.com/explosion/spaCy/issues/4349
 def anonymize_text(text: str) -> str:
     analyzer = AnalyzerEngine()
     anonymizer = AnonymizerEngine()
@@ -106,11 +95,12 @@ def anonymize_series(s: pd.Series) -> pd.Series:
     return s.apply(anonymize_text)
 
 
+# define a the function as pandas UDF
 anonymize = pandas_udf(anonymize_series, returnType=StringType())
 
+# apply the udf
 anonymized_df = input_df.withColumn("anonymized_text", anonymize(col("value")))
 display(anonymized_df)
-
 
 # COMMAND ----------
 
@@ -119,14 +109,9 @@ display(anonymized_df)
 
 # COMMAND ----------
 
-anonymized_df = anonymized_df.withColumn(
-    "filename",
-    regexp_replace(
-        "filename",
-        "^.*(/" + dbutils.widgets.get("storage_input_folder") + "/)",
-        dbutils.widgets.get("storage_output_folder") + "/",
-    ),
-)
+# define a pandas UDF function and a series function over it.
+# Note that this is not using the native write API but the Azure
+# client to allow writing each row as a separate blob from worker.
 
 
 def upload_to_blob(text, file_name):
@@ -138,16 +123,34 @@ def upload_to_blob(text, file_name):
 
 
 def upload_series(s1: pd.Series, s2: pd.Series) -> pd.Series:
-    res = []
-    for index, s1_item in s1.items():
-        s2_item = s2[index]
-        res.append(upload_to_blob(s1_item, s2_item))
-    return pd.Series(res)
+    return pd.Series([upload_to_blob(c1, c2) for c1, c2 in zip(s1, s2)])
 
 
+# define a the function as pandas UDF
 save_udf = pandas_udf(upload_series, returnType=StringType())
 
+# setup a Azure Blob client.
+blob_service_client = BlobServiceClient(
+    account_url="https://" + storage_account_name + ".blob.core.windows.net/",
+    credential=storage_account_access_key,
+)
+
+# transform the input file name to output file name
+anonymized_df = anonymized_df.withColumn(
+    "filename",
+    regexp_replace(
+        "filename",
+        "^.*(/" + dbutils.widgets.get("storage_input_folder") + "/)",
+        dbutils.widgets.get("storage_output_folder") + "/",
+    ),
+)
+
+# apply the udf
 out_df = anonymized_df.withColumn(
     "processed", save_udf(col("anonymized_text"), col("filename"))
 )
+
 out_df.collect()
+
+# unmount the blob container
+dbutils.fs.unmount("/mnt/files")
