@@ -30,7 +30,7 @@ Persidio anonymizer comes with predefined anonymizers but can easily be extended
     docker pull mcr.microsoft.com/presidio-anonymizer
     
     # Run the container with the default port
-    docker run -d -p 5001:5001 mcr.microsoft.com/presidio-anonymizer:latest
+    docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
     ```
 
 === "From source"
@@ -78,7 +78,7 @@ Persidio anonymizer comes with predefined anonymizers but can easily be extended
     
     ```sh
     cd presidio-anonymizer
-    docker run -p 5001:5001 presidio-anonymizer 
+    docker run -p 5001:3000 presidio-anonymizer 
     ```
     
     #### Using python runtime
