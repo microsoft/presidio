@@ -11,6 +11,7 @@ from presidio_anonymizer.entities.engine.result.anonymize_result_item import \
     AnonymizeResultItem
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.services.aes_cipher import AESCipher
+from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
 from tests.integration.file_utils import get_scenario_file_content
 
 
@@ -50,10 +51,10 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
         expected_anonymize_result_json["text"], items
     )
     engine = AnonymizerEngine()
-    anonymizers_config = AnonymizerConfig.get_anonymizer_configs_from_json(
+    anonymizers_config = AppEntitiesConvertor.anonymizer_configs_from_json(
         anonymizer_request_dict
     )
-    analyzer_results = RecognizerResult.handle_analyzer_results_json(
+    analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
         anonymizer_request_dict.get("analyzer_results")
     )
 
@@ -76,6 +77,20 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
 def test_given_anonymize_called_with_error_scenarios_then_expected_errors_returned(
         anonymize_scenario,
 ):
+
+        text = "hello world, my name is Jane Doe. My number is: 03-4453334",
+        anonymizers = {"PHONE_NUMBER": AnonymizerConfig("mask", {"masking_char": "non_character",
+                "chars_to_mask": 6,
+                "from_end": True})}
+        analyzer_results = [RecognizerResult("PHONE_NUMBER"), π]
+        "analyzer_results": [
+            {
+                "start": 48,
+                "end": 57,
+                "score": 0.95,
+                "entity_type": "PHONE_NUMBER"
+            }
+
     anonymizer_request_dict = json.loads(
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.in.json")
     )
@@ -83,7 +98,7 @@ def test_given_anonymize_called_with_error_scenarios_then_expected_errors_return
         get_scenario_file_content("anonymize", f"{anonymize_scenario}.out.json")
     )
     engine = AnonymizerEngine()
-    anonymizers_config = AnonymizerConfig.get_anonymizer_configs_from_json(
+    anonymizers_config = AppEntitiesConvertor.anonymizer_configs_from_json(
         anonymizer_request_dict
     )
     analyzer_results = RecognizerResult.handle_analyzer_results_json(
@@ -92,7 +107,7 @@ def test_given_anonymize_called_with_error_scenarios_then_expected_errors_return
 
     try:
         actual_anonymize_result = engine.anonymize(
-            anonymizer_request_dict.get("text"), analyzer_results, anonymizers_config
+            text, analyzer_results, anonymizers_config
         )
     except Exception as e:
         actual_anonymize_result = str(e)

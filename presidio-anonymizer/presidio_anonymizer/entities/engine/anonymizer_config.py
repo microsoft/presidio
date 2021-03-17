@@ -38,31 +38,10 @@ class AnonymizerConfig:
             params.pop("type")
         return cls(anonymizer_name, params)
 
-
     def __eq__(self, other):
         """Verify two AnonymizerConfig are equal."""
 
         anonymizer_class_equals = self.anonymizer_name == other.anonymizer_name
         return self.params == other.params and anonymizer_class_equals
 
-    @classmethod
-    def get_anonymizer_configs_from_json(
-            cls, data: Dict
-    ) -> Dict[str, 'AnonymizerConfig']:
-        """
-        Go over the anonymizers and get the relevant anonymizer class for it.
 
-        Inserts the class to the anonymizer so the engine will use it.
-        :param data: contains the text, configuration and analyzer_results
-        value - AnonynmizerConfig
-        """
-        anonymizers_config = {}
-        anonymizers = data.get("anonymizers")
-        if anonymizers is not None:
-            for key, anonymizer_json in anonymizers.items():
-                cls.logger.debug(
-                    f"converting {anonymizer_json} to anonymizer config class"
-                )
-                anonymizer_config = AnonymizerConfig.from_json(anonymizer_json)
-                anonymizers_config[key] = anonymizer_config
-        return anonymizers_config

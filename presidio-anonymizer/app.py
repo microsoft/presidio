@@ -10,11 +10,9 @@ from flask import Flask, request
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.decryptor_engine import DecryptEngine
-from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine.decrypt_entity import DecryptEntity
-
 from presidio_anonymizer.entities.error_response import ErrorResponse
+from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
 
 DEFAULT_PORT = "3000"
 
@@ -56,10 +54,10 @@ class Server:
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
 
-            anonymizers_config = AnonymizerConfig.get_anonymizer_configs_from_json(
+            anonymizers_config = AppEntitiesConvertor.anonymizer_configs_from_json(
                 content
             )
-            analyzer_results = RecognizerResult.handle_analyzer_results_json(
+            analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 content.get("analyzer_results"))
             anoymizer_result = self.engine.anonymize(
                 text=content.get("text"),
@@ -74,7 +72,7 @@ class Server:
             if not content:
                 return ErrorResponse("Invalid request json").to_json(), 400
             text = content.get("text")
-            decrypt_entities = DecryptEntity.multiple_from_json(content)
+            decrypt_entities = AppEntitiesConvertor.decrypt_entities_from_json(content)
             decrypt_response = self.decryptor.decrypt(
                 text=text, entities=decrypt_entities
             )

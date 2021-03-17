@@ -18,23 +18,6 @@ def test_given_json_then_anonymizer_config_is_created_properly(class_name):
     assert anonymizer_config.params == {"param_1": "my_parameter"}
 
 
-
-def test_given_valid_json_then_anonymizers_config_list_created_successfully():
-    content = get_content()
-    anonymizers_config = AnonymizerConfig.get_anonymizer_configs_from_json(content)
-    assert len(anonymizers_config) == 2
-    phone_number_anonymizer = anonymizers_config.get("PHONE_NUMBER")
-    assert phone_number_anonymizer.params == {
-        "masking_char": "*",
-        "chars_to_mask": 4,
-        "from_end": True,
-    }
-    assert phone_number_anonymizer.anonymizer_name == "mask"
-    default_anonymizer = anonymizers_config.get("DEFAULT")
-    assert default_anonymizer.params == {"new_value": "ANONYMIZED"}
-    assert default_anonymizer.anonymizer_name == "replace"
-
-
 def get_content():
     return {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",

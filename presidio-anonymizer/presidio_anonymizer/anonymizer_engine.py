@@ -10,7 +10,7 @@ from presidio_anonymizer.entities.engine.result.engine_result import EngineResul
 from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.operators.operators_factory import OperatorsFactory
-from presidio_anonymizer.services.text_engine import TextEngine
+from presidio_anonymizer.text_engine import TextEngine
 
 DEFAULT = "replace"
 

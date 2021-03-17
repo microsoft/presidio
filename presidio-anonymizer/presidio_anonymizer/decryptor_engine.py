@@ -6,7 +6,7 @@ from presidio_anonymizer.entities.engine.decrypt_entity import DecryptEntity
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 from presidio_anonymizer.services.aes_cipher import AESCipher
-from presidio_anonymizer.services.text_engine import TextEngine
+from presidio_anonymizer.text_engine import TextEngine
 from presidio_anonymizer.services.validators import validate_parameter
 
 

@@ -79,27 +79,6 @@ class DecryptEntity(TextMetadata):
         entity_type = json.get("entity_type")
         return cls(key, start, end, entity_type)
 
-    @classmethod
-    def multiple_from_json(cls, json: Dict) -> List['DecryptEntity']:
-        """
-        Create DecryptEntity list.
 
-        :param json e.g.:
-        {
-            "text": text,
-            "items": [{
-                "start": 0,
-                "end": len(text),
-                "key": "1111111111111111",
-            }],
-        }
-        :return: DecryptRequest
-        """
-        items = []
-        decrypt_entity = json.get("items")
-        if decrypt_entity:
-            for result in decrypt_entity:
-                items.append(DecryptEntity.from_json(result))
-        return items
 
 

@@ -1,0 +1,66 @@
+from typing import List, Dict
+
+from presidio_anonymizer.entities import InvalidParamException, RecognizerResult, \
+    AnonymizerConfig
+from presidio_anonymizer.entities.engine.decrypt_entity import DecryptEntity
+
+
+class AppEntitiesConvertor:
+    @staticmethod
+    def analyzer_results_from_json(data: List[Dict]) -> List['RecognizerResult']:
+        """
+        Go over analyzer results, validate them and convert to List[AnalyzeResult].
+
+        :param data: contains the anonymizers and analyzer_results_json
+        """
+        analyzer_results = []
+        if data is None:
+            cls.logger.debug("invalid input, json missing field: analyzer_results_json")
+            raise InvalidParamException(
+                "Invalid input, " "request must contain analyzer results"
+            )
+        for analyzer_result in data:
+            analyzer_result = RecognizerResult.from_json(analyzer_result)
+            analyzer_results.append(analyzer_result)
+        return analyzer_results
+
+    @staticmethod
+    def anonymizer_configs_from_json(
+            data: Dict
+    ) -> Dict[str, 'AnonymizerConfig']:
+        """
+        Go over the anonymizers and get the relevant create anonymizer config entity.
+
+        :param data: contains the list of configuration
+        value - AnonynmizerConfig
+        """
+        anonymizers_config = {}
+        anonymizers = data.get("anonymizers")
+        if anonymizers is not None:
+            for key, anonymizer_json in anonymizers.items():
+                anonymizer_config = AnonymizerConfig.from_json(anonymizer_json)
+                anonymizers_config[key] = anonymizer_config
+        return anonymizers_config
+
+    @staticmethod
+    def decrypt_entities_from_json(json: Dict) -> List['DecryptEntity']:
+        """
+        Create DecryptEntity list.
+
+        :param json e.g.:
+        {
+            "text": text,
+            "items": [{
+                "start": 0,
+                "end": len(text),
+                "key": "1111111111111111",
+            }],
+        }
+        :return: DecryptRequest
+        """
+        items = []
+        decrypt_entity = json.get("items")
+        if decrypt_entity:
+            for result in decrypt_entity:
+                items.append(DecryptEntity.from_json(result))
+        return items
