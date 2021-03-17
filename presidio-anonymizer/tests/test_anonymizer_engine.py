@@ -120,17 +120,16 @@ def test_given_invalid_json_for_anonymizers_then_we_fail(anonymizers, result_tex
 
 
 def test_given_several_analyzer_results_then_check_we_filter_them_properly_and_get_correct_mocked_result():
-    analyzer_results = RecognizerResult.handle_analyzer_results_json(
-        [{"start": 48, "end": 57, "score": 0.55, "entity_type": "SSN"},
-         {"start": 24, "end": 32, "score": 0.6, "entity_type": "FULL_NAME"},
-         {"start": 24, "end": 28, "score": 0.9, "entity_type": "FIRST_NAME"},
-         {"start": 29, "end": 32, "score": 0.6, "entity_type": "LAST_NAME"},
-         {"start": 24, "end": 30, "score": 0.8, "entity_type": "NAME"},
-         {"start": 18, "end": 32, "score": 0.8, "entity_type": "BLA"},
-         {"start": 23, "end": 35, "score": 0.8, "entity_type": "BLA"},
-         {"start": 28, "end": 36, "score": 0.8, "entity_type": "BLA"},
-         {"start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER"}],
-    )
+    analyzer_results = [RecognizerResult(start=48, end=57, score=0.55, entity_type="SSN"),
+         RecognizerResult(start=24, end=32, score=0.6, entity_type="FULL_NAME"),
+         RecognizerResult(start=24, end=28, score=0.9, entity_type="FIRST_NAME"),
+         RecognizerResult(start=29, end=32, score=0.6, entity_type="LAST_NAME"),
+         RecognizerResult(start=24, end=30, score=0.8, entity_type="NAME"),
+         RecognizerResult(start=18, end=32, score=0.8, entity_type="BLA"),
+         RecognizerResult(start=23, end=35, score=0.8, entity_type="BLA"),
+         RecognizerResult(start=28, end=36, score=0.8, entity_type="BLA"),
+         RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER")]
+        
     anonymizer_config = AnonymizerConfig("replace", {})
     anonymizer_config.anonymizer_name = ""
     engine = AnonymizerEngine()

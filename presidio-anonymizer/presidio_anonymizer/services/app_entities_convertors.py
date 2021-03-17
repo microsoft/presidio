@@ -15,7 +15,6 @@ class AppEntitiesConvertor:
         """
         analyzer_results = []
         if data is None:
-            cls.logger.debug("invalid input, json missing field: analyzer_results_json")
             raise InvalidParamException(
                 "Invalid input, " "request must contain analyzer results"
             )
