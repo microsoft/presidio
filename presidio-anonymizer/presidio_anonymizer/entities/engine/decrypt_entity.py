@@ -16,8 +16,8 @@ class EncryptResult(TextMetadata):
         :param start: start index in the anonymized text.
         :param end: end index in the anonymized text.
         """
-        self.logger = logging.getLogger("presidio-anonymizer")
         TextMetadata.__init__(self, start, end, entity_type)
+        self.logger = logging.getLogger("presidio-anonymizer")
         self.key = key
         self.__validate_fields()
 

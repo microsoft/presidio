@@ -1,4 +1,3 @@
-import logging
 from abc import ABC
 from typing import Dict
 
@@ -13,7 +12,6 @@ class OperatorMetadata(ABC):
             params: Dict,
             operator_name: str
     ):
-        self.logger = logging.getLogger("presidio-anonymizer")
         self.operator_type = operator_type
         self.operator_name = operator_name
         self.params = params
