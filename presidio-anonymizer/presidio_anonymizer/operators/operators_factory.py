@@ -23,6 +23,7 @@ class OperatorsFactory:
         :type operator_name: operator name.
         :return: operator class entity.
         """
+        operator_class = None
         if operator_type == OperatorType.Anonymize:
             operator_class = OperatorsFactory.get_anonymizers().get(operator_name)
         if operator_type == OperatorType.Decrypt:

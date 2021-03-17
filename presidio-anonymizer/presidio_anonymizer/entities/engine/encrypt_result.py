@@ -45,6 +45,7 @@ class EncryptResult(TextMetadata):
             "start": 0,
             "end": len(text),
             "key": "1111111111111111",
+            "entity_type":"PERSON",
         }
         :return: DecryptEntity object
         """
