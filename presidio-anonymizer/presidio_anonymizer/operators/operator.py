@@ -11,6 +11,9 @@ class OperatorType(Enum):
     Decrypt = 2
 
 
+types = [OperatorType.Anonymize, OperatorType.Decrypt]
+
+
 class Operator(ABC):
     """Operator abstract class to be implemented by each operator."""
 

@@ -5,12 +5,12 @@ from presidio_anonymizer.entities.engine import TextMetadata
 
 
 class EncryptResult(TextMetadata):
-    """Information about the decrypt entity."""
+    """Information about the encrypted entity."""
 
     def __init__(self, key: str, start: int,
                  end: int, entity_type: str) -> 'EncryptResult':
         """
-        Create DecryptEntity.
+        Have the information about the entity we already encrypted and want to decrypt.
 
         :param key: the key used to anonymize/encrypt the text.
         :param start: start index in the anonymized text.
@@ -38,7 +38,7 @@ class EncryptResult(TextMetadata):
     @classmethod
     def from_json(cls, json: dict) -> 'EncryptResult':
         """
-        Create DecryptEntity from user json.
+        Create EncryptEntity from user json.
 
         :param json e.g.:
         {

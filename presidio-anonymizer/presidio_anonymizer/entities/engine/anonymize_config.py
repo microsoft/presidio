@@ -7,7 +7,7 @@ from presidio_anonymizer.operators import OperatorType
 
 
 class AnonymizeConfig(OperatorMetadata):
-    """Handle the anonymizers data - anonymizer class and params."""
+    """Handle the anonymizers (operators) data - anonymizer class name and params."""
 
     logger = logging.getLogger("presidio-anonymizer")
 

@@ -37,8 +37,8 @@ class AnonymizeEngine:
         :param anonymizers_config: The configuration of the anonymizers we would like
         to use for each entity e.g.: {"PHONE_NUMBER":AnonymizerConfig("redact", {})}
         received from the analyzer
-        :return: the anonymized text and a list of information
-        about the anonymized entities.
+        :return: the anonymized text and a list of information about the
+        anonymized entities.
         """
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results)
