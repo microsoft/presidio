@@ -1,13 +1,13 @@
 import logging
 from typing import List, Dict
 
+from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 from presidio_anonymizer.entities.engine.result.engine_result import \
     EngineResult
 from presidio_anonymizer.entities.engine.result.result_item_builder import \
     ResultItemBuilder
 from presidio_anonymizer.entities.engine.text_metadata import \
     TextMetadata
-from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 from presidio_anonymizer.operators.operators_factory import OperatorsFactory
 from presidio_anonymizer.services.text_interpolator import TextInterpolator
 
@@ -46,9 +46,9 @@ class TextEngine:
             # from start to end once the loop ends and the text length is deterministic.
             result_item_builder = ResultItemBuilder(operator_metadata.operator_type)
             result_item = result_item_builder.set_operator_name(
-            operator_metadata.operator_name).set_entity_type(
-            manipulation.entity_type).set_end(
-            index_from_end).manipulated_text(manipulated_text).build()
+                operator_metadata.operator_name).set_entity_type(
+                manipulation.entity_type).set_end(
+                index_from_end).manipulated_text(manipulated_text).build()
             manipulation_result.add_item(result_item)
 
         manipulation_result.set_text(text_interpolator.output_text)

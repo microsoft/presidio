@@ -31,7 +31,7 @@ class TextInterpolator:
         return self.output_text[start:end]
 
     def replace_text_get_insertion_index(
-        self, new_text: str, start: int, end: int
+            self, new_text: str, start: int, end: int
     ) -> int:
         """
         Replace text in a specific position with the text.

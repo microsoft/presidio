@@ -1,7 +1,7 @@
 from typing import Dict
 
-from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.operators import Operator, OperatorType
 from presidio_anonymizer.services.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
 

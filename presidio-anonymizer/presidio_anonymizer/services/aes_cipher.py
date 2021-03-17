@@ -1,8 +1,8 @@
-from Crypto.Util.Padding import pad, unpad
-
 import base64
+
 from Crypto import Random
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
 
 
 class AESCipher:
@@ -38,7 +38,7 @@ class AESCipher:
         iv = decoded_text[: AES.block_size]
         cipher = AES.new(key, AES.MODE_CBC, iv)
         decrypted_text = unpad(
-            cipher.decrypt(decoded_text[AES.block_size :]), AES.block_size
+            cipher.decrypt(decoded_text[AES.block_size:]), AES.block_size
         )
         return decrypted_text.decode("utf-8")
 

@@ -59,4 +59,3 @@ class OperatorsFactory:
             cls.operator_name(cls): cls for
             cls in manipulators
         }
-

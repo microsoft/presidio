@@ -4,11 +4,9 @@ from typing import List, Dict, Optional
 
 from presidio_anonymizer.entities import (
     RecognizerResult,
-    AnonymizerConfig, InvalidParamException,
-)
+    AnonymizerConfig)
 from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
-from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.operators.operators_factory import OperatorsFactory
 from presidio_anonymizer.text_engine import TextEngine
 
@@ -92,7 +90,8 @@ class AnonymizerEngine:
                     other_elements])
 
     def __check_or_add_default_anonymizer(self,
-                                          anonymizers_config: Dict[str, AnonymizerConfig]) -> \
+                                          anonymizers_config: Dict[
+                                              str, AnonymizerConfig]) -> \
             Dict[str, OperatorMetadata]:
         default_anonymizer = {"DEFAULT": AnonymizerConfig(DEFAULT)}
         if not anonymizers_config:

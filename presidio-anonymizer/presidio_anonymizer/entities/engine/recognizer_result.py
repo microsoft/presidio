@@ -50,8 +50,6 @@ class RecognizerResult(TextMetadata):
         end = data.get("end")
         return cls(entity_type, start, end, score)
 
-
-
     def __gt__(self, other):
         """
         Check if one result is greater by using the results indices in the text.
