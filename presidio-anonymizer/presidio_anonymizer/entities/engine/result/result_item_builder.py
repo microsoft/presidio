@@ -1,3 +1,4 @@
+from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine.result import AnonymizeResultItem
 from presidio_anonymizer.entities.engine.result import DecryptResultItem
 from presidio_anonymizer.entities.engine.result import EngineResultItem
@@ -43,5 +44,8 @@ class ResultItemBuilder:
                                        self.__operated_on_text,
                                        self.__entity_type, self.__operator_name)
 
-        return DecryptResultItem(self.__start, self.__end, self.__entity_type,
-                                 self.__operated_on_text)
+        if self.__operator_type == OperatorType.Decrypt:
+            return DecryptResultItem(self.__start, self.__end, self.__entity_type,
+                                     self.__operated_on_text)
+
+        raise InvalidParamException(f"Invalid operator type {self.__operator_type}")

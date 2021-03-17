@@ -5,7 +5,7 @@ from presidio_anonymizer.entities.engine.result import DecryptResultItem
 
 def test_given_decrypt_result_item_then_all_params_exist():
     result = DecryptResultItem(0, 3, "NAME", "bla")
-    assert result.end == 1
+    assert result.end == 3
     assert result.start == 0
     assert result.decrypted_text == "bla"
     assert result.entity_type == "NAME"
