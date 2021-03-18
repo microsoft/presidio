@@ -146,4 +146,4 @@ Upload a file to the blob storage input folder, using any preferd method ([Azure
 az storage blob upload --account-name $STORAGE_ACCOUNT_NAME  --container $STORAGE_CONTAINER_NAME --file ./[file name] --name input/[file name]
 ```
 
-Run the notebook cells and look for the output file at the output folder.
+Run the notebook cells, the output should be csv files which contain two columns, the original file name, and the anonymized content of that file.
