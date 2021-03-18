@@ -2,8 +2,8 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
 from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
 from presidio_anonymizer.entities.engine.result import EngineResult
 from presidio_anonymizer.operators import OperatorsFactory
 from presidio_anonymizer.text_engine import TextEngine
@@ -91,9 +91,9 @@ class AnonymizeEngine:
                                           anonymizers_config: Dict[
                                               str, AnonymizeConfig]) -> \
             Dict[str, OperatorMetadata]:
-        default_anonymizer = {"DEFAULT": AnonymizeConfig(DEFAULT)}
+        default_anonymizer = AnonymizeConfig(DEFAULT)
         if not anonymizers_config:
-            return default_anonymizer
+            return {"DEFAULT": default_anonymizer}
         if not anonymizers_config.get("DEFAULT"):
             anonymizers_config["DEFAULT"] = default_anonymizer
         return anonymizers_config
