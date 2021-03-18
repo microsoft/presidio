@@ -13,7 +13,6 @@
 
 # COMMAND ----------
 
-from azure.storage.blob import BlobServiceClient
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import AnonymizerConfig
@@ -40,11 +39,6 @@ storage_container_name = dbutils.widgets.get("storage_container_name")
 storage_account_access_key = dbutils.widgets.get("storage_account_access_key")
 
 # mount the container
-spark.conf.set(
-    "fs.azure.account.key." + storage_account_name + ".blob.core.windows.net",
-    storage_account_access_key,
-)
-
 dbutils.fs.mount(
     source="wasbs://"
     + storage_container_name
@@ -60,9 +54,9 @@ dbutils.fs.mount(
 )
 
 # load the files
-input_df = spark.read.text("/mnt/files/input/*").withColumn(
-    "filename", input_file_name()
-)
+input_df = spark.read.text(
+    "/mnt/files/" + dbutils.widgets.get("storage_input_folder") + "/*"
+).withColumn("filename", input_file_name())
 display(input_df)
 
 
@@ -114,43 +108,14 @@ display(anonymized_df)
 # client to allow writing each row as a separate blob from worker.
 
 
-def upload_to_blob(text, file_name):
-    blob_client = blob_service_client.get_blob_client(
-        container=storage_container_name, blob=file_name
-    )
-    blob_client.upload_blob(text)
-    return "SAVED"
-
-
-def upload_series(s1: pd.Series, s2: pd.Series) -> pd.Series:
-    return pd.Series([upload_to_blob(c1, c2) for c1, c2 in zip(s1, s2)])
-
-
-# define a the function as pandas UDF
-save_udf = pandas_udf(upload_series, returnType=StringType())
-
-# setup a Azure Blob client.
-blob_service_client = BlobServiceClient(
-    account_url="https://" + storage_account_name + ".blob.core.windows.net/",
-    credential=storage_account_access_key,
-)
-
-# transform the input file name to output file name
+# remove hdfs prefix from file name
 anonymized_df = anonymized_df.withColumn(
     "filename",
-    regexp_replace(
-        "filename",
-        "^.*(/" + dbutils.widgets.get("storage_input_folder") + "/)",
-        dbutils.widgets.get("storage_output_folder") + "/",
-    ),
+    regexp_replace("filename", "^.*(/mnt/files/)", ""),
 )
-
-# apply the udf
-out_df = anonymized_df.withColumn(
-    "processed", save_udf(col("anonymized_text"), col("filename"))
-)
-
-out_df.collect()
+anonymized_df = anonymized_df.drop("value")
+display(anonymized_df)
+anonymized_df.write.csv("/mnt/files/" + dbutils.widgets.get("storage_output_file"))
 
 # unmount the blob container
 dbutils.fs.unmount("/mnt/files")
