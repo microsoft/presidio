@@ -7,7 +7,7 @@ from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
 from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
 from presidio_anonymizer.entities.engine.result.anonymize_result_item import \
-    AnonymizeResultItem
+    AnonymizedEntity
 from presidio_anonymizer.entities.engine.result.engine_result import \
     EngineResult
 from presidio_anonymizer.entities.engine.text_metadata import \
@@ -161,7 +161,7 @@ class MockTextManipulator:
         assert len(operators) == 1
         assert operators["DEFAULT"]
         return EngineResult("Number: I am your new text!",
-                            [AnonymizeResultItem(0, 35, "text", "type", "hash")])
+                            [AnonymizedEntity(0, 35, "text", "type", "hash")])
 
 
 class MockAnonymizer:

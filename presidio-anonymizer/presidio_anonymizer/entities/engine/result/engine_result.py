@@ -37,7 +37,7 @@ class EngineResult:
         text_len = len(self.text)
         for result_item in self.items:
             result_item.start = text_len - result_item.end
-            result_item.end = result_item.start + len(result_item.get_operated_text())
+            result_item.end = result_item.start + len(result_item.get_text())
 
     def to_json(self) -> str:
         """Return a json string serializing this instance."""

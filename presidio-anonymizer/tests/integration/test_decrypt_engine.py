@@ -5,7 +5,7 @@ from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import EncryptResult
 
 
-def test_given_operator_decrypt_with_valid_params_then_we_decrypt_text_successfully():
+def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully():
     text = "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
     encryption_results = [
         EncryptResult(

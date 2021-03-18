@@ -2,7 +2,7 @@
 from presidio_anonymizer.entities.engine.result import EngineResultItem
 
 
-class DecryptResultItem(EngineResultItem):
+class DecryptedEntity(EngineResultItem):
     """Information about the decrypted entity."""
 
     def __init__(
@@ -23,11 +23,11 @@ class DecryptResultItem(EngineResultItem):
         EngineResultItem.__init__(self, start, end, entity_type)
         self.decrypted_text = decrypted_text
 
-    def __eq__(self, other: 'DecryptResultItem') -> bool:
+    def __eq__(self, other: 'DecryptedEntity') -> bool:
         """
-        Verify two DecryptResultItems are equal.
+        Verify two DecryptedEntity are equal.
 
-        :param other: DecryptResultItem
+        :param other: DecryptedEntity
         :return: bool
         """
         return (self.start == other.start
@@ -35,7 +35,7 @@ class DecryptResultItem(EngineResultItem):
                 and self.entity_type == other.entity_type
                 and self.decrypted_text == other.decrypted_text)
 
-    def get_operated_text(self):
+    def get_text(self):
         """
         Get the text after we performed the operator over it.
 
