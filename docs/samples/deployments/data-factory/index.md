@@ -20,7 +20,7 @@ Provision and setup the datbricks cluster by following the steps in [presidio-sp
 
 ### Deploy the ARM template
 
-Create the rest of the service by running the following script which uses the provided ARM template.
+Create the rest of the services by running the following script which uses the provided ARM template.
 
 ```bash
 RESOURCE_GROUP=[Name of resource group]
