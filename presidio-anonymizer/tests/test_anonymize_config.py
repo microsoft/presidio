@@ -39,6 +39,7 @@ def test_given_two_identical_entities_then_we_verify_they_are_equal():
     two = AnonymizeConfig("name", {"key", "key"})
     assert one == two
 
+
 @pytest.mark.parametrize(
     # fmt: off
     "anonymizer_config",
@@ -51,7 +52,6 @@ def test_given_two_identical_entities_then_we_verify_they_are_equal():
 def test_given_two_different_entities_then_we_verify_they_are_equal(anonymizer_config):
     one = AnonymizeConfig("name", {"key", "key"})
     assert one != anonymizer_config
-
 
 
 @pytest.mark.parametrize(
