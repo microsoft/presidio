@@ -53,8 +53,9 @@ class AppEntitiesConvertor:
             "text": text,
             "encrypt_results": [{
                 "start": 0,
-                "end": len(text),
+                "end": 10,
                 "key": "1111111111111111",
+                "entity_type":"PHONE_NUMBER"
             }],
         }
         :return: DecryptRequest
