@@ -162,10 +162,10 @@ paths:
               examples:
                 Replace and Redact Anonymizers:
                   value:
-                    {"text": "hello world, my name is ANONYMIZED. My number is: ", "items": [{"anonymizer": "redact", "entity_type": "PHONE_NUMBER", "start": 50, "end": 50, "anonymized_text": ""}, {"anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED"}]}                
+                    { "text": "hello world, my name is ANONYMIZED. My number is: ", "items": [ { "anonymizer": "redact", "entity_type": "PHONE_NUMBER", "start": 50, "end": 50, "anonymized_text": "" }, { "anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED" } ] }
                 Replace as default Anonymizer:
                   value:
-                    {"text": "hello world, my name is ANONYMIZED. My number is: ANONYMIZED", "items": [{"anonymizer": "replace", "entity_type": "PHONE_NUMBER", "start": 50, "end": 60, "anonymized_text": "ANONYMIZED"}, {"anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED"}]}
+                    { "text": "hello world, my name is ANONYMIZED. My number is: ANONYMIZED", "items": [ { "anonymizer": "replace", "entity_type": "PHONE_NUMBER", "start": 50, "end": 60, "anonymized_text": "ANONYMIZED" }, { "anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED" } ] }
         400:
           $ref: "#/components/responses/400BadRequest"
 
@@ -193,7 +193,7 @@ paths:
                   type: string
                   example: "mask"
               example:
-                ["hash", "mask", "redact", "replace", "encrypt"]
+                [ "hash", "mask", "redact", "replace", "encrypt" ]
 
   /decrypt:
     post:
@@ -254,7 +254,7 @@ components:
                   "text": "John Smith drivers license is AC432223",
                   "language": "en"
                 }
-            Enhanced Request :
+            Enhanced Request:
               value:
                 {
                   "text": "John Smith drivers license is AC432223",
@@ -262,7 +262,7 @@ components:
                   "return_decision_process": false,
                   "correlation_id": "123e4567-e89b-12d3-a456-426614174000",
                   "score_threshold": 0.6,
-                  "entities": ["US_DRIVER_LICENSE"],
+                  "entities": [ "US_DRIVER_LICENSE" ],
                   "trace": false
                 }
 
@@ -308,8 +308,10 @@ components:
             Decrypt Single PII:
               value:
                 {
-                  "text": "04Sw4HmhqHA3pX9fwQ9FFJEJtnoIYK+vPvvzCV864Tw=",
-                  "key": "AAECAwQFBgcICQoLDA0ODw=="
+                  "text": "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
+                  "encrypt_results": [
+                    { "start": 11, "end": 55, "key": "WmZq4t7w!z%C&F)J", "entity_type": "PERSON" },
+                  ]
                 }
 
 
@@ -588,9 +590,30 @@ components:
 
     DecryptResponse:
       type: object
-      properties:
-        result:
-          type: string
+        properties:
+          text:
+            type: string
+          items:
+            type: array
+            description: "Array of decrypted entities"
+            items:
+              $ref: "#/components/schemas/DecryptedEntity"
+
+  DecryptedEntity:
+    type: object
+    properties:
+      entity_type:
+        type: string
+        description: "Type of the PII entity"
+      start:
+        type: integer
+        description: "Start index in the decrypted text"
+      end:
+        type: integer
+        description: "End index in the decrypted text"
+      decrypted_text:
+        type: string
+        description: "The decrypted text"
 
   responses:
     400BadRequest:

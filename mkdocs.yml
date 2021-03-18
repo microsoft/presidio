@@ -21,7 +21,7 @@ nav:
       - Tracing the decision process: analyzer/decision_process.md
     - Presidio Anonymizer:
       - Anonymizer Home: anonymizer/index.md
-      - Developing PII anonymizers: anonymizer/adding_anonymizers.md
+      - Developing PII operators: anonymizer/adding_operators.md
   - Image Redactor:
       - Home: image-redactor/index.md
 
