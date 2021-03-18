@@ -58,6 +58,34 @@ def test_given_name_and_phone_number_then_we_anonymize_correctly():
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
+def test_given_name_and_phone_number_without_anonymizers_then_we_use_default():
+    text = "hello world, my name is Jane Doe. My number is: 03-4453334"
+    anonymizer_config = {"ABC": AnonymizeConfig("mask", {"masking_char": "*",
+                                                         "chars_to_mask": 6,
+                                                         "from_end": True})}
+    analyzer_results = [
+        RecognizerResult(
+            start=24,
+            end=32,
+            score=0.8,
+            entity_type="NAME"
+        ),
+        RecognizerResult(
+            start=48,
+            end=57,
+            score=0.95,
+            entity_type="PHONE_NUMBER"
+        )
+    ]
+    expected_result = (
+        '{"text": "hello world, my name is <NAME>. My number is: <PHONE_NUMBER>4", '
+        '"items": [{"start": 46, "end": 60, "entity_type": "PHONE_NUMBER", '
+        '"anonymized_text": "<PHONE_NUMBER>", "anonymizer": "replace"}, {"start": 24, '
+        '"end": 30, "entity_type": "NAME", "anonymized_text": "<NAME>", "anonymizer": '
+        '"replace"}]}')
+    run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
+
+
 def test_given_redact_and_replace_then_we_anonymize_successfully():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {
