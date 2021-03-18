@@ -157,7 +157,10 @@ class MockTextManipulator:
             RecognizerResult(start=18, end=32, entity_type="BLA", score=0.8),
             RecognizerResult(start=23, end=35, entity_type="BLA", score=0.8),
             RecognizerResult(start=28, end=36, entity_type="BLA", score=0.8)]
-        print(text_metadata)
+        print(f"0: {text_metadata[0]}")
+        print(f"1: {text_metadata[1]}")
+        print(f"1: {text_metadata[2]}")
+        print(f"1: {text_metadata[3]}")
         assert expected[0] in text_metadata
         assert expected[1] in text_metadata
         assert expected[2] in text_metadata
