@@ -1,42 +1,72 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "dataFactoryName": {
             "type": "string",
-            "metadata": "Data Factory name"
+            "metadata": {
+                "description": "Data Factory name"
+            },
+            "defaultValue": "[concat('presidioadf', uniqueString(resourceGroup().id))]"
         },
         "Databricks_accessToken": {
-            "type": "secureString",
-            "metadata": "Secure string for 'accessToken' of 'PresidioDatabricks'"
+            "type": "securestring",
+            "metadata": {
+                "description": "Secure string for 'accessToken' of 'PresidioDatabricks'"
+            }
         },
         "Databricks_workSpaceUrl": {
             "type": "string",
-            "metadata": "The databricks workspace URL"
+            "metadata": {
+                "description": "The databricks workspace URL"
+            }
         },
         "Databricks_clusterId": {
             "type": "string",
-            "metadata": "ID of a presidio-ready databricks cluster'"
+            "metadata": {
+                "description": "ID of a presidio-ready databricks cluster"
+            }
         },
         "Databricks_notebookLocation": {
             "type": "string",
-            "metadata": "Path to notebook on databricks'"
+            "metadata": {
+                "description": "Path to notebook on databricks"
+            }
         },
         "AzureBlobStorage_accountName": {
             "type": "string",
-            "metadata": "Azure Storage Account Name'"
+            "metadata": {
+                "description": "Azure Storage Account Name"
+            },
+            "defaultValue": "[concat('presidio', uniqueString(resourceGroup().id))]"
         },
         "AzureBlobStorage_cotainerName": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Azure Storage Container Name"
+            },
+            "defaultValue": "presidio"
         },
         "AzureKeyVault_name": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Azure Key Vault Name"
+            },
+            "defaultValue": "[concat('presidioakv', uniqueString(resourceGroup().id))]"
         },
         "AzureKeyVault_storageAccessKeySecretName": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Name of storage access key secert in Key Vault"
+            },
+            "defaultValue": "access-token"
         },
         "AzureKeyVault_storageSASSecretName": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Name of storage SAS token secert in Key Vault"
+            },
+            "defaultValue": "sas-token"
         },
         "accountSasProperties": {
             "type": "object",
@@ -145,7 +175,9 @@
                             "authenticationType": "Anonymous"
                         }
                     },
-                    "dependsOn": [ "[parameters('dataFactoryName')]" ]
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]"
+                    ]
                 },
                 {
                     "name": "[concat(parameters('dataFactoryName'), '/AzureKeyVault1')]",
@@ -158,7 +190,9 @@
                             "baseUrl": "[variables('AzureKeyVault_baseUrl')]"
                         }
                     },
-                    "dependsOn": [ "[parameters('dataFactoryName')]" ]
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]"
+                    ]
                 },
                 {
                     "name": "[concat(parameters('dataFactoryName'), '/GithubDataSet')]",
