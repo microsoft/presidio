@@ -3,6 +3,11 @@ from pathlib import Path
 import pytest
 import json
 
+from presidio_analyzer import AnalyzerEngine, RecognizerResult
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import AnonymizerResult, AnonymizedEntity
+from presidio_analyzer.nlp_engine import NlpEngineProvider
+
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
 
@@ -56,7 +61,7 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"result":"<PERSON> drivers license is AC43****"}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC43****", "items": [{"anonymizer": "mask", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 36, "anonymized_text": "AC43****"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -96,7 +101,7 @@ def test_given_a_correct_analyze_input_high_threashold_then_anonymize_partially(
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"result":"<PERSON> drivers license is AC432223"}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -142,7 +147,7 @@ def test_given_a_correct_analyze_input_with_high_threshold_and_unmatched_entitie
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"result":"<PERSON> drivers license is AC432223"}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -178,7 +183,7 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
     }
 
     expected_response = (
-        """{"result":"<PERSON> drivers license is <US_DRIVER_LICENSE>"}"""
+        """{"text": "<PERSON> drivers license is <US_DRIVER_LICENSE>", "items": [{"anonymizer": "replace", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 47, "anonymized_text": "<US_DRIVER_LICENSE>"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
     )
 
     anonymize_and_assert(anonymizer_request, expected_response)
@@ -186,7 +191,6 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
 
 @pytest.mark.integration
 def test_demo_website_text_returns_correct_anonymized_version():
-
     # Analyzer request info
 
     dir_path = Path(__file__).resolve().parent.parent
@@ -224,12 +228,12 @@ def test_demo_website_text_returns_correct_anonymized_version():
     )
 
     anonymizer_response_dict = json.loads(anonymizer_response)
-    actual_anonymized_text = anonymizer_response_dict["result"]
+    actual_anonymized_text = anonymizer_response_dict["text"]
 
     # Expected output:
 
     with open(
-        Path(dir_path, "resources", "demo_anonymized.txt"), encoding="utf-8"
+            Path(dir_path, "resources", "demo_anonymized.txt"), encoding="utf-8"
     ) as f_exp:
         text_into_rows = f_exp.read().split("\n")
 
@@ -239,3 +243,38 @@ def test_demo_website_text_returns_correct_anonymized_version():
     # Assert equal
 
     assert expected_anonymized_text == actual_anonymized_text
+
+
+@pytest.mark.package
+def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_successfully():
+    text_to_test = "John Smith drivers license is AC432223"
+
+    expected_response = [RecognizerResult("PERSON", 0, 10, 0.85),
+                         RecognizerResult("US_DRIVER_LICENSE", 30, 38, 0.6499999999999999)
+                         ]
+    # Create configuration containing engine name and models
+    configuration = {
+        "nlp_engine_name": "spacy",
+        "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+    }
+
+    # Create NLP engine based on configuration
+    provider = NlpEngineProvider(nlp_configuration=configuration)
+    nlp_engine = provider.create_engine()
+
+    # Pass the created NLP engine and supported_languages to the AnalyzerEngine
+    analyzer = AnalyzerEngine(
+        nlp_engine=nlp_engine,
+        supported_languages=["en"]
+    )
+    analyzer_results = analyzer.analyze(text_to_test, "en")
+    for i in range(len(analyzer_results)):
+        assert analyzer_results[i] == expected_response[i]
+
+    expected_response = AnonymizerResult(text="<PERSON> drivers license is <US_DRIVER_LICENSE>")
+    expected_response.add_item(AnonymizedEntity("replace", "US_DRIVER_LICENSE", 28, 47, "<US_DRIVER_LICENSE>"))
+    expected_response.add_item(AnonymizedEntity("replace", "PERSON", 0, 8, "<PERSON>"))
+
+    anonymizer = AnonymizerEngine()
+    anonymizer_results = anonymizer.anonymize(text_to_test, analyzer_results)
+    assert anonymizer_results == expected_response

@@ -1,1 +1,1 @@
-"hello world, my name is 1c272047233576d77a9b9a1acfdf741c. My number is: e7706047f07bf68a5dd73e8c47db3a30"
+{"text": "hello world, my name is 1c272047233576d77a9b9a1acfdf741c. My number is: e7706047f07bf68a5dd73e8c47db3a30", "items": [{"anonymizer": "hash", "entity_type": "PHONE_NUMBER", "start": 72, "end": 104, "anonymized_text": "e7706047f07bf68a5dd73e8c47db3a30"}, {"anonymizer": "hash", "entity_type": "NAME", "start": 24, "end": 56, "anonymized_text": "1c272047233576d77a9b9a1acfdf741c"}]}
