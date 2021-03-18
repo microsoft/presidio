@@ -274,10 +274,11 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     expected_response = EngineResult(
         text="<PERSON> drivers license is <US_DRIVER_LICENSE>")
     expected_response.add_item(
-        AnonymizeResultItem("replace", "US_DRIVER_LICENSE", 28, 47,
-                            "<US_DRIVER_LICENSE>"))
+        AnonymizeResultItem(anonymizer="replace", entity_type="US_DRIVER_LICENSE",
+                            start=28, end=47, anonynmized_text="<US_DRIVER_LICENSE>"))
     expected_response.add_item(
-        AnonymizeResultItem("replace", "PERSON", 0, 8, "<PERSON>"))
+        AnonymizeResultItem(anonymizer="replace", entity_type="PERSON", start=0, end=8,
+                            anonynmized_text="<PERSON>"))
 
     anonymizer = AnonymizeEngine()
     anonymizer_results = anonymizer.anonymize(text_to_test, analyzer_results)
