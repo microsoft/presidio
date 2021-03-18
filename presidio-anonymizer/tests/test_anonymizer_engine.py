@@ -157,14 +157,7 @@ class MockTextManipulator:
             RecognizerResult(start=18, end=32, entity_type="BLA", score=0.8),
             RecognizerResult(start=23, end=35, entity_type="BLA", score=0.8),
             RecognizerResult(start=28, end=36, entity_type="BLA", score=0.8)]
-        print(f"0: {text_metadata[0]}")
-        print(f"1: {text_metadata[1]}")
-        print(f"1: {text_metadata[2]}")
-        print(f"1: {text_metadata[3]}")
-        assert expected[0] in text_metadata
-        assert expected[1] in text_metadata
-        assert expected[2] in text_metadata
-        assert expected[3] in text_metadata
+        assert all(elem in text_metadata for elem in expected)
         assert len(operators) == 1
         assert operators["DEFAULT"]
         return EngineResult("Number: I am your new text!",
