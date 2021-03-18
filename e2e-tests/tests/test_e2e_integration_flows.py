@@ -1,15 +1,14 @@
+import json
 from pathlib import Path
 
 import pytest
-import json
-
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import AnonymizerResult, AnonymizedEntity
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
+from presidio_anonymizer import AnonymizeEngine
+from presidio_anonymizer.entities.engine.result import EngineResult, AnonymizeResultItem
 
 
 def analyze_and_assert(analyzer_request, expected_response):
@@ -250,7 +249,8 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     text_to_test = "John Smith drivers license is AC432223"
 
     expected_response = [RecognizerResult("PERSON", 0, 10, 0.85),
-                         RecognizerResult("US_DRIVER_LICENSE", 30, 38, 0.6499999999999999)
+                         RecognizerResult("US_DRIVER_LICENSE", 30, 38,
+                                          0.6499999999999999)
                          ]
     # Create configuration containing engine name and models
     configuration = {
@@ -271,10 +271,14 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     for i in range(len(analyzer_results)):
         assert analyzer_results[i] == expected_response[i]
 
-    expected_response = AnonymizerResult(text="<PERSON> drivers license is <US_DRIVER_LICENSE>")
-    expected_response.add_item(AnonymizedEntity("replace", "US_DRIVER_LICENSE", 28, 47, "<US_DRIVER_LICENSE>"))
-    expected_response.add_item(AnonymizedEntity("replace", "PERSON", 0, 8, "<PERSON>"))
+    expected_response = EngineResult(
+        text="<PERSON> drivers license is <US_DRIVER_LICENSE>")
+    expected_response.add_item(
+        AnonymizeResultItem("replace", "US_DRIVER_LICENSE", 28, 47,
+                            "<US_DRIVER_LICENSE>"))
+    expected_response.add_item(
+        AnonymizeResultItem("replace", "PERSON", 0, 8, "<PERSON>"))
 
-    anonymizer = AnonymizerEngine()
+    anonymizer = AnonymizeEngine()
     anonymizer_results = anonymizer.anonymize(text_to_test, analyzer_results)
     assert anonymizer_results == expected_response

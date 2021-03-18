@@ -1,8 +1,8 @@
 from typing import List, Dict
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
 from presidio_anonymizer.entities.engine import EncryptResult
+from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
 
 
 class AppEntitiesConvertor:
@@ -51,7 +51,7 @@ class AppEntitiesConvertor:
         :param json e.g.:
         {
             "text": text,
-            "items": [{
+            "encrypt_results": [{
                 "start": 0,
                 "end": len(text),
                 "key": "1111111111111111",
@@ -60,7 +60,7 @@ class AppEntitiesConvertor:
         :return: DecryptRequest
         """
         items = []
-        decrypt_entity = json.get("items")
+        decrypt_entity = json.get("encrypt_results")
         if decrypt_entity:
             for result in decrypt_entity:
                 items.append(EncryptResult.from_json(result))

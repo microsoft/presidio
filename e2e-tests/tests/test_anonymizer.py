@@ -114,7 +114,7 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
-        "items": [{
+        "encrypt_results": [{
             "start": 0,
             "end": len(text),
             "key": "1111111111111111",
@@ -135,7 +135,7 @@ def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_retur
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz + YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
-        "items": [{
+        "encrypt_results": [{
             "start": 0,
             "end": len(text),
             "entity_type": "number",
@@ -236,7 +236,7 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
 
     decrypt_request = {
         "text": encrypted_text,
-        "items": [
+        "encrypt_results": [
             {
                 "start": 0,
                 "end": 44,
