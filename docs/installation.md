@@ -33,7 +33,7 @@ pip install presidio_analyzer
 pip install presidio_anonymizer
 
 # Presidio analyzer requires a spaCy language model.
-python -m spacy download en_core_web_lg
+python -m spacy download en_core_web_trf
 ```
 
 For a more detailed installation of each package, refer to the specific documentation:
@@ -50,7 +50,7 @@ pip install presidio_image_redactor
 
 # Presidio image redactor uses the presidio-analyzer
 # which requires a spaCy language model:
-python -m spacy download en_core_web_lg
+python -m spacy download en_core_web_trf
 ```
 
 [Click here](image-redactor/index.md) for more information on the presidio-image-redactor package.

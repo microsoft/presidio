@@ -20,11 +20,11 @@ Named Entity Recognition and other types of logic to detect PII in unstructured 
         Consider installing the Presidio python packages on a virtual environment like venv or conda.
 
     To get started with Presidio-analyzer,
-    download the package and the `en_core_web_lg` spaCy model:
+    download the package and the `en_core_web_trf` spaCy model:
 
     ```sh
     pip install presidio-analyzer
-    python -m spacy download en_core_web_lg
+    python -m spacy download en_core_web_trf
     ```
 
 === "Using Docker"

@@ -27,14 +27,14 @@ class SpacyNlpEngine(NlpEngine):
         Initialize a wrapper on spaCy functionality.
 
         :param models: Dictionary with the name of the spaCy model per language.
-        For example: models = {"en": "en_core_web_lg"}
+        For example: models = {"en": "en_core_web_trf"}
         """
         if not models:
-            models = {"en": "en_core_web_lg"}
+            models = {"en": "en_core_web_trf"}
         logger.debug(f"Loading SpaCy models: {models.values()}")
 
         self.nlp = {
-            lang_code: spacy.load(model_name, disable=["parser", "tagger"])
+            lang_code: spacy.load(model_name, disable=["parser"])
             for lang_code, model_name in models.items()
         }
 

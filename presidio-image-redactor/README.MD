@@ -30,7 +30,7 @@ Once Installed, run the following command to download the default spacy model ne
 Presidio Analyzer:
 
 ```sh
-python -m spacy download en_core_web_lg
+python -m spacy download en_core_web_trf
 ```
 
 ## Getting started

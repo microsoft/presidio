@@ -45,7 +45,7 @@ def nlp_engines(request, nlp_engine_provider):
     nlp_engines = nlp_engine_provider.nlp_engines
     for name, engine_cls in nlp_engines.items():
         if name == "spacy" and not request.config.getoption("--runfast"):
-            available_engines[f"{name}_en"] = engine_cls({"en": "en_core_web_lg"})
+            available_engines[f"{name}_en"] = engine_cls({"en": "en_core_web_trf"})
         else:
             available_engines[f"{name}_en"] = engine_cls()
 

@@ -11,9 +11,10 @@ Steps:
    ```
    Note that these might take some time to build for the first time.
    
-3. Install the e2e-tests framework, preferrably in a virtual environment:
+3. Install the e2e-tests framework, preferably in a virtual environment:
    ```sh
    pip install -r requirements.txt
+   python -m spacy download en_core_web_sm
    ```
 4. Run tests:
    ```

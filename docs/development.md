@@ -60,7 +60,7 @@ Follow these steps when starting to work on a Presidio service with Pipenv:
     `pipenv run`. For example:
     1. `pipenv run flake8`
     2. `pipenv run pip freeze`
-    3. `pipenv run python -m spacy download en_core_web_lg`
+    3. `pipenv run python -m spacy download en_core_web_trf`
 
     Command 3 downloads the default spacy model needed for Presidio Analyzer.`
 
