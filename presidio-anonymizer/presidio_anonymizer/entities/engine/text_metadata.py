@@ -40,7 +40,7 @@ class TextMetadata(ABC):
                 f"must be smaller than end index '{self.end}'"
             )
 
-    def __validate_field(self, field_name: str):
+    def __field_validation_error(self, field_name: str):
         self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
         raise InvalidParamException(
             f"Invalid input, result must contain {field_name}"
