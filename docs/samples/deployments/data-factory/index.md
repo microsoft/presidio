@@ -23,15 +23,15 @@ Provision and setup the datbricks cluster by following the steps in [presidio-sp
 
 ### Deploy the ARM template
 
-Create the rest of the service by running the following script which uses the provided ARM template.
+Create the rest of the services by running the following script which uses the provided ARM template.
 
 ```bash
 RESOURCE_GROUP=[Name of resource group]
 LOCATION=[location of resources]
-DATABRICKS_ACCESS_TOKEN=[Access token to databricks from the previous step]
+DATABRICKS_ACCESS_TOKEN=[Access token to databricks created in the presidio-spark sample]
 DATABRICKS_WORKSPACE_URL=[Databricks workspace URL]
 DATABRICKS_CLUSTER_ID=[Databricks presidio-ready cluster ID]
-DATABRICKS_NOTEBOOK_LOCATION=[Location of presidio notebook from previous step]
+DATABRICKS_NOTEBOOK_LOCATION=[Location of presidio notebook from the presidio-spark sample]
 
 az group create --name RESOURCE_GROUP --location $LOCATION
 az deployment group create -g $RESOURCE_GROUP --template-file ./azure-deploy.json --parameters Databricks_accessToken=$DATABRICKS_ACCESS_TOKEN Databricks_clusterId=$DATABRICKS_CLUSTER_ID Databricks_notebookLocation=$DATABRICKS_NOTEBOOK_LOCATION Databricks_workSpaceUrl=$DATABRICKS_WORKSPACE_URL

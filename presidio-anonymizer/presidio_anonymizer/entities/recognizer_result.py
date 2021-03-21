@@ -136,7 +136,7 @@ class RecognizerResult:
             self.__validate_field("score")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
-                f"Invalid input, analyzer result start and end must be positive"
+                "Invalid input, analyzer result start and end must be positive"
             )
         if self.start >= self.end:
             raise InvalidParamException(

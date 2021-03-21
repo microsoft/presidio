@@ -131,7 +131,7 @@ class RecognizerResult:
         :return: bool
         """
         equal_type = self.entity_type == other.entity_type
-        equal_score = self.score is other.score
+        equal_score = self.score == other.score
         return self.equal_indices(other) and equal_type and equal_score
 
     def __hash__(self):

@@ -58,12 +58,12 @@ class Server:
                 content
             )
             analyzer_results = AnonymizerRequest.handle_analyzer_results_json(content)
-            text = self.engine.anonymize(
+            anoymizer_result = self.engine.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
                 anonymizers_config=anonymizers_config,
             )
-            return jsonify(result=text)
+            return anoymizer_result.to_json()
 
         @self.app.route("/decrypt", methods=["POST"])
         def decrypt() -> Union[str, Tuple[str, int]]:
