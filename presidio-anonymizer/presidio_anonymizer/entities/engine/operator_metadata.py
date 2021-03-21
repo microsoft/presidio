@@ -30,7 +30,7 @@ class OperatorMetadata(ABC):
                 f"Invalid input, invalid operator type {self.operator_type}"
             )
 
-    def __validate_field(self, field_name: str):
+    def __field_validation_error(self, field_name: str):
         self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
         raise InvalidParamException(
             f"Invalid input, config must contain {field_name}"
