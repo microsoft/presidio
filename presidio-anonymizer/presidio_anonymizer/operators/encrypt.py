@@ -41,9 +41,9 @@ class Encrypt(Operator):
             )
 
     def operator_name(self) -> str:
-        """Return anonymizer name."""
+        """Return operator name."""
         return "encrypt"
 
     def operator_type(self) -> OperatorType:
-        """Return anonymizer name."""
+        """Return operator type."""
         return OperatorType.Anonymize

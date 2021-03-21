@@ -16,9 +16,9 @@ class Redact(Operator):
         pass
 
     def operator_name(self) -> str:
-        """Return anonymizer name."""
+        """Return operator name."""
         return "redact"
 
     def operator_type(self) -> OperatorType:
-        """Return anonymizer name."""
+        """Return operator type."""
         return OperatorType.Anonymize
