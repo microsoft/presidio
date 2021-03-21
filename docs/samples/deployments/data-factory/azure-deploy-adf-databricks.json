@@ -341,7 +341,20 @@
                                             "type": "JsonWriteSettings"
                                         }
                                     },
-                                    "enableStaging": false
+                                    "enableStaging": false,
+                                    "translator": {
+                                        "type": "TabularTranslator",
+                                        "mappings": [
+                                            {
+                                                "source": {
+                                                    "path": "$['full_text']"
+                                                },
+                                                "sink": {
+                                                    "path": "full_text"
+                                                }
+                                            }
+                                        ]
+                                    }
                                 },
                                 "inputs": [
                                     {

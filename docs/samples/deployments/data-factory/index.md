@@ -26,7 +26,7 @@ Create the Azure App Service and the ADF pipeline by running the following scrip
 RESOURCE_GROUP=[Name of resource group]
 LOCATION=[location of resources]
 
-az group create --name RESOURCE_GROUP --location $LOCATION
+az group create --name $RESOURCE_GROUP --location $LOCATION
 az deployment group create -g $RESOURCE_GROUP --template-file ./azure-deploy-adf-app-service.json
 ```
 
@@ -56,7 +56,7 @@ DATABRICKS_WORKSPACE_URL=[Databricks workspace URL]
 DATABRICKS_CLUSTER_ID=[Databricks presidio-ready cluster ID]
 DATABRICKS_NOTEBOOK_LOCATION=[Location of presidio notebook from the presidio-spark sample]
 
-az group create --name RESOURCE_GROUP --location $LOCATION
+az group create --name $RESOURCE_GROUP --location $LOCATION
 az deployment group create -g $RESOURCE_GROUP --template-file ./azure-deploy-adf-databricks.json --parameters Databricks_accessToken=$DATABRICKS_ACCESS_TOKEN Databricks_clusterId=$DATABRICKS_CLUSTER_ID Databricks_notebookLocation=$DATABRICKS_NOTEBOOK_LOCATION Databricks_workSpaceUrl=$DATABRICKS_WORKSPACE_URL
 ```
 

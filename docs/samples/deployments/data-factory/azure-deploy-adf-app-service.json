@@ -273,18 +273,18 @@
                                     },
                                     "enableStaging": false,
                                     "translator": {
-                                    "type": "TabularTranslator",
-                                    "mappings": [
-                                        {
-                                            "source": {
-                                                "path": "$['full_text']"
-                                            },
-                                            "sink": {
-                                                "path": "full_text"
+                                        "type": "TabularTranslator",
+                                        "mappings": [
+                                            {
+                                                "source": {
+                                                    "path": "$['full_text']"
+                                                },
+                                                "sink": {
+                                                    "path": "full_text"
+                                                }
                                             }
-                                        }
-                                    ]
-                                }
+                                        ]
+                                    }
                                 },
                                 "inputs": [
                                     {
@@ -458,7 +458,7 @@
                                                     "x-ms-blob-type": "BlockBlob"
                                                 },
                                                 "body": {
-                                                    "value": "@item().full_text",
+                                                    "value": "@activity('PresidioAnonymize').output.result",
                                                     "type": "Expression"
                                                 }
                                             }
