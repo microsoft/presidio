@@ -1,15 +1,16 @@
 """REST API server for analyzer."""
+import json
 import logging
+import os
 from logging.config import fileConfig
 from pathlib import Path
 from typing import Tuple
 
+from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import HTTPException
 
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
-from flask import Flask, request, jsonify
-import os
 
 DEFAULT_PORT = "3000"
 
@@ -65,7 +66,14 @@ class Server:
                     return_decision_process=req_data.return_decision_process,
                 )
 
-                return jsonify([r.to_dict() for r in recognizer_result_list]), 200
+                return Response(
+                    json.dumps(
+                        recognizer_result_list,
+                        default=lambda o: o.to_dict(),
+                        sort_keys=True,
+                    ),
+                    content_type="application/json",
+                )
             except Exception as e:
                 self.logger.error(
                     f"A fatal error occurred during execution of "
