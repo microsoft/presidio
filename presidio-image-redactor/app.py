@@ -3,7 +3,7 @@ import logging
 import os
 
 from PIL import Image
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, jsonify, Response
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor.entities import InvalidParamException
@@ -55,7 +55,7 @@ class Server:
             redacted_image = self.engine.redact(im, color_fill)
 
             img_byte_arr = image_to_byte_array(redacted_image, im.format)
-            return make_response(img_byte_arr)
+            return Response(img_byte_arr, mimetype="application/octet-stream")
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
