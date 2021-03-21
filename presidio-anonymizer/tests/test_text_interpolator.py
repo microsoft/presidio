@@ -1,6 +1,6 @@
 import pytest
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.services.text_interpolator import TextInterpolator
+from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
 
 
 @pytest.mark.parametrize(
@@ -16,16 +16,16 @@ from presidio_anonymizer.services.text_interpolator import TextInterpolator
 def test_given_text_then_we_replace_the_original_with_anonymized_correctly(
     original_text, start, end, anonymized_text, expected
 ):
-    text_interpolator = TextInterpolator(original_text)
-    text_interpolator.replace_text_get_insertion_index(anonymized_text, start, end)
-    assert text_interpolator.output_text == expected
+    text_replace_builder = TextReplaceBuilder(original_text)
+    text_replace_builder.replace_text_get_insertion_index(anonymized_text, start, end)
+    assert text_replace_builder.output_text == expected
 
 
 def test_given_empty_text_then_we_fail():
     with pytest.raises(
         InvalidParamException, match="Invalid input, text can not be empty"
     ):
-        TextInterpolator("")
+        TextReplaceBuilder("")
 
 
 @pytest.mark.parametrize(
@@ -42,8 +42,8 @@ def test_given_empty_text_then_we_fail():
 def test_given_text_then_we_get_correct_indices_text_from_it(
     original_text, start, end, expected
 ):
-    text_interpolator = TextInterpolator(original_text)
-    text_in_position = text_interpolator.get_text_in_position(start, end)
+    text_replace_builder = TextReplaceBuilder(original_text)
+    text_in_position = text_replace_builder.get_text_in_position(start, end)
     assert text_in_position == expected
 
 
@@ -58,10 +58,10 @@ def test_given_text_then_we_get_correct_indices_text_from_it(
     # fmt: on
 )
 def test_given_text_and_bad_indices_then_we_get_fail(original_text, start, end):
-    text_interpolator = TextInterpolator(original_text)
+    text_replace_builder = TextReplaceBuilder(original_text)
     err_msg = (
         f"Invalid analyzer result, start: {start} and end: {end}, "
         f"while text length is only 11."
     )
     with pytest.raises(InvalidParamException, match=err_msg):
-        text_interpolator.get_text_in_position(start, end)
+        text_replace_builder.get_text_in_position(start, end)

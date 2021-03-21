@@ -2,20 +2,21 @@
 import logging
 from typing import List
 
+from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine.decrypt_config import DecryptConfig
 from presidio_anonymizer.entities.engine.encrypt_result import EncryptResult
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
-from presidio_anonymizer.services.aes_cipher import AESCipher
+from presidio_anonymizer.operators.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
-from presidio_anonymizer.text_engine import TextEngine
 
 
-class DecryptEngine:
+class DecryptEngine(EngineBase):
     """Decrypting text that was previously anonymized using a 'decrypt' anonymizer."""
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
+        EngineBase.__init__(self)
 
     def decrypt_text(self, key: str, text: str) -> str:
         """
@@ -47,6 +48,6 @@ class DecryptEngine:
         operators_metadata = {}
         for entity in entities:
             operators_metadata[entity.entity_type] = DecryptConfig(entity.key)
-        return TextEngine().operate(text,
-                                    entities,
-                                    operators_metadata)
+        return self.operate(text,
+                            entities,
+                            operators_metadata)

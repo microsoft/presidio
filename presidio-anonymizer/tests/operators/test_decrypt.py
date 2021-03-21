@@ -4,7 +4,7 @@ import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.operators import Decrypt
-from presidio_anonymizer.services.aes_cipher import AESCipher
+from presidio_anonymizer.operators.aes_cipher import AESCipher
 
 
 @mock.patch.object(AESCipher, "decrypt")

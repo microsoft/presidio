@@ -2,16 +2,16 @@
 import logging
 from typing import List, Dict, Optional
 
+from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities.engine import OperatorMetadata
 from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
 from presidio_anonymizer.entities.engine.result import EngineResult
 from presidio_anonymizer.operators import OperatorsFactory
-from presidio_anonymizer.text_engine import TextEngine
 
 DEFAULT = "replace"
 
 
-class AnonymizeEngine:
+class AnonymizeEngine(EngineBase):
     """
     AnonymizeEngine class.
 
@@ -21,7 +21,7 @@ class AnonymizeEngine:
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
-        self.text_engine = TextEngine()
+        EngineBase.__init__(self)
 
     def anonymize(
             self,
@@ -45,9 +45,7 @@ class AnonymizeEngine:
 
         anonymizers_config = self.__check_or_add_default_anonymizer(anonymizers_config)
 
-        return self.text_engine.operate(text,
-                                        analyzer_results,
-                                        anonymizers_config)
+        return self.operate(text, analyzer_results, anonymizers_config)
 
     def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results):
         """

@@ -130,7 +130,7 @@ def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result
     anonymizer_config = AnonymizeConfig("replace", {})
     anonymizer_config.operator_name = ""
     engine = AnonymizeEngine()
-    engine.text_engine = MockTextManipulator()
+    engine.operate = operate
     result = engine.anonymize(
         "hello world, my name is Jane Doe. My number is: 034453334",
         analyzer_results,
@@ -146,30 +146,18 @@ def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result
     assert result.items[0].anonymized_text == "text"
 
 
-class MockTextManipulator:
-    def operate(self, text: str,
-                text_metadata: List[TextMetadata],
-                operators: Dict[str, OperatorMetadata]) -> EngineResult:
-        assert text == "hello world, my name is Jane Doe. My number is: 034453334"
-        assert len(text_metadata) == 4
-        expected = [
-            RecognizerResult(start=48, end=57, entity_type="PHONE_NUMBER", score=0.95),
-            RecognizerResult(start=18, end=32, entity_type="BLA", score=0.8),
-            RecognizerResult(start=23, end=35, entity_type="BLA", score=0.8),
-            RecognizerResult(start=28, end=36, entity_type="BLA", score=0.8)]
-        assert all(elem in text_metadata for elem in expected)
-        assert len(operators) == 1
-        assert operators["DEFAULT"]
-        return EngineResult("Number: I am your new text!",
-                            [AnonymizedEntity(0, 35, "text", "type", "hash")])
-
-
-class MockAnonymizer:
-    def operate(self, text: str, params: Dict = None):
-        return "I am your new text!"
-
-    def validate(self, params):
-        pass
-
-    def operator_name(self):
-        return "name"
+def operate(text: str,
+            text_metadata: List[TextMetadata],
+            operators: Dict[str, OperatorMetadata]) -> EngineResult:
+    assert text == "hello world, my name is Jane Doe. My number is: 034453334"
+    assert len(text_metadata) == 4
+    expected = [
+        RecognizerResult(start=48, end=57, entity_type="PHONE_NUMBER", score=0.95),
+        RecognizerResult(start=18, end=32, entity_type="BLA", score=0.8),
+        RecognizerResult(start=23, end=35, entity_type="BLA", score=0.8),
+        RecognizerResult(start=28, end=36, entity_type="BLA", score=0.8)]
+    assert all(elem in text_metadata for elem in expected)
+    assert len(operators) == 1
+    assert operators["DEFAULT"]
+    return EngineResult("Number: I am your new text!",
+                        [AnonymizedEntity(0, 35, "text", "type", "hash")])

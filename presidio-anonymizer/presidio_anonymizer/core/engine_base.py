@@ -1,16 +1,17 @@
 """Handle the entire text operations using the operators."""
 import logging
+from abc import ABC
 from typing import List, Dict
 
+from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
 from presidio_anonymizer.entities.engine import OperatorMetadata
 from presidio_anonymizer.entities.engine import TextMetadata
 from presidio_anonymizer.entities.engine.result import EngineResult
 from presidio_anonymizer.entities.engine.result import ResultItemBuilder
 from presidio_anonymizer.operators import OperatorsFactory
-from presidio_anonymizer.services.text_interpolator import TextInterpolator
 
 
-class TextEngine:
+class EngineBase(ABC):
     """Handle the logic of operations over the text using the operators."""
 
     def __init__(self):
@@ -30,10 +31,10 @@ class TextEngine:
         we want to perform over this entity_type.
         :return:
         """
-        text_interpolator = TextInterpolator(original_text=text)
+        text_replace_builder = TextReplaceBuilder(original_text=text)
         engine_result = EngineResult()
         for operator in sorted(text_metadata, reverse=True):
-            text_to_operate_on = text_interpolator.get_text_in_position(
+            text_to_operate_on = text_replace_builder.get_text_in_position(
                 operator.start, operator.end
             )
 
@@ -45,7 +46,7 @@ class TextEngine:
             changed_text = self.__operate_on_text(
                 operator, text_to_operate_on, operator_metadata
             )
-            index_from_end = text_interpolator.replace_text_get_insertion_index(
+            index_from_end = text_replace_builder.replace_text_get_insertion_index(
                 changed_text, operator.start, operator.end
             )
 
@@ -59,7 +60,7 @@ class TextEngine:
                 index_from_end).set_operated_on_text(changed_text).build()
             engine_result.add_item(result_item)
 
-        engine_result.set_text(text_interpolator.output_text)
+        engine_result.set_text(text_replace_builder.output_text)
         engine_result.normalize_item_indexes()
         return engine_result
 

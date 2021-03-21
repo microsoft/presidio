@@ -23,11 +23,11 @@ class OperatorsFactory:
         :type operator_name: operator name.
         :return: operator class entity.
         """
-        operator_class = None
-        if operator_type == OperatorType.Anonymize:
-            operator_class = OperatorsFactory.get_anonymizers().get(operator_name)
-        if operator_type == OperatorType.Decrypt:
-            operator_class = OperatorsFactory.get_decryptors().get(operator_name)
+        operator_class = {
+            OperatorType.Anonymize: OperatorsFactory.get_anonymizers().get(
+                operator_name),
+            OperatorType.Decrypt: OperatorsFactory.get_decryptors().get(operator_name),
+        }.get(operator_type)
         if not operator_class:
             self.logger.error(f"No such operator class {operator_name}")
             raise InvalidParamException(

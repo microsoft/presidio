@@ -3,7 +3,7 @@ import pytest
 from presidio_anonymizer import AnonymizeEngine
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import AnonymizeConfig, RecognizerResult
-from presidio_anonymizer.services.aes_cipher import AESCipher
+from presidio_anonymizer.operators.aes_cipher import AESCipher
 
 
 def test_given_operator_decrypt_then_we_fail():

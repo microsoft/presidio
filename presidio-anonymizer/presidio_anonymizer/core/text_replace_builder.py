@@ -4,7 +4,7 @@ import logging
 from presidio_anonymizer.entities import InvalidParamException
 
 
-class TextInterpolator:
+class TextReplaceBuilder:
     """Creates new text according to users request."""
 
     def __init__(self, original_text: str):
