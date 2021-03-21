@@ -55,12 +55,12 @@ class OperatorsFactory:
         return OperatorsFactory._decryptors
 
     @staticmethod
-    def __get_operators_by_type(manipulator_type: OperatorType):
-        manipulators = Operator.__subclasses__()
-        manipulators = list(filter(
-            lambda cls: cls.operator_type(cls) == manipulator_type,
-            manipulators))
+    def __get_operators_by_type(operator_type: OperatorType):
+        operators = Operator.__subclasses__()
+        operators = list(filter(
+            lambda cls: cls.operator_type(cls) == operator_type,
+            operators))
         return {
             cls.operator_name(cls): cls for
-            cls in manipulators
+            cls in operators
         }
