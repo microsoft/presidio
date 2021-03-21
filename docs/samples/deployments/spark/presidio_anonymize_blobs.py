@@ -39,7 +39,7 @@ storage_container_name = dbutils.widgets.get("storage_container_name")
 storage_account_access_key = dbutils.widgets.get("storage_account_access_key")
 
 
-# unount container if previously mounted
+# unmount container if previously mounted
 def sub_unmount(str_path):
     if any(mount.mountPoint == str_path for mount in dbutils.fs.mounts()):
         dbutils.fs.unmount(str_path)
