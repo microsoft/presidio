@@ -4,11 +4,11 @@ from logging.config import fileConfig
 from pathlib import Path
 from typing import Tuple
 
+from werkzeug.exceptions import HTTPException
+
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
-from presidio_analyzer.error_response import ErrorResponse
-from flask import Flask, request
-import json
+from flask import Flask, request, jsonify
 import os
 
 DEFAULT_PORT = "3000"
@@ -41,17 +41,7 @@ class Server:
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.
-
-            ---
-            responses:
-              200:
-                description: OK
-                content:
-                  text/plain:
-                    schema:
-                      type: string
-            """
+            """Return basic health probe result."""
             return "Presidio Analyzer service is up"
 
         @self.app.route("/analyze", methods=["POST"])
@@ -75,21 +65,13 @@ class Server:
                     return_decision_process=req_data.return_decision_process,
                 )
 
-                return (
-                    json.dumps(
-                        recognizer_result_list,
-                        default=lambda o: o.to_dict(),
-                        sort_keys=True,
-                        indent=4,
-                    ),
-                    200,
-                )
+                return jsonify([r.to_dict() for r in recognizer_result_list]), 200
             except Exception as e:
                 self.logger.error(
                     f"A fatal error occurred during execution of "
                     f"AnalyzerEngine.analyze(). {e}"
                 )
-                return ErrorResponse(e.args[0]).to_json(), 500
+                return jsonify(error=e.args[0]), 500
 
         @self.app.route("/recognizers", methods=["GET"])
         def recognizers() -> Tuple[str, int]:
@@ -98,13 +80,13 @@ class Server:
             try:
                 recognizers_list = self.engine.get_recognizers(language)
                 names = [o.name for o in recognizers_list]
-                return json.dumps(names), 200
+                return jsonify(names), 200
             except Exception as e:
                 self.logger.error(
                     f"A fatal error occurred during execution of "
                     f"AnalyzerEngine.get_recognizers(). {e}"
                 )
-                return ErrorResponse(e.args[0]).to_json(), 500
+                return jsonify(error=e.args[0]), 500
 
         @self.app.route("/supportedentities", methods=["GET"])
         def supported_entities() -> Tuple[str, int]:
@@ -112,13 +94,17 @@ class Server:
             language = request.args.get("language")
             try:
                 entities_list = self.engine.get_supported_entities(language)
-                return json.dumps(entities_list), 200
+                return jsonify(entities_list), 200
             except Exception as e:
                 self.logger.error(
                     f"A fatal error occurred during execution of "
                     f"AnalyzerEngine.supported_entities(). {e}"
                 )
-                return ErrorResponse(e.args[0]).to_json(), 500
+                return jsonify(error=e.args[0]), 500
+
+        @self.app.errorhandler(HTTPException)
+        def http_exception(e):
+            return jsonify(error=e.description), e.code
 
 
 if __name__ == "__main__":

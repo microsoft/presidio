@@ -3,10 +3,9 @@ import logging
 import os
 
 from PIL import Image
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, jsonify
 
 from presidio_image_redactor import ImageRedactorEngine
-from presidio_image_redactor.entities import ErrorResponse
 from presidio_image_redactor.entities import InvalidParamException
 from presidio_image_redactor.entities.api_request_convertor import (
     get_json_data,
@@ -40,17 +39,7 @@ class Server:
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.
-
-            ---
-            responses:
-              200:
-                description: OK
-                content:
-                  text/plain:
-                    schema:
-                      type: string
-            """
+            """Return basic health probe result."""
             return "Presidio Image Redactor service is up"
 
         @self.app.route("/redact", methods=["POST"])
@@ -60,8 +49,7 @@ class Server:
             color_fill = color_fill_string_to_value(params)
             image_file = request.files.get("image")
             if not image_file:
-                raise InvalidParamException(
-                    "Invalid parameter, please add image data")
+                raise InvalidParamException("Invalid parameter, please add image data")
             im = Image.open(image_file)
 
             redacted_image = self.engine.redact(im, color_fill)
@@ -74,12 +62,12 @@ class Server:
             self.logger.warning(
                 f"failed to redact image with validation error: {err.err_msg}"
             )
-            return ErrorResponse(err.err_msg).to_json(), 422
+            return jsonify(error=err.err_msg), 422
 
         @self.app.errorhandler(Exception)
         def server_error(e):
             self.logger.error(f"A fatal error occurred during execution: {e}")
-            return ErrorResponse("Internal server error").to_json(), 500
+            return jsonify(error="Internal server error"), 500
 
 
 if __name__ == "__main__":
