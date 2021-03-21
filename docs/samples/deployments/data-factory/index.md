@@ -1,15 +1,18 @@
 # Anonymize PII entities in an Azure Data Factory ETL Pipeline
 
-You can build data anonymization ETL pipelines using Azure Data Factory and Presidio.
-The following sample leverage the code for using [Presidio on spark](../spark/index.md) to move a set of JSON objects from an online location to an Azure Storage while anonymizing their content, using the following Azure Services:
+You can build data anonymization ETL pipelines using Azure Data Factory (ADF) and Presidio.
+The following samples showcase two scenarios which use ADF to move a set of JSON objects from an online location to an Azure Storage while anonymizing their content.
+The first sample leverages the code for using [Presidio on Azure App Service](../app-service/index.md) to call Presidio as an HTTP REST endpoint in the ADF pipeline while parsing and storing each file as an Azure Blob Storage.
+The second sample leverage the code for using [Presidio on spark](../spark/index.md) to run over a set of files on an Azure Blob Storage to anonymnize their content, in the case of having a large data set that requires the scale of databricks.
+
+The samples use the following Azure Services:
 
 * Azure Data Factory - Host and orchestrate the transformation pipeline.
-* Azure Databricks - Host presidio libraries to anonymize the data.
 * Azure KeyVault - Holds the access keys for Azure Storage to avoid having keys and secrets in the code.
 * Azure Storage - Persistence layer of this sample.
+* Azure Databricks/ Azure App Service - Host presidio to anonymize the data.
 
-The input file used by this sample is hosted on [presidio-research](https://github.com/microsoft/presidio-research/) repository. 
-It is setup as a variable on the provided ARM template and used by Azure Data Factory as the input source.
+The input file used by the samples is hosted on [presidio-research](https://github.com/microsoft/presidio-research/) repository. It is setup as a variable on the provided ARM template and used by Azure Data Factory as the input source.
 
 ## Pre-requisites
 
