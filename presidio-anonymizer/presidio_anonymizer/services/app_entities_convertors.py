@@ -15,15 +15,11 @@ class AppEntitiesConvertor:
 
         :param data: contains the anonymizers and analyzer_results_json
         """
-        analyzer_results = []
         if data is None:
             raise InvalidParamException(
                 "Invalid input, " "request must contain analyzer results"
             )
-        for analyzer_result in data:
-            analyzer_result = RecognizerResult.from_json(analyzer_result)
-            analyzer_results.append(analyzer_result)
-        return analyzer_results
+        return [RecognizerResult.from_json(analyzer_result) for analyzer_result in data]
 
     @staticmethod
     def anonymizer_configs_from_json(
@@ -35,20 +31,20 @@ class AppEntitiesConvertor:
         :param data: contains the list of configuration
         value - AnonynmizerConfig
         """
-        anonymizers_config = {}
         anonymizers = data.get("anonymizers")
+
         if anonymizers is not None:
-            for key, anonymizer_json in anonymizers.items():
-                anonymizer_config = AnonymizeConfig.from_json(anonymizer_json)
-                anonymizers_config[key] = anonymizer_config
-        return anonymizers_config
+            return {key: AnonymizeConfig.from_json(anonymizer_json) for
+                    (key, anonymizer_json)
+                    in anonymizers.items()}
+        return {}
 
     @staticmethod
     def decrypt_entities_from_json(json: Dict) -> List['EncryptResult']:
         """
         Create DecryptEntity list.
 
-        :param json e.g.:
+        :param json:
         {
             "text": text,
             "encrypt_results": [{
@@ -58,7 +54,7 @@ class AppEntitiesConvertor:
                 "entity_type":"PHONE_NUMBER"
             }],
         }
-        :return: DecryptRequest
+        :return: List[EncryptResult]
         """
         items = []
         decrypt_entity = json.get("encrypt_results")
