@@ -174,12 +174,3 @@ def __find_element(content: List, entity_type: str):
         if result.get("entity_type") == entity_type:
             return result
     return None
-
-
-def get_scenario_file_content(scenario_method, scenario_name: str):
-    integration_directory = Path(__file__).parent
-    with open(
-            os.path.join(integration_directory, "resources", scenario_method,
-                         scenario_name)
-    ) as f:
-        return f.read()

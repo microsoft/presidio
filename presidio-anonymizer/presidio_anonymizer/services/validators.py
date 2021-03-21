@@ -20,6 +20,18 @@ def validate_parameter_in_range(
         )
 
 
+def validate_parameter_exists(parameter_value, entity: str, parameter_name: str):
+    if not parameter_value:
+        raise InvalidParamException(
+            f"Invalid input, {entity} must contain {parameter_name}")
+
+
+def validate_int_parameter_exists(parameter_value, entity: str, parameter_name: str):
+    if parameter_value is None:
+        raise InvalidParamException(
+            f"Invalid input, {entity} must contain {parameter_name}")
+
+
 def validate_parameter(
         parameter_value, parameter_name: str, parameter_type: type
 ) -> None:

@@ -1,7 +1,7 @@
 import logging
 
-from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import TextMetadata
+from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
 class EncryptResult(TextMetadata):
@@ -18,22 +18,12 @@ class EncryptResult(TextMetadata):
         """
         TextMetadata.__init__(self, start, end, entity_type)
         self.logger = logging.getLogger("presidio-anonymizer")
+        validate_parameter_exists(key, "decrypt entity", "key")
         self.key = key
-        self.__validate_fields()
 
     def __gt__(self, other) -> bool:
         """Check result is greater by the text index start location."""
         return self.start > other.start
-
-    def __validate_fields(self):
-        if self.key is None:
-            self.__validate_field("key")
-
-    def __validate_field(self, field_name: str):
-        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
-        raise InvalidParamException(
-            f"Invalid input, decrypt entity must contain {field_name}"
-        )
 
     @classmethod
     def from_json(cls, json: dict) -> 'EncryptResult':

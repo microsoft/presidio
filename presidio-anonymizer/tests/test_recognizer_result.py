@@ -16,8 +16,8 @@ from presidio_anonymizer.entities.engine import RecognizerResult
     # fmt: on
 )
 def test_given_recognizer_results_then_one_contains_another(start, end):
-    first = create_recognizer_result("", 0, 0, 10)
-    second = create_recognizer_result("", 0, start, end)
+    first = create_recognizer_result("entity", 0, 0, 10)
+    second = create_recognizer_result("entity", 0, start, end)
 
     assert first.contains(second)
 
@@ -34,15 +34,15 @@ def test_given_recognizer_results_then_one_contains_another(start, end):
     # fmt: on
 )
 def test_given_recognizer_result_then_they_do_not_contain_one_another(start, end):
-    first = create_recognizer_result("", 0, 5, 10)
-    second = create_recognizer_result("", 0, start, end)
+    first = create_recognizer_result("entity", 0, 5, 10)
+    second = create_recognizer_result("entity", 0, start, end)
 
     assert not first.contains(second)
 
 
 def test_given_recognizer_results_with_same_indices_then_indices_are_equal():
-    first = create_recognizer_result("", 0, 0, 10)
-    second = create_recognizer_result("", 0, 0, 10)
+    first = create_recognizer_result("entity", 0, 0, 10)
+    second = create_recognizer_result("entity", 0, 0, 10)
 
     assert first.equal_indices(second)
 
@@ -61,8 +61,8 @@ def test_given_recognizer_results_with_same_indices_then_indices_are_equal():
 def test_given_recognizer_results_with_different_indices_then_indices_are_not_equal(
         start, end
 ):
-    first = create_recognizer_result("", 0, 5, 10)
-    second = create_recognizer_result("", 0, start, end)
+    first = create_recognizer_result("entity", 0, 5, 10)
+    second = create_recognizer_result("entity", 0, start, end)
 
     assert not first.equal_indices(second)
 
@@ -95,8 +95,8 @@ def test_given_different_recognizer_result_then_they_are_not_equal(
 
 
 def test_given_recognizer_result_then_their_hash_is_equal():
-    first = create_recognizer_result("", 0, 0, 10)
-    second = create_recognizer_result("", 0, 0, 10)
+    first = create_recognizer_result("entity", 0, 0, 10)
+    second = create_recognizer_result("entity", 0, 0, 10)
 
     assert first.__hash__() == second.__hash__()
 
@@ -216,8 +216,8 @@ def test_given_valid_json_for_creating_recognizer_result_then_creation_is_succes
     # fmt: on
 )
 def test_given_recognizer_results_then_one_is_greater_then_another(start, end):
-    first = create_recognizer_result("", 0, 5, 10)
-    second = create_recognizer_result("", 0, start, end)
+    first = create_recognizer_result("entity", 0, 5, 10)
+    second = create_recognizer_result("entity", 0, start, end)
 
     assert first.__gt__(second)
 
@@ -233,15 +233,15 @@ def test_given_recognizer_results_then_one_is_greater_then_another(start, end):
     # fmt: on
 )
 def test_given_recognizer_result_then_one_is_not_greater_then_another(start, end):
-    first = create_recognizer_result("", 0, 5, 10)
-    second = create_recognizer_result("", 0, start, end)
+    first = create_recognizer_result("entity", 0, 5, 10)
+    second = create_recognizer_result("entity", 0, start, end)
 
     assert not first.__gt__(second)
 
 
 def test_given_endpoint_larger_then_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
-        create_recognizer_result("", 0, 10, 0)
+        create_recognizer_result("entity", 0, 10, 0)
     assert (
             e.value.err_msg == "Invalid input, start index '10' "
                                "must be smaller than end index '0'"
@@ -250,7 +250,7 @@ def test_given_endpoint_larger_then_start_point_then_we_fail():
 
 def test_given_endpoint_equal_to_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
-        create_recognizer_result("", 0, 0, 0)
+        create_recognizer_result("entity", 0, 0, 0)
     assert (
             e.value.err_msg == "Invalid input, start index '0' "
                                "must be smaller than end index '0'"
@@ -272,7 +272,7 @@ def test_given_negative_start_or_endpoint_then_we_fail(start, end):
             InvalidParamException,
             match="Invalid input, result start and end must be positive",
     ):
-        create_recognizer_result("", 0, start, end)
+        create_recognizer_result("entity", 0, start, end)
 
 
 def create_recognizer_result(entity_type: str, score: float, start: int, end: int):
