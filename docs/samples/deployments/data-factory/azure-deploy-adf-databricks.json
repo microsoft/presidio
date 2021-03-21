@@ -150,7 +150,7 @@
                             "accountKey": {
                                 "type": "AzureKeyVaultSecret",
                                 "store": {
-                                    "referenceName": "AzureKeyVault1",
+                                    "referenceName": "StorageSecretsKeyVault",
                                     "type": "LinkedServiceReference"
                                 },
                                 "secretName": "[parameters('AzureKeyVault_storageAccessKeySecretName')]"
@@ -159,7 +159,7 @@
                     },
                     "dependsOn": [
                         "[parameters('dataFactoryName')]",
-                        "[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
+                        "[concat(variables('factoryId'), '/linkedServices/StorageSecretsKeyVault')]"
                     ]
                 },
                 {
@@ -180,7 +180,7 @@
                     ]
                 },
                 {
-                    "name": "[concat(parameters('dataFactoryName'), '/AzureKeyVault1')]",
+                    "name": "[concat(parameters('dataFactoryName'), '/StorageSecretsKeyVault')]",
                     "type": "Microsoft.DataFactory/factories/linkedServices",
                     "apiVersion": "2018-06-01",
                     "properties": {
