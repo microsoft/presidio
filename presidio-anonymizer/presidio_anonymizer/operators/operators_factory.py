@@ -57,10 +57,5 @@ class OperatorsFactory:
     @staticmethod
     def __get_operators_by_type(operator_type: OperatorType):
         operators = Operator.__subclasses__()
-        operators = list(filter(
-            lambda cls: cls.operator_type(cls) == operator_type,
-            operators))
-        return {
-            cls.operator_name(cls): cls for
-            cls in operators
-        }
+        return {cls.operator_name(cls): cls for cls in operators if
+                cls.operator_type(cls) == operator_type}
