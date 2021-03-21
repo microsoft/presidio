@@ -6,7 +6,7 @@
 # MAGIC
 # MAGIC <br>The following code sample will:
 # MAGIC <ol>
-# MAGIC <li>Import the content of text files located in an Azure Storage blob folder</li> # noqa D501
+# MAGIC <li>Import the content of text files located in an Azure Storage blob folder</li>
 # MAGIC <li>Anonymize the content using Presidio</li>
 # MAGIC <li>Write the anonymized content back to the Azure Storage blob account</li>
 # MAGIC </ol>
@@ -115,7 +115,7 @@ anonymized_df = anonymized_df.withColumn(
 )
 anonymized_df = anonymized_df.drop("value")
 display(anonymized_df)
-anonymized_df.write.csv("/mnt/files/" + dbutils.widgets.get("storage_output_file"))
+anonymized_df.write.csv("/mnt/files/" + dbutils.widgets.get("storage_output_folder"))
 
 # unmount the blob container
 dbutils.fs.unmount("/mnt/files")
