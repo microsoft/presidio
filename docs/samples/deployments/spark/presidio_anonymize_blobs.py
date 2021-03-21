@@ -38,6 +38,15 @@ storage_account_name = dbutils.widgets.get("storage_account_name")
 storage_container_name = dbutils.widgets.get("storage_container_name")
 storage_account_access_key = dbutils.widgets.get("storage_account_access_key")
 
+
+# unount container if previously mounted
+def sub_unmount(str_path):
+    if any(mount.mountPoint == str_path for mount in dbutils.fs.mounts()):
+        dbutils.fs.unmount(str_path)
+
+
+sub_unmount("/mnt/files")
+
 # mount the container
 dbutils.fs.mount(
     source="wasbs://"
@@ -116,6 +125,3 @@ anonymized_df = anonymized_df.withColumn(
 anonymized_df = anonymized_df.drop("value")
 display(anonymized_df)
 anonymized_df.write.csv("/mnt/files/" + dbutils.widgets.get("storage_output_folder"))
-
-# unmount the blob container
-dbutils.fs.unmount("/mnt/files")
