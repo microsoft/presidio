@@ -3,7 +3,7 @@ import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple
 
 from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import BadRequest, HTTPException
