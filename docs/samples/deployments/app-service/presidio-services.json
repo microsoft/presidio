@@ -54,29 +54,36 @@
                 "description": "Location for all resources."
             }
         },
+        "singleAppServicePlan": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Choose if to deploy each service to its own App Service Plan or to share the plan."
+            }
+        },
         "analyzerSku": {
             "type": "string",
-            "defaultValue": "P2V2",
+            "defaultValue": "P1V3",
             "metadata": {
-                "description": "The SKU of Analyzer App Service Plan."
+                "description": "The SKU of Analyzer App Service Plan. Only required when singleAppServicePlan is false"
             },
-            "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
+            "allowedValues": ["F2", "B2", "S2", "P1V3", "I2"]
         },
         "anonymizerSku": {
             "type": "string",
-            "defaultValue": "P1V2",
+            "defaultValue": "P1V3",
             "metadata": {
-                "description": "The SKU of Anonymizer App Service Plan."
+                "description": "The SKU of Anonymizer App Service Plan. Only required when singleAppServicePlan is false"
             },
-            "allowedValues": ["F1", "B1", "S1", "P1V2", "I1"]
+            "allowedValues": ["F1", "B1", "S1", "P1V3", "I1"]
         },
         "imageReductorSku": {
             "type": "string",
-            "defaultValue": "P2V2",
+            "defaultValue": "P1V3",
             "metadata": {
-                "description": "The SKU of Image Reductor App Service Plan."
+                "description": "The SKU of Image Reductor App Service Plan. Only required when singleAppServicePlan is false"
             },
-            "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
+            "allowedValues": ["F2", "B2", "S2", "P1V3", "I2"]
         },
         "imagesArePublic": {
             "type": "bool",
@@ -135,7 +142,15 @@
             }
         }
     },
-    "variables": {},
+    "variables": {
+        "sharedAppServicePlanName": "[concat('presidioServicePlan-', uniqueString(resourceGroup().id))]",
+        "analyzerServicePlanName": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanName'), concat(parameters('analyzerWebAppName'), '-ServicePlan'))]",
+        "anonymizerServicePlanName": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanName'), concat(parameters('anonymizerWebAppName'), '-ServicePlan'))]",
+        "imageRedactorServicePlanName": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanName'), concat(parameters('imageReductorWebAppName'), '-ServicePlan'))]",
+        "analyzerServicePlanSku": "",
+        "anonymizerServicePlanSku": "",
+        "imageRedactorServicePlanSku": ""
+    },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
