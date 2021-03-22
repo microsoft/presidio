@@ -145,12 +145,12 @@
     "variables": {
         "sharedAppServicePlanName": "[concat('presidioServicePlan-', uniqueString(resourceGroup().id))]",
         "sharedAppServicePlanSku": "P2V3",
-        "analyzerServicePlanName": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanName'), concat(parameters('analyzerWebAppName'), '-ServicePlan'))]",
-        "anonymizerServicePlanName": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanName'), concat(parameters('anonymizerWebAppName'), '-ServicePlan'))]",
-        "imageRedactorServicePlanName": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanName'), concat(parameters('imageRedactorWebAppName'), '-ServicePlan'))]",
-        "analyzerServicePlanSku": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanSku'), parameters('analyzerSku'))]",
-        "anonymizerServicePlanSku": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanSku'), parameters('anonymizerSku'))]",
-        "imageRedactorServicePlanSku": "[if(equals(parameters('singleAppServicePlan'), 'true'), variables('sharedAppServicePlanSku'), parameters('imageRedactorSku'))]"
+        "analyzerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('analyzerWebAppName'), '-ServicePlan'))]",
+        "anonymizerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('anonymizerWebAppName'), '-ServicePlan'))]",
+        "imageRedactorServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('imageRedactorWebAppName'), '-ServicePlan'))]",
+        "analyzerServicePlanSku": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanSku'), parameters('analyzerSku'))]",
+        "anonymizerServicePlanSku": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanSku'), parameters('anonymizerSku'))]",
+        "imageRedactorServicePlanSku": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanSku'), parameters('imageRedactorSku'))]"
     },
     "resources": [
         {
@@ -161,7 +161,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/fix/arm-templates-image-reductor/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -209,7 +209,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/fix/arm-templates-image-reductor/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -257,7 +257,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/fix/arm-templates-image-reductor/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
