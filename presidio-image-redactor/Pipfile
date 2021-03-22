@@ -18,6 +18,3 @@ pytest = "*"
 flake8 = { version = "==3.7.9" }
 pep8-naming = "*"
 flake8-docstrings = "*"
-importlib-metadata = { version = "==3.7.3", markers = "python_version<'3.8'" }
-typing-extensions = { version = "==3.7.4.3", markers = "python_version<'3.8'" }
-zipp = { version = "==3.4.1", markers = "python_version>='3.6'" }
