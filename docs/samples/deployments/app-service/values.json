@@ -8,8 +8,8 @@
     "anonymizerWebAppName": {
       "value": "presidio-anonimyzer"
     },
-    "imageReductorWebAppName": {
-      "value": "presidio-image-reductor"
+    "imageRedactorWebAppName": {
+      "value": "presidio-image-redactor"
     }
   }
 }
