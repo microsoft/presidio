@@ -39,4 +39,3 @@ class TextMetadata(ABC):
                 f"Invalid input, start index '{self.start}' "
                 f"must be smaller than end index '{self.end}'"
             )
-
