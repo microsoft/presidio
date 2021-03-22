@@ -143,7 +143,7 @@
         }
     },
     "variables": {
-        "sharedAppServicePlanName": "[concat('presidioServicePlan-', uniqueString(resourceGroup().id))]",
+        "sharedAppServicePlanName": "[concat('presidio-ServicePlan-', uniqueString(resourceGroup().id))]",
         "sharedAppServicePlanSku": "P3V2",
         "analyzerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('analyzerWebAppName'), '-ServicePlan'))]",
         "anonymizerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('anonymizerWebAppName'), '-ServicePlan'))]",
@@ -161,7 +161,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/app-services-single-plan/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -202,14 +202,11 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "presidio-analyzer",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'presidio-anonymizer')]"
-            ],
             "condition": "[parameters('analyzer')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/app-services-single-plan/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -250,14 +247,11 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "presidio-image-redactor",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'presidio-anonymizer')]"
-            ],
             "condition": "[parameters('imageRedactor')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/app-services-single-plan/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -269,48 +263,6 @@
                     },
                     "sku": {
                         "value": "[variables('imageRedactorServicePlanSku')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "imageIsPublic": {
-                        "value": "[parameters('imagesArePublic')]"
-                    },
-                    "image": {
-                        "value": "[parameters('imageRedactorImage')]"
-                    },
-                    "dockerRegsitryUrl": {
-                        "value": "[parameters('dockerRegsitryUrl')]"
-                    },
-                    "dockerRegistryUser": {
-                        "value": "[parameters('dockerRegistryUser')]"
-                    },
-                    "dockerRegistryPassword": {
-                        "value": "[parameters('dockerRegistryPassword')]"
-                    },
-                    "ipRestriction": {
-                        "value": "[parameters('ipRestriction')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "presidio-image-redactor",
-            "condition": "[parameters('imageRedactor')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "webAppName": {
-                        "value": "[parameters('imageRedactorWebAppName')]"
-                    },
-                    "sku": {
-                        "value": "[parameters('imageRedactorSku')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
