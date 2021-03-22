@@ -14,7 +14,7 @@ The samples use the following Azure Services:
 
 The input file used by the samples is hosted on [presidio-research](https://github.com/microsoft/presidio-research/) repository. It is setup as a variable on the provided ARM template and used by Azure Data Factory as the input source.
 
-## Presidio as an HTTP REST endpoint
+## Option 1: Presidio as an HTTP REST endpoint
 
 By using Presidio as an HTTP endpoint, the user can select which infrastructure best suits their requirements. in this sample, Presidio is deployed to an Azure App Service, but other deployment targets can be used, such as [kubernetes](../k8s/index.md).
 
