@@ -117,6 +117,6 @@ if __name__ == "__main__":
     )
 
     remote_results = rec.analyze(
-        text="My name is David", entities=["PERSON"], nlp_artifacts=None
+        text="My name is Robert", entities=["PERSON"], nlp_artifacts=None
     )
     print(remote_results)

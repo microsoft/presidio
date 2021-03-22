@@ -53,7 +53,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         configuration = {
             "nlp_engine_name": "spacy",
             "models": [{"lang_code": "es", "model_name": "es_core_news_md"},
-                       {"lang_code": "en", "model_name": "en_core_web_trf"}],
+                       {"lang_code": "en", "model_name": "en_core_web_lg"}],
         }
 
         # Create NLP engine based on configuration
@@ -67,10 +67,10 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         )
 
         # Analyze in different languages
-        results_spanish = analyzer.analyze(text="Mi nombre es David", language="es")
+        results_spanish = analyzer.analyze(text="Mi nombre es Roberto", language="es")
         print(results_spanish)
 
-        results_english = analyzer.analyze(text="My name is David", language="en")
+        results_english = analyzer.analyze(text="My name is Robert", language="en")
         print(results_english)
         ```
 
@@ -83,7 +83,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         models:
             -
             lang_code: en
-            model_name: en_core_web_trf
+            model_name: en_core_web_lg
             -
             lang_code: es
             model_name: es_core_news_md 
@@ -106,14 +106,14 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         )
 
         # Analyze in different languages
-        results_spanish = analyzer.analyze(text="Mi nombre es David", language="es")
+        results_spanish = analyzer.analyze(text="Mi nombre es Roberto", language="es")
         print(results_spanish)
 
-        results_english = analyzer.analyze(text="My name is David", language="en")
+        results_english = analyzer.analyze(text="My name is Robert", language="en")
         print(results_english)
         ```
 
-    In this examples we create an `NlpEngine` holding two spaCy models (one in English: `en_core_web_trf` and one in Spanish: `es_core_news_md`), define the `supported_languages` parameter accordingly, and can send requests in each of these languages.
+    In this examples we create an `NlpEngine` holding two spaCy models (one in English: `en_core_web_lg` and one in Spanish: `es_core_news_md`), define the `supported_languages` parameter accordingly, and can send requests in each of these languages.
 
 ### Set up language specific recognizers
 

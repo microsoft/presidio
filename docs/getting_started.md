@@ -11,7 +11,7 @@ Using Presidio's modules as Python packages to get started
         ```sh
         pip install presidio-analyzer
         pip install presidio-anonymizer
-        python -m spacy download en_core_web_trf
+        python -m spacy download en_core_web_lg
         ```
     
     2. Analyze + Anonymize

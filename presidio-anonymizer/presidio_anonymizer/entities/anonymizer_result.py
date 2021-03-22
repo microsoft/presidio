@@ -42,6 +42,16 @@ class AnonymizerResult:
         """Return a json string serializing this instance."""
         return json.dumps(self, default=lambda x: x.__dict__)
 
+    def __str__(self):  # noqa D105
+        nl = "\n"
+        return (
+            f"Text: {self.text}{nl}{nl}"
+            f"Anonymized entities:{nl}{nl.join([str(item) for item in self.items])}"
+        )
+
+    def __repr__(self):  # noqa D105
+        return self.__str__()
+
     def __eq__(self, other) -> bool:
         """Verify two instances are equal.
 

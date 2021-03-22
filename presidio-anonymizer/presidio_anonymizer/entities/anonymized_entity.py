@@ -23,6 +23,17 @@ class AnonymizedEntity:
         self.end = end
         self.anonymized_text = anonymized_text
 
+    def __str__(self):  # noqa D105
+        return (
+            f"text: {self.anonymized_text}, "
+            f"anonymizer: {self.anonymizer}, "
+            f"entity_type: {self.entity_type}, "
+            f"indices: ({self.start}, {self.end})."
+        )
+
+    def __repr__(self):  # noqa D105
+        return self.__str__()
+
     def __eq__(self, other) -> bool:
         """Verify two instances are equal.
 

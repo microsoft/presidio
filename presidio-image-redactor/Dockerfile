@@ -12,7 +12,7 @@ COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv
 RUN pipenv sync
 
-RUN pipenv run python -m spacy download en_core_web_trf
+RUN pipenv run python -m spacy download en_core_web_lg
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
