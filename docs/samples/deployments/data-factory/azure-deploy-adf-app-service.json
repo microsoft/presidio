@@ -88,6 +88,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "imageRedactor": {
+                        "value": "false"
+                    },
                     "analyzerWebAppName": {
                         "value": "[parameters('Analyzer_appName')]"
                     },
