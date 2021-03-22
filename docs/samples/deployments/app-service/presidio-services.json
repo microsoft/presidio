@@ -63,27 +63,27 @@
         },
         "analyzerSku": {
             "type": "string",
-            "defaultValue": "P1V3",
+            "defaultValue": "P2V2",
             "metadata": {
-                "description": "The SKU of Analyzer App Service Plan. Only required when singleAppServicePlan is false"
+                "description": "The SKU of Analyzer App Service Plan. Only supported when singleAppServicePlan is false"
             },
-            "allowedValues": ["F2", "B2", "S2", "P1V3", "I2"]
+            "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
         },
         "anonymizerSku": {
             "type": "string",
-            "defaultValue": "P1V3",
+            "defaultValue": "P1V2",
             "metadata": {
-                "description": "The SKU of Anonymizer App Service Plan. Only required when singleAppServicePlan is false"
+                "description": "The SKU of Anonymizer App Service Plan. Only supported when singleAppServicePlan is false"
             },
-            "allowedValues": ["F1", "B1", "S1", "P1V3", "I1"]
+            "allowedValues": ["F1", "B1", "S1", "P1V2", "I1"]
         },
         "imageRedactorSku": {
             "type": "string",
-            "defaultValue": "P1V3",
+            "defaultValue": "P2V2",
             "metadata": {
-                "description": "The SKU of Image Redactor App Service Plan. Only required when singleAppServicePlan is false"
+                "description": "The SKU of Image Redactor App Service Plan. Only supported when singleAppServicePlan is false"
             },
-            "allowedValues": ["F2", "B2", "S2", "P1V3", "I2"]
+            "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
         },
         "imagesArePublic": {
             "type": "bool",
@@ -144,7 +144,7 @@
     },
     "variables": {
         "sharedAppServicePlanName": "[concat('presidioServicePlan-', uniqueString(resourceGroup().id))]",
-        "sharedAppServicePlanSku": "P2V3",
+        "sharedAppServicePlanSku": "P3V2",
         "analyzerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('analyzerWebAppName'), '-ServicePlan'))]",
         "anonymizerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('anonymizerWebAppName'), '-ServicePlan'))]",
         "imageRedactorServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('imageRedactorWebAppName'), '-ServicePlan'))]",
