@@ -103,7 +103,7 @@
             "type": "string",
             "defaultValue": "mcr.microsoft.com/presidio-image-redactor:latest",
             "metadata": {
-                "description": "The full anonymizer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+                "description": "The full image reductor image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "dockerRegsitryUrl": {
