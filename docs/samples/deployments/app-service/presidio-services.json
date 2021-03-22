@@ -61,29 +61,37 @@
                 "description": "Choose if to deploy each service to its own App Service Plan or to share the plan."
             }
         },
+        "singleAppServicePlanSku": {
+            "type": "string",
+            "defaultValue": "P3V2",
+            "metadata": {
+                "description": "The sku of the shared App Service Plan. Only supported when singleAppServicePlan is true."
+            },
+            "allowedValues": ["P2V2", "P3V2", "P1V3", "P2V3", "P3V3", "I2", "I3"]
+        },
         "analyzerSku": {
             "type": "string",
             "defaultValue": "P2V2",
             "metadata": {
-                "description": "The SKU of Analyzer App Service Plan. Only supported when singleAppServicePlan is false"
+                "description": "The SKU of Analyzer App Service Plan. Only supported when singleAppServicePlan is false."
             },
-            "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
+            "allowedValues": ["F2", "B2", "S2", "P2V2", "P1V3", "I2"]
         },
         "anonymizerSku": {
             "type": "string",
             "defaultValue": "P1V2",
             "metadata": {
-                "description": "The SKU of Anonymizer App Service Plan. Only supported when singleAppServicePlan is false"
+                "description": "The SKU of Anonymizer App Service Plan. Only supported when singleAppServicePlan is false."
             },
-            "allowedValues": ["F1", "B1", "S1", "P1V2", "I1"]
+            "allowedValues": ["F1", "B1", "S1", "P1V2", "P1V3", "I1"]
         },
         "imageRedactorSku": {
             "type": "string",
             "defaultValue": "P2V2",
             "metadata": {
-                "description": "The SKU of Image Redactor App Service Plan. Only supported when singleAppServicePlan is false"
+                "description": "The SKU of Image Redactor App Service Plan. Only supported when singleAppServicePlan is false."
             },
-            "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
+            "allowedValues": ["F2", "B2", "S2", "P2V2", "P1V3", "I2"]
         },
         "imagesArePublic": {
             "type": "bool",
@@ -144,13 +152,12 @@
     },
     "variables": {
         "sharedAppServicePlanName": "[concat('presidio-ServicePlan-', uniqueString(resourceGroup().id))]",
-        "sharedAppServicePlanSku": "P3V2",
         "analyzerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('analyzerWebAppName'), '-ServicePlan'))]",
         "anonymizerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('anonymizerWebAppName'), '-ServicePlan'))]",
         "imageRedactorServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('imageRedactorWebAppName'), '-ServicePlan'))]",
-        "analyzerServicePlanSku": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanSku'), parameters('analyzerSku'))]",
-        "anonymizerServicePlanSku": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanSku'), parameters('anonymizerSku'))]",
-        "imageRedactorServicePlanSku": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanSku'), parameters('imageRedactorSku'))]"
+        "analyzerServicePlanSku": "[if(parameters('singleAppServicePlan'), parameters('singleAppServicePlanSku'), parameters('analyzerSku'))]",
+        "anonymizerServicePlanSku": "[if(parameters('singleAppServicePlan'), parameters('singleAppServicePlanSku'), parameters('anonymizerSku'))]",
+        "imageRedactorServicePlanSku": "[if(parameters('singleAppServicePlan'), parameters('singleAppServicePlanSku'), parameters('imageRedactorSku'))]"
     },
     "resources": [
         {
@@ -161,7 +168,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/app-services-single-plan/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -206,7 +213,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/app-services-single-plan/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -251,7 +258,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/feature/app-services-single-plan/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
