@@ -18,9 +18,15 @@ The input file used by the samples is hosted on [presidio-research](https://gith
 
 By using Presidio as an HTTP endpoint, the user can select which infrastructure best suits their requirements. in this sample, Presidio is deployed to an Azure App Service, but other deployment targets can be used, such as [kubernetes](../k8s/index.md).
 
+![ADF-App-Service](adf-app-service-screenshot.png)
+
+
 ### Deploy the ARM template
 
-Create the Azure App Service and the ADF pipeline by running the following script, to provision the [provided ARM template](./azure-deploy-adf-app-service.json).
+Create the Azure App Service and the ADF pipeline by clicking the Deploy-to-Azure button, or by running the following script to provision the [provided ARM template](./azure-deploy-adf-app-service.json).
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Fazure-deploy-adf-app-service.json)
+
 
 ```bash
 RESOURCE_GROUP=[Name of resource group]
@@ -39,6 +45,8 @@ Note that:
 
 By using Presidio as a Notebook step in ADF, we allow Databricks to scale presidio according to the cluster capabilities and the input dataset. Using presidio as a native python package in pyspark can unlock more analysis and de-identifiaction scenarios.
 
+![ADF-Databricks](adf-databricks-screenshot.png)
+
 ### Pre-requisite - Deploy Azure Databricks
 
 Provision and setup the datbricks cluster by following the steps in [presidio-spark sample](../spark/index.md#Azure-Databricks). 
@@ -46,7 +54,7 @@ Provision and setup the datbricks cluster by following the steps in [presidio-sp
 
 ### Deploy the ARM template
 
-Create the rest of the services by running the following script which uses the provided ARM template.
+Create the rest of the services by running the following script which uses the [provided ARM template](./azure-deploy-adf-databricks.json).
 
 ```bash
 RESOURCE_GROUP=[Name of resource group]
