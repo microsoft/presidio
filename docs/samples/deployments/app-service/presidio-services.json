@@ -293,6 +293,48 @@
                     }
                 }
             }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-image-redactor",
+            "condition": "[parameters('imageRedactor')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webAppName": {
+                        "value": "[parameters('imageRedactorWebAppName')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('imageRedactorSku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "imageIsPublic": {
+                        "value": "[parameters('imagesArePublic')]"
+                    },
+                    "image": {
+                        "value": "[parameters('imageRedactorImage')]"
+                    },
+                    "dockerRegsitryUrl": {
+                        "value": "[parameters('dockerRegsitryUrl')]"
+                    },
+                    "dockerRegistryUser": {
+                        "value": "[parameters('dockerRegistryUser')]"
+                    },
+                    "dockerRegistryPassword": {
+                        "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    "ipRestriction": {
+                        "value": "[parameters('ipRestriction')]"
+                    }
+                }
+            }
         }
     ]
 }
