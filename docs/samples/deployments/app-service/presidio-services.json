@@ -16,11 +16,11 @@
                 "description": "Choose if to deploy the Anonymizer service"
             }
         },
-        "imageReductor": {
+        "imageRedactor": {
             "type": "bool",
             "defaultValue": true,
             "metadata": {
-                "description": "Choose if to deploy the Image Reductor service"
+                "description": "Choose if to deploy the Image Redactor service"
             }
         },
         "analyzerWebAppName": {
@@ -39,12 +39,12 @@
                 "description": "Anonymizer Web app name."
             }
         },
-        "imageReductorWebAppName": {
+        "imageRedactorWebAppName": {
             "type": "string",
             "defaultValue": "[concat('image-', uniqueString(resourceGroup().id))]",
             "minLength": 2,
             "metadata": {
-                "description": "Image Reductor Web app name."
+                "description": "Image Redactor Web app name."
             }
         },
         "location": {
@@ -70,11 +70,11 @@
             },
             "allowedValues": ["F1", "B1", "S1", "P1V2", "I1"]
         },
-        "imageReductorSku": {
+        "imageRedactorSku": {
             "type": "string",
             "defaultValue": "P2V2",
             "metadata": {
-                "description": "The SKU of Image Reductor App Service Plan."
+                "description": "The SKU of Image Redactor App Service Plan."
             },
             "allowedValues": ["F2", "B2", "S2", "P2V2", "I2"]
         },
@@ -99,11 +99,11 @@
                 "description": "The full anonymizer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
-        "imageReductorImage": {
+        "imageRedactorImage": {
             "type": "string",
             "defaultValue": "mcr.microsoft.com/presidio-image-redactor:latest",
             "metadata": {
-                "description": "The full image reductor image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+                "description": "The full image redactor image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
             }
         },
         "dockerRegsitryUrl": {
@@ -224,8 +224,8 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "presidio-image-reductor",
-            "condition": "[parameters('imageReductor')]",
+            "name": "presidio-image-redactor",
+            "condition": "[parameters('imageRedactor')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -234,10 +234,10 @@
                 },
                 "parameters": {
                     "webAppName": {
-                        "value": "[parameters('imageReductorWebAppName')]"
+                        "value": "[parameters('imageRedactorWebAppName')]"
                     },
                     "sku": {
-                        "value": "[parameters('imageReductorSku')]"
+                        "value": "[parameters('imageRedactorSku')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
@@ -246,7 +246,7 @@
                         "value": "[parameters('imagesArePublic')]"
                     },
                     "image": {
-                        "value": "[parameters('imageReductorImage')]"
+                        "value": "[parameters('imageRedactorImage')]"
                     },
                     "dockerRegsitryUrl": {
                         "value": "[parameters('dockerRegsitryUrl')]"

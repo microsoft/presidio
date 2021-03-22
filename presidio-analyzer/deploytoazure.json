@@ -55,7 +55,7 @@
                     "anonymizer": {
                         "value": false
                     },
-                    "imageReductor": {
+                    "imageRedactor": {
                         "value": false
                     },
                     "analyzerWebAppName": {
