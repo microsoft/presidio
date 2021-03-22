@@ -31,18 +31,6 @@
                 "I1"
             ]
         },
-        "dockerRegistryUser": {
-            "type": "string",
-            "metadata": {
-                "description": "The user name for docker registry."
-            }
-        },
-        "dockerRegistryPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The user password for docker registry."
-            }
-        },
         "ipRestriction": {
             "type": "string",
             "defaultValue": "any",
@@ -67,6 +55,9 @@
                     "analyzer": {
                         "value": false
                     },
+                    "imageRedactor": {
+                        "value": false
+                    },
                     "anonymizerWebAppName": {
                         "value": "[parameters('webAppName')]"
                     },
@@ -75,12 +66,6 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
-                    },
-                    "dockerRegistryUser": {
-                        "value": "[parameters('dockerRegistryUser')]"
-                    },
-                    "dockerRegistryPassword": {
-                        "value": "[parameters('dockerRegistryPassword')]"
                     },
                     "ipRestriction": {
                         "value": "[parameters('ipRestriction')]"
