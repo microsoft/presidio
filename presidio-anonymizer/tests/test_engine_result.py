@@ -1,4 +1,4 @@
-from presidio_anonymizer.entities.engine.result.anonymize_result_item import \
+from presidio_anonymizer.entities.engine.result.anonymized_entity import \
     AnonymizedEntity
 from presidio_anonymizer.entities.engine.result.engine_result import \
     EngineResult
