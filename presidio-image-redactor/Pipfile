@@ -10,6 +10,7 @@ pytesseract = "==0.3.7"
 presidio-analyzer = ">=1.9.0"
 pillow = "==8.1.1"
 importlib-metadata = {version = "==3.7.3", markers="python_version<'3.8'"}
+zipp = "==3.4.1"
 
 [dev-packages]
 pytest = "*"
