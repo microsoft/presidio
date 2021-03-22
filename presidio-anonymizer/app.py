@@ -1,18 +1,17 @@
 """REST API server for anonymizer."""
-import json
 import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
 from typing import Tuple, Union
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
+from werkzeug.exceptions import BadRequest, HTTPException
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.anonymizer_decryptor import AnonymizerDecryptor
 from presidio_anonymizer.entities import AnonymizerRequest
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.error_response import ErrorResponse
 
 DEFAULT_PORT = "3000"
 
@@ -52,7 +51,7 @@ class Server:
         def anonymize():
             content = request.get_json()
             if not content:
-                return ErrorResponse("Invalid request json").to_json(), 400
+                raise BadRequest("Invalid request json")
 
             anonymizers_config = AnonymizerRequest.get_anonymizer_configs_from_json(
                 content
@@ -63,13 +62,13 @@ class Server:
                 analyzer_results=analyzer_results,
                 anonymizers_config=anonymizers_config,
             )
-            return anoymizer_result.to_json()
+            return Response(anoymizer_result.to_json(), mimetype="application/json")
 
         @self.app.route("/decrypt", methods=["POST"])
         def decrypt() -> Union[str, Tuple[str, int]]:
             content = request.get_json()
             if not content:
-                return ErrorResponse("Invalid request json").to_json(), 400
+                raise BadRequest("Invalid request json")
             decrypted_text = self.decryptor.decrypt(
                 key=content.get("key"), text=content.get("text")
             )
@@ -78,19 +77,23 @@ class Server:
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
-            return json.dumps(self.engine.get_anonymizers()), 200
+            return jsonify(self.engine.get_anonymizers())
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
             self.logger.warning(
-                f"failed to anonymize text with validation error: {err.err_msg}"
+                f"Request failed with parameter validation error: {err.err_msg}"
             )
-            return ErrorResponse(err.err_msg).to_json(), 422
+            return jsonify(error=err.err_msg), 422
+
+        @self.app.errorhandler(HTTPException)
+        def http_exception(e):
+            return jsonify(error=e.description), e.code
 
         @self.app.errorhandler(Exception)
         def server_error(e):
             self.logger.error(f"A fatal error occurred during execution: {e}")
-            return ErrorResponse("Internal server error").to_json(), 500
+            return jsonify(error="Internal server error"), 500
 
 
 if __name__ == "__main__":
