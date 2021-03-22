@@ -6,7 +6,7 @@
 # MAGIC
 # MAGIC <br>The following code sample will:
 # MAGIC <ol>
-# MAGIC <li>Import the content of text files located in an Azure Storage blob folder</li> # noqa D501
+# MAGIC <li>Import the content of text files located in an Azure Storage blob folder</li>
 # MAGIC <li>Anonymize the content using Presidio</li>
 # MAGIC <li>Write the anonymized content back to the Azure Storage blob account</li>
 # MAGIC </ol>
@@ -37,6 +37,16 @@ dbutils.widgets.text("storage_output_folder", "output", "Output Folder Name")
 storage_account_name = dbutils.widgets.get("storage_account_name")
 storage_container_name = dbutils.widgets.get("storage_container_name")
 storage_account_access_key = dbutils.widgets.get("storage_account_access_key")
+storage_mount_name = "/mnt/files"
+
+
+# unmount container if previously mounted
+def sub_unmount(str_path):
+    if any(mount.mountPoint == str_path for mount in dbutils.fs.mounts()):
+        dbutils.fs.unmount(str_path)
+
+
+sub_unmount(storage_mount_name)
 
 # mount the container
 dbutils.fs.mount(
@@ -45,7 +55,7 @@ dbutils.fs.mount(
     + "@"
     + storage_account_name
     + ".blob.core.windows.net",
-    mount_point="/mnt/files",
+    mount_point=storage_mount_name,
     extra_configs={
         "fs.azure.account.key."
         + storage_account_name
@@ -55,7 +65,7 @@ dbutils.fs.mount(
 
 # load the files
 input_df = spark.read.text(
-    "/mnt/files/" + dbutils.widgets.get("storage_input_folder") + "/*"
+    storage_mount_name + "/" + dbutils.widgets.get("storage_input_folder") + "/*"
 ).withColumn("filename", input_file_name())
 display(input_df)
 
@@ -111,11 +121,10 @@ display(anonymized_df)
 # remove hdfs prefix from file name
 anonymized_df = anonymized_df.withColumn(
     "filename",
-    regexp_replace("filename", "^.*(/mnt/files/)", ""),
+    regexp_replace("filename", "^.*(" + storage_mount_name + "/)", ""),
 )
 anonymized_df = anonymized_df.drop("value")
 display(anonymized_df)
-anonymized_df.write.csv("/mnt/files/" + dbutils.widgets.get("storage_output_file"))
-
-# unmount the blob container
-dbutils.fs.unmount("/mnt/files")
+anonymized_df.write.csv(
+    storage_mount_name + "/" + dbutils.widgets.get("storage_output_folder")
+)

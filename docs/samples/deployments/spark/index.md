@@ -21,8 +21,7 @@ LOCATION=[location]
 
 # Create the storage account
 az group create --name $RESOURCE_GROUP --location $LOCATION
-az storage account create --name $STORAGE_ACCOUNT_NAME --resource-group
-$RESOURCE_GROUP
+az storage account create --name $STORAGE_ACCOUNT_NAME --resource-group $RESOURCE_GROUP
 
 # Get the storage account access key
 STORAGE_ACCESS_KEY=$(az storage account keys list --account-name $STORAGE_ACCOUNT_NAME --resource-group $RESOURCE_GROUP --query '[0].value' -o tsv)
