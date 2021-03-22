@@ -2,7 +2,7 @@ from typing import List, Dict
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import EncryptResult
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
+from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
 
 
 class AppEntitiesConvertor:
@@ -24,7 +24,7 @@ class AppEntitiesConvertor:
     @staticmethod
     def anonymizer_configs_from_json(
             data: Dict
-    ) -> Dict[str, 'AnonymizeConfig']:
+    ) -> Dict[str, 'AnonymizerConfig']:
         """
         Go over the anonymizers and get the relevant create anonymizer config entity.
 
@@ -34,7 +34,7 @@ class AppEntitiesConvertor:
         anonymizers = data.get("anonymizers")
 
         if anonymizers is not None:
-            return {key: AnonymizeConfig.from_json(anonymizer_json) for
+            return {key: AnonymizerConfig.from_json(anonymizer_json) for
                     (key, anonymizer_json)
                     in anonymizers.items()}
         return {}

@@ -1,14 +1,14 @@
 import pytest
 
-from presidio_anonymizer import AnonymizeEngine
+from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import AnonymizeConfig, RecognizerResult
+from presidio_anonymizer.entities.engine import AnonymizerConfig, RecognizerResult
 from presidio_anonymizer.operators.aes_cipher import AESCipher
 
 
 def test_given_operator_decrypt_then_we_fail():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
-    anonymizers_config = {"DEFAULT": AnonymizeConfig("decrypt", {"key": "key"})}
+    anonymizers_config = {"DEFAULT": AnonymizerConfig("decrypt", {"key": "key"})}
     analyzer_results = [
         RecognizerResult(
             start=24,
@@ -17,7 +17,7 @@ def test_given_operator_decrypt_then_we_fail():
             entity_type="NAME"
         ),
     ]
-    engine = AnonymizeEngine()
+    engine = AnonymizerEngine()
     with pytest.raises(
             InvalidParamException,
             match="Invalid operator class 'decrypt'.",
@@ -29,10 +29,10 @@ def test_given_operator_decrypt_then_we_fail():
 
 def test_given_name_and_phone_number_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
-    anonymizer_config = {"DEFAULT": AnonymizeConfig("mask", {"masking_char": "*",
+    anonymizer_config = {"DEFAULT": AnonymizerConfig("mask", {"masking_char": "*",
                                                              "chars_to_mask": 20,
                                                              "from_end": False}),
-                         "PHONE_NUMBER": AnonymizeConfig("mask", {"masking_char": "*",
+                         "PHONE_NUMBER": AnonymizerConfig("mask", {"masking_char": "*",
                                                                   "chars_to_mask": 6,
                                                                   "from_end": True})
                          }
@@ -60,7 +60,7 @@ def test_given_name_and_phone_number_then_we_anonymize_correctly():
 
 def test_given_name_and_phone_number_without_anonymizers_then_we_use_default():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
-    anonymizer_config = {"ABC": AnonymizeConfig("mask", {"masking_char": "*",
+    anonymizer_config = {"ABC": AnonymizerConfig("mask", {"masking_char": "*",
                                                          "chars_to_mask": 6,
                                                          "from_end": True})}
     analyzer_results = [
@@ -89,8 +89,8 @@ def test_given_name_and_phone_number_without_anonymizers_then_we_use_default():
 def test_given_redact_and_replace_then_we_anonymize_successfully():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {
-        "NAME": AnonymizeConfig("redact", {"new_value": "ANONYMIZED"}),
-        "PHONE_NUMBER": AnonymizeConfig("replace", {"new_value": ""})}
+        "NAME": AnonymizerConfig("redact", {"new_value": "ANONYMIZED"}),
+        "PHONE_NUMBER": AnonymizerConfig("replace", {"new_value": ""})}
     analyzer_results = [
         RecognizerResult(
             start=24,
@@ -220,7 +220,7 @@ def test_given_hash_then_we_anonymize_correctly(hash_type, result):
     if hash_type:
         params = {"hash_type": hash_type}
     anonymizer_config = {
-        "DEFAULT": AnonymizeConfig("hash", params)}
+        "DEFAULT": AnonymizerConfig("hash", params)}
     analyzer_results = [
         RecognizerResult(
             start=48,
@@ -252,7 +252,7 @@ def test_given_hash_then_we_anonymize_correctly(hash_type, result):
 
 def run_engine_and_validate(text: str, anonymizers_config, analyzer_results,
                             expected_result):
-    engine = AnonymizeEngine()
+    engine = AnonymizerEngine()
     try:
         actual_anonymize_result = engine.anonymize(
             text, analyzer_results, anonymizers_config
@@ -266,12 +266,12 @@ def run_engine_and_validate(text: str, anonymizers_config, analyzer_results,
 def test_given_anonymize_called_with_error_scenarios_then_expected_errors_returned():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizers = {
-        "PHONE_NUMBER": AnonymizeConfig("mask", {"masking_char": "non_character",
+        "PHONE_NUMBER": AnonymizerConfig("mask", {"masking_char": "non_character",
                                                  "chars_to_mask": 6,
                                                  "from_end": True})}
     analyzer_results = [RecognizerResult("PHONE_NUMBER", 48, 57, 0.95)]
 
-    engine = AnonymizeEngine()
+    engine = AnonymizerEngine()
 
     try:
         actual_anonymize_result = engine.anonymize(
@@ -291,10 +291,10 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     end_index = 16
     key = "WmZq4t7w!z%C&F)J"
     analyzer_results = [RecognizerResult("PERSON", start_index, end_index, 0.8)]
-    anonymizers_config = {"PERSON": AnonymizeConfig("encrypt", {"key": key})}
+    anonymizers_config = {"PERSON": AnonymizerConfig("encrypt", {"key": key})}
 
     actual_anonymize_result = (
-        AnonymizeEngine().anonymize(text, analyzer_results, anonymizers_config).text
+        AnonymizerEngine().anonymize(text, analyzer_results, anonymizers_config).text
     )
 
     assert actual_anonymize_result[:start_index] == unencrypted_text

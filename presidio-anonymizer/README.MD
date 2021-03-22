@@ -93,8 +93,8 @@ pip install presidio-anonymizer
 #### Getting started
 
 ```python
-from presidio_anonymizer import AnonymizeEngine
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
 
 # Initialize the engine with logger.
 engine = AnonymizeEngine()

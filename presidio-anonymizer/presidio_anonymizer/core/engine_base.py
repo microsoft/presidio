@@ -18,9 +18,9 @@ class EngineBase(ABC):
         self.logger = logging.getLogger("presidio-anonymizer")
         self.operators_factory = OperatorsFactory()
 
-    def operate(self, text: str,
-                text_metadata: List[TextMetadata],
-                operators_metadata: Dict[
+    def _operate(self, text: str,
+                 text_metadata: List[TextMetadata],
+                 operators_metadata: Dict[
                     str, OperatorMetadata]) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.

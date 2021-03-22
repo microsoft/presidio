@@ -7,7 +7,7 @@ from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
-from presidio_anonymizer import AnonymizeEngine
+from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities.engine.result import EngineResult, AnonymizedEntity
 
 
@@ -280,6 +280,6 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
         AnonymizedEntity(anonymizer="replace", entity_type="PERSON", start=0, end=8,
                          anonynmized_text="<PERSON>"))
 
-    anonymizer = AnonymizeEngine()
+    anonymizer = AnonymizerEngine()
     anonymizer_results = anonymizer.anonymize(text_to_test, analyzer_results)
     assert anonymizer_results == expected_response

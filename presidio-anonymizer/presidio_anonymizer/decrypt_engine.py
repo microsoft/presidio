@@ -48,6 +48,6 @@ class DecryptEngine(EngineBase):
         operators_metadata = {}
         for entity in entities:
             operators_metadata[entity.entity_type] = DecryptConfig(entity.key)
-        return self.operate(text,
-                            entities,
-                            operators_metadata)
+        return self._operate(text,
+                             entities,
+                             operators_metadata)
