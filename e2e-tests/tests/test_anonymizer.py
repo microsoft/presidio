@@ -216,7 +216,7 @@ def test_given_decrypt_called_with_missing_payload_then_bad_request_response_ret
 
 @pytest.mark.api
 def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text():
-    text_for_encryption = "Shiran Rubin is a Software Engineer"
+    text_for_encryption = "Lorem Ipsum is a Software Engineer"
     key = "1111111111111111"
     anonymize_request = {
         "text": text_for_encryption,
