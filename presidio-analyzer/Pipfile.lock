@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dd0a893c6c29690c22c7f954982f4e02af159765c01f6fa6761cfc76455e776d"
+            "sha256": "ae3fb3a636c52f2dedb790f685f2a9020f76f4e86cf8744d760f045f8c033b3a"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -62,6 +62,13 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==7.1.2"
+        },
+        "contextvars": {
+            "hashes": [
+                "sha256:f38c908aaa59c14335eeea12abea5f443646216c4e29380d7bf34d2018e2c39e"
+            ],
+            "markers": "python_version < '3.7'",
+            "version": "==2.4"
         },
         "cymem": {
             "hashes": [

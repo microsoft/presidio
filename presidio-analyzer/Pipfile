@@ -14,6 +14,7 @@ importlib-metadata = { version = "==3.7.3", markers = "python_version<'3.8'" }
 typing-extensions = { version = "==3.7.4.3", markers = "python_version<'3.8'" }
 zipp = { version = "==3.4.1", markers = "python_version<'3.8'" }
 dataclasses = { version = "==0.8", markers = "python_version<'3.7'" }
+contextvars = { version = "==2.4", markers = "python_version<'3.7'" }
 
 [dev-packages]
 pytest = "*"
