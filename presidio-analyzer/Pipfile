@@ -10,6 +10,10 @@ tldextract = "*"
 numpy = "==1.19.3"
 flask = "==1.1.2"
 pyyaml = "*"
+importlib-metadata = { version = "==3.7.3", markers = "python_version<'3.8'" }
+typing-extensions = { version = "==3.7.4.3", markers = "python_version<'3.8'" }
+zipp = { version = "==3.4.1", markers = "python_version<'3.8'" }
+dataclasses = { version = "==0.8", markers = "python_version<'3.7'" }
 
 [dev-packages]
 pytest = "*"
