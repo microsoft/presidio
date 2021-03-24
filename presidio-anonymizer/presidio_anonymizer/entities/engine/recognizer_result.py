@@ -6,8 +6,8 @@ Represents the findings of detected entity.
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import TextMetadata
+from presidio_anonymizer.services.validators import validate_parameter_not_empty
 
 
 class RecognizerResult(TextMetadata):
@@ -20,8 +20,6 @@ class RecognizerResult(TextMetadata):
     :param start: the start location of the detected entity
     :param end: the end location of the detected entity
     :param score: the score of the detection
-    :param analysis_explanation: contains the explanation of why this
-                                 entity was identified
     """
 
     logger = logging.getLogger("presidio-anonymizer")
@@ -29,7 +27,7 @@ class RecognizerResult(TextMetadata):
     def __init__(self, entity_type: str, start: int, end: int, score: float):
         TextMetadata.__init__(self, start, end, entity_type)
         self.score = score
-        self.__validate_fields()
+        validate_parameter_not_empty(score, "analyzer result", "score")
 
     @classmethod
     def from_json(cls, data: Dict):
@@ -123,13 +121,3 @@ class RecognizerResult(TextMetadata):
         :return:
         """
         return self.start == other.start and self.end == other.end
-
-    def __validate_fields(self):
-        if self.score is None:
-            self.__validate_field("score")
-
-    def __validate_field(self, field_name: str):
-        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
-        raise InvalidParamException(
-            f"Invalid input, analyzer result must contain {field_name}"
-        )

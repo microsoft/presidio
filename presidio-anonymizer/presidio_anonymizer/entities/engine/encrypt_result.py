@@ -1,7 +1,8 @@
 import logging
 
-from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import TextMetadata
+from presidio_anonymizer.entities.engine.result import AnonymizedEntity
+from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
 class EncryptResult(TextMetadata):
@@ -18,22 +19,12 @@ class EncryptResult(TextMetadata):
         """
         TextMetadata.__init__(self, start, end, entity_type)
         self.logger = logging.getLogger("presidio-anonymizer")
+        validate_parameter_exists(key, "decrypt entity", "key")
         self.key = key
-        self.__validate_fields()
 
     def __gt__(self, other) -> bool:
         """Check result is greater by the text index start location."""
         return self.start > other.start
-
-    def __validate_fields(self):
-        if self.key is None:
-            self.__validate_field("key")
-
-    def __validate_field(self, field_name: str):
-        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
-        raise InvalidParamException(
-            f"Invalid input, decrypt entity must contain {field_name}"
-        )
 
     @classmethod
     def from_json(cls, json: dict) -> 'EncryptResult':
@@ -43,7 +34,7 @@ class EncryptResult(TextMetadata):
         :param json e.g.:
         {
             "start": 0,
-            "end": len(text),
+            "end": 10,
             "key": "1111111111111111",
             "entity_type":"PERSON",
         }
@@ -54,3 +45,16 @@ class EncryptResult(TextMetadata):
         end = json.get("end")
         entity_type = json.get("entity_type")
         return cls(key, start, end, entity_type)
+
+    @classmethod
+    def from_anonymized_entity(cls, key: str, anonymized_entity: AnonymizedEntity):
+        """
+        Convert anonymized entity returned from anonymizer engine to encrypt result.
+
+        :param key: the key we used to encrypt the text.
+        :param anonymized_entity: a single anonymizer encrypt result we received
+        from the engine.
+        :return:
+        """
+        return cls(key, anonymized_entity.start, anonymized_entity.end,
+                   anonymized_entity.entity_type)

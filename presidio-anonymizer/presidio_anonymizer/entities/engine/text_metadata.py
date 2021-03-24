@@ -2,6 +2,8 @@ import logging
 from abc import ABC
 
 from presidio_anonymizer.entities import InvalidParamException
+from presidio_anonymizer.services.validators import validate_parameter_exists, \
+    validate_parameter_not_empty
 
 
 class TextMetadata(ABC):
@@ -25,12 +27,9 @@ class TextMetadata(ABC):
                 and self.entity_type == other.entity_type)
 
     def __validate_fields(self):
-        if self.start is None:
-            self.__validate_field("start")
-        if self.end is None:
-            self.__validate_field("end")
-        if self.entity_type is None:
-            self.__validate_field("entity_type")
+        validate_parameter_not_empty(self.start, "result", "start")
+        validate_parameter_not_empty(self.end, "result", "end")
+        validate_parameter_exists(self.entity_type, "result", "entity_type")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
                 "Invalid input, result start and end must be positive"
@@ -40,9 +39,3 @@ class TextMetadata(ABC):
                 f"Invalid input, start index '{self.start}' "
                 f"must be smaller than end index '{self.end}'"
             )
-
-    def __validate_field(self, field_name: str):
-        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
-        raise InvalidParamException(
-            f"Invalid input, result must contain {field_name}"
-        )

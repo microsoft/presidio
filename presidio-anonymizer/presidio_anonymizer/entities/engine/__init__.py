@@ -1,16 +1,16 @@
 """Engine request entities."""
 from .text_metadata import TextMetadata
-from .operator_metadata import OperatorMetadata
+from .operator_config import OperatorConfig
 from .recognizer_result import RecognizerResult
-from .anonymize_config import AnonymizeConfig
+from .anonymizer_config import AnonymizerConfig
 from .decrypt_config import DecryptConfig
 from .encrypt_result import EncryptResult
 
 __all__ = [
     "TextMetadata",
-    "OperatorMetadata",
+    "OperatorConfig",
     "RecognizerResult",
-    "AnonymizeConfig",
+    "AnonymizerConfig",
     "DecryptConfig",
     "EncryptResult"
 ]

@@ -1,26 +1,27 @@
 """Handle the entire text operations using the operators."""
 import logging
+from abc import ABC
 from typing import List, Dict
 
-from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
+from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine import TextMetadata
 from presidio_anonymizer.entities.engine.result import EngineResult
 from presidio_anonymizer.entities.engine.result import ResultItemBuilder
 from presidio_anonymizer.operators import OperatorsFactory
-from presidio_anonymizer.services.text_interpolator import TextInterpolator
 
 
-class TextEngine:
+class EngineBase(ABC):
     """Handle the logic of operations over the text using the operators."""
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
         self.operators_factory = OperatorsFactory()
 
-    def operate(self, text: str,
-                text_metadata: List[TextMetadata],
-                operators_metadata: Dict[
-                    str, OperatorMetadata]) -> EngineResult:
+    def _operate(self, text: str,
+                 text_metadata: List[TextMetadata],
+                 operators_metadata: Dict[
+                     str, OperatorConfig]) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.
 
@@ -30,10 +31,10 @@ class TextEngine:
         we want to perform over this entity_type.
         :return:
         """
-        text_interpolator = TextInterpolator(original_text=text)
+        text_replace_builder = TextReplaceBuilder(original_text=text)
         engine_result = EngineResult()
         for operator in sorted(text_metadata, reverse=True):
-            text_to_operate_on = text_interpolator.get_text_in_position(
+            text_to_operate_on = text_replace_builder.get_text_in_position(
                 operator.start, operator.end
             )
 
@@ -45,7 +46,7 @@ class TextEngine:
             changed_text = self.__operate_on_text(
                 operator, text_to_operate_on, operator_metadata
             )
-            index_from_end = text_interpolator.replace_text_get_insertion_index(
+            index_from_end = text_replace_builder.replace_text_get_insertion_index(
                 changed_text, operator.start, operator.end
             )
 
@@ -59,7 +60,7 @@ class TextEngine:
                 index_from_end).set_operated_on_text(changed_text).build()
             engine_result.add_item(result_item)
 
-        engine_result.set_text(text_interpolator.output_text)
+        engine_result.set_text(text_replace_builder.output_text)
         engine_result.normalize_item_indexes()
         return engine_result
 
@@ -67,7 +68,7 @@ class TextEngine:
             self,
             text_metadata: TextMetadata,
             text_to_operate_on: str,
-            operator_metadata: OperatorMetadata
+            operator_metadata: OperatorConfig
     ) -> str:
         entity_type = text_metadata.entity_type
         self.logger.debug(f"getting operator for {entity_type}")
@@ -83,8 +84,8 @@ class TextEngine:
 
     @staticmethod
     def __get_entity_operator_metadata(
-            entity_type: str, operators_metadata: Dict[str, OperatorMetadata] = {}
-    ) -> OperatorMetadata:
+            entity_type: str, operators_metadata: Dict[str, OperatorConfig] = {}
+    ) -> OperatorConfig:
         # We try to get the operator from the list by entity_type.
         # If it does not exist, we get the default from the list.
         operator = operators_metadata.get(entity_type)

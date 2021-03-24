@@ -7,8 +7,8 @@ from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
-from presidio_anonymizer import AnonymizeEngine
-from presidio_anonymizer.entities.engine.result import EngineResult, AnonymizeResultItem
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities.engine.result import EngineResult, AnonymizedEntity
 
 
 def analyze_and_assert(analyzer_request, expected_response):
@@ -274,12 +274,12 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     expected_response = EngineResult(
         text="<PERSON> drivers license is <US_DRIVER_LICENSE>")
     expected_response.add_item(
-        AnonymizeResultItem(anonymizer="replace", entity_type="US_DRIVER_LICENSE",
-                            start=28, end=47, anonynmized_text="<US_DRIVER_LICENSE>"))
+        AnonymizedEntity(anonymizer="replace", entity_type="US_DRIVER_LICENSE",
+                         start=28, end=47, anonynmized_text="<US_DRIVER_LICENSE>"))
     expected_response.add_item(
-        AnonymizeResultItem(anonymizer="replace", entity_type="PERSON", start=0, end=8,
-                            anonynmized_text="<PERSON>"))
+        AnonymizedEntity(anonymizer="replace", entity_type="PERSON", start=0, end=8,
+                         anonynmized_text="<PERSON>"))
 
-    anonymizer = AnonymizeEngine()
+    anonymizer = AnonymizerEngine()
     anonymizer_results = anonymizer.anonymize(text_to_test, analyzer_results)
     assert anonymizer_results == expected_response

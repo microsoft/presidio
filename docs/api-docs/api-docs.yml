@@ -215,7 +215,7 @@ paths:
               examples:
                 Decrypt Single PII:
                   value:
-                    { "result": "decrypted_text" }
+                    { "text": "text_for_encryption", "items": [ { "start": 0, "end": 19, "decrypted_text": "text_for_encryption","entity_type": "NUMBER" } ] }
         400:
           $ref: "#/components/responses/400BadRequest"
 
@@ -309,9 +309,12 @@ components:
               value:
                 {
                   "text": "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
-                  "encrypt_results": [
-                    { "start": 11, "end": 55, "key": "WmZq4t7w!z%C&F)J", "entity_type": "PERSON" },
-                  ]
+                  "encrypt_results": [ {
+                    "key": "WmZq4t7w!z%C&F)J",
+                    "start": 11,
+                    "end": 55,
+                    "entity_type": "PERSON"
+                  } ]
                 }
 
 
@@ -369,7 +372,7 @@ components:
                 - $ref: "#/components/schemas/Hash"
                 - $ref: "#/components/schemas/Encrypt"
           default:
-            {"DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" }}
+            { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
 
         analyzer_results:
           type: array
@@ -590,30 +593,30 @@ components:
 
     DecryptResponse:
       type: object
-        properties:
-          text:
-            type: string
+      properties:
+        text:
+          type: string
+        items:
+          type: array
+          description: "Array of decrypted entities"
           items:
-            type: array
-            description: "Array of decrypted entities"
-            items:
-              $ref: "#/components/schemas/DecryptedEntity"
+            $ref: "#/components/schemas/DecryptedEntity"
 
-  DecryptedEntity:
-    type: object
-    properties:
-      entity_type:
-        type: string
-        description: "Type of the PII entity"
-      start:
-        type: integer
-        description: "Start index in the decrypted text"
-      end:
-        type: integer
-        description: "End index in the decrypted text"
-      decrypted_text:
-        type: string
-        description: "The decrypted text"
+    DecryptedEntity:
+      type: object
+      properties:
+        entity_type:
+          type: string
+          description: "Type of the PII entity"
+        start:
+          type: integer
+          description: "Start index in the decrypted text"
+        end:
+          type: integer
+          description: "End index in the decrypted text"
+        decrypted_text:
+          type: string
+          description: "The PII decrypted text"
 
   responses:
     400BadRequest:

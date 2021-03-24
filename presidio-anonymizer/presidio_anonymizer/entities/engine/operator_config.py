@@ -4,9 +4,10 @@ from typing import Dict
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.operators import OperatorType, operator
+from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
-class OperatorMetadata(ABC):
+class OperatorConfig(ABC):
     """Abstract class to hold the data of the required operator."""
 
     def __init__(
@@ -22,16 +23,14 @@ class OperatorMetadata(ABC):
         self.__validate_fields()
 
     def __validate_fields(self):
-        if self.operator_name is None:
-            self.__validate_field("operator_name")
-        if self.operator_type is None:
-            self.__validate_field("operator_type")
+        validate_parameter_exists(self.operator_name, "config", "operator_name")
+        validate_parameter_exists(self.operator_type, "config", "operator_type")
         if self.operator_type not in operator.types:
             raise InvalidParamException(
                 f"Invalid input, invalid operator type {self.operator_type}"
             )
 
-    def __validate_field(self, field_name: str):
+    def __field_validation_error(self, field_name: str):
         self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
         raise InvalidParamException(
             f"Invalid input, config must contain {field_name}"

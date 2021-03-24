@@ -2,11 +2,11 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.operators import OperatorType
 
 
-class AnonymizeConfig(OperatorMetadata):
+class AnonymizerConfig(OperatorConfig):
     """Handle the anonymizers (operators) data - anonymizer class name and params."""
 
     logger = logging.getLogger("presidio-anonymizer")
@@ -21,7 +21,7 @@ class AnonymizeConfig(OperatorMetadata):
         """
         if not params:
             params = {}
-        OperatorMetadata.__init__(self, OperatorType.Anonymize, params, anonymizer_name)
+        OperatorConfig.__init__(self, OperatorType.Anonymize, params, anonymizer_name)
 
     @classmethod
     def from_json(cls, params: dict):

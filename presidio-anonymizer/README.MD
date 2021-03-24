@@ -93,11 +93,11 @@ pip install presidio-anonymizer
 #### Getting started
 
 ```python
-from presidio_anonymizer import AnonymizeEngine
-from presidio_anonymizer.entities import RecognizerResult, AnonymizeConfig
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
 
 # Initialize the engine with logger.
-engine = AnonymizerEngine()
+engine = AnonymizeEngine()
 
 # Class the anonymize function with the text, analyzer results and
 # Anonymizers config to define the anonymization type.
@@ -105,7 +105,7 @@ result = engine.anonymize(
     text="My name is Bond, James Bond",
     analyzer_results=[RecognizerResult("PERSON", 11, 15, 0.8),
                       RecognizerResult("PERSON", 17, 27, 0.8)],
-    anonymizers_config={"PERSON": AnonymizerConfig("replace", {"new_value": "BIP"})}
+    anonymizers_config={"PERSON": AnonymizeConfig("replace", {"new_value": "BIP"})}
 )
 
 print(result)

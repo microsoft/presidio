@@ -2,16 +2,16 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.entities.engine import OperatorMetadata
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizeConfig
+from presidio_anonymizer.core.engine_base import EngineBase
+from presidio_anonymizer.entities.engine import OperatorConfig
+from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities.engine.result import EngineResult
 from presidio_anonymizer.operators import OperatorsFactory
-from presidio_anonymizer.text_engine import TextEngine
 
 DEFAULT = "replace"
 
 
-class AnonymizeEngine:
+class AnonymizerEngine(EngineBase):
     """
     AnonymizeEngine class.
 
@@ -19,15 +19,16 @@ class AnonymizeEngine:
     and replaces the PII entities with the desired anonymizers.
     """
 
+    logger = logging.getLogger("presidio-anonymizer")
+
     def __init__(self):
-        self.logger = logging.getLogger("presidio-anonymizer")
-        self.text_engine = TextEngine()
+        EngineBase.__init__(self)
 
     def anonymize(
             self,
             text: str,
             analyzer_results: List[RecognizerResult],
-            anonymizers_config: Optional[Dict[str, AnonymizeConfig]] = None,
+            anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -45,11 +46,10 @@ class AnonymizeEngine:
 
         anonymizers_config = self.__check_or_add_default_anonymizer(anonymizers_config)
 
-        return self.text_engine.operate(text,
-                                        analyzer_results,
-                                        anonymizers_config)
+        return self._operate(text, analyzer_results, anonymizers_config)
 
-    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results):
+    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results: List[
+            RecognizerResult]) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
 
@@ -87,11 +87,11 @@ class AnonymizeEngine:
         return any([result.has_conflict(other_element) for other_element in
                     other_elements])
 
-    def __check_or_add_default_anonymizer(self,
-                                          anonymizers_config: Dict[
-                                              str, AnonymizeConfig]) -> \
-            Dict[str, OperatorMetadata]:
-        default_anonymizer = AnonymizeConfig(DEFAULT)
+    @staticmethod
+    def __check_or_add_default_anonymizer(anonymizers_config: Dict[
+        str, AnonymizerConfig]) -> \
+            Dict[str, OperatorConfig]:
+        default_anonymizer = AnonymizerConfig(DEFAULT)
         if not anonymizers_config:
             return {"DEFAULT": default_anonymizer}
         if not anonymizers_config.get("DEFAULT"):

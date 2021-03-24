@@ -1,12 +1,12 @@
 import logging
 
-from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.operators import Decrypt
 from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
-class DecryptConfig(OperatorMetadata):
+class DecryptConfig(OperatorConfig):
     """Decrypt configuration for each text entity of the decryption."""
 
     def __init__(self, key: str):
@@ -18,13 +18,6 @@ class DecryptConfig(OperatorMetadata):
         :param params: the parameters to use in the selected anonymizer class
         """
         self.logger = logging.getLogger("presidio-anonymizer")
+        validate_parameter_exists(key, "config", "key")
         params = {Decrypt.KEY: key}
-        if not key:
-            self.__validate_field("key")
-        OperatorMetadata.__init__(self, OperatorType.Decrypt, params, Decrypt.NAME)
-
-    def __validate_field(self, field_name: str):
-        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
-        raise InvalidParamException(
-            f"Invalid input, config must contain {field_name}"
-        )
+        OperatorConfig.__init__(self, OperatorType.Decrypt, params, Decrypt.NAME)

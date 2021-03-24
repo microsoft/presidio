@@ -23,11 +23,11 @@ class OperatorsFactory:
         :type operator_name: operator name.
         :return: operator class entity.
         """
-        operator_class = None
-        if operator_type == OperatorType.Anonymize:
-            operator_class = OperatorsFactory.get_anonymizers().get(operator_name)
-        if operator_type == OperatorType.Decrypt:
-            operator_class = OperatorsFactory.get_decryptors().get(operator_name)
+        operator_class = {
+            OperatorType.Anonymize: OperatorsFactory.get_anonymizers().get(
+                operator_name),
+            OperatorType.Decrypt: OperatorsFactory.get_decryptors().get(operator_name),
+        }.get(operator_type)
         if not operator_class:
             self.logger.error(f"No such operator class {operator_name}")
             raise InvalidParamException(
@@ -55,12 +55,7 @@ class OperatorsFactory:
         return OperatorsFactory._decryptors
 
     @staticmethod
-    def __get_operators_by_type(manipulator_type: OperatorType):
-        manipulators = Operator.__subclasses__()
-        manipulators = list(filter(
-            lambda cls: cls.operator_type(cls) == manipulator_type,
-            manipulators))
-        return {
-            cls.operator_name(cls): cls for
-            cls in manipulators
-        }
+    def __get_operators_by_type(operator_type: OperatorType):
+        operators = Operator.__subclasses__()
+        return {cls.operator_name(cls): cls for cls in operators if
+                cls.operator_type(cls) == operator_type}

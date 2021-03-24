@@ -15,6 +15,6 @@ class EngineResultItem(ABC):
         pass
 
     @abstractmethod
-    def get_operated_text(self):
+    def get_text(self):
         """Need to implement for getting the text we operated on."""
         pass

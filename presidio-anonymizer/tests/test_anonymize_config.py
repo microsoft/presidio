@@ -1,12 +1,12 @@
 import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import AnonymizeConfig, OperatorMetadata
+from presidio_anonymizer.entities.engine import AnonymizerConfig, OperatorConfig
 from presidio_anonymizer.operators import OperatorType
 
 
 def test_given_valid_json_then_we_parse_it_to_anonymize_config():
-    anonymize_config = AnonymizeConfig.from_json({
+    anonymize_config = AnonymizerConfig.from_json({
         "type": "mask",
         "masking_char": "*",
         "chars_to_mask": 4,
@@ -21,7 +21,7 @@ def test_given_valid_json_then_we_parse_it_to_anonymize_config():
 def test_given_invalid_json_then_we_fail_to_parse_it_to_anonymize_config():
     expected_error = "Invalid input, config must contain operator_name"
     with pytest.raises(InvalidParamException, match=expected_error):
-        AnonymizeConfig.from_json({
+        AnonymizerConfig.from_json({
             "masking_char": "*",
             "chars_to_mask": 4,
             "from_end": True
@@ -31,12 +31,12 @@ def test_given_invalid_json_then_we_fail_to_parse_it_to_anonymize_config():
 def test_creating_operator_md_without_operator_type_then_we_fail():
     expected_error = "Invalid input, invalid operator type 4"
     with pytest.raises(InvalidParamException, match=expected_error):
-        OperatorMetadata(4, {}, "anonymizer_name")
+        OperatorConfig(4, {}, "anonymizer_name")
 
 
 def test_given_two_identical_entities_then_we_verify_they_are_equal():
-    one = AnonymizeConfig("name", {"key", "key"})
-    two = AnonymizeConfig("name", {"key", "key"})
+    one = AnonymizerConfig("name", {"key", "key"})
+    two = AnonymizerConfig("name", {"key", "key"})
     assert one == two
 
 
@@ -44,13 +44,13 @@ def test_given_two_identical_entities_then_we_verify_they_are_equal():
     # fmt: off
     "anonymizer_config",
     [
-        AnonymizeConfig("name1", {"key", "key"}),
-        AnonymizeConfig("name1", {}),
+        AnonymizerConfig("name1", {"key", "key"}),
+        AnonymizerConfig("name1", {}),
     ],
     # fmt: on
 )
 def test_given_two_different_entities_then_we_verify_they_are_equal(anonymizer_config):
-    one = AnonymizeConfig("name", {"key", "key"})
+    one = AnonymizerConfig("name", {"key", "key"})
     assert one != anonymizer_config
 
 
@@ -64,6 +64,6 @@ def test_given_two_different_entities_then_we_verify_they_are_equal(anonymizer_c
 )
 def test_given_json_then_anonymizer_config_is_created_properly(class_name):
     json = {"type": class_name, "param_1": "my_parameter"}
-    anonymizer_config = AnonymizeConfig.from_json(json)
+    anonymizer_config = AnonymizerConfig.from_json(json)
     assert anonymizer_config.operator_name == class_name
     assert anonymizer_config.params == {"param_1": "my_parameter"}

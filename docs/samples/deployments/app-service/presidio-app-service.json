@@ -10,6 +10,14 @@
                 "description": "Web app name."
             }
         },
+        "appServicePlanName": {
+            "type": "string",
+            "defaultValue": "[concat('appServicePlan-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
+            "metadata": {
+                "description": "Web app name."
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -64,7 +72,6 @@
         }
     },
     "variables": {
-        "appServicePlanPortalName": "[concat('AppServicePlan-', parameters('webAppName'))]",
         "linuxFxVersion": "[concat('DOCKER|', parameters('image'))]",
         "appSettingsPrivateRegistry": [
                         {
@@ -87,7 +94,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2020-06-01",
-            "name": "[variables('appServicePlanPortalName')]",
+            "name": "[parameters('appServicePlanName')]",
             "location": "[parameters('location')]",
             "sku": {
                 "name": "[parameters('sku')]"
@@ -104,10 +111,10 @@
             "location": "[parameters('location')]",
 
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]"
+                "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
             ],
             "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanPortalName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
                 "httpsOnly": true,
                 "siteConfig": {
                     "linuxFxVersion": "[variables('linuxFxVersion')]",

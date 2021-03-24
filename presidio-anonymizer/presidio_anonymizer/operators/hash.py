@@ -39,12 +39,12 @@ class Hash(Operator):
         pass
 
     def operator_name(self) -> str:
-        """Return anonymizer name."""
+        """Return operator name."""
         return "hash"
 
     def _get_hash_type_or_default(self, params: Dict = None):
         return params.get(self.HASH_TYPE, self.SHA256)
 
     def operator_type(self) -> OperatorType:
-        """Return anonymizer name."""
+        """Return operator type."""
         return OperatorType.Anonymize

@@ -53,8 +53,12 @@ class Mask(Operator):
         validate_parameter(params.get(self.FROM_END), self.FROM_END, bool)
 
     def operator_name(self) -> str:
-        """Return anonymizer name."""
+        """Return operator name."""
         return "mask"
+
+    def operator_type(self) -> OperatorType:
+        """Return operator type."""
+        return OperatorType.Anonymize
 
     @staticmethod
     def _get_effective_chars_to_mask(text, chars_to_mask):
@@ -67,7 +71,3 @@ class Mask(Operator):
         else:
             mask_from_index = len(text) - chars_to_mask
             return text[:mask_from_index] + masking_char * chars_to_mask
-
-    def operator_type(self) -> OperatorType:
-        """Return anonymizer name."""
-        return OperatorType.Anonymize

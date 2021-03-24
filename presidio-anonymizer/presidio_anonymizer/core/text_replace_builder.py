@@ -4,7 +4,7 @@ import logging
 from presidio_anonymizer.entities import InvalidParamException
 
 
-class TextInterpolator:
+class TextReplaceBuilder:
     """Creates new text according to users request."""
 
     def __init__(self, original_text: str):
@@ -31,12 +31,12 @@ class TextInterpolator:
         return self.output_text[start:end]
 
     def replace_text_get_insertion_index(
-            self, new_text: str, start: int, end: int
+            self, replacement_text: str, start: int, end: int
     ) -> int:
         """
         Replace text in a specific position with the text.
 
-        :param new_text:
+        :param replacement_text: new text to replace the old text according to indices
         :param start: the startpoint to replace the text
         :param end: the endpoint to replace the text
         :return: The index of inserted text
@@ -46,11 +46,11 @@ class TextInterpolator:
 
         before_text = self.output_text[:start]
         after_text = self.output_text[end_of_text_index:]
-        self.output_text = before_text + new_text + after_text
+        self.output_text = before_text + replacement_text + after_text
 
         # The replace algorithm is replacing the text from end to start.
         # calculate and return the start point from the end.
-        return len(after_text) + len(new_text)
+        return len(after_text) + len(replacement_text)
 
     def __validate_position_in_text(self, start: int, end: int):
         """Validate the start and end position match the text length."""

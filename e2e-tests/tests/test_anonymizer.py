@@ -27,9 +27,15 @@ def test_given_anonymize_called_with_valid_request_then_expected_valid_response_
 
     response_status, response_content = anonymize(request_body)
 
-    expected_response = (
-        """{"text": "hello world, my name is ANONYMIZED. My number is: 03445****", "items": [{"anonymizer": "mask", "entity_type": "PHONE_NUMBER", "start": 50, "end": 59, "anonymized_text": "03445****"}, {"anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED"}]}"""
-    )
+    expected_response = """
+    {
+        "text": "hello world, my name is ANONYMIZED. My number is: 03445****", 
+        "items": [
+            {"anonymizer": "mask", "entity_type": "PHONE_NUMBER", "start": 50, "end": 59, "anonymized_text": "03445****"}, 
+            {"anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED"}
+        ]
+    }
+    """
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
 
@@ -77,7 +83,7 @@ def test_given_anonymize_called_with_empty_analyzer_results_then_unchanged_text_
 
 
 @pytest.mark.api
-def test_given_anonymize_called_with_deformed_body_then_internal_server_error_returned():
+def test_given_anonymize_called_with_deformed_body_then_bad_request_error_returned():
     request_body = """
     {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
@@ -92,8 +98,8 @@ def test_given_anonymize_called_with_deformed_body_then_internal_server_error_re
     """
     response_status, response_content = anonymize(request_body)
 
-    expected_response = '{"error": "Internal server error"}'
-    assert response_status == 500
+    expected_response = '{"error": "The browser (or proxy) sent a request that this server could not understand."}'
+    assert response_status == 400
     assert equal_json_strings(expected_response, response_content)
 
 
@@ -210,7 +216,7 @@ def test_given_decrypt_called_with_missing_payload_then_bad_request_response_ret
 
 @pytest.mark.api
 def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text():
-    text_for_encryption = "Shiran Rubin is a Software Engineer"
+    text_for_encryption = "Lorem Ipsum is a Software Engineer"
     key = "1111111111111111"
     anonymize_request = {
         "text": text_for_encryption,
@@ -240,14 +246,12 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
             {
                 "start": 0,
                 "end": 44,
-                "score": 0.8,
                 "entity_type": "NAME",
                 "key": key,
             },
             {
                 "start": 50,
                 "end": 114,
-                "score": 0.8,
                 "entity_type": "TITLE",
                 "key": "2222222222222222"
             }

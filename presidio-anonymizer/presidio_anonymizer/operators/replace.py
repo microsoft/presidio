@@ -23,9 +23,9 @@ class Replace(Operator):
         pass
 
     def operator_name(self) -> str:
-        """Return anonymizer name."""
+        """Return operator name."""
         return "replace"
 
     def operator_type(self) -> OperatorType:
-        """Return anonymizer name."""
+        """Return operator type."""
         return OperatorType.Anonymize

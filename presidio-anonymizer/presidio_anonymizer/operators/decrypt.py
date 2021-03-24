@@ -3,7 +3,7 @@ from typing import Dict
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.operators import Operator
 from presidio_anonymizer.operators import OperatorType
-from presidio_anonymizer.services.aes_cipher import AESCipher
+from presidio_anonymizer.operators.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
 
 
@@ -43,9 +43,9 @@ class Decrypt(Operator):
             )
 
     def operator_name(self) -> str:
-        """Return decrypt name."""
+        """Return operator name."""
         return self.NAME
 
     def operator_type(self) -> OperatorType:
-        """Return decrypt type."""
+        """Return operator type."""
         return OperatorType.Decrypt
