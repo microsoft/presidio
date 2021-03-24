@@ -4,7 +4,7 @@ from abc import ABC
 from typing import List, Dict
 
 from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
-from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine import TextMetadata
 from presidio_anonymizer.entities.engine.result import EngineResult
 from presidio_anonymizer.entities.engine.result import ResultItemBuilder
@@ -21,7 +21,7 @@ class EngineBase(ABC):
     def _operate(self, text: str,
                  text_metadata: List[TextMetadata],
                  operators_metadata: Dict[
-                    str, OperatorMetadata]) -> EngineResult:
+                     str, OperatorConfig]) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.
 
@@ -68,7 +68,7 @@ class EngineBase(ABC):
             self,
             text_metadata: TextMetadata,
             text_to_operate_on: str,
-            operator_metadata: OperatorMetadata
+            operator_metadata: OperatorConfig
     ) -> str:
         entity_type = text_metadata.entity_type
         self.logger.debug(f"getting operator for {entity_type}")
@@ -84,8 +84,8 @@ class EngineBase(ABC):
 
     @staticmethod
     def __get_entity_operator_metadata(
-            entity_type: str, operators_metadata: Dict[str, OperatorMetadata] = {}
-    ) -> OperatorMetadata:
+            entity_type: str, operators_metadata: Dict[str, OperatorConfig] = {}
+    ) -> OperatorConfig:
         # We try to get the operator from the list by entity_type.
         # If it does not exist, we get the default from the list.
         operator = operators_metadata.get(entity_type)

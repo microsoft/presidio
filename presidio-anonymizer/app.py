@@ -75,7 +75,7 @@ class Server:
             decrypt_response = self.decryptor.decrypt(
                 text=text, entities=decrypt_entities
             )
-            return jsonify(result=decrypt_response)
+            return Response(decrypt_response.to_json(), mimetype="application/json")
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:

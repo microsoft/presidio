@@ -7,7 +7,7 @@ from presidio_anonymizer.operators import OperatorType, operator
 from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
-class OperatorMetadata(ABC):
+class OperatorConfig(ABC):
     """Abstract class to hold the data of the required operator."""
 
     def __init__(

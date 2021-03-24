@@ -3,7 +3,7 @@ import logging
 from typing import List, Dict, Optional
 
 from presidio_anonymizer.core.engine_base import EngineBase
-from presidio_anonymizer.entities.engine import OperatorMetadata
+from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
 from presidio_anonymizer.entities.engine.result import EngineResult
 from presidio_anonymizer.operators import OperatorsFactory
@@ -18,9 +18,9 @@ class AnonymizerEngine(EngineBase):
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
     and replaces the PII entities with the desired anonymizers.
     """
+    logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self):
-        self.logger = logging.getLogger("presidio-anonymizer")
         EngineBase.__init__(self)
 
     def anonymize(
@@ -47,7 +47,8 @@ class AnonymizerEngine(EngineBase):
 
         return self._operate(text, analyzer_results, anonymizers_config)
 
-    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results):
+    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results: List[
+        RecognizerResult]) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
 
@@ -85,10 +86,10 @@ class AnonymizerEngine(EngineBase):
         return any([result.has_conflict(other_element) for other_element in
                     other_elements])
 
-    def __check_or_add_default_anonymizer(self,
-                                          anonymizers_config: Dict[
+    @staticmethod
+    def __check_or_add_default_anonymizer(anonymizers_config: Dict[
                                               str, AnonymizerConfig]) -> \
-            Dict[str, OperatorMetadata]:
+            Dict[str, OperatorConfig]:
         default_anonymizer = AnonymizerConfig(DEFAULT)
         if not anonymizers_config:
             return {"DEFAULT": default_anonymizer}

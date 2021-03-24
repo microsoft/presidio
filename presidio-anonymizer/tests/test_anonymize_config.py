@@ -1,7 +1,7 @@
 import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import AnonymizerConfig, OperatorMetadata
+from presidio_anonymizer.entities.engine import AnonymizerConfig, OperatorConfig
 from presidio_anonymizer.operators import OperatorType
 
 
@@ -31,7 +31,7 @@ def test_given_invalid_json_then_we_fail_to_parse_it_to_anonymize_config():
 def test_creating_operator_md_without_operator_type_then_we_fail():
     expected_error = "Invalid input, invalid operator type 4"
     with pytest.raises(InvalidParamException, match=expected_error):
-        OperatorMetadata(4, {}, "anonymizer_name")
+        OperatorConfig(4, {}, "anonymizer_name")
 
 
 def test_given_two_identical_entities_then_we_verify_they_are_equal():

@@ -10,6 +10,10 @@ class ResultItemBuilder:
 
     def __init__(self,
                  operator_type: OperatorType):
+        """
+
+        :param operator_type: the operator type anonymize/decrypt
+        """
         self.__operator_type = operator_type
         self.__operator_name = ""
         self.__operated_on_text = ""

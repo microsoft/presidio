@@ -5,7 +5,7 @@ import pytest
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
-from presidio_anonymizer.entities.engine.operator_metadata import OperatorMetadata
+from presidio_anonymizer.entities.engine.operator_config import OperatorConfig
 from presidio_anonymizer.entities.engine.result.anonymized_entity import \
     AnonymizedEntity
 from presidio_anonymizer.entities.engine.result.engine_result import \
@@ -148,7 +148,7 @@ def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result
 
 def operate(text: str,
             text_metadata: List[TextMetadata],
-            operators: Dict[str, OperatorMetadata]) -> EngineResult:
+            operators: Dict[str, OperatorConfig]) -> EngineResult:
     assert text == "hello world, my name is Jane Doe. My number is: 034453334"
     assert len(text_metadata) == 4
     expected = [
