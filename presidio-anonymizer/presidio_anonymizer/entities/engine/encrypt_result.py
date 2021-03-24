@@ -1,6 +1,7 @@
 import logging
 
 from presidio_anonymizer.entities.engine import TextMetadata
+from presidio_anonymizer.entities.engine.result import AnonymizedEntity
 from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
@@ -44,3 +45,8 @@ class EncryptResult(TextMetadata):
         end = json.get("end")
         entity_type = json.get("entity_type")
         return cls(key, start, end, entity_type)
+
+    @classmethod
+    def from_anonymized_entity(cls, key: str, anonymized_entity: AnonymizedEntity):
+        return cls(key, anonymized_entity.start, anonymized_entity.end,
+                   anonymized_entity.entity_type)

@@ -2,6 +2,18 @@ import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import EncryptResult
+from presidio_anonymizer.entities.engine.result import AnonymizedEntity
+
+
+def test_given_anonymized_entity_then_we_parse_it_to_encrypt_result():
+    encrypt_result = EncryptResult.from_anonymized_entity(
+        "1111111111111111",
+        AnonymizedEntity(9, 10, "DSKMDEWO#*!)*&E!#KNDMLNC", "PHONE_NUMBER", "bla")
+    )
+    assert encrypt_result.end == 10
+    assert encrypt_result.start == 9
+    assert encrypt_result.key == "1111111111111111"
+    assert encrypt_result.entity_type == "PHONE_NUMBER"
 
 
 def test_given_valid_json_then_we_parse_it_to_encrypt_result():
