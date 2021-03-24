@@ -3,6 +3,9 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[version]
+python_version = "3.6"
+
 [packages]
 spacy = "==2.3.4"
 regex = "*"
