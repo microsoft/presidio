@@ -266,7 +266,6 @@ def test_when_entities_is_none_then_return_all_fields(loaded_registry):
     assert "DOMAIN_NAME" in returned_entities
 
 
-@pytest.mark.skip(reason="test 3.9")
 def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
     nlp_engine,
 ):
