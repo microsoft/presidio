@@ -1,8 +1,8 @@
 import pytest
 
-from presidio_analyzer import RecognizerResult
 from presidio_anonymizer import DecryptEngine, AnonymizerEngine
-from presidio_anonymizer.entities import InvalidParamException, AnonymizerConfig
+from presidio_anonymizer.entities import InvalidParamException, AnonymizerConfig, \
+    RecognizerResult
 from presidio_anonymizer.entities.engine import EncryptResult
 
 
