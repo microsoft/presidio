@@ -34,7 +34,7 @@ class EncryptResult(TextMetadata):
         :param json e.g.:
         {
             "start": 0,
-            "end": len(text),
+            "end": 10,
             "key": "1111111111111111",
             "entity_type":"PERSON",
         }
@@ -48,5 +48,13 @@ class EncryptResult(TextMetadata):
 
     @classmethod
     def from_anonymized_entity(cls, key: str, anonymized_entity: AnonymizedEntity):
+        """
+        Convert anonymized entity returned from anonymizer engine to encrypt result.
+
+        :param key: the key we used to encrypt the text.
+        :param anonymized_entity: a single anonymizer encrypt result we received
+        from the engine.
+        :return:
+        """
         return cls(key, anonymized_entity.start, anonymized_entity.end,
                    anonymized_entity.entity_type)
