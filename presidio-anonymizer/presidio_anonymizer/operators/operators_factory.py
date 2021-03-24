@@ -9,7 +9,7 @@ class OperatorsFactory:
     """Operators factory to get the correct operator class."""
 
     _anonymizers: Dict = None
-    _decryptors: Dict = None
+    _deanonymizers: Dict = None
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
@@ -26,7 +26,7 @@ class OperatorsFactory:
         operator_class = {
             OperatorType.Anonymize: OperatorsFactory.get_anonymizers().get(
                 operator_name),
-            OperatorType.Decrypt: OperatorsFactory.get_decryptors().get(operator_name),
+            OperatorType.Deanonymize: OperatorsFactory.get_deanonymizers().get(operator_name),
         }.get(operator_type)
         if not operator_class:
             self.logger.error(f"No such operator class {operator_name}")
@@ -46,16 +46,17 @@ class OperatorsFactory:
         return OperatorsFactory._anonymizers
 
     @staticmethod
-    def get_decryptors() -> \
+    def get_deanonymizers() -> \
             Dict[str, "Operator"]:
-        """Return all decryptors classes currently available."""
-        if not OperatorsFactory._decryptors:
-            OperatorsFactory._decryptors = OperatorsFactory.__get_operators_by_type(
-                OperatorType.Decrypt)
-        return OperatorsFactory._decryptors
+        """Return all deanonymizers classes currently available."""
+        if not OperatorsFactory._deanonymizers:
+            OperatorsFactory._deanonymizers = OperatorsFactory.__get_operators_by_type(
+                OperatorType.Deanonymize)
+        return OperatorsFactory._deanonymizers
 
     @staticmethod
     def __get_operators_by_type(operator_type: OperatorType):
         operators = Operator.__subclasses__()
         return {cls.operator_name(cls): cls for cls in operators if
-                cls.operator_type(cls) == operator_type}
+                cls.operator_type(cls) == operator_type or
+                cls.operator_type(cls) == OperatorType.All}

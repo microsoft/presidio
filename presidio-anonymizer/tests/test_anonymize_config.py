@@ -28,10 +28,10 @@ def test_given_invalid_json_then_we_fail_to_parse_it_to_anonymize_config():
         })
 
 
-def test_creating_operator_md_without_operator_type_then_we_fail():
+def test_creating_operator_config_without_operator_type_then_we_fail():
     expected_error = "Invalid input, invalid operator type 4"
     with pytest.raises(InvalidParamException, match=expected_error):
-        OperatorConfig(4, {}, "anonymizer_name")
+        OperatorConfig(4, "anonymizer_name", {})
 
 
 def test_given_two_identical_entities_then_we_verify_they_are_equal():

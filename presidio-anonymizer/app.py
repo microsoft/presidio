@@ -9,7 +9,7 @@ from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import BadRequest, HTTPException
 
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.decrypt_engine import DecryptEngine
+from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
 
@@ -38,8 +38,8 @@ class Server:
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
         self.logger.info("Starting anonymizer engine")
-        self.engine = AnonymizerEngine()
-        self.decryptor = DecryptEngine()
+        self.anonymize = AnonymizerEngine()
+        self.deanonymize = DeanonymizeEngine()
         self.logger.info(WELCOME_MESSAGE)
 
         @self.app.route("/health")
@@ -58,29 +58,36 @@ class Server:
             )
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 content.get("analyzer_results"))
-            anoymizer_result = self.engine.anonymize(
+            anoymizer_result = self.anonymize.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
                 anonymizers_config=anonymizers_config,
             )
             return Response(anoymizer_result.to_json(), mimetype="application/json")
 
-        @self.app.route("/decrypt", methods=["POST"])
-        def decrypt():
+        @self.app.route("/deanonymize", methods=["POST"])
+        def deanonymize():
             content = request.get_json()
             if not content:
                 raise BadRequest("Invalid request json")
             text = content.get("text")
-            decrypt_entities = AppEntitiesConvertor.decrypt_entities_from_json(content)
-            decrypt_response = self.decryptor.decrypt(
-                text=text, entities=decrypt_entities
+            deanonymize_entities = AppEntitiesConvertor.deanonymize_entities_from_json(
+                content)
+            deanonymize_config = AppEntitiesConvertor.deanonymize_configs_from_json()
+            decrypt_response = self.deanonymize.deanonymize(
+                text=text, entities=deanonymize_entities, operators=deanonymize_config
             )
             return Response(decrypt_response.to_json(), mimetype="application/json")
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers() -> Tuple[str, int]:
             """Return a list of supported anonymizers."""
-            return jsonify(self.engine.get_anonymizers())
+            return jsonify(self.anonymize.get_anonymizers())
+
+        @self.app.route("/deanonymizers", methods=["GET"])
+        def deanonymizers() -> Tuple[str, int]:
+            """Return a list of supported deanonymizers."""
+            return jsonify(self.deanonymize.get_deanonymizers())
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):

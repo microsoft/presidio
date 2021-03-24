@@ -1,15 +1,15 @@
 import logging
+from typing import Dict
 
 from presidio_anonymizer.entities.engine import TextMetadata
 from presidio_anonymizer.entities.engine.result import AnonymizedEntity
-from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
-class EncryptResult(TextMetadata):
+class AnonymizerResult(TextMetadata):
     """Information about the encrypted entity."""
 
-    def __init__(self, key: str, start: int,
-                 end: int, entity_type: str) -> 'EncryptResult':
+    def __init__(self, start: int,
+                 end: int, entity_type: str) -> 'AnonymizerResult':
         """
         Have the information about the entity we already encrypted and want to decrypt.
 
@@ -19,15 +19,13 @@ class EncryptResult(TextMetadata):
         """
         TextMetadata.__init__(self, start, end, entity_type)
         self.logger = logging.getLogger("presidio-anonymizer")
-        validate_parameter_exists(key, "decrypt entity", "key")
-        self.key = key
 
     def __gt__(self, other) -> bool:
         """Check result is greater by the text index start location."""
         return self.start > other.start
 
     @classmethod
-    def from_json(cls, json: dict) -> 'EncryptResult':
+    def from_json(cls, json: Dict) -> 'AnonymizerResult':
         """
         Create EncryptEntity from user json.
 
@@ -44,10 +42,10 @@ class EncryptResult(TextMetadata):
         start = json.get("start")
         end = json.get("end")
         entity_type = json.get("entity_type")
-        return cls(key, start, end, entity_type)
+        return cls(start, end, entity_type)
 
     @classmethod
-    def from_anonymized_entity(cls, key: str, anonymized_entity: AnonymizedEntity):
+    def from_anonymized_entity(cls, anonymized_entity: AnonymizedEntity):
         """
         Convert anonymized entity returned from anonymizer engine to encrypt result.
 
@@ -56,5 +54,5 @@ class EncryptResult(TextMetadata):
         from the engine.
         :return:
         """
-        return cls(key, anonymized_entity.start, anonymized_entity.end,
+        return cls(anonymized_entity.start, anonymized_entity.end,
                    anonymized_entity.entity_type)

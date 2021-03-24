@@ -19,7 +19,7 @@ def test_given_anonymize_operator_type_then_we_get_anonymize_result_item():
 
 
 def test_given_decrypt_operator_type_then_we_get_decrypt_result_item():
-    result = ResultItemBuilder(OperatorType.Decrypt).set_operator_name(
+    result = ResultItemBuilder(OperatorType.Deanonymize).set_operator_name(
         "encrypt").set_entity_type("PERSON").set_operated_on_text(
         "new text").set_end(
         100).build()

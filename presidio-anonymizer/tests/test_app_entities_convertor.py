@@ -120,15 +120,13 @@ def test_given_valid_json_then_we_convert_it_to_decrypt_entities_list():
         "encrypt_results": [{
             "start": 0,
             "end": 5,
-            "key": "1111111111111111",
             "entity_type": "PHONE"
         }],
     }
-    decrypted_entities = AppEntitiesConvertor.decrypt_entities_from_json(data)
+    decrypted_entities = AppEntitiesConvertor.deanonymize_entities_from_json(data)
     assert len(decrypted_entities) == 1
     assert decrypted_entities[0].start == 0
     assert decrypted_entities[0].end == 5
-    assert decrypted_entities[0].key == "1111111111111111"
     assert decrypted_entities[0].entity_type == "PHONE"
 
 
@@ -143,7 +141,7 @@ def test_given_invalid_json_then_we_fail_to_convert():
     }
     with pytest.raises(InvalidParamException,
                        match="Invalid input, result must contain entity_type"):
-        AppEntitiesConvertor.decrypt_entities_from_json(data)
+        AppEntitiesConvertor.deanonymize_entities_from_json(data)
 
 
 def get_content():

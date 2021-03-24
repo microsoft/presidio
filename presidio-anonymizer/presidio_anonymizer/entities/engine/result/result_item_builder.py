@@ -49,7 +49,7 @@ class ResultItemBuilder:
                                     self.__operated_on_text,
                                     self.__entity_type, self.__operator_name)
 
-        if self.__operator_type == OperatorType.Decrypt:
+        if self.__operator_type == OperatorType.Deanonymize:
             return DecryptedEntity(self.__start, self.__end, self.__entity_type,
                                    self.__operated_on_text)
 

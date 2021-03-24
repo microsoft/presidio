@@ -1,15 +1,14 @@
 import logging
+from typing import Dict
 
 from presidio_anonymizer.entities.engine import OperatorConfig
-from presidio_anonymizer.operators import Decrypt
 from presidio_anonymizer.operators import OperatorType
-from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
-class DecryptConfig(OperatorConfig):
+class DeanonymizeConfig(OperatorConfig):
     """Decrypt configuration for each text entity of the decryption."""
 
-    def __init__(self, key: str):
+    def __init__(self, operator_name: str, params: Dict = None):
         """
         Create AnonymizerConfig entity.
 
@@ -18,6 +17,5 @@ class DecryptConfig(OperatorConfig):
         :param params: the parameters to use in the selected anonymizer class
         """
         self.logger = logging.getLogger("presidio-anonymizer")
-        validate_parameter_exists(key, "config", "key")
-        params = {Decrypt.KEY: key}
-        OperatorConfig.__init__(self, OperatorType.Decrypt, params, Decrypt.NAME)
+        OperatorConfig.__init__(self, operator_type=OperatorType.Deanonymize, params=params,
+                                operator_name=operator_name)

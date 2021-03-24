@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import EncryptResult
+from presidio_anonymizer.entities.engine import AnonymizerResult, DeanonymizeConfig
 from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
 
 
@@ -40,7 +40,7 @@ class AppEntitiesConvertor:
         return {}
 
     @staticmethod
-    def decrypt_entities_from_json(json: Dict) -> List['EncryptResult']:
+    def deanonymize_entities_from_json(json: Dict) -> List['AnonymizerResult']:
         """
         Create DecryptEntity list.
 
@@ -60,5 +60,23 @@ class AppEntitiesConvertor:
         decrypt_entity = json.get("encrypt_results")
         if decrypt_entity:
             for result in decrypt_entity:
-                items.append(EncryptResult.from_json(result))
+                items.append(AnonymizerResult.from_json(result))
         return items
+
+    @staticmethod
+    def deanonymize_configs_from_json(
+            data: Dict
+    ) -> Dict[str, 'DeanonymizeConfig']:
+        """
+        Go over the deanonymizers and get the relevant create deanonymizer config entity.
+
+        :param data: contains the list of configuration
+        value - AnonynmizerConfig
+        """
+        deanonymizers = data.get("deanonymizers")
+
+        if deanonymizers is not None:
+            return {key: DeanonymizeConfig.from_json(deanonymizer_json) for
+                    (key, deanonymizer_json)
+                    in deanonymizers.items()}
+        return {}
