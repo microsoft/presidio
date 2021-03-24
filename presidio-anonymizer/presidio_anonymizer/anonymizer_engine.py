@@ -18,6 +18,7 @@ class AnonymizerEngine(EngineBase):
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
     and replaces the PII entities with the desired anonymizers.
     """
+
     logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self):
@@ -48,7 +49,7 @@ class AnonymizerEngine(EngineBase):
         return self._operate(text, analyzer_results, anonymizers_config)
 
     def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results: List[
-        RecognizerResult]) -> List[RecognizerResult]:
+            RecognizerResult]) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
 
@@ -88,7 +89,7 @@ class AnonymizerEngine(EngineBase):
 
     @staticmethod
     def __check_or_add_default_anonymizer(anonymizers_config: Dict[
-                                              str, AnonymizerConfig]) -> \
+        str, AnonymizerConfig]) -> \
             Dict[str, OperatorConfig]:
         default_anonymizer = AnonymizerConfig(DEFAULT)
         if not anonymizers_config:
