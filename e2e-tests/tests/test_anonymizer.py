@@ -246,14 +246,12 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
             {
                 "start": 0,
                 "end": 44,
-                "score": 0.8,
                 "entity_type": "NAME",
                 "key": key,
             },
             {
                 "start": 50,
                 "end": 114,
-                "score": 0.8,
                 "entity_type": "TITLE",
                 "key": "2222222222222222"
             }
