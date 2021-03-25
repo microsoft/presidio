@@ -10,7 +10,7 @@ from presidio_anonymizer.entities.engine.result import \
     OperatorResult
 from presidio_anonymizer.entities.engine.result.engine_result import \
     EngineResult
-from presidio_anonymizer.entities.engine.text_metadata import \
+from presidio_anonymizer.entities.engine.pii_entity import \
     PIIEntity
 from presidio_anonymizer.operators import OperatorType
 
