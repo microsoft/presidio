@@ -1,5 +1,6 @@
 mkdocs
 mkdocs-material
+mkdocs-jupyter
 pymdown-extensions
 markdown
 mkdocstrings
