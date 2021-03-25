@@ -117,7 +117,7 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
 def test_given_valid_json_then_we_convert_it_to_decrypt_entities_list():
     data = {
         "text": "THIS IS MY TEXT",
-        "encrypt_results": [{
+        "anonymizer_results": [{
             "start": 0,
             "end": 5,
             "entity_type": "PHONE"
@@ -133,7 +133,7 @@ def test_given_valid_json_then_we_convert_it_to_decrypt_entities_list():
 def test_given_invalid_json_then_we_fail_to_convert():
     data = {
         "text": "THIS IS MY TEXT",
-        "encrypt_results": [{
+        "anonymizer_results": [{
             "start": 0,
             "end": 5,
             "key": "1111111111111111",
