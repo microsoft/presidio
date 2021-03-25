@@ -11,7 +11,7 @@ class AppEntitiesConvertor:
     @staticmethod
     def analyzer_results_from_json(data: List[Dict]) -> List['RecognizerResult']:
         """
-        Go over analyzer results, validate them and convert to List[AnalyzeResult].
+        Go over analyzer results, validate them and convert to List[RecognizerResult].
 
         :param data: contains the anonymizers and analyzer_results_json
         """
@@ -52,7 +52,7 @@ class AppEntitiesConvertor:
                 "entity_type":"PHONE_NUMBER"
             }],
         }
-        :return: List[EncryptResult]
+        :return: List[AnonymizerResult]
         """
         items = []
         decrypt_entity = json.get("anonymizer_results")
