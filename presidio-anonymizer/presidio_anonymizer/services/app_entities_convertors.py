@@ -57,7 +57,7 @@ class AppEntitiesConvertor:
         :return: List[EncryptResult]
         """
         items = []
-        decrypt_entity = json.get("encrypt_results")
+        decrypt_entity = json.get("anonymizer_results")
         if decrypt_entity:
             for result in decrypt_entity:
                 items.append(AnonymizerResult.from_json(result))

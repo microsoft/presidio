@@ -73,7 +73,8 @@ class Server:
             text = content.get("text")
             deanonymize_entities = AppEntitiesConvertor.deanonymize_entities_from_json(
                 content)
-            deanonymize_config = AppEntitiesConvertor.deanonymize_configs_from_json()
+            deanonymize_config = AppEntitiesConvertor.deanonymize_configs_from_json(
+                content)
             decrypt_response = self.deanonymize.deanonymize(
                 text=text, entities=deanonymize_entities, operators=deanonymize_config
             )

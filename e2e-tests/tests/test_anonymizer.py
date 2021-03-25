@@ -3,7 +3,7 @@ import json
 import pytest
 
 from common.assertions import equal_json_strings
-from common.methods import anonymize, anonymizers, decrypt
+from common.methods import anonymize, anonymizers, deanonymize
 
 
 @pytest.mark.api
@@ -120,15 +120,20 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
-        "encrypt_results": [{
+        "deanonymizers": {
+            "NUMBER": {
+                "type": "decrypt",
+                "key": "1111111111111111"
+            }
+        },
+        "anonymizer_results": [{
             "start": 0,
             "end": len(text),
-            "key": "1111111111111111",
             "entity_type": "NUMBER"
         }],
     }
 
-    response_status, response_content = decrypt(json.dumps(request_body))
+    response_status, response_content = deanonymize(json.dumps(request_body))
 
     expected_response = """{"text": "text_for_encryption", "items": [{"start": 0, "end": 19, "decrypted_text": "text_for_encryption","entity_type":"NUMBER"}]}"""
 
@@ -141,15 +146,20 @@ def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_retur
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz + YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
-        "encrypt_results": [{
+        "deanonymizers": {
+            "NUMBER": {
+                "type": "decrypt",
+                "key": "invalidkey"
+            }
+        },
+        "anonymizer_results": [{
             "start": 0,
             "end": len(text),
-            "entity_type": "number",
-            "key": "invalidkey",
+            "entity_type": "NUMBER"
         }],
     }
 
-    response_status, response_content = decrypt(json.dumps(request_body))
+    response_status, response_content = deanonymize(json.dumps(request_body))
 
     expected_response = """
     {
@@ -169,7 +179,7 @@ def test_given_decrypt_called_with_missing_key_then_invalid_input_response_retur
     }
     """
 
-    response_status, response_content = decrypt(request_body)
+    response_status, response_content = deanonymize(request_body)
 
     expected_response = """{"text": "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy", "items": []}"""
     assert response_status == 200
@@ -184,7 +194,7 @@ def test_given_decrypt_called_with_missing_text_then_invalid_input_response_retu
     }
     """
 
-    response_status, response_content = decrypt(request_body)
+    response_status, response_content = deanonymize(request_body)
 
     expected_response = """
     {
@@ -202,7 +212,7 @@ def test_given_decrypt_called_with_missing_payload_then_bad_request_response_ret
     { }
     """
 
-    response_status, response_content = decrypt(request_body)
+    response_status, response_content = deanonymize(request_body)
 
     expected_response = """
     {
@@ -242,23 +252,31 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
 
     decrypt_request = {
         "text": encrypted_text,
-        "encrypt_results": [
+        "deanonymizers": {
+            "DEFAULT": {
+                "type": "decrypt",
+                "key": "1111111111111111"
+            },
+            "TITLE": {
+                "type": "decrypt",
+                "key": "2222222222222222"
+            }
+        },
+        "anonymizer_results": [
             {
                 "start": 0,
                 "end": 44,
                 "entity_type": "NAME",
-                "key": key,
             },
             {
                 "start": 50,
                 "end": 114,
                 "entity_type": "TITLE",
-                "key": "2222222222222222"
             }
         ],
     }
 
-    _, decrypted_text_response = decrypt(json.dumps(decrypt_request))
+    _, decrypted_text_response = deanonymize(json.dumps(decrypt_request))
 
     decrypted_text = json.loads(decrypted_text_response)["text"]
     assert decrypted_text == text_for_encryption
