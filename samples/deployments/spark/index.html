@@ -13,21 +13,21 @@
         <meta name="author" content="Microsoft">
       
       
-        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/docker/">
+        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/deployments/spark/">
       
-      <link rel="icon" href="../../assets/ms_icon.png">
+      <link rel="icon" href="../../../assets/ms_icon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.6">
     
     
       
-        <title>Docker - Microsoft Presidio</title>
+        <title>Anonymize PII using Presidio on Spark - Microsoft Presidio</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.2c0c5eaf.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.2c0c5eaf.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.7fa14f5b.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.7fa14f5b.min.css">
         
       
     
@@ -42,7 +42,7 @@
     
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
     
 <script type="text/javascript">
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#using-presidio-in-docker" class="md-skip">
+        <a href="#anonymize-pii-using-presidio-on-spark" class="md-skip">
           Skip to content
         </a>
       
@@ -85,9 +85,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
+    <a href="../../.." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
-  <img src="../../assets/ms_icon.png" alt="logo">
+  <img src="../../../assets/ms_icon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Docker
+              Anonymize PII using Presidio on Spark
             
           </span>
         </div>
@@ -175,7 +175,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../.." class="md-tabs__link">
+    <a href="../../.." class="md-tabs__link">
       Home
     </a>
   </li>
@@ -187,7 +187,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../getting_started/" class="md-tabs__link">
+    <a href="../../../getting_started/" class="md-tabs__link">
       Getting Started
     </a>
   </li>
@@ -199,7 +199,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../installation/" class="md-tabs__link">
+    <a href="../../../installation/" class="md-tabs__link">
       Installation
     </a>
   </li>
@@ -214,7 +214,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../text_anonymization/" class="md-tabs__link">
+      <a href="../../../text_anonymization/" class="md-tabs__link">
         Text anonymization
       </a>
     </li>
@@ -230,7 +230,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../image-redactor/" class="md-tabs__link">
+      <a href="../../../image-redactor/" class="md-tabs__link">
         Image Redactor
       </a>
     </li>
@@ -240,15 +240,13 @@
         
   
   
-    
-  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../" class="md-tabs__link md-tabs__link--active">
+      <a href="../../" class="md-tabs__link">
         Samples
       </a>
     </li>
@@ -261,7 +259,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../supported_entities/" class="md-tabs__link">
+    <a href="../../../supported_entities/" class="md-tabs__link">
       Supported entities
     </a>
   </li>
@@ -276,7 +274,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../design/" class="md-tabs__link">
+      <a href="../../../design/" class="md-tabs__link">
         Development and design
       </a>
     </li>
@@ -303,9 +301,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
+    <a href="../../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
-  <img src="../../assets/ms_icon.png" alt="logo">
+  <img src="../../../assets/ms_icon.png" alt="logo">
 
     </a>
     Microsoft Presidio
@@ -334,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -349,7 +347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/" class="md-nav__link">
+      <a href="../../../getting_started/" class="md-nav__link">
         Getting Started
       </a>
     </li>
@@ -364,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../installation/" class="md-nav__link">
+      <a href="../../../installation/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -400,7 +398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../text_anonymization/" class="md-nav__link">
+      <a href="../../../text_anonymization/" class="md-nav__link">
         Home
       </a>
     </li>
@@ -433,7 +431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/" class="md-nav__link">
+      <a href="../../../analyzer/" class="md-nav__link">
         Analyzer Home
       </a>
     </li>
@@ -466,7 +464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/adding_recognizers/" class="md-nav__link">
+      <a href="../../../analyzer/adding_recognizers/" class="md-nav__link">
         Tutorial
       </a>
     </li>
@@ -478,7 +476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/developing_recognizers/" class="md-nav__link">
+      <a href="../../../analyzer/developing_recognizers/" class="md-nav__link">
         Best practices in developing recognizers
       </a>
     </li>
@@ -496,7 +494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/languages/" class="md-nav__link">
+      <a href="../../../analyzer/languages/" class="md-nav__link">
         Multi-language support
       </a>
     </li>
@@ -508,7 +506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/decision_process/" class="md-nav__link">
+      <a href="../../../analyzer/decision_process/" class="md-nav__link">
         Tracing the decision process
       </a>
     </li>
@@ -547,7 +545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../anonymizer/" class="md-nav__link">
+      <a href="../../../anonymizer/" class="md-nav__link">
         Anonymizer Home
       </a>
     </li>
@@ -559,7 +557,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../anonymizer/adding_anonymizers/" class="md-nav__link">
+      <a href="../../../anonymizer/adding_anonymizers/" class="md-nav__link">
         Developing PII anonymizers
       </a>
     </li>
@@ -607,7 +605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../image-redactor/" class="md-nav__link">
+      <a href="../../../image-redactor/" class="md-nav__link">
         Home
       </a>
     </li>
@@ -626,14 +624,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
       
       <label class="md-nav__link" for="__nav_6">
         Samples
@@ -651,7 +647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         Samples Home
       </a>
     </li>
@@ -663,7 +659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../python/" class="md-nav__link">
+      <a href="../../python/" class="md-nav__link">
         Python
       </a>
     </li>
@@ -673,83 +669,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Docker
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../docker/" class="md-nav__link">
         Docker
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
-    Description
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#postman-collection" class="md-nav__link">
-    Postman collection
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sample-api-calls" class="md-nav__link">
-    Sample API Calls
-  </a>
-  
-    <nav class="md-nav" aria-label="Sample API Calls">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#simple-text-analysis" class="md-nav__link">
-    Simple Text Analysis
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#simple-text-anonymization" class="md-nav__link">
-    Simple Text Anonymization
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -780,7 +704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../deployments/app-service/" class="md-nav__link">
+      <a href="../app-service/" class="md-nav__link">
         Azure App Service
       </a>
     </li>
@@ -792,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../deployments/k8s/" class="md-nav__link">
+      <a href="../k8s/" class="md-nav__link">
         Kubernetes
       </a>
     </li>
@@ -819,7 +743,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../supported_entities/" class="md-nav__link">
+      <a href="../../../supported_entities/" class="md-nav__link">
         Supported entities
       </a>
     </li>
@@ -855,7 +779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../design/" class="md-nav__link">
+      <a href="../../../design/" class="md-nav__link">
         Design
       </a>
     </li>
@@ -867,7 +791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/" class="md-nav__link">
+      <a href="../../../development/" class="md-nav__link">
         Setting up a development environment
       </a>
     </li>
@@ -879,7 +803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../build_release/" class="md-nav__link">
+      <a href="../../../build_release/" class="md-nav__link">
         Build and release process
       </a>
     </li>
@@ -891,7 +815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../presidio_V2/" class="md-nav__link">
+      <a href="../../../presidio_V2/" class="md-nav__link">
         Changes from V1 to V2
       </a>
     </li>
@@ -924,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/analyzer_python/" class="md-nav__link">
+      <a href="../../../api/analyzer_python/" class="md-nav__link">
         Presidio Analyzer Python API
       </a>
     </li>
@@ -936,7 +860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/anonymizer_python/" class="md-nav__link">
+      <a href="../../../api/anonymizer_python/" class="md-nav__link">
         Presidio Anonymizer Python API
       </a>
     </li>
@@ -948,7 +872,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/image_redactor_python/" class="md-nav__link">
+      <a href="../../../api/image_redactor_python/" class="md-nav__link">
         Presidio Image Redactor Python API
       </a>
     </li>
@@ -1004,37 +928,57 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
-    Description
+  <a href="#pre-requisites" class="md-nav__link">
+    Pre-requisites
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#postman-collection" class="md-nav__link">
-    Postman collection
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sample-api-calls" class="md-nav__link">
-    Sample API Calls
-  </a>
-  
-    <nav class="md-nav" aria-label="Sample API Calls">
+    <nav class="md-nav" aria-label="Pre-requisites">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#simple-text-analysis" class="md-nav__link">
-    Simple Text Analysis
+  <a href="#azure-storage" class="md-nav__link">
+    Azure Storage
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#simple-text-anonymization" class="md-nav__link">
-    Simple Text Anonymization
+  <a href="#azure-databricks" class="md-nav__link">
+    Azure Databricks
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-the-sample" class="md-nav__link">
+    Running the sample
+  </a>
+  
+    <nav class="md-nav" aria-label="Running the sample">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#import-notebook-to-databricks" class="md-nav__link">
+    Import notebook to databricks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-the-notebook" class="md-nav__link">
+    Configure the notebook
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-the-notebook" class="md-nav__link">
+    Run the notebook
   </a>
   
 </li>
@@ -1057,22 +1001,125 @@
               
                 
                 
-                <h1 id="using-presidio-in-docker">Using Presidio in Docker</h1>
-<h2 id="description">Description</h2>
-<p>Presidio can expose REST endpoints for each service using Flask and Docker. Follow the <a href="https://github.com/microsoft/presidio/blob/V2/docs/installation.md#using-docker">installation guide</a> to learn how to install and run presidio-analyzer and presidio-anonymizer using docker.</p>
-<h2 id="postman-collection">Postman collection</h2>
-<p>This repository contains a postman collection with sample REST API request for each service. Follow <a href="https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman">this tutorial</a> to learn how to export the sample requests into postman</p>
-<ol>
-<li><a href="PresidioAnalyzer.postman_collection.json" download>Download Presidio Analyzer postman requests</a></li>
-<li><a href="PresidioAnonymizer.postman_collection.json" download>Download Presidio Anonymizer postman requests</a></li>
-</ol>
-<h2 id="sample-api-calls">Sample API Calls</h2>
-<h3 id="simple-text-analysis">Simple Text Analysis</h3>
-<div class="highlight"><pre><span></span><code>curl -X POST http://localhost:5002/analyze -H &quot;Content-type: application/json&quot; --data &quot;{ \&quot;text\&quot;: \&quot;John Smith drivers license is AC432223\&quot;, \&quot;language\&quot; : \&quot;en\&quot;}&quot;
+                <h1 id="anonymize-pii-using-presidio-on-spark">Anonymize PII using Presidio on Spark</h1>
+<p>You can leverages presidio to perform data anonymization as part of spark notebooks.
+The following sample uses <a href="https://docs.microsoft.com/en-us/azure/databricks/">Azure Databricks</a> and simple text files hosted on <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/">Azure Blob Storage</a>. However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.</p>
+<h2 id="pre-requisites">Pre-requisites</h2>
+<p>Provision and setup the required infrastrucutre</p>
+<h3 id="azure-storage">Azure Storage</h3>
+<p>Provision an Azure storage account using the following script.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>resource group name<span class="o">]</span>
+<span class="nv">STORAGE_ACCOUNT_NAME</span><span class="o">=[</span>storage account name<span class="o">]</span>
+<span class="nv">STORAGE_CONTAINER_NAME</span><span class="o">=[</span>blob container name<span class="o">]</span>
+<span class="nv">DATABRICKS_WORKSPACE_NAME</span><span class="o">=[</span>databricks workspace name<span class="o">]</span>
+<span class="nv">DATABRICKS_SKU</span><span class="o">=[</span>basic/standard/premium<span class="o">]</span>
+<span class="nv">LOCATION</span><span class="o">=[</span>location<span class="o">]</span>
+
+<span class="c1"># Create the storage account</span>
+az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
+az storage account create --name <span class="nv">$STORAGE_ACCOUNT_NAME</span> --resource-group <span class="nv">$RESOURCE_GROUP</span>
+
+<span class="c1"># Get the storage account access key</span>
+<span class="nv">STORAGE_ACCESS_KEY</span><span class="o">=</span><span class="k">$(</span>az storage account keys list --account-name <span class="nv">$STORAGE_ACCOUNT_NAME</span> --resource-group <span class="nv">$RESOURCE_GROUP</span> --query <span class="s1">&#39;[0].value&#39;</span> -o tsv<span class="k">)</span>
+
+<span class="c1"># Create a blob container</span>
+az storage container create -n <span class="nv">$STORAGE_CONTAINER_NAME</span> --account-name <span class="nv">$STORAGE_ACCOUNT_NAME</span>
 </code></pre></div>
-<h3 id="simple-text-anonymization">Simple Text Anonymization</h3>
-<div class="highlight"><pre><span></span><code>curl -X POST http://localhost:5001/anonymize -H &quot;Content-type: application/json&quot; --data &quot;{\&quot;text\&quot;: \&quot;hello world, my name is Jane Doe. My number is: 034453334\&quot;, \&quot;analyzer_results\&quot;: [{\&quot;start\&quot;: 24, \&quot;end\&quot;: 32, \&quot;score\&quot;: 0.8, \&quot;entity_type\&quot;: \&quot;NAME\&quot;}, { \&quot;start\&quot;: 48, \&quot;end\&quot;: 57,  \&quot;score\&quot;: 0.95,\&quot;entity_type\&quot;: \&quot;PHONE_NUMBER\&quot; }],  \&quot;anonymizers\&quot;: {\&quot;DEFAULT\&quot;: { \&quot;type\&quot;: \&quot;replace\&quot;, \&quot;new_value\&quot;: \&quot;ANONYMIZED\&quot; },\&quot;PHONE_NUMBER\&quot;: { \&quot;type\&quot;: \&quot;mask\&quot;, \&quot;masking_char\&quot;: \&quot;*\&quot;, \&quot;chars_to_mask\&quot;: 4, \&quot;from_end\&quot;: true }}}&quot;
+<h3 id="azure-databricks">Azure Databricks</h3>
+<p>Provision an Azure databricks service using the following script.</p>
+<div class="highlight"><pre><span></span><code>az extension add --name databricks
+
+az databricks workspace create --resource-group <span class="nv">$RESOURCE_GROUP</span>  --name <span class="nv">$DATABRICKS_WORKSPACE_NAME</span> --sku <span class="nv">$DATABRICKS_SKU</span>
 </code></pre></div>
+<p>Initialze a cluster, either using the <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/create">Azure databricks UI</a> or by following up the next script using <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/create">databricks cli</a>.
+Note that the provided template uses a memory optimized VM type Standard DS12 v2. That allows spark to have enough memory per CPU core to parallelize the Presidio Analyzer.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Configure databricks token. for host name use https://[databricks region name].azuredatabricks.net. for token acquire a PAT using the following guide: https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/authentication#--generate-a-personal-access-token</span>
+<span class="c1"># </span>
+databricks configure --token
+
+databricks clusters create --json <span class="s2">&quot;{ </span>
+<span class="s2">    \&quot;cluster_name\&quot;: \&quot;presidio\&quot;,</span>
+<span class="s2">    \&quot;spark_version\&quot;: \&quot;7.5.x-scala2.12\&quot;, </span>
+<span class="s2">    \&quot;autoscale\&quot;: {</span>
+<span class="s2">        \&quot;min_workers\&quot;: 2,</span>
+<span class="s2">        \&quot;max_workers\&quot;: 8</span>
+<span class="s2">    },</span>
+<span class="s2">    \&quot;azure_attributes\&quot;: { </span>
+<span class="s2">        \&quot;first_on_demand\&quot;: 1, </span>
+<span class="s2">        \&quot;availability\&quot;: \&quot;ON_DEMAND_AZURE\&quot;, </span>
+<span class="s2">        \&quot;spot_bid_max_price\&quot;: -1 </span>
+<span class="s2">    }, </span>
+<span class="s2">    \&quot;node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
+<span class="s2">    \&quot;driver_node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
+<span class="s2">    \&quot;spark_env_vars\&quot;: { </span>
+<span class="s2">        \&quot;PYSPARK_PYTHON\&quot;: \&quot;/databricks/python3/bin/python3\&quot; </span>
+<span class="s2">    }, </span>
+<span class="s2">    \&quot;autotermination_minutes\&quot;: 120, </span>
+<span class="s2">    \&quot;enable_elastic_disk\&quot;: true, </span>
+<span class="s2">    \&quot;cluster_source\&quot;: \&quot;UI\&quot;</span>
+<span class="s2">}&quot;</span>
+
+<span class="c1"># Note the cluster ID.</span>
+</code></pre></div>
+<p>Configure the cluster by uploading the provided startup script and setting it as part of the cluster initialization process. this stage will load the required Presidio and Azure Storage libraries to the cluster. You can follow through the next script to perform this stage using the databricks cli, or using the <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/init-scripts#--configure-a-cluster-scoped-init-script">databricks UI</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Upload the init script to the file system</span>
+databricks fs cp ./startup.sh dbfs:/FileStore/dependencies/startup.sh
+
+<span class="c1"># set the cluster init script</span>
+databricks clusters edit --json <span class="s2">&quot;{</span>
+<span class="s2">    \&quot;cluster_name\&quot;: \&quot;presidio\&quot;,</span>
+<span class="s2">    \&quot;spark_version\&quot;: \&quot;7.5.x-scala2.12\&quot;, </span>
+<span class="s2">    \&quot;autoscale\&quot;: {</span>
+<span class="s2">        \&quot;min_workers\&quot;: 2,</span>
+<span class="s2">        \&quot;max_workers\&quot;: 8</span>
+<span class="s2">    },</span>
+<span class="s2">    \&quot;azure_attributes\&quot;: { </span>
+<span class="s2">        \&quot;first_on_demand\&quot;: 1, </span>
+<span class="s2">        \&quot;availability\&quot;: \&quot;ON_DEMAND_AZURE\&quot;, </span>
+<span class="s2">        \&quot;spot_bid_max_price\&quot;: -1 </span>
+<span class="s2">    }, </span>
+<span class="s2">    \&quot;node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
+<span class="s2">    \&quot;driver_node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
+<span class="s2">    \&quot;spark_env_vars\&quot;: { </span>
+<span class="s2">        \&quot;PYSPARK_PYTHON\&quot;: \&quot;/databricks/python3/bin/python3\&quot; </span>
+<span class="s2">    }, </span>
+<span class="s2">    \&quot;autotermination_minutes\&quot;: 120, </span>
+<span class="s2">    \&quot;enable_elastic_disk\&quot;: true, </span>
+<span class="s2">    \&quot;cluster_source\&quot;: \&quot;UI\&quot;,</span>
+<span class="s2">    \&quot;init_scripts\&quot;: [</span>
+<span class="s2">        {</span>
+<span class="s2">            \&quot;dbfs\&quot;: {</span>
+<span class="s2">                \&quot;destination\&quot;: \&quot;dbfs:/FileStore/dependencies/startup.sh\&quot;</span>
+<span class="s2">            }</span>
+<span class="s2">        }</span>
+<span class="s2">    ],</span>
+<span class="s2">    \&quot;cluster_id\&quot;: \&quot;[your cluster id]\&quot;</span>
+<span class="s2">}&quot;</span>
+</code></pre></div>
+<h2 id="running-the-sample">Running the sample</h2>
+<h3 id="import-notebook-to-databricks">Import notebook to databricks</h3>
+<p>Upload the provided notebook, either by using the <a href="https://docs.microsoft.com/en-us/azure/databricks/notebooks/notebooks-manage#--import-a-notebook">databricks UI</a> or by following up the next script using databricks cli.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># upload the notebook to a shared folder in the workspace</span>
+databricks workspace import_dir . /Shared/presidio/
+</code></pre></div>
+<h3 id="configure-the-notebook">Configure the notebook</h3>
+<p>Open the notebook from the location where it was stored in the previous step and attach it to the configured cluster.
+Run the first code-cell and note the following parameters on the top end of the notebook (notebook widgets) and set them accordingly</p>
+<ul>
+<li>Blob Storage Account Name - Name of the storage account ($STORAGE_ACCOUNT_NAME)</li>
+<li>Blob Container Name - Name of the blob container ($STORAGE_CONTAINER_NAME)</li>
+<li>Storage Account Access Key - Storage account access key ($STORAGE_ACCESS_KEY)</li>
+</ul>
+<p>Additionaly, the following parameters have a default value, which you can change.</p>
+<ul>
+<li>Input Folder - a folder on the container where input files are found.</li>
+<li>Output Folder - a folder on the container where output files will be written to.</li>
+</ul>
+<h3 id="run-the-notebook">Run the notebook</h3>
+<p>Upload a file to the blob storage input folder, using any preferd method (<a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal">Azure Portal</a>, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-storage-explorer">Azure Storage Explorer</a>, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli">Azure CLI</a>).</p>
+<div class="highlight"><pre><span></span><code>az storage blob upload --account-name <span class="nv">$STORAGE_ACCOUNT_NAME</span>  --container <span class="nv">$STORAGE_CONTAINER_NAME</span> --file ./<span class="o">[</span>file name<span class="o">]</span> --name input/<span class="o">[</span>file name<span class="o">]</span>
+</code></pre></div>
+<p>Run the notebook cells, the output should be csv files which contain two columns, the original file name, and the anonymized content of that file.</p>
                 
               
               
@@ -1087,39 +1134,6 @@
       
         
 <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        <a href="../python/" class="md-footer__link md-footer__link--prev" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              Python
-            </div>
-          </div>
-        </a>
-      
-      
-        <a href="../deployments/app-service/" class="md-footer__link md-footer__link--next" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Azure App Service
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -1168,10 +1182,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
       
     
   </body>

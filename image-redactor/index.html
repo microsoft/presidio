@@ -15,8 +15,8 @@
       
         <link rel="canonical" href="https://microsoft.github.io/presidio/image-redactor/">
       
-      <link rel="shortcut icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.3">
+      <link rel="icon" href="../assets/ms_icon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.1655a90d.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.2c0c5eaf.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.7fa14f5b.min.css">
@@ -45,8 +45,14 @@
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
     
-      
-    
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "5pd40fk720");
+</script>
+
     
   </head>
   
@@ -77,11 +83,9 @@
       
     </div>
     
-      
-
-<header class="md-header" data-md-component="header">
+      <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="https://microsoft.github.io/presidio" title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio">
+    <a href=".." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
   <img src="../assets/ms_icon.png" alt="logo">
 
@@ -294,14 +298,12 @@
                   <div class="md-sidebar__inner">
                     
 
-
-
   
 
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="https://microsoft.github.io/presidio" title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio">
+    <a href=".." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
   <img src="../assets/ms_icon.png" alt="logo">
 
@@ -1103,7 +1105,7 @@ python -m spacy download en_core_web_lg
 docker pull mcr.microsoft.com/presidio-image-redactor
 
 <span class="c1"># Run the container with the default port</span>
-docker run -d -p <span class="m">5003</span>:5003 mcr.microsoft.com/presidio-image-redactor:latest
+docker run -d -p <span class="m">5003</span>:3000 mcr.microsoft.com/presidio-image-redactor:latest
 </code></pre></div>
 </div>
 <input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">From source</label><div class="tabbed-content">
@@ -1139,7 +1141,7 @@ docker build . -t presidio/presidio-image-redactor
 <p>You can run presidio image redactor as an http server using either python runtime or using a docker container.</p>
 <h4 id="using-docker-container">Using docker container</h4>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span> presidio-image-redactor
-docker run -p <span class="m">5003</span>:5003 presidio-image-redactor 
+docker run -p <span class="m">5003</span>:3000 presidio-image-redactor 
 </code></pre></div>
 <h4 id="using-python-runtime">Using python runtime</h4>
 <div class="admonition note">
@@ -1216,6 +1218,7 @@ and <a href="../api/image_redactor_python/">Image Redactor Python API</a> for Py
         <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs
         </a>
+        
       </div>
       
   <div class="md-footer-social">
@@ -1257,7 +1260,7 @@ and <a href="../api/image_redactor_python/">Image Redactor Python API</a> for Py
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.ca5457b8.min.js"></script>
+      <script src="../assets/javascripts/bundle.a1c7c35e.min.js"></script>
       
     
   </body>

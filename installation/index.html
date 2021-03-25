@@ -15,8 +15,8 @@
       
         <link rel="canonical" href="https://microsoft.github.io/presidio/installation/">
       
-      <link rel="shortcut icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.3">
+      <link rel="icon" href="../assets/ms_icon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.1655a90d.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.2c0c5eaf.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.7fa14f5b.min.css">
@@ -45,8 +45,14 @@
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
     
-      
-    
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "5pd40fk720");
+</script>
+
     
   </head>
   
@@ -77,11 +83,9 @@
       
     </div>
     
-      
-
-<header class="md-header" data-md-component="header">
+      <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="https://microsoft.github.io/presidio" title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio">
+    <a href=".." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
   <img src="../assets/ms_icon.png" alt="logo">
 
@@ -294,14 +298,12 @@
                   <div class="md-sidebar__inner">
                     
 
-
-
   
 
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="https://microsoft.github.io/presidio" title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio">
+    <a href=".." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
   <img src="../assets/ms_icon.png" alt="logo">
 
@@ -406,6 +408,13 @@
   
     <nav class="md-nav" aria-label="Using pip">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-python-versions" class="md-nav__link">
+    Supported Python Versions
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#pii-anonymization-on-text" class="md-nav__link">
@@ -1042,6 +1051,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#supported-python-versions" class="md-nav__link">
+    Supported Python Versions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pii-anonymization-on-text" class="md-nav__link">
     PII anonymization on text
   </a>
@@ -1120,6 +1136,14 @@ Presidio suite using <code>pip</code> (as Python packages) or using <code>Docker
 on a virtual environment like <a href="https://docs.python.org/3/tutorial/venv.html">venv</a>
 or <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html">conda</a>.</p>
 </div>
+<h3 id="supported-python-versions">Supported Python Versions</h3>
+<p>Presidio is supported for the following python versions:</p>
+<ul>
+<li>3.6</li>
+<li>3.7</li>
+<li>3.8</li>
+</ul>
+<p>We may drop support for Python 3.6 in the future</p>
 <h3 id="pii-anonymization-on-text">PII anonymization on text</h3>
 <p>For PII anonymization on text, install the <code>presidio-analyzer</code> and <code>presidio-anonymizer</code> packages:</p>
 <div class="highlight"><pre><span></span><code>pip install presidio_analyzer
@@ -1157,9 +1181,9 @@ docker pull mcr.microsoft.com/presidio-analyzer
 docker pull mcr.microsoft.com/presidio-anonymizer
 
 <span class="c1"># Run containers with default ports</span>
-docker run -d -p <span class="m">5001</span>:5001 mcr.microsoft.com/presidio-analyzer:latest
+docker run -d -p <span class="m">5001</span>:3000 mcr.microsoft.com/presidio-analyzer:latest
 
-docker run -d -p <span class="m">5002</span>:5001 mcr.microsoft.com/presidio-anonymizer:latest
+docker run -d -p <span class="m">5002</span>:3000 mcr.microsoft.com/presidio-anonymizer:latest
 </code></pre></div>
 <h3 id="for-pii-redaction-in-images">For PII redaction in images</h3>
 <p>For PII detection in images, the <code>presidio-image-redactor</code> is required.</p>
@@ -1167,7 +1191,7 @@ docker run -d -p <span class="m">5002</span>:5001 mcr.microsoft.com/presidio-ano
 docker pull mcr.microsoft.com/presidio-image-redactor
 
 <span class="c1"># Run container with the default port</span>
-docker run -d -p <span class="m">5003</span>:5001 mcr.microsoft.com/presidio-image-redactor:latest
+docker run -d -p <span class="m">5003</span>:3000 mcr.microsoft.com/presidio-image-redactor:latest
 </code></pre></div>
 <p>Once the services are running, their APIs are available.
 API reference and example calls can be found <a href="../api/">here</a>.</p>
@@ -1260,6 +1284,7 @@ refer to the <a href="../development/">setting up a development environment</a> 
         <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs
         </a>
+        
       </div>
       
   <div class="md-footer-social">
@@ -1301,7 +1326,7 @@ refer to the <a href="../development/">setting up a development environment</a> 
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.ca5457b8.min.js"></script>
+      <script src="../assets/javascripts/bundle.a1c7c35e.min.js"></script>
       
     
   </body>
