@@ -6,7 +6,7 @@ from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
 class OperatorConfig:
-    """Abstract class to hold the data of the required operator."""
+    """Hold the data of the required operator."""
 
     logger = logging.getLogger("presidio-anonymizer")
 
@@ -15,6 +15,12 @@ class OperatorConfig:
             operator_name: str,
             params: Dict = None
     ):
+        """
+        Create an operator config instance
+
+        :param operator_name: the name of the operator we want to work with
+        :param params: the parameters the operator needs in order to work
+        """
         self.logger = logging.getLogger("presidio-anonymizer")
         self.operator_name = operator_name
         if not params:
@@ -25,7 +31,7 @@ class OperatorConfig:
     @classmethod
     def from_json(cls, params: Dict):
         """
-        Create AnonymizerConfig from json.
+        Create OperatorConfig from json.
 
         :param params: json e.g.: {
             "type": "mask",
@@ -33,7 +39,7 @@ class OperatorConfig:
             "chars_to_mask": 4,
             "from_end": true
         }
-        :return: AnonymizerConfig
+        :return: OperatorConfig
         """
         operator_name = params.get("type")
         if operator_name:
