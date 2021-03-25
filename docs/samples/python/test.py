@@ -5,19 +5,25 @@ from faker import Faker
 from faker.providers import internet
 import random
 import string
+import uuid
 
 
+def replaceChar(text, position, new_char):
+    temp = list(text)
+    temp[position] = new_char
+    return "".join(temp)
 
 def anonymizeEmail(text_to_anonymize): 
     analyzer_results = analyzer.analyze(text=text_to_anonymize, entities=["EMAIL_ADDRESS"], language='en')
 
+    print(analyzer_results)
     allowed_chars = string.ascii_letters + string.punctuation
 
     anonymized_results = anonymizer.anonymize(
         text=text_to_anonymize,
         analyzer_results=analyzer_results,    
         #anonymizers_config={"EMAIL_ADDRESS": AnonymizerConfig("custom", {"new_value": lambda x: fake.safe_email()})}
-        anonymizers_config={"EMAIL_ADDRESS": AnonymizerConfig("custom_replace", {"new_value": lambda x: random.choice(allowed_chars)})}
+        anonymizers_config={"EMAIL_ADDRESS": AnonymizerConfig("custom", {"new_value": lambda x: '{0}{1}'.format(x, "-fake")})}        
     )
 
     return anonymized_results

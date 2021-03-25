@@ -5,6 +5,6 @@ from .mask import Mask
 from .redact import Redact
 from .replace import Replace
 from .encrypt import Encrypt
-from .custom_replace import CustomReplace
+from .custom import Custom
 
-__all__ = ["Anonymizer", "Hash", "Mask", "Redact", "Replace", "Encrypt", "CustomReplace"]
+__all__ = ["Anonymizer", "Hash", "Mask", "Redact", "Replace", "Encrypt", "Custom"]
