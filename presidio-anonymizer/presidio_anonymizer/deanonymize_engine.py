@@ -1,4 +1,4 @@
-"""Decrypt encrypted text by the 'encrypt' anonymizer."""
+"""Deanonymize anonymized text by using deanonymize operators."""
 import logging
 from typing import List, Dict
 
@@ -10,7 +10,7 @@ from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
 
 class DeanonymizeEngine(EngineBase):
-    """Decrypting text that was previously anonymized using a 'decrypt' anonymizer."""
+    """Deanonymize text that was previously anonymized."""
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
@@ -19,12 +19,12 @@ class DeanonymizeEngine(EngineBase):
     def deanonymize(self, text: str, entities: List[AnonymizerResult],
                     operators: Dict[str, OperatorConfig]) -> EngineResult:
         """
-        Receive the text and the entities and decrypt accordingly.
+        Receive the text, entities and operators to perform deanonymization over.
 
         :param operators: the operators to apply on the anonymizer result entities
         :param text: the full text with the encrypted entities
         :param entities: list of encrypted entities
-        :return: EngineResult - the new text and data about the decrypted entities.
+        :return: EngineResult - the new text and data about the deanonymized entities.
         """
         return self._operate(text,
                              entities,
