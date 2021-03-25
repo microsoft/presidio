@@ -36,7 +36,7 @@ class AnonymizerEngine(EngineBase):
         :param analyzer_results: A list of RecognizerResult class -> The results we
         received from the analyzer
         :param operators: The configuration of the anonymizers we would like
-        to use for each entity e.g.: {"PHONE_NUMBER":AnonymizerConfig("redact", {})}
+        to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})}
         received from the analyzer
         :return: the anonymized text and a list of information about the
         anonymized entities.
@@ -44,7 +44,7 @@ class AnonymizerEngine(EngineBase):
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results)
 
-        operators = self.__check_or_add_default_anonymizer(operators)
+        operators = self.__check_or_add_default_operator(operators)
 
         return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
 
@@ -88,7 +88,7 @@ class AnonymizerEngine(EngineBase):
                     other_elements])
 
     @staticmethod
-    def __check_or_add_default_anonymizer(operators: Dict[
+    def __check_or_add_default_operator(operators: Dict[
         str, OperatorConfig]) -> \
             Dict[str, OperatorConfig]:
         default_operator = OperatorConfig(DEFAULT)

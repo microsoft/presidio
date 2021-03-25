@@ -28,6 +28,7 @@ class EngineBase(ABC):
         :param text: the text we need to operate on.
         :param text_metadata: data about the text entities we want to operate over.
         :param operators_metadata: dictionary where the key is the entity_type and what
+        :type operator_type: either anonymize or deanonymize
         we want to perform over this entity_type.
         :return:
         """
