@@ -1,5 +1,5 @@
 class OperatorResult:
-    """An abstract class to hold mutual data for engines results."""
+    """A class to hold data for engines results either anonymize or deanonymize."""
 
     def __init__(self, text: str, operator_name: str, start: int, end: int,
                  entity_type: str):
@@ -11,9 +11,9 @@ class OperatorResult:
 
     def __eq__(self, other: 'OperatorResult') -> bool:
         """
-        Verify two DecryptedEntity are equal.
+        Verify two OperatorResults are equal.
 
-        :param other: DecryptedEntity
+        :param other: OperatorResult
         :return: bool
         """
         return (self.start == other.start
@@ -21,11 +21,3 @@ class OperatorResult:
                 and self.entity_type == other.entity_type
                 and self.operator == other.operator
                 and self.text == other.text)
-
-    def get_text(self):
-        """
-        Get the text after we performed the operator over it.
-
-        :return: the text we operated over and this decrypt result represent.
-        """
-        return self.text

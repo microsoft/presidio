@@ -10,7 +10,6 @@ def test_given_decrypt_result_item_then_all_params_exist():
     assert result.text == "bla"
     assert result.entity_type == "NAME"
     assert result.operator == "decrypt"
-    assert result.get_text() == result.text
 
 
 def test_given_idenctical_decrypt_results_item_they_are_equal():
