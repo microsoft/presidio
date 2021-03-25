@@ -52,9 +52,9 @@ def test_given_name_and_phone_number_then_we_anonymize_correctly():
     ]
     expected_result = ('{"text": "hello world, my name is ********. My number is: '
                        '03-******4", "items": [{"start": 48, "end": 57, "entity_type": '
-                       '"PHONE_NUMBER", "text": "03-******", "operator_name": "mask"}, '
+                       '"PHONE_NUMBER", "text": "03-******", "operator": "mask"}, '
                        '{"start": 24, "end": 32, "entity_type": "NAME", '
-                       '"text": "********", "operator_name": "mask"}]}')
+                       '"text": "********", "operator": "mask"}]}')
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
@@ -80,9 +80,9 @@ def test_given_name_and_phone_number_without_anonymizers_then_we_use_default():
     expected_result = ('{"text": "hello world, my name is <NAME>. My number is: '
                        '<PHONE_NUMBER>4", "items": [{"start": 46, "end": 60, '
                        '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
-                       '"operator_name": "replace"}, {"start": 24, "end": 30, '
+                       '"operator": "replace"}, {"start": 24, "end": 30, '
                        '"entity_type": "NAME", "text": "<NAME>", '
-                       '"operator_name": "replace"}]}')
+                       '"operator": "replace"}]}')
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
@@ -108,8 +108,8 @@ def test_given_redact_and_replace_then_we_anonymize_successfully():
     expected_result = ('{"text": "hello world, my name is . My number is: '
                        '<PHONE_NUMBER>4", "items": [{"start": 40, "end": 54, '
                        '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
-                       '"operator_name": "replace"}, {"start": 24, "end": 24, '
-                       '"entity_type": "NAME", "text": "", "operator_name": '
+                       '"operator": "replace"}, {"start": 24, "end": 24, '
+                       '"entity_type": "NAME", "text": "", "operator": '
                        '"redact"}]}')
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
@@ -158,13 +158,13 @@ def test_given_intersacting_entities_then_we_anonymize_correctly():
     expected_result = ('{"text": "hello world, my name is <FULL_NAME><LAST_NAME> My '
                        'number is: <PHONE_NUMBER><SSN>4", "items": [{"start": 75, '
                        '"end": 80, "entity_type": "SSN", "text": "<SSN>", '
-                       '"operator_name": "replace"}, {"start": 61, "end": 75, '
+                       '"operator": "replace"}, {"start": 61, "end": 75, '
                        '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
-                       '"operator_name": "replace"}, {"start": 35, "end": 46, '
+                       '"operator": "replace"}, {"start": 35, "end": 46, '
                        '"entity_type": "LAST_NAME", "text": "<LAST_NAME>", '
-                       '"operator_name": "replace"}, {"start": 24, "end": 35, '
+                       '"operator": "replace"}, {"start": 24, "end": 35, '
                        '"entity_type": "FULL_NAME", "text": "<FULL_NAME>", '
-                       '"operator_name": "replace"}]}')
+                       '"operator": "replace"}]}')
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
@@ -176,18 +176,18 @@ def test_given_intersacting_entities_then_we_anonymize_correctly():
          '{"text": "hello world, my name is 1c272047233576d77a9b9a1acfdf741c. '
          'My number is: e7706047f07bf68a5dd73e8c47db3a30", "items": [{"start": 72, '
          '"end": 104, "entity_type": "PHONE_NUMBER", "text": '
-         '"e7706047f07bf68a5dd73e8c47db3a30", "operator_name": "hash"}, '
+         '"e7706047f07bf68a5dd73e8c47db3a30", "operator": "hash"}, '
          '{"start": 24, "end": 56, "entity_type": "NAME", "text": '
-         '"1c272047233576d77a9b9a1acfdf741c", "operator_name": "hash"}]}'),
+         '"1c272047233576d77a9b9a1acfdf741c", "operator": "hash"}]}'),
         ("sha256",
          '{"text": "hello world, my name is '
          '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a. '
          'My number is: 230451ebc7df208f1d5227aceaebf6d8e9'
          '36f17d74330a5a5c5cbbd4e41d0d57", "items": [{"start": 104, "end": 168, '
          '"entity_type": "PHONE_NUMBER", "text": "230451ebc7df208f1d5227aceaebf6d8e'
-         '936f17d74330a5a5c5cbbd4e41d0d57", "operator_name": "hash"}, {"start": 24, '
+         '936f17d74330a5a5c5cbbd4e41d0d57", "operator": "hash"}, {"start": 24, '
          '"end": 88, "entity_type": "NAME", "text": "01332c876518a793b7c1b8dfaf6d4b404f'
-         'f5db09b21c6627ca59710cc24f696a", "operator_name": "hash"}]}'),
+         'f5db09b21c6627ca59710cc24f696a", "operator": "hash"}]}'),
         ("sha512",
          '{"text": "hello world, my name is 508789e7c17beebf2f17e611b43920792b692a'
          'd9ae53f9be3a947b04fbf820f40d57f42864a20e7121180e9467fda3fa2480e50c0da15244b'
@@ -196,18 +196,18 @@ def test_given_intersacting_entities_then_we_anonymize_correctly():
          '3fbebdc", "items": [{"start": 168, "end": 296, "entity_type": "PHONE_NUMBER",'
          ' "text": "8ea244bbf71264237db23324b3ff83f6ef6601c9da08af42122f992ec45d757c'
          '3efd953185b2590e4542aa1ca3637fa8935ebff2b43af0ea1245e7c843fbebdc", '
-         '"operator_name": "hash"}, {"start": 24, "end": 152, "entity_type": "NAME", '
+         '"operator": "hash"}, {"start": 24, "end": 152, "entity_type": "NAME", '
          '"text": "508789e7c17beebf2f17e611b43920792b692ad9ae53f9be3a947b04fbf820f40'
          'd57f42864a20e7121180e9467fda3fa2480e50c0da15244b6153abe2509362c", '
-         '"operator_name": "hash"}]}'),
+         '"operator": "hash"}]}'),
         ("",
          '{"text": "hello world, my name is 01332c876518a793b7c1b8dfaf6d4b404ff5db09b'
          '21c6627ca59710cc24f696a. My number is: 230451ebc7df208f1d5227aceaebf6d8e936f'
          '17d74330a5a5c5cbbd4e41d0d57", "items": [{"start": 104, "end": 168, '
          '"entity_type": "PHONE_NUMBER", "text": "230451ebc7df208f1d5227aceaebf6d8e936'
-         'f17d74330a5a5c5cbbd4e41d0d57", "operator_name": "hash"}, {"start": 24, '
+         'f17d74330a5a5c5cbbd4e41d0d57", "operator": "hash"}, {"start": 24, '
          '"end": 88, "entity_type": "NAME", "text": "01332c876518a793b7c1b8dfaf6d4b404'
-         'ff5db09b21c6627ca59710cc24f696a", "operator_name": "hash"}]}'
+         'ff5db09b21c6627ca59710cc24f696a", "operator": "hash"}]}'
          )
     ],
     # fmt: on

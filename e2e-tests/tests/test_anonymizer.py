@@ -31,11 +31,12 @@ def test_given_anonymize_called_with_valid_request_then_expected_valid_response_
     {
         "text": "hello world, my name is ANONYMIZED. My number is: 03445****", 
         "items": [
-            {"anonymizer": "mask", "entity_type": "PHONE_NUMBER", "start": 50, "end": 59, "anonymized_text": "03445****"}, 
-            {"anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED"}
+            {"operator": "mask", "entity_type": "PHONE_NUMBER", "start": 50, "end": 59, "text":"03445****"}, 
+            {"operator": "replace", "entity_type": "NAME", "start": 24, "end": 34, "text":"ANONYMIZED"}
         ]
     }
     """
+
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
 
@@ -135,7 +136,7 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
 
     response_status, response_content = deanonymize(json.dumps(request_body))
 
-    expected_response = """{"text": "text_for_encryption", "items": [{"start": 0, "end": 19, "decrypted_text": "text_for_encryption","entity_type":"NUMBER"}]}"""
+    expected_response = """{"text": "text_for_encryption", "items": [{"start": 0, "end": 19, "operator":"decrypt", "text": "text_for_encryption","entity_type":"NUMBER"}]}"""
 
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)

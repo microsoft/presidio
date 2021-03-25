@@ -9,7 +9,7 @@ def test_given_decrypt_result_item_then_all_params_exist():
     assert result.start == 0
     assert result.text == "bla"
     assert result.entity_type == "NAME"
-    assert result.operator_name == "decrypt"
+    assert result.operator == "decrypt"
     assert result.get_text() == result.text
 
 

@@ -7,7 +7,7 @@ class OperatorResult:
         self.end = end
         self.entity_type = entity_type
         self.text = text
-        self.operator_name = operator_name
+        self.operator = operator_name
 
     def __eq__(self, other: 'OperatorResult') -> bool:
         """
@@ -19,7 +19,7 @@ class OperatorResult:
         return (self.start == other.start
                 and self.end == other.end
                 and self.entity_type == other.entity_type
-                and self.operator_name == other.operator_name
+                and self.operator == other.operator
                 and self.text == other.text)
 
     def get_text(self):

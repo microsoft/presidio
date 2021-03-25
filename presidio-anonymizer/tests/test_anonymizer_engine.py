@@ -140,7 +140,7 @@ def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result
 
     assert result.text == "Number: I am your new text!"
     assert len(result.items) == 1
-    assert result.items[0].operator_name == "hash"
+    assert result.items[0].operator == "hash"
     assert result.items[0].entity_type == "type"
     assert result.items[0].start == 0
     assert result.items[0].end == 35

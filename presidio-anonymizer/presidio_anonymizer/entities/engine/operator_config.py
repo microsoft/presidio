@@ -40,7 +40,7 @@ class OperatorConfig:
             params.pop("type")
         return cls(operator_name, params)
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'OperatorConfig'):
         """Verify two OperatorConfigs are equal."""
         operator_name = self.operator_name == other.operator_name
         return (self.params == other.params
