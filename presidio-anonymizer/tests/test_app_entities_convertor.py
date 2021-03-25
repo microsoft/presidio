@@ -3,13 +3,14 @@ from typing import List
 import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import AnonymizerConfig, RecognizerResult
+from presidio_anonymizer.entities.engine import RecognizerResult, OperatorConfig
 from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
 
 
 def test_given_valid_json_then_anonymizers_config_list_created_successfully():
     content = get_content()
-    anonymizers_config = AppEntitiesConvertor.anonymizer_configs_from_json(content)
+    anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
+        content.get("anonymizers"))
     assert len(anonymizers_config) == 2
     phone_number_anonymizer = anonymizers_config.get("PHONE_NUMBER")
     assert phone_number_anonymizer.params == {
@@ -78,18 +79,18 @@ def test_given_empty_analyzer_results_then_list_created_successfully():
         ({"anonymizers": {}}, {}),
         ({}, {}),
         ({"anonymizers": {"PHONE": {"type": "replace"}}},
-         {"PHONE": AnonymizerConfig("replace")}),
+         {"PHONE": OperatorConfig("replace")}),
         ({"anonymizers": {
             "PHONE": {"type": "redact", "param": "param", "param_1": "param_1"}}},
-         {"PHONE": AnonymizerConfig("redact",
-                                    {"param": "param", "param_1": "param_1"})})
+         {"PHONE": OperatorConfig("redact",
+                                  {"param": "param", "param_1": "param_1"})})
     ],
 )
 def test_given_anonymizers_json_then_we_create_properties_properly(
         anonymizer_json, result
 ):
-    anonymizers_config = AppEntitiesConvertor.anonymizer_configs_from_json(
-        anonymizer_json
+    anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
+        anonymizer_json.get("anonymizers")
     )
     assert anonymizers_config == result
 

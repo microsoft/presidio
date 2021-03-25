@@ -2,12 +2,11 @@
 import logging
 from typing import List, Dict
 
-from presidio_anonymizer.operators import OperatorsFactory
-
 from presidio_anonymizer.core.engine_base import EngineBase
-from presidio_anonymizer.entities.engine import OperatorConfig, DeanonymizeConfig
+from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine.anonymizer_result import AnonymizerResult
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
+from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
 
 class DeanonymizeEngine(EngineBase):
@@ -18,7 +17,7 @@ class DeanonymizeEngine(EngineBase):
         EngineBase.__init__(self)
 
     def deanonymize(self, text: str, entities: List[AnonymizerResult],
-                    operators: Dict[str, DeanonymizeConfig]) -> EngineResult:
+                    operators: Dict[str, OperatorConfig]) -> EngineResult:
         """
         Receive the text and the entities and decrypt accordingly.
 
@@ -29,7 +28,8 @@ class DeanonymizeEngine(EngineBase):
         """
         return self._operate(text,
                              entities,
-                             operators)
+                             operators,
+                             OperatorType.Deanonymize)
 
     @staticmethod
     def get_deanonymizers() -> List[str]:

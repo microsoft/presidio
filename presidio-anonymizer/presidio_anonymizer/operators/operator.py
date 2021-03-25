@@ -9,7 +9,6 @@ class OperatorType(Enum):
 
     Anonymize = 1
     Deanonymize = 2
-    All = 3
 
 
 types = [OperatorType.Anonymize, OperatorType.Deanonymize]

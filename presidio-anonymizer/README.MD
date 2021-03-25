@@ -105,7 +105,7 @@ result = engine.anonymize(
     text="My name is Bond, James Bond",
     analyzer_results=[RecognizerResult("PERSON", 11, 15, 0.8),
                       RecognizerResult("PERSON", 17, 27, 0.8)],
-    anonymizers_config={"PERSON": AnonymizeConfig("replace", {"new_value": "BIP"})}
+    operators={"PERSON": AnonymizeConfig("replace", {"new_value": "BIP"})}
 )
 
 print(result)

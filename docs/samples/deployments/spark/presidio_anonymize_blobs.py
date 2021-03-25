@@ -88,7 +88,7 @@ def anonymize_text(text: str) -> str:
     anonymized_results = anonymizer.anonymize(
         text=text,
         analyzer_results=analyzer_results,
-        anonymizers_config={
+        operators={
             "DEFAULT": AnonymizerConfig("replace", {"new_value": "<ANONYMIZED>"})
         },
     )

@@ -2,12 +2,12 @@ import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import AnonymizerResult
-from presidio_anonymizer.entities.engine.result import AnonymizedEntity
+from presidio_anonymizer.entities.engine.result import OperatorResult
 
 
 def test_given_anonymized_entity_then_we_parse_it_to_encrypt_result():
-    anonyimzer_result = AnonymizerResult.from_anonymized_entity(
-        AnonymizedEntity(9, 10, "bla", "PHONE_NUMBER", "bla")
+    anonyimzer_result = AnonymizerResult.from_operator_result(
+        OperatorResult("bla", "replace", 9, 10, "PHONE_NUMBER")
     )
     assert anonyimzer_result.end == 10
     assert anonyimzer_result.start == 9

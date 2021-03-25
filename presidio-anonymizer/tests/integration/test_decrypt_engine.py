@@ -2,9 +2,8 @@ import pytest
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
-from presidio_anonymizer.entities import InvalidParamException, AnonymizerConfig, \
-    RecognizerResult
-from presidio_anonymizer.entities.engine import AnonymizerResult, DeanonymizeConfig
+from presidio_anonymizer.entities import InvalidParamException, RecognizerResult
+from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig
 from presidio_anonymizer.operators import Decrypt
 
 
@@ -20,11 +19,11 @@ def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully
     engine = DeanonymizeEngine()
     decryption = engine.deanonymize(
         text, encryption_results,
-        {"DEFAULT": DeanonymizeConfig(Decrypt.NAME, {"key": "WmZq4t7w!z%C&F)J"})}
+        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": "WmZq4t7w!z%C&F)J"})}
     )
     assert decryption.text == "My name is Chloë"
     assert len(decryption.items) == 1
-    assert decryption.items[0].decrypted_text == "Chloë"
+    assert decryption.items[0].text == "Chloë"
     assert decryption.items[0].end == 16
     assert decryption.items[0].start == 11
     assert decryption.items[0].entity_type == "PERSON"
@@ -45,7 +44,7 @@ def test_given_short_key_then_we_fail():
                        match=expected_result):
         engine.deanonymize(
             text, encryption_results,
-            {"PERSON": DeanonymizeConfig(Decrypt.NAME, {"key": "1234"})}
+            {"PERSON": OperatorConfig(Decrypt.NAME, {"key": "1234"})}
         )
 
 
@@ -57,7 +56,7 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     end_index = 16
     key = "WmZq4t7w!z%C&F)J"
     analyzer_results = [RecognizerResult("PERSON", start_index, end_index, 0.8)]
-    anonymizers_config = {"PERSON": AnonymizerConfig("encrypt", {"key": key})}
+    anonymizers_config = {"PERSON": OperatorConfig("encrypt", {"key": key})}
 
     actual_anonymize_result = (
         AnonymizerEngine().anonymize(text, analyzer_results, anonymizers_config)
@@ -65,16 +64,16 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
 
     assert len(actual_anonymize_result.items) == 1
     anonymized_entities = [
-        AnonymizerResult.from_anonymized_entity(actual_anonymize_result.items[0])
+        AnonymizerResult.from_operator_result(actual_anonymize_result.items[0])
     ]
     engine = DeanonymizeEngine()
     decryption = engine.deanonymize(
         actual_anonymize_result.text, anonymized_entities,
-        {"PERSON": DeanonymizeConfig(Decrypt.NAME, {"key": key})}
+        {"PERSON": OperatorConfig(Decrypt.NAME, {"key": key})}
     )
     assert decryption.text == "My name is Chloë"
     assert len(decryption.items) == 1
-    assert decryption.items[0].decrypted_text == "Chloë"
+    assert decryption.items[0].text == "Chloë"
     assert decryption.items[0].end == 16
     assert decryption.items[0].start == 11
     assert decryption.items[0].entity_type == "PERSON"

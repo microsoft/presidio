@@ -58,5 +58,4 @@ class OperatorsFactory:
     def __get_operators_by_type(operator_type: OperatorType):
         operators = Operator.__subclasses__()
         return {cls.operator_name(cls): cls for cls in operators if
-                cls.operator_type(cls) == operator_type or
-                cls.operator_type(cls) == OperatorType.All}
+                cls.operator_type(cls) == operator_type}

@@ -3,13 +3,13 @@ import json
 from typing import List
 
 from presidio_anonymizer.entities.engine.result import \
-    EngineResultItem
+    OperatorResult
 
 
 class EngineResult:
     """Anonymizer result."""
 
-    def __init__(self, text: str = None, items: List[EngineResultItem] = None):
+    def __init__(self, text: str = None, items: List[OperatorResult] = None):
         """Create AnonymizerResult entity.
 
         :param text: The anonymized text.
@@ -25,7 +25,7 @@ class EngineResult:
         """Set a text."""
         self.text = text
 
-    def add_item(self, item: EngineResultItem):
+    def add_item(self, item: OperatorResult):
         """Add an item.
 
         :param item: an item to add to the list.

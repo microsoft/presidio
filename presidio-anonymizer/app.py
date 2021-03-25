@@ -53,15 +53,15 @@ class Server:
             if not content:
                 raise BadRequest("Invalid request json")
 
-            anonymizers_config = AppEntitiesConvertor.anonymizer_configs_from_json(
-                content
+            anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
+                content.get("anonymizers")
             )
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 content.get("analyzer_results"))
             anoymizer_result = self.anonymize.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
-                anonymizers_config=anonymizers_config,
+                operators=anonymizers_config,
             )
             return Response(anoymizer_result.to_json(), mimetype="application/json")
 
@@ -73,8 +73,8 @@ class Server:
             text = content.get("text")
             deanonymize_entities = AppEntitiesConvertor.deanonymize_entities_from_json(
                 content)
-            deanonymize_config = AppEntitiesConvertor.deanonymize_configs_from_json(
-                content)
+            deanonymize_config = AppEntitiesConvertor.operators_config_from_json(
+                content.get("deanonymizers"))
             decrypt_response = self.deanonymize.deanonymize(
                 text=text, entities=deanonymize_entities, operators=deanonymize_config
             )

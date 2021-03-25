@@ -1,8 +1,8 @@
 from typing import List, Dict
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import AnonymizerResult, DeanonymizeConfig
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
+from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig
+from presidio_anonymizer.entities.engine import RecognizerResult
 
 
 class AppEntitiesConvertor:
@@ -22,21 +22,19 @@ class AppEntitiesConvertor:
         return [RecognizerResult.from_json(analyzer_result) for analyzer_result in data]
 
     @staticmethod
-    def anonymizer_configs_from_json(
+    def operators_config_from_json(
             data: Dict
-    ) -> Dict[str, 'AnonymizerConfig']:
+    ) -> Dict[str, 'OperatorConfig']:
         """
-        Go over the anonymizers and get the relevant create anonymizer config entity.
+        Go over the operators list and get the relevant create operator config entity.
 
         :param data: contains the list of configuration
-        value - AnonynmizerConfig
+        value - OperatorConfig
         """
-        anonymizers = data.get("anonymizers")
-
-        if anonymizers is not None:
-            return {key: AnonymizerConfig.from_json(anonymizer_json) for
-                    (key, anonymizer_json)
-                    in anonymizers.items()}
+        if data is not None:
+            return {key: OperatorConfig.from_json(operator_json) for
+                    (key, operator_json)
+                    in data.items()}
         return {}
 
     @staticmethod
@@ -62,21 +60,3 @@ class AppEntitiesConvertor:
             for result in decrypt_entity:
                 items.append(AnonymizerResult.from_json(result))
         return items
-
-    @staticmethod
-    def deanonymize_configs_from_json(
-            data: Dict
-    ) -> Dict[str, 'DeanonymizeConfig']:
-        """
-        Go over the deanonymizers and get the relevant create deanonymizer config entity.
-
-        :param data: contains the list of configuration
-        value - AnonynmizerConfig
-        """
-        deanonymizers = data.get("deanonymizers")
-
-        if deanonymizers is not None:
-            return {key: DeanonymizeConfig.from_json(deanonymizer_json) for
-                    (key, deanonymizer_json)
-                    in deanonymizers.items()}
-        return {}

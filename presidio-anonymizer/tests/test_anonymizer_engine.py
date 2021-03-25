@@ -4,14 +4,15 @@ import pytest
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
+from presidio_anonymizer.entities.engine import RecognizerResult
 from presidio_anonymizer.entities.engine.operator_config import OperatorConfig
-from presidio_anonymizer.entities.engine.result.anonymized_entity import \
-    AnonymizedEntity
+from presidio_anonymizer.entities.engine.result import \
+    OperatorResult
 from presidio_anonymizer.entities.engine.result.engine_result import \
     EngineResult
 from presidio_anonymizer.entities.engine.text_metadata import \
-    TextMetadata
+    PIIEntity
+from presidio_anonymizer.operators import OperatorType
 
 
 def test_given_request_anonymizers_return_list():
@@ -57,7 +58,7 @@ def test_given_default_anonymizer_then_we_use_it():
     engine = AnonymizerEngine()
     text = "please REPLACE ME."
     analyzer_result = RecognizerResult("SSN", 7, 17, 0.8)
-    anonymizer_config = AnonymizerConfig("replace", {"new_value": "and thank you"})
+    anonymizer_config = OperatorConfig("replace", {"new_value": "and thank you"})
     result = engine.anonymize(
         text, [analyzer_result], {"DEFAULT": anonymizer_config}
     ).text
@@ -68,8 +69,8 @@ def test_given_specific_anonymizer_then_we_use_it():
     engine = AnonymizerEngine()
     text = "please REPLACE ME."
     analyzer_result = RecognizerResult("SSN", 7, 17, 0.8)
-    anonymizer_config = AnonymizerConfig("replace", {"new_value": "and thank you"})
-    ssn_anonymizer_config = AnonymizerConfig("redact", {})
+    anonymizer_config = OperatorConfig("replace", {"new_value": "and thank you"})
+    ssn_anonymizer_config = OperatorConfig("redact", {})
     result = engine.anonymize(
         text,
         [analyzer_result],
@@ -104,7 +105,7 @@ def test_given_analyzer_result_with_an_incorrect_text_positions_then_we_fail(
     # fmt: off
     "anonymizers, result_text",
     [
-        ({"number": AnonymizerConfig("fake")}, "Invalid operator class 'fake'."),
+        ({"number": OperatorConfig("fake")}, "Invalid operator class 'fake'."),
     ],
     # fmt: on
 )
@@ -127,28 +128,29 @@ def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result
         RecognizerResult(start=28, end=36, score=0.8, entity_type="BLA"),
         RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER")]
 
-    anonymizer_config = AnonymizerConfig("replace", {})
-    anonymizer_config.operator_name = ""
+    operator_config = OperatorConfig("replace", {})
+    operator_config.operator_name = ""
     engine = AnonymizerEngine()
-    engine._operate = operate
+    engine._operate = _operate
     result = engine.anonymize(
         "hello world, my name is Jane Doe. My number is: 034453334",
         analyzer_results,
-        {"DEFAULT": anonymizer_config}
+        {"DEFAULT": operator_config}
     )
 
     assert result.text == "Number: I am your new text!"
     assert len(result.items) == 1
-    assert result.items[0].anonymizer == "hash"
+    assert result.items[0].operator_name == "hash"
     assert result.items[0].entity_type == "type"
     assert result.items[0].start == 0
     assert result.items[0].end == 35
-    assert result.items[0].anonymized_text == "text"
+    assert result.items[0].text == "text"
 
 
-def operate(text: str,
-            text_metadata: List[TextMetadata],
-            operators: Dict[str, OperatorConfig]) -> EngineResult:
+def _operate(text: str,
+             text_metadata: List[PIIEntity],
+             operators: Dict[str, OperatorConfig],
+             operator: OperatorType) -> EngineResult:
     assert text == "hello world, my name is Jane Doe. My number is: 034453334"
     assert len(text_metadata) == 4
     expected = [
@@ -159,5 +161,6 @@ def operate(text: str,
     assert all(elem in text_metadata for elem in expected)
     assert len(operators) == 1
     assert operators["DEFAULT"]
+    assert operator == OperatorType.Anonymize
     return EngineResult("Number: I am your new text!",
-                        [AnonymizedEntity(0, 35, "text", "type", "hash")])
+                        [OperatorResult("text", "hash", 0, 35, "type")])
