@@ -6,7 +6,7 @@ from presidio_anonymizer.services.validators import validate_parameter_exists, \
     validate_parameter_not_empty
 
 
-class TextMetadata(ABC):
+class PIIEntity(ABC):
     """Abstract class to hold the text we are going to operate on metadata."""
 
     def __init__(self, start: int, end: int, entity_type: str):
