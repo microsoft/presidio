@@ -60,7 +60,7 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC43****", "items": [{"anonymizer": "mask", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 36, "text": "AC43****"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC43****", "items": [{"operator": "mask", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 36, "text": "AC43****"}, {"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -100,7 +100,7 @@ def test_given_a_correct_analyze_input_high_threashold_then_anonymize_partially(
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -146,7 +146,7 @@ def test_given_a_correct_analyze_input_with_high_threshold_and_unmatched_entitie
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -182,7 +182,7 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
     }
 
     expected_response = (
-        """{"text": "<PERSON> drivers license is <US_DRIVER_LICENSE>", "items": [{"anonymizer": "replace", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 47, "text": "<US_DRIVER_LICENSE>"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
+        """{"text": "<PERSON> drivers license is <US_DRIVER_LICENSE>", "items": [{"operator": "replace", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 47, "text": "<US_DRIVER_LICENSE>"}, {"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
     )
 
     anonymize_and_assert(anonymizer_request, expected_response)
