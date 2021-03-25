@@ -1,8 +1,8 @@
 from typing import List, Dict
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import EncryptResult
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
+from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig
+from presidio_anonymizer.entities.engine import RecognizerResult
 
 
 class AppEntitiesConvertor:
@@ -22,25 +22,23 @@ class AppEntitiesConvertor:
         return [RecognizerResult.from_json(analyzer_result) for analyzer_result in data]
 
     @staticmethod
-    def anonymizer_configs_from_json(
+    def operators_config_from_json(
             data: Dict
-    ) -> Dict[str, 'AnonymizerConfig']:
+    ) -> Dict[str, 'OperatorConfig']:
         """
-        Go over the anonymizers and get the relevant create anonymizer config entity.
+        Go over the operators list and get the relevant create operator config entity.
 
         :param data: contains the list of configuration
-        value - AnonynmizerConfig
+        value - OperatorConfig
         """
-        anonymizers = data.get("anonymizers")
-
-        if anonymizers is not None:
-            return {key: AnonymizerConfig.from_json(anonymizer_json) for
-                    (key, anonymizer_json)
-                    in anonymizers.items()}
+        if data is not None:
+            return {key: OperatorConfig.from_json(operator_json) for
+                    (key, operator_json)
+                    in data.items()}
         return {}
 
     @staticmethod
-    def decrypt_entities_from_json(json: Dict) -> List['EncryptResult']:
+    def deanonymize_entities_from_json(json: Dict) -> List['AnonymizerResult']:
         """
         Create DecryptEntity list.
 
@@ -57,8 +55,8 @@ class AppEntitiesConvertor:
         :return: List[EncryptResult]
         """
         items = []
-        decrypt_entity = json.get("encrypt_results")
+        decrypt_entity = json.get("anonymizer_results")
         if decrypt_entity:
             for result in decrypt_entity:
-                items.append(EncryptResult.from_json(result))
+                items.append(AnonymizerResult.from_json(result))
         return items

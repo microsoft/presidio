@@ -48,4 +48,4 @@ class Decrypt(Operator):
 
     def operator_type(self) -> OperatorType:
         """Return operator type."""
-        return OperatorType.Decrypt
+        return OperatorType.Deanonymize

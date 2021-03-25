@@ -1,16 +1,12 @@
 """Engine request entities."""
-from .text_metadata import TextMetadata
+from .pii_entity import PIIEntity
 from .operator_config import OperatorConfig
 from .recognizer_result import RecognizerResult
-from .anonymizer_config import AnonymizerConfig
-from .decrypt_config import DecryptConfig
-from .encrypt_result import EncryptResult
+from .anonymizer_result import AnonymizerResult
 
 __all__ = [
-    "TextMetadata",
+    "PIIEntity",
     "OperatorConfig",
     "RecognizerResult",
-    "AnonymizerConfig",
-    "DecryptConfig",
-    "EncryptResult"
+    "AnonymizerResult"
 ]

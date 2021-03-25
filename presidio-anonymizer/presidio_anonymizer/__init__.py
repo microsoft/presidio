@@ -2,11 +2,11 @@
 import logging
 
 from .anonymizer_engine import AnonymizerEngine
-from .decrypt_engine import DecryptEngine
+from .deanonymize_engine import DeanonymizeEngine
 
 # Set up default logging (with NullHandler)
 
 
 logging.getLogger("presidio-anonymizer").addHandler(logging.NullHandler())
 
-__all__ = ["AnonymizerEngine", "DecryptEngine"]
+__all__ = ["AnonymizerEngine", "DeanonymizeEngine"]

@@ -8,10 +8,10 @@ class OperatorType(Enum):
     """Operator type either anonymize or decrypt to separate the operators."""
 
     Anonymize = 1
-    Decrypt = 2
+    Deanonymize = 2
 
 
-types = [OperatorType.Anonymize, OperatorType.Decrypt]
+types = [OperatorType.Anonymize, OperatorType.Deanonymize]
 
 
 class Operator(ABC):

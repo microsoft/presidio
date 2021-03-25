@@ -6,11 +6,11 @@ Represents the findings of detected entity.
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities.engine import TextMetadata
+from presidio_anonymizer.entities.engine import PIIEntity
 from presidio_anonymizer.services.validators import validate_parameter_not_empty
 
 
-class RecognizerResult(TextMetadata):
+class RecognizerResult(PIIEntity):
     """
     Recognizer Result represents the findings of the detected entity.
 
@@ -25,7 +25,7 @@ class RecognizerResult(TextMetadata):
     logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(self, entity_type: str, start: int, end: int, score: float):
-        TextMetadata.__init__(self, start, end, entity_type)
+        PIIEntity.__init__(self, start, end, entity_type)
         self.score = score
         validate_parameter_not_empty(score, "analyzer result", "score")
 

@@ -40,10 +40,10 @@ bitcoin wallets, US phone numbers, financial data and more.
 
 ## Installing Presidio
 
-1. [Using pip](installation.md#using-pip)
-2. [Using Docker](installation.md#using-docker)
-3. [From source](installation.md#install-from-source)
-4. [Supported Python Versions](installation/#supported-python-versions)
+1. [Supported Python Versions](installation.md#supported-python-versions)
+2. [Using pip](installation.md#using-pip)
+3. [Using Docker](installation.md#using-docker)
+4. [From source](installation.md#install-from-source)
 5. [Migrating from V1 to V2](presidio_V2.md)
 
 ## Running Presidio

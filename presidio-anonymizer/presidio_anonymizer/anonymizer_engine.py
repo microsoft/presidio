@@ -4,9 +4,9 @@ from typing import List, Dict, Optional
 
 from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities.engine import OperatorConfig
-from presidio_anonymizer.entities.engine import RecognizerResult, AnonymizerConfig
+from presidio_anonymizer.entities.engine import RecognizerResult
 from presidio_anonymizer.entities.engine.result import EngineResult
-from presidio_anonymizer.operators import OperatorsFactory
+from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 
 DEFAULT = "replace"
 
@@ -28,15 +28,15 @@ class AnonymizerEngine(EngineBase):
             self,
             text: str,
             analyzer_results: List[RecognizerResult],
-            anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
+            operators: Optional[Dict[str, OperatorConfig]] = None
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
         :param analyzer_results: A list of RecognizerResult class -> The results we
         received from the analyzer
-        :param anonymizers_config: The configuration of the anonymizers we would like
-        to use for each entity e.g.: {"PHONE_NUMBER":AnonymizerConfig("redact", {})}
+        :param operators: The configuration of the anonymizers we would like
+        to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})}
         received from the analyzer
         :return: the anonymized text and a list of information about the
         anonymized entities.
@@ -44,9 +44,9 @@ class AnonymizerEngine(EngineBase):
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
             analyzer_results)
 
-        anonymizers_config = self.__check_or_add_default_anonymizer(anonymizers_config)
+        operators = self.__check_or_add_default_operator(operators)
 
-        return self._operate(text, analyzer_results, anonymizers_config)
+        return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
 
     def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results: List[
             RecognizerResult]) -> List[RecognizerResult]:
@@ -88,12 +88,12 @@ class AnonymizerEngine(EngineBase):
                     other_elements])
 
     @staticmethod
-    def __check_or_add_default_anonymizer(anonymizers_config: Dict[
-        str, AnonymizerConfig]) -> \
+    def __check_or_add_default_operator(operators: Dict[
+        str, OperatorConfig]) -> \
             Dict[str, OperatorConfig]:
-        default_anonymizer = AnonymizerConfig(DEFAULT)
-        if not anonymizers_config:
-            return {"DEFAULT": default_anonymizer}
-        if not anonymizers_config.get("DEFAULT"):
-            anonymizers_config["DEFAULT"] = default_anonymizer
-        return anonymizers_config
+        default_operator = OperatorConfig(DEFAULT)
+        if not operators:
+            return {"DEFAULT": default_operator}
+        if not operators.get("DEFAULT"):
+            operators["DEFAULT"] = default_operator
+        return operators
