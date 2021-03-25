@@ -16,7 +16,7 @@ class OperatorConfig:
             params: Dict = None
     ):
         """
-        Create an operator config instance
+        Create an operator config instance.
 
         :param operator_name: the name of the operator we want to work with
         :param params: the parameters the operator needs in order to work
