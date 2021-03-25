@@ -26,7 +26,8 @@ class OperatorsFactory:
         operator_class = {
             OperatorType.Anonymize: OperatorsFactory.get_anonymizers().get(
                 operator_name),
-            OperatorType.Deanonymize: OperatorsFactory.get_deanonymizers().get(operator_name),
+            OperatorType.Deanonymize: OperatorsFactory.get_deanonymizers().get(
+                operator_name),
         }.get(operator_type)
         if not operator_class:
             self.logger.error(f"No such operator class {operator_name}")

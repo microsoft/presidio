@@ -14,8 +14,8 @@ def test_given_decrypt_result_item_then_all_params_exist():
 
 
 def test_given_idenctical_decrypt_results_item_they_are_equal():
-    result_1 = result = OperatorResult("bla", "decrypt", 0, 3, "NAME")
-    result_2 = result = OperatorResult("bla", "decrypt", 0, 3, "NAME")
+    result_1 = OperatorResult("bla", "decrypt", 0, 3, "NAME")
+    result_2 = OperatorResult("bla", "decrypt", 0, 3, "NAME")
     assert result_1 == result_2
 
 
@@ -32,5 +32,5 @@ def test_given_idenctical_decrypt_results_item_they_are_equal():
     # fmt: on
 )
 def test_given_changed_decrypt_results_item_they_are_equal(result_item):
-    result_1 = result = OperatorResult("bla", "decrypt", 0, 3, "NAME")
+    result_1 = OperatorResult("bla", "decrypt", 0, 3, "NAME")
     assert result_1 != result_item

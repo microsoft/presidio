@@ -30,11 +30,11 @@ def test_given_operator_decrypt_then_we_fail():
 def test_given_name_and_phone_number_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {"DEFAULT": OperatorConfig("mask", {"masking_char": "*",
-                                                              "chars_to_mask": 20,
-                                                              "from_end": False}),
+                                                            "chars_to_mask": 20,
+                                                            "from_end": False}),
                          "PHONE_NUMBER": OperatorConfig("mask", {"masking_char": "*",
-                                                                   "chars_to_mask": 6,
-                                                                   "from_end": True})
+                                                                 "chars_to_mask": 6,
+                                                                 "from_end": True})
                          }
     analyzer_results = [
         RecognizerResult(
@@ -61,8 +61,8 @@ def test_given_name_and_phone_number_then_we_anonymize_correctly():
 def test_given_name_and_phone_number_without_anonymizers_then_we_use_default():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {"ABC": OperatorConfig("mask", {"masking_char": "*",
-                                                          "chars_to_mask": 6,
-                                                          "from_end": True})}
+                                                        "chars_to_mask": 6,
+                                                        "from_end": True})}
     analyzer_results = [
         RecognizerResult(
             start=24,
@@ -267,8 +267,8 @@ def test_given_anonymize_called_with_error_scenarios_then_expected_errors_return
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizers = {
         "PHONE_NUMBER": OperatorConfig("mask", {"masking_char": "non_character",
-                                                  "chars_to_mask": 6,
-                                                  "from_end": True})}
+                                                "chars_to_mask": 6,
+                                                "from_end": True})}
     analyzer_results = [RecognizerResult("PHONE_NUMBER", 48, 57, 0.95)]
 
     engine = AnonymizerEngine()

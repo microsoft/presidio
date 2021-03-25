@@ -13,7 +13,7 @@ def test_given_valid_json_then_we_parse_it_to_operator_config():
     })
     assert operator_config.operator_name == "mask"
     assert operator_config.params == {"masking_char": "*", "chars_to_mask": 4,
-                                       "from_end": True}
+                                      "from_end": True}
 
 
 def test_given_invalid_json_then_we_fail_to_parse_it_to_operator_config():
@@ -24,7 +24,6 @@ def test_given_invalid_json_then_we_fail_to_parse_it_to_operator_config():
             "chars_to_mask": 4,
             "from_end": True
         })
-
 
 
 def test_given_two_identical_entities_then_we_verify_they_are_equal():

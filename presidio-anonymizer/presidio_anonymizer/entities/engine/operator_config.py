@@ -47,28 +47,11 @@ class OperatorConfig:
                 and operator_name)
 
     def __validate_fields(self):
-        validate_parameter_exists(self.operator_name, "operator config", "operator_name")
+        validate_parameter_exists(self.operator_name, "operator config",
+                                  "operator_name")
 
     def __field_validation_error(self, field_name: str):
         self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
         raise InvalidParamException(
             f"Invalid input, config must contain {field_name}"
         )
-
-    @classmethod
-    def from_json(cls, params: Dict):
-        """
-        Create AnonymizerConfig from json.
-
-        :param params: json e.g.: {
-            "type": "mask",
-            "masking_char": "*",
-            "chars_to_mask": 4,
-            "from_end": true
-        }
-        :return: AnonymizerConfig
-        """
-        operator_name = params.get("type")
-        if operator_name:
-            params.pop("type")
-        return cls(operator_name, params)
