@@ -8,7 +8,7 @@ __version__ = ""
 this_directory = path.abspath(path.dirname(__file__))
 parent_directory = os.path.abspath(os.path.join(this_directory, os.pardir))
 
-with open(path.join(this_directory, 'README.MD'), encoding='utf-8') as f:
+with open(path.join(this_directory, "README.MD"), encoding="utf-8") as f:
     long_description = f.read()
 
 try:
@@ -44,5 +44,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type="text/markdown",
 )

@@ -67,7 +67,9 @@ def test_when_using_spacy_then_all_spacy_result_found(
         )
 
 
-def test_when_person_in_text_then_person_full_name_complex_found(nlp_engine, nlp_recognizer, entities):
+def test_when_person_in_text_then_person_full_name_complex_found(
+    nlp_engine, nlp_recognizer, entities
+):
     text = "Richard (Rick) C. Henderson"
     results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
 
