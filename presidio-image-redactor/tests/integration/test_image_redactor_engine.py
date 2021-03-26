@@ -1,5 +1,5 @@
 from methods import get_resource_image, compare_images
-from presidio_image_redactor import ImageRedactorEngine,ImagePiiVerifyEngine
+from presidio_image_redactor import ImageRedactorEngine
 
 red_fill = (255, 0, 0)
 
