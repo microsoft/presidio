@@ -24,6 +24,7 @@ class ImageAnalyzerEngine:
         analyzer = AnalyzerEngine()
         analyzer_result = analyzer.analyze(text=text, language="en", **kwargs)
         bboxes = self.map_analyzer_results_to_bounding_boxes(
+            
             analyzer_result, ocr_result, text
         )
         return bboxes

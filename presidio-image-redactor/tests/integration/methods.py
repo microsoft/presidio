@@ -20,3 +20,8 @@ def get_resource_image(file_name: str) -> Image:
     script_dir = os.path.dirname(__file__)
     file_path = os.path.join(script_dir, "resources", file_name)
     return Image.open(file_path)
+
+def get_resource_image_filepath(file_name: str):
+    script_dir = os.path.dirname(__file__)
+    file_path = os.path.join(script_dir, "resources", file_name)
+    return file_path
