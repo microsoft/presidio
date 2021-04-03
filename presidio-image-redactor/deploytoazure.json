@@ -28,6 +28,7 @@
                 "B2",
                 "S2",
                 "P2V2",
+                "P1V3",
                 "I2"
             ]
         },
@@ -55,13 +56,13 @@
                     "anonymizer": {
                         "value": false
                     },
-                    "imageRedactor": {
+                    "analyzer": {
                         "value": false
                     },
-                    "analyzerWebAppName": {
+                    "imageRedactorWebAppName": {
                         "value": "[parameters('webAppName')]"
                     },
-                    "analyzerSku": {
+                    "imageRedactorSku": {
                         "value": "[parameters('sku')]"
                     },
                     "location": {

@@ -3,10 +3,9 @@ import logging
 import os
 
 from PIL import Image
-from flask import Flask, request, make_response
+from flask import Flask, request, jsonify, Response
 
 from presidio_image_redactor import ImageRedactorEngine
-from presidio_image_redactor.entities import ErrorResponse
 from presidio_image_redactor.entities import InvalidParamException
 from presidio_image_redactor.entities.api_request_convertor import (
     get_json_data,
@@ -40,17 +39,7 @@ class Server:
 
         @self.app.route("/health")
         def health() -> str:
-            """Return basic health probe result.
-
-            ---
-            responses:
-              200:
-                description: OK
-                content:
-                  text/plain:
-                    schema:
-                      type: string
-            """
+            """Return basic health probe result."""
             return "Presidio Image Redactor service is up"
 
         @self.app.route("/redact", methods=["POST"])
@@ -66,19 +55,19 @@ class Server:
             redacted_image = self.engine.redact(im, color_fill)
 
             img_byte_arr = image_to_byte_array(redacted_image, im.format)
-            return make_response(img_byte_arr)
+            return Response(img_byte_arr, mimetype="application/octet-stream")
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
             self.logger.warning(
                 f"failed to redact image with validation error: {err.err_msg}"
             )
-            return ErrorResponse(err.err_msg).to_json(), 422
+            return jsonify(error=err.err_msg), 422
 
         @self.app.errorhandler(Exception)
         def server_error(e):
             self.logger.error(f"A fatal error occurred during execution: {e}")
-            return ErrorResponse("Internal server error").to_json(), 500
+            return jsonify(error="Internal server error"), 500
 
 
 if __name__ == "__main__":
