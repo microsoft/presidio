@@ -1,22 +1,21 @@
-from methods import get_resource_image
-from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
+from tests.integration.methods import get_resource_image
 
 
-def test_given_image_then_text_entities_are_recognized_correctly():
+def test_given_image_then_text_entities_are_recognized_correctly(image_analyzer_engine):
     # Image with PII entities
     image = get_resource_image("ocr_test.png")
-    analyzer_results = ImageAnalyzerEngine().analyze(image)
+    analyzer_results = image_analyzer_engine.analyze(image)
     assert len(analyzer_results) == 7
     results = __get_expected_ocr_test_image_analysis_results()
     for i in range(7):
         assert analyzer_results[i] == results[i]
 
 
-def test_given_image_without_text_then_no_entities_recognized():
+def test_given_image_without_text_then_no_entities_recognized(image_analyzer_engine):
     # Image without PII entities
     image = get_resource_image("no_ocr.jpg")
-    analyzer_results = ImageAnalyzerEngine().analyze(image)
+    analyzer_results = image_analyzer_engine.analyze(image)
     assert len(analyzer_results) == 0
 
 
