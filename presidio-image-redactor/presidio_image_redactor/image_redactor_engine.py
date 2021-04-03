@@ -2,14 +2,20 @@ from typing import Union, Tuple
 
 from PIL import Image, ImageDraw, ImageChops
 
-from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
+from presidio_image_redactor import ImageAnalyzerEngine
 
 
 class ImageRedactorEngine:
-    """ImageRedactorEngine class only supporting redaction currently."""
+    """ImageRedactorEngine performs OCR + PII detection + bounding box redaction.
 
-    def __init__(self):
-        self.analyzer_engine = ImageAnalyzerEngine()
+    :param image_analyzer_engine: Engine which performs OCR + PII detection.
+    """
+
+    def __init__(self, image_analyzer_engine: ImageAnalyzerEngine = None):
+        if not image_analyzer_engine:
+            self.image_analyzer_engine = ImageAnalyzerEngine()
+        else:
+            self.image_analyzer_engine = image_analyzer_engine
 
     def redact(
         self, image: Image, fill: Union[int, Tuple[int, int, int]] = (0, 0, 0)
@@ -27,7 +33,7 @@ class ImageRedactorEngine:
 
         image = ImageChops.duplicate(image)
 
-        bboxes = self.analyzer_engine.analyze(image)
+        bboxes = self.image_analyzer_engine.analyze(image)
         draw = ImageDraw.Draw(image)
 
         for box in bboxes:
