@@ -16,14 +16,12 @@ class ImageAnalyzerEngine:
 
     def __init__(self, analyzer_engine: AnalyzerEngine = None, ocr: OCR = None):
         if not analyzer_engine:
-            self.analyzer_engine = AnalyzerEngine()
-        else:
-            self.analyzer_engine = analyzer_engine
+            analyzer_engine = AnalyzerEngine()
+        self.analyzer_engine = analyzer_engine
 
         if not ocr:
-            self.ocr = TesseractOCR()
-        else:
-            self.ocr = ocr
+            ocr = TesseractOCR()
+        self.ocr = ocr
 
     def analyze(self, image: object, **kwargs) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.

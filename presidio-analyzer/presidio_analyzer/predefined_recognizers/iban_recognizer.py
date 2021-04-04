@@ -100,7 +100,8 @@ class IbanRecognizer(PatternRecognizer):
         entities: List[str],
         nlp_artifacts: NlpArtifacts = None,
         regex_flags: int = None,
-    ) -> List[RecognizerResult]:  # noqa D102
+    ) -> List[RecognizerResult]:
+        """Analyze IBAN."""
         results = []
 
         if self.patterns:
