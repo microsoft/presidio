@@ -7,7 +7,7 @@ On <DATE_TIME> I visited <DOMAIN_NAME> and sent an email to <EMAIL_ADDRESS>,  fr
 
 My passport: <US_PASSPORT> and my phone number: <PHONE_NUMBER>.
 
-This is a valid IBAN: <IBAN_CODE> . Can you please check the status on bank account <US_BANK_NUMBER>?
+This is a valid International Bank Account Number: <IBAN_CODE> . Can you please check the status on bank account <US_BANK_NUMBER>?
 
 <PERSON>'s social security number is <US_SSN>.  Her driver license? it is <US_DRIVER_LICENSE>.
 
