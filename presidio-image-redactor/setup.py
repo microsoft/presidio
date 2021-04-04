@@ -32,7 +32,7 @@ setup(
     include_package_data=True,
     license="MIT",
     keywords="presidio_image_redactor",
-    classifiers=[        
+    classifiers=[
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Natural Language :: English",
