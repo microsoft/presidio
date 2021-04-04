@@ -13,7 +13,7 @@ DEFAULT = "replace"
 
 class AnonymizerEngine(EngineBase):
     """
-    AnonymizeEngine class.
+    AnonymizerEngine class.
 
     Handles the entire logic of the Presidio-anonymizer. Gets the original text
     and replaces the PII entities with the desired anonymizers.
