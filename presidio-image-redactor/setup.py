@@ -32,8 +32,7 @@ setup(
     include_package_data=True,
     license="MIT",
     keywords="presidio_image_redactor",
-    classifiers=[
-        "Programming Language :: Python :: 3",
+    classifiers=[        
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Natural Language :: English",
