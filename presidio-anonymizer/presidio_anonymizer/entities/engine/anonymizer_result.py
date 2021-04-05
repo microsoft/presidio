@@ -32,7 +32,7 @@ class AnonymizerResult(PIIEntity):
             "key": "1111111111111111",
             "entity_type":"PERSON",
         }
-        :return: DecryptEntity object
+        :return: AnonymizerResult object
         """
         start = json.get("start")
         end = json.get("end")

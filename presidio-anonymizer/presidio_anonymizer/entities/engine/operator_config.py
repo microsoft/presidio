@@ -7,8 +7,6 @@ from presidio_anonymizer.services.validators import validate_parameter_not_empty
 class OperatorConfig:
     """Hold the data of the required operator."""
 
-    logger = logging.getLogger("presidio-anonymizer")
-
     def __init__(
             self,
             operator_name: str,
