@@ -9,7 +9,16 @@ from presidio_image_redactor.ocr import OCR
 
 
 class ImageAnalyzerEngine:
-    """ImageAnalyzerEngine class."""
+    """ImageAnalyzerEngine class.
+
+    :param analyzer_engine: The Presidio AnalyzerEngine instance
+        to be used to detect PII in text.
+    """
+
+    def __init__(self, analyzer_engine: AnalyzerEngine = None):
+        if not analyzer_engine:
+            analyzer_engine = AnalyzerEngine()
+        self.analyzer_engine = analyzer_engine
 
     def analyze(self, image: object, **kwargs) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
@@ -21,8 +30,8 @@ class ImageAnalyzerEngine:
         ocr_result = OCR().perform_ocr(image)
         text = OCR().get_text_from_ocr_dict(ocr_result)
 
-        analyzer = AnalyzerEngine()
-        analyzer_result = analyzer.analyze(text=text, language="en", **kwargs)
+        analyzer_result = self.analyzer_engine.analyze(
+            text=text, language="en", **kwargs)
         bboxes = self.map_analyzer_results_to_bounding_boxes(
             analyzer_result, ocr_result, text
         )
