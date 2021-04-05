@@ -31,8 +31,7 @@ class DeanonymizeEngine(EngineBase):
                              operators,
                              OperatorType.Deanonymize)
 
-    @staticmethod
-    def get_deanonymizers() -> List[str]:
+    def get_deanonymizers(self) -> List[str]:
         """Return a list of supported deanonymizers."""
-        names = [p for p in OperatorsFactory.get_deanonymizers().keys()]
+        names = [p for p in self.get_deanonymizers().keys()]
         return names
