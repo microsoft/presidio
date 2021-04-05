@@ -18,7 +18,7 @@ class PIIEntity(ABC):
 
     def __gt__(self, other):
         """Check one entity is greater then other by the text end index."""
-        return self.end > other.end
+        return self.start > other.start
 
     def __eq__(self, other):
         """Check two text metadata entities are equal."""
