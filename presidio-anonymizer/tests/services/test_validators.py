@@ -82,9 +82,10 @@ def test_given_parameter_is_none_typed_then_ipe_raised():
 
 
 def test_given_parameter_is_bad_typed_then_ipe_raised():
+    err = "Invalid parameter value for name. Expecting 'number', but got 'string'."
     with pytest.raises(
             InvalidParamException,
-            match="Invalid parameter value for name. Expecting 'number', but got 'string'.",
+            match=err,
     ):
         validate_parameter(
             parameter_value="1", parameter_name="name", parameter_type=int
