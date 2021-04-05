@@ -2,7 +2,7 @@ import logging
 from typing import Dict
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.services.validators import validate_parameter_exists
+from presidio_anonymizer.services.validators import validate_parameter_not_empty
 
 
 class OperatorConfig:
@@ -53,11 +53,6 @@ class OperatorConfig:
                 and operator_name)
 
     def __validate_fields(self):
-        validate_parameter_exists(self.operator_name, "operator config",
+        validate_parameter_not_empty(self.operator_name, "operator config",
                                   "operator_name")
 
-    def __field_validation_error(self, field_name: str):
-        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
-        raise InvalidParamException(
-            f"Invalid input, config must contain {field_name}"
-        )

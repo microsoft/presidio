@@ -19,14 +19,14 @@ class EngineBase(ABC):
 
     def _operate(self,
                  text: str,
-                 text_metadata: List[PIIEntity],
+                 pii_entities: List[PIIEntity],
                  operators_metadata: Dict[str, OperatorConfig],
                  operator_type: OperatorType) -> EngineResult:
         """
         Operate will do the operations required by the user over the text.
 
         :param text: the text we need to operate on.
-        :param text_metadata: data about the text entities we want to operate over.
+        :param pii_entities: data about the text entities we want to operate over.
         :param operators_metadata: dictionary where the key is the entity_type and what
         :type operator_type: either anonymize or deanonymize
         we want to perform over this entity_type.
@@ -34,7 +34,8 @@ class EngineBase(ABC):
         """
         text_replace_builder = TextReplaceBuilder(original_text=text)
         engine_result = EngineResult()
-        for operator in sorted(text_metadata, reverse=True):
+        sorted_pii_entities = sorted(pii_entities, reverse=True)
+        for operator in sorted_pii_entities:
             text_to_operate_on = text_replace_builder.get_text_in_position(
                 operator.start, operator.end
             )

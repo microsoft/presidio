@@ -101,7 +101,7 @@ engine = AnonymizeEngine()
 
 # Class the anonymize function with the text, analyzer results and
 # Anonymizers config to define the anonymization type.
-result = engine.anonymize(
+result = engine.anonymizer(
     text="My name is Bond, James Bond",
     analyzer_results=[RecognizerResult("PERSON", 11, 15, 0.8),
                       RecognizerResult("PERSON", 17, 27, 0.8)],

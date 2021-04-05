@@ -2,8 +2,8 @@ import logging
 from abc import ABC
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.services.validators import validate_parameter_exists, \
-    validate_parameter_not_empty
+from presidio_anonymizer.services.validators import validate_parameter_not_empty, \
+    validate_parameter_exists
 
 
 class PIIEntity(ABC):
@@ -27,9 +27,9 @@ class PIIEntity(ABC):
                 and self.entity_type == other.entity_type)
 
     def __validate_fields(self):
-        validate_parameter_not_empty(self.start, "result", "start")
-        validate_parameter_not_empty(self.end, "result", "end")
-        validate_parameter_exists(self.entity_type, "result", "entity_type")
+        validate_parameter_exists(self.start, "result", "start")
+        validate_parameter_exists(self.end, "result", "end")
+        validate_parameter_not_empty(self.entity_type, "result", "entity_type")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
                 "Invalid input, result start and end must be positive"

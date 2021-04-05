@@ -11,7 +11,7 @@ from werkzeug.exceptions import BadRequest, HTTPException
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
+from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
 
 DEFAULT_PORT = "3000"
 
@@ -38,7 +38,7 @@ class Server:
         self.logger.setLevel(os.environ.get("LOG_LEVEL", self.logger.level))
         self.app = Flask(__name__)
         self.logger.info("Starting anonymizer engine")
-        self.anonymize = AnonymizerEngine()
+        self.anonymizer = AnonymizerEngine()
         self.deanonymize = DeanonymizeEngine()
         self.logger.info(WELCOME_MESSAGE)
 
@@ -58,7 +58,7 @@ class Server:
             )
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 content.get("analyzer_results"))
-            anoymizer_result = self.anonymize.anonymize(
+            anoymizer_result = self.anonymizer.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
                 operators=anonymizers_config,
@@ -75,18 +75,18 @@ class Server:
                 content)
             deanonymize_config = AppEntitiesConvertor.operators_config_from_json(
                 content.get("deanonymizers"))
-            decrypt_response = self.deanonymize.deanonymize(
+            deanonymized_response = self.deanonymize.deanonymize(
                 text=text, entities=deanonymize_entities, operators=deanonymize_config
             )
-            return Response(decrypt_response.to_json(), mimetype="application/json")
+            return Response(deanonymized_response.to_json(), mimetype="application/json")
 
         @self.app.route("/anonymizers", methods=["GET"])
-        def anonymizers() -> Tuple[str, int]:
+        def anonymizers():
             """Return a list of supported anonymizers."""
-            return jsonify(self.anonymize.get_anonymizers())
+            return jsonify(self.anonymizer.get_anonymizers())
 
         @self.app.route("/deanonymizers", methods=["GET"])
-        def deanonymizers() -> Tuple[str, int]:
+        def deanonymizers():
             """Return a list of supported deanonymizers."""
             return jsonify(self.deanonymize.get_deanonymizers())
 
