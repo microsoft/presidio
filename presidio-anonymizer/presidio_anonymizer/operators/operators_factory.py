@@ -24,8 +24,13 @@ class OperatorsFactory:
         :type operator_name: operator name.
         :return: operator class entity.
         """
-        operator_class = self.__get_operators_classes().get(operator_type).get(
-            operator_name)
+        operators_by_type = self.__get_operators_classes().get(operator_type)
+        if not operators_by_type:
+            self.logger.error(f"No such operator type {operator_type}")
+            raise InvalidParamException(
+                f"Invalid operator type '{operator_type}'."
+            )
+        operator_class = operators_by_type.get(operator_name)
         if not operator_class:
             self.logger.error(f"No such operator class {operator_name}")
             raise InvalidParamException(

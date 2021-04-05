@@ -28,7 +28,7 @@ class OperatorConfig:
         self.__validate_fields()
 
     @classmethod
-    def from_json(cls, params: Dict):
+    def from_json(cls, params: Dict) -> 'OperatorConfig':
         """
         Create OperatorConfig from json.
 

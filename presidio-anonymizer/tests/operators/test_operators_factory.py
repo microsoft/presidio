@@ -51,5 +51,5 @@ def test_given_wrong_name_for_anonymizer_class_then_we_fail():
 
 def test_given_wrong_operator_then_we_fail():
     with pytest.raises(InvalidParamException,
-                       match="Invalid operator class 'bla'."):
+                       match="Invalid operator type '3'."):
         OperatorsFactory().create_operator_class("bla", 3)
