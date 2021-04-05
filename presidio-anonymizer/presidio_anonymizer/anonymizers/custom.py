@@ -7,9 +7,9 @@ from presidio_anonymizer.entities import InvalidParamException
 
 
 class Custom(Anonymizer):
-    """replace old PII text entity with the lambda result executed on the old PII text"""
-    """lambda retrun type must be a string"""
-    """If the new value is not a lambda, this will act as a replace method and replace the old value with the new value"""
+    """Replace old PII text entity with the lambda result executed on the old PII text
+    lambda retrun type must be a string
+    If the new value is not a lambda, this will act as a replace method"""
 
     NEW_VALUE = "new_value"
 
@@ -24,10 +24,10 @@ class Custom(Anonymizer):
         """Validate the new value is string."""
         new_val = params.get(self.NEW_VALUE)
         if callable(new_val):
-          if (type(new_val("PII")) == str):
-            return
-          else:                
-            raise InvalidParamException("Invalid method return type. must be a str")
+            if (type(new_val("PII")) == str):
+              return
+            else:
+              raise InvalidParamException("Invalid method return type. must be a str")
         else:
           validate_type(new_val, self.NEW_VALUE, str)
         pass
