@@ -47,7 +47,7 @@ class Server:
             return "Presidio Anonymizer service is up"
 
         @self.app.route("/anonymize", methods=["POST"])
-        def anonymize():
+        def anonymize() -> Response:
             content = request.get_json()
             if not content:
                 raise BadRequest("Invalid request json")
@@ -65,7 +65,7 @@ class Server:
             return Response(anoymizer_result.to_json(), mimetype="application/json")
 
         @self.app.route("/deanonymize", methods=["POST"])
-        def deanonymize():
+        def deanonymize() -> Response:
             content = request.get_json()
             if not content:
                 raise BadRequest("Invalid request json")
