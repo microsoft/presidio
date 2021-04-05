@@ -67,6 +67,22 @@ def test_given_recognizer_results_with_different_indices_then_indices_are_not_eq
     assert not first.equal_indices(second)
 
 
+@pytest.mark.parametrize(
+    # fmt: off
+    "start, end, err",
+    [
+        ("0", 10,
+         "Invalid parameter value for start. Expecting 'number', but got 'string'."),
+        (0, "10",
+         "Invalid parameter value for end. Expecting 'number', but got 'string'."),
+    ],
+    # fmt: on
+)
+def test_given_invalid_string_start_instead_of_int_then_we_fail(start, end, err):
+    with pytest.raises(InvalidParamException, match=err):
+        create_recognizer_result("bla", 0.2, start, end)
+
+
 def test_given_identical_recognizer_results_then_they_are_equal():
     first = create_recognizer_result("bla", 0.2, 0, 10)
     second = create_recognizer_result("bla", 0.2, 0, 10)
