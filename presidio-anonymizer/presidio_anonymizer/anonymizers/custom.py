@@ -9,7 +9,7 @@ from presidio_anonymizer.entities import InvalidParamException
 class Custom(Anonymizer):
     """
     Replace old PII text entity with the lambda result executed on the old PII text.
-    
+
     lambda retrun type must be a string
     If the new value is not a lambda, this will act as a replace method
     """
