@@ -24,4 +24,3 @@ def test_given_non_str_lambda_than_ipe_raised():
 
 def test_when_validate_anonymizer_then_correct_name():
     assert Custom().anonymizer_name() == "custom"
-    
