@@ -6,7 +6,7 @@ from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine import RecognizerResult
 from presidio_anonymizer.entities.engine.result import EngineResult
-from presidio_anonymizer.operators import OperatorsFactory, OperatorType
+from presidio_anonymizer.operators import OperatorType
 
 DEFAULT = "replace"
 
