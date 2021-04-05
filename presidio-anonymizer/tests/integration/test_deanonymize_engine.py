@@ -77,3 +77,11 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     assert decryption.items[0].end == 16
     assert decryption.items[0].start == 11
     assert decryption.items[0].entity_type == "PERSON"
+
+
+def test_given_request_deanonymizers_return_list():
+    engine = DeanonymizeEngine()
+    expected_list = ["decrypt"]
+    anon_list = engine.get_deanonymizers()
+
+    assert anon_list == expected_list

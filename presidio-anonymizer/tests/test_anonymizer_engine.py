@@ -2,16 +2,16 @@ from typing import Dict, List
 
 import pytest
 
-from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
+from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import RecognizerResult
 from presidio_anonymizer.entities.engine.operator_config import OperatorConfig
+from presidio_anonymizer.entities.engine.pii_entity import \
+    PIIEntity
 from presidio_anonymizer.entities.engine.result import \
     OperatorResult
 from presidio_anonymizer.entities.engine.result.engine_result import \
     EngineResult
-from presidio_anonymizer.entities.engine.pii_entity import \
-    PIIEntity
 from presidio_anonymizer.operators import OperatorType
 
 
@@ -22,13 +22,6 @@ def test_given_request_anonymizers_return_list():
 
     assert anon_list == expected_list
 
-
-def test_given_request_deanonymizers_return_list():
-    engine = DeanonymizeEngine()
-    expected_list = ["decrypt"]
-    anon_list = engine.get_deanonymizers()
-
-    assert anon_list == expected_list
 
 def test_given_empty_text_to_engine_then_we_fail():
     engine = AnonymizerEngine()
