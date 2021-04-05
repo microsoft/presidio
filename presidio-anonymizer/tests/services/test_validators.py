@@ -2,9 +2,9 @@ import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.services.validators import validate_parameter
-from presidio_anonymizer.services.validators import validate_parameter_not_empty
-from presidio_anonymizer.services.validators import validate_parameter_in_range
 from presidio_anonymizer.services.validators import validate_parameter_exists
+from presidio_anonymizer.services.validators import validate_parameter_in_range
+from presidio_anonymizer.services.validators import validate_parameter_not_empty
 from presidio_anonymizer.services.validators import validate_type
 
 

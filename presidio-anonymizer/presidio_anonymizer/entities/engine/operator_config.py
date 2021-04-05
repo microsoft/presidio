@@ -1,7 +1,6 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.services.validators import validate_parameter_not_empty
 
 
@@ -54,5 +53,4 @@ class OperatorConfig:
 
     def __validate_fields(self):
         validate_parameter_not_empty(self.operator_name, "operator config",
-                                  "operator_name")
-
+                                     "operator_name")

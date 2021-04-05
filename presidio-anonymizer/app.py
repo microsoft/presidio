@@ -3,7 +3,6 @@ import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
-from typing import Tuple
 
 from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import BadRequest, HTTPException
@@ -78,7 +77,8 @@ class Server:
             deanonymized_response = self.deanonymize.deanonymize(
                 text=text, entities=deanonymize_entities, operators=deanonymize_config
             )
-            return Response(deanonymized_response.to_json(), mimetype="application/json")
+            return Response(deanonymized_response.to_json(),
+                            mimetype="application/json")
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers():
