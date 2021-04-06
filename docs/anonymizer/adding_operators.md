@@ -2,7 +2,7 @@
 
 Presidio anonymizer can be easily extended to support additional anonnymization and deanonymization methods.
 
-## Extending the anonymizer for additional PII operators:
+## Extending presidio-anonymizer for additional PII operators:
 
 1. Under the path presidio_anonymizer/operators create new python class implementing the abstract [Operator](https://github.com/microsoft/presidio/blob/main/presidio-anonymizer/presidio_anonymizer/operators/operator.py) class 
 2. Implement the methods: 
@@ -15,4 +15,3 @@ Presidio anonymizer can be easily extended to support additional anonnymization 
 
 !!! note "Note"
     The list of operators is being loaded dynamically each time Presidio Anonymizer is started.
-
