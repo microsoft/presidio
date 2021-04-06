@@ -181,7 +181,7 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
   My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
   <PHONE_NUMBER\><SSN\>.
 
-## Creating new Operators
+## Creating a new `operator`
 
 Presidio anonymizer can be easily extended to support additional operators.
 See [this tutorial on adding new operators](adding_operators.md)
