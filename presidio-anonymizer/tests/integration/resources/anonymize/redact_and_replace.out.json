@@ -1,1 +1,0 @@
-{"text": "hello world, my name is . My number is: <PHONE_NUMBER>", "items": [{"anonymizer": "replace", "entity_type": "PHONE_NUMBER", "start": 40, "end": 54, "anonymized_text": "<PHONE_NUMBER>"}, {"anonymizer": "redact", "entity_type": "NAME", "start": 24, "end": 24, "anonymized_text": ""}]}

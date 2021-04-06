@@ -1,6 +1,7 @@
 import pytest
 from presidio_analyzer.recognizer_result import RecognizerResult
 
+from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
 
 
@@ -39,3 +40,8 @@ def get_image_recognizerresult():
         ImageRecognizerResult("PERSON", 39, 46, 0.85, 141, 134, 190, 50),
     ]
     return results
+
+
+@pytest.fixture(scope="module")
+def image_analyzer_engine():
+    return ImageAnalyzerEngine()
