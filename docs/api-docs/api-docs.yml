@@ -329,7 +329,7 @@ components:
           schema:
             $ref: "#/components/schemas/DeanonymizeRequest"
           examples:
-            Deanonymized text:
+            Deanonymize text:
               value:
                 {
                   "text": "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
