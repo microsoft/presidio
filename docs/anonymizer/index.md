@@ -145,7 +145,7 @@ Operator type | Operaor name | Description | Parameters
 
 !!! note "Note"
     When performing anonymization, if anonymizers map is empty or "DEFAULT" key is not stated, the default
-    anonymizer is "replace" for all entities. The replacing value will be the entity type
+    anonymization operator is "replace" for all entities. The replacing value will be the entity type
     e.g.: <PHONE_NUMBER\>
 
 
@@ -181,7 +181,7 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
   My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
   <PHONE_NUMBER\><SSN\>.
 
-## Creating new Operators
+## Creating a new `operator`
 
 Presidio anonymizer can be easily extended to support additional operators.
 See [this tutorial on adding new operators](adding_operators.md)
