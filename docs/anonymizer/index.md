@@ -145,7 +145,7 @@ Operator type | Operaor name | Description | Parameters
 
 !!! note "Note"
     When performing anonymization, if anonymizers map is empty or "DEFAULT" key is not stated, the default
-    anonymizer is "replace" for all entities. The replacing value will be the entity type
+    anonymization operator is "replace" for all entities. The replacing value will be the entity type
     e.g.: <PHONE_NUMBER\>
 
 
