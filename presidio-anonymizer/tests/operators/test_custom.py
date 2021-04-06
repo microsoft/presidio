@@ -9,7 +9,7 @@ def test_given_non_callable_for_custom_then_ipe_raised():
         InvalidParamException,
         match="New value must be a callable function",
     ):
-        Custom().validate({"new_value": "bla"})    
+        Custom().validate({"new_value": "bla"})
 
 
 def test_given_lambda_for_custom_we_get_the_result_back():
