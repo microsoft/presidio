@@ -1,15 +1,14 @@
+import json
 from pathlib import Path
 
 import pytest
-import json
-
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import AnonymizerResult, AnonymizedEntity
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 from common.assertions import equal_json_strings
 from common.methods import analyze, anonymize, analyzer_supported_entities
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities.engine.result import EngineResult, OperatorResult
 
 
 def analyze_and_assert(analyzer_request, expected_response):
@@ -61,7 +60,7 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC43****", "items": [{"anonymizer": "mask", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 36, "anonymized_text": "AC43****"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC43****", "items": [{"operator": "mask", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 36, "text": "AC43****"}, {"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -101,7 +100,7 @@ def test_given_a_correct_analyze_input_high_threashold_then_anonymize_partially(
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -147,7 +146,7 @@ def test_given_a_correct_analyze_input_with_high_threshold_and_unmatched_entitie
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -183,7 +182,7 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
     }
 
     expected_response = (
-        """{"text": "<PERSON> drivers license is <US_DRIVER_LICENSE>", "items": [{"anonymizer": "replace", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 47, "anonymized_text": "<US_DRIVER_LICENSE>"}, {"anonymizer": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "anonymized_text": "<PERSON>"}]}"""
+        """{"text": "<PERSON> drivers license is <US_DRIVER_LICENSE>", "items": [{"operator": "replace", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 47, "text": "<US_DRIVER_LICENSE>"}, {"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
     )
 
     anonymize_and_assert(anonymizer_request, expected_response)
@@ -250,7 +249,8 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     text_to_test = "John Smith drivers license is AC432223"
 
     expected_response = [RecognizerResult("PERSON", 0, 10, 0.85),
-                         RecognizerResult("US_DRIVER_LICENSE", 30, 38, 0.6499999999999999)
+                         RecognizerResult("US_DRIVER_LICENSE", 30, 38,
+                                          0.6499999999999999)
                          ]
     # Create configuration containing engine name and models
     configuration = {
@@ -271,9 +271,14 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     for i in range(len(analyzer_results)):
         assert analyzer_results[i] == expected_response[i]
 
-    expected_response = AnonymizerResult(text="<PERSON> drivers license is <US_DRIVER_LICENSE>")
-    expected_response.add_item(AnonymizedEntity("replace", "US_DRIVER_LICENSE", 28, 47, "<US_DRIVER_LICENSE>"))
-    expected_response.add_item(AnonymizedEntity("replace", "PERSON", 0, 8, "<PERSON>"))
+    expected_response = EngineResult(
+        text="<PERSON> drivers license is <US_DRIVER_LICENSE>")
+    expected_response.add_item(
+        OperatorResult(operator_name="replace", entity_type="US_DRIVER_LICENSE",
+                       start=28, end=47, text="<US_DRIVER_LICENSE>"))
+    expected_response.add_item(
+        OperatorResult(operator_name="replace", entity_type="PERSON", start=0, end=8,
+                       text="<PERSON>"))
 
     anonymizer = AnonymizerEngine()
     anonymizer_results = anonymizer.anonymize(text_to_test, analyzer_results)
