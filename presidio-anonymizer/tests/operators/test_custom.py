@@ -20,7 +20,7 @@ def test_given_lambda_for_custom_we_get_the_result_back():
 def test_given_non_str_lambda_than_ipe_raised():
     with pytest.raises(
         InvalidParamException,
-        match="Invalid function return type. must be a str",
+        match="Function return type must be a str",
     ):
         Custom().validate({"new_value" : lambda x: len(x)})
 

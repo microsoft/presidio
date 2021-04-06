@@ -26,7 +26,7 @@ class Custom(Operator):
             if (type(new_val("PII")) == str):
                 return
             else:
-                raise InvalidParamException("Invalid function return type. must be a str")
+                raise InvalidParamException("Function return type must be a str")
         else:
             raise InvalidParamException("New value must be a callable function")
 
