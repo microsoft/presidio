@@ -2,20 +2,16 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.anonymizers import Anonymizer
-from presidio_anonymizer.entities import (
-    RecognizerResult,
-    AnalyzerResults,
-    AnonymizerResult,
-    AnonymizedTextBuilder,
-    AnonymizerConfig,
-    AnonymizedEntity,
-)
+from presidio_anonymizer.core.engine_base import EngineBase
+from presidio_anonymizer.entities.engine import OperatorConfig
+from presidio_anonymizer.entities.engine import RecognizerResult
+from presidio_anonymizer.entities.engine.result import EngineResult
+from presidio_anonymizer.operators import OperatorType
 
 DEFAULT = "replace"
 
 
-class AnonymizerEngine:
+class AnonymizerEngine(EngineBase):
     """
     AnonymizerEngine class.
 
@@ -23,111 +19,80 @@ class AnonymizerEngine:
     and replaces the PII entities with the desired anonymizers.
     """
 
+    logger = logging.getLogger("presidio-anonymizer")
+
     def __init__(self):
-        self.logger = logging.getLogger("presidio-anonymizer")
+        EngineBase.__init__(self)
 
     def anonymize(
-        self,
-        text: str,
-        analyzer_results: List[RecognizerResult],
-        anonymizers_config: Optional[Dict[str, AnonymizerConfig]] = None,
-    ) -> AnonymizerResult:
+            self,
+            text: str,
+            analyzer_results: List[RecognizerResult],
+            operators: Optional[Dict[str, OperatorConfig]] = None
+    ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
         :param text: the text we are anonymizing
         :param analyzer_results: A list of RecognizerResult class -> The results we
         received from the analyzer
-        :param anonymizers_config: The configuration of the anonymizers we would like
-        to use for each entity e.g.: {"PHONE_NUMBER":AnonymizerConfig("redact", {})}
+        :param operators: The configuration of the anonymizers we would like
+        to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})}
         received from the analyzer
-        :return: the anonymized text and a list of information
-        about the anonymized entities.
+        :return: the anonymized text and a list of information about the
+        anonymized entities.
         """
-        text_builder = AnonymizedTextBuilder(original_text=text)
-        if not anonymizers_config:
-            anonymizers_config = {}
+        analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
+            analyzer_results)
 
-        analyzer_results = AnalyzerResults(analyzer_results).to_sorted_unique_results(
-            True
-        )
+        operators = self.__check_or_add_default_operator(operators)
 
-        anonymizer_result = AnonymizerResult()
+        return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
 
-        # loop over each analyzer result
-        # get AnonymizerConfig for the analyzer result
-        # trigger the anonymize method on the section of the text
-        # perform the anonymization
-        # concat the anonymized string into the output string
-        for analyzer_result in analyzer_results:
-            text_to_anonymize = text_builder.get_text_in_position(
-                analyzer_result.start, analyzer_result.end
-            )
+    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results: List[
+            RecognizerResult]) -> List[RecognizerResult]:
+        """
+        Iterate the list and create a sorted unique results list from it.
 
-            anonymizer_config = self.__get_anonymizer_config_by_entity_type(
-                analyzer_result.entity_type, anonymizers_config
-            )
+        Only insert results which are:
+        1. Indices are not contained in other result.
+        2. Have the same indices as other results but with larger score.
+        :return: List
+        """
+        unique_text_metadata_elements = []
+        # This list contains all elements which we need to check a single result
+        # against. If a result is dropped, it can also be dropped from this list
+        # since it is intersecting with another result and we selected the other one.
+        other_elements = analyzer_results.copy()
+        for result in analyzer_results:
+            other_elements.remove(result)
+            result_conflicted = self.__is_result_conflicted_with_other_elements(
+                other_elements, result)
+            if not result_conflicted:
+                other_elements.append(result)
+                unique_text_metadata_elements.append(result)
+            else:
+                self.logger.debug(
+                    f"removing element {result} from results list due to conflict"
+                )
+        return unique_text_metadata_elements
 
-            self.logger.debug(
-                f"for analyzer result {analyzer_result} received config "
-                f"{anonymizer_config}"
-            )
-
-            anonymized_text = self.__extract_anonymizer_and_anonymize(
-                analyzer_result.entity_type, anonymizer_config, text_to_anonymize
-            )
-            index_from_end = text_builder.replace_text_get_insertion_index(
-                anonymized_text, analyzer_result.start, analyzer_result.end
-            )
-
-            # The following creates an intermediate list of anonymized entities,
-            # ordered from end to start, and the indexes will be normalized
-            # from start to end once the loop ends and the text length is deterministic.
-            result_item = AnonymizedEntity(
-                anonymizer=anonymizer_config.anonymizer_name,
-                entity_type=analyzer_result.entity_type,
-                start=0,
-                end=index_from_end,
-                anonymized_text=anonymized_text,
-            )
-
-            anonymizer_result.add_item(result_item)
-
-        anonymizer_result.set_text(text_builder.output_text)
-        anonymizer_result.normalize_item_indexes()
-        return anonymizer_result
-
-    @staticmethod
-    def get_anonymizers() -> List[str]:
+    def get_anonymizers(self) -> List[str]:
         """Return a list of supported anonymizers."""
-        names = [p for p in Anonymizer.get_anonymizers().keys()]
+        names = [p for p in self.operators_factory.get_anonymizers().keys()]
         return names
 
-    def __extract_anonymizer_and_anonymize(
-        self,
-        entity_type: str,
-        anonymizer_config: AnonymizerConfig,
-        text_to_anonymize: str,
-    ) -> str:
-        self.logger.debug(f"getting anonymizer for {entity_type}")
-        anonymizer = anonymizer_config.anonymizer_class()
-        self.logger.debug(f"validating anonymizer {anonymizer} for {entity_type}")
-        anonymizer.validate(params=anonymizer_config.params)
-        params = anonymizer_config.params
-        params["entity_type"] = entity_type
-        self.logger.debug(f"anonymizing {entity_type} with {anonymizer}")
-        anonymized_text = anonymizer.anonymize(params=params, text=text_to_anonymize)
-        return anonymized_text
+    @staticmethod
+    def __is_result_conflicted_with_other_elements(other_elements, result):
+        return any([result.has_conflict(other_element) for other_element in
+                    other_elements])
 
     @staticmethod
-    def __get_anonymizer_config_by_entity_type(
-        entity_type: str, anonymizers_config: Dict[str, AnonymizerConfig]
-    ) -> AnonymizerConfig:
-        # We try to get the anonymizer from the list by entity_type.
-        # If it does not exist, we try to get the default from the list.
-        # If there is no default we fallback into the current DEFAULT which is replace.
-        anonymizer = anonymizers_config.get(entity_type)
-        if not anonymizer:
-            anonymizer = anonymizers_config.get("DEFAULT")
-            if not anonymizer:
-                anonymizer = AnonymizerConfig(DEFAULT, {})
-        return anonymizer
+    def __check_or_add_default_operator(operators: Dict[
+        str, OperatorConfig]) -> \
+            Dict[str, OperatorConfig]:
+        default_operator = OperatorConfig(DEFAULT)
+        if not operators:
+            return {"DEFAULT": default_operator}
+        if not operators.get("DEFAULT"):
+            operators["DEFAULT"] = default_operator
+        return operators

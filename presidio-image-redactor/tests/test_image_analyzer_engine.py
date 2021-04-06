@@ -1,10 +1,8 @@
 import pytest
-
 from presidio_analyzer import RecognizerResult
-from presidio_image_redactor.entities.image_recognizer_result import (
-    ImageRecognizerResult,
-)
-from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
+
+from presidio_image_redactor import ImageAnalyzerEngine
+from presidio_image_redactor.entities import ImageRecognizerResult
 
 
 def test_given_valid_ocr_and_entities_then_map_analyzer_returns_correct_len_and_output(

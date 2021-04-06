@@ -54,9 +54,9 @@ def redact(file, color_fill=None):
     return response
 
 
-def decrypt(data):
+def deanonymize(data):
     response = requests.post(
-        f"{ANONYMIZER_BASE_URL}/decrypt", data=data, headers=DEFAULT_HEADERS
+        f"{ANONYMIZER_BASE_URL}/deanonymize", data=data, headers=DEFAULT_HEADERS
     )
     return response.status_code, response.content
 
