@@ -1,37 +1,42 @@
 from typing import List
 
-from presidio_analyzer import AnalyzerEngine
-from presidio_analyzer import RecognizerResult
-from presidio_image_redactor.entities.image_recognizer_result import (
-    ImageRecognizerResult,
-)
-from presidio_image_redactor.ocr import OCR
+from presidio_analyzer import AnalyzerEngine, RecognizerResult
+
+from presidio_image_redactor import OCR, TesseractOCR
+from presidio_image_redactor.entities import ImageRecognizerResult
 
 
 class ImageAnalyzerEngine:
     """ImageAnalyzerEngine class.
 
     :param analyzer_engine: The Presidio AnalyzerEngine instance
-        to be used to detect PII in text.
+        to be used to detect PII in text
+    :param ocr: the OCR object to be used to detect text in images.
     """
 
-    def __init__(self, analyzer_engine: AnalyzerEngine = None):
+    def __init__(self, analyzer_engine: AnalyzerEngine = None, ocr: OCR = None):
         if not analyzer_engine:
             analyzer_engine = AnalyzerEngine()
         self.analyzer_engine = analyzer_engine
+
+        if not ocr:
+            ocr = TesseractOCR()
+        self.ocr = ocr
 
     def analyze(self, image: object, **kwargs) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
         :param image: PIL Image/numpy array or file path(str) to be processed
+        :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         :return: list of the extract entities with image bounding boxes
         """
-        ocr_result = OCR().perform_ocr(image)
-        text = OCR().get_text_from_ocr_dict(ocr_result)
+        ocr_result = self.ocr.perform_ocr(image)
+        text = self.ocr.get_text_from_ocr_dict(ocr_result)
 
         analyzer_result = self.analyzer_engine.analyze(
-            text=text, language="en", **kwargs)
+            text=text, language="en", **kwargs
+        )
         bboxes = self.map_analyzer_results_to_bounding_boxes(
             analyzer_result, ocr_result, text
         )
