@@ -2,8 +2,8 @@ import logging
 from abc import ABC
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.services.validators import validate_parameter_exists, \
-    validate_parameter_not_empty
+from presidio_anonymizer.services.validators import validate_parameter_not_empty, \
+    validate_parameter_exists, validate_type
 
 
 class PIIEntity(ABC):
@@ -18,7 +18,7 @@ class PIIEntity(ABC):
 
     def __gt__(self, other):
         """Check one entity is greater then other by the text end index."""
-        return self.end > other.end
+        return self.start > other.start
 
     def __eq__(self, other):
         """Check two text metadata entities are equal."""
@@ -27,9 +27,11 @@ class PIIEntity(ABC):
                 and self.entity_type == other.entity_type)
 
     def __validate_fields(self):
-        validate_parameter_not_empty(self.start, "result", "start")
-        validate_parameter_not_empty(self.end, "result", "end")
-        validate_parameter_exists(self.entity_type, "result", "entity_type")
+        validate_parameter_exists(self.start, "result", "start")
+        validate_type(self.start, "start", int)
+        validate_parameter_exists(self.end, "result", "end")
+        validate_type(self.end, "end", int)
+        validate_parameter_not_empty(self.entity_type, "result", "entity_type")
         if self.start < 0 or self.end < 0:
             raise InvalidParamException(
                 "Invalid input, result start and end must be positive"

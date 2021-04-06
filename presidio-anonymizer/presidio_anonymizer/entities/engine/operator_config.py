@@ -1,14 +1,11 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.services.validators import validate_parameter_exists
+from presidio_anonymizer.services.validators import validate_parameter_not_empty
 
 
 class OperatorConfig:
     """Hold the data of the required operator."""
-
-    logger = logging.getLogger("presidio-anonymizer")
 
     def __init__(
             self,
@@ -29,7 +26,7 @@ class OperatorConfig:
         self.__validate_fields()
 
     @classmethod
-    def from_json(cls, params: Dict):
+    def from_json(cls, params: Dict) -> 'OperatorConfig':
         """
         Create OperatorConfig from json.
 
@@ -53,11 +50,5 @@ class OperatorConfig:
                 and operator_name)
 
     def __validate_fields(self):
-        validate_parameter_exists(self.operator_name, "operator config",
-                                  "operator_name")
-
-    def __field_validation_error(self, field_name: str):
-        self.logger.debug(f"invalid parameter, {field_name} cannot be empty")
-        raise InvalidParamException(
-            f"Invalid input, config must contain {field_name}"
-        )
+        validate_parameter_not_empty(self.operator_name, "operator config",
+                                     "operator_name")

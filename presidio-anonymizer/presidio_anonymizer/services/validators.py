@@ -20,14 +20,16 @@ def validate_parameter_in_range(
         )
 
 
-def validate_parameter_exists(parameter_value, entity: str, parameter_name: str):
+def validate_parameter_not_empty(parameter_value, entity: str,
+                                 parameter_name: str) -> None:
     """Validate parameter exists and not only empty."""
     if not parameter_value:
         raise InvalidParamException(
             f"Invalid input, {entity} must contain {parameter_name}")
 
 
-def validate_parameter_not_empty(parameter_value, entity: str, parameter_name: str):
+def validate_parameter_exists(parameter_value, entity: str,
+                              parameter_name: str) -> None:
     """Validate parameter is not empty."""
     if parameter_value is None:
         raise InvalidParamException(

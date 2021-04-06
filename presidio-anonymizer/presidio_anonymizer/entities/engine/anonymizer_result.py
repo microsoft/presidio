@@ -11,18 +11,14 @@ class AnonymizerResult(PIIEntity):
     def __init__(self, start: int,
                  end: int, entity_type: str) -> 'AnonymizerResult':
         """
-        Have the information about the entity we already encrypted and want to decrypt.
+        Information about the anonymized entity we want to deanonymize.
 
-        :param key: the key used to anonymize/encrypt the text.
         :param start: start index in the anonymized text.
         :param end: end index in the anonymized text.
+        :param entity_type: the type of the PII.
         """
         PIIEntity.__init__(self, start, end, entity_type)
         self.logger = logging.getLogger("presidio-anonymizer")
-
-    def __gt__(self, other) -> bool:
-        """Check result is greater by the text index start location."""
-        return self.start > other.start
 
     @classmethod
     def from_json(cls, json: Dict) -> 'AnonymizerResult':
@@ -36,7 +32,7 @@ class AnonymizerResult(PIIEntity):
             "key": "1111111111111111",
             "entity_type":"PERSON",
         }
-        :return: DecryptEntity object
+        :return: AnonymizerResult object
         """
         start = json.get("start")
         end = json.get("end")

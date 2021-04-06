@@ -7,7 +7,7 @@ import logging
 from typing import Dict
 
 from presidio_anonymizer.entities.engine import PIIEntity
-from presidio_anonymizer.services.validators import validate_parameter_not_empty
+from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
 class RecognizerResult(PIIEntity):
@@ -27,7 +27,7 @@ class RecognizerResult(PIIEntity):
     def __init__(self, entity_type: str, start: int, end: int, score: float):
         PIIEntity.__init__(self, start, end, entity_type)
         self.score = score
-        validate_parameter_not_empty(score, "analyzer result", "score")
+        validate_parameter_exists(score, "analyzer result", "score")
 
     @classmethod
     def from_json(cls, data: Dict):

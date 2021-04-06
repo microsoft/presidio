@@ -4,7 +4,7 @@ import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import RecognizerResult, OperatorConfig
-from presidio_anonymizer.services.app_entities_convertors import AppEntitiesConvertor
+from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
 
 
 def test_given_valid_json_then_anonymizers_config_list_created_successfully():

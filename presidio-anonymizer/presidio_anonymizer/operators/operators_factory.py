@@ -10,6 +10,7 @@ class OperatorsFactory:
 
     _anonymizers: Dict = None
     _deanonymizers: Dict = None
+    _operator_class: Dict = None
 
     def __init__(self):
         self.logger = logging.getLogger("presidio-anonymizer")
@@ -23,12 +24,13 @@ class OperatorsFactory:
         :type operator_name: operator name.
         :return: operator class entity.
         """
-        operator_class = {
-            OperatorType.Anonymize: OperatorsFactory.get_anonymizers().get(
-                operator_name),
-            OperatorType.Deanonymize: OperatorsFactory.get_deanonymizers().get(
-                operator_name),
-        }.get(operator_type)
+        operators_by_type = self.__get_operators_classes().get(operator_type)
+        if not operators_by_type:
+            self.logger.error(f"No such operator type {operator_type}")
+            raise InvalidParamException(
+                f"Invalid operator type '{operator_type}'."
+            )
+        operator_class = operators_by_type.get(operator_name)
         if not operator_class:
             self.logger.error(f"No such operator class {operator_name}")
             raise InvalidParamException(
@@ -36,6 +38,15 @@ class OperatorsFactory:
             )
         self.logger.debug(f"applying class {operator_class}")
         return operator_class()
+
+    @staticmethod
+    def __get_operators_classes():
+        if not OperatorsFactory._operator_class:
+            OperatorsFactory._operator_class = {
+                OperatorType.Anonymize: OperatorsFactory.get_anonymizers(),
+                OperatorType.Deanonymize: OperatorsFactory.get_deanonymizers(),
+            }
+        return OperatorsFactory._operator_class
 
     @staticmethod
     def get_anonymizers() -> \

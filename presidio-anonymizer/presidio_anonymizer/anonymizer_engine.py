@@ -6,7 +6,7 @@ from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine import RecognizerResult
 from presidio_anonymizer.entities.engine.result import EngineResult
-from presidio_anonymizer.operators import OperatorsFactory, OperatorType
+from presidio_anonymizer.operators import OperatorType
 
 DEFAULT = "replace"
 
@@ -76,10 +76,9 @@ class AnonymizerEngine(EngineBase):
                 )
         return unique_text_metadata_elements
 
-    @staticmethod
-    def get_anonymizers() -> List[str]:
+    def get_anonymizers(self) -> List[str]:
         """Return a list of supported anonymizers."""
-        names = [p for p in OperatorsFactory.get_anonymizers().keys()]
+        names = [p for p in self.operators_factory.get_anonymizers().keys()]
         return names
 
     @staticmethod

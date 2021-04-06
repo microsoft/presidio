@@ -6,12 +6,12 @@ from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities.engine import RecognizerResult
 from presidio_anonymizer.entities.engine.operator_config import OperatorConfig
+from presidio_anonymizer.entities.engine.pii_entity import \
+    PIIEntity
 from presidio_anonymizer.entities.engine.result import \
     OperatorResult
 from presidio_anonymizer.entities.engine.result.engine_result import \
     EngineResult
-from presidio_anonymizer.entities.engine.pii_entity import \
-    PIIEntity
 from presidio_anonymizer.operators import OperatorType
 
 
