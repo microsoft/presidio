@@ -1,5 +1,11 @@
 # Supporting new types of PII operators
 
+Operators are the presidio-anonymizer actions over the text. 
+
+There are two types of operators: 
+- Anonymize (hash, replace, redact, encrypt, mask)
+- Deanonymize (decrypt)
+
 Presidio anonymizer can be easily extended to support additional anonnymization and deanonymization methods.
 
 ## Extending the anonymizer for additional PII operators:
