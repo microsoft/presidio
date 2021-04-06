@@ -195,28 +195,6 @@ paths:
               example:
                 [ "hash", "mask", "redact", "replace", "encrypt" ]
 
-  /deanonymizers:
-    get:
-      servers:
-        - url: https://presidio-anonymizer-prod.azurewebsites.net
-      tags:
-        - Anonymizer
-      summary: "Get supported deanonymizers"
-
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: "A list of all built-in supported deanonymizers"
-                type: array
-                items:
-                  description: "The Deanonymizer name"
-                  type: string
-                  example: "decrypt"
-              example:
-                [ "decrypt" ]
 
   /deanonymize:
     post:
@@ -244,6 +222,29 @@ paths:
 
         422:
           $ref: "#/components/responses/422UnprocessableEntity"
+
+  /deanonymizers:
+    get:
+      servers:
+        - url: https://presidio-anonymizer-prod.azurewebsites.net
+      tags:
+        - Anonymizer
+      summary: "Get supported deanonymizers"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: "A list of all built-in supported deanonymizers"
+                type: array
+                items:
+                  description: "The Deanonymizer name"
+                  type: string
+                  example: "decrypt"
+              example:
+                [ "decrypt" ]
 
   /health:
     get:
@@ -277,7 +278,7 @@ components:
                   "text": "John Smith drivers license is AC432223",
                   "language": "en"
                 }
-            Enhanced Request:
+            Enhanced Request :
               value:
                 {
                   "text": "John Smith drivers license is AC432223",
@@ -285,7 +286,7 @@ components:
                   "return_decision_process": false,
                   "correlation_id": "123e4567-e89b-12d3-a456-426614174000",
                   "score_threshold": 0.6,
-                  "entities": [ "US_DRIVER_LICENSE" ],
+                  "entities": ["US_DRIVER_LICENSE"],
                   "trace": false
                 }
 
@@ -390,15 +391,12 @@ components:
         anonymizers:
           description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition"
           type: object
-          additionalProperties:
-              x-additionalPropertiesName: <ENTITY_TYPE> or DEFAULT
-              type: object
-              anyOf:
-                - $ref: "#/components/schemas/Replace"
-                - $ref: "#/components/schemas/Redact"
-                - $ref: "#/components/schemas/Mask"
-                - $ref: "#/components/schemas/Hash"
-                - $ref: "#/components/schemas/Encrypt"
+          anyOf:
+            - $ref: "#/components/schemas/Replace"
+            - $ref: "#/components/schemas/Redact"
+            - $ref: "#/components/schemas/Mask"
+            - $ref: "#/components/schemas/Hash"
+            - $ref: "#/components/schemas/Encrypt"
           default:
             { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
 
@@ -408,19 +406,28 @@ components:
           items:
             $ref: "#/components/schemas/RecognizerResult"
 
-    DecryptRequest:
+    DeanonymizeRequest:
       type: object
       required:
         - text
-        - key
+        - anonymizer_results
+        - deanonymizers
       properties:
         text:
           type: string
-          description: "The text for decryption"
-        key:
-          type: string
-          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
-          example: "AAECAwQFBgcICQoLDA0ODw=="
+          description: "The anonymized text"
+          example: "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
+        deanonymizers:
+          description: "Currently only decrypt is supported"
+          type: object
+          anyOf:
+            - $ref: "#/components/schemas/Decrypt"
+        anonymizer_results:
+          type: array
+          description: "Array of anonymized PIIs"
+          items:
+            $ref: "#/components/schemas/AnonymizerResult"
+
 
     RecognizerResult:
       type: object
@@ -443,6 +450,24 @@ components:
           format: double
           description: "The PII detection score"
           example: 0.8
+        entity_type:
+          $ref: "#/components/schemas/EntityTypes"
+
+    AnonymizerResult:
+      type: object
+      required:
+        - start
+        - end
+        - entity_type
+      properties:
+        start:
+          type: integer
+          description: "Where the anonymized PII starts"
+          example: 24
+        end:
+          type: integer
+          description: "Where the anonymized PII ends"
+          example: 32
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
 
@@ -589,6 +614,23 @@ components:
           description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
           example: "3t6w9z$C&F)J@NcR"
 
+    Decrypt:
+      title: Decrypt
+      description: "Replace encrypted PII decrypted text"
+      type: object
+      required:
+        - type
+        - key
+      properties:
+        type:
+          type: string
+          description: "decrypt"
+          example: decrypt
+        key:
+          type: string
+          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
+          example: "3t6w9z$C&F)J@NcR"
+
     AnonymizeResponse:
       type: object
       properties:
@@ -626,7 +668,7 @@ components:
           type: string
         items:
           type: array
-          description: "Array of decrypted entities"
+          description: "Array of deanonymized entities"
           items:
             $ref: "#/components/schemas/OperatorEntity"
 
