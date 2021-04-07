@@ -1,11 +1,9 @@
 # Presidio Anonymizer
 
 The Presidio anonymizer is a Python based module for anonymizing detected PII text
-entities with desired values.
-
-Persidio anonymizer comes with predefined operators but can easily be extended.
-
-Presidio-Anonymizer supports both anonymization and deanonymization of encrypted entities.
+entities with desired values. Presidio anonymizer supports both anonymization and 
+deanonymization by using operators. Operators are built-int text manipulation classes 
+which can be easily extended.
 
 
 ![Anonymizer Design](../assets/anonymizer-design.png)
@@ -72,7 +70,6 @@ Presidio-Anonymizer supports both anonymization and deanonymization of encrypted
     print(result)
     
     ```
-
 === "Python"
 
     Deanonymized ecncrypted text:
