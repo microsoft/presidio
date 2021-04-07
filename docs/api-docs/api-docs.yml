@@ -473,6 +473,24 @@ components:
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
 
+    AnonymizerResult:
+      type: object
+      required:
+        - start
+        - end
+        - entity_type
+      properties:
+        start:
+          type: integer
+          description: "Where the anonymized PII starts"
+          example: 24
+        end:
+          type: integer
+          description: "Where the anonymized PII ends"
+          example: 32
+        entity_type:
+          $ref: "#/components/schemas/EntityTypes"
+
     RecognizerResultWithAnaysisExplanation:
       allOf:
         - $ref: '#/components/schemas/RecognizerResult'
