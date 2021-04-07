@@ -70,9 +70,9 @@ which can be easily extended.
     print(result)
     
     ```
-=== "Python"
 
-    Deanonymized ecncrypted text:
+
+    Deanonymize encrypted text:
     
     ```python
     from presidio_anonymizer import DeanonymizeEngine
