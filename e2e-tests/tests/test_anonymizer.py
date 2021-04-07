@@ -105,6 +105,27 @@ def test_given_anonymize_called_with_deformed_body_then_bad_request_error_return
 
 
 @pytest.mark.api
+def test_given_anonymize_called_with_custom_then_bad_request_error_returned():
+    request_body = """
+    {
+        "text": "The user has the following two emails: email1@conto.com and email2@conto.com",
+        "anonymizers": {
+            "DEFAULT": { "type": "custom", "new_value": "lambda x:  x[::-1]" }            
+        },
+        "analyzer_results": [
+            { "start": 39, "end": 55, "score": 1.0, "entity_type": "EMAIL_ADDRESS" },
+            { "start": 60, "end": 76, "score": 1.0, "entity_type": "EMAIL_ADDRESS" }
+        ]
+    }
+    """
+    response_status, response_content = anonymize(request_body)
+
+    expected_response = '{"error": "Custom type anonymizer is not supported"}'
+    assert response_status == 400
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
 def test_given_anonymizers_called_then_expected_anonymizers_list_returned():
     response_status, response_content = anonymizers()
 

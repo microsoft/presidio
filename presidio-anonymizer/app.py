@@ -50,11 +50,14 @@ class Server:
         def anonymize() -> Response:
             content = request.get_json()
             if not content:
-                raise BadRequest("Invalid request json")
+                raise BadRequest("Invalid request json")            
 
             anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
                 content.get("anonymizers")
             )
+            if AppEntitiesConvertor.check_custom_operator(anonymizers_config):
+                raise BadRequest("Custom type anonymizer is not supported")
+
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 content.get("analyzer_results"))
             anoymizer_result = self.anonymizer.anonymize(
