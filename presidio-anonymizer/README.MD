@@ -82,7 +82,7 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
 
 ### Deanonymize
 
-Presidio deanonymize currently only contains one operator:
+Presidio deanonymize currently contains one operator:
 
 -   Decrypt - replaced the encrypted text with decrypted text. Uses Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 
 
