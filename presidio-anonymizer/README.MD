@@ -124,8 +124,8 @@ result = engine.anonymize(
 print(result)
 
 ```
-
-Deanonymize example, for an already encrypted text by the anonymizer: 
+This example take the output of the AnonymizerEngine with encrypted PII entities, 
+and decrypt it back to the original text:
 ```python
 from presidio_anonymizer import DeanonymizeEngine
 from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig

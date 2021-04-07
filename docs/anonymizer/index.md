@@ -72,7 +72,8 @@ which can be easily extended.
     ```
 
 
-    Deanonymize an already encrypted text by the anonymizer:
+    This example take the output of the AnonymizerEngine with encrypted PII entity, 
+    and decrypts it back to the original text:
     
     ```python
     from presidio_anonymizer import DeanonymizeEngine
