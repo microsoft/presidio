@@ -73,7 +73,6 @@ Presidio-Anonymizer supports both anonymization and deanonymization of encrypted
     
     ```
 
-=== "Python"
 
     Deanonymize encrypted text:
     
