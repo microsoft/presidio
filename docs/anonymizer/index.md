@@ -58,7 +58,7 @@ which can be easily extended.
     # Initialize the engine with logger.
     engine = AnonymizerEngine()
     
-    # Class the anonymize function with the text, analyzer results and
+    # Activate the anonymize function with the text, analyzer results and
     # Operators to define the anonymization type.
     result = engine.anonymize(
         text="My name is Bond, James Bond",
@@ -81,7 +81,7 @@ which can be easily extended.
     # Initialize the engine with logger.
     engine = DeanonymizeEngine()
     
-    # Class the deanonymize function with the text, anonymizer results and
+    # Activate the deanonymize function with the text, anonymizer results and
     # Operators to define the deanonymization type.
     result = engine.deanonymize(
         text="My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
