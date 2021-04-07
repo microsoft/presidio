@@ -162,10 +162,10 @@ paths:
               examples:
                 Replace and Redact Anonymizers:
                   value:
-                    { "text": "hello world, my name is ANONYMIZED. My number is: ", "items": [ { "anonymizer": "redact", "entity_type": "PHONE_NUMBER", "start": 50, "end": 50, "anonymized_text": "" }, { "anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED" } ] }
+                    { "text": "hello world, my name is ANONYMIZED. My number is: ", "items": [ { "operator": "redact", "entity_type": "PHONE_NUMBER", "start": 50, "end": 50, "text": "" }, { "operator": "replace", "entity_type": "NAME", "start": 24, "end": 34, "text": "ANONYMIZED" } ] }
                 Replace as default Anonymizer:
                   value:
-                    { "text": "hello world, my name is ANONYMIZED. My number is: ANONYMIZED", "items": [ { "anonymizer": "replace", "entity_type": "PHONE_NUMBER", "start": 50, "end": 60, "anonymized_text": "ANONYMIZED" }, { "anonymizer": "replace", "entity_type": "NAME", "start": 24, "end": 34, "anonymized_text": "ANONYMIZED" } ] }
+                    { "text": "hello world, my name is ANONYMIZED. My number is: ANONYMIZED", "items": [ { "operator": "replace", "entity_type": "PHONE_NUMBER", "start": 50, "end": 60, "text": "ANONYMIZED" }, { "operator": "replace", "entity_type": "NAME", "start": 24, "end": 34, "text": "ANONYMIZED" } ] }
         400:
           $ref: "#/components/responses/400BadRequest"
 
@@ -195,15 +195,16 @@ paths:
               example:
                 [ "hash", "mask", "redact", "replace", "encrypt" ]
 
-  /decrypt:
+
+  /deanonymize:
     post:
       servers:
         - url: https://presidio-anonymizer-prod.azurewebsites.net
       tags:
         - Anonymizer
-      summary: "Decrypt Anonymized Text"
+      summary: "Deanonymize Text"
       requestBody:
-        $ref: "#/components/requestBodies/DecryptRequest"
+        $ref: "#/components/requestBodies/DeanonymizeRequest"
 
       responses:
         200:
@@ -211,16 +212,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DecryptResponse"
+                $ref: "#/components/schemas/DeanonymizeResponse"
               examples:
                 Decrypt Single PII:
                   value:
-                    { "text": "text_for_encryption", "items": [ { "start": 0, "end": 19, "decrypted_text": "text_for_encryption","entity_type": "NUMBER" } ] }
+                    { "text": "text_for_encryption", "items": [ { "start": 0, "end": 19, "operator":"decrypt", "text": "text_for_encryption","entity_type": "NUMBER" } ] }
         400:
           $ref: "#/components/responses/400BadRequest"
 
         422:
           $ref: "#/components/responses/422UnprocessableEntity"
+
+  /deanonymizers:
+    get:
+      servers:
+        - url: https://presidio-anonymizer-prod.azurewebsites.net
+      tags:
+        - Anonymizer
+      summary: "Get supported deanonymizers"
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: "A list of all built-in supported deanonymizers"
+                type: array
+                items:
+                  description: "The Deanonymizer name"
+                  type: string
+                  example: "decrypt"
+              example:
+                [ "decrypt" ]
 
   /health:
     get:
@@ -254,7 +278,7 @@ components:
                   "text": "John Smith drivers license is AC432223",
                   "language": "en"
                 }
-            Enhanced Request:
+            Enhanced Request :
               value:
                 {
                   "text": "John Smith drivers license is AC432223",
@@ -262,7 +286,7 @@ components:
                   "return_decision_process": false,
                   "correlation_id": "123e4567-e89b-12d3-a456-426614174000",
                   "score_threshold": 0.6,
-                  "entities": [ "US_DRIVER_LICENSE" ],
+                  "entities": ["US_DRIVER_LICENSE"],
                   "trace": false
                 }
 
@@ -298,19 +322,24 @@ components:
                   ]
                 }
 
-    DecryptRequest:
+    DeanonymizeRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/DecryptRequest"
+            $ref: "#/components/schemas/DeanonymizeRequest"
           examples:
-            Decrypt Single PII:
+            Deanonymize text:
               value:
                 {
                   "text": "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
-                  "encrypt_results": [ {
-                    "key": "WmZq4t7w!z%C&F)J",
+                  "deanonymizers": {
+                    "PERSON": {
+                      "type": "decrypt",
+                      "key": "WmZq4t7w!z%C&F)J"
+                    }
+                  },
+                  "anonymizer_results": [ {
                     "start": 11,
                     "end": 55,
                     "entity_type": "PERSON"
@@ -362,15 +391,12 @@ components:
         anonymizers:
           description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition"
           type: object
-          additionalProperties:
-              x-additionalPropertiesName: <ENTITY_TYPE> or DEFAULT
-              type: object
-              anyOf:
-                - $ref: "#/components/schemas/Replace"
-                - $ref: "#/components/schemas/Redact"
-                - $ref: "#/components/schemas/Mask"
-                - $ref: "#/components/schemas/Hash"
-                - $ref: "#/components/schemas/Encrypt"
+          anyOf:
+            - $ref: "#/components/schemas/Replace"
+            - $ref: "#/components/schemas/Redact"
+            - $ref: "#/components/schemas/Mask"
+            - $ref: "#/components/schemas/Hash"
+            - $ref: "#/components/schemas/Encrypt"
           default:
             { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
 
@@ -380,19 +406,28 @@ components:
           items:
             $ref: "#/components/schemas/RecognizerResult"
 
-    DecryptRequest:
+    DeanonymizeRequest:
       type: object
       required:
         - text
-        - key
+        - anonymizer_results
+        - deanonymizers
       properties:
         text:
           type: string
-          description: "The text for decryption"
-        key:
-          type: string
-          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
-          example: "AAECAwQFBgcICQoLDA0ODw=="
+          description: "The anonymized text"
+          example: "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
+        deanonymizers:
+          description: "Currently only decrypt is supported"
+          type: object
+          anyOf:
+            - $ref: "#/components/schemas/Decrypt"
+        anonymizer_results:
+          type: array
+          description: "Array of anonymized PIIs"
+          items:
+            $ref: "#/components/schemas/AnonymizerResult"
+
 
     RecognizerResult:
       type: object
@@ -415,6 +450,24 @@ components:
           format: double
           description: "The PII detection score"
           example: 0.8
+        entity_type:
+          $ref: "#/components/schemas/EntityTypes"
+
+    AnonymizerResult:
+      type: object
+      required:
+        - start
+        - end
+        - entity_type
+      properties:
+        start:
+          type: integer
+          description: "Where the anonymized PII starts"
+          example: 24
+        end:
+          type: integer
+          description: "Where the anonymized PII ends"
+          example: 32
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
 
@@ -561,6 +614,23 @@ components:
           description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
           example: "3t6w9z$C&F)J@NcR"
 
+    Decrypt:
+      title: Decrypt
+      description: "Replace encrypted PII decrypted text"
+      type: object
+      required:
+        - type
+        - key
+      properties:
+        type:
+          type: string
+          description: "decrypt"
+          example: decrypt
+        key:
+          type: string
+          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
+          example: "3t6w9z$C&F)J@NcR"
+
     AnonymizeResponse:
       type: object
       properties:
@@ -570,52 +640,37 @@ components:
           type: array
           description: "Array of anonymized entities"
           items:
-            $ref: "#/components/schemas/AnonymizedEntity"
+            $ref: "#/components/schemas/OperatorEntity"
 
-    AnonymizedEntity:
+    OperatorEntity:
       type: object
       properties:
-        anonymizer:
+        operator:
           type: string
-          description: "Name of the anonymizer"
+          description: "Name of the used operator"
         entity_type:
           type: string
           description: "Type of the PII entity"
         start:
           type: integer
-          description: "Start index in the anonymized text"
+          description: "Start index of the changed text"
         end:
           type: integer
-          description: "End index in the anonymized text"
-        anonymized_text:
+          description: "End index in the changed text"
+        text:
           type: string
-          description: "The PII anonymized text"
+          description: "The new text returned"
 
-    DecryptResponse:
+    DeanonymizeResponse:
       type: object
       properties:
         text:
           type: string
         items:
           type: array
-          decription: "Array of decrypted entities"
-          items: "#/components/schemas/DecryptedEntity"
-
-    DecryptedEntity:
-      type: object
-      properties:
-        entity_type:
-          type: string
-          description: "Type of the PII entity"
-        start:
-          type: integer
-          description: "Start index in the decrypted text"
-        end:
-          type: integer
-          description: "End index in the decrypted text"
-        decrypted_text:
-          type: string
-          description: "The PII decrypted text"
+          description: "Array of deanonymized entities"
+          items:
+            $ref: "#/components/schemas/OperatorEntity"
 
   responses:
     400BadRequest:
