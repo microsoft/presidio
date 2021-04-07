@@ -39,6 +39,13 @@ Presidio anonymizer comes by default with the following anonymizers:
     -   `from_end` - Whether to mask the PII from it's end.
     
 -   Encrypt - replaced the PII with an encrypted text. 
+-   Custom - replace the PII with the result of the function executed on the PII
+
+    Parameters: `new_value` - lambda to execute on the PII data
+
+    The lambda return type must be a string
+
+
 Anonymizer currently uses Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 
 
     Parameters:
