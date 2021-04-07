@@ -75,7 +75,7 @@ Presidio-Anonymizer supports both anonymization and deanonymization of encrypted
 
 === "Python"
 
-    Deanonymized ecncrypted text:
+    Deanonymize encrypted text:
     
     ```python
     from presidio_anonymizer import DeanonymizeEngine
