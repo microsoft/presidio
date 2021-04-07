@@ -80,7 +80,7 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
     My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is: <
     PHONE_NUMBER><SSN>.
 
-### Deanonymize
+### Deanonymizer
 
 Presidio deanonymize currently only contains one operator:
 
@@ -125,7 +125,7 @@ print(result)
 
 ```
 
-Deanonymize example: 
+Deanonymize example, for an already encrypted text by the anonymizer: 
 ```python
 from presidio_anonymizer import DeanonymizeEngine
 from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig

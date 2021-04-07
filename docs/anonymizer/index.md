@@ -72,7 +72,7 @@ which can be easily extended.
     ```
 
 
-    Deanonymize encrypted text:
+    Deanonymize an already encrypted text by the anonymizer:
     
     ```python
     from presidio_anonymizer import DeanonymizeEngine
