@@ -1,9 +1,10 @@
 # Presidio Anonymizer
 
 The Presidio anonymizer is a Python based module for anonymizing detected PII text
-entities with desired values.
+entities with desired values. Presidio anonymizer supports both anonymization and 
+deanonymization by using operators. Operators are built-in text manipulation classes 
+which can be easily extended.
 
-Persidio anonymizer comes with predefined operators but can easily be extended.
 
 ![Anonymizer Design](../assets/anonymizer-design.png)
 
@@ -57,8 +58,8 @@ Persidio anonymizer comes with predefined operators but can easily be extended.
     # Initialize the engine with logger.
     engine = AnonymizerEngine()
     
-    # Class the anonymize function with the text, analyzer results and
-    # Anonymizers config to define the anonymization type.
+    # Invoke the anonymize function with the text, analyzer results and
+    # Operators to define the anonymization type.
     result = engine.anonymize(
         text="My name is Bond, James Bond",
         analyzer_results=[RecognizerResult("PERSON", 11, 15, 0.8),
@@ -68,6 +69,29 @@ Persidio anonymizer comes with predefined operators but can easily be extended.
     
     print(result)
     
+    ```
+
+
+    This example take the output of the AnonymizerEngine with encrypted PII entity, 
+    and decrypts it back to the original text:
+    
+    ```python
+    from presidio_anonymizer import DeanonymizeEngine
+    from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig
+    
+    # Initialize the engine with logger.
+    engine = DeanonymizeEngine()
+    
+    # Invoke the deanonymize function with the text, anonymizer results and
+    # Operators to define the deanonymization type.
+    result = engine.deanonymize(
+        text="My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
+        entities=[AnonymizerResult("PERSON", 11, 55)],
+        operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})}
+    )
+    
+    print(result)
+
     ```
 
 === "As an HTTP server"
@@ -129,6 +153,27 @@ Persidio anonymizer comes with predefined operators but can easily be extended.
             "end": 57,
             "score": 0.95,
             "entity_type": "PHONE_NUMBER"
+        }
+    ]}
+
+    Deanonymize:
+    
+    curl -XPOST http://localhost:3000/deanonymize -H "Content-Type: application/json" -d @payload
+
+    payload example:
+    {
+    "text": "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
+    "deanonymizers": {
+        "PERSON": {
+            "type": "decrypt",
+            "key": "WmZq4t7w!z%C&F)J"
+        }
+    },
+    "anonymizer_results": [
+        {
+            "start": 11,
+            "end": 55,
+            "entity_type": "PERSON"
         }
     ]}
     ```
