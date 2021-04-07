@@ -16,7 +16,7 @@ class UsPhoneRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "Phone (strong)",
-            r"(\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|d{3}[-\.\s]\d{3}[-\.\s]\\d{4})",
+            r"(\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]\d{3}[-\.\s]\d{4})",
             0.7,
         ),
         Pattern("Phone (medium)", r"\b(\d{3}[-\.\s]\d{3}[-\.\s]??\d{4})\b", 0.5),
