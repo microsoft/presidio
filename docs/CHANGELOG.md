@@ -3,7 +3,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
 
+### Removed
+
+### Deprecated
 
 ## [2.2.0] - 12.04.2021
 ### Changed
