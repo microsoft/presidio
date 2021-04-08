@@ -55,7 +55,7 @@ class Server:
             anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
                 content.get("anonymizers")
             )
-            if AppEntitiesConvertor.check_custom_operator(anonymizers_config):
+            if any([config.operator_name == "custom" for config in anonymizers_config.values()]):
                 raise BadRequest("Custom type anonymizer is not supported")
 
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
