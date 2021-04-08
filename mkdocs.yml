@@ -32,6 +32,8 @@ nav:
     - Sample Deployments:
       - Azure App Service: samples/deployments/app-service/index.md
       - Kubernetes: samples/deployments/k8s/index.md
+      - Azure Databricks/Spark: samples/deployments/spark/index.md
+      - Azure Data Factory: samples/deployments/data-factory/index.md
   - Supported entities: supported_entities.md
   - Development and design:
     - Design: design.md

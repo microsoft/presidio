@@ -8,11 +8,8 @@
     "anonymizerWebAppName": {
       "value": "presidio-anonimyzer"
     },
-    "analyzerSku": {
-      "value": "B2"
-    },
-    "anonymizerSku": {
-      "value": "B1"
+    "imageRedactorWebAppName": {
+      "value": "presidio-image-redactor"
     }
   }
 }

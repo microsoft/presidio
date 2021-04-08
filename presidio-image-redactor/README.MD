@@ -7,6 +7,12 @@
 The Presidio Image Redactor is a Python based module for detecting and redacting PII
 text entities in images.
 
+## Deploy Presidio image redactor to Azure
+
+Use the following button to deploy presidio image redactor to your Azure subscription.
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fpresidio-image-redactor%2Fdeploytoazure.json)
+
 ![Image Redactor Design](../docs/assets/image-redactor-design.png)
 
 ## Installation
