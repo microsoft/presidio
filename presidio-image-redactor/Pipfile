@@ -9,6 +9,7 @@ flask = "==1.1.2"
 pytesseract = "==0.3.7"
 presidio-analyzer = ">=1.9.0"
 pillow = "==8.1.1"
+matplotlib = "==3.2.2"
 
 [dev-packages]
 pytest = "*"

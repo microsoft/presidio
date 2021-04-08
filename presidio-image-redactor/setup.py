@@ -4,7 +4,12 @@ from os import path
 
 from setuptools import setup, find_packages
 
-requirements = ["pillow", "pytesseract==0.3.7", "presidio-analyzer>=1.9.0"]
+requirements = [
+    "pillow",
+    "matplotlib",
+    "pytesseract==0.3.7",
+    "presidio-analyzer>=1.9.0",
+]
 
 test_requirements = ["pytest>=3", "flake8==3.7.9"]
 
