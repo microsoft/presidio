@@ -12,6 +12,15 @@ Presidio is a community project aimed at helping everyone handle their private d
 Presidio is both a framework and a system. It's a framework in a sense that you could take code parts from it, extend, customize and plug somewhere. It's also a system you could take as a whole or in parts and deploy locally, on-prem on in the cloud.
 When contributing to presidio, it's important to keep this in mind, as some "framework" contributions might not be suitable for a deployment, or vice-versa.
 
+### PR guidelines
+Commit message should be clear, explaining the committed changes.
+
+Update CHANGELOG.md:
+
+Under Unreleased section, use the category which is most suitable for your change (changed/removed/deprecated). 
+Document the change with simple readable text and push it as part of the commit.
+Next release, the change will be documented under the new version.
+
 ### Build and Release process
 
 The project currently supports [Azure Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/) using YAML pipelines which can be easily imported to any Azure Pipelines instance.

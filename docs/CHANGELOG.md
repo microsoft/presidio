@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.2.0] - 12.04.2021
 ### Changed
-Anonymizer Engine:
+#### Anonymizer Engine:
 1. Request entity AnonymizerConfig renamed OperatorConfig
     - In OperatorConfig: anonymizer_name -> operator_name
 2. Response entity AnonymizerResult renamed to EngineResult
@@ -20,11 +20,11 @@ Anonymizer Engine:
         - anonymizer -> operator
         - anonymized_text -> text
 
-Anonymize API:
+#### Anonymize API:
 1. Response entity anonymizer renamed to operator.
 2. Response entity anonymizer_text renamed to text.
 
-Deanonymize:
+#### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
 [unreleased]: https://github.com/microsoft/presidio/compare/2.2.0...HEAD
