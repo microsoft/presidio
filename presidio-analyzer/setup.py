@@ -31,7 +31,7 @@ setuptools.setup(
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8==3.7.9"],
     install_requires=[
-        "spacy==2.3.4",
+        "spacy==3.0.5",
         "regex==2020.11.13",
         "tldextract==3.1.0",
         "pyyaml==5.4.1",
@@ -39,7 +39,6 @@ setuptools.setup(
     include_package_data=True,
     license="MIT",
     classifiers=[
-        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3.6",
