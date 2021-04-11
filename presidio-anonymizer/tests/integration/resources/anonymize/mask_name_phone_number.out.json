@@ -1,1 +1,0 @@
-{"text": "hello world, my name is ********. My number is: 03-******4", "items": [{"anonymizer": "mask", "entity_type": "PHONE_NUMBER", "start": 48, "end": 57, "anonymized_text": "03-******"}, {"anonymizer": "mask", "entity_type": "NAME", "start": 24, "end": 32, "anonymized_text": "********"}]}

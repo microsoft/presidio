@@ -80,6 +80,19 @@ My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is
     My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is: <
     PHONE_NUMBER><SSN>.
 
+### Deanonymizer
+
+Presidio deanonymize currently contains one operator:
+
+-   Decrypt - replaced the encrypted text with decrypted text. Uses Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 
+
+    Parameters:
+
+    -   `key` - a cryptographic key used for the encryption.
+    The length of the key needs to be of 128, 192 or 256 bits, in a string format.
+
+Please notice: you can use "DEFAULT" as an operator key to define an operator over all entities.
+
 ## Installation
 
 ### As package:
@@ -94,18 +107,38 @@ pip install presidio-anonymizer
 
 ```python
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import RecognizerResult, AnonymizerConfig
+from presidio_anonymizer.entities.engine import RecognizerResult, OperatorConfig
 
 # Initialize the engine with logger.
 engine = AnonymizerEngine()
 
-# Class the anonymize function with the text, analyzer results and
-# Anonymizers config to define the anonymization type.
+# Invoke the anonymize function with the text, analyzer results and
+# Operators to define the anonymization type.
 result = engine.anonymize(
     text="My name is Bond, James Bond",
     analyzer_results=[RecognizerResult("PERSON", 11, 15, 0.8),
                       RecognizerResult("PERSON", 17, 27, 0.8)],
-    anonymizers_config={"PERSON": AnonymizerConfig("replace", {"new_value": "BIP"})}
+    operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})}
+)
+
+print(result)
+
+```
+This example take the output of the AnonymizerEngine with encrypted PII entities, 
+and decrypt it back to the original text:
+```python
+from presidio_anonymizer import DeanonymizeEngine
+from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig
+
+# Initialize the engine with logger.
+engine = DeanonymizeEngine()
+
+# Invoke the deanonymize function with the text, anonymizer results and
+# Operators to define the deanonymization type.
+result = engine.deanonymize(
+    text="My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
+    entities=[AnonymizerResult("PERSON", 11, 55)],
+    operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})}
 )
 
 print(result)
