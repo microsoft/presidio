@@ -29,7 +29,7 @@ The template defines four parameters:
 
 * **SourceStore_Location** is the container name of your source store where you want to move files from.
 * **DestinationStore_Name** is the name of the target storage account which is provisioned by the ARM template.
-* **DestinationStore_Location** is the container name of your destination store where you want to move files to.
+* **DestinationStore_Location** is the container name of your destination store where you want to move files to. it has a default value of a container which was created during provisioning of the ARM template (presidio).
 * **KeyVault_Name** is the name of the Azure Key Vault which is provisioned by the ARM template.
 * **Analyzer_Url** is the URL for the Analyzer App Service which is provisioned by the ARM template.
 * **Anonymizer_Url** is the URL for the Anonymizer App Service which is provisioned by the ARM template.
