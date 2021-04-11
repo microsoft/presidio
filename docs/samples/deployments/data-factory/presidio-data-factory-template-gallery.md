@@ -10,6 +10,8 @@ The sample deploys the following Azure Services:
 
 Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline.
 
+**Note that** given the solution architecture which call presidio services using HTTP, it is optimal for use with a small-to-medium number of files, each with a small-to-medium content size. working with larger file stores or large files will have better performance when using [presidio with databricks](presidio-data-factory.md#option-2-presidio-on-azure-databricks). 
+
 ## About this Solution Template
 
 This template gets the files from your source file-based store. It then anonymizes the content and uploads each of them to the destination store.
