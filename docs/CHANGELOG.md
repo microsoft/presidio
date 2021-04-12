@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file.
 
 ## [2.2.0] - 12.04.2021
 ### Changed
+#### Analyzer:
+Upgrade Analyzer spacy version to 3.0.5
+
 #### Anonymizer Engine:
 1. Request entity AnonymizerConfig renamed OperatorConfig
     - In OperatorConfig: anonymizer_name -> operator_name
