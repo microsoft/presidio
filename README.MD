@@ -10,7 +10,12 @@
 [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
 [![PyPI package version](https://badge.fury.io/py/presidio-analyzer.svg)](https://badge.fury.io/py/presidio-analyzer.svg)
 
-[![Python 3.6](https://camo.githubusercontent.com/8e26ba5220a7019a30342315ff5cc4989f91e698fdfe73a41476dd57524385d1/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f707974686f6e2d332e362d626c75652e737667)](https://www.python.org/downloads/release/python-360/) [![Python 3.7](https://camo.githubusercontent.com/8d14b69ac2d9c1eb37ec86657e42ca8881c4c096895c48e96fe64916ba4b609a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f707974686f6e2d332e372d626c75652e737667)](https://www.python.org/downloads/release/python-370/) [![Python 3.8](https://camo.githubusercontent.com/f0cf3d008a2671b0a60a7bb65cbcd1adfdfc93f5e1d54032d3c64bad5a2f8a25/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f707974686f6e2d332e382d626c75652e737667)](https://www.python.org/downloads/release/python-380/)
+
+Analyzer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
+
+Anonymizer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-anonymizer.svg)](https://pypi.python.org/pypi/presidio-anonymizer/)
+
+Image-Redactor [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-image-redactor.svg)](https://pypi.python.org/pypi/presidio-image-redactor/)
 
 ## What is Presidio
 
