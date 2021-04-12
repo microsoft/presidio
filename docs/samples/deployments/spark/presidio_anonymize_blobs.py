@@ -82,17 +82,20 @@ display(input_df)
 # This is due to spacy limitation of loading models in multiple threads as
 # described here: https://github.com/explosion/spaCy/issues/4349
 def anonymize_text(text: str) -> str:
-    analyzer = AnalyzerEngine()
-    anonymizer = AnonymizerEngine()
-    analyzer_results = analyzer.analyze(text=text, language="en")
-    anonymized_results = anonymizer.anonymize(
-        text=text,
-        analyzer_results=analyzer_results,
-        operators={
-            "DEFAULT": AnonymizerConfig("replace", {"new_value": "<ANONYMIZED>"})
-        },
-    )
-    return anonymized_results
+    try:
+        analyzer = AnalyzerEngine()
+        anonymizer = AnonymizerEngine()
+        analyzer_results = analyzer.analyze(text=text, language="en")
+        anonymized_results = anonymizer.anonymize(
+            text=text,
+            analyzer_results=analyzer_results,
+            operators={
+                "DEFAULT": AnonymizerConfig("replace", {"new_value": "<ANONYMIZED>"})
+            },
+        )
+        return anonymized_results.text
+    except Exception as e:
+        print(f"An exception occurred. {e}")
 
 
 def anonymize_series(s: pd.Series) -> pd.Series:
