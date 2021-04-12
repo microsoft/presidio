@@ -1,5 +1,5 @@
 mkdocs
-mkdocs-material
+mkdocs-material==7.0.6
 mkdocs-jupyter
 pymdown-extensions
 markdown
