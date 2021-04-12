@@ -616,8 +616,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#built-in-anonymizers" class="md-nav__link">
-    Built-in anonymizers:
+  <a href="#built-in-operators" class="md-nav__link">
+    Built-in operators:
   </a>
   
 </li>
@@ -630,8 +630,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#creating-new-anonymizers" class="md-nav__link">
-    Creating new anonymizers
+  <a href="#creating-a-new-operator" class="md-nav__link">
+    Creating a new operator
   </a>
   
 </li>
@@ -656,8 +656,8 @@
   
   
     <li class="md-nav__item">
-      <a href="adding_anonymizers/" class="md-nav__link">
-        Developing PII anonymizers
+      <a href="adding_operators/" class="md-nav__link">
+        Developing PII operators
       </a>
     </li>
   
@@ -817,6 +817,30 @@
     <li class="md-nav__item">
       <a href="../samples/deployments/k8s/" class="md-nav__link">
         Kubernetes
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samples/deployments/spark/" class="md-nav__link">
+        Azure Databricks/Spark
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samples/deployments/data-factory/" class="md-nav__link">
+        Azure Data Factory
       </a>
     </li>
   
@@ -1061,8 +1085,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#built-in-anonymizers" class="md-nav__link">
-    Built-in anonymizers:
+  <a href="#built-in-operators" class="md-nav__link">
+    Built-in operators:
   </a>
   
 </li>
@@ -1075,8 +1099,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#creating-new-anonymizers" class="md-nav__link">
-    Creating new anonymizers
+  <a href="#creating-a-new-operator" class="md-nav__link">
+    Creating a new operator
   </a>
   
 </li>
@@ -1103,8 +1127,9 @@
                 
                 <h1 id="presidio-anonymizer">Presidio Anonymizer</h1>
 <p>The Presidio anonymizer is a Python based module for anonymizing detected PII text
-entities with desired values.</p>
-<p>Persidio anonymizer comes with predefined anonymizers but can easily be extended.</p>
+entities with desired values. Presidio anonymizer supports both anonymization and 
+deanonymization by using operators. Operators are built-in text manipulation classes 
+which can be easily extended.</p>
 <p><img alt="Anonymizer Design" src="../assets/anonymizer-design.png" /></p>
 <h2 id="installation">Installation</h2>
 <div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Using pip</label><div class="tabbed-content">
@@ -1140,18 +1165,36 @@ docker build . -t presidio/presidio-anonymizer
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Python</label><div class="tabbed-content">
 <p>Once the Presidio-anonymizer package is installed, run this simple script:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">AnonymizerEngine</span>
-<span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">RecognizerResult</span><span class="p">,</span> <span class="n">AnonymizerConfig</span>
+<span class="kn">from</span> <span class="nn">presidio_anonymizer.entities.engine</span> <span class="kn">import</span> <span class="n">RecognizerResult</span><span class="p">,</span> <span class="n">OperatorConfig</span>
 
 <span class="c1"># Initialize the engine with logger.</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">AnonymizerEngine</span><span class="p">()</span>
 
-<span class="c1"># Class the anonymize function with the text, analyzer results and</span>
-<span class="c1"># Anonymizers config to define the anonymization type.</span>
+<span class="c1"># Invoke the anonymize function with the text, analyzer results and</span>
+<span class="c1"># Operators to define the anonymization type.</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span>
     <span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is Bond, James Bond&quot;</span><span class="p">,</span>
     <span class="n">analyzer_results</span><span class="o">=</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
                       <span class="n">RecognizerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)],</span>
-    <span class="n">anonymizers_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="n">AnonymizerConfig</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;new_value&quot;</span><span class="p">:</span> <span class="s2">&quot;BIP&quot;</span><span class="p">})}</span>
+    <span class="n">operators</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;new_value&quot;</span><span class="p">:</span> <span class="s2">&quot;BIP&quot;</span><span class="p">})}</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<p>This example take the output of the AnonymizerEngine with encrypted PII entity, 
+and decrypts it back to the original text:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">DeanonymizeEngine</span>
+<span class="kn">from</span> <span class="nn">presidio_anonymizer.entities.engine</span> <span class="kn">import</span> <span class="n">AnonymizerResult</span><span class="p">,</span> <span class="n">OperatorConfig</span>
+
+<span class="c1"># Initialize the engine with logger.</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">DeanonymizeEngine</span><span class="p">()</span>
+
+<span class="c1"># Invoke the deanonymize function with the text, anonymizer results and</span>
+<span class="c1"># Operators to define the deanonymization type.</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">deanonymize</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=&quot;</span><span class="p">,</span>
+    <span class="n">entities</span><span class="o">=</span><span class="p">[</span><span class="n">AnonymizerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">55</span><span class="p">)],</span>
+    <span class="n">operators</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">&quot;decrypt&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;WmZq4t7w!z%C&amp;F)J&quot;</span><span class="p">})}</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
@@ -1212,50 +1255,43 @@ payload example:
         <span class="s2">&quot;entity_type&quot;</span>: <span class="s2">&quot;PHONE_NUMBER&quot;</span>
     <span class="o">}</span>
 <span class="o">]}</span>
+
+Deanonymize:
+
+curl -XPOST http://localhost:3000/deanonymize -H <span class="s2">&quot;Content-Type: application/json&quot;</span> -d @payload
+
+payload example:
+<span class="o">{</span>
+<span class="s2">&quot;text&quot;</span>: <span class="s2">&quot;My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=&quot;</span>,
+<span class="s2">&quot;deanonymizers&quot;</span>: <span class="o">{</span>
+    <span class="s2">&quot;PERSON&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;type&quot;</span>: <span class="s2">&quot;decrypt&quot;</span>,
+        <span class="s2">&quot;key&quot;</span>: <span class="s2">&quot;WmZq4t7w!z%C&amp;F)J&quot;</span>
+    <span class="o">}</span>
+<span class="o">}</span>,
+<span class="s2">&quot;anonymizer_results&quot;</span>: <span class="o">[</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;start&quot;</span>: <span class="m">11</span>,
+        <span class="s2">&quot;end&quot;</span>: <span class="m">55</span>,
+        <span class="s2">&quot;entity_type&quot;</span>: <span class="s2">&quot;PERSON&quot;</span>
+    <span class="o">}</span>
+<span class="o">]}</span>
 </code></pre></div>
 </div>
 </div>
-<h2 id="built-in-anonymizers">Built-in anonymizers:</h2>
-<table>
-<thead>
-<tr>
-<th>Anonymizer type</th>
-<th>Description</th>
-<th>Parameters</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>replace</td>
-<td>replaces the PII with desired value</td>
-<td><code>new_value</code> - replaces existing text with the given value.<br> If <code>new_value</code> is not supplied or empty, default behavior will be: &lt;entity_type> e.g: &lt;PHONE_NUMBER></td>
-</tr>
-<tr>
-<td>redact</td>
-<td>removes the PII completely from text</td>
-<td>None</td>
-</tr>
-<tr>
-<td>hash</td>
-<td>hash the PII using either sha256, sha512 or md5</td>
-<td><code>hash_type</code> - sets the type of hashing. Can be either <code>sha256</code>, <code>sha512</code> or <code>md5</code>. <br> The default hash type is <code>sha256</code>.</td>
-</tr>
-<tr>
-<td>mask</td>
-<td>replaces the PII with a given character</td>
-<td><code>chars_to_mask</code> - the amount of characters out of the PII that should be replaced. <br> <code>masking_char</code> - the character to be replaced with. <br> <code>from_end</code> - Whether to mask the PII from it's end.</td>
-</tr>
-<tr>
-<td>encrypt</td>
-<td>encrypts the PII using a given key</td>
-<td><code>key</code> - a cryptographic key used for the encryption.</td>
-</tr>
-</tbody>
-</table>
+<h2 id="built-in-operators">Built-in operators:</h2>
+<p>Operator type | Operaor name | Description | Parameters
+| --- | --- | ---| ---|
+| Anonymize | replace | replaces the PII with desired value | <code>new_value</code> - replaces existing text with the given value.<br> If <code>new_value</code> is not supplied or empty, default behavior will be: &lt;entity_type> e.g: &lt;PHONE_NUMBER> |
+| Anonymize | redact | removes the PII completely from text | None |
+| Anonymize | hash | hash the PII using either sha256, sha512 or md5 | <code>hash_type</code> - sets the type of hashing. Can be either <code>sha256</code>, <code>sha512</code> or <code>md5</code>. <br> The default hash type is <code>sha256</code>. | 
+| Anonymize | mask | replaces the PII with a given character | <code>chars_to_mask</code> - the amount of characters out of the PII that should be replaced. <br> <code>masking_char</code> - the character to be replaced with. <br> <code>from_end</code> - Whether to mask the PII from it's end. |
+| Anonymize | encrypt | encrypts the PII using a given key | <code>key</code> - a cryptographic key used for the encryption. |
+| Deanonymize | decrypt | decrypt the encrypted PII in the text using the encryption key | <code>key</code> - a cryptographic key used for the encryption is also used for the decryption. |</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If anonymizers map is empty or "DEFAULT" key is not stated, the default
-anonymizer is "replace" for all entities. The replacing value will be the entity type
+<p>When performing anonymization, if anonymizers map is empty or "DEFAULT" key is not stated, the default
+anonymization operator is "replace" for all entities. The replacing value will be the entity type
 e.g.: &lt;PHONE_NUMBER></p>
 </div>
 <h2 id="overlapping-anonymization-scenarios">Overlapping Anonymization Scenarios</h2>
@@ -1288,9 +1324,9 @@ anonymization scenarios:</p>
   My name is Inigo Montoya. You Killed my Father. Prepare to die. BTW my number is:
   &lt;PHONE_NUMBER>&lt;SSN>.</li>
 </ul>
-<h2 id="creating-new-anonymizers">Creating new anonymizers</h2>
-<p>Presidio anonymizer can be easily extended to support additional anonnymization methods.
-See <a href="adding_anonymizers/">this tutorial on adding new anonymization methods</a>
+<h2 id="creating-a-new-operator">Creating a new <code>operator</code></h2>
+<p>Presidio anonymizer can be easily extended to support additional operators.
+See <a href="adding_operators/">this tutorial on adding new operators</a>
 for more information.</p>
 <h2 id="api-reference">API reference</h2>
 <p>Follow
@@ -1329,13 +1365,13 @@ and <a href="../api/anonymizer_python/">Anonymizer Python API</a> for Python API
         </a>
       
       
-        <a href="adding_anonymizers/" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="adding_operators/" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Developing PII anonymizers
+              Developing PII operators
             </div>
           </div>
           <div class="md-footer__button md-icon">

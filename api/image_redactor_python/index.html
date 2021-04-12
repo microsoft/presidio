@@ -559,8 +559,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../anonymizer/adding_anonymizers/" class="md-nav__link">
-        Developing PII anonymizers
+      <a href="../../anonymizer/adding_operators/" class="md-nav__link">
+        Developing PII operators
       </a>
     </li>
   
@@ -720,6 +720,30 @@
     <li class="md-nav__item">
       <a href="../../samples/deployments/k8s/" class="md-nav__link">
         Kubernetes
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/spark/" class="md-nav__link">
+        Azure Databricks/Spark
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samples/deployments/data-factory/" class="md-nav__link">
+        Azure Data Factory
       </a>
     </li>
   
@@ -1084,8 +1108,27 @@
 <a id="presidio_image_redactor.image_redactor_engine.ImageRedactorEngine"></a>
     <div class="doc doc-contents first">
 
-      <p>ImageRedactorEngine class only supporting redaction currently.</p>
+      <p>ImageRedactorEngine performs OCR + PII detection + bounding box redaction.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>image_analyzer_engine</code></td>
+        <td><code></code></td>
+        <td><p>Engine which performs OCR + PII detection.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
 
 
 
@@ -1129,7 +1172,7 @@ manipulate it.</p>
   <tbody>
       <tr>
         <td><code>image</code></td>
-        <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.9.2/x64/lib/python3.9/site-packages/PIL/Image.py&#39;&gt;</code></td>
+        <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.9.4/x64/lib/python3.9/site-packages/PIL/Image.py&#39;&gt;</code></td>
         <td><p>PIL Image to be processed</p></td>
         <td><em>required</em></td>
       </tr>
@@ -1151,7 +1194,7 @@ manipulate it.</p>
   </thead>
   <tbody>
     <tr>
-      <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.9.2/x64/lib/python3.9/site-packages/PIL/Image.py&#39;&gt;</code></td>
+      <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.9.4/x64/lib/python3.9/site-packages/PIL/Image.py&#39;&gt;</code></td>
       <td><p>the redacted image</p></td>
     </tr>
   </tbody>
@@ -1174,7 +1217,7 @@ manipulate it.</p>
 
     <span class="n">image</span> <span class="o">=</span> <span class="n">ImageChops</span><span class="o">.</span><span class="n">duplicate</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
-    <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
     <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
@@ -1211,10 +1254,36 @@ manipulate it.</p>
 
       <p>ImageAnalyzerEngine class.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>analyzer_engine</code></td>
+        <td><code></code></td>
+        <td><p>The Presidio AnalyzerEngine instance to be used to detect PII in text</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>ocr</code></td>
+        <td><code></code></td>
+        <td><p>the OCR object to be used to detect text in images.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
 
 
 
   <div class="doc doc-children">
+
 
 
 
@@ -1255,6 +1324,12 @@ manipulate it.</p>
         <td><p>PIL Image/numpy array or file path(str) to be processed</p></td>
         <td><em>required</em></td>
       </tr>
+      <tr>
+        <td><code>kwargs</code></td>
+        <td><code></code></td>
+        <td><p>Additional values for the analyze method in AnalyzerEngine</p></td>
+        <td><code>{}</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -1278,14 +1353,16 @@ manipulate it.</p>
     <span class="sd">&quot;&quot;&quot;Analyse method to analyse the given image.</span>
 
 <span class="sd">    :param image: PIL Image/numpy array or file path(str) to be processed</span>
+<span class="sd">    :param kwargs: Additional values for the analyze method in AnalyzerEngine</span>
 
 <span class="sd">    :return: list of the extract entities with image bounding boxes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ocr_result</span> <span class="o">=</span> <span class="n">OCR</span><span class="p">()</span><span class="o">.</span><span class="n">perform_ocr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">OCR</span><span class="p">()</span><span class="o">.</span><span class="n">get_text_from_ocr_dict</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">)</span>
+    <span class="n">ocr_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">perform_ocr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">get_text_from_ocr_dict</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">)</span>
 
-    <span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
-    <span class="n">analyzer_result</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">analyzer_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span>
     <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_analyzer_results_to_bounding_boxes</span><span class="p">(</span>
         <span class="n">analyzer_result</span><span class="p">,</span> <span class="n">ocr_result</span><span class="p">,</span> <span class="n">text</span>
     <span class="p">)</span>

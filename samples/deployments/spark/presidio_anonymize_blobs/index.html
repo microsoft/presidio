@@ -552,8 +552,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../anonymizer/adding_anonymizers/" class="md-nav__link">
-        Developing PII anonymizers
+      <a href="../../../../anonymizer/adding_operators/" class="md-nav__link">
+        Developing PII operators
       </a>
     </li>
   
@@ -713,6 +713,30 @@
     <li class="md-nav__item">
       <a href="../../k8s/" class="md-nav__link">
         Kubernetes
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Azure Databricks/Spark
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data-factory/" class="md-nav__link">
+        Azure Data Factory
       </a>
     </li>
   
@@ -916,54 +940,56 @@
                 
 <div class="notebook-content">
 <style type="text/css">
+    
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: var(--jp-cell-editor-active-background) }
-.highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
-.highlight .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
-.highlight .err { color: var(--jp-mirror-editor-error-color) } /* Error */
-.highlight .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
-.highlight .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
-.highlight .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
-.highlight .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
-.highlight .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
-.highlight .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
-.highlight .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
-.highlight .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
-.highlight .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
-.highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
-.highlight .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
-.highlight .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
-.highlight .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
-.highlight .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
-.highlight .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
-.highlight .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
-.highlight .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
-.highlight .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
-.highlight .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
-.highlight .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
-.highlight .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
-.highlight .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
-.highlight .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
-.highlight .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
-.highlight .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
-.highlight .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
-.highlight .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
-.highlight .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
-.highlight .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
-.highlight .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
+.highlight-ipynb .hll { background-color: var(--jp-cell-editor-active-background) }
+.highlight-ipynb { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
+.highlight-ipynb .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
+.highlight-ipynb .err { color: var(--jp-mirror-editor-error-color) } /* Error */
+.highlight-ipynb .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */
+.highlight-ipynb .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */
+.highlight-ipynb .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */
+.highlight-ipynb .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */
+.highlight-ipynb .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */
+.highlight-ipynb .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */
+.highlight-ipynb .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */
+.highlight-ipynb .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */
+.highlight-ipynb .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */
+.highlight-ipynb .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */
+.highlight-ipynb .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */
+.highlight-ipynb .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */
+.highlight-ipynb .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */
+.highlight-ipynb .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */
+.highlight-ipynb .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */
+.highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
+.highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
+.highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
+.highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
+.highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
+.highlight-ipynb .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */
+.highlight-ipynb .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */
+.highlight-ipynb .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */
+.highlight-ipynb .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */
+.highlight-ipynb .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */
+.highlight-ipynb .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */
+.highlight-ipynb .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */
+.highlight-ipynb .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */
+.highlight-ipynb .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */
+.highlight-ipynb .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */
+.highlight-ipynb .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */
+.highlight-ipynb .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */
+.highlight-ipynb .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */
+.highlight-ipynb .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */
+.highlight-ipynb .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */
+.highlight-ipynb .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */
+.highlight-ipynb .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */
   </style>
+
 
 
 <style type="text/css">
@@ -14704,7 +14730,8 @@ body.lm-mod-override-cursor .jp-OutputArea-output.jp-mod-isolated:before {
 |----------------------------------------------------------------------------*/
 
 </style>
-<style type="text/css">
+
+    <style type="text/css">
 /*-----------------------------------------------------------------------------
 | Copyright (c) Jupyter Development Team.
 | Distributed under the terms of the Modified BSD License.
@@ -15094,7 +15121,10 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-icon-contrast-color3: var(--md-blue-600);
 }
 </style>
-<style type="text/css">
+
+
+
+<style>
 /* Reset */
 *, *::before, *::after {
     -webkit-box-sizing: border-box;
@@ -15115,54 +15145,60 @@ all of MD as it is not optimized for dense, information rich UIs.
 }
 
 /* Anchor links */
-.anchor-link {
+.jupyter-notebook .anchor-link {
     display: none;
 }
 h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Markdown cells: Remove prompt */
+/* Markdown cells: Remove Input prompt */
 .jp-Cell-inputWrapper .jp-InputPrompt {
     display: none;
 }
 
-/* Code cells: Show prompt */
+/* Code cells: Show Input prompt */
 .jp-CodeCell .jp-Cell-inputWrapper .jp-InputPrompt {
     display: block;
 }
 
-/* Prompt fixes */
+/* Code pre block scroll horizontaly */
 .jp-InputPrompt, .jp-OutputPrompt{
     overflow: visible;
 }
 
-/* Lab uses move for the input prompts */
+/* Lab uses move cursor for the input prompts */
 .jp-Notebook .jp-Cell .jp-InputPrompt {
     cursor: default;
 }
 
-/* Editor max-width */
+/* Code cell max-width */
 .jp-InputArea-editor {
     width: 1px;
 }
 
-/* Editor colors */
-.jp-Editor .highlight {
-    margin: 0.4em;
-    background: var(--jp-cell-editor-background);
-    color: var(--jp-mirror-editor-variable-color);
+/* Code cell Fix pre margin */
+.jp-InputArea-editor .highlight-ipynb pre {
+    margin: 0;
+    padding: 5px 10px;
 }
 
 /* Editor colors */
-.jp-Editor .highlight pre {
+/* .jp-Editor .highlight {
+    margin: 0.4em;
+    background: var(--jp-cell-editor-background);
+    color: var(--jp-mirror-editor-variable-color);
+} */
+
+/* Editor colors */
+/* .jp-Editor .highlight pre {
     background: none;
     border: none;
     margin: 0;
     overflow-x: auto;
-}
+} */
 
-/* Material mkdocs */
+/* MKDocs Material theme defaults */
 .jp-RenderedHTMLCommon p {
     font-size: .8rem;
     line-height: 1.6;
@@ -15202,9 +15238,12 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     border: none;
 }
 
+.jp-RenderedHTMLCommon .admonition p:not(:first-child) {
+    margin: 1em 0;
+}
 
 /* Tags on cells */
-/* Mostly copying this from straight Jupyter */
+/* Mostly copying this from straight from Jupyter */
 .celltoolbar {
     border: none;
     background: #EEE;
@@ -15250,7 +15289,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     display: inline-block;
 }
 
-/* Bokeh plots table no hover */
+/* Fix: Bokeh plots table no hover */
 .bk-plot-wrapper tbody tr {
     background: none !important;
 }
@@ -15297,9 +15336,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     }
     init_mathjax();
     </script>
-    <!-- End of mathjax configuration -->
-<body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-
+    <!-- End of mathjax configuration --><div class="jupyter-notebook">
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Databricks notebook source
@@ -15330,7 +15367,7 @@ MAGIC </ol></p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span>
 <span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">AnonymizerEngine</span>
 <span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">AnonymizerConfig</span>
 <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">StringType</span>
@@ -15353,7 +15390,7 @@ MAGIC </ol></p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;storage_account_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Blob Storage Account Name&quot;</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;storage_account_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Blob Storage Account Name&quot;</span><span class="p">)</span>
 <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;storage_container_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Blob Container Name&quot;</span><span class="p">)</span>
 <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;storage_account_access_key&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Storage Account Access Key&quot;</span><span class="p">)</span>
 <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;storage_input_folder&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;Input Folder Name&quot;</span><span class="p">)</span>
@@ -15393,7 +15430,7 @@ MAGIC # Import the text files from Azure Blob storage</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">storage_account_name</span> <span class="o">=</span> <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_account_name&quot;</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">storage_account_name</span> <span class="o">=</span> <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_account_name&quot;</span><span class="p">)</span>
 <span class="n">storage_container_name</span> <span class="o">=</span> <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_container_name&quot;</span><span class="p">)</span>
 <span class="n">storage_account_access_key</span> <span class="o">=</span> <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_account_access_key&quot;</span><span class="p">)</span>
 <span class="n">storage_mount_name</span> <span class="o">=</span> <span class="s2">&quot;/mnt/files&quot;</span>
@@ -15413,7 +15450,7 @@ MAGIC # Import the text files from Azure Blob storage</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># unmount container if previously mounted</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># unmount container if previously mounted</span>
 <span class="k">def</span> <span class="nf">sub_unmount</span><span class="p">(</span><span class="n">str_path</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">mount</span><span class="o">.</span><span class="n">mountPoint</span> <span class="o">==</span> <span class="n">str_path</span> <span class="k">for</span> <span class="n">mount</span> <span class="ow">in</span> <span class="n">dbutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">mounts</span><span class="p">()):</span>
         <span class="n">dbutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">unmount</span><span class="p">(</span><span class="n">str_path</span><span class="p">)</span>
@@ -15433,7 +15470,7 @@ MAGIC # Import the text files from Azure Blob storage</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="n">sub_unmount</span><span class="p">(</span><span class="n">storage_mount_name</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">sub_unmount</span><span class="p">(</span><span class="n">storage_mount_name</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -15450,7 +15487,7 @@ MAGIC # Import the text files from Azure Blob storage</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># mount the container</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># mount the container</span>
 <span class="n">dbutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span>
     <span class="n">source</span><span class="o">=</span><span class="s2">&quot;wasbs://&quot;</span>
     <span class="o">+</span> <span class="n">storage_container_name</span>
@@ -15480,7 +15517,7 @@ MAGIC # Import the text files from Azure Blob storage</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># load the files</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># load the files</span>
 <span class="n">input_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
     <span class="n">storage_mount_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">dbutils</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_input_folder&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/*&quot;</span>
 <span class="p">)</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">input_file_name</span><span class="p">())</span>
@@ -15520,22 +15557,25 @@ MAGIC # Anonymize Text using Presidio</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># define a pandas UDF function and a series function over it.</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define a pandas UDF function and a series function over it.</span>
 <span class="c1"># Note that analyzer is loaded within the UDF and not broadcasted.</span>
 <span class="c1"># This is due to spacy limitation of loading models in multiple threads as</span>
 <span class="c1"># described here: https://github.com/explosion/spaCy/issues/4349</span>
 <span class="k">def</span> <span class="nf">anonymize_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
-    <span class="n">anonymizer</span> <span class="o">=</span> <span class="n">AnonymizerEngine</span><span class="p">()</span>
-    <span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-    <span class="n">anonymized_results</span> <span class="o">=</span> <span class="n">anonymizer</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span>
-        <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
-        <span class="n">analyzer_results</span><span class="o">=</span><span class="n">analyzer_results</span><span class="p">,</span>
-        <span class="n">anonymizers_config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">AnonymizerConfig</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;new_value&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ANONYMIZED&gt;&quot;</span><span class="p">})</span>
-        <span class="p">},</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">anonymized_results</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
+        <span class="n">anonymizer</span> <span class="o">=</span> <span class="n">AnonymizerEngine</span><span class="p">()</span>
+        <span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+        <span class="n">anonymized_results</span> <span class="o">=</span> <span class="n">anonymizer</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">analyzer_results</span><span class="o">=</span><span class="n">analyzer_results</span><span class="p">,</span>
+            <span class="n">operators</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">AnonymizerConfig</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;new_value&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ANONYMIZED&gt;&quot;</span><span class="p">})</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">anonymized_results</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An exception occurred. </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -15552,7 +15592,7 @@ MAGIC # Anonymize Text using Presidio</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">anonymize_series</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">anonymize_series</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">anonymize_text</span><span class="p">)</span>
 </pre></div>
 
@@ -15570,7 +15610,7 @@ MAGIC # Anonymize Text using Presidio</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># define a the function as pandas UDF</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># define a the function as pandas UDF</span>
 <span class="n">anonymize</span> <span class="o">=</span> <span class="n">pandas_udf</span><span class="p">(</span><span class="n">anonymize_series</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="n">StringType</span><span class="p">())</span>
 </pre></div>
 
@@ -15588,7 +15628,7 @@ MAGIC # Anonymize Text using Presidio</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># apply the udf</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># apply the udf</span>
 <span class="n">anonymized_df</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;anonymized_text&quot;</span><span class="p">,</span> <span class="n">anonymize</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)))</span>
 <span class="n">display</span><span class="p">(</span><span class="n">anonymized_df</span><span class="p">)</span>
 </pre></div>
@@ -15634,7 +15674,7 @@ client to allow writing each row as a separate blob from worker.</p>
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class=" highlight highlight-ipynb hl-python"><pre><span></span><span class="c1"># remove hdfs prefix from file name</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># remove hdfs prefix from file name</span>
 <span class="n">anonymized_df</span> <span class="o">=</span> <span class="n">anonymized_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
     <span class="s2">&quot;filename&quot;</span><span class="p">,</span>
     <span class="n">regexp_replace</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="s2">&quot;^.*(&quot;</span> <span class="o">+</span> <span class="n">storage_mount_name</span> <span class="o">+</span> <span class="s2">&quot;/)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
@@ -15653,7 +15693,7 @@ client to allow writing each row as a separate blob from worker.</p>
 </div>
 
 </div>
-</body>
+</div>
 
 
 </div>

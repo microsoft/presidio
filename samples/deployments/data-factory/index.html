@@ -20,7 +20,7 @@
     
     
       
-        <title>Anonymize PII entities in an Azure Data Factory ETL Pipeline - Microsoft Presidio</title>
+        <title>Azure Data Factory - Microsoft Presidio</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#anonymize-pii-entities-in-an-azure-data-factory-etl-pipeline" class="md-skip">
+        <a href="#anonymize-pii-entities-with-azure-data-factory" class="md-skip">
           Skip to content
         </a>
       
@@ -103,7 +103,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Anonymize PII entities in an Azure Data Factory ETL Pipeline
+              Azure Data Factory
             
           </span>
         </div>
@@ -240,13 +240,15 @@
         
   
   
+    
+  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../../" class="md-tabs__link">
+      <a href="../../" class="md-tabs__link md-tabs__link--active">
         Samples
       </a>
     </li>
@@ -557,8 +559,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../anonymizer/adding_anonymizers/" class="md-nav__link">
-        Developing PII anonymizers
+      <a href="../../../anonymizer/adding_operators/" class="md-nav__link">
+        Developing PII operators
       </a>
     </li>
   
@@ -624,12 +626,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
       
       <label class="md-nav__link" for="__nav_6">
         Samples
@@ -681,12 +685,14 @@
             
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" type="checkbox" id="__nav_6_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" type="checkbox" id="__nav_6_4" checked>
       
       <label class="md-nav__link" for="__nav_6_4">
         Sample Deployments
@@ -719,6 +725,39 @@
       <a href="../k8s/" class="md-nav__link">
         Kubernetes
       </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spark/" class="md-nav__link">
+        Azure Databricks/Spark
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Azure Data Factory
+      </a>
+      
     </li>
   
 
@@ -921,61 +960,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#option-1-presidio-as-an-http-rest-endpoint" class="md-nav__link">
-    Option 1: Presidio as an HTTP REST endpoint
-  </a>
-  
-    <nav class="md-nav" aria-label="Option 1: Presidio as an HTTP REST endpoint">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#deploy-the-arm-template" class="md-nav__link">
-    Deploy the ARM template
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#option-2-presidio-on-azure-databricks" class="md-nav__link">
-    Option 2: Presidio on Azure Databricks
-  </a>
-  
-    <nav class="md-nav" aria-label="Option 2: Presidio on Azure Databricks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pre-requisite-deploy-azure-databricks" class="md-nav__link">
-    Pre-requisite - Deploy Azure Databricks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#deploy-the-arm-template_1" class="md-nav__link">
-    Deploy the ARM template
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -987,56 +971,13 @@
               
                 
                 
-                <h1 id="anonymize-pii-entities-in-an-azure-data-factory-etl-pipeline">Anonymize PII entities in an Azure Data Factory ETL Pipeline</h1>
+                <h1 id="anonymize-pii-entities-with-azure-data-factory">Anonymize PII entities with Azure Data Factory</h1>
 <p>You can build data anonymization ETL pipelines using Azure Data Factory (ADF) and Presidio.
-The following samples showcase two scenarios which use ADF to move a set of JSON objects from an online location to an Azure Storage while anonymizing their content.
-The first sample leverages the code for using <a href="../app-service/">Presidio on Azure App Service</a> to call Presidio as an HTTP REST endpoint in the ADF pipeline while parsing and storing each file as an Azure Blob Storage.
-The second sample leverage the code for using <a href="../spark/">Presidio on spark</a> to run over a set of files on an Azure Blob Storage to anonymnize their content, in the case of having a large data set that requires the scale of databricks.</p>
-<p>The samples use the following Azure Services:</p>
-<ul>
-<li>Azure Data Factory - Host and orchestrate the transformation pipeline.</li>
-<li>Azure KeyVault - Holds the access keys for Azure Storage to avoid having keys and secrets in the code.</li>
-<li>Azure Storage - Persistence layer of this sample.</li>
-<li>Azure Databricks/ Azure App Service - Host presidio to anonymize the data.</li>
-</ul>
-<p>The input file used by the samples is hosted on <a href="https://github.com/microsoft/presidio-research/">presidio-research</a> repository. It is setup as a variable on the provided ARM template and used by Azure Data Factory as the input source.</p>
-<h2 id="option-1-presidio-as-an-http-rest-endpoint">Option 1: Presidio as an HTTP REST endpoint</h2>
-<p>By using Presidio as an HTTP endpoint, the user can select which infrastructure best suits their requirements. in this sample, Presidio is deployed to an Azure App Service, but other deployment targets can be used, such as <a href="../k8s/">kubernetes</a>.</p>
-<p><img alt="ADF-App-Service" src="adf-app-service-screenshot.png" /></p>
-<h3 id="deploy-the-arm-template">Deploy the ARM template</h3>
-<p>Create the Azure App Service and the ADF pipeline by clicking the Deploy-to-Azure button, or by running the following script to provision the <a href="azure-deploy-adf-app-service.json">provided ARM template</a>.</p>
-<p><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Fazure-deploy-adf-app-service.json"><img alt="Deploy to Azure" src="https://aka.ms/deploytoazurebutton" /></a></p>
-<div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>Name of resource group<span class="o">]</span>
-<span class="nv">LOCATION</span><span class="o">=[</span>location of resources<span class="o">]</span>
-
-az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
-az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./azure-deploy-adf-app-service.json
-</code></pre></div>
-<p>Note that:</p>
-<ul>
-<li>A SAS token keys is created and read from Azure Storage and then imported to Azure Key Vault. Using ARM template built in <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions">functions</a>: <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas">listAccountSas</a>.</li>
-<li>An access policy grants the Azure Data Factory managed identity access to the Azure Key Vault by using ARM template <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions-resource?tabs=json#reference">reference</a> function to the Data Factory object and acquire its identity.principalId property. This is enabled by setting the data factory ARM resource's identity attribute to managed identity (SystemAssigned).</li>
-</ul>
-<h2 id="option-2-presidio-on-azure-databricks">Option 2: Presidio on Azure Databricks</h2>
-<p>By using Presidio as a Notebook step in ADF, we allow Databricks to scale presidio according to the cluster capabilities and the input dataset. Using presidio as a native python package in pyspark can unlock more analysis and de-identifiaction scenarios.</p>
-<p><img alt="ADF-Databricks" src="adf-databricks-screenshot.png" /></p>
-<h3 id="pre-requisite-deploy-azure-databricks">Pre-requisite - Deploy Azure Databricks</h3>
-<p>Provision and setup the datbricks cluster by following the steps in <a href="../spark/#Azure-Databricks">presidio-spark sample</a>. 
-<strong>Note</strong> that you should only create and configure the databricks cluster and not the storage account, which will be created in the next step.</p>
-<h3 id="deploy-the-arm-template_1">Deploy the ARM template</h3>
-<p>Create the rest of the services by running the following script which uses the <a href="azure-deploy-adf-databricks.json">provided ARM template</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>Name of resource group<span class="o">]</span>
-<span class="nv">LOCATION</span><span class="o">=[</span>location of resources<span class="o">]</span>
-<span class="nv">DATABRICKS_ACCESS_TOKEN</span><span class="o">=[</span>Access token to databricks created <span class="k">in</span> the presidio-spark sample<span class="o">]</span>
-<span class="nv">DATABRICKS_WORKSPACE_URL</span><span class="o">=[</span>Databricks workspace URL without the https:// prefix<span class="o">]</span>
-<span class="nv">DATABRICKS_CLUSTER_ID</span><span class="o">=[</span>Databricks presidio-ready cluster ID<span class="o">]</span>
-<span class="nv">DATABRICKS_NOTEBOOK_LOCATION</span><span class="o">=[</span>Location of presidio notebook from the presidio-spark sample<span class="o">]</span>
-
-az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
-az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./azure-deploy-adf-databricks.json --parameters <span class="nv">Databricks_accessToken</span><span class="o">=</span><span class="nv">$DATABRICKS_ACCESS_TOKEN</span> <span class="nv">Databricks_clusterId</span><span class="o">=</span><span class="nv">$DATABRICKS_CLUSTER_ID</span> <span class="nv">Databricks_notebookLocation</span><span class="o">=</span><span class="nv">$DATABRICKS_NOTEBOOK_LOCATION</span> <span class="nv">Databricks_workSpaceUrl</span><span class="o">=</span><span class="nv">$DATABRICKS_WORKSPACE_URL</span>
-</code></pre></div>
-<p>Note that:
-Two keys are read from Azure Storage and imported to Azure Key Vault, the account Access Token and a SAS token, using ARM template built in <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions">functions</a>: <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas">listAccountSas</a> and <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys">listKeys</a>.</p>
+This section provides instructions on how to leverage presidio in Azure Data Factory:</p>
+<ol>
+<li><a href="presidio-data-factory/">Complete samples</a> - Setup Azure Data Factory and Presidio in a single deployment and run the samples.</li>
+<li><a href="presidio-data-factory-template-gallery/">Using Azure Data Factory Template Gallery</a> - If you already have an instance of Azure Data Factory and would like to use the built in data anonymization with presidio template.</li>
+</ol>
                 
               
               
@@ -1051,6 +992,39 @@ Two keys are read from Azure Storage and imported to Azure Key Vault, the accoun
       
         
 <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../spark/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Azure Databricks/Spark
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../../../supported_entities/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Supported entities
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

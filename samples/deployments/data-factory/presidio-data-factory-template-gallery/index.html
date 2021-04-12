@@ -13,21 +13,21 @@
         <meta name="author" content="Microsoft">
       
       
-        <link rel="canonical" href="https://microsoft.github.io/presidio/anonymizer/adding_anonymizers/">
+        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory-template-gallery/">
       
-      <link rel="icon" href="../../assets/ms_icon.png">
+      <link rel="icon" href="../../../../assets/ms_icon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.6">
     
     
       
-        <title>Developing PII anonymizers - Microsoft Presidio</title>
+        <title>Anonymize PII entities using Azure Data Factory template - Microsoft Presidio</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.2c0c5eaf.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.2c0c5eaf.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.7fa14f5b.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.7fa14f5b.min.css">
         
       
     
@@ -42,7 +42,7 @@
     
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
     
     
 <script type="text/javascript">
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#supporting-new-types-of-pii-anonymizers" class="md-skip">
+        <a href="#anonymize-pii-entities-using-azure-data-factory-template" class="md-skip">
           Skip to content
         </a>
       
@@ -85,9 +85,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
+    <a href="../../../.." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
-  <img src="../../assets/ms_icon.png" alt="logo">
+  <img src="../../../../assets/ms_icon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -103,7 +103,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Developing PII anonymizers
+              Anonymize PII entities using Azure Data Factory template
             
           </span>
         </div>
@@ -175,7 +175,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../.." class="md-tabs__link">
+    <a href="../../../.." class="md-tabs__link">
       Home
     </a>
   </li>
@@ -187,7 +187,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../getting_started/" class="md-tabs__link">
+    <a href="../../../../getting_started/" class="md-tabs__link">
       Getting Started
     </a>
   </li>
@@ -199,7 +199,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../installation/" class="md-tabs__link">
+    <a href="../../../../installation/" class="md-tabs__link">
       Installation
     </a>
   </li>
@@ -208,15 +208,13 @@
         
   
   
-    
-  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../../text_anonymization/" class="md-tabs__link md-tabs__link--active">
+      <a href="../../../../text_anonymization/" class="md-tabs__link">
         Text anonymization
       </a>
     </li>
@@ -232,7 +230,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../image-redactor/" class="md-tabs__link">
+      <a href="../../../../image-redactor/" class="md-tabs__link">
         Image Redactor
       </a>
     </li>
@@ -248,7 +246,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../samples/" class="md-tabs__link">
+      <a href="../../../" class="md-tabs__link">
         Samples
       </a>
     </li>
@@ -261,7 +259,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../supported_entities/" class="md-tabs__link">
+    <a href="../../../../supported_entities/" class="md-tabs__link">
       Supported entities
     </a>
   </li>
@@ -276,7 +274,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../design/" class="md-tabs__link">
+      <a href="../../../../design/" class="md-tabs__link">
         Development and design
       </a>
     </li>
@@ -303,9 +301,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
+    <a href="../../../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
-  <img src="../../assets/ms_icon.png" alt="logo">
+  <img src="../../../../assets/ms_icon.png" alt="logo">
 
     </a>
     Microsoft Presidio
@@ -334,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -349,7 +347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/" class="md-nav__link">
+      <a href="../../../../getting_started/" class="md-nav__link">
         Getting Started
       </a>
     </li>
@@ -364,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../installation/" class="md-nav__link">
+      <a href="../../../../installation/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -377,14 +375,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
       
       <label class="md-nav__link" for="__nav_4">
         Text anonymization
@@ -402,7 +398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../text_anonymization/" class="md-nav__link">
+      <a href="../../../../text_anonymization/" class="md-nav__link">
         Home
       </a>
     </li>
@@ -435,7 +431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/" class="md-nav__link">
+      <a href="../../../../analyzer/" class="md-nav__link">
         Analyzer Home
       </a>
     </li>
@@ -468,7 +464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/adding_recognizers/" class="md-nav__link">
+      <a href="../../../../analyzer/adding_recognizers/" class="md-nav__link">
         Tutorial
       </a>
     </li>
@@ -480,7 +476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/developing_recognizers/" class="md-nav__link">
+      <a href="../../../../analyzer/developing_recognizers/" class="md-nav__link">
         Best practices in developing recognizers
       </a>
     </li>
@@ -498,7 +494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/languages/" class="md-nav__link">
+      <a href="../../../../analyzer/languages/" class="md-nav__link">
         Multi-language support
       </a>
     </li>
@@ -510,7 +506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../analyzer/decision_process/" class="md-nav__link">
+      <a href="../../../../analyzer/decision_process/" class="md-nav__link">
         Tracing the decision process
       </a>
     </li>
@@ -526,14 +522,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
       
       <label class="md-nav__link" for="__nav_4_3">
         Presidio Anonymizer
@@ -551,7 +545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../../../anonymizer/" class="md-nav__link">
         Anonymizer Home
       </a>
     </li>
@@ -561,49 +555,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Developing PII anonymizers
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        Developing PII anonymizers
+    <li class="md-nav__item">
+      <a href="../../../../anonymizer/adding_operators/" class="md-nav__link">
+        Developing PII operators
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#extending-the-anonymizer-for-additional-pii-anonymizations" class="md-nav__link">
-    Extending the anonymizer for additional PII anonymizations:
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -649,7 +605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../image-redactor/" class="md-nav__link">
+      <a href="../../../../image-redactor/" class="md-nav__link">
         Home
       </a>
     </li>
@@ -691,7 +647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../samples/" class="md-nav__link">
+      <a href="../../../" class="md-nav__link">
         Samples Home
       </a>
     </li>
@@ -703,7 +659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../samples/python/" class="md-nav__link">
+      <a href="../../../python/" class="md-nav__link">
         Python
       </a>
     </li>
@@ -715,7 +671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../samples/docker/" class="md-nav__link">
+      <a href="../../../docker/" class="md-nav__link">
         Docker
       </a>
     </li>
@@ -748,7 +704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../samples/deployments/app-service/" class="md-nav__link">
+      <a href="../../app-service/" class="md-nav__link">
         Azure App Service
       </a>
     </li>
@@ -760,8 +716,32 @@
   
   
     <li class="md-nav__item">
-      <a href="../../samples/deployments/k8s/" class="md-nav__link">
+      <a href="../../k8s/" class="md-nav__link">
         Kubernetes
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spark/" class="md-nav__link">
+        Azure Databricks/Spark
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Azure Data Factory
       </a>
     </li>
   
@@ -787,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../supported_entities/" class="md-nav__link">
+      <a href="../../../../supported_entities/" class="md-nav__link">
         Supported entities
       </a>
     </li>
@@ -823,7 +803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../design/" class="md-nav__link">
+      <a href="../../../../design/" class="md-nav__link">
         Design
       </a>
     </li>
@@ -835,7 +815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/" class="md-nav__link">
+      <a href="../../../../development/" class="md-nav__link">
         Setting up a development environment
       </a>
     </li>
@@ -847,7 +827,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../build_release/" class="md-nav__link">
+      <a href="../../../../build_release/" class="md-nav__link">
         Build and release process
       </a>
     </li>
@@ -859,7 +839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../presidio_V2/" class="md-nav__link">
+      <a href="../../../../presidio_V2/" class="md-nav__link">
         Changes from V1 to V2
       </a>
     </li>
@@ -892,7 +872,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/analyzer_python/" class="md-nav__link">
+      <a href="../../../../api/analyzer_python/" class="md-nav__link">
         Presidio Analyzer Python API
       </a>
     </li>
@@ -904,7 +884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/anonymizer_python/" class="md-nav__link">
+      <a href="../../../../api/anonymizer_python/" class="md-nav__link">
         Presidio Anonymizer Python API
       </a>
     </li>
@@ -916,7 +896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/image_redactor_python/" class="md-nav__link">
+      <a href="../../../../api/image_redactor_python/" class="md-nav__link">
         Presidio Image Redactor Python API
       </a>
     </li>
@@ -972,9 +952,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#extending-the-anonymizer-for-additional-pii-anonymizations" class="md-nav__link">
-    Extending the anonymizer for additional PII anonymizations:
+  <a href="#about-this-solution-template" class="md-nav__link">
+    About this Solution Template
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-this-solution-template" class="md-nav__link">
+    How to use this Solution Template
+  </a>
+  
+    <nav class="md-nav" aria-label="How to use this Solution Template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup-presidio" class="md-nav__link">
+    Setup Presidio
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup-azure-data-factory" class="md-nav__link">
+    Setup Azure Data Factory
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -991,24 +998,76 @@
               
                 
                 
-                <h1 id="supporting-new-types-of-pii-anonymizers">Supporting new types of PII anonymizers</h1>
-<p>Presidio anonymizer can be easily extended to support additional anonnymization methods.</p>
-<h2 id="extending-the-anonymizer-for-additional-pii-anonymizations">Extending the anonymizer for additional PII anonymizations:</h2>
-<ol>
-<li>Under the path presidio_anonymizer/anonymizers create  new python class implemeting the abstract <a href="https://github.com/microsoft/presidio/blob/main/presidio-anonymizer/presidio_anonymizer/anonymizers/anonymizer.py">Anonymizer</a> class </li>
-<li>Implement the methods: <ul>
-<li><code>anonymize</code> - gets the data and returns a new text expected to replace the old one.</li>
-<li><code>validate</code> - validate the parameters entered for the anonymizer exists and valid.</li>
-<li><code>anonymizer_name</code> - this method helps to automatically load the existing anonymizers.</li>
+                <h1 id="anonymize-pii-entities-using-azure-data-factory-template">Anonymize PII entities using Azure Data Factory template</h1>
+<p>This sample uses the built in data anonymization template of Azure Data Factory which is a part of the Template Gallery to move a set of text files from one location to another while anonymizing their content. It leverages the code for using <a href="../../app-service/">Presidio on Azure App Service</a> to call Presidio as an HTTP REST endpoint in the Azure Data Factory (ADF) pipeline while parsing and storing each file as an Azure Blob Storage.</p>
+<p>The sample deploys the following Azure Services:</p>
+<ul>
+<li>Azure KeyVault - Holds the access keys for Azure Storage to avoid having keys and secrets in the code.</li>
+<li>Azure Storage - Persistence layer of this sample.</li>
+<li>Azure App Service - Host presidio to anonymize the data.</li>
 </ul>
+<p>Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline.</p>
+<p><strong>Note that</strong> given the solution architecture which call presidio services using HTTP, it is optimal for use with a small-to-medium number of files, each with a small-to-medium content size. working with larger file stores or large files will have better performance when using <a href="../presidio-data-factory/#option-2-presidio-on-azure-databricks">presidio with databricks</a>. </p>
+<h2 id="about-this-solution-template">About this Solution Template</h2>
+<p>This template gets the files from your source file-based store. It then anonymizes the content and uploads each of them to the destination store.</p>
+<p>The template contains eight activities:</p>
+<ul>
+<li><strong>GetMetadata</strong> gets the list of objects including the files and subfolders from your folder on source store. It will not retrieve the objects recursively.</li>
+<li><strong>Filter</strong> filter the objects list from GetMetadata activity to select the files only.</li>
+<li><strong>GetSASToken</strong> gets the target storage account SAS token from the Azure Key Vault.</li>
+<li><strong>ForEach</strong> gets the file list from the Filter activity and then iterates over the list and passes each file to the Anonymization activities.</li>
+<li><strong>LoadFileContent</strong> loads the content of a text file to an ADF Lookup.</li>
+<li><strong>PresidioAnalyze</strong> sends the text content to Presidio Analyzer.</li>
+<li><strong>PresidioAnonymize</strong> sends the text and the analysis response to Presidio Anonymizer to get the anonymized text.</li>
+<li><strong>UploadBlob</strong> uses Azure Blob Storage REST API to upload the anonymized text to the target container.</li>
+</ul>
+<p>The template defines four parameters:</p>
+<ul>
+<li><strong>SourceStore_Location</strong> is the container name of your source store where you want to move files from.</li>
+<li><strong>DestinationStore_Name</strong> is the name of the target storage account which is provisioned by the ARM template.</li>
+<li><strong>DestinationStore_Location</strong> is the container name of your destination store where you want to move files to. it has a default value of a container which was created during provisioning of the ARM template (presidio).</li>
+<li><strong>KeyVault_Name</strong> is the name of the Azure Key Vault which is provisioned by the ARM template.</li>
+<li><strong>Analyzer_Url</strong> is the URL for the Analyzer App Service which is provisioned by the ARM template.</li>
+<li><strong>Anonymizer_Url</strong> is the URL for the Anonymizer App Service which is provisioned by the ARM template.</li>
+</ul>
+<h2 id="how-to-use-this-solution-template">How to use this Solution Template</h2>
+<p>To use this template you should first setup the required infrastructure for the sample to run, then setup the template in Azure Data Factory.</p>
+<h3 id="setup-presidio">Setup Presidio</h3>
+<p>Create the Azure App Service, the storage accounts and an Azure Key Vault by clicking the Deploy-to-Azure button, or by running the following script to provision the <a href="../azure-deploy-adf-app-service.json">provided ARM template</a>.</p>
+<p><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%azure-deploy-adf-template-gallery.json"><img alt="Deploy to Azure" src="https://aka.ms/deploytoazurebutton" /></a></p>
+<div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>Name of resource group<span class="o">]</span>
+<span class="nv">LOCATION</span><span class="o">=[</span>location of resources<span class="o">]</span>
+
+az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
+az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./azure-deploy-adf-template-gallery.json
+</code></pre></div>
+<p>Note that:</p>
+<ul>
+<li>A SAS token keys is created and read from Azure Storage and then imported to Azure Key Vault. Using ARM template built in <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions">functions</a>: <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas">listAccountSas</a>. This token is time limited.</li>
+<li>An access policy grants the Azure Data Factory managed identity access to the Azure Key Vault. You should provide your ADF client principal ID by following <a href="https://docs.microsoft.com/en-us/azure/data-factory/data-factory-service-identity">this guide</a>.</li>
+</ul>
+<h3 id="setup-azure-data-factory">Setup Azure Data Factory</h3>
+<ol>
+<li>
+<p>Go to the Data anonymization with Presidio template. Select existing connection or create a New connection to your source file store where you want to move files from. Be aware that DataSource_Folder and DataSource_File are reference to the same connection of your source file store.
+<img alt="ADF-Template-Load" src="../Data-anonymization01.png" /></p>
 </li>
-<li>Add the class to presidio_anonymizer/anonymizers/<strong>init</strong>.py.    </li>
-<li>Restart the anonymizer.</li>
+<li>
+<p>Select Use this template tab</p>
+</li>
+<li>
+<p>You'll see the pipeline, as in the following example:
+<img alt="ADF-Template-Pipeline" src="../Data-anonymization02.png" /></p>
+</li>
+<li>
+<p>Select Debug, enter the Parameters, and then select Finish. The parameters are the container where you want to move files from and the container path where you want to move the anonymized files to.
+<img alt="ADF-Template-Parameters" src="../Data-anonymization03.png" /></p>
+</li>
+<li>
+<p>Review the result.
+<img alt="ADF-Template-Results" src="../Data-anonymization04.png" /></p>
+</li>
 </ol>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The list of anonymizers is being loaded dynamically each time Presidio Anonymizer is started.</p>
-</div>
                 
               
               
@@ -1023,39 +1082,6 @@
       
         
 <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        <a href="../" class="md-footer__link md-footer__link--prev" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              Anonymizer Home
-            </div>
-          </div>
-        </a>
-      
-      
-        <a href="../../image-redactor/" class="md-footer__link md-footer__link--next" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Home
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -1104,10 +1130,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
       
     
   </body>
