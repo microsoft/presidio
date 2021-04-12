@@ -1,4 +1,4 @@
-# Anonymize PII entities in an Azure Data Factory ETL Pipeline
+# Anonymize PII entities using Azure Data Factory template
 
 This sample uses the built in data anonymization template of Azure Data Factory which is a part of the Template Gallery to move a set of text files from one location to another while anonymizing their content. It leverages the code for using [Presidio on Azure App Service](../app-service/index.md) to call Presidio as an HTTP REST endpoint in the Azure Data Factory (ADF) pipeline while parsing and storing each file as an Azure Blob Storage.
 
