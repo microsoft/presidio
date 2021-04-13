@@ -6,7 +6,7 @@ from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine import RecognizerResult
 from presidio_anonymizer.entities.engine.result import EngineResult
-from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.operators import OperatorType, Operator, OperatorsFactory
 
 DEFAULT = "replace"
 
@@ -49,7 +49,7 @@ class AnonymizerEngine(EngineBase):
         return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
 
     def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results: List[
-            RecognizerResult]) -> List[RecognizerResult]:
+        RecognizerResult]) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
 
@@ -80,6 +80,12 @@ class AnonymizerEngine(EngineBase):
         """Return a list of supported anonymizers."""
         names = [p for p in self.operators_factory.get_anonymizers().keys()]
         return names
+
+    def add_anonymizer(self, operator: Operator) -> None:
+        self.operators_factory.add_operator(operator, OperatorType.Anonymize)
+
+    def remove_anonymizer(self, operator_name: str) -> None:
+        self.operators_factory.remove_operator(operator_name, OperatorType.Anonymize)
 
     @staticmethod
     def __is_result_conflicted_with_other_elements(other_elements, result):

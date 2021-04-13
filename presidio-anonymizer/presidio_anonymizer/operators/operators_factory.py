@@ -1,4 +1,7 @@
+import importlib
 import logging
+import os
+from os import listdir
 from typing import Dict
 
 from presidio_anonymizer.entities import InvalidParamException
@@ -68,6 +71,42 @@ class OperatorsFactory:
 
     @staticmethod
     def __get_operators_by_type(operator_type: OperatorType):
+        OperatorsFactory.__load_operators()
         operators = Operator.__subclasses__()
         return {cls.operator_name(cls): cls for cls in operators if
                 cls.operator_type(cls) == operator_type}
+
+    @staticmethod
+    def __load_operators():
+        current_dir = os.path.abspath(os.path.dirname(__file__))
+        for f in listdir(current_dir):
+            f = f.replace('.py', '')
+            importlib.import_module('presidio_anonymizer.operators.' + f)
+
+    @staticmethod
+    def add_operator(operator: Operator, operator_type: OperatorType) -> None:
+        if not OperatorsFactory._anonymizers or not OperatorsFactory._deanonymizers:
+            OperatorsFactory.get_anonymizers()
+            OperatorsFactory.get_deanonymizers()
+        operator_name = operator.operator_name()
+        if operator_type == OperatorType.Anonymize:
+            OperatorsFactory._anonymizers[operator_name] = operator
+            return
+        if operator_type == OperatorType.Deanonymize:
+            OperatorsFactory._deanonymizers[operator_name] = operator
+            return
+        raise InvalidParamException(
+            f"Invalid operator type '{operator_type}'."
+        )
+
+    @staticmethod
+    def remove_operator(operator_name: str, operator_type: OperatorType) -> None:
+        if operator_type == OperatorType.Anonymize:
+            OperatorsFactory._anonymizers.pop(operator_name)
+            return
+        if operator_type == OperatorType.Deanonymize:
+            OperatorsFactory._deanonymizers.pop(operator_name)
+            return
+        raise InvalidParamException(
+            f"Invalid operator type '{operator_type}'."
+        )

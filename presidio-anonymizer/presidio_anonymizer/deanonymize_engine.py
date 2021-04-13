@@ -6,7 +6,7 @@ from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.entities.engine.anonymizer_result import AnonymizerResult
 from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
-from presidio_anonymizer.operators import OperatorType
+from presidio_anonymizer.operators import OperatorType, Operator
 
 
 class DeanonymizeEngine(EngineBase):
@@ -35,3 +35,9 @@ class DeanonymizeEngine(EngineBase):
         """Return a list of supported deanonymizers."""
         names = [p for p in self.operators_factory.get_deanonymizers().keys()]
         return names
+
+    def add_deanonymizer(self, operator: Operator) -> None:
+        self.operators_factory.add_operator(operator, OperatorType.Deanonymize)
+
+    def remove_deanonymizer(self, operator_name: str) -> None:
+        self.operators_factory.remove_operator(operator_name, OperatorType.Deanonymize)
