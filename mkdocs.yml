@@ -50,7 +50,7 @@ theme:
   name: material
   custom_dir: overrides
   palette:
-    - scheme: default
+      scheme: default
       primary: blue grey
       accent: indigo
   font:
