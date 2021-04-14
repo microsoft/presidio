@@ -11,4 +11,4 @@ from .image_pii_verify_engine import ImagePiiVerifyEngine
 # Set up default logging (with NullHandler)
 logging.getLogger("presidio-image-redactor").addHandler(logging.NullHandler())
 
-__all__ = ["OCR", "ImageAnalyzerEngine", "ImageRedactorEngine", "ImagePiiVerifyEngine"]
+__all__ = ["OCR", "TesseractOCR", "ImageAnalyzerEngine", "ImageRedactorEngine", "ImagePiiVerifyEngine"]
