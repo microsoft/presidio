@@ -39,6 +39,21 @@ Note that:
 * A SAS token keys is created and read from Azure Storage and then imported to Azure Key Vault. Using ARM template built in [functions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions): [listAccountSas](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas).
 * An access policy grants the Azure Data Factory managed identity access to the Azure Key Vault by using ARM template [reference](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions-resource?tabs=json#reference) function to the Data Factory object and acquire its identity.principalId property. This is enabled by setting the data factory ARM resource's identity attribute to managed identity (SystemAssigned).
 
+### About this Solution Template
+
+This template gets a collection of JSON documents from a file on GitHub. It then extracts one of the text fields of the document, anonymizes the content and uploads it as a text file to the destination store.
+
+The template contains seven activities:
+
+* **GetDataSet**- Copy the dataset from GitHub to the first folder on the Azure Storage blob container (/dataset).
+* **LoadSet**- Loads the dataset into the Azure Data Factory memory for processing in a for-each loop.
+* **GetSASToken** - Get the SAS token from Azure Key Vault. This will be used later for writing to the blob container.
+* **SaveBlobs** - Is a For-Each loop activity. It includes a clause which is executed for each document in the array.
+* **PresidioAnalyze** - Sends the text to presidio analyzer endpoint.
+* **PresidioAnonymize** - Sends the response from presidio analyzer to presidio anonymizer endpoint.
+* **UploadBlob** - Saves the anonymized response from presidio to a randomly named text file on the target Azure Blob Storage.
+
+
 ## Option 2: Presidio on Azure Databricks
 
 By using Presidio as a Notebook step in ADF, we allow Databricks to scale presidio according to the cluster capabilities and the input dataset. Using presidio as a native python package in pyspark can unlock more analysis and de-identifiaction scenarios.
@@ -68,3 +83,17 @@ az deployment group create -g $RESOURCE_GROUP --template-file ./azure-deploy-adf
 
 Note that:
 Two keys are read from Azure Storage and imported to Azure Key Vault, the account Access Token and a SAS token, using ARM template built in [functions](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions): [listAccountSas](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas) and [listKeys](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys).
+
+### About this Solution Template
+
+This template gets a collection of JSON documents from a file on GitHub. It then extracts one of the text fields of the document and saves it to a text file on a temporary folder in the storage account (un-anonymized content). It then runs a spark notebook job that anonymizes the content of the files in that folder and saves the result as csv files on the destination store.
+
+The template contains seven activities:
+
+* **GetDataSet** - Copy the dataset from GitHub to the first folder on the Azure Storage blob container (/dataset).
+* **GetSASToken** - Get the SAS token from Azure Key Vault. This will be used later for writing to the blob container.
+* **LoadSet** -  Loads the dataset into the Azure Data Factory memory for processing in a for-each loop.
+* **SaveBlobs** - Is a For-Each loop activity. It includes a clause which is executed for each document in the array.
+* **UploadBlob** - Saves the text file on a temporary container on the target Azure Blob Storage
+* **GetSecret** - Get the storage account secret from Azure Key Vault. This will be used later for accessing the blob container from databricks
+* **Presidio-Anonymize** - Is a databricks spark job which runs presidio on the temporary storage container. the result of this job is a new container (/output) with csv files that contain the anonymized text.
