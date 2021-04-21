@@ -39,7 +39,7 @@ stages:
       steps:
         - checkout: self
           persistCredentials: true
-        # Always start by removing the tag, to override the old tag commit, if the version wasn't changed.
+        # Start by removing the tag, to override the old tag commit, if the version wasn't changed.
         - script: |
             git push --delete origin $(version)
             git tag $(version)
