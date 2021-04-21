@@ -31,6 +31,20 @@ stages:
           displayName: Set Image Version
           name: setImageVer
 
+    - job: createGitTag
+      displayName: Create Git Tag
+      dependsOn: version
+      variables:
+        version: $[ dependencies.Version.outputs['setVer.version'] ]
+      steps:
+        - checkout: self
+          persistCredentials: true
+        # Always start by removing the tag, to override the old tag commit, if the version wasn't changed.
+        - script: |
+            git push --delete origin $(version)
+            git tag $(version)
+            git push origin $(version)
+
     - job: githubRelease
       displayName: GitHub Release
       # Don't fail the job and continue to the deployment, if the version already exists
