@@ -10,9 +10,13 @@ tldextract = "*"
 numpy = "==1.19.3"
 flask = "==1.1.2"
 pyyaml = "*"
+azure-ai-textanalytics = "==5.1.0b3"
 
 [dev-packages]
 pytest = "*"
 flake8= {version = "==3.7.9"}
 pep8-naming = "*"
 flake8-docstrings = "*"
+
+[pipenv]
+allow_prereleases = true

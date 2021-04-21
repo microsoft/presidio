@@ -10,6 +10,7 @@ from .ip_recognizer import IpRecognizer
 from .sg_fin_recognizer import SgFinRecognizer
 from .spacy_recognizer import SpacyRecognizer
 from .stanza_recognizer import StanzaRecognizer
+from .text_analytics_recognizer import TextAnalyticsRecognizer
 from .uk_nhs_recognizer import NhsRecognizer
 from .us_bank_recognizer import UsBankRecognizer
 from .us_driver_license_recognizer import UsLicenseRecognizer
@@ -43,4 +44,5 @@ __all__ = [
     "SpacyRecognizer",
     "StanzaRecognizer",
     "NLP_RECOGNIZERS",
+    "TextAnalyticsRecognizer",
 ]

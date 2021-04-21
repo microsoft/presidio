@@ -1,0 +1,11 @@
+- name: DateTime
+  entity_type: DATE_TIME
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: Email
+  entity_type: EMAIL_ADDRESS
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: Quantity
+  subcategory: Age
+  entity_type: AGE
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+

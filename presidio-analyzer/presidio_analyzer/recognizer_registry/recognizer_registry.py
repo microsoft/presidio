@@ -21,6 +21,7 @@ from presidio_analyzer.predefined_recognizers import (
     SpacyRecognizer,
     EsNifRecognizer,
     StanzaRecognizer,
+    TextAnalyticsRecognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -75,6 +76,7 @@ class RecognizerRegistry:
                 IbanRecognizer,
                 IpRecognizer,
                 nlp_recognizer,
+                TextAnalyticsRecognizer,
             ],
         }
         for lang in languages:
