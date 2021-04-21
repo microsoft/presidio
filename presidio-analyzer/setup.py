@@ -35,6 +35,7 @@ setuptools.setup(
         "regex==2020.11.13",
         "tldextract==3.1.0",
         "pyyaml==5.4.1",
+        "azure-ai-textanalytics==5.1.0b3",
     ],
     include_package_data=True,
     license="MIT",
