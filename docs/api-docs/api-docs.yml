@@ -393,6 +393,7 @@ components:
           description: "Whether to include analysis explanation in the response"
         ad_hoc_recognizers:
           type: array
+          description: "list of recognizers to be used in the context of this request only (ad-hoc)."
           items:
             $ref: "#/components/schemas/PatternRecognizer"
 
