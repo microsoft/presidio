@@ -1,5 +1,7 @@
 from typing import Dict
 
+from presidio_analyzer import PatternRecognizer
+
 
 class AnalyzerRequest:
     """
@@ -25,3 +27,9 @@ class AnalyzerRequest:
         self.correlation_id = req_data.get("correlation_id")
         self.score_threshold = req_data.get("score_threshold")
         self.return_decision_process = req_data.get("return_decision_process")
+        ad_hoc_recognizers = req_data.get("ad_hoc_recognizers")
+        self.ad_hoc_recognizers = []
+        if ad_hoc_recognizers:
+            self.ad_hoc_recognizers = [
+                PatternRecognizer.from_dict(rec) for rec in ad_hoc_recognizers
+            ]

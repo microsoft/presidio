@@ -1,4 +1,5 @@
 import pytest
+
 from common.assertions import equal_json_strings
 from common.methods import analyze, analyzer_supported_entities
 
@@ -267,5 +268,77 @@ def test_given_an_illegal_input_for_supported_entities_then_igonre_and_proceed()
          "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS",
           "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME"]
     """
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_ad_hoc_pattern_recognizer_the_right_entities_are_returned():
+    request_body = r"""
+     {
+         "text": "John Smith drivers license is AC432223. Zip code: 10023",
+         "language": "en",
+         "ad_hoc_recognizers":[
+             {
+                "name": "Zip code Recognizer",
+                "supported_language": "en",
+                "patterns": [
+                    {
+                    "name": "zip code (weak)", 
+                    "regex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)", 
+                    "score": 0.01
+                    }
+                ],
+                "supported_entity":"ZIP"
+            }
+        ]
+     }
+     """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+     [
+         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null},
+         {"entity_type": "ZIP", "start": 50, "end": 55, "score": 0.01, "analysis_explanation":null}
+     ]
+     """
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
+    request_body = r"""
+    {
+        "text": "Mr. John Smith's drivers license is AC432223",
+        "language": "en",
+        "ad_hoc_recognizers":[
+            {
+            "name": "Mr. Recognizer",
+            "supported_language": "en",
+            "deny_list": ["Mr", "Mr.", "Mister"],
+            "supported_entity":"MR_TITLE"
+            },
+            {
+            "name": "Ms. Recognizer",
+            "supported_language": "en",
+            "deny_list": ["Ms", "Ms.", "Miss", "Mrs", "Mrs."],
+            "supported_entity":"MS_TITLE"
+            }
+        ]
+    }
+     """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+     [
+         {"entity_type": "PERSON", "start": 4, "end": 14, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "US_DRIVER_LICENSE", "start": 36, "end": 44, "score": 0.6499999999999999, "analysis_explanation":null},
+         {"entity_type": "MR_TITLE", "start": 0, "end": 3, "score": 1.0, "analysis_explanation":null}
+     ]
+     """
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)

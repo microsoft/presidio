@@ -519,3 +519,77 @@ def test_when_read_test_spacy_nlp_conf_file_then_returns_spacy_nlp_engine(
 
     assert isinstance(engine.nlp_engine, SpacyNlpEngine)
     assert engine.nlp_engine.nlp is not None
+
+
+def test_when_ad_hoc_pattern_recognizer_is_added_then_result_contains_result(
+    loaded_analyzer_engine,
+):
+    text = "John Smith drivers license is AC432223 and his zip code is 10023"
+    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
+    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
+
+    zip_code_recognizer = PatternRecognizer(
+        supported_entity="ZIP", patterns=[zipcode_pattern]
+    )
+
+    responses = loaded_analyzer_engine.analyze(
+        text=text, language="en", ad_hoc_recognizers=[zip_code_recognizer]
+    )
+
+    detected_entities = [response.entity_type for response in responses]
+    assert "ZIP" in detected_entities
+
+
+def test_when_ad_hoc_deny_list_recognizer_is_added_then_result_contains_result(
+    loaded_analyzer_engine,
+):
+    text = "Mr. John Smith's drivers license is AC432223"
+
+    mr_recognizer = PatternRecognizer(supported_entity="MR", deny_list=["Mr.", "Mr"])
+
+    responses = loaded_analyzer_engine.analyze(
+        text=text, language="en", ad_hoc_recognizers=[mr_recognizer]
+    )
+
+    detected_entities = [response.entity_type for response in responses]
+    assert "MR" in detected_entities
+
+
+def test_when_ad_hoc_deny_list_recognizer_is_added_then_result_does_not_persist(
+    loaded_analyzer_engine,
+):
+    text = "Mr. John Smith's drivers license is AC432223"
+
+    mr_recognizer = PatternRecognizer(supported_entity="MR", deny_list=["Mr.", "Mr"])
+
+    responses1 = loaded_analyzer_engine.analyze(
+        text=text, language="en", ad_hoc_recognizers=[mr_recognizer]
+    )
+    responses2 = loaded_analyzer_engine.analyze(text=text, language="en")
+
+    detected_entities1 = [response.entity_type for response in responses1]
+    assert "MR" in detected_entities1
+
+    detected_entities2 = [response.entity_type for response in responses2]
+    assert "MR" not in detected_entities2
+
+
+def test_when_ad_hoc_deny_list_recognizer_contains_both_regex_and_deny_list(
+    loaded_analyzer_engine,
+):
+    text = "Mr. John Smith's zip code is 10023 or 999"
+    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
+    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
+
+    zip_recognizer = PatternRecognizer(
+        supported_entity="ZIP", deny_list=["999"], patterns=[zipcode_pattern]
+    )
+
+    responses = loaded_analyzer_engine.analyze(
+        text=text, language="en", ad_hoc_recognizers=[zip_recognizer]
+    )
+
+    detected_zips = [
+        response.entity_type for response in responses if response.entity_type == "ZIP"
+    ]
+    assert len(detected_zips) == 2
