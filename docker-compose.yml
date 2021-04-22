@@ -18,6 +18,8 @@ services:
         - NAME=presidio-analyzer
     environment:
       - PORT=5001
+      - TEXT_ANALYTICS_KEY=${TEXT_ANALYTICS_KEY}
+      - TEXT_ANALYTICS_ENDPOINT=${TEXT_ANALYTICS_ENDPOINT}
     ports:
       - "5002:5001"
   presidio-image-redactor:
