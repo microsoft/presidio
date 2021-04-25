@@ -19,6 +19,7 @@ steps:
     pip install presidio-image-redactor
     pip install jupyter
     pip install nbconvert
+    npm install -g newman
   
 - script: |
     for f in docs/samples/python/*.ipynb;
@@ -27,6 +28,29 @@ steps:
     done
   displayName: Execute notebooks
   continueOnError: true
+
+- script: |
+    for f in docs/samples/python/*.py;
+    do    
+      python $f
+    done
+  displayName: Execute python scripts
+  continueOnError: true
+
+- task: DockerCompose@0
+  displayName: 'Run service with docker compose'
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Run services'
+
+- script: |    
+    for f in docs/samples/docker/*.postman_collection.json;
+    do
+      newman run $f
+    done
+  displayName: Execute postman collection
+  continueOnError: true  
 
 - task: PythonScript@0
   displayName: 'Test python code in markdown files'
