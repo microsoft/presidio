@@ -22,13 +22,15 @@ steps:
   
 - script: |
     for f in docs/samples/python/*.ipynb;
-    do    
-      jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file $f
-    done
+    do;    
+      jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file $f;
+    done;
   displayName: Execute notebooks
+  continueOnError: true
 
 - task: PythonScript@0
   displayName: 'Test python code in markdown files'
+  continueOnError: true
   inputs:
     scriptSource: 'filePath'
-    scriptPath: './.pipelines/templates/test-md.py'
+    scriptPath: './.pipelines/templates/test-md.py'  
