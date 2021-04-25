@@ -19,7 +19,6 @@ steps:
     pip install presidio-image-redactor 
   
 - task: PythonScript@0
-- task: PythonScript@0
   inputs:
     scriptSource: 'filePath'
     scriptPath: './pipelines/templates/test-md.py'
