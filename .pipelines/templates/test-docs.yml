@@ -1,0 +1,35 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+    architecture: 'x64'
+
+- script: |
+    set -eux  # fail on error
+    pip install exdown 
+    pip install pytest
+    pip install presidio-analyzer
+    pip install presidio-anonymizer
+    pip install presidio-image-redactor 
+  
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'inline'
+    script: |
+      import os
+      import exdown
+      
+      for root, dirs, files in os.walk("."):
+          for file in files:                
+              if (file.endswith(".md") or file.endswith(".MD")):  
+                filename = os.path.join(root,file)                  
+                #blocks = exdown.extract(filename)
+                test_readme = exdown.pytests(filename)
+                print(test_readme)
