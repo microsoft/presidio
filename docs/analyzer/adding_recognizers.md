@@ -126,6 +126,12 @@ To add a recognizer to the list of pre-defined recognizers:
 3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
+## Azure Text Analytics recognizer 
+
+On how to integrate Presidio with Azure Text Analytics, 
+and a sample for a Text Analytics Remote Recognizer, refer to the
+[Azure Text Analytics Integration document](text-analytics.md).
+
 ## PII detection in different languages
 
 For recognizers in new languages, refer to the [languages documentation](languages.md).
