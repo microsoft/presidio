@@ -227,14 +227,19 @@ class TextAnalyticsRecognizer(RemoteRecognizer):
 
 
 if __name__ == "__main__":
+    import os
 
-    # How to setup Text Analytics and fetch instance key and endpoint:
+    # Instruction for setting up Text Analytics and fetch instance key and endpoint:
     # https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cognitive-services/text-analytics/includes/create-text-analytics-resource.md
     rec = TextAnalyticsRecognizer(
-        text_analytics_key="{YOUR_TEXT_ANALYTICS_KEY}",
-        text_analytics_endpoint="{YOUR_TEXT_ANALYTICS_ENDPOINT}",
-        categories_file_location="example_text_analytics_entity_categories.yaml",
+        text_analytics_key="<YOUR_TEXT_ANALYTICS_KEY>",
+        text_analytics_endpoint="<YOUR_TEXT_ANALYTICS_ENDPOINT>",
+        categories_file_location=os.path.join(
+            os.path.dirname(__file__), "example_text_analytics_entity_categories.yaml"
+        ),
     )
 
-    remote_results = rec.analyze(text="My name is David")
-    print(remote_results)
+    text_analytics_results = rec.analyze(
+        text="David is 30 years old. His IBAN: IL150120690000003111111"
+    )
+    print(text_analytics_results)
