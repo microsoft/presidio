@@ -13,7 +13,8 @@ steps:
 
 - task: NodeTool@0
   inputs:
-    versionSpec: '6.x'
+    versionSpec: '>= 10.x'
+    checkLatest: true
     
 - script: |
     set -eux  # fail on error
