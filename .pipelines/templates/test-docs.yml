@@ -21,4 +21,4 @@ steps:
 - task: PythonScript@0
   inputs:
     scriptSource: 'filePath'
-    scriptPath: './pipelines/templates/test-md.py'
+    scriptPath: './.pipelines/templates/test-md.py'
