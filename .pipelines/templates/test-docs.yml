@@ -16,7 +16,9 @@ steps:
     pip install exdown 
     pip install presidio-analyzer
     pip install presidio-anonymizer
-    pip install presidio-image-redactor 
+    pip install presidio-image-redactor
+    pip install jupyter
+    pip install nbconvert
   
 - script: |
     jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file ./docs/samples/python/presidio_notebook.ipynb
