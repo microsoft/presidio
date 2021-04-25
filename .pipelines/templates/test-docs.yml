@@ -18,7 +18,11 @@ steps:
     pip install presidio-anonymizer
     pip install presidio-image-redactor 
   
+- script: |
+    jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file ./docs/samples/python/presidio_notebook.ipynb
+
 - task: PythonScript@0
+  displayName: 'Test python code in markdown files'
   inputs:
     scriptSource: 'filePath'
     scriptPath: './.pipelines/templates/test-md.py'
