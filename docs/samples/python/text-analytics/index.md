@@ -22,11 +22,11 @@ for instructions. The key and endpoint, generated once the resource is created,
 will be used when integrating with Text Analytics, using a Presidio Text Analytics recognizer.
 
 ## Text Analytics Recognizer
-[Sample implementation of a `TextAnalyticsRecognizer`](../samples/python/text-analytics/example_text_analytics_recognizer.py).
+[Sample implementation of a `TextAnalyticsRecognizer`](example_text_analytics_recognizer.py).
 The sample suggests an implementation of a [Remote Recognizer](https://microsoft.github.io/presidio/analyzer/adding_recognizers/#creating-a-remote-recognizer)
 calling the Text Analytics service REST API. There is also an alternative solution of using `azure-ai-textanalytics` [python package](https://pypi.org/project/azure-ai-textanalytics/),
 replacing the client implementation in the example.
-The sample reads from a [yaml file](../samples/python/text-analytics/example_text_analytics_entity_categories.yaml), 
+The sample reads from a [yaml file](example_text_analytics_entity_categories.yaml), 
 defining the entities that should be recognized by Text Analytics, and their corresponding
 Preisdio entity types. Use the supported entity categories reference above to extend the 
 list of entities defined in the file, with the entities that you want Text Analytics to recognize.

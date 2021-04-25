@@ -130,7 +130,7 @@ To add a recognizer to the list of pre-defined recognizers:
 
 On how to integrate Presidio with Azure Text Analytics, 
 and a sample for a Text Analytics Remote Recognizer, refer to the
-[Azure Text Analytics Integration document](text-analytics.md).
+[Azure Text Analytics Integration document](../samples/python/text-analytics/index.md).
 
 ## PII detection in different languages
 
