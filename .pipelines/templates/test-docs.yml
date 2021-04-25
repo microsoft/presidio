@@ -11,6 +11,10 @@ steps:
     addToPath: true
     architecture: 'x64'
 
+- task: NodeTool@0
+  inputs:
+    versionSpec: '6.x'
+    
 - script: |
     set -eux  # fail on error
     pip install exdown 
@@ -19,11 +23,7 @@ steps:
     pip install presidio-image-redactor
     pip install jupyter
     pip install nbconvert
-
-- task: Npm@1
-  inputs:
-    command: 'install'
-    workingDir: 'newman'
+    npm install -g newman
   
 - script: |
     for f in docs/samples/python/*.ipynb;
