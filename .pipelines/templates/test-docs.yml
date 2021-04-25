@@ -21,7 +21,11 @@ steps:
     pip install nbconvert
   
 - script: |
-    jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file ./docs/samples/python/presidio_notebook.ipynb
+    for f in docs/samples/python/*.ipynb;
+    do    
+      jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file $f
+    done
+  displayName: Execute notebooks
 
 - task: PythonScript@0
   displayName: 'Test python code in markdown files'
