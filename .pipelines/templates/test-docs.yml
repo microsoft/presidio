@@ -19,7 +19,11 @@ steps:
     pip install presidio-image-redactor
     pip install jupyter
     pip install nbconvert
-    npm install -g newman
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'newman'
   
 - script: |
     for f in docs/samples/python/*.ipynb;
