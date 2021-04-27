@@ -45,7 +45,7 @@ steps:
       echo testing $f
       jupyter nbconvert --to script $f --output converted_notebook
       python converted_notebook.py
-      rm converted_notebook.py
+      rm docs/samples/python/converted_notebook.py
     done
   displayName: Execute notebooks
   continueOnError: true
