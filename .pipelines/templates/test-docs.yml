@@ -24,8 +24,7 @@ steps:
     action: 'Run services'
     
 - script: |
-    set -eux  # fail on error
-    
+    set -eux  # fail on error    
     pip install exdown 
     pip install presidio-analyzer
     pip install presidio-anonymizer
@@ -33,13 +32,11 @@ steps:
     python -m spacy download en_core_web_lg
     python -m spacy download es_core_news_md
     pip install jupyter
-    pip install nbconvert
-    
-    npm install -g newman
-    
-    apt-get update 
-    apt-get install tesseract-ocr -y 
-    tesseract -v
+    pip install nbconvert    
+    npm install -g newman    
+    sudo apt-get install tesseract-ocr -y
+    sudo apt show tesseract-ocr
+    sudo tesseract -v
   displayName: install tools and packages
   
 - script: |
