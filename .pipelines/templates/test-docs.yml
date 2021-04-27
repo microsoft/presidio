@@ -22,10 +22,12 @@ steps:
     pip install presidio-analyzer
     pip install presidio-anonymizer
     pip install presidio-image-redactor
+    python -m spacy download en_core_web_lg
     python -m spacy download es_core_news_md
     pip install jupyter
     pip install nbconvert
     npm install -g newman
+  displayName: setup packages
   
 - script: |
     for f in docs/samples/python/*.ipynb;
@@ -41,7 +43,7 @@ steps:
     containerregistrytype: 'Azure Container Registry'
     dockerComposeFile: '**/docker-compose.yml'
     action: 'Run services'
-    
+
 - script: |
     for f in docs/samples/python/*.py;
     do    
