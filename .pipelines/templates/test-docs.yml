@@ -25,6 +25,7 @@ steps:
     
 - script: |
     set -eux  # fail on error
+    
     pip install exdown 
     pip install presidio-analyzer
     pip install presidio-anonymizer
@@ -33,8 +34,13 @@ steps:
     python -m spacy download es_core_news_md
     pip install jupyter
     pip install nbconvert
+    
     npm install -g newman
-  displayName: setup packages
+    
+    apt-get update 
+    apt-get install tesseract-ocr -y 
+    tesseract -v
+  displayName: install tools and packages
   
 - script: |
     for f in docs/samples/python/*.ipynb;
