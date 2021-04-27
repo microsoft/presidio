@@ -16,6 +16,13 @@ steps:
     versionSpec: '>= 10.x'
     checkLatest: true
     
+- task: DockerCompose@0
+  displayName: 'Run service with docker compose'
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Run services'
+    
 - script: |
     set -eux  # fail on error
     pip install exdown 
@@ -31,22 +38,17 @@ steps:
   
 - script: |
     for f in docs/samples/python/*.ipynb;
-    do    
+    do  
+      echo testing $f
       jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file $f
     done
   displayName: Execute notebooks
   continueOnError: true
 
-- task: DockerCompose@0
-  displayName: 'Run service with docker compose'
-  inputs:
-    containerregistrytype: 'Azure Container Registry'
-    dockerComposeFile: '**/docker-compose.yml'
-    action: 'Run services'
-
 - script: |
     for f in docs/samples/python/*.py;
     do    
+      echo testing $f
       python $f
     done
   displayName: Execute python scripts
@@ -55,6 +57,7 @@ steps:
 - script: |    
     for f in docs/samples/docker/*.postman_collection.json;
     do
+      echo testing $f
       newman run $f
     done
   displayName: Execute postman collection
