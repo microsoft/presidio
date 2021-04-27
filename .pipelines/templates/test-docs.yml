@@ -22,6 +22,7 @@ steps:
     pip install presidio-analyzer
     pip install presidio-anonymizer
     pip install presidio-image-redactor
+    python -m spacy download es_core_news_md
     pip install jupyter
     pip install nbconvert
     npm install -g newman

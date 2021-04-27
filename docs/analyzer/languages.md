@@ -35,6 +35,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
 
     - To download a new model with Stanza:
 
+        <!--exdown-skip-->
         ```python
         import stanza
         stanza.download("en") # where en is the language code of the model.
@@ -96,7 +97,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         from presidio_analyzer.nlp_engine import NlpEngineProvider
 
         # Create NLP engine based on configuration file
-        provider = NlpEngineProvider(conf_file="PATH_TO_YAML")
+        provider = NlpEngineProvider(conf_file="./docs/analyzer/languages-config.yml")
         nlp_engine_with_spanish = provider.create_engine()
 
         # Pass created NLP engine and supported_languages to the AnalyzerEngine
@@ -145,7 +146,7 @@ analyzer = AnalyzerEngine(
     supported_languages=["en","es"],
     nlp_engine=nlp_engine_with_spanish)
 
-analyzer.analyze(...)
+analyzer.analyze(text="My name is David", language="en")
 ```
 
 ### Automatically install NLP models into the Docker container

@@ -52,7 +52,7 @@ from PIL import Image
 from presidio_image_redactor import ImageRedactorEngine
 
 # Get the image to redact using PIL lib (pillow)
-image = Image.open("ocr_text.png")
+image = Image.open("presidio-image-redactor/tests/integration/resources/ocr_test.png")
 
 # Initialize the engine
 engine = ImageRedactorEngine()
@@ -62,8 +62,8 @@ redacted_image = engine.redact(image, (255, 192, 203))
 
 # save the redacted image 
 redacted_image.save("new_image.png")
-# open the image for viewing
-redacted_image.show()
+# uncomments to open the image for viewing
+# redacted_image.show()
 ```
 
 ### As docker service:
