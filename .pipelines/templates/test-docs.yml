@@ -43,7 +43,9 @@ steps:
     for f in docs/samples/python/*.ipynb;
     do  
       echo testing $f
-      jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=60 --output out_file $f
+      jupyter nbconvert --to script $f --output converted_notebook
+      python converted_notebook.py
+      rm converted_notebook.py
     done
   displayName: Execute notebooks
   continueOnError: true
