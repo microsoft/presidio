@@ -35,6 +35,13 @@ steps:
   displayName: Execute notebooks
   continueOnError: true
 
+- task: DockerCompose@0
+  displayName: 'Run service with docker compose'
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Run services'
+    
 - script: |
     for f in docs/samples/python/*.py;
     do    
@@ -42,13 +49,6 @@ steps:
     done
   displayName: Execute python scripts
   continueOnError: true
-
-- task: DockerCompose@0
-  displayName: 'Run service with docker compose'
-  inputs:
-    containerregistrytype: 'Azure Container Registry'
-    dockerComposeFile: '**/docker-compose.yml'
-    action: 'Run services'
 
 - script: |    
     for f in docs/samples/docker/*.postman_collection.json;

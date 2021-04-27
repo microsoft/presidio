@@ -112,8 +112,8 @@ if __name__ == "__main__":
     # Illustrative example only: Run Presidio analyzer
     # as if it was an external PII detection mechanism.
     rec = ExampleRemoteRecognizer(
-        pii_identification_url="http://localhost:3000/analyze",
-        supported_entities_url="http://localhost:3000/supportedentities",
+        pii_identification_url="http://localhost:5002/analyze",
+        supported_entities_url="http://localhost:5002/supportedentities",
     )
 
     remote_results = rec.analyze(
