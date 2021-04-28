@@ -9,9 +9,7 @@ pool:
   pool:
       vmImage: 'ubuntu-16.04'
   strategy:
-      matrix:
-          Python36:
-              python.version: '3.6'
+      matrix:          
           Python37:
               python.version: '3.7'
           Python38:
