@@ -4,73 +4,88 @@ pr: none
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.x'
-    addToPath: true
-    architecture: 'x64'
+- job: TestAnalyzer
+  displayName: Test Analyzer 
+  pool:
+      vmImage: 'ubuntu-16.04'
+  strategy:
+      matrix:
+          Python36:
+              python.version: '3.6'
+          Python37:
+              python.version: '3.7'
+          Python38:
+              python.version: '3.8'
+          Python39:
+              python.version: '3.9'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      addToPath: true
+      architecture: 'x64'
+    displayName: 'Use Python $(python.version)'
 
-- task: NodeTool@0
-  inputs:
-    versionSpec: '>= 10.x'
-    checkLatest: true
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '>= 10.x'
+      checkLatest: true
+      
+  - task: DockerCompose@0
+    displayName: 'Run service with docker compose'
+    inputs:
+      containerregistrytype: 'Azure Container Registry'
+      dockerComposeFile: '**/docker-compose.yml'
+      action: 'Run services'
+      
+  - script: |
+      set -eux  # fail on error    
+      pip install exdown 
+      pip install presidio-analyzer
+      pip install presidio-anonymizer
+      pip install presidio-image-redactor
+      python -m spacy download en_core_web_lg
+      python -m spacy download es_core_news_md
+      pip install jupyter
+      pip install nbconvert    
+      npm install -g newman    
+      sudo apt-get install tesseract-ocr -y
+      sudo apt show tesseract-ocr
+      sudo tesseract -v
+    displayName: install tools and packages
     
-- task: DockerCompose@0
-  displayName: 'Run service with docker compose'
-  inputs:
-    containerregistrytype: 'Azure Container Registry'
-    dockerComposeFile: '**/docker-compose.yml'
-    action: 'Run services'
-    
-- script: |
-    set -eux  # fail on error    
-    pip install exdown 
-    pip install presidio-analyzer
-    pip install presidio-anonymizer
-    pip install presidio-image-redactor
-    python -m spacy download en_core_web_lg
-    python -m spacy download es_core_news_md
-    pip install jupyter
-    pip install nbconvert    
-    npm install -g newman    
-    sudo apt-get install tesseract-ocr -y
-    sudo apt show tesseract-ocr
-    sudo tesseract -v
-  displayName: install tools and packages
-  
-- script: |
-    for f in docs/samples/python/*.ipynb;
-    do  
-      echo testing $f
-      jupyter nbconvert --to script $f --output converted_notebook
-      python docs/samples/python/converted_notebook.py
-      rm docs/samples/python/converted_notebook.py
-    done
-  displayName: Execute notebooks
-  continueOnError: true
+  - script: |
+      for f in docs/samples/python/*.ipynb;
+      do  
+        echo testing $f
+        jupyter nbconvert --to script $f --output converted_notebook
+        python docs/samples/python/converted_notebook.py
+        rm docs/samples/python/converted_notebook.py
+      done
+    displayName: Execute notebooks
+    continueOnError: true
 
-- script: |
-    for f in docs/samples/python/*.py;
-    do    
-      echo testing $f
-      python $f
-    done
-  displayName: Execute python scripts
-  continueOnError: true
+  - script: |
+      for f in docs/samples/python/*.py;
+      do    
+        echo testing $f
+        python $f
+      done
+    displayName: Execute python scripts
+    continueOnError: true
 
-- script: |    
-    for f in docs/samples/docker/*.postman_collection.json;
-    do
-      echo testing $f
-      newman run $f
-    done
-  displayName: Execute postman collection
-  continueOnError: true  
+  - script: |    
+      for f in docs/samples/docker/*.postman_collection.json;
+      do
+        echo testing $f
+        newman run $f
+      done
+    displayName: Execute postman collection
+    continueOnError: true  
 
-- task: PythonScript@0
-  displayName: 'Test python code in markdown files'
-  continueOnError: true
-  inputs:
-    scriptSource: 'filePath'
-    scriptPath: './.pipelines/templates/test-md.py'  
+  - task: PythonScript@0
+    displayName: 'Test python code in markdown files'
+    continueOnError: true
+    inputs:
+      scriptSource: 'filePath'
+      scriptPath: './.pipelines/templates/test-md.py'  
