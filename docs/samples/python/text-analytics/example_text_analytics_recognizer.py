@@ -228,10 +228,11 @@ class TextAnalyticsRecognizer(RemoteRecognizer):
 
 if __name__ == "__main__":
     import os
+    from presidio_analyzer import AnalyzerEngine
 
     # Instruction for setting up Text Analytics and fetch instance key and endpoint:
     # https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cognitive-services/text-analytics/includes/create-text-analytics-resource.md
-    rec = TextAnalyticsRecognizer(
+    text_analytics_recognizer = TextAnalyticsRecognizer(
         text_analytics_key="<YOUR_TEXT_ANALYTICS_KEY>",
         text_analytics_endpoint="<YOUR_TEXT_ANALYTICS_ENDPOINT>",
         categories_file_location=os.path.join(
@@ -239,7 +240,9 @@ if __name__ == "__main__":
         ),
     )
 
-    text_analytics_results = rec.analyze(
-        text="David is 30 years old. His IBAN: IL150120690000003111111"
+    analyzer = AnalyzerEngine()
+    analyzer.registry.add_recognizer(text_analytics_recognizer)
+    results = analyzer.analyze(
+        text="David is 30 years old. His IBAN: IL150120690000003111111", language="en"
     )
-    print(text_analytics_results)
+    print(results)

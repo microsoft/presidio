@@ -9,10 +9,10 @@ entities in text and categorize them into pre-defined classes or types.
 This document will demonstrate Presidio integration with Azure Text Analytics.
 
 ## Supported entity categories in the Text Analytics API
-Text Analytics supports multiple entity categories that can be returned by NER.
-NER runs a predictive model to identify and categorize named entities from an input document.
-NER latest version includes the ability to detect personal (PII) and health (PHI) information.
-A list of all supported entities can be found in the 
+Text Analytics supports multiple PII entity categories. The Text Analytics service
+runs a predictive model to identify and categorize named entities from an input
+document. The service's latest version includes the ability to detect personal (PII)
+and health (PHI) information. A list of all supported entities can be found in the
 [official documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal).
 
 ## Prerequisites
