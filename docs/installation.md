@@ -21,7 +21,7 @@ Presidio is supported for the following python versions:
 * 3.6
 * 3.7
 * 3.8
-* 3.9 - presidio-analyzer and presidio-anonymizer only
+* 3.9
 
 We may drop support for Python 3.6 in the future
 

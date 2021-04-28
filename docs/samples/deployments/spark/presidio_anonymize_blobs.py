@@ -15,7 +15,7 @@
 
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import AnonymizerConfig
+from presidio_anonymizer.entities.engine import OperatorConfig
 from pyspark.sql.types import StringType
 from pyspark.sql.functions import input_file_name, regexp_replace
 from pyspark.sql.functions import col, pandas_udf
@@ -77,22 +77,30 @@ display(input_df)
 
 # COMMAND ----------
 
+analyzer = AnalyzerEngine()
+anonymizer = AnonymizerEngine()
+broadcasted_analyzer = sc.broadcast(analyzer)
+broadcasted_anonymizer = sc.broadcast(anonymizer)
+
 # define a pandas UDF function and a series function over it.
-# Note that analyzer is loaded within the UDF and not broadcasted.
-# This is due to spacy limitation of loading models in multiple threads as
-# described here: https://github.com/explosion/spaCy/issues/4349
+# Note that analyzer and anonymizer are broadcasted.
+
+
 def anonymize_text(text: str) -> str:
-    analyzer = AnalyzerEngine()
-    anonymizer = AnonymizerEngine()
-    analyzer_results = analyzer.analyze(text=text, language="en")
-    anonymized_results = anonymizer.anonymize(
-        text=text,
-        analyzer_results=analyzer_results,
-        operators={
-            "DEFAULT": AnonymizerConfig("replace", {"new_value": "<ANONYMIZED>"})
-        },
-    )
-    return anonymized_results
+    try:
+        analyzer = broadcasted_analyzer.value
+        anonymizer = broadcasted_anonymizer.value
+        analyzer_results = analyzer.analyze(text=text, language="en")
+        anonymized_results = anonymizer.anonymize(
+            text=text,
+            analyzer_results=analyzer_results,
+            operators={
+                "DEFAULT": OperatorConfig("replace", {"new_value": "<ANONYMIZED>"})
+            },
+        )
+        return anonymized_results.text
+    except Exception as e:
+        print(f"An exception occurred. {e}")
 
 
 def anonymize_series(s: pd.Series) -> pd.Series:
