@@ -96,8 +96,10 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
         from presidio_analyzer.nlp_engine import NlpEngineProvider
 
+        LANGUAGES_CONFIG_FILE = "./docs/analyzer/languages-config.yml"
+
         # Create NLP engine based on configuration file
-        provider = NlpEngineProvider(conf_file="./docs/analyzer/languages-config.yml")
+        provider = NlpEngineProvider(conf_file=LANGUAGES_CONFIG_FILE)
         nlp_engine_with_spanish = provider.create_engine()
 
         # Pass created NLP engine and supported_languages to the AnalyzerEngine
