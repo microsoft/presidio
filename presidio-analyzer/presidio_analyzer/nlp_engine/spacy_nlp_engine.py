@@ -34,7 +34,7 @@ class SpacyNlpEngine(NlpEngine):
         logger.debug(f"Loading SpaCy models: {models.values()}")
 
         self.nlp = {
-            lang_code: spacy.load(model_name, disable=["parser", "tagger"])
+            lang_code: spacy.load(model_name, disable=["parser"])
             for lang_code, model_name in models.items()
         }
 
