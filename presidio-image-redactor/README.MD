@@ -62,7 +62,7 @@ redacted_image = engine.redact(image, (255, 192, 203))
 
 # save the redacted image 
 redacted_image.save("new_image.png")
-# uncomments to open the image for viewing
+# uncomment to open the image for viewing
 # redacted_image.show()
 ```
 

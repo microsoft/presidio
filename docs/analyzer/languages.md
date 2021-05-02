@@ -68,10 +68,10 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
         )
 
         # Analyze in different languages
-        results_spanish = analyzer.analyze(text="Mi nombre es David", language="es")
+        results_spanish = analyzer.analyze(text="Mi nombre es Morris", language="es")
         print(results_spanish)
 
-        results_english = analyzer.analyze(text="My name is David", language="en")
+        results_english = analyzer.analyze(text="My name is Morris", language="en")
         print(results_english)
         ```
 
