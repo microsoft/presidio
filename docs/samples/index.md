@@ -3,7 +3,7 @@
 | Topic       | Type                   | Sample                                                                                                                                          |
 | :---------- | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
 | Usage       | Python Notebook        | [Presidio Basic Usage Notebook](python/presidio_notebook.ipynb)                                                                                 |
-| Usage       | Python Notebook        | [Customizing Presidio Analyzer](python/customizing_presidio_analyzer.ipymb)                                                                     |
+| Usage       | Python Notebook        | [Customizing Presidio Analyzer](python/customizing_presidio_analyzer.ipynb)                                                                     |
 | Usage       | Python                 | [Remote Recognizer](python/example_remote_recognizer.py)                                                                                        |
 | Usage       | Python                 | [Text Analytics as a Remote Recognizer](python/text-analytics/index.md)                                                                         |
 | Usage       | REST API (postman)     | [Presidio as a REST endpoint](docker/index.md)                                                                                                  |
