@@ -66,7 +66,7 @@ Pre-requisites:
     from presidio_image_redactor import ImageRedactorEngine
     
     # Get the image to redact using PIL lib (pillow)
-    image = Image.open("ocr_text.png")
+    image = Image.open("./docs/image-redactor/ocr_text.png")
     
     # Initialize the engine
     engine = ImageRedactorEngine()
@@ -76,8 +76,8 @@ Pre-requisites:
     
     # save the redacted image 
     redacted_image.save("new_image.png")
-    # open the image for viewing
-    redacted_image.show()
+    # uncomment to open the image for viewing
+    # redacted_image.show()
     
     ```
 
