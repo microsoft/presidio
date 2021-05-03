@@ -146,21 +146,21 @@ def test_given_invalid_json_then_we_fail_to_convert():
 
 
 def test_given_custom_operator_then_expected_result_returned():
-    expected_result = True
+    result = True
     anonymizers = {
             "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
             "PHONE_NUMBER": {"type": "custom", "lambda": "lambda x: x[::-1]"}
     }
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(anonymizers)
-    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == expected_result
+    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == result
 
 
 def test_given_no_custom_operator_then_expected_result_returned():
-    expected_result = False
+    result = False
     content = get_content()
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
         content.get("anonymizers"))
-    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == expected_result
+    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == result
 
 
 def get_content():
