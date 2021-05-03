@@ -72,7 +72,9 @@ def mock_nlp_artifacts():
     return NlpArtifacts([], [], [], [], None, "en")
 
 
-def test_when_text_with_context_then_improves_score(dataset, nlp_engine, mock_nlp_artifacts):
+def test_when_text_with_context_then_improves_score(
+    dataset, nlp_engine, mock_nlp_artifacts
+):
     for item in dataset:
         text, recognizer, entities = item
         nlp_artifacts = nlp_engine.process_text(text, "en")
