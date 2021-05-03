@@ -23,6 +23,7 @@ class ImagePiiVerifyEngine:
 
     def verify(self, image: Image) -> Image:
         """Redact method to redact the given image.
+
         Please notice, this method duplicates the image, creates a new instance and
         manipulate it.
         :param image: PIL Image to be processed
