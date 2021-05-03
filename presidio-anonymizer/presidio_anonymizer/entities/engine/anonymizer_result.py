@@ -8,8 +8,7 @@ from presidio_anonymizer.entities.engine.result import OperatorResult
 class AnonymizerResult(PIIEntity):
     """Information about the encrypted entity."""
 
-    def __init__(self, start: int,
-                 end: int, entity_type: str) -> 'AnonymizerResult':
+    def __init__(self, start: int, end: int, entity_type: str) -> "AnonymizerResult":
         """
         Information about the anonymized entity we want to deanonymize.
 
@@ -21,18 +20,17 @@ class AnonymizerResult(PIIEntity):
         self.logger = logging.getLogger("presidio-anonymizer")
 
     @classmethod
-    def from_json(cls, json: Dict) -> 'AnonymizerResult':
+    def from_json(cls, json: Dict) -> "AnonymizerResult":
         """
-        Create EncryptEntity from user json.
+        Create AnonymizerResult from user json.
 
-        :param json e.g.:
+        :param json: json representation for this anonymizer result. For example:
         {
             "start": 0,
             "end": 10,
             "key": "1111111111111111",
             "entity_type":"PERSON",
         }
-        :return: AnonymizerResult object
         """
         start = json.get("start")
         end = json.get("end")
@@ -44,10 +42,10 @@ class AnonymizerResult(PIIEntity):
         """
         Convert anonymized entity returned from anonymizer engine to encrypt result.
 
-        :param key: the key we used to encrypt the text.
         :param operator_result: a single anonymizer encrypt result we received
         from the engine.
         :return:
         """
-        return cls(operator_result.start, operator_result.end,
-                   operator_result.entity_type)
+        return cls(
+            operator_result.start, operator_result.end, operator_result.entity_type
+        )
