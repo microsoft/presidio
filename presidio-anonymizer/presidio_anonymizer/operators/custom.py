@@ -20,7 +20,6 @@ class Custom(Operator):
         return new_val(text)
 
     def validate(self, params: Dict) -> None:
-
         """Validate the provided function is returning a string."""
         new_val = params.get(self.NEW_VALUE)
         if callable(new_val):
