@@ -137,7 +137,7 @@ engine = DeanonymizeEngine()
 # Operators to define the deanonymization type.
 result = engine.deanonymize(
     text="My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
-    entities=[AnonymizerResult("PERSON", 11, 55)],
+    entities=[AnonymizerResult(start=11, end=55, entity_type="PERSON"),],
     operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})}
 )
 
