@@ -88,12 +88,14 @@ To create a new recognizer via code:
 
     i. load: load a model / resource to be used during recognition
 
+    <!--exdown-skip-->
     ```python
     def load(self)
     ```
 
     ii. analyze: The main function to be called for getting entities out of the new recognizer:
 
+    <!--exdown-skip-->
     ```python
     def analyze(self, text, entities, nlp_artifacts)
     ```
