@@ -144,19 +144,24 @@ def test_given_invalid_json_then_we_fail_to_convert():
                        match="Invalid input, result must contain entity_type"):
         AppEntitiesConvertor.deanonymize_entities_from_json(data)
 
+
 def test_given_custom_operator_then_expected_result_returned():
+    expected_result = True
     anonymizers = {
             "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
             "PHONE_NUMBER": {"type": "custom", "lambda": "lambda x: x[::-1]"}
     }
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(anonymizers)
-    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == True
+    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == expected_result
+
 
 def test_given_no_custom_operator_then_expected_result_returned():
+    expected_result = False
     content = get_content()
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
         content.get("anonymizers"))
-    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == False
+    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == expected_result
+
 
 def get_content():
     return {
@@ -184,4 +189,3 @@ def __find_element(content: List, entity_type: str):
         if result.get("entity_type") == entity_type:
             return result
     return None
-

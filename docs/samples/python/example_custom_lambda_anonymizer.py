@@ -11,7 +11,7 @@ def anonymize_reverse_lambda(analyzer_results, text_to_anonymize):
     anonymized_results = anonymizer.anonymize(
         text=text_to_anonymize,
         analyzer_results=analyzer_results,            
-        operators={"EMAIL_ADDRESS": OperatorConfig("custom", {"new_value": lambda x: x[::-1]})}        
+        operators={"EMAIL_ADDRESS": OperatorConfig("custom", {"lambda": lambda x: x[::-1]})}        
     )
 
     return anonymized_results
@@ -20,7 +20,7 @@ def anonymize_faker_lambda(analyzer_results, text_to_anonymize):
     anonymized_results = anonymizer.anonymize(
         text=text_to_anonymize,
         analyzer_results=analyzer_results,    
-        operators={"EMAIL_ADDRESS": OperatorConfig("custom", {"new_value": lambda x: fake.safe_email()})}
+        operators={"EMAIL_ADDRESS": OperatorConfig("custom", {"lambda": lambda x: fake.safe_email()})}
     )
 
     return anonymized_results
