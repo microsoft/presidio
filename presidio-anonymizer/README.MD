@@ -41,7 +41,7 @@ Presidio anonymizer comes by default with the following anonymizers:
 -   Encrypt - replaced the PII with an encrypted text. 
 -   Custom - replace the PII with the result of the function executed on the PII
 
-    Parameters: `new_value` - lambda to execute on the PII data
+    Parameters: `lambda` - lambda to execute on the PII data
 
     The lambda return type must be a string
 

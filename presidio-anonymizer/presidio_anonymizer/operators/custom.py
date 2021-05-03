@@ -12,16 +12,16 @@ class Custom(Operator):
     The function retrun type must be a string
     """
 
-    NEW_VALUE = "new_value"
+    LAMBDA = "lambda"
 
     def operate(self, text: str = None, params: Dict = None) -> str:
         """:return: result of function executed on the text."""
-        new_val = params.get(self.NEW_VALUE)
+        new_val = params.get(self.LAMBDA)
         return new_val(text)
 
     def validate(self, params: Dict) -> None:
         """Validate the provided function is returning a string."""
-        new_val = params.get(self.NEW_VALUE)
+        new_val = params.get(self.LAMBDA)
         if callable(new_val):
             if not type(new_val("PII")) == str:
                 raise InvalidParamException("Function return type must be a str")
