@@ -23,10 +23,9 @@ class Custom(Operator):
         """Validate the provided function is returning a string."""
         new_val = params.get(self.NEW_VALUE)
         if callable(new_val):
-            if (type(new_val("PII")) == str):
-                return
-            else:
+            if not type(new_val("PII")) == str:
                 raise InvalidParamException("Function return type must be a str")
+
         else:
             raise InvalidParamException("New value must be a callable function")
 
