@@ -618,3 +618,18 @@ def test_ad_hoc_with_context_support_higher_confidence(nlp_engine, zip_code_reco
     zip_result_with_context = [resp for resp in responses2 if resp.entity_type == "ZIP"]
 
     assert zip_result_no_context[0].score < zip_result_with_context[0].score
+
+
+def test_ad_hoc_when_no_other_recognizers_are_requested_returns_only_ad_hoc_results(
+    loaded_analyzer_engine, zip_code_recognizer
+):
+    text = "Mr. John Smith's zip code is 10023"
+
+    responses = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+        ad_hoc_recognizers=[zip_code_recognizer],
+        entities=["ZIP"],
+    )
+
+    assert "ZIP" in [resp.entity_type for resp in responses]
