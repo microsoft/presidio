@@ -60,3 +60,8 @@ class AppEntitiesConvertor:
             for result in decrypt_entity:
                 items.append(AnonymizerResult.from_json(result))
         return items
+
+    @staticmethod
+    def check_custom_operator(operators: Dict[str, OperatorConfig]):
+        """Check if an operator is of type custom."""
+        return any([config.operator_name == "custom" for config in operators.values()])
