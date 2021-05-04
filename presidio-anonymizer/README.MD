@@ -39,6 +39,13 @@ Presidio anonymizer comes by default with the following anonymizers:
     -   `from_end` - Whether to mask the PII from it's end.
     
 -   Encrypt - replaced the PII with an encrypted text. 
+-   Custom - replace the PII with the result of the function executed on the PII
+
+    Parameters: `lambda` - lambda to execute on the PII data
+
+    The lambda return type must be a string
+
+
 Anonymizer currently uses Advanced Encryption Standard (AES) as the encryption algorithm, also known as Rijndael. 
 
     Parameters:
@@ -137,7 +144,7 @@ engine = DeanonymizeEngine()
 # Operators to define the deanonymization type.
 result = engine.deanonymize(
     text="My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
-    entities=[AnonymizerResult("PERSON", 11, 55)],
+    entities=[AnonymizerResult(start=11, end=55, entity_type="PERSON"),],
     operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})}
 )
 

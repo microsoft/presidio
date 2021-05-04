@@ -2,8 +2,7 @@
 import json
 from typing import List
 
-from presidio_anonymizer.entities.engine.result import \
-    OperatorResult
+from presidio_anonymizer.entities.engine.result import OperatorResult
 
 
 class EngineResult:
@@ -46,7 +45,7 @@ class EngineResult:
     def __eq__(self, other) -> bool:
         """Verify two instances are equal.
 
-        :return true if the two instances are equal, false otherwise.
+        Returns true if the two instances are equal, false otherwise.
         """
         return self.text == other.text and all(
             map(lambda x, y: x == y, self.items, other.items)
