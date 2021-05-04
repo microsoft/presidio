@@ -88,12 +88,14 @@ To create a new recognizer via code:
 
     i. load: load a model / resource to be used during recognition
 
+    <!--exdown-skip-->
     ```python
     def load(self)
     ```
 
     ii. analyze: The main function to be called for getting entities out of the new recognizer:
 
+    <!--exdown-skip-->
     ```python
     def analyze(self, text, entities, nlp_artifacts)
     ```
@@ -125,6 +127,12 @@ To add a recognizer to the list of pre-defined recognizers:
 2. Create a file containing the new recognizer Python class.
 3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
+
+## Azure Text Analytics recognizer 
+
+On how to integrate Presidio with Azure Text Analytics, 
+and a sample for a Text Analytics Remote Recognizer, refer to the
+[Azure Text Analytics Integration document](../samples/python/text-analytics/index.md).
 
 ### Creating ad-hoc recognizers
 

@@ -1,0 +1,10 @@
+- name: Person
+  entity_type: NAME
+  supported_languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: Age
+  subcategory: Age
+  entity_type: AGE
+  supported_languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: InternationlBankingAccountNumber
+  entity_type: IBAN
+  supported_languages: [en, es, fr, de, it, pt-pt, pt-br]

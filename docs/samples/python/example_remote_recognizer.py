@@ -76,7 +76,7 @@ class ExampleRemoteRecognizer(RemoteRecognizer):
         """Call an external service for PII detection."""
 
         payload = {"text": text, "language": self.supported_language}
-
+        
         response = requests.post(
             self.pii_identification_url,
             json=payload,
@@ -112,11 +112,11 @@ if __name__ == "__main__":
     # Illustrative example only: Run Presidio analyzer
     # as if it was an external PII detection mechanism.
     rec = ExampleRemoteRecognizer(
-        pii_identification_url="http://localhost:3000/analyze",
-        supported_entities_url="http://localhost:3000/supportedentities",
+        pii_identification_url="http://localhost:5002/analyze",
+        supported_entities_url="http://localhost:5002/supportedentities",
     )
 
     remote_results = rec.analyze(
-        text="My name is David", entities=["PERSON"], nlp_artifacts=None
+        text="My name is Morris", entities=["PERSON"], nlp_artifacts=None
     )
     print(remote_results)
