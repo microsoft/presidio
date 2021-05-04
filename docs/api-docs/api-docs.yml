@@ -299,6 +299,7 @@ components:
                         "score": 0.01
                         }
                     ],
+                    "context": ["zip", "code"],
                     "supported_entity":"ZIP"
                     }
         ]

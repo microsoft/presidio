@@ -148,6 +148,7 @@ These recognizers, in JSON form, are added to the `/analyze` request and are onl
                 "score": 0.01
                 }
             ],
+            "context": ["zip", "code"],
             "supported_entity":"ZIP"
             }
         ]
@@ -178,6 +179,8 @@ These recognizers, in JSON form, are added to the `/analyze` request and are onl
     ```
 
 In both examples, the `/analyze` request is extended with a list of `ad_hoc_recognizers`, which could be either `patterns`, `deny_list` or both.
+
+Additional examples can be found in the [OpenAPI spec](../api-docs/api-docs.html).
 
 ## PII detection in different languages
 

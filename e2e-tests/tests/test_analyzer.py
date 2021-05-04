@@ -337,8 +337,8 @@ def test_given_wrong_ad_hoc_json_exception_is_given():
     }
     """
 
-    assert response_status == 400
     assert equal_json_strings(expected_response, response_content)
+    assert response_status == 400
 
 
 def test_given_ad_hoc_pattern_recognizer_context_raises_confidence():
@@ -357,7 +357,7 @@ def test_given_ad_hoc_pattern_recognizer_context_raises_confidence():
                     "score": 0.01
                     }
                 ],
-                "context": ["Zip","code"],
+                "context": ["zip", "code"],
                 "supported_entity":"ZIP"
             }
         ]
