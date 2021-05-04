@@ -151,7 +151,12 @@ class AnalyzerEngine:
         )
 
         if ad_hoc_recognizers:
-            recognizers.extend(ad_hoc_recognizers)
+            recognizers_to_add = self._filter_ad_hoc_recognizers(
+                ad_hoc_recognizers=ad_hoc_recognizers,
+                language=language,
+                entities=entities,
+            )
+            recognizers.extend(recognizers_to_add)
 
         if all_fields:
             # Since all_fields=True, list all entities by iterating
@@ -195,6 +200,33 @@ class AnalyzerEngine:
             results = self.__remove_decision_process(results)
 
         return results
+
+    @staticmethod
+    def _filter_ad_hoc_recognizers(
+        ad_hoc_recognizers: List[EntityRecognizer],
+        language: str,
+        entities: Optional[List[str]] = None,
+    ) -> List[EntityRecognizer]:
+        """
+        Return the ad hoc recognizers relevant for the requested entities and language.
+
+        :param ad_hoc_recognizers: List of recognizers provided in the analyze request
+        :param entities: List of entities to return for this request
+        :param language: Language code for this request
+        :return: A list of EntityRecognizer
+        """
+        if not entities:
+            return ad_hoc_recognizers
+
+        subset = []
+        for entity in entities:
+            subset = [
+                rec
+                for rec in ad_hoc_recognizers
+                if entity in rec.supported_entities
+                and language == rec.supported_language
+            ]
+        return subset
 
     def __remove_low_scores(
         self, results: List[RecognizerResult], score_threshold: float = None

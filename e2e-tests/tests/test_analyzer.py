@@ -308,6 +308,75 @@ def test_given_ad_hoc_pattern_recognizer_the_right_entities_are_returned():
     assert equal_json_strings(expected_response, response_content)
 
 
+def test_given_wrong_ad_hoc_json_exception_is_given():
+    malformed_request_body = r"""
+      {
+          "text": "John Smith drivers license is AC432223. Zip code: 10023",
+          "language": "en",
+          "ad_hoc_recognizers":[
+              {
+                 "name": "Zip code Recognizer",
+                 "supported_language": "en",
+                 "patterns": [
+                     {
+                     "type": "zip code (weak)", 
+                     "bebex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)", 
+                     "confidence": 0.01
+                     }
+                 ],
+                 "supported_entity":"ZIP"
+             }
+         ]
+      }
+      """
+    response_status, response_content = analyze(malformed_request_body)
+
+    expected_response = """
+    {
+        "error":"Failed to parse /analyze request for AnalyzerEngine.analyze(). __init__() got an unexpected keyword argument \'type\'"
+    }
+    """
+
+    assert response_status == 400
+    assert equal_json_strings(expected_response, response_content)
+
+
+def test_given_ad_hoc_pattern_recognizer_context_raises_confidence():
+    request_body = r"""
+     {
+         "text": "John Smith drivers license is AC432223. Zip code: 10023",
+         "language": "en",
+         "ad_hoc_recognizers":[
+             {
+                "name": "Zip code Recognizer",
+                "supported_language": "en",
+                "patterns": [
+                    {
+                    "name": "zip code (weak)", 
+                    "regex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)", 
+                    "score": 0.01
+                    }
+                ],
+                "context": ["Zip","code"],
+                "supported_entity":"ZIP"
+            }
+        ]
+     }
+     """
+
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+     [
+         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null},
+         {"entity_type": "ZIP", "start": 50, "end": 55, "score": 0.4, "analysis_explanation":null}
+     ]
+     """
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+
+
 @pytest.mark.api
 def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
     request_body = r"""

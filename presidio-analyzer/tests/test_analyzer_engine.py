@@ -522,15 +522,9 @@ def test_when_read_test_spacy_nlp_conf_file_then_returns_spacy_nlp_engine(
 
 
 def test_when_ad_hoc_pattern_recognizer_is_added_then_result_contains_result(
-    loaded_analyzer_engine,
+    loaded_analyzer_engine, zip_code_recognizer
 ):
     text = "John Smith drivers license is AC432223 and his zip code is 10023"
-    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
-    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
-
-    zip_code_recognizer = PatternRecognizer(
-        supported_entity="ZIP", patterns=[zipcode_pattern]
-    )
 
     responses = loaded_analyzer_engine.analyze(
         text=text, language="en", ad_hoc_recognizers=[zip_code_recognizer]
@@ -575,21 +569,52 @@ def test_when_ad_hoc_deny_list_recognizer_is_added_then_result_does_not_persist(
 
 
 def test_when_ad_hoc_deny_list_recognizer_contains_both_regex_and_deny_list(
-    loaded_analyzer_engine,
+    loaded_analyzer_engine, zip_code_deny_list_recognizer
 ):
     text = "Mr. John Smith's zip code is 10023 or 999"
-    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
-    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
-
-    zip_recognizer = PatternRecognizer(
-        supported_entity="ZIP", deny_list=["999"], patterns=[zipcode_pattern]
-    )
 
     responses = loaded_analyzer_engine.analyze(
-        text=text, language="en", ad_hoc_recognizers=[zip_recognizer]
+        text=text, language="en", ad_hoc_recognizers=[zip_code_deny_list_recognizer]
     )
 
     detected_zips = [
         response.entity_type for response in responses if response.entity_type == "ZIP"
     ]
     assert len(detected_zips) == 2
+
+
+def test_entities_filter_for_ad_hoc_removes_recognizer(loaded_analyzer_engine):
+    text = "Mr. John Smith's zip code is 10002"
+
+    mr_recognizer = PatternRecognizer(supported_entity="MR", deny_list=["Mr.", "Mr"])
+    responses1 = loaded_analyzer_engine.analyze(
+        text=text, language="en", ad_hoc_recognizers=[mr_recognizer]
+    )
+    responses2 = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+        ad_hoc_recognizers=[mr_recognizer],
+        entities=["PERSON"],
+    )
+
+    assert "MR" in [resp.entity_type for resp in responses1]
+    assert "MR" not in [resp.entity_type for resp in responses2]
+
+
+def test_ad_hoc_with_context_support_higher_confidence(nlp_engine, zip_code_recognizer):
+    text = "Mr. John Smith's zip code is 10023"
+    analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine)
+
+    responses1 = analyzer_engine.analyze(
+        text=text, language="en", ad_hoc_recognizers=[zip_code_recognizer]
+    )
+
+    zip_code_recognizer.context = ["zip", "code"]
+    responses2 = analyzer_engine.analyze(
+        text=text, language="en", ad_hoc_recognizers=[zip_code_recognizer]
+    )
+
+    zip_result_no_context = [resp for resp in responses1 if resp.entity_type == "ZIP"]
+    zip_result_with_context = [resp for resp in responses2 if resp.entity_type == "ZIP"]
+
+    assert zip_result_no_context[0].score < zip_result_with_context[0].score
