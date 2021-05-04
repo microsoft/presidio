@@ -562,10 +562,17 @@ components:
           type: string
           description: "Language code supported by this recognizer"
         patterns:
+          description: "List of type Pattern containing regex expressions with additional metadata."
           type: array
           items:
             $ref: "#/components/schemas/Pattern"
         deny_list:
+          type: array
+          description: "List of words to be returned as PII if found."
+          items:
+            type: string
+        context:
+          description: "List of words to be used to increase confidence if found in the vicinity of detected entities."
           type: array
           items:
             type: string
