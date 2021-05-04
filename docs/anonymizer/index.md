@@ -186,6 +186,7 @@ Operator type | Operaor name | Description | Parameters |
 | Anonymize | hash | hash the PII using either sha256, sha512 or md5 | `hash_type` - sets the type of hashing. Can be either `sha256`, `sha512` or `md5`. <br> The default hash type is `sha256`. |
 | Anonymize | mask | replaces the PII with a given character | `chars_to_mask` - the amount of characters out of the PII that should be replaced. <br> `masking_char` - the character to be replaced with. <br> `from_end` - Whether to mask the PII from it's end. |
 | Anonymize | encrypt | encrypts the PII using a given key | `key` - a cryptographic key used for the encryption. |
+| Anonymize | custom | replace the PII with the result of the function executed on the PII | `lambda` - lambda to execute on the PII data. The lambda return type must be a string. |
 | Deanonymize | decrypt | decrypt the encrypted PII in the text using the encryption key | `key` - a cryptographic key used for the encryption is also used for the decryption. |
 
 !!! note "Note"

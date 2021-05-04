@@ -145,6 +145,24 @@ def test_given_invalid_json_then_we_fail_to_convert():
         AppEntitiesConvertor.deanonymize_entities_from_json(data)
 
 
+def test_given_custom_operator_then_expected_result_returned():
+    result = True
+    anonymizers = {
+            "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
+            "PHONE_NUMBER": {"type": "custom", "lambda": "lambda x: x[::-1]"}
+    }
+    anonymizers_config = AppEntitiesConvertor.operators_config_from_json(anonymizers)
+    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == result
+
+
+def test_given_no_custom_operator_then_expected_result_returned():
+    result = False
+    content = get_content()
+    anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
+        content.get("anonymizers"))
+    assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == result
+
+
 def get_content():
     return {
         "text": "hello world, my name is Jane Doe. My number is: 034453334",
