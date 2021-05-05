@@ -1,3 +1,4 @@
+import copy
 import logging
 from typing import Optional, List, Iterable, Union, Type
 
@@ -107,6 +108,7 @@ class RecognizerRegistry:
         language: str,
         entities: Optional[List[str]] = None,
         all_fields: bool = False,
+        ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
     ) -> List[EntityRecognizer]:
         """
         Return a list of recognizers which supports the specified name and language.
@@ -114,6 +116,8 @@ class RecognizerRegistry:
         :param entities: the requested entities
         :param language: the requested language
         :param all_fields: a flag to return all fields of a requested language.
+        :param ad_hoc_recognizers: Additional recognizers provided by the user
+        as part of the request
         :return: A list of the recognizers which supports the supplied entities
         and language
         """
@@ -123,7 +127,9 @@ class RecognizerRegistry:
         if entities is None and all_fields is False:
             raise ValueError("No entities provided")
 
-        all_possible_recognizers = self.recognizers
+        all_possible_recognizers = copy.copy(self.recognizers)
+        if ad_hoc_recognizers:
+            all_possible_recognizers.extend(ad_hoc_recognizers)
 
         # filter out unwanted recognizers
         to_return = set()
