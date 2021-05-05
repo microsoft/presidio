@@ -13,4 +13,5 @@
 | Deployment  | Spark/Azure Databricks | [Presidio with Spark](deployments/spark/index.md)                                                                                               |
 | Deployment  | Azure Data Factory     | [Presidio in Azure Data Factory with App Service](deployments/data-factory/presidio-data-factory.md#option-1-presidio-as-an-http-rest-endpoint) |
 | Deployment  | Azure Data Factory     | [Presidio in Azure Data Factory with Databricks](deployments/data-factory/presidio-data-factory.md#option-2-presidio-on-azure-databricks)       |
-| Deployment  | Azure Data Factory     | [Presidio in Azure Data Factory Template Gallery](deployments/data-factory/presidio-data-factory-template-gallery.md)                           |
+| Deployment  | Azure Data Factory     | [Presidio in Azure Data Factory Template Gallery (HTTP endpoint)](deployments/data-factory/presidio-data-factory-template-gallery-http.md)                           |
+| Deployment  | Azure Data Factory     | [Presidio in Azure Data Factory Template Gallery (Databricks)](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md)                           |
