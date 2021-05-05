@@ -22,12 +22,12 @@ class ImagePiiVerifyEngine:
         self.analyzer_engine = ImageAnalyzerEngine()
 
     def verify(self, image: Image) -> Image:
-        """Redact method to redact the given image.
+        """Annotate image with the detect PII entity.
 
         Please notice, this method duplicates the image, creates a new instance and
         manipulate it.
         :param image: PIL Image to be processed
-        :return: the redacted image
+        :return: the annotated image
         """
 
         image = ImageChops.duplicate(image)
