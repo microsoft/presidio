@@ -281,13 +281,28 @@ components:
             Enhanced Request :
               value:
                 {
-                  "text": "John Smith drivers license is AC432223",
+                  "text": "John Smith drivers license is AC432223 and the zip code is 12345",
                   "language": "en",
                   "return_decision_process": false,
                   "correlation_id": "123e4567-e89b-12d3-a456-426614174000",
                   "score_threshold": 0.6,
-                  "entities": ["US_DRIVER_LICENSE"],
-                  "trace": false
+                  "entities": ["US_DRIVER_LICENSE", "ZIP"],
+                  "trace": false,
+                  "ad_hoc_recognizers":[
+                    {
+                    "name": "Zip code Recognizer",
+                    "supported_language": "en",
+                    "patterns": [
+                        {
+                        "name": "zip code (weak)", 
+                        "regex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)", 
+                        "score": 0.01
+                        }
+                    ],
+                    "context": ["zip", "code"],
+                    "supported_entity":"ZIP"
+                    }
+        ]
                 }
 
     AnonymizeRequest:
@@ -377,6 +392,11 @@ components:
         return_decision_process:
           type: boolean
           description: "Whether to include analysis explanation in the response"
+        ad_hoc_recognizers:
+          type: array
+          description: "list of recognizers to be used in the context of this request only (ad-hoc)."
+          items:
+            $ref: "#/components/schemas/PatternRecognizer"
 
     AnonymizeRequest:
       type: object
@@ -515,7 +535,50 @@ components:
           type: number
           format: double
           description: "Result of a validation (e.g. checksum)"
+    
+    Pattern:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Name of regular expression pattern"
+        regex:
+          type: string
+          description: "Regex pattern string"
+        score:
+          type: number
+          format: double
+          description: "Detection confidence of this pattern (0.01 if very noisy, 0.6-1.0 if very specific)"
 
+
+    PatternRecognizer:
+      type: object
+      description: "A regular expressions or deny-list based recognizer"
+      properties:
+        name:
+          type: string
+          description: "Name of recognizer"
+        supported_language:
+          type: string
+          description: "Language code supported by this recognizer"
+        patterns:
+          description: "List of type Pattern containing regex expressions with additional metadata."
+          type: array
+          items:
+            $ref: "#/components/schemas/Pattern"
+        deny_list:
+          type: array
+          description: "List of words to be returned as PII if found."
+          items:
+            type: string
+        context:
+          description: "List of words to be used to increase confidence if found in the vicinity of detected entities."
+          type: array
+          items:
+            type: string
+        supported_entity:
+          type: string
+          description: "The name of entity this ad hoc recognizer detects"
 
     EntityTypes:
       description: "The supported PII entity types."

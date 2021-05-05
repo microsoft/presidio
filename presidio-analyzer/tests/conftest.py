@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import spacy
 
-from presidio_analyzer import EntityRecognizer
+from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
 from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
@@ -82,6 +82,11 @@ def loaded_registry():
 
 
 @pytest.fixture(scope="module")
+def nlp_engine(nlp_engines):
+    return nlp_engines["spacy_en"]
+
+
+@pytest.fixture(scope="module")
 def mock_registry():
     return RecognizerRegistryMock()
 
@@ -106,6 +111,26 @@ def mock_bn_model():
     """
     bn = spacy.blank("bn")
     bn.to_disk("bn_test")
+
+
+@pytest.fixture(scope="session")
+def zip_code_recognizer():
+    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
+    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
+    zip_recognizer = PatternRecognizer(
+        supported_entity="ZIP", patterns=[zipcode_pattern]
+    )
+    return zip_recognizer
+
+
+@pytest.fixture(scope="session")
+def zip_code_deny_list_recognizer():
+    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
+    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
+    zip_recognizer = PatternRecognizer(
+        supported_entity="ZIP", deny_list=["999"], patterns=[zipcode_pattern]
+    )
+    return zip_recognizer
 
 
 def pytest_sessionfinish():

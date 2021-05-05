@@ -113,6 +113,7 @@ class AnalyzerEngine:
         correlation_id: Optional[str] = None,
         score_threshold: Optional[float] = None,
         return_decision_process: Optional[bool] = False,
+        ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -126,6 +127,8 @@ class AnalyzerEngine:
         to return an identified entity
         :param return_decision_process: Whether the analysis decision process steps
         returned in the response.
+        :param ad_hoc_recognizers: List of recognizers which will be used only
+        for this specific request.
         :return: an array of the found entities in the text
 
         :example:
@@ -144,7 +147,10 @@ class AnalyzerEngine:
         all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
-            language=language, entities=entities, all_fields=all_fields
+            language=language,
+            entities=entities,
+            all_fields=all_fields,
+            ad_hoc_recognizers=ad_hoc_recognizers,
         )
 
         if all_fields:
