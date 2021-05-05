@@ -118,6 +118,8 @@ In this example, an external PII detection service exposes two APIs: `detect` an
 
 In this code snippet, we simulate the external PII detector by using the Presidio analyzer. In reality, we would adapt this code to fit the external PII detector we have in hand.
 
+For an example of integrating a `RemoteRecognizer` with Presidio-Analyzer, see [this example](../samples/python/integrating_with_external_services.ipynb).
+
 ### Creating pre-defined recognizers
 
 Once a recognizer is created, it can either be added to the `RecognizerRegistry` via the `add_recognizer` method, or it could be added into the list of predefined recognizers.
@@ -128,11 +130,11 @@ To add a recognizer to the list of pre-defined recognizers:
 3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
-## Azure Text Analytics recognizer 
+## Azure Text Analytics recognizer
 
-On how to integrate Presidio with Azure Text Analytics, 
+On how to integrate Presidio with Azure Text Analytics,
 and a sample for a Text Analytics Remote Recognizer, refer to the
-[Azure Text Analytics Integration document](../samples/python/text-analytics/index.md).
+[Azure Text Analytics Integration document](../samples/python/text_analytics/index.md).
 
 ### Creating ad-hoc recognizers
 
