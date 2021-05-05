@@ -9,11 +9,6 @@ def entities():
 
 
 @pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
-
-
-@pytest.fixture(scope="module")
 def nlp_recognizer(nlp_recognizers):
     return nlp_recognizers["spacy"]
 

@@ -49,8 +49,8 @@ class Server:
         def analyze() -> Tuple[str, int]:
             """Execute the analyzer function."""
             # Parse the request params
-            req_data = AnalyzerRequest(request.get_json())
             try:
+                req_data = AnalyzerRequest(request.get_json())
                 if not req_data.text:
                     raise Exception("No text provided")
 
@@ -64,6 +64,7 @@ class Server:
                     score_threshold=req_data.score_threshold,
                     entities=req_data.entities,
                     return_decision_process=req_data.return_decision_process,
+                    ad_hoc_recognizers=req_data.ad_hoc_recognizers,
                 )
 
                 return Response(
@@ -74,6 +75,14 @@ class Server:
                     ),
                     content_type="application/json",
                 )
+            except TypeError as te:
+                error_msg = (
+                    f"Failed to parse /analyze request "
+                    f"for AnalyzerEngine.analyze(). {te.args[0]}"
+                )
+                self.logger.error(error_msg)
+                return jsonify(error=error_msg), 400
+
             except Exception as e:
                 self.logger.error(
                     f"A fatal error occurred during execution of "
