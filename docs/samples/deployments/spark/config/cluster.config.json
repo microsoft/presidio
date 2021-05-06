@@ -1,0 +1,20 @@
+{
+    "cluster_name": "presidio_cluster",
+    "autoscale": { "min_workers": 2, "max_workers": 5 },
+    "spark_version": "7.5.x-scala2.12",
+    "autotermination_minutes": 30,
+    "node_type_id": "Standard_DS12_v2",
+    "driver_node_type_id": "Standard_DS12_v2",
+    "spark_env_vars": {
+        "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+        "STORAGE_MOUNT_NAME": "/mnt/files",
+        "STORAGE_CONTAINER_NAME": "storagecontainername",
+        "STORAGE_ACCOUNT_NAME": "storageaccountname"
+    },
+    "init_scripts": [{
+        "dbfs": {
+            "destination": "dbfs:/FileStore/dependencies/startup.sh"
+        }
+
+    }]
+}

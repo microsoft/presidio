@@ -20,10 +20,8 @@ from pyspark.sql.types import StringType
 from pyspark.sql.functions import input_file_name, regexp_replace
 from pyspark.sql.functions import col, pandas_udf
 import pandas as pd
+import os
 
-dbutils.widgets.text("storage_account_name", "", "Blob Storage Account Name")
-dbutils.widgets.text("storage_container_name", "", "Blob Container Name")
-dbutils.widgets.text("storage_account_access_key", "", "Storage Account Access Key")
 dbutils.widgets.text("storage_input_folder", "input", "Input Folder Name")
 dbutils.widgets.text("storage_output_folder", "output", "Output Folder Name")
 
@@ -34,38 +32,11 @@ dbutils.widgets.text("storage_output_folder", "output", "Output Folder Name")
 
 # COMMAND ----------
 
-storage_account_name = dbutils.widgets.get("storage_account_name")
-storage_container_name = dbutils.widgets.get("storage_container_name")
-storage_account_access_key = dbutils.widgets.get("storage_account_access_key")
-storage_mount_name = "/mnt/files"
-
-
-# unmount container if previously mounted
-def sub_unmount(str_path):
-    if any(mount.mountPoint == str_path for mount in dbutils.fs.mounts()):
-        dbutils.fs.unmount(str_path)
-
-
-sub_unmount(storage_mount_name)
-
-# mount the container
-dbutils.fs.mount(
-    source="wasbs://"
-    + storage_container_name
-    + "@"
-    + storage_account_name
-    + ".blob.core.windows.net",
-    mount_point=storage_mount_name,
-    extra_configs={
-        "fs.azure.account.key."
-        + storage_account_name
-        + ".blob.core.windows.net": storage_account_access_key
-    },
-)
-
+storage_mount_name = os.environ["STORAGE_MOUNT_NAME"]
+storage_input_folder = dbutils.widgets.get("storage_input_folder")
 # load the files
 input_df = spark.read.text(
-    storage_mount_name + "/" + dbutils.widgets.get("storage_input_folder") + "/*"
+    storage_mount_name + "/" + storage_input_folder + "/*"
 ).withColumn("filename", input_file_name())
 display(input_df)
 
@@ -133,6 +104,5 @@ anonymized_df = anonymized_df.withColumn(
 )
 anonymized_df = anonymized_df.drop("value")
 display(anonymized_df)
-anonymized_df.write.csv(
-    storage_mount_name + "/" + dbutils.widgets.get("storage_output_folder")
-)
+storage_output_folder = dbutils.widgets.get("storage_output_folder")
+anonymized_df.write.csv(storage_mount_name + "/" + storage_output_folder)
