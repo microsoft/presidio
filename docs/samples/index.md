@@ -5,7 +5,8 @@
 | Usage       | Python Notebook        | [Presidio Basic Usage Notebook](python/presidio_notebook.ipynb)                                                                                 |
 | Usage       | Python Notebook        | [Customizing Presidio Analyzer](python/customizing_presidio_analyzer.ipynb)                                                                     |
 | Usage       | Python                 | [Remote Recognizer](python/example_remote_recognizer.py)                                                                                        |
-| Usage       | Python                 | [Text Analytics as a Remote Recognizer](python/text-analytics/index.md)                                                                         |
+| Usage       | Python                 | [Text Analytics as a Remote Recognizer](python/text_analytics/index.md)                                                                         |
+| Usage       | Python                 | [Integrating with external services](python/integrating_with_external_services.ipynb)                                                                         |
 | Usage       | Python                 | [Passing a lambda as a Presidio anonymizer using Faker](python/example_custom_lambda_anonymizer.py)                                             |
 | Usage       | REST API (postman)     | [Presidio as a REST endpoint](docker/index.md)                                                                                                  |
 | Deployment  | App Service            | [Presidio with App Service](deployments/app-service/index.md)                                                                                   |
