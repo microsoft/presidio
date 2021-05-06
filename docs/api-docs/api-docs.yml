@@ -201,7 +201,7 @@ paths:
       servers:
         - url: https://presidio-anonymizer-prod.azurewebsites.net
       tags:
-        - Anonymizer
+        - Deanonymize
       summary: "Deanonymize Text"
       requestBody:
         $ref: "#/components/requestBodies/DeanonymizeRequest"
@@ -294,8 +294,8 @@ components:
                     "supported_language": "en",
                     "patterns": [
                         {
-                        "name": "zip code (weak)", 
-                        "regex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)", 
+                        "name": "zip code (weak)",
+                        "regex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)",
                         "score": 0.01
                         }
                     ],
@@ -535,7 +535,7 @@ components:
           type: number
           format: double
           description: "Result of a validation (e.g. checksum)"
-    
+
     Pattern:
       type: object
       properties:
