@@ -9,7 +9,7 @@ The sample deploys the following Azure Services:
 * Azure Storage - The target storage account where data will be persisted.
 * Azure Databricks - Host presidio to anonymize the data.
 
-Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline and a storage account which holds the source files.
+Additionaly you should already have an instance of Azure Data Factory which hosts and orchestrates the transformation pipeline and a storage account which holds the source files.
 
 ## About this Solution Template
 
@@ -42,7 +42,7 @@ Take a note of the authentication token and do not follow the "Running the sampl
 1. Go to the Data anonymization with Presidio (Databricks) template. Select the AnonymizedCSV connection (Azure Storage) and select "New" from the drop down menu.
 ![ADF-Template-Load](images/data-anonymization-databricks-01.png)
 
-2. Name the service "PresidioStorage" and select the storage account that was created in the previous steps from your subscription. Note that Target source was also select as the sample uses the same storage account for both source and target.
+2. Name the service "PresidioStorage" and select the storage account that was created in the previous steps from your subscription. Note that Target source was also selecte as the sample uses the same storage account for both source and target.
 ![ADF-Storage-Link](images/data-anonymization-databricks-02.png)
 
 3. Select the Anonymize Source connection (Databricks) and select "New" from the drop down menu.
