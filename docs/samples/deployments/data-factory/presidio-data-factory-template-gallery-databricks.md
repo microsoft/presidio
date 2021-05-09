@@ -1,8 +1,8 @@
 # Anonymize PII entities using Azure Data Factory template
 
-This sample uses the built in [data anonymization template](https://github.com/Azure/Azure-DataFactory/tree/main/templates/Data%20Anonymization%20with%20Presidio%20Databricks) of Azure Data Factory which is a part of the Template Gallery to copy a csv dataset from one location to another while anonymizing a text column in the dataset from PII data. It leverages the code for using [Presidio on Azure Databricks](../spark/index.md) to call Presidio as a Databricks notebook job in the Azure Data Factory (ADF) pipeline to transform the input dataset before mergine the results to an Azure Blob Storage.
+This sample uses the built in [data anonymization template](https://github.com/Azure/Azure-DataFactory/tree/main/templates/Data%20Anonymization%20with%20Presidio%20on%20Databricks) of Azure Data Factory which is a part of the Template Gallery to copy a csv dataset from one location to another while anonymizing a text column in the dataset from PII data. It leverages the code for using [Presidio on Azure Databricks](../spark/index.md) to call Presidio as a Databricks notebook job in the Azure Data Factory (ADF) pipeline to transform the input dataset before mergine the results to an Azure Blob Storage.
 
-**Note that** this solution is capabale of transforming large datasets. For smaller, text based input you may want to work with the Data Anonymization with Presidio (HTTP) template which offers an easier deployment for Presidio.
+**Note that** this solution is capabale of transforming large datasets. For smaller, text based input you may want to work with the Data Anonymization with Presidio as an HTTP service template which offers an easier deployment for Presidio.
 
 The sample deploys the following Azure Services:
 
@@ -39,7 +39,7 @@ Take a note of the authentication token and do not follow the "Running the sampl
 
 ### Setup Azure Data Factory
 
-1. Go to the Data anonymization with Presidio (Databricks) template. Select the AnonymizedCSV connection (Azure Storage) and select "New" from the drop down menu.
+1. Go to the Data anonymization with Presidio on Databricks template. Select the AnonymizedCSV connection (Azure Storage) and select "New" from the drop down menu.
 ![ADF-Template-Load](images/data-anonymization-databricks-01.png)
 
 2. Name the service "PresidioStorage" and select the storage account that was created in the previous steps from your subscription. Note that Target source was also selecte as the sample uses the same storage account for both source and target.
