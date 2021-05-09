@@ -42,7 +42,7 @@ Note the output token and do not follow the "Running the sample" steps.
 1. Go to the Data anonymization with Presidio (Databricks) template. Select the AnonymizedCSV connection (Azure Storage) and select "New" from the drop down menu.
 ![ADF-Template-Load](images/data-anonymization-databricks-01.png)
 
-2. Name the service "PresidioStorage" and select the storage account that was created in the previous steps from your subscription. Note that Target source was also select as the sample uses the same storage account for both source and target.
+2. Name the service "PresidioStorage" and select the storage account that was created in the previous steps from your subscription. Note that Target source was also selecte as the sample uses the same storage account for both source and target.
 ![ADF-Storage-Link](images/data-anonymization-databricks-02.png)
 
 3. Select the Anonymize Source connection (Databricks) and select "New" from the drop down menu.
