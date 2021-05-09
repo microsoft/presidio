@@ -1,6 +1,6 @@
 # Anonymize PII entities using Azure Data Factory template
 
-This sample uses the built in data anonymization template of Azure Data Factory which is a part of the Template Gallery to copy a csv dataset from one location to another while anonymizing a text column in the dataset from PII data. It leverages the code for using [Presidio on Azure Databricks](../spark/index.md) to call Presidio as a Databricks notebook job in the Azure Data Factory (ADF) pipeline to transform the input dataset before mergine the results to an Azure Blob Storage.
+This sample uses the built in [data anonymization template](https://github.com/Azure/Azure-DataFactory/tree/main/templates/Data%20Anonymization%20with%20Presidio%20Databricks) of Azure Data Factory which is a part of the Template Gallery to copy a csv dataset from one location to another while anonymizing a text column in the dataset from PII data. It leverages the code for using [Presidio on Azure Databricks](../spark/index.md) to call Presidio as a Databricks notebook job in the Azure Data Factory (ADF) pipeline to transform the input dataset before mergine the results to an Azure Blob Storage.
 
 **Note that** this solution is capabale of transforming large datasets. For smaller, text based input you may want to work with the Data Anonymization with Presidio (HTTP) template which offers an easier deployment for Presidio.
 
@@ -34,8 +34,8 @@ To use this template you should first setup the required infrastructure for the 
 
 ### Setup Presidio
 
-Provision and setup the datbricks cluster by following the Deploy and Setup steps in [presidio-spark sample](../spark/index.md#Azure-Databricks).
-Note the output token and do not follow the "Running the sample" steps.
+Provision and setup the datbricks cluster by following the Deploy and Setup steps in [presidio-spark sample](../spark/index.md#Pre-requisites).
+Take a note of the authentication token and do not follow the "Running the sample" steps.
 
 ### Setup Azure Data Factory
 
@@ -48,7 +48,7 @@ Note the output token and do not follow the "Running the sample" steps.
 3. Select the Anonymize Source connection (Databricks) and select "New" from the drop down menu.
 ![ADF-Databricks-Load](images/data-anonymization-databricks-03.png)
 
-4. Name the service "PresidioDatabricks" and select the Azure Databricks workspace that was created in the previous steps from your subscription. Follow through the steps to input the authentication token which was generated in the previous step and selecting presidio_cluster to run the job.
+4. Name the service "PresidioDatabricks" and select the Azure Databricks workspace that was created in the previous steps from your subscription. Follow through the steps to input the authentication token which was generated in the [previous step](../spark/index.md#Setup-Databricks), or create a new one by following [this guide](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/authentication). Select presidio_cluster to run the job.
 ![ADF-Databricks-Link](images/data-anonymization-databricks-04.png)
 
 5. Select Use this template tab
