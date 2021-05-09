@@ -21,16 +21,18 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using JsonSubTypes;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIDateConverter = Microsoft.Presidio.Client.OpenAPIDateConverter;
 
 namespace Microsoft.Presidio.Model
 {
     /// <summary>
-    /// Replace with a given character
+    /// Mask
     /// </summary>
     [DataContract(Name = "Mask")]
-    public partial class Mask : IEquatable<Mask>, IValidatableObject
+    [JsonConverter(typeof(JsonSubtypes), "Type")]
+    public partial class Mask : Operator, IEquatable<Mask>, IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Mask" /> class.
@@ -40,11 +42,11 @@ namespace Microsoft.Presidio.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="Mask" /> class.
         /// </summary>
-        /// <param name="type">mask (required).</param>
+        /// <param name="type">mask (required) (default to &quot;Mask&quot;).</param>
         /// <param name="maskingChar">The replacement character (required).</param>
         /// <param name="charsToMask">The amount of characters that should be replaced (required).</param>
         /// <param name="fromEnd">Whether to mask the PII from it&#39;s end (default to false).</param>
-        public Mask(string type = default(string), string maskingChar = default(string), int charsToMask = default(int), bool fromEnd = false)
+        public Mask(string type = "Mask", string maskingChar = default(string), int charsToMask = default(int), bool fromEnd = false) : base()
         {
             // to ensure "type" is required (not null)
             this.Type = type ?? throw new ArgumentNullException("type is a required property for Mask and cannot be null");
@@ -90,6 +92,7 @@ namespace Microsoft.Presidio.Model
         {
             var sb = new StringBuilder();
             sb.Append("class Mask {\n");
+            sb.Append("  ").Append(base.ToString().Replace("\n", "\n  ")).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("  MaskingChar: ").Append(MaskingChar).Append("\n");
             sb.Append("  CharsToMask: ").Append(CharsToMask).Append("\n");
@@ -102,7 +105,7 @@ namespace Microsoft.Presidio.Model
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public virtual string ToJson()
+        public override string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
         }
@@ -127,21 +130,21 @@ namespace Microsoft.Presidio.Model
             if (input == null)
                 return false;
 
-            return 
+            return base.Equals(input) && 
                 (
                     this.Type == input.Type ||
                     (this.Type != null &&
                     this.Type.Equals(input.Type))
-                ) && 
+                ) && base.Equals(input) && 
                 (
                     this.MaskingChar == input.MaskingChar ||
                     (this.MaskingChar != null &&
                     this.MaskingChar.Equals(input.MaskingChar))
-                ) && 
+                ) && base.Equals(input) && 
                 (
                     this.CharsToMask == input.CharsToMask ||
                     this.CharsToMask.Equals(input.CharsToMask)
-                ) && 
+                ) && base.Equals(input) && 
                 (
                     this.FromEnd == input.FromEnd ||
                     this.FromEnd.Equals(input.FromEnd)
@@ -156,7 +159,7 @@ namespace Microsoft.Presidio.Model
         {
             unchecked // Overflow is fine, just wrap
             {
-                int hashCode = 41;
+                int hashCode = base.GetHashCode();
                 if (this.Type != null)
                     hashCode = hashCode * 59 + this.Type.GetHashCode();
                 if (this.MaskingChar != null)
@@ -174,6 +177,17 @@ namespace Microsoft.Presidio.Model
         /// <returns>Validation Result</returns>
         IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
+            return this.BaseValidate(validationContext);
+        }
+
+        /// <summary>
+        /// To validate all properties of the instance
+        /// </summary>
+        /// <param name="validationContext">Validation context</param>
+        /// <returns>Validation Result</returns>
+        protected IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> BaseValidate(ValidationContext validationContext)
+        {
+            foreach(var x in BaseValidate(validationContext)) yield return x;
             yield break;
         }
     }

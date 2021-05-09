@@ -1,5 +1,4 @@
 # Microsoft.Presidio.Model.Mask
-Replace with a given character
 
 ## Properties
 

@@ -43,7 +43,7 @@ namespace Microsoft.Presidio.Model
         /// <param name="text">The anonymized text (required).</param>
         /// <param name="deanonymizers">Object where the key is DEFAULT or the ENTITY_TYPE and the value is decrypt since it is the only one supported (required).</param>
         /// <param name="anonymizerResults">Array of anonymized PIIs (required).</param>
-        public DeanonymizeRequest(string text = default(string), Dictionary<string, object> deanonymizers = default(Dictionary<string, object>), List<AnonymizerResult> anonymizerResults = default(List<AnonymizerResult>))
+        public DeanonymizeRequest(string text = default(string), AnyOfDecrypt deanonymizers = default(AnyOfDecrypt), List<AnonymizerResult> anonymizerResults = default(List<AnonymizerResult>))
         {
             // to ensure "text" is required (not null)
             this.Text = text ?? throw new ArgumentNullException("text is a required property for DeanonymizeRequest and cannot be null");
@@ -65,7 +65,7 @@ namespace Microsoft.Presidio.Model
         /// </summary>
         /// <value>Object where the key is DEFAULT or the ENTITY_TYPE and the value is decrypt since it is the only one supported</value>
         [DataMember(Name = "deanonymizers", IsRequired = true, EmitDefaultValue = false)]
-        public Dictionary<string, object> Deanonymizers { get; set; }
+        public AnyOfDecrypt Deanonymizers { get; set; }
 
         /// <summary>
         /// Array of anonymized PIIs

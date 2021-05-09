@@ -43,7 +43,7 @@ namespace Microsoft.Presidio.Model
         /// <param name="text">The text to anonymize (required).</param>
         /// <param name="anonymizers">Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition.</param>
         /// <param name="analyzerResults">Array of analyzer detections (required).</param>
-        public AnonymizeRequest(string text = default(string), Dictionary<string, object> anonymizers = default(Dictionary<string, object>), List<RecognizerResult> analyzerResults = default(List<RecognizerResult>))
+        public AnonymizeRequest(string text = default(string), Dictionary<string, AnyOfReplaceRedactMaskHashEncrypt> anonymizers = default(Dictionary<string, AnyOfReplaceRedactMaskHashEncrypt>), List<RecognizerResult> analyzerResults = default(List<RecognizerResult>))
         {
             // to ensure "text" is required (not null)
             this.Text = text ?? throw new ArgumentNullException("text is a required property for AnonymizeRequest and cannot be null");
@@ -64,7 +64,7 @@ namespace Microsoft.Presidio.Model
         /// </summary>
         /// <value>Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition</value>
         [DataMember(Name = "anonymizers", EmitDefaultValue = false)]
-        public Dictionary<string, object> Anonymizers { get; set; }
+        public Dictionary<string, AnyOfReplaceRedactMaskHashEncrypt> Anonymizers { get; set; }
 
         /// <summary>
         /// Array of analyzer detections
@@ -125,8 +125,9 @@ namespace Microsoft.Presidio.Model
                 ) && 
                 (
                     this.Anonymizers == input.Anonymizers ||
-                    (this.Anonymizers != null &&
-                    this.Anonymizers.Equals(input.Anonymizers))
+                    this.Anonymizers != null &&
+                    input.Anonymizers != null &&
+                    this.Anonymizers.SequenceEqual(input.Anonymizers)
                 ) && 
                 (
                     this.AnalyzerResults == input.AnalyzerResults ||

@@ -21,16 +21,18 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using JsonSubTypes;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIDateConverter = Microsoft.Presidio.Client.OpenAPIDateConverter;
 
 namespace Microsoft.Presidio.Model
 {
     /// <summary>
-    /// Replace with an encrypted value
+    /// Encrypt
     /// </summary>
     [DataContract(Name = "Encrypt")]
-    public partial class Encrypt : IEquatable<Encrypt>, IValidatableObject
+    [JsonConverter(typeof(JsonSubtypes), "Type")]
+    public partial class Encrypt : Operator, IEquatable<Encrypt>, IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Encrypt" /> class.
@@ -40,22 +42,13 @@ namespace Microsoft.Presidio.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="Encrypt" /> class.
         /// </summary>
-        /// <param name="type">encrypt (required).</param>
         /// <param name="key">Cryptographic key of length 128, 192 or 256 bits, in a string format (required).</param>
-        public Encrypt(string type = default(string), string key = default(string))
+        /// <param name="type">type (required) (default to &quot;Encrypt&quot;).</param>
+        public Encrypt(string key = default(string), string type = "Encrypt") : base(type)
         {
-            // to ensure "type" is required (not null)
-            this.Type = type ?? throw new ArgumentNullException("type is a required property for Encrypt and cannot be null");
             // to ensure "key" is required (not null)
             this.Key = key ?? throw new ArgumentNullException("key is a required property for Encrypt and cannot be null");
         }
-
-        /// <summary>
-        /// encrypt
-        /// </summary>
-        /// <value>encrypt</value>
-        [DataMember(Name = "type", IsRequired = true, EmitDefaultValue = false)]
-        public string Type { get; set; }
 
         /// <summary>
         /// Cryptographic key of length 128, 192 or 256 bits, in a string format
@@ -72,7 +65,7 @@ namespace Microsoft.Presidio.Model
         {
             var sb = new StringBuilder();
             sb.Append("class Encrypt {\n");
-            sb.Append("  Type: ").Append(Type).Append("\n");
+            sb.Append("  ").Append(base.ToString().Replace("\n", "\n  ")).Append("\n");
             sb.Append("  Key: ").Append(Key).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -82,7 +75,7 @@ namespace Microsoft.Presidio.Model
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public virtual string ToJson()
+        public override string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
         }
@@ -107,12 +100,7 @@ namespace Microsoft.Presidio.Model
             if (input == null)
                 return false;
 
-            return 
-                (
-                    this.Type == input.Type ||
-                    (this.Type != null &&
-                    this.Type.Equals(input.Type))
-                ) && 
+            return base.Equals(input) && 
                 (
                     this.Key == input.Key ||
                     (this.Key != null &&
@@ -128,9 +116,7 @@ namespace Microsoft.Presidio.Model
         {
             unchecked // Overflow is fine, just wrap
             {
-                int hashCode = 41;
-                if (this.Type != null)
-                    hashCode = hashCode * 59 + this.Type.GetHashCode();
+                int hashCode = base.GetHashCode();
                 if (this.Key != null)
                     hashCode = hashCode * 59 + this.Key.GetHashCode();
                 return hashCode;
@@ -144,6 +130,17 @@ namespace Microsoft.Presidio.Model
         /// <returns>Validation Result</returns>
         IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
+            return this.BaseValidate(validationContext);
+        }
+
+        /// <summary>
+        /// To validate all properties of the instance
+        /// </summary>
+        /// <param name="validationContext">Validation context</param>
+        /// <returns>Validation Result</returns>
+        protected IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> BaseValidate(ValidationContext validationContext)
+        {
+            foreach(var x in BaseValidate(validationContext)) yield return x;
             yield break;
         }
     }

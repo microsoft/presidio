@@ -411,14 +411,15 @@ components:
         anonymizers:
           description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition"
           type: object
-          anyOf:
-            - $ref: "#/components/schemas/Replace"
-            - $ref: "#/components/schemas/Redact"
-            - $ref: "#/components/schemas/Mask"
-            - $ref: "#/components/schemas/Hash"
-            - $ref: "#/components/schemas/Encrypt"
-          default:
-            { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
+          additionalProperties:
+            anyOf:
+              - $ref: "#/components/schemas/Replace"
+              - $ref: "#/components/schemas/Redact"
+              - $ref: "#/components/schemas/Mask"
+              - $ref: "#/components/schemas/Hash"
+              - $ref: "#/components/schemas/Encrypt"
+            default:
+              { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
 
         analyzer_results:
           type: array
@@ -585,116 +586,111 @@ components:
       type: string
       example: PERSON
 
-    Replace:
-      title: Replace
-      description: "Replace with a given value"
+    Operator:
       type: object
       required:
         - type
-        - new_value
       properties:
         type:
           type: string
-          description: "replace"
-          example: replace
-        new_value:
-          type: string
-          description: "The string to replace with"
-          example: VALUE
+      discriminator:
+        propertyName: type
+
+    Replace:
+      allOf:
+        - $ref: '#/components/schemas/Operator'
+        - type: object
+          title: Replace
+          description: "Replace with a given value"
+          required:
+            - new_value
+          properties:
+            new_value:
+              type: string
+              description: "The string to replace with"
+              example: VALUE
 
     Redact:
-      title: Redact
-      description: "Replace with an empty string"
-      type: object
-      required:
-        - type
-      properties:
-        type:
-          type: string
-          description: "redact"
-          example: redact
+      allOf:
+        - $ref: '#/components/schemas/Operator'
+        - type: object
+          title: Redact
+          description: "Replace with an empty string"
+
 
     Mask:
-      title: Mask
-      description: "Replace with a given character"
-      type: object
-      required:
-        - type
-        - masking_char
-        - chars_to_mask
-      properties:
-        type:
-          type: string
-          description: "mask"
-          example: mask
-        masking_char:
-          type: string
-          description: "The replacement character"
-          example: "*"
-        chars_to_mask:
-          type: integer
-          description: "The amount of characters that should be replaced"
-          example: 4
-        from_end:
-          type: boolean
-          description: "Whether to mask the PII from it's end"
-          example: true
-          default: false
+      allOf:
+        - $ref: '#/components/schemas/Operator'
+        - type: object
+          title: Mask
+          description: "Replace with a given character"
+          required:
+            - type
+            - masking_char
+            - chars_to_mask
+          properties:
+            type:
+              type: string
+              description: "mask"
+              example: mask
+            masking_char:
+              type: string
+              description: "The replacement character"
+              example: "*"
+            chars_to_mask:
+              type: integer
+              description: "The amount of characters that should be replaced"
+              example: 4
+            from_end:
+              type: boolean
+              description: "Whether to mask the PII from it's end"
+              example: true
+              default: false
 
     Hash:
-      title: Hash
-      description: "Replace with hashed value"
-      type: object
-      required:
-        - type
-      properties:
-        type:
-          type: string
-          description: "hash"
-          example: hash
-        hash_type:
-          type: string
-          description: "The hashing algorithm"
-          enum:
-            - md5
-            - sha256
-            - sha512
-          example: md5
-          default: md5
+      allOf:
+        - $ref: '#/components/schemas/Operator'
+        - type: object
+          title: Hash
+          description: "Replace with hashed value"
+          properties:
+            hash_type:
+              type: string
+              description: "The hashing algorithm"
+              enum:
+                - md5
+                - sha256
+                - sha512
+              example: md5
+              default: md5
 
     Encrypt:
-      title: Encrypt
-      description: "Replace with an encrypted value"
-      type: object
-      required:
-        - type
-        - key
-      properties:
-        type:
-          type: string
-          description: "encrypt"
-          example: encrypt
-        key:
-          type: string
-          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
-          example: "3t6w9z$C&F)J@NcR"
+      allOf:
+        - $ref: '#/components/schemas/Operator'
+        - type: object
+          title: Encrypt
+          description: "Replace with an encrypted value"
+          required:
+            - key
+          properties:
+            key:
+              type: string
+              description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
+              example: "3t6w9z$C&F)J@NcR"
 
     Decrypt:
-      title: Decrypt
-      description: "Replace encrypted PII decrypted text"
-      type: object
-      required:
-        - type
-        - key
-      properties:
-        type:
-          type: string
-          description: "decrypt"
-          example: decrypt
-        key:
-          type: string
-          description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
-          example: "3t6w9z$C&F)J@NcR"
+      allOf:
+        - $ref: '#/components/schemas/Operator'
+        - type: object
+          title: Decrypt
+          description: "Replace encrypted PII decrypted text"
+          required:
+            - key
+          properties:
+            key:
+              type: string
+              description: "Cryptographic key of length 128, 192 or 256 bits, in a string format"
+              example: "3t6w9z$C&F)J@NcR"
 
     AnonymizeResponse:
       type: object

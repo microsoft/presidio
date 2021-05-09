@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Text** | **string** | The text to anonymize | 
-**Anonymizers** | [**AnyOfReplaceRedactMaskHashEncrypt**](AnyOfReplaceRedactMaskHashEncrypt.md) | Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition | [optional] 
+**Anonymizers** | [**Dictionary&lt;string, AnyOfReplaceRedactMaskHashEncrypt&gt;**](AnyOfReplaceRedactMaskHashEncrypt.md) | Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition | [optional] 
 **AnalyzerResults** | [**List&lt;RecognizerResult&gt;**](RecognizerResult.md) | Array of analyzer detections | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

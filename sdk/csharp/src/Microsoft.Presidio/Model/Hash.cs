@@ -21,16 +21,18 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using JsonSubTypes;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIDateConverter = Microsoft.Presidio.Client.OpenAPIDateConverter;
 
 namespace Microsoft.Presidio.Model
 {
     /// <summary>
-    /// Replace with hashed value
+    /// Hash
     /// </summary>
     [DataContract(Name = "Hash")]
-    public partial class Hash : IEquatable<Hash>, IValidatableObject
+    [JsonConverter(typeof(JsonSubtypes), "Type")]
+    public partial class Hash : Operator, IEquatable<Hash>, IValidatableObject
     {
         /// <summary>
         /// The hashing algorithm
@@ -73,21 +75,12 @@ namespace Microsoft.Presidio.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="Hash" /> class.
         /// </summary>
-        /// <param name="type">hash (required).</param>
         /// <param name="hashType">The hashing algorithm (default to HashTypeEnum.Md5).</param>
-        public Hash(string type = default(string), HashTypeEnum? hashType = HashTypeEnum.Md5)
+        /// <param name="type">type (required) (default to &quot;Hash&quot;).</param>
+        public Hash(HashTypeEnum? hashType = HashTypeEnum.Md5, string type = "Hash") : base(type)
         {
-            // to ensure "type" is required (not null)
-            this.Type = type ?? throw new ArgumentNullException("type is a required property for Hash and cannot be null");
             this.HashType = hashType;
         }
-
-        /// <summary>
-        /// hash
-        /// </summary>
-        /// <value>hash</value>
-        [DataMember(Name = "type", IsRequired = true, EmitDefaultValue = false)]
-        public string Type { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -97,7 +90,7 @@ namespace Microsoft.Presidio.Model
         {
             var sb = new StringBuilder();
             sb.Append("class Hash {\n");
-            sb.Append("  Type: ").Append(Type).Append("\n");
+            sb.Append("  ").Append(base.ToString().Replace("\n", "\n  ")).Append("\n");
             sb.Append("  HashType: ").Append(HashType).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -107,7 +100,7 @@ namespace Microsoft.Presidio.Model
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public virtual string ToJson()
+        public override string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
         }
@@ -132,12 +125,7 @@ namespace Microsoft.Presidio.Model
             if (input == null)
                 return false;
 
-            return 
-                (
-                    this.Type == input.Type ||
-                    (this.Type != null &&
-                    this.Type.Equals(input.Type))
-                ) && 
+            return base.Equals(input) && 
                 (
                     this.HashType == input.HashType ||
                     this.HashType.Equals(input.HashType)
@@ -152,9 +140,7 @@ namespace Microsoft.Presidio.Model
         {
             unchecked // Overflow is fine, just wrap
             {
-                int hashCode = 41;
-                if (this.Type != null)
-                    hashCode = hashCode * 59 + this.Type.GetHashCode();
+                int hashCode = base.GetHashCode();
                 hashCode = hashCode * 59 + this.HashType.GetHashCode();
                 return hashCode;
             }
@@ -167,6 +153,17 @@ namespace Microsoft.Presidio.Model
         /// <returns>Validation Result</returns>
         IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
+            return this.BaseValidate(validationContext);
+        }
+
+        /// <summary>
+        /// To validate all properties of the instance
+        /// </summary>
+        /// <param name="validationContext">Validation context</param>
+        /// <returns>Validation Result</returns>
+        protected IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> BaseValidate(ValidationContext validationContext)
+        {
+            foreach(var x in BaseValidate(validationContext)) yield return x;
             yield break;
         }
     }

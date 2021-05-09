@@ -135,11 +135,16 @@ Class | Method | HTTP request | Description
  - [Model.DeanonymizeRequest](docs/DeanonymizeRequest.md)
  - [Model.DeanonymizeResponse](docs/DeanonymizeResponse.md)
  - [Model.Decrypt](docs/Decrypt.md)
+ - [Model.Decrypt1](docs/Decrypt1.md)
  - [Model.Encrypt](docs/Encrypt.md)
+ - [Model.Encrypt1](docs/Encrypt1.md)
  - [Model.Hash](docs/Hash.md)
+ - [Model.Hash1](docs/Hash1.md)
  - [Model.InlineResponse400](docs/InlineResponse400.md)
  - [Model.InlineResponse422](docs/InlineResponse422.md)
  - [Model.Mask](docs/Mask.md)
+ - [Model.Mask1](docs/Mask1.md)
+ - [Model.Operator](docs/Operator.md)
  - [Model.OperatorEntity](docs/OperatorEntity.md)
  - [Model.Pattern](docs/Pattern.md)
  - [Model.PatternRecognizer](docs/PatternRecognizer.md)
@@ -148,6 +153,7 @@ Class | Method | HTTP request | Description
  - [Model.RecognizerResultWithAnaysisExplanationAllOf](docs/RecognizerResultWithAnaysisExplanationAllOf.md)
  - [Model.Redact](docs/Redact.md)
  - [Model.Replace](docs/Replace.md)
+ - [Model.Replace1](docs/Replace1.md)
 
 
 <a name="documentation-for-authorization"></a>
