@@ -412,20 +412,23 @@ components:
           description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition"
           type: object
           additionalProperties:
-            anyOf:
-              - $ref: "#/components/schemas/Replace"
-              - $ref: "#/components/schemas/Redact"
-              - $ref: "#/components/schemas/Mask"
-              - $ref: "#/components/schemas/Hash"
-              - $ref: "#/components/schemas/Encrypt"
-            default:
-              { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
-
+            $ref: "#/components/schemas/Anonymizer"
         analyzer_results:
           type: array
           description: "Array of analyzer detections"
           items:
             $ref: "#/components/schemas/RecognizerResult"
+
+    Anonymizer:
+      type: object
+      anyOf:
+        - $ref: "#/components/schemas/Replace"
+        - $ref: "#/components/schemas/Redact"
+        - $ref: "#/components/schemas/Mask"
+        - $ref: "#/components/schemas/Hash"
+        - $ref: "#/components/schemas/Encrypt"
+      default:
+        { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
 
     DeanonymizeRequest:
       type: object
@@ -441,16 +444,20 @@ components:
         deanonymizers:
           description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is decrypt since it is the only one supported"
           type: object
-          anyOf:
-            - $ref: "#/components/schemas/Decrypt"
-          default:
-            { "DEFAULT": { "type": "decrypt", "key": "3t6w9z$C&F)J@NcR" } }
+          additionalProperties:
+            $ref: "#/components/schemas/Deanonymizer"
         anonymizer_results:
           type: array
           description: "Array of anonymized PIIs"
           items:
             $ref: "#/components/schemas/AnonymizerResult"
 
+    Deanonymizer:
+      type: object
+      anyOf:
+        - $ref: "#/components/schemas/Decrypt"
+      default:
+        { "DEFAULT": { "type": "decrypt", "key": "3t6w9z$C&F)J@NcR" } }
 
     RecognizerResult:
       type: object
@@ -600,8 +607,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Operator'
         - type: object
-          title: Replace
-          description: "Replace with a given value"
+        - title: Replace
+        - description: "Replace with a given value"
           required:
             - new_value
           properties:
@@ -614,16 +621,16 @@ components:
       allOf:
         - $ref: '#/components/schemas/Operator'
         - type: object
-          title: Redact
-          description: "Replace with an empty string"
+        - title: Redact
+        - description: "Replace with an empty string"
 
 
     Mask:
       allOf:
         - $ref: '#/components/schemas/Operator'
         - type: object
-          title: Mask
-          description: "Replace with a given character"
+        - title: Mask
+        - description: "Replace with a given character"
           required:
             - type
             - masking_char
@@ -651,8 +658,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Operator'
         - type: object
-          title: Hash
-          description: "Replace with hashed value"
+        - title: Hash
+        - description: "Replace with hashed value"
           properties:
             hash_type:
               type: string
@@ -668,8 +675,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Operator'
         - type: object
-          title: Encrypt
-          description: "Replace with an encrypted value"
+        - title: Encrypt
+        - description: "Replace with an encrypted value"
           required:
             - key
           properties:
@@ -682,8 +689,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/Operator'
         - type: object
-          title: Decrypt
-          description: "Replace encrypted PII decrypted text"
+        - title: Decrypt
+        - description: "Replace encrypted PII decrypted text"
           required:
             - key
           properties:
