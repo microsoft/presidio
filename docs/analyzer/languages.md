@@ -129,6 +129,13 @@ Each recognizer can support one language. For example:
 ```python
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 from presidio_analyzer.predefined_recognizers import EmailRecognizer
+from presidio_analyzer.nlp_engine import NlpEngineProvider
+
+LANGUAGES_CONFIG_FILE = "./docs/analyzer/languages-config.yml"
+
+# Create NLP engine based on configuration file
+provider = NlpEngineProvider(conf_file=LANGUAGES_CONFIG_FILE)
+nlp_engine_with_spanish = provider.create_engine()
 
 # Setting up an English Email recognizer:
 email_recognizer_en = EmailRecognizer(supported_language="en",context=["email","mail"])
