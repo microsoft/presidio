@@ -70,6 +70,6 @@ steps:
   continueOnError: true  
 
 - script: |    
-    python -m pytest --codeblocks
-  displayName: Test python code in markdown files'
+    python -m pytest ./docs --codeblocks
+  displayName: Test python code in markdown files
   continueOnError: false
