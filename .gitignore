@@ -114,6 +114,11 @@ venv.bak/
 # Test binary, build with `go test -c`
 *.test
 
+!sdk/*
+!sdk/csharp/*
+!sdk/csharp/src/*
+!sdk/csharp/src/Microsoft.Presidio.Test/*
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
