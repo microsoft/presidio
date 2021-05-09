@@ -34,12 +34,12 @@ To use this template you should first setup the required infrastructure for the 
 
 ### Setup Presidio
 
-Provision and setup the datbricks cluster by following the steps in [presidio-spark sample](../spark/index.md#Azure-Databricks).
-Note the output token.
+Provision and setup the datbricks cluster by following the Deploy and Setup steps in [presidio-spark sample](../spark/index.md#Azure-Databricks).
+Note the output token and do not follow the "Running the sample" steps.
 
 ### Setup Azure Data Factory
 
-1. Go to the Data anonymization with Presidio (Databricks) template. Select the Anonymized_CSV connection (Azure Storage) and select "New" from the drop down menu.
+1. Go to the Data anonymization with Presidio (Databricks) template. Select the AnonymizedCSV connection (Azure Storage) and select "New" from the drop down menu.
 ![ADF-Template-Load](images/data-anonymization-databricks-01.png)
 
 2. Name the service "PresidioStorage" and select the storage account that was created in the previous steps from your subscription. Note that Target source was also select as the sample uses the same storage account for both source and target.
