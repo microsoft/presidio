@@ -9,7 +9,7 @@ The sample deploys the following Azure Services:
 * Azure Storage - The target storage account where data will be persisted.
 * Azure Databricks - Host presidio to anonymize the data.
 
-Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline and a storage account which holds the source files.
+Additionaly you should already have an instance of Azure Data Factory which hosts and orchestrates the transformation pipeline and a storage account which holds the source files.
 
 ## About this Solution Template
 
