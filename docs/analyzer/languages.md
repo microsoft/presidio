@@ -35,7 +35,7 @@ and [Stanza](https://github.com/stanfordnlp/stanza). To set up new models, follo
 
     - To download a new model with Stanza:
 
-        <!--exdown-skip-->
+        <!--pytest-codeblocks:skip-->
         ```python
         import stanza
         stanza.download("en") # where en is the language code of the model.
