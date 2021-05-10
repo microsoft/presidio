@@ -19,8 +19,7 @@ using Xunit;
 
 using Microsoft.Presidio.Client;
 using Microsoft.Presidio.Api;
-// uncomment below to import models
-//using Microsoft.Presidio.Model;
+using Microsoft.Presidio.Model;
 
 namespace Microsoft.Presidio.Test.Api
 {
@@ -38,6 +37,7 @@ namespace Microsoft.Presidio.Test.Api
         public AnalyzerApiTests()
         {
             instance = new AnalyzerApi();
+            instance.Configuration.BasePath = "http://127.0.0.1:3000/";
         }
 
         public void Dispose()
@@ -51,20 +51,22 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void InstanceTest()
         {
-            // TODO uncomment below to test 'IsType' AnalyzerApi
-            //Assert.IsType<AnalyzerApi>(instance);
+            Assert.IsInstanceOfType(typeof(AnalyzerApi), instance, "instance is a AnalyzerApi");
         }
 
         /// <summary>
         /// Test AnalyzePost
         /// </summary>
         [Fact]
-        public void AnalyzePostTest()
+         public void AnalyzePostTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //AnalyzeRequest analyzeRequest = null;
-            //var response = instance.AnalyzePost(analyzeRequest);
-            //Assert.IsType<List<RecognizerResultWithAnaysisExplanation>>(response);
+            AnalyzeRequest body =
+                new AnalyzeRequest(text: "My name is Inigo Montoya, you killed my father, prepare to die.",
+                    language: "en");
+            var response = instance.AnalyzePost(body);
+            Assert.IsTrue(response.Count.Equals(1));
+            Assert.IsInstanceOf<List<RecognizerResultWithAnaysisExplanation>>(response,
+                "response is List<RecognizerResultWithAnaysisExplanation>");
         }
 
         /// <summary>
@@ -73,9 +75,8 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void HealthGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //var response = instance.HealthGet();
-            //Assert.IsType<string>(response);
+            var response = instance.HealthGet();
+            Assert.IsInstanceOf<string>(response, "response is string");
         }
 
         /// <summary>
@@ -84,11 +85,11 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void RecognizersGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //string language = null;
-            //var response = instance.RecognizersGet(language);
-            //Assert.IsType<List<string>>(response);
+            string language = "en";
+            var response = instance.RecognizersGet(language);
+            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
         }
+
 
         /// <summary>
         /// Test SupportedentitiesGet
@@ -96,10 +97,9 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void SupportedentitiesGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //string language = null;
-            //var response = instance.SupportedentitiesGet(language);
-            //Assert.IsType<List<string>>(response);
+            string language = null;
+            var response = instance.SupportedentitiesGet(language);
+            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
         }
     }
 }

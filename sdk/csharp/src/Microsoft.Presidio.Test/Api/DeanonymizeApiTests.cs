@@ -19,8 +19,7 @@ using Xunit;
 
 using Microsoft.Presidio.Client;
 using Microsoft.Presidio.Api;
-// uncomment below to import models
-//using Microsoft.Presidio.Model;
+using Microsoft.Presidio.Model;
 
 namespace Microsoft.Presidio.Test.Api
 {
@@ -38,6 +37,7 @@ namespace Microsoft.Presidio.Test.Api
         public DeanonymizeApiTests()
         {
             instance = new DeanonymizeApi();
+            instance.Configuration.BasePath = "http://127.0.0.1:3000";
         }
 
         public void Dispose()
@@ -51,8 +51,7 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void InstanceTest()
         {
-            // TODO uncomment below to test 'IsType' DeanonymizeApi
-            //Assert.IsType<DeanonymizeApi>(instance);
+            Assert.IsInstanceOfType(typeof(DeanonymizeApi), instance, "instance is a DeanonymizerApi");
         }
 
         /// <summary>
@@ -61,10 +60,16 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void DeanonymizePostTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //DeanonymizeRequest deanonymizeRequest = null;
-            //var response = instance.DeanonymizePost(deanonymizeRequest);
-            //Assert.IsType<DeanonymizeResponse>(response);
+             var decrypt = new Decrypt("decrypt", "3t6w9z$C&F)J@NcR");
+            var deanonymizers = new Dictionary<string, object>() {{"PERSON", decrypt}};
+            var anonymizerResult = new AnonymizerResult(start: 11, end: 55, entityType: "PERSON");
+            var anonymizerResults = new List<AnonymizerResult>() {anonymizerResult};
+            DeanonymizeRequest body = new DeanonymizeRequest(
+                text: "My name is MnHePFVW1uQEWKNYRbc7c4AiFySIgh8XLiDq0n9w4qU=, you killed my father prepare to die.", deanonymizers: deanonymizers,
+                anonymizerResults: anonymizerResults);
+            var response = instance.DeanonymizePost(body);
+            Assert.IsInstanceOf<DeanonymizeResponse>(response, "response is DeanonymizeResponse");
+            Assert.IsTrue(response.Text == "My name is Inigo Montoya, you killed my father prepare to die.");
         }
     }
 }

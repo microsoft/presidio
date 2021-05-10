@@ -32,13 +32,16 @@ namespace Microsoft.Presidio.Test.Model
     /// </remarks>
     public class DeanonymizeResponseTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for DeanonymizeResponse
-        //private DeanonymizeResponse instance;
+        private DeanonymizeResponse instance;
+        private List<OperatorEntity> entities;
 
         public DeanonymizeResponseTests()
         {
-            // TODO uncomment below to create an instance of DeanonymizeResponse
-            //instance = new DeanonymizeResponse();
+           var operatorEntity = new OperatorEntity(_operator: "hash", entityType: "PERSON", start: 10, end: 12,
+                text: "hello");
+            entities = new List<OperatorEntity>() {operatorEntity};
+            instance = new DeanonymizeResponse(text: "hello world", entities);
+        }
         }
 
         public void Dispose()
@@ -52,8 +55,8 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void DeanonymizeResponseInstanceTest()
         {
-            // TODO uncomment below to test "IsType" DeanonymizeResponse
-            //Assert.IsType<DeanonymizeResponse>(instance);
+            // TODO uncomment below to test "IsInstanceOfType" DeanonymizeResponse
+            //Assert.IsInstanceOfType<DeanonymizeResponse> (instance, "variable 'instance' is a DeanonymizeResponse");
         }
 
 

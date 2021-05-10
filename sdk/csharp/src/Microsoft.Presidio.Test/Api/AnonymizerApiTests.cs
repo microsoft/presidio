@@ -19,8 +19,7 @@ using Xunit;
 
 using Microsoft.Presidio.Client;
 using Microsoft.Presidio.Api;
-// uncomment below to import models
-//using Microsoft.Presidio.Model;
+using Microsoft.Presidio.Model;
 
 namespace Microsoft.Presidio.Test.Api
 {
@@ -38,6 +37,7 @@ namespace Microsoft.Presidio.Test.Api
         public AnonymizerApiTests()
         {
             instance = new AnonymizerApi();
+            instance.Configuration.BasePath = "http://127.0.0.1:3000";
         }
 
         public void Dispose()
@@ -51,8 +51,7 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void InstanceTest()
         {
-            // TODO uncomment below to test 'IsType' AnonymizerApi
-            //Assert.IsType<AnonymizerApi>(instance);
+            Assert.IsInstanceOfType(typeof(AnonymizerApi), instance, "instance is a AnonymizerApi");
         }
 
         /// <summary>
@@ -61,10 +60,18 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void AnonymizePostTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //AnonymizeRequest anonymizeRequest = null;
-            //var response = instance.AnonymizePost(anonymizeRequest);
-            //Assert.IsType<AnonymizeResponse>(response);
+           var encrypt = new Encrypt("encrypt", "3t6w9z$C&F)J@NcR");
+            var anonymizers = new Dictionary<string, object>() {{"PERSON", encrypt}};
+            var result = new RecognizerResult(start: 11, end: 24, score: 0.9, entityType: "PERSON");
+            var analyzerResults = new List<RecognizerResult>() {result};
+            var originalText = "My name is Inigo Montoya, you killed my father prepare to die.";
+            AnonymizeRequest body = new AnonymizeRequest(
+                text: originalText, anonymizers: anonymizers,
+                analyzerResults: analyzerResults);
+            var response = instance.AnonymizePost(body);
+            Assert.IsTrue(response.Text != originalText);
+            Assert.IsInstanceOf<AnonymizeResponse>(response, "response is AnonymizeResponse");
+
         }
 
         /// <summary>
@@ -73,9 +80,8 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void AnonymizersGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //var response = instance.AnonymizersGet();
-            //Assert.IsType<List<string>>(response);
+            /var response = instance.AnonymizersGet();
+            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
         }
 
         /// <summary>
@@ -84,9 +90,8 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void DeanonymizersGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //var response = instance.DeanonymizersGet();
-            //Assert.IsType<List<string>>(response);
+            var response = instance.DeanonymizersGet();
+            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
         }
 
         /// <summary>
@@ -95,9 +100,8 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void HealthGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //var response = instance.HealthGet();
-            //Assert.IsType<string>(response);
+            var response = instance.HealthGet();
+            Assert.IsInstanceOf<string>(response, "response is string");
         }
     }
 }

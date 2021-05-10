@@ -32,13 +32,16 @@ namespace Microsoft.Presidio.Test.Model
     /// </remarks>
     public class AnonymizeRequestTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for AnonymizeRequest
-        //private AnonymizeRequest instance;
+
+        private AnonymizeRequest instance;
 
         public AnonymizeRequestTests()
         {
-            // TODO uncomment below to create an instance of AnonymizeRequest
-            //instance = new AnonymizeRequest();
+            var encrypt = new Replace("replace", "val");
+            anonymizers = new Dictionary<string, object>() {{"PERSON", encrypt}};
+            var result = new RecognizerResult(start: 11, end: 24, score: 0.9, entityType: "PERSON");
+            results = new List<RecognizerResult>() {result};
+            instance = new AnonymizeRequest(text: "hello world", anonymizers: anonymizers, analyzerResults: results);
         }
 
         public void Dispose()
@@ -52,8 +55,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnonymizeRequestInstanceTest()
         {
-            // TODO uncomment below to test "IsType" AnonymizeRequest
-            //Assert.IsType<AnonymizeRequest>(instance);
+            Assert.IsInstanceOfType(typeof(AnonymizeRequest), instance, "variable 'instance' is a AnonymizeRequest");
         }
 
 
@@ -63,7 +65,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-            // TODO unit test for the property 'Text'
+             Assert.IsTrue(instance.Text == "hello world");
         }
         /// <summary>
         /// Test the property 'Anonymizers'
@@ -71,7 +73,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnonymizersTest()
         {
-            // TODO unit test for the property 'Anonymizers'
+            Assert.IsTrue(instance.Anonymizers == anonymizers);
         }
         /// <summary>
         /// Test the property 'AnalyzerResults'
@@ -79,7 +81,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnalyzerResultsTest()
         {
-            // TODO unit test for the property 'AnalyzerResults'
+            Assert.IsTrue(instance.AnalyzerResults == results);
         }
 
     }

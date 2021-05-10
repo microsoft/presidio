@@ -32,8 +32,8 @@ namespace Microsoft.Presidio.Test.Model
     /// </remarks>
     public class AnalyzeRequestTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for AnalyzeRequest
-        //private AnalyzeRequest instance;
+
+        private AnalyzeRequest instance;
 
         public AnalyzeRequestTests()
         {
@@ -49,70 +49,62 @@ namespace Microsoft.Presidio.Test.Model
         /// <summary>
         /// Test an instance of AnalyzeRequest
         /// </summary>
-        [Fact]
+        [Test]
         public void AnalyzeRequestInstanceTest()
         {
-            // TODO uncomment below to test "IsType" AnalyzeRequest
-            //Assert.IsType<AnalyzeRequest>(instance);
+            Assert.IsInstanceOfType(typeof(AnalyzeRequest), instance, "variable 'instance' is a AnalyzeRequest");
         }
 
 
         /// <summary>
         /// Test the property 'Text'
         /// </summary>
-        [Fact]
+        [Test]
         public void TextTest()
         {
-            // TODO unit test for the property 'Text'
+            Assert.IsTrue(instance.Text == "hello world");
         }
         /// <summary>
         /// Test the property 'Language'
         /// </summary>
-        [Fact]
+        [Test]
         public void LanguageTest()
         {
-            // TODO unit test for the property 'Language'
+            Assert.IsTrue(instance.Language == "en");
         }
         /// <summary>
         /// Test the property 'CorrelationId'
         /// </summary>
-        [Fact]
+        [Test]
         public void CorrelationIdTest()
         {
-            // TODO unit test for the property 'CorrelationId'
+            Assert.IsTrue(instance.CorrelationId == "1234");
         }
         /// <summary>
         /// Test the property 'ScoreThreshold'
         /// </summary>
-        [Fact]
+        [Test]
         public void ScoreThresholdTest()
         {
-            // TODO unit test for the property 'ScoreThreshold'
+            Assert.IsTrue(instance.ScoreThreshold == 0.4);
         }
         /// <summary>
         /// Test the property 'Entities'
         /// </summary>
-        [Fact]
+        [Test]
         public void EntitiesTest()
         {
-            // TODO unit test for the property 'Entities'
+            Assert.IsTrue(instance.Entities.Count.Equals(1));
         }
         /// <summary>
         /// Test the property 'ReturnDecisionProcess'
         /// </summary>
-        [Fact]
+        [Test]
         public void ReturnDecisionProcessTest()
         {
-            // TODO unit test for the property 'ReturnDecisionProcess'
+            Assert.IsFalse(instance.ReturnDecisionProcess.Value);
         }
-        /// <summary>
-        /// Test the property 'AdHocRecognizers'
-        /// </summary>
-        [Fact]
-        public void AdHocRecognizersTest()
-        {
-            // TODO unit test for the property 'AdHocRecognizers'
-        }
+
 
     }
 
