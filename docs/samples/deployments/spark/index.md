@@ -61,7 +61,7 @@ databricks secrets put --scope storage_scope --key storage_account_access_key --
 
 ```
 
-#### Upload or upadte cluster init scripts
+#### Upload or update cluster init scripts
 
 Presidio libraries are loaded to the cluster on init.
 Upload the cluster setup script or add its content to the existing cluster's init script.
