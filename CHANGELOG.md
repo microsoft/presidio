@@ -9,6 +9,23 @@ All notable changes to this project will be documented in this file.
 
 ### Deprecated
 
+## [2.3.0] - 10.05.2021
+### Changed
+* Create CODE_OF_CONDUCT
+* ADF templates docs
+* Fix spark sample to run presidio in broadcast
+* Ad-hoc recognizers
+* Text Analytics Integration Sample
+* Documentation update and samples validation
+* Adding tagger to the spaCy model pipeline
+* Sample notebook for remote recognizer (using Text Analytics)
+* Add matplotlib to image-redactor
+
+
+[unreleased]: https://github.com/microsoft/presidio/compare/2.3.0...HEAD
+[2.3.0]: https://github.com/microsoft/presidio/compare/2.2.0...2.3.0
+
+
 ## [2.2.0] - 12.04.2021
 ### Changed
 #### Analyzer:
