@@ -20,11 +20,10 @@ All notable changes to this project will be documented in this file.
 * Adding tagger to the spaCy model pipeline
 * Sample notebook for remote recognizer (using Text Analytics)
 * Add matplotlib to image-redactor
-
+* Added custom lambda anonymizer
 
 [unreleased]: https://github.com/microsoft/presidio/compare/2.3.0...HEAD
 [2.3.0]: https://github.com/microsoft/presidio/compare/2.2.0...2.3.0
-
 
 ## [2.2.0] - 12.04.2021
 ### Changed
