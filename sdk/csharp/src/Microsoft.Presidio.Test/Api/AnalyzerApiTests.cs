@@ -36,8 +36,7 @@ namespace Microsoft.Presidio.Test.Api
 
         public AnalyzerApiTests()
         {
-            instance = new AnalyzerApi();
-            instance.Configuration = new Configuration(null, null, null, "http://127.0.0.1:3000/");
+            instance = new AnalyzerApi("http://127.0.0.1:3000/");
         }
 
         public void Dispose()

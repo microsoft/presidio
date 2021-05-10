@@ -36,8 +36,7 @@ namespace Microsoft.Presidio.Test.Api
 
         public AnonymizerApiTests()
         {
-            instance = new AnonymizerApi();
-            instance.Configuration = new Configuration(null, null, null, "http://127.0.0.1:3000");
+            instance = new AnonymizerApi("http://127.0.0.1:3000/");
         }
 
         public void Dispose()
