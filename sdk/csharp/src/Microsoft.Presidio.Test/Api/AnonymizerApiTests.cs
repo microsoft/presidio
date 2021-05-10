@@ -37,7 +37,7 @@ namespace Microsoft.Presidio.Test.Api
         public AnonymizerApiTests()
         {
             instance = new AnonymizerApi();
-            instance.Configuration.BasePath = "http://127.0.0.1:3000";
+            instance.Configuration = new Configuration(null, null, null, "http://127.0.0.1:3000");
         }
 
         public void Dispose()
@@ -51,7 +51,7 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void InstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(AnonymizerApi), instance, "instance is a AnonymizerApi");
+            Assert.IsType<AnonymizerApi>(instance);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Microsoft.Presidio.Test.Api
         public void AnonymizePostTest()
         {
            var encrypt = new Encrypt("encrypt", "3t6w9z$C&F)J@NcR");
-            var anonymizers = new Dictionary<string, object>() {{"PERSON", encrypt}};
+            var anonymizers = new Dictionary<string, Anonymizer>() {{"PERSON", new Anonymizer(encrypt)}};
             var result = new RecognizerResult(start: 11, end: 24, score: 0.9, entityType: "PERSON");
             var analyzerResults = new List<RecognizerResult>() {result};
             var originalText = "My name is Inigo Montoya, you killed my father prepare to die.";
@@ -69,8 +69,8 @@ namespace Microsoft.Presidio.Test.Api
                 text: originalText, anonymizers: anonymizers,
                 analyzerResults: analyzerResults);
             var response = instance.AnonymizePost(body);
-            Assert.IsTrue(response.Text != originalText);
-            Assert.IsInstanceOf<AnonymizeResponse>(response, "response is AnonymizeResponse");
+            Assert.NotEqual(response.Text, originalText);
+            Assert.IsType<AnonymizeResponse>(response);
 
         }
 
@@ -80,8 +80,8 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void AnonymizersGetTest()
         {
-            /var response = instance.AnonymizersGet();
-            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
+            var response = instance.AnonymizersGet();
+            Assert.IsType<List<string>>(response);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Microsoft.Presidio.Test.Api
         public void DeanonymizersGetTest()
         {
             var response = instance.DeanonymizersGet();
-            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
+            Assert.IsType<List<string>>(response);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Microsoft.Presidio.Test.Api
         public void HealthGetTest()
         {
             var response = instance.HealthGet();
-            Assert.IsInstanceOf<string>(response, "response is string");
+            Assert.IsType<string>(response);
         }
     }
 }

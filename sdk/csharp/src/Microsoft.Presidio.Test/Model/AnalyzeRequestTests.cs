@@ -37,8 +37,8 @@ namespace Microsoft.Presidio.Test.Model
 
         public AnalyzeRequestTests()
         {
-            // TODO uncomment below to create an instance of AnalyzeRequest
-            //instance = new AnalyzeRequest();
+            var entities = new List<string>() { "test" };
+            instance = new AnalyzeRequest(text:"hello world", language:"en", correlationId:"1234", scoreThreshold:0.4, entities: entities, returnDecisionProcess: false);
         }
 
         public void Dispose()
@@ -49,60 +49,60 @@ namespace Microsoft.Presidio.Test.Model
         /// <summary>
         /// Test an instance of AnalyzeRequest
         /// </summary>
-        [Test]
+        [Fact]
         public void AnalyzeRequestInstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(AnalyzeRequest), instance, "variable 'instance' is a AnalyzeRequest");
+            Assert.IsType<AnalyzeRequest>(instance);
         }
 
 
         /// <summary>
         /// Test the property 'Text'
         /// </summary>
-        [Test]
+        [Fact]
         public void TextTest()
         {
-            Assert.IsTrue(instance.Text == "hello world");
+            Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Language'
         /// </summary>
-        [Test]
+        [Fact]
         public void LanguageTest()
         {
-            Assert.IsTrue(instance.Language == "en");
+            Assert.Equal(instance.Language, "en");
         }
         /// <summary>
         /// Test the property 'CorrelationId'
         /// </summary>
-        [Test]
+        [Fact]
         public void CorrelationIdTest()
         {
-            Assert.IsTrue(instance.CorrelationId == "1234");
+            Assert.Equal(instance.CorrelationId, "1234");
         }
         /// <summary>
         /// Test the property 'ScoreThreshold'
         /// </summary>
-        [Test]
+        [Fact]
         public void ScoreThresholdTest()
         {
-            Assert.IsTrue(instance.ScoreThreshold == 0.4);
+            Assert.Equal(instance.ScoreThreshold, 0.4);
         }
         /// <summary>
         /// Test the property 'Entities'
         /// </summary>
-        [Test]
+        [Fact]
         public void EntitiesTest()
         {
-            Assert.IsTrue(instance.Entities.Count.Equals(1));
+            Assert.Equal(instance.Entities.Count, 1);
         }
         /// <summary>
         /// Test the property 'ReturnDecisionProcess'
         /// </summary>
-        [Test]
+        [Fact]
         public void ReturnDecisionProcessTest()
         {
-            Assert.IsFalse(instance.ReturnDecisionProcess.Value);
+            Assert.False(instance.ReturnDecisionProcess);
         }
 
 

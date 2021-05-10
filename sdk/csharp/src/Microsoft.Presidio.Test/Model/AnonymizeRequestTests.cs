@@ -34,11 +34,13 @@ namespace Microsoft.Presidio.Test.Model
     {
 
         private AnonymizeRequest instance;
+        private List<RecognizerResult> results;
+        private Dictionary<string, Anonymizer> anonymizers;
 
         public AnonymizeRequestTests()
         {
             var encrypt = new Replace("replace", "val");
-            anonymizers = new Dictionary<string, object>() {{"PERSON", encrypt}};
+            anonymizers = new Dictionary<string, Anonymizer>() {{"PERSON", new Anonymizer(encrypt)}};
             var result = new RecognizerResult(start: 11, end: 24, score: 0.9, entityType: "PERSON");
             results = new List<RecognizerResult>() {result};
             instance = new AnonymizeRequest(text: "hello world", anonymizers: anonymizers, analyzerResults: results);
@@ -55,7 +57,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnonymizeRequestInstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(AnonymizeRequest), instance, "variable 'instance' is a AnonymizeRequest");
+            Assert.IsType<AnonymizeRequest>(instance);
         }
 
 
@@ -65,7 +67,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-             Assert.IsTrue(instance.Text == "hello world");
+             Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Anonymizers'
@@ -73,7 +75,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnonymizersTest()
         {
-            Assert.IsTrue(instance.Anonymizers == anonymizers);
+            Assert.Equal(instance.Anonymizers, anonymizers);
         }
         /// <summary>
         /// Test the property 'AnalyzerResults'
@@ -81,7 +83,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnalyzerResultsTest()
         {
-            Assert.IsTrue(instance.AnalyzerResults == results);
+            Assert.Equal(instance.AnalyzerResults, results);
         }
 
     }

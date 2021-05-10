@@ -33,13 +33,13 @@ namespace Microsoft.Presidio.Test.Model
     public class DeanonymizeRequestTests : IDisposable
     {
         private DeanonymizeRequest instance;
-        private Dictionary<string, object> deanonymizers;
+        private Dictionary<string, Deanonymizer> deanonymizers;
         private List<AnonymizerResult> results;
 
         public DeanonymizeRequestTests()
         {
             var decrypt = new Decrypt("decrypt", "3t6w9z$C&F)J@NcR");
-            deanonymizers = new Dictionary<string, object>() {{"PERSON", decrypt}};
+            deanonymizers = new Dictionary<string, Deanonymizer>() {{"PERSON", new Deanonymizer(decrypt)}};
             var anonymizerResult = new AnonymizerResult(start: 11, end: 55, entityType: "PERSON");
             results = new List<AnonymizerResult>() {anonymizerResult};
             instance = new DeanonymizeRequest(text: "hello world", deanonymizers: deanonymizers, anonymizerResults: results);
@@ -56,7 +56,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void DeanonymizeRequestInstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(DeanonymizeRequest),instance, "variable 'instance' is a DeanonymizeRequest");
+            Assert.IsType<DeanonymizeRequest>(instance);
         }
 
 
@@ -66,7 +66,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-            Assert.IsTrue(instance.Text == "hello world");
+            Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Deanonymizers'
@@ -74,7 +74,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void DeanonymizersTest()
         {
-            Assert.IsTrue(instance.Deanonymizers == deanonymizers);
+            Assert.Equal(instance.Deanonymizers, deanonymizers);
         }
         /// <summary>
         /// Test the property 'AnonymizerResults'
@@ -82,7 +82,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnonymizerResultsTest()
         {
-            Assert.IsTrue(instance.AnonymizerResults == results);
+            Assert.Equal(instance.AnonymizerResults, results);
         }
 
     }

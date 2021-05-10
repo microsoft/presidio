@@ -37,7 +37,7 @@ namespace Microsoft.Presidio.Test.Api
         public AnalyzerApiTests()
         {
             instance = new AnalyzerApi();
-            instance.Configuration.BasePath = "http://127.0.0.1:3000/";
+            instance.Configuration = new Configuration(null, null, null, "http://127.0.0.1:3000/");
         }
 
         public void Dispose()
@@ -51,7 +51,7 @@ namespace Microsoft.Presidio.Test.Api
         [Fact]
         public void InstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(AnalyzerApi), instance, "instance is a AnalyzerApi");
+            Assert.IsType<AnalyzerApi>(instance);
         }
 
         /// <summary>
@@ -64,9 +64,8 @@ namespace Microsoft.Presidio.Test.Api
                 new AnalyzeRequest(text: "My name is Inigo Montoya, you killed my father, prepare to die.",
                     language: "en");
             var response = instance.AnalyzePost(body);
-            Assert.IsTrue(response.Count.Equals(1));
-            Assert.IsInstanceOf<List<RecognizerResultWithAnaysisExplanation>>(response,
-                "response is List<RecognizerResultWithAnaysisExplanation>");
+            Assert.Equal(response.Count, 1);
+            Assert.IsType<List<RecognizerResultWithAnaysisExplanation>>(response);
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace Microsoft.Presidio.Test.Api
         public void HealthGetTest()
         {
             var response = instance.HealthGet();
-            Assert.IsInstanceOf<string>(response, "response is string");
+            Assert.IsType<string>(response);
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ namespace Microsoft.Presidio.Test.Api
         {
             string language = "en";
             var response = instance.RecognizersGet(language);
-            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
+            Assert.IsType<List<string>>(response);
         }
 
 
@@ -99,7 +98,7 @@ namespace Microsoft.Presidio.Test.Api
         {
             string language = null;
             var response = instance.SupportedentitiesGet(language);
-            Assert.IsInstanceOf<List<string>>(response, "response is List<string>");
+            Assert.IsType<List<string>>(response);
         }
     }
 }

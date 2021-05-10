@@ -55,7 +55,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnonymizeResponseInstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(AnonymizeResponse), instance, "variable 'instance' is a AnonymizeResponse");
+            Assert.IsType<AnonymizeResponse>(instance);
         }
 
 
@@ -65,7 +65,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-            Assert.IsTrue(instance.Text == "hello world");
+            Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Items'
@@ -73,7 +73,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void ItemsTest()
         {
-            Assert.IsTrue(instance.Items == entities);
+            Assert.Equal(instance.Items, entities);
         }
 
     }

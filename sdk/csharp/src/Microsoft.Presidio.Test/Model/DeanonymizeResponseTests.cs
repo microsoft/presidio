@@ -42,7 +42,7 @@ namespace Microsoft.Presidio.Test.Model
             entities = new List<OperatorEntity>() {operatorEntity};
             instance = new DeanonymizeResponse(text: "hello world", entities);
         }
-        }
+        
 
         public void Dispose()
         {

@@ -50,7 +50,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnonymizerResultInstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(AnonymizerResult), instance, "variable 'instance' is a AnonymizerResult");
+            Assert.IsType<AnonymizerResult>(instance);
         }
 
 
@@ -60,7 +60,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void StartTest()
         {
-            Assert.IsTrue(instance.Start == 10);
+            Assert.Equal(instance.Start, 10);
         }
         /// <summary>
         /// Test the property 'End'
@@ -68,7 +68,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void EndTest()
         {
-            Assert.IsTrue(instance.End == 100);
+            Assert.Equal(instance.End, 100);
         }
         /// <summary>
         /// Test the property 'EntityType'
@@ -76,7 +76,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void EntityTypeTest()
         {
-            Assert.IsTrue(instance.EntityType == "PERSON");
+            Assert.Equal(instance.EntityType, "PERSON");
         }
 
     }

@@ -52,7 +52,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void AnalysisExplanationInstanceTest()
         {
-            Assert.IsInstanceOfType(typeof(AnalysisExplanation), instance, "variable 'instance' is a AnalysisExplanation");
+            Assert.IsType<AnalysisExplanation>(instance);
         }
 
 
@@ -62,7 +62,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void RecognizerTest()
         {
-             Assert.IsTrue(instance.Recognizer == "recognizer");
+             Assert.Equal(instance.Recognizer, "recognizer");
         }
         /// <summary>
         /// Test the property 'PatternName'
@@ -70,7 +70,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void PatternNameTest()
         {
-            Assert.IsTrue(instance.PatternName == "patternName");
+            Assert.Equal(instance.PatternName, "patternName");
         }
         /// <summary>
         /// Test the property 'Pattern'
@@ -78,7 +78,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void PatternTest()
         {
-            Assert.IsTrue(instance.Pattern == "pattern");
+            Assert.Equal(instance.Pattern, "pattern");
         }
         /// <summary>
         /// Test the property 'OriginalScore'
@@ -86,7 +86,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void OriginalScoreTest()
         {
-            Assert.IsTrue(instance.OriginalScore == 0.5);
+            Assert.Equal(instance.OriginalScore, 0.5);
         }
         /// <summary>
         /// Test the property 'Score'
@@ -94,7 +94,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void ScoreTest()
         {
-            Assert.IsTrue(instance.Score == 0.4);
+            Assert.Equal(instance.Score, 0.4);
         }
         /// <summary>
         /// Test the property 'TextualExplanation'
@@ -102,7 +102,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void TextualExplanationTest()
         {
-            Assert.IsTrue(instance.TextualExplanation == "explanation");
+            Assert.Equal(instance.TextualExplanation, "explanation");
         }
         /// <summary>
         /// Test the property 'ScoreContextImprovement'
@@ -110,7 +110,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void ScoreContextImprovementTest()
         {
-            Assert.IsTrue(instance.ScoreContextImprovement == 0.2);
+            Assert.Equal(instance.ScoreContextImprovement, 0.2);
         }
         /// <summary>
         /// Test the property 'SupportiveContextWord'
@@ -118,7 +118,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void SupportiveContextWordTest()
         {
-            Assert.IsTrue(instance.SupportiveContextWord == "word");
+            Assert.Equal(instance.SupportiveContextWord, "word");
         }
         /// <summary>
         /// Test the property 'ValidationResult'
@@ -126,7 +126,7 @@ namespace Microsoft.Presidio.Test.Model
         [Fact]
         public void ValidationResultTest()
         {
-            Assert.IsTrue(instance.ValidationResult == 0.1);
+            Assert.Equal(instance.ValidationResult, 0.1);
         }
 
     }
