@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/text_anonymization/">
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -408,6 +408,7 @@
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
       
         
       
@@ -957,6 +958,7 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
     
   
   
@@ -976,6 +978,14 @@
 <ul>
 <li><a href="../analyzer/">Presidio analyzer</a>: Identification PII in text</li>
 <li><a href="../anonymizer/">Presidio anonymizer</a>: Anonymize detected PII entities using different operators</li>
+</ul>
+<p>In most cases, we would run the Presidio analyzer to detect where PII entities exist,
+and then the Presidio anonymizer to remove those using specific operators (such as redact, replace, hash or encrypt)</p>
+<p>This figure presents the overall flow in high level:</p>
+<p><img alt="Analyze and anonymize" src="../assets/analyze-anonymize.png" /></p>
+<ul>
+<li>The <a href="../analyzer/">Presidio Analyzer</a> holds multiple recognizers, each one capable of detecting specific PII entities. These recognizers leverage regular expressions, deny lists, checksum, rule based logic, Named Entity Recognition ML models and context from surrounding words.</li>
+<li>The <a href="../anonymizer/">Presidio Anonymizer</a> holds multiple operators, each one can be used to anonymize the PII entity in a different way. Additionally, it can be used to de-anonymize an already anonymized entity (For example, decrypt an encrypted entity)</li>
 </ul>
                 
               
@@ -1073,10 +1083,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

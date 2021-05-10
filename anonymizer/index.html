@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/anonymizer/">
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -558,6 +558,7 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
         
       
       
@@ -572,6 +573,7 @@
       
         
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -619,7 +621,7 @@
       
         <li class="md-nav__item">
   <a href="#built-in-operators" class="md-nav__link">
-    Built-in operators:
+    Built-in operators
   </a>
   
 </li>
@@ -1043,6 +1045,7 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
     
   
   
@@ -1088,7 +1091,7 @@
       
         <li class="md-nav__item">
   <a href="#built-in-operators" class="md-nav__link">
-    Built-in operators:
+    Built-in operators
   </a>
   
 </li>
@@ -1129,8 +1132,8 @@
                 
                 <h1 id="presidio-anonymizer">Presidio Anonymizer</h1>
 <p>The Presidio anonymizer is a Python based module for anonymizing detected PII text
-entities with desired values. Presidio anonymizer supports both anonymization and 
-deanonymization by using operators. Operators are built-in text manipulation classes 
+entities with desired values. Presidio anonymizer supports both anonymization and
+deanonymization by using operators. Operators are built-in text manipulation classes
 which can be easily extended.</p>
 <p><img alt="Anonymizer Design" src="../assets/anonymizer-design.png" /></p>
 <h2 id="installation">Installation</h2>
@@ -1195,7 +1198,7 @@ and decrypts it back to the original text:</p>
 <span class="c1"># Operators to define the deanonymization type.</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">deanonymize</span><span class="p">(</span>
     <span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=&quot;</span><span class="p">,</span>
-    <span class="n">entities</span><span class="o">=</span><span class="p">[</span><span class="n">AnonymizerResult</span><span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">55</span><span class="p">)],</span>
+    <span class="n">entities</span><span class="o">=</span><span class="p">[</span><span class="n">AnonymizerResult</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">),],</span>
     <span class="n">operators</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">&quot;decrypt&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;WmZq4t7w!z%C&amp;F)J&quot;</span><span class="p">})}</span>
 <span class="p">)</span>
 
@@ -1281,15 +1284,61 @@ payload example:
 </code></pre></div>
 </div>
 </div>
-<h2 id="built-in-operators">Built-in operators:</h2>
-<p>Operator type | Operaor name | Description | Parameters
-| --- | --- | ---| ---|
-| Anonymize | replace | replaces the PII with desired value | <code>new_value</code> - replaces existing text with the given value.<br> If <code>new_value</code> is not supplied or empty, default behavior will be: &lt;entity_type> e.g: &lt;PHONE_NUMBER> |
-| Anonymize | redact | removes the PII completely from text | None |
-| Anonymize | hash | hash the PII using either sha256, sha512 or md5 | <code>hash_type</code> - sets the type of hashing. Can be either <code>sha256</code>, <code>sha512</code> or <code>md5</code>. <br> The default hash type is <code>sha256</code>. | 
-| Anonymize | mask | replaces the PII with a given character | <code>chars_to_mask</code> - the amount of characters out of the PII that should be replaced. <br> <code>masking_char</code> - the character to be replaced with. <br> <code>from_end</code> - Whether to mask the PII from it's end. |
-| Anonymize | encrypt | encrypts the PII using a given key | <code>key</code> - a cryptographic key used for the encryption. |
-| Deanonymize | decrypt | decrypt the encrypted PII in the text using the encryption key | <code>key</code> - a cryptographic key used for the encryption is also used for the decryption. |</p>
+<h2 id="built-in-operators">Built-in operators</h2>
+<table>
+<thead>
+<tr>
+<th>Operator type</th>
+<th>Operaor name</th>
+<th>Description</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Anonymize</td>
+<td>replace</td>
+<td>replaces the PII with desired value</td>
+<td><code>new_value</code> - replaces existing text with the given value.<br> If <code>new_value</code> is not supplied or empty, default behavior will be: &lt;entity_type> e.g: &lt;PHONE_NUMBER></td>
+</tr>
+<tr>
+<td>Anonymize</td>
+<td>redact</td>
+<td>removes the PII completely from text</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Anonymize</td>
+<td>hash</td>
+<td>hash the PII using either sha256, sha512 or md5</td>
+<td><code>hash_type</code> - sets the type of hashing. Can be either <code>sha256</code>, <code>sha512</code> or <code>md5</code>. <br> The default hash type is <code>sha256</code>.</td>
+</tr>
+<tr>
+<td>Anonymize</td>
+<td>mask</td>
+<td>replaces the PII with a given character</td>
+<td><code>chars_to_mask</code> - the amount of characters out of the PII that should be replaced. <br> <code>masking_char</code> - the character to be replaced with. <br> <code>from_end</code> - Whether to mask the PII from it's end.</td>
+</tr>
+<tr>
+<td>Anonymize</td>
+<td>encrypt</td>
+<td>encrypts the PII using a given key</td>
+<td><code>key</code> - a cryptographic key used for the encryption.</td>
+</tr>
+<tr>
+<td>Anonymize</td>
+<td>custom</td>
+<td>replace the PII with the result of the function executed on the PII</td>
+<td><code>lambda</code> - lambda to execute on the PII data. The lambda return type must be a string.</td>
+</tr>
+<tr>
+<td>Deanonymize</td>
+<td>decrypt</td>
+<td>decrypt the encrypted PII in the text using the encryption key</td>
+<td><code>key</code> - a cryptographic key used for the encryption is also used for the decryption.</td>
+</tr>
+</tbody>
+</table>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>When performing anonymization, if anonymizers map is empty or "DEFAULT" key is not stated, the default
@@ -1431,10 +1480,10 @@ and <a href="../api/anonymizer_python/">Anonymizer Python API</a> for Python API
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

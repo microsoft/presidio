@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/analyzer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -885,6 +885,7 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
         
       
       
@@ -899,6 +900,7 @@
       
         
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -1531,6 +1533,7 @@
                   <div class="md-sidebar__inner">
                     
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -2187,7 +2190,7 @@
 
 
 <h2 id="presidio_analyzer.analyzer_engine.AnalyzerEngine.analyze" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">correlation_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_decision_process</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">correlation_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_decision_process</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h2>
@@ -2258,6 +2261,12 @@ print(results)
         <td><p>Whether the analysis decision process steps returned in the response.</p></td>
         <td><code>False</code></td>
       </tr>
+      <tr>
+        <td><code>ad_hoc_recognizers</code></td>
+        <td><code>Optional[List[presidio_analyzer.entity_recognizer.EntityRecognizer]]</code></td>
+        <td><p>List of recognizers which will be used only for this specific request.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2285,6 +2294,7 @@ print(results)
     <span class="n">correlation_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">score_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">return_decision_process</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ad_hoc_recognizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find PII entities in text using different PII recognizers for a given language.</span>
@@ -2298,6 +2308,8 @@ print(results)
 <span class="sd">    to return an identified entity</span>
 <span class="sd">    :param return_decision_process: Whether the analysis decision process steps</span>
 <span class="sd">    returned in the response.</span>
+<span class="sd">    :param ad_hoc_recognizers: List of recognizers which will be used only</span>
+<span class="sd">    for this specific request.</span>
 <span class="sd">    :return: an array of the found entities in the text</span>
 
 <span class="sd">    :example:</span>
@@ -2316,7 +2328,10 @@ print(results)
     <span class="n">all_fields</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">entities</span>
 
     <span class="n">recognizers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_recognizers</span><span class="p">(</span>
-        <span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">all_fields</span><span class="o">=</span><span class="n">all_fields</span>
+        <span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">,</span>
+        <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
+        <span class="n">all_fields</span><span class="o">=</span><span class="n">all_fields</span><span class="p">,</span>
+        <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="n">ad_hoc_recognizers</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">all_fields</span><span class="p">:</span>
@@ -2627,7 +2642,7 @@ print(results)
 
 
 <h2 id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.get_recognizers" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_recognizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">all_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">get_recognizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">all_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h2>
@@ -2665,6 +2680,12 @@ print(results)
         <td><p>a flag to return all fields of a requested language.</p></td>
         <td><code>False</code></td>
       </tr>
+      <tr>
+        <td><code>ad_hoc_recognizers</code></td>
+        <td><code>Optional[List[presidio_analyzer.entity_recognizer.EntityRecognizer]]</code></td>
+        <td><p>Additional recognizers provided by the user as part of the request</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2689,6 +2710,7 @@ print(results)
     <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">entities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">all_fields</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ad_hoc_recognizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a list of recognizers which supports the specified name and language.</span>
@@ -2696,6 +2718,8 @@ print(results)
 <span class="sd">    :param entities: the requested entities</span>
 <span class="sd">    :param language: the requested language</span>
 <span class="sd">    :param all_fields: a flag to return all fields of a requested language.</span>
+<span class="sd">    :param ad_hoc_recognizers: Additional recognizers provided by the user</span>
+<span class="sd">    as part of the request</span>
 <span class="sd">    :return: A list of the recognizers which supports the supplied entities</span>
 <span class="sd">    and language</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2705,7 +2729,9 @@ print(results)
     <span class="k">if</span> <span class="n">entities</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">all_fields</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No entities provided&quot;</span><span class="p">)</span>
 
-    <span class="n">all_possible_recognizers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span>
+    <span class="n">all_possible_recognizers</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ad_hoc_recognizers</span><span class="p">:</span>
+        <span class="n">all_possible_recognizers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ad_hoc_recognizers</span><span class="p">)</span>
 
     <span class="c1"># filter out unwanted recognizers</span>
     <span class="n">to_return</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -4668,7 +4694,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading SpaCy models: </span><span class="si">{</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">lang_code</span><span class="p">:</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;parser&quot;</span><span class="p">,</span> <span class="s2">&quot;tagger&quot;</span><span class="p">])</span>
+        <span class="n">lang_code</span><span class="p">:</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;parser&quot;</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">lang_code</span><span class="p">,</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
 </code></pre></div>
@@ -6087,10 +6113,10 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

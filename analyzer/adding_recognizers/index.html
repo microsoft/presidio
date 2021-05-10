@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/analyzer/adding_recognizers/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -479,6 +479,7 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
         
       
       
@@ -493,6 +494,7 @@
       
         
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -550,6 +552,26 @@
           <li class="md-nav__item">
   <a href="#creating-pre-defined-recognizers" class="md-nav__link">
     Creating pre-defined recognizers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-text-analytics-recognizer" class="md-nav__link">
+    Azure Text Analytics recognizer
+  </a>
+  
+    <nav class="md-nav" aria-label="Azure Text Analytics recognizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-ad-hoc-recognizers" class="md-nav__link">
+    Creating ad-hoc recognizers
   </a>
   
 </li>
@@ -1052,6 +1074,7 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
     
   
   
@@ -1107,6 +1130,26 @@
           <li class="md-nav__item">
   <a href="#creating-pre-defined-recognizers" class="md-nav__link">
     Creating pre-defined recognizers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-text-analytics-recognizer" class="md-nav__link">
+    Azure Text Analytics recognizer
+  </a>
+  
+    <nav class="md-nav" aria-label="Azure Text Analytics recognizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-ad-hoc-recognizers" class="md-nav__link">
+    Creating ad-hoc recognizers
   </a>
   
 </li>
@@ -1210,11 +1253,13 @@ we can leverage the provided <code>PatternRecognizer</code>:</p>
 (<code>LocalRecognizer</code> implements the base <a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/entity_recognizer.py">EntityRecognizer</a> class)</p>
 <p>This class has the following functions:</p>
 <p>i. load: load a model / resource to be used during recognition</p>
+<p><!--exdown-skip-->
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></p>
 <p>ii. analyze: The main function to be called for getting entities out of the new recognizer:</p>
+<p><!--exdown-skip-->
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></p>
 <p>Notes:
 1. Each recognizer has access to different NLP assets such as tokens, <a href="https://en.wikipedia.org/wiki/Lemma_(morphology)">lemmas</a>, and more.
 These are given through the <code>nlp_artifacts</code> parameter.
@@ -1232,6 +1277,7 @@ Refer to the <a href="https://github.com/microsoft/presidio/blob/main/presidio-a
 <p><a href="../../samples/python/example_remote_recognizer/">Sample implementation of a <code>RemoteRecognizer</code></a>.
 In this example, an external PII detection service exposes two APIs: <code>detect</code> and <code>supported_entities</code>. The class implemented here, <code>ExampleRemoteRecognizer</code>, uses the <code>requests</code> package to call the external service via HTTP.</p>
 <p>In this code snippet, we simulate the external PII detector by using the Presidio analyzer. In reality, we would adapt this code to fit the external PII detector we have in hand.</p>
+<p>For an example of integrating a <code>RemoteRecognizer</code> with Presidio-Analyzer, see <a href="../../samples/python/integrating_with_external_services/">this example</a>.</p>
 <h3 id="creating-pre-defined-recognizers">Creating pre-defined recognizers</h3>
 <p>Once a recognizer is created, it can either be added to the <code>RecognizerRegistry</code> via the <code>add_recognizer</code> method, or it could be added into the list of predefined recognizers.
 To add a recognizer to the list of pre-defined recognizers:</p>
@@ -1241,6 +1287,62 @@ To add a recognizer to the list of pre-defined recognizers:</p>
 <li>Add the recognizer to the <code>recognizers_map</code> dict in the <code>RecognizerRegistry.load_predefined_recognizers</code> method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.</li>
 <li>Optional: Update documentation (e.g., the <a href="../../supported_entities/">supported entities list</a>).</li>
 </ol>
+<h2 id="azure-text-analytics-recognizer">Azure Text Analytics recognizer</h2>
+<p>On how to integrate Presidio with Azure Text Analytics,
+and a sample for a Text Analytics Remote Recognizer, refer to the
+<a href="../../samples/python/text_analytics/">Azure Text Analytics Integration document</a>.</p>
+<h3 id="creating-ad-hoc-recognizers">Creating ad-hoc recognizers</h3>
+<p>In addition to recognizers in code, it is possible to create ad-hoc recognizers via the Presidio Analyzer API for regex and deny-list based logic.
+These recognizers, in JSON form, are added to the <code>/analyze</code> request and are only used in the context of this request.</p>
+<ul>
+<li>
+<p>The json structure for a regex ad-hoc recognizer is the following:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;John Smith drivers license is AC432223. Zip code: 10023&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;language&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;ad_hoc_recognizers&quot;</span><span class="p">:[</span>
+        <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Zip code Recognizer&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;supported_language&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;patterns&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;zip code (weak)&quot;</span><span class="p">,</span> 
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="s2">&quot;(\\b\\d{5}(?:\\-\\d{4})?\\b)&quot;</span><span class="p">,</span> 
+            <span class="nt">&quot;score&quot;</span><span class="p">:</span> <span class="mf">0.01</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;context&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">],</span>
+        <span class="nt">&quot;supported_entity&quot;</span><span class="p">:</span><span class="s2">&quot;ZIP&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</li>
+<li>
+<p>The json structure for a deny-list based recognizers is the following:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Mr. John Smith&#39;s drivers license is AC432223&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;language&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;ad_hoc_recognizers&quot;</span><span class="p">:[</span>
+        <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mr. Recognizer&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;supported_language&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;deny_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Mr&quot;</span><span class="p">,</span> <span class="s2">&quot;Mr.&quot;</span><span class="p">,</span> <span class="s2">&quot;Mister&quot;</span><span class="p">],</span>
+        <span class="nt">&quot;supported_entity&quot;</span><span class="p">:</span><span class="s2">&quot;MR_TITLE&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Ms. Recognizer&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;supported_language&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;deny_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Ms&quot;</span><span class="p">,</span> <span class="s2">&quot;Ms.&quot;</span><span class="p">,</span> <span class="s2">&quot;Miss&quot;</span><span class="p">,</span> <span class="s2">&quot;Mrs&quot;</span><span class="p">,</span> <span class="s2">&quot;Mrs.&quot;</span><span class="p">],</span>
+        <span class="nt">&quot;supported_entity&quot;</span><span class="p">:</span><span class="s2">&quot;MS_TITLE&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</li>
+</ul>
+<p>In both examples, the <code>/analyze</code> request is extended with a list of <code>ad_hoc_recognizers</code>, which could be either <code>patterns</code>, <code>deny_list</code> or both.</p>
+<p>Additional examples can be found in the <a href="../../api-docs/api-docs.html">OpenAPI spec</a>.</p>
 <h2 id="pii-detection-in-different-languages">PII detection in different languages</h2>
 <p>For recognizers in new languages, refer to the <a href="../languages/">languages documentation</a>.</p>
 <h2 id="considerations-when-creating-recognizers">Considerations when creating recognizers</h2>
@@ -1341,10 +1443,10 @@ To add a recognizer to the list of pre-defined recognizers:</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

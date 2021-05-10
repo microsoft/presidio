@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory/">
       
       <link rel="icon" href="../../../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -944,6 +944,7 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
     
   
   
@@ -964,6 +965,13 @@
           <li class="md-nav__item">
   <a href="#deploy-the-arm-template" class="md-nav__link">
     Deploy the ARM template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#about-this-solution-template" class="md-nav__link">
+    About this Solution Template
   </a>
   
 </li>
@@ -991,6 +999,13 @@
           <li class="md-nav__item">
   <a href="#deploy-the-arm-template_1" class="md-nav__link">
     Deploy the ARM template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#about-this-solution-template_1" class="md-nav__link">
+    About this Solution Template
   </a>
   
 </li>
@@ -1042,6 +1057,18 @@ az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template
 <li>A SAS token keys is created and read from Azure Storage and then imported to Azure Key Vault. Using ARM template built in <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions">functions</a>: <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas">listAccountSas</a>.</li>
 <li>An access policy grants the Azure Data Factory managed identity access to the Azure Key Vault by using ARM template <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions-resource?tabs=json#reference">reference</a> function to the Data Factory object and acquire its identity.principalId property. This is enabled by setting the data factory ARM resource's identity attribute to managed identity (SystemAssigned).</li>
 </ul>
+<h3 id="about-this-solution-template">About this Solution Template</h3>
+<p>This template gets a collection of JSON documents from a file on GitHub. It then extracts one of the text fields of the document, anonymizes the content and uploads it as a text file to the destination store.</p>
+<p>The template contains seven activities:</p>
+<ul>
+<li><strong>GetDataSet</strong>- Copy the dataset from GitHub to the first folder on the Azure Storage blob container (/dataset).</li>
+<li><strong>LoadSet</strong>- Loads the dataset into the Azure Data Factory memory for processing in a for-each loop.</li>
+<li><strong>GetSASToken</strong> - Get the SAS token from Azure Key Vault. This will be used later for writing to the blob container.</li>
+<li><strong>SaveBlobs</strong> - Is a For-Each loop activity. It includes a clause which is executed for each document in the array.</li>
+<li><strong>PresidioAnalyze</strong> - Sends the text to presidio analyzer endpoint.</li>
+<li><strong>PresidioAnonymize</strong> - Sends the response from presidio analyzer to presidio anonymizer endpoint.</li>
+<li><strong>UploadBlob</strong> - Saves the anonymized response from presidio to a randomly named text file on the target Azure Blob Storage.</li>
+</ul>
 <h2 id="option-2-presidio-on-azure-databricks">Option 2: Presidio on Azure Databricks</h2>
 <p>By using Presidio as a Notebook step in ADF, we allow Databricks to scale presidio according to the cluster capabilities and the input dataset. Using presidio as a native python package in pyspark can unlock more analysis and de-identifiaction scenarios.</p>
 <p><img alt="ADF-Databricks" src="../adf-databricks-screenshot.png" /></p>
@@ -1062,6 +1089,18 @@ az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template
 </code></pre></div>
 <p>Note that:
 Two keys are read from Azure Storage and imported to Azure Key Vault, the account Access Token and a SAS token, using ARM template built in <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions">functions</a>: <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas">listAccountSas</a> and <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys">listKeys</a>.</p>
+<h3 id="about-this-solution-template_1">About this Solution Template</h3>
+<p>This template gets a collection of JSON documents from a file on GitHub. It then extracts one of the text fields of the document and saves it to a text file on a temporary folder in the storage account (un-anonymized content). It then runs a spark notebook job that anonymizes the content of the files in that folder and saves the result as csv files on the destination store.</p>
+<p>The template contains seven activities:</p>
+<ul>
+<li><strong>GetDataSet</strong> - Copy the dataset from GitHub to the first folder on the Azure Storage blob container (/dataset).</li>
+<li><strong>GetSASToken</strong> - Get the SAS token from Azure Key Vault. This will be used later for writing to the blob container.</li>
+<li><strong>LoadSet</strong> -  Loads the dataset into the Azure Data Factory memory for processing in a for-each loop.</li>
+<li><strong>SaveBlobs</strong> - Is a For-Each loop activity. It includes a clause which is executed for each document in the array.</li>
+<li><strong>UploadBlob</strong> - Saves the text file on a temporary container on the target Azure Blob Storage</li>
+<li><strong>GetSecret</strong> - Get the storage account secret from Azure Key Vault. This will be used later for accessing the blob container from databricks</li>
+<li><strong>Presidio-Anonymize</strong> - Is a databricks spark job which runs presidio on the temporary storage container. the result of this job is a new container (/output) with csv files that contain the anonymized text.</li>
+</ul>
                 
               
               
@@ -1125,10 +1164,10 @@ Two keys are read from Azure Storage and imported to Azure Key Vault, the accoun
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

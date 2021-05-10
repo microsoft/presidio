@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/image-redactor/">
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -616,6 +616,7 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
         
       
       
@@ -630,6 +631,7 @@
       
         
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -1027,6 +1029,7 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
     
   
   
@@ -1149,7 +1152,7 @@ docker build . -t presidio/presidio-image-redactor
 <span class="kn">from</span> <span class="nn">presidio_image_redactor</span> <span class="kn">import</span> <span class="n">ImageRedactorEngine</span>
 
 <span class="c1"># Get the image to redact using PIL lib (pillow)</span>
-<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;ocr_text.png&quot;</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;./docs/image-redactor/ocr_text.png&quot;</span><span class="p">)</span>
 
 <span class="c1"># Initialize the engine</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">ImageRedactorEngine</span><span class="p">()</span>
@@ -1159,8 +1162,8 @@ docker build . -t presidio/presidio-image-redactor
 
 <span class="c1"># save the redacted image </span>
 <span class="n">redacted_image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;new_image.png&quot;</span><span class="p">)</span>
-<span class="c1"># open the image for viewing</span>
-<span class="n">redacted_image</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># uncomment to open the image for viewing</span>
+<span class="c1"># redacted_image.show()</span>
 </code></pre></div>
 </div>
 <input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">As an HTTP server</label><div class="tabbed-content">
@@ -1284,10 +1287,10 @@ and <a href="../api/image_redactor_python/">Image Redactor Python API</a> for Py
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

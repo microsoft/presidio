@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/analyzer/languages/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -507,6 +507,7 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
         
       
       
@@ -521,6 +522,7 @@
       
         
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -1015,6 +1017,7 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
     
   
   
@@ -1105,9 +1108,10 @@ and <a href="https://github.com/stanfordnlp/stanza">Stanza</a>. To set up new mo
 </li>
 <li>
 <p>To download a new model with Stanza:</p>
+<p><!--exdown-skip-->
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">stanza</span>
 <span class="n">stanza</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">)</span> <span class="c1"># where en is the language code of the model.</span>
-</code></pre></div>
+</code></pre></div></p>
 </li>
 </ul>
 <p>For the available models, follow these links: <a href="https://spacy.io/usage/models">spaCy</a>, <a href="https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models">stanza</a>.</p>
@@ -1138,10 +1142,10 @@ and <a href="https://github.com/stanfordnlp/stanza">Stanza</a>. To set up new mo
 <span class="p">)</span>
 
 <span class="c1"># Analyze in different languages</span>
-<span class="n">results_spanish</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mi nombre es David&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;es&quot;</span><span class="p">)</span>
+<span class="n">results_spanish</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mi nombre es Morris&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;es&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">results_spanish</span><span class="p">)</span>
 
-<span class="n">results_english</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is David&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+<span class="n">results_english</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is Morris&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">results_english</span><span class="p">)</span>
 </code></pre></div>
 </li>
@@ -1161,8 +1165,10 @@ and <a href="https://github.com/stanfordnlp/stanza">Stanza</a>. To set up new mo
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">RecognizerRegistry</span>
 <span class="kn">from</span> <span class="nn">presidio_analyzer.nlp_engine</span> <span class="kn">import</span> <span class="n">NlpEngineProvider</span>
 
+<span class="n">LANGUAGES_CONFIG_FILE</span> <span class="o">=</span> <span class="s2">&quot;./docs/analyzer/languages-config.yml&quot;</span>
+
 <span class="c1"># Create NLP engine based on configuration file</span>
-<span class="n">provider</span> <span class="o">=</span> <span class="n">NlpEngineProvider</span><span class="p">(</span><span class="n">conf_file</span><span class="o">=</span><span class="s2">&quot;PATH_TO_YAML&quot;</span><span class="p">)</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">NlpEngineProvider</span><span class="p">(</span><span class="n">conf_file</span><span class="o">=</span><span class="n">LANGUAGES_CONFIG_FILE</span><span class="p">)</span>
 <span class="n">nlp_engine_with_spanish</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
 
 <span class="c1"># Pass created NLP engine and supported_languages to the AnalyzerEngine</span>
@@ -1209,7 +1215,7 @@ Each recognizer can support one language. For example:</p>
     <span class="n">supported_languages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">,</span><span class="s2">&quot;es&quot;</span><span class="p">],</span>
     <span class="n">nlp_engine</span><span class="o">=</span><span class="n">nlp_engine_with_spanish</span><span class="p">)</span>
 
-<span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is David&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="automatically-install-nlp-models-into-the-docker-container">Automatically install NLP models into the Docker container</h3>
 <p>When packaging the code into a Docker container, NLP models are automatically installed.
@@ -1312,10 +1318,10 @@ the <code>docker build</code> phase and the models defined in it are installed a
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>

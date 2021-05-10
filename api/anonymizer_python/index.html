@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/anonymizer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -897,6 +897,7 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
         
       
       
@@ -911,6 +912,7 @@
       
         
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
   
   
     
@@ -1453,6 +1455,60 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom" class="md-nav__link">
+    custom
+  </a>
+  
+    <nav class="md-nav" aria-label="custom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom" class="md-nav__link">
+    Custom
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.operate" class="md-nav__link">
+    operate()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.operator_name" class="md-nav__link">
+    operator_name()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.operator_type" class="md-nav__link">
+    operator_type()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.validate" class="md-nav__link">
+    validate()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#presidio_anonymizer.operators.decrypt" class="md-nav__link">
     decrypt
   </a>
@@ -1916,6 +1972,13 @@
           <li class="md-nav__item">
   <a href="#presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.analyzer_results_from_json" class="md-nav__link">
     analyzer_results_from_json()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.check_custom_operator" class="md-nav__link">
+    check_custom_operator()
   </a>
   
 </li>
@@ -2056,6 +2119,7 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
     
   
   
@@ -2596,6 +2660,60 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom" class="md-nav__link">
+    custom
+  </a>
+  
+    <nav class="md-nav" aria-label="custom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom" class="md-nav__link">
+    Custom
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.operate" class="md-nav__link">
+    operate()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.operator_name" class="md-nav__link">
+    operator_name()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.operator_type" class="md-nav__link">
+    operator_type()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.operators.custom.Custom.validate" class="md-nav__link">
+    validate()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#presidio_anonymizer.operators.decrypt" class="md-nav__link">
     decrypt
   </a>
@@ -3059,6 +3177,13 @@
           <li class="md-nav__item">
   <a href="#presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.analyzer_results_from_json" class="md-nav__link">
     analyzer_results_from_json()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.check_custom_operator" class="md-nav__link">
+    check_custom_operator()
   </a>
   
 </li>
@@ -4090,8 +4215,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 </table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/anonymizer_result.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-             <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AnonymizerResult&#39;</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AnonymizerResult&quot;</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Information about the anonymized entity we want to deanonymize.</span>
 
@@ -4124,7 +4248,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Create EncryptEntity from user json.</p>
+      <p>Create AnonymizerResult from user json.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4138,43 +4262,27 @@ and replaces the PII entities with the desired anonymizers.</p>
   </thead>
   <tbody>
       <tr>
-        <td><code>e.g.</code></td>
         <td><code>json</code></td>
-        <td><p>{ "start": 0, "end": 10, "key": "1111111111111111", "entity_type":"PERSON", }</p></td>
+        <td><code>Dict</code></td>
+        <td><p>json representation for this anonymizer result. For example: { "start": 0, "end": 10, "key": "1111111111111111", "entity_type":"PERSON", }</p></td>
         <td><em>required</em></td>
       </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>AnonymizerResult</code></td>
-      <td><p>AnonymizerResult object</p></td>
-    </tr>
   </tbody>
 </table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/anonymizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AnonymizerResult&#39;</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AnonymizerResult&quot;</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create EncryptEntity from user json.</span>
+<span class="sd">    Create AnonymizerResult from user json.</span>
 
-<span class="sd">    :param json e.g.:</span>
+<span class="sd">    :param json: json representation for this anonymizer result. For example:</span>
 <span class="sd">    {</span>
 <span class="sd">        &quot;start&quot;: 0,</span>
 <span class="sd">        &quot;end&quot;: 10,</span>
 <span class="sd">        &quot;key&quot;: &quot;1111111111111111&quot;,</span>
 <span class="sd">        &quot;entity_type&quot;:&quot;PERSON&quot;,</span>
 <span class="sd">    }</span>
-<span class="sd">    :return: AnonymizerResult object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
@@ -4217,12 +4325,6 @@ and replaces the PII entities with the desired anonymizers.</p>
   </thead>
   <tbody>
       <tr>
-        <td><code>key</code></td>
-        <td><code></code></td>
-        <td><p>the key we used to encrypt the text.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
         <td><code>operator_result</code></td>
         <td><code>OperatorResult</code></td>
         <td><p>a single anonymizer encrypt result we received from the engine.</p></td>
@@ -4252,13 +4354,13 @@ and replaces the PII entities with the desired anonymizers.</p>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert anonymized entity returned from anonymizer engine to encrypt result.</span>
 
-<span class="sd">    :param key: the key we used to encrypt the text.</span>
 <span class="sd">    :param operator_result: a single anonymizer encrypt result we received</span>
 <span class="sd">    from the engine.</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">operator_result</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">operator_result</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
-               <span class="n">operator_result</span><span class="o">.</span><span class="n">entity_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+        <span class="n">operator_result</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">operator_result</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">operator_result</span><span class="o">.</span><span class="n">entity_type</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -5410,13 +5512,14 @@ and replaces the PII entities with the desired anonymizers.</p>
     <div class="doc doc-contents ">
 
       <p>Verify two instances are equal.</p>
+<p>Returns true if the two instances are equal, false otherwise.</p>
 
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/result/engine_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Verify two instances are equal.</span>
 
-<span class="sd">    :return true if the two instances are equal, false otherwise.</span>
+<span class="sd">    Returns true if the two instances are equal, false otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
         <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
@@ -5852,6 +5955,7 @@ and replaces the PII entities with the desired anonymizers.</p>
     <div class="doc doc-contents ">
 
       <p>Throw exception with error when user input is not valid.</p>
+<p>param msg: Message to be added to the exception</p>
 
 
 
@@ -6245,6 +6349,213 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
+<h3 id="presidio_anonymizer.operators.custom" class="doc doc-heading">
+        <code>custom</code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Replaces the PII text with function result.</p>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h4 id="presidio_anonymizer.operators.custom.Custom" class="doc doc-heading">
+        <code>Custom</code>
+
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Replace PII text entity with the results of a function executed on the PII text.</p>
+<p>The function retrun type must be a string</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="presidio_anonymizer.operators.custom.Custom.operate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h5>
+
+    <div class="doc doc-contents ">
+
+      
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>str</code></td>
+      <td><p>result of function executed on the text.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/custom.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;:return: result of function executed on the text.&quot;&quot;&quot;</span>
+    <span class="n">new_val</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LAMBDA</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_val</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="presidio_anonymizer.operators.custom.Custom.operator_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Return operator name.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/custom.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;custom&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="presidio_anonymizer.operators.custom.Custom.operator_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Return operator type.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/custom.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="presidio_anonymizer.operators.custom.Custom.validate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></code>
+
+
+</h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Validate the provided function is returning a string.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/custom.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Validate the provided function is returning a string.&quot;&quot;&quot;</span>
+    <span class="n">new_val</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LAMBDA</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">new_val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_val</span><span class="p">(</span><span class="s2">&quot;PII&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="s2">&quot;Function return type must be a str&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="s2">&quot;New value must be a callable function&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
 <h3 id="presidio_anonymizer.operators.decrypt" class="doc doc-heading">
         <code>decrypt</code>
 
@@ -6469,7 +6780,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 <span class="sd">    :param params:</span>
 <span class="sd">        * *key* The key supplied by the user for the encryption.</span>
 <span class="sd">                Should be a string of 128, 192 or 256 bits length.</span>
-<span class="sd">    :raises: InvalidParamException in case on an invalid parameter.</span>
+<span class="sd">    :raises InvalidParamException in case on an invalid parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">)</span>
     <span class="n">validate_parameter</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -6736,7 +7047,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 <span class="sd">    :param params:</span>
 <span class="sd">        * *key* The key supplied by the user for the encryption.</span>
 <span class="sd">                Should be a string of 128, 192 or 256 bits length.</span>
-<span class="sd">    :raises: InvalidParamException in case on an invalid parameter.</span>
+<span class="sd">    :raises InvalidParamException in case on an invalid parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">)</span>
     <span class="n">validate_parameter</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -8277,6 +8588,37 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
+<h5 id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.check_custom_operator" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_custom_operator</span><span class="p">(</span><span class="n">operators</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Check if an operator is of type custom.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/services/app_entities_convertor.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">check_custom_operator</span><span class="p">(</span><span class="n">operators</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperatorConfig</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Check if an operator is of type custom.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">([</span><span class="n">config</span><span class="o">.</span><span class="n">operator_name</span> <span class="o">==</span> <span class="s2">&quot;custom&quot;</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">operators</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h5 id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.deanonymize_entities_from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">deanonymize_entities_from_json</span><span class="p">(</span><span class="n">json</span><span class="p">)</span></code>
 
@@ -8773,10 +9115,10 @@ as content.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
       
     
   </body>
