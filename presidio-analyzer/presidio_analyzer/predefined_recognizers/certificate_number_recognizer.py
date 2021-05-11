@@ -19,7 +19,7 @@ class CertificateNumberRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "USA DEA Certificate Number (weak)",
-            r"[a-zA-Z]{2}\d{7} | [a-zA-Z]{1}9\d{7}",   
+            r"[a-zA-Z]{2}\d{7}|[a-zA-Z]{1}9\d{7}",   
             0.3,
         ),
     ]
@@ -62,7 +62,7 @@ class CertificateNumberRecognizer(PatternRecognizer):
         def digits_of(n: str) -> List[int]:
             return [int(dig) for dig in str(n)]
 
-        digits = digits_of(sanitized_value)
+        digits = digits_of(sanitized_value[2:])
         odd_digits = digits[-1::-2]
         even_digits = digits[-2::-2]
         checksum = sum(odd_digits)
