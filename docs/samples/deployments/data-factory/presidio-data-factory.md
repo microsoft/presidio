@@ -75,7 +75,7 @@ DATABRICKS_HOST=https://$DATABRICKS_WORKSPACE_URL
 DATABRICKS_CLUSTER_ID=$(databricks clusters get --cluster-name presidio_cluster | jq -r .cluster_id)
 DATABRICKS_NOTEBOOK_LOCATION="/notebooks/01_transform_presidio"
 
-az deployment group create -g $RESOURCE_GROUP --template-file ./arm-templates/azure-deploy-adf-databricks.json --parameters Databricks_accessToken=$DATABRICKS_TOKEN Databricks_clusterId=$DATABRICKS_CLUSTER_ID Databricks_notebookLocation=$DATABRICKS_NOTEBOOK_LOCATION Databricks_workSpaceUrl=$DATABRICKS_HOST AzureBlobStorage_accountName=$STORAGE_ACCOUNT_NAME AzureBlobStorage_cotainerName=$STORAGE_CONTAINER_NAME
+az deployment group create -g $RESOURCE_GROUP --template-file ./arm-templates/azure-deploy-adf-databricks.json --parameters Databricks_accessToken=$DATABRICKS_TOKEN Databricks_clusterId=$DATABRICKS_CLUSTER_ID Databricks_notebookLocation=$DATABRICKS_NOTEBOOK_LOCATION Databricks_workSpaceUrl=$DATABRICKS_WORKSPACE_URL AzureBlobStorage_accountName=$STORAGE_ACCOUNT_NAME AzureBlobStorage_cotainerName=$STORAGE_CONTAINER_NAME
 ```
 
 Note that:
