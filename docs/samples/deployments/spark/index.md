@@ -116,7 +116,7 @@ databricks fs cp "./setup/startup.sh" "dbfs:/FileStore/dependencies/startup.sh"
 
 ```
 
-[Setup the cluster](https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#init-scripts) to run the init script.
+Setup the cluster to run the [init script](https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#init-scripts).
 
 #### Upload presidio notebooks
 
