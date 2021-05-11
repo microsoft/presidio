@@ -1,18 +1,16 @@
-# Anonymize PII entities in text using Azure Data Factory template and Presidio as an HTTP service
+# Anonymize PII entities using Azure Data Factory template
 
-This sample uses the built in [data anonymization template](https://github.com/Azure/Azure-DataFactory/tree/main/templates/Data%20Anonymization%20with%20Presidio%20as%20an%20HTTP%20service) of Azure Data Factory which is a part of the Template Gallery to move a set of text files from one location to another while anonymizing their content. It leverages the code for using [Presidio on Azure App Service](../app-service/index.md) to call Presidio as an HTTP REST endpoint in the Azure Data Factory (ADF) pipeline while parsing and storing each file as an Azure Blob Storage.
-
-**Note that** given the solution architecture which call presidio services using HTTP, this sample should be used for up to 5000 files, each up to 200KB in size.
-The restrictions are based on ADF lookup-activity which is used to iterate the files in the storage container (up to 5000 records), and having Presidio as an HTTP endpoint with text being sent over network to be anonymized. 
-For larger sets please work with the [Data Anonymization with Presidio on Databricks](./presidio-data-factory-template-gallery-databricks) template.
+This sample uses the built in data anonymization template of Azure Data Factory which is a part of the Template Gallery to move a set of text files from one location to another while anonymizing their content. It leverages the code for using [Presidio on Azure App Service](../app-service/index.md) to call Presidio as an HTTP REST endpoint in the Azure Data Factory (ADF) pipeline while parsing and storing each file as an Azure Blob Storage.
 
 The sample deploys the following Azure Services:
 
 * Azure KeyVault - Holds the access keys for Azure Storage to avoid having keys and secrets in the code.
-* Azure Storage - The target storage account where data will be persisted.
+* Azure Storage - Persistence layer of this sample.
 * Azure App Service - Host presidio to anonymize the data.
 
-Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline and a storage account which holds the source files.
+Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline.
+
+**Note that** given the solution architecture which call presidio services using HTTP, it is optimal for use with a small-to-medium number of files, each with a small-to-medium content size. working with larger file stores or large files will have better performance when using [presidio with databricks](presidio-data-factory.md#option-2-presidio-on-azure-databricks). 
 
 ## About this Solution Template
 
@@ -44,16 +42,16 @@ To use this template you should first setup the required infrastructure for the 
 
 ### Setup Presidio
 
-Create the Azure App Service, the storage accounts and an Azure Key Vault by clicking the Deploy-to-Azure button, or by running the following script to provision the [provided ARM template](./arm-templates/azure-deploy-adf-template-gallery-http.json).
+Create the Azure App Service, the storage accounts and an Azure Key Vault by clicking the Deploy-to-Azure button, or by running the following script to provision the [provided ARM template](./azure-deploy-adf-template-gallery.json).
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Farm-templates%2Fazure-deploy-adf-template-gallery-http.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Fazure-deploy-adf-template-gallery.json)
 
 ```bash
 RESOURCE_GROUP=[Name of resource group]
 LOCATION=[location of resources]
 
 az group create --name $RESOURCE_GROUP --location $LOCATION
-az deployment group create -g $RESOURCE_GROUP --template-file ./arm-templates/azure-deploy-adf-template-gallery-http.json
+az deployment group create -g $RESOURCE_GROUP --template-file ./azure-deploy-adf-template-gallery.json
 ```
 
 Note that:
@@ -63,7 +61,7 @@ Note that:
 
 ### Setup Azure Data Factory
 
-1. Go to the Data anonymization with Presidio as an HTTP service template. Select existing connection or create a New connection to your source file store where you want to move files from. Be aware that DataSource_Folder and DataSource_File are reference to the same connection of your source file store.
+1. Go to the Data anonymization with Presidio template. Select existing connection or create a New connection to your source file store where you want to move files from. Be aware that DataSource_Folder and DataSource_File are reference to the same connection of your source file store.
 ![ADF-Template-Load](images/data-anonymization-http-01.png)
 
 2. Select Use this template tab
