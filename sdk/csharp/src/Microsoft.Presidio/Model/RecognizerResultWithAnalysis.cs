@@ -28,61 +28,36 @@ using OpenAPIDateConverter = Microsoft.Presidio.Client.OpenAPIDateConverter;
 namespace Microsoft.Presidio.Model
 {
     /// <summary>
-    /// RecognizerResult
+    /// RecognizerResultWithAnalysis
     /// </summary>
-    [DataContract(Name = "RecognizerResult")]
+    [DataContract(Name = "RecognizerResultWithAnalysis")]
     [JsonConverter(typeof(JsonSubtypes), "RecognizerResultWithAnalysis")]
     [JsonSubtypes.KnownSubType(typeof(RecognizerResultWithAnalysis), "RecognizerResultWithAnalysis")]
-    public partial class RecognizerResult : IEquatable<RecognizerResult>, IValidatableObject
+    public partial class RecognizerResultWithAnalysis : RecognizerResult, IEquatable<RecognizerResultWithAnalysis>, IValidatableObject
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecognizerResult" /> class.
+        /// Initializes a new instance of the <see cref="RecognizerResultWithAnalysis" /> class.
         /// </summary>
         [JsonConstructorAttribute]
-        protected RecognizerResult() { }
+        protected RecognizerResultWithAnalysis() { }
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecognizerResult" /> class.
+        /// Initializes a new instance of the <see cref="RecognizerResultWithAnalysis" /> class.
         /// </summary>
+        /// <param name="analysisExplanation">analysisExplanation.</param>
         /// <param name="start">Where the PII starts (required).</param>
         /// <param name="end">Where the PII ends (required).</param>
         /// <param name="score">The PII detection score (required).</param>
         /// <param name="entityType">The supported PII entity types. (required).</param>
-        public RecognizerResult(int start = default(int), int end = default(int), double score = default(double), string entityType = default(string))
+        public RecognizerResultWithAnalysis(AnalysisExplanation analysisExplanation = default(AnalysisExplanation), int start = default(int), int end = default(int), double score = default(double), string entityType = default(string)) : base(start, end, score, entityType)
         {
-            this.Start = start;
-            this.End = end;
-            this.Score = score;
-            // to ensure "entityType" is required (not null)
-            this.EntityType = entityType ?? throw new ArgumentNullException("entityType is a required property for RecognizerResult and cannot be null");
+            this.AnalysisExplanation = analysisExplanation;
         }
 
         /// <summary>
-        /// Where the PII starts
+        /// Gets or Sets AnalysisExplanation
         /// </summary>
-        /// <value>Where the PII starts</value>
-        [DataMember(Name = "start", IsRequired = true, EmitDefaultValue = false)]
-        public int Start { get; set; }
-
-        /// <summary>
-        /// Where the PII ends
-        /// </summary>
-        /// <value>Where the PII ends</value>
-        [DataMember(Name = "end", IsRequired = true, EmitDefaultValue = false)]
-        public int End { get; set; }
-
-        /// <summary>
-        /// The PII detection score
-        /// </summary>
-        /// <value>The PII detection score</value>
-        [DataMember(Name = "score", IsRequired = true, EmitDefaultValue = false)]
-        public double Score { get; set; }
-
-        /// <summary>
-        /// The supported PII entity types.
-        /// </summary>
-        /// <value>The supported PII entity types.</value>
-        [DataMember(Name = "entity_type", IsRequired = true, EmitDefaultValue = false)]
-        public string EntityType { get; set; }
+        [DataMember(Name = "analysis_explanation", EmitDefaultValue = false)]
+        public AnalysisExplanation AnalysisExplanation { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -91,11 +66,9 @@ namespace Microsoft.Presidio.Model
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class RecognizerResult {\n");
-            sb.Append("  Start: ").Append(Start).Append("\n");
-            sb.Append("  End: ").Append(End).Append("\n");
-            sb.Append("  Score: ").Append(Score).Append("\n");
-            sb.Append("  EntityType: ").Append(EntityType).Append("\n");
+            sb.Append("class RecognizerResultWithAnalysis {\n");
+            sb.Append("  ").Append(base.ToString().Replace("\n", "\n  ")).Append("\n");
+            sb.Append("  AnalysisExplanation: ").Append(AnalysisExplanation).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -104,7 +77,7 @@ namespace Microsoft.Presidio.Model
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public virtual string ToJson()
+        public override string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
         }
@@ -116,36 +89,24 @@ namespace Microsoft.Presidio.Model
         /// <returns>Boolean</returns>
         public override bool Equals(object input)
         {
-            return this.Equals(input as RecognizerResult);
+            return this.Equals(input as RecognizerResultWithAnalysis);
         }
 
         /// <summary>
-        /// Returns true if RecognizerResult instances are equal
+        /// Returns true if RecognizerResultWithAnalysis instances are equal
         /// </summary>
-        /// <param name="input">Instance of RecognizerResult to be compared</param>
+        /// <param name="input">Instance of RecognizerResultWithAnalysis to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(RecognizerResult input)
+        public bool Equals(RecognizerResultWithAnalysis input)
         {
             if (input == null)
                 return false;
 
-            return 
+            return base.Equals(input) && 
                 (
-                    this.Start == input.Start ||
-                    this.Start.Equals(input.Start)
-                ) && 
-                (
-                    this.End == input.End ||
-                    this.End.Equals(input.End)
-                ) && 
-                (
-                    this.Score == input.Score ||
-                    this.Score.Equals(input.Score)
-                ) && 
-                (
-                    this.EntityType == input.EntityType ||
-                    (this.EntityType != null &&
-                    this.EntityType.Equals(input.EntityType))
+                    this.AnalysisExplanation == input.AnalysisExplanation ||
+                    (this.AnalysisExplanation != null &&
+                    this.AnalysisExplanation.Equals(input.AnalysisExplanation))
                 );
         }
 
@@ -157,12 +118,9 @@ namespace Microsoft.Presidio.Model
         {
             unchecked // Overflow is fine, just wrap
             {
-                int hashCode = 41;
-                hashCode = hashCode * 59 + this.Start.GetHashCode();
-                hashCode = hashCode * 59 + this.End.GetHashCode();
-                hashCode = hashCode * 59 + this.Score.GetHashCode();
-                if (this.EntityType != null)
-                    hashCode = hashCode * 59 + this.EntityType.GetHashCode();
+                int hashCode = base.GetHashCode();
+                if (this.AnalysisExplanation != null)
+                    hashCode = hashCode * 59 + this.AnalysisExplanation.GetHashCode();
                 return hashCode;
             }
         }
@@ -184,6 +142,7 @@ namespace Microsoft.Presidio.Model
         /// <returns>Validation Result</returns>
         protected IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> BaseValidate(ValidationContext validationContext)
         {
+            foreach(var x in BaseValidate(validationContext)) yield return x;
             yield break;
         }
     }

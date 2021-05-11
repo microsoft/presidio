@@ -35,8 +35,8 @@ namespace Microsoft.Presidio.Api
         /// </remarks>
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
-        /// <returns>List&lt;RecognizerResultWithAnaysisExplanation&gt;</returns>
-        List<RecognizerResultWithAnaysisExplanation> AnalyzePost(AnalyzeRequest analyzeRequest);
+        /// <returns>List&lt;RecognizerResultWithAnalysis&gt;</returns>
+        List<RecognizerResultWithAnalysis> AnalyzePost(AnalyzeRequest analyzeRequest);
 
         /// <summary>
         /// Analyze Text
@@ -46,8 +46,8 @@ namespace Microsoft.Presidio.Api
         /// </remarks>
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
-        /// <returns>ApiResponse of List&lt;RecognizerResultWithAnaysisExplanation&gt;</returns>
-        ApiResponse<List<RecognizerResultWithAnaysisExplanation>> AnalyzePostWithHttpInfo(AnalyzeRequest analyzeRequest);
+        /// <returns>ApiResponse of List&lt;RecognizerResultWithAnalysis&gt;</returns>
+        ApiResponse<List<RecognizerResultWithAnalysis>> AnalyzePostWithHttpInfo(AnalyzeRequest analyzeRequest);
         /// <summary>
         /// Healthcheck
         /// </summary>
@@ -124,8 +124,8 @@ namespace Microsoft.Presidio.Api
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of List&lt;RecognizerResultWithAnaysisExplanation&gt;</returns>
-        System.Threading.Tasks.Task<List<RecognizerResultWithAnaysisExplanation>> AnalyzePostAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <returns>Task of List&lt;RecognizerResultWithAnalysis&gt;</returns>
+        System.Threading.Tasks.Task<List<RecognizerResultWithAnalysis>> AnalyzePostAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <summary>
         /// Analyze Text
@@ -136,8 +136,8 @@ namespace Microsoft.Presidio.Api
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of ApiResponse (List&lt;RecognizerResultWithAnaysisExplanation&gt;)</returns>
-        System.Threading.Tasks.Task<ApiResponse<List<RecognizerResultWithAnaysisExplanation>>> AnalyzePostWithHttpInfoAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <returns>Task of ApiResponse (List&lt;RecognizerResultWithAnalysis&gt;)</returns>
+        System.Threading.Tasks.Task<ApiResponse<List<RecognizerResultWithAnalysis>>> AnalyzePostWithHttpInfoAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
         /// <summary>
         /// Healthcheck
         /// </summary>
@@ -330,10 +330,10 @@ namespace Microsoft.Presidio.Api
         /// </summary>
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
-        /// <returns>List&lt;RecognizerResultWithAnaysisExplanation&gt;</returns>
-        public List<RecognizerResultWithAnaysisExplanation> AnalyzePost(AnalyzeRequest analyzeRequest)
+        /// <returns>List&lt;RecognizerResultWithAnalysis&gt;</returns>
+        public List<RecognizerResultWithAnalysis> AnalyzePost(AnalyzeRequest analyzeRequest)
         {
-            Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnaysisExplanation>> localVarResponse = AnalyzePostWithHttpInfo(analyzeRequest);
+            Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnalysis>> localVarResponse = AnalyzePostWithHttpInfo(analyzeRequest);
             return localVarResponse.Data;
         }
 
@@ -342,8 +342,8 @@ namespace Microsoft.Presidio.Api
         /// </summary>
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
-        /// <returns>ApiResponse of List&lt;RecognizerResultWithAnaysisExplanation&gt;</returns>
-        public Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnaysisExplanation>> AnalyzePostWithHttpInfo(AnalyzeRequest analyzeRequest)
+        /// <returns>ApiResponse of List&lt;RecognizerResultWithAnalysis&gt;</returns>
+        public Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnalysis>> AnalyzePostWithHttpInfo(AnalyzeRequest analyzeRequest)
         {
             // verify the required parameter 'analyzeRequest' is set
             if (analyzeRequest == null)
@@ -370,7 +370,7 @@ namespace Microsoft.Presidio.Api
 
 
             // make the HTTP request
-            var localVarResponse = this.Client.Post<List<RecognizerResultWithAnaysisExplanation>>("/analyze", localVarRequestOptions, this.Configuration);
+            var localVarResponse = this.Client.Post<List<RecognizerResultWithAnalysis>>("/analyze", localVarRequestOptions, this.Configuration);
 
             if (this.ExceptionFactory != null)
             {
@@ -387,10 +387,10 @@ namespace Microsoft.Presidio.Api
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of List&lt;RecognizerResultWithAnaysisExplanation&gt;</returns>
-        public async System.Threading.Tasks.Task<List<RecognizerResultWithAnaysisExplanation>> AnalyzePostAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        /// <returns>Task of List&lt;RecognizerResultWithAnalysis&gt;</returns>
+        public async System.Threading.Tasks.Task<List<RecognizerResultWithAnalysis>> AnalyzePostAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnaysisExplanation>> localVarResponse = await AnalyzePostWithHttpInfoAsync(analyzeRequest, cancellationToken).ConfigureAwait(false);
+            Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnalysis>> localVarResponse = await AnalyzePostWithHttpInfoAsync(analyzeRequest, cancellationToken).ConfigureAwait(false);
             return localVarResponse.Data;
         }
 
@@ -400,8 +400,8 @@ namespace Microsoft.Presidio.Api
         /// <exception cref="Microsoft.Presidio.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="analyzeRequest"></param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of ApiResponse (List&lt;RecognizerResultWithAnaysisExplanation&gt;)</returns>
-        public async System.Threading.Tasks.Task<Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnaysisExplanation>>> AnalyzePostWithHttpInfoAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        /// <returns>Task of ApiResponse (List&lt;RecognizerResultWithAnalysis&gt;)</returns>
+        public async System.Threading.Tasks.Task<Microsoft.Presidio.Client.ApiResponse<List<RecognizerResultWithAnalysis>>> AnalyzePostWithHttpInfoAsync(AnalyzeRequest analyzeRequest, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             // verify the required parameter 'analyzeRequest' is set
             if (analyzeRequest == null)
@@ -431,7 +431,7 @@ namespace Microsoft.Presidio.Api
 
             // make the HTTP request
 
-            var localVarResponse = await this.AsynchronousClient.PostAsync<List<RecognizerResultWithAnaysisExplanation>>("/analyze", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+            var localVarResponse = await this.AsynchronousClient.PostAsync<List<RecognizerResultWithAnalysis>>("/analyze", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
 
             if (this.ExceptionFactory != null)
             {

@@ -27,16 +27,16 @@ using OpenAPIDateConverter = Microsoft.Presidio.Client.OpenAPIDateConverter;
 namespace Microsoft.Presidio.Model
 {
     /// <summary>
-    /// RecognizerResultWithAnaysisExplanationAllOf
+    /// RecognizerResultWithAnalysisAllOf
     /// </summary>
-    [DataContract(Name = "RecognizerResultWithAnaysisExplanation_allOf")]
-    public partial class RecognizerResultWithAnaysisExplanationAllOf : IEquatable<RecognizerResultWithAnaysisExplanationAllOf>, IValidatableObject
+    [DataContract(Name = "RecognizerResultWithAnalysis_allOf")]
+    public partial class RecognizerResultWithAnalysisAllOf : IEquatable<RecognizerResultWithAnalysisAllOf>, IValidatableObject
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecognizerResultWithAnaysisExplanationAllOf" /> class.
+        /// Initializes a new instance of the <see cref="RecognizerResultWithAnalysisAllOf" /> class.
         /// </summary>
         /// <param name="analysisExplanation">analysisExplanation.</param>
-        public RecognizerResultWithAnaysisExplanationAllOf(AnalysisExplanation analysisExplanation = default(AnalysisExplanation))
+        public RecognizerResultWithAnalysisAllOf(AnalysisExplanation analysisExplanation = default(AnalysisExplanation))
         {
             this.AnalysisExplanation = analysisExplanation;
         }
@@ -54,7 +54,7 @@ namespace Microsoft.Presidio.Model
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class RecognizerResultWithAnaysisExplanationAllOf {\n");
+            sb.Append("class RecognizerResultWithAnalysisAllOf {\n");
             sb.Append("  AnalysisExplanation: ").Append(AnalysisExplanation).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -76,15 +76,15 @@ namespace Microsoft.Presidio.Model
         /// <returns>Boolean</returns>
         public override bool Equals(object input)
         {
-            return this.Equals(input as RecognizerResultWithAnaysisExplanationAllOf);
+            return this.Equals(input as RecognizerResultWithAnalysisAllOf);
         }
 
         /// <summary>
-        /// Returns true if RecognizerResultWithAnaysisExplanationAllOf instances are equal
+        /// Returns true if RecognizerResultWithAnalysisAllOf instances are equal
         /// </summary>
-        /// <param name="input">Instance of RecognizerResultWithAnaysisExplanationAllOf to be compared</param>
+        /// <param name="input">Instance of RecognizerResultWithAnalysisAllOf to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(RecognizerResultWithAnaysisExplanationAllOf input)
+        public bool Equals(RecognizerResultWithAnalysisAllOf input)
         {
             if (input == null)
                 return false;

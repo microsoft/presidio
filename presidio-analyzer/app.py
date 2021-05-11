@@ -12,7 +12,7 @@ from werkzeug.exceptions import HTTPException
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 
-DEFAULT_PORT = "3000"
+DEFAULT_PORT = "3001"
 
 LOGGING_CONF_FILE = "logging.ini"
 

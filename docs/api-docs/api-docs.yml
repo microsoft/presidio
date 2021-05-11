@@ -43,7 +43,7 @@ paths:
                 description: "A list analysis results"
                 type: array
                 items:
-                  $ref: "#/components/schemas/RecognizerResultWithAnaysisExplanation"
+                  $ref: "#/components/schemas/RecognizerResultWithAnalysis"
 
               examples:
                 Enhanced response:
@@ -482,6 +482,10 @@ components:
           example: 0.8
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
+      discriminator:
+        propertyName: RecognizerResultWithAnalysis
+        mapping:
+          RecognizerResultWithAnalysis: "#/components/schemas/RecognizerResultWithAnalysis"
 
     AnonymizerResult:
       type: object
@@ -501,7 +505,7 @@ components:
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
 
-    RecognizerResultWithAnaysisExplanation:
+    RecognizerResultWithAnalysis:
       allOf:
         - $ref: '#/components/schemas/RecognizerResult'
         - type: object

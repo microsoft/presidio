@@ -24,8 +24,8 @@ docs/OperatorEntity.md
 docs/Pattern.md
 docs/PatternRecognizer.md
 docs/RecognizerResult.md
-docs/RecognizerResultWithAnaysisExplanation.md
-docs/RecognizerResultWithAnaysisExplanationAllOf.md
+docs/RecognizerResultWithAnalysis.md
+docs/RecognizerResultWithAnalysisAllOf.md
 docs/Redact.md
 docs/Replace.md
 git_push.sh
@@ -70,7 +70,7 @@ src/Microsoft.Presidio/Model/OperatorEntity.cs
 src/Microsoft.Presidio/Model/Pattern.cs
 src/Microsoft.Presidio/Model/PatternRecognizer.cs
 src/Microsoft.Presidio/Model/RecognizerResult.cs
-src/Microsoft.Presidio/Model/RecognizerResultWithAnaysisExplanation.cs
-src/Microsoft.Presidio/Model/RecognizerResultWithAnaysisExplanationAllOf.cs
+src/Microsoft.Presidio/Model/RecognizerResultWithAnalysis.cs
+src/Microsoft.Presidio/Model/RecognizerResultWithAnalysisAllOf.cs
 src/Microsoft.Presidio/Model/Redact.cs
 src/Microsoft.Presidio/Model/Replace.cs

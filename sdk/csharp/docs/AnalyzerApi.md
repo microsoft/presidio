@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 <a name="analyzepost"></a>
 # **AnalyzePost**
-> List&lt;RecognizerResultWithAnaysisExplanation&gt; AnalyzePost (AnalyzeRequest analyzeRequest)
+> List&lt;RecognizerResultWithAnalysis&gt; AnalyzePost (AnalyzeRequest analyzeRequest)
 
 Analyze Text
 
@@ -40,7 +40,7 @@ namespace Example
             try
             {
                 // Analyze Text
-                List<RecognizerResultWithAnaysisExplanation> result = apiInstance.AnalyzePost(analyzeRequest);
+                List<RecognizerResultWithAnalysis> result = apiInstance.AnalyzePost(analyzeRequest);
                 Debug.WriteLine(result);
             }
             catch (ApiException  e)
@@ -62,7 +62,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**List&lt;RecognizerResultWithAnaysisExplanation&gt;**](RecognizerResultWithAnaysisExplanation.md)
+[**List&lt;RecognizerResultWithAnalysis&gt;**](RecognizerResultWithAnalysis.md)
 
 ### Authorization
 

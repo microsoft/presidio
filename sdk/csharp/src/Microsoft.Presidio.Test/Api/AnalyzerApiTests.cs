@@ -64,7 +64,7 @@ namespace Microsoft.Presidio.Test.Api
                     language: "en");
             var response = instance.AnalyzePost(body);
             Assert.Equal(response.Count, 1);
-            Assert.IsType<List<RecognizerResultWithAnaysisExplanation>>(response);
+            Assert.IsType<List<RecognizerResultWithAnalysis>>(response);
         }
 
         /// <summary>

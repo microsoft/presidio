@@ -91,7 +91,7 @@ namespace Example
             try
             {
                 // Analyze Text
-                List<RecognizerResultWithAnaysisExplanation> result = apiInstance.AnalyzePost(analyzeRequest);
+                List<RecognizerResultWithAnalysis> result = apiInstance.AnalyzePost(analyzeRequest);
                 Debug.WriteLine(result);
             }
             catch (ApiException e)
@@ -146,8 +146,8 @@ Class | Method | HTTP request | Description
  - [Model.Pattern](docs/Pattern.md)
  - [Model.PatternRecognizer](docs/PatternRecognizer.md)
  - [Model.RecognizerResult](docs/RecognizerResult.md)
- - [Model.RecognizerResultWithAnaysisExplanation](docs/RecognizerResultWithAnaysisExplanation.md)
- - [Model.RecognizerResultWithAnaysisExplanationAllOf](docs/RecognizerResultWithAnaysisExplanationAllOf.md)
+ - [Model.RecognizerResultWithAnalysis](docs/RecognizerResultWithAnalysis.md)
+ - [Model.RecognizerResultWithAnalysisAllOf](docs/RecognizerResultWithAnalysisAllOf.md)
  - [Model.Redact](docs/Redact.md)
  - [Model.Replace](docs/Replace.md)
 

@@ -6,8 +6,8 @@
     <AssemblyName>Microsoft.Presidio</AssemblyName>
     <PackageId>Microsoft.Presidio</PackageId>
     <OutputType>Library</OutputType>
-    <Authors>Microsoft Presidio team</Authors>
-    <Company>Microsoft</Company>
+    <Authors>OpenAPI</Authors>
+    <Company>OpenAPI</Company>
     <AssemblyTitle>OpenAPI Library</AssemblyTitle>
     <Description>A library generated from a OpenAPI doc</Description>
     <Copyright>No Copyright</Copyright>
