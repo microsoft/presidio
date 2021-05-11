@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>1.0.0</version>
+    <title>$title$</title>
+    <authors>$authors$</authors>
+    <owners>$authors$</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/microsoft/presidio</projectUrl>
+    <description>$description$</description>
+    <releaseNotes>First release</releaseNotes>
+    <copyright>Copyright 2021</copyright>
+    <dependencies>
+      <group targetFramework="netcoreapp3.1">
+        <dependency id="JsonSubTypes" version="1.8.0" />
+        <dependency id="Newtonsoft.Json" version="12.0.3" />
+        <dependency id="RestSharp" version="106.11.7" />
+        <dependency id="Polly" version="7.2.1" />
+        <dependency id="System.ComponentModel.Annotations" version="5.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
