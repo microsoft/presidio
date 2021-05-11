@@ -1,10 +1,10 @@
-# Anonymize PII entities using Azure Data Factory template
+# Anonymize PII entities in text using Azure Data Factory template and Presidio as an HTTP service
 
 This sample uses the built in [data anonymization template](https://github.com/Azure/Azure-DataFactory/tree/main/templates/Data%20Anonymization%20with%20Presidio%20as%20an%20HTTP%20service) of Azure Data Factory which is a part of the Template Gallery to move a set of text files from one location to another while anonymizing their content. It leverages the code for using [Presidio on Azure App Service](../app-service/index.md) to call Presidio as an HTTP REST endpoint in the Azure Data Factory (ADF) pipeline while parsing and storing each file as an Azure Blob Storage.
 
 **Note that** given the solution architecture which call presidio services using HTTP, this sample should be used for up to 5000 files, each up to 200KB in size.
 The restrictions are based on ADF lookup-activity which is used to iterate the files in the storage container (up to 5000 records), and having Presidio as an HTTP endpoint with text being sent over network to be anonymized. 
-For larger sets please work with the Data Anonymization with Presidio on Databricks template.
+For larger sets please work with the [Data Anonymization with Presidio on Databricks](./presidio-data-factory-template-gallery-databricks) template.
 
 The sample deploys the following Azure Services:
 

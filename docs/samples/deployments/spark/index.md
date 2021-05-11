@@ -1,9 +1,54 @@
 # Anonymize PII using Presidio on Spark
 
 You can leverages presidio to perform data anonymization as part of spark notebooks.
+
 The following sample uses [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) and simple text files hosted on [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/). However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.
 
 **Note** that this code works for Databricks runtime 8.1 (spark 3.1.1) and the libraries described [here](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/8.1).
+
+## The basics of working with Presidio in Spark
+
+A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of [transform presidio notebook](./notebooks/02_transform_presidio_text.py), is the basis of the e2e sample which uses Azure Databricks as the Spark environment.
+
+```python
+analyzer = AnalyzerEngine()
+anonymizer = AnonymizerEngine()
+
+# broadcast the engines to the cluster nodes
+broadcasted_analyzer = sc.broadcast(analyzer)
+broadcasted_anonymizer = sc.broadcast(anonymizer)
+
+# define a pandas UDF function and a series function over it.
+def anonymize_text(text: str) -> str:
+    try:
+        analyzer = broadcasted_analyzer.value
+        anonymizer = broadcasted_anonymizer.value
+        analyzer_results = analyzer.analyze(text=text, language="en")
+        anonymized_results = anonymizer.anonymize(
+            text=text,
+            analyzer_results=analyzer_results,
+            operators={
+                "DEFAULT": OperatorConfig("replace", {"new_value": "<ANONYMIZED>"})
+            },
+        )
+        return anonymized_results.text
+    except Exception as e:
+        print(f"An exception occurred. {e}")
+
+
+def anonymize_series(s: pd.Series) -> pd.Series:
+    return s.apply(anonymize_text)
+
+
+# define a the function as pandas UDF
+anonymize = pandas_udf(anonymize_series, returnType=StringType())
+
+# apply the udf
+anonymized_df = input_df.withColumn(
+    anonymized_column, anonymize(col(anonymized_column))
+)
+
+```
 
 ## Pre-requisites
 
@@ -99,11 +144,13 @@ Run the notebook 00_setup to mount the storage account to databricks.
 
 ### Configure Presidio transformation notebook
 
-From Databricks workspace, under notebooks folder, open the provided 01_transform_presidio_text notebook and attach it to the cluster preisidio_cluster.
+From Databricks workspace, under notebooks folder, open the provided 01_transform_presidio notebook and attach it to the cluster preisidio_cluster.
 Run the first code-cell and note the following parameters on the top end of the notebook (notebook widgets) and set them accordingly
 
-* Input Folder - a folder on the container where input files are found.
+* Input File Format - text (selected).
+* Input path - a folder on the container where input files are found.
 * Output Folder - a folder on the container where output files will be written to.
+* Column to Anonymize - value (selected).
 
 ### Run the notebook
 

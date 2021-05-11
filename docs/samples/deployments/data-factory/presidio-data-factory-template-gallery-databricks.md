@@ -1,8 +1,8 @@
-# Anonymize PII entities using Azure Data Factory template
+# Anonymize PII entities in datasets using Azure Data Factory template and Presidio on Databricks
 
 This sample uses the built in [data anonymization template](https://github.com/Azure/Azure-DataFactory/tree/main/templates/Data%20Anonymization%20with%20Presidio%20on%20Databricks) of Azure Data Factory which is a part of the Template Gallery to copy a csv dataset from one location to another while anonymizing a text column in the dataset from PII data. It leverages the code for using [Presidio on Azure Databricks](../spark/index.md) to call Presidio as a Databricks notebook job in the Azure Data Factory (ADF) pipeline to transform the input dataset before mergine the results to an Azure Blob Storage.
 
-**Note that** this solution is capabale of transforming large datasets. For smaller, text based input you may want to work with the Data Anonymization with Presidio as an HTTP service template which offers an easier deployment for Presidio.
+**Note that** this solution is capabale of transforming large datasets. For smaller, text based input you may want to work with the [Data Anonymization with Presidio as an HTTP service](./presidio-data-factory-template-gallery-http.md) template which offers an easier deployment for Presidio.
 
 The sample deploys the following Azure Services:
 
