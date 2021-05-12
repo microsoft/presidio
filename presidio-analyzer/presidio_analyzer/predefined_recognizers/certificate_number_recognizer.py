@@ -1,8 +1,8 @@
 from typing import List, Tuple, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
+# https://www.meditec.com/blog/dea-numbers-what-do-they-mean
 
-#https://www.meditec.com/blog/dea-numbers-what-do-they-mean
 
 class CertificateNumberRecognizer(PatternRecognizer):
     """
@@ -20,7 +20,7 @@ class CertificateNumberRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "USA DEA Certificate Number (weak)",
-            r"[a-zA-Z]{2}\d{7}|[a-zA-Z]{1}9\d{7}",   
+            r"[a-zA-Z]{2}\d{7}|[a-zA-Z]{1}9\d{7}",
             0.3,
         ),
     ]
