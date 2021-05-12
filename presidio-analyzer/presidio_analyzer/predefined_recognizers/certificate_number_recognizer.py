@@ -1,6 +1,7 @@
 from typing import List, Tuple, Optional
 
 from presidio_analyzer import Pattern, PatternRecognizer
+
 # https://www.meditec.com/blog/dea-numbers-what-do-they-mean
 
 
