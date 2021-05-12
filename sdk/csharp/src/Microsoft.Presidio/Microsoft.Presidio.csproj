@@ -12,7 +12,7 @@
     <Description>A library generated from a OpenAPI doc</Description>
     <Copyright>No Copyright</Copyright>
     <RootNamespace>Microsoft.Presidio</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>0.0.1</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Microsoft.Presidio.xml</DocumentationFile>
     <RepositoryUrl>https://github.com/GIT_USER_ID/GIT_REPO_ID.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

@@ -1,8 +1,5 @@
 {
   "packageName": "Microsoft.Presidio",
   "netCoreProjectFile": true,
-  "info": {
-    "title": "Presidio",
-    "version": "1.1.1"
-  }
+  "packageVersion": "0.0.1"
 }
