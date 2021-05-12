@@ -25,7 +25,7 @@ steps:
     
 - script: |
     set -eux  # fail on error    
-    pip install pytest-codeblocks 
+    pip install pytest-codeblocks==0.10.4
     pip install pytest
     pip install presidio-analyzer
     pip install presidio-anonymizer
