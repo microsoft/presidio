@@ -12,7 +12,7 @@
 | Deployment  | App Service            | [Presidio with App Service](deployments/app-service/index.md)                                                                                   |
 | Deployment  | Kubernetes             | [Presidio with Kubernetes](deployments/k8s/index.md)                                                                                            |
 | Deployment  | Spark/Azure Databricks | [Presidio with Spark](deployments/spark/index.md)                                                                                               |
-| Deployment  | Azure Data Factory     | [Presidio in Azure Data Factory with App Service](deployments/data-factory/presidio-data-factory.md#option-1-presidio-as-an-http-rest-endpoint) |
-| Deployment  | Azure Data Factory     | [Presidio in Azure Data Factory with Databricks](deployments/data-factory/presidio-data-factory.md#option-2-presidio-on-azure-databricks)       |
-| Deployment  | Azure Data Factory     | [Presidio as an HTTP service in Azure Data Factory Template Gallery](deployments/data-factory/presidio-data-factory-template-gallery-http.md)                           |
-| Deployment  | Azure Data Factory     | [Presidio on Databricks in Azure Data Factory Template Gallery](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md)                           |
+| Deployment  | Azure Data Factory with App Service    | [ETL for small dataset](deployments/data-factory/presidio-data-factory.md#option-1-presidio-as-an-http-rest-endpoint) |
+| Deployment  | Azure Data Factory with Databricks   | [ETL for large datasets](deployments/data-factory/presidio-data-factory.md#option-2-presidio-on-azure-databricks)       |
+| Usage  | Azure Data Factory     | [Add Presidio as an HTTP service to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-http.md)                           |
+| Usage  | Azure Data Factory     | [Add Presidio on Databricks to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md)                           |
