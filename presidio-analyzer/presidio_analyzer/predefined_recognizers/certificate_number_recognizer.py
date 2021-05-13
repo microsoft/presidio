@@ -37,7 +37,7 @@ class CertificateNumberRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "Certificate_Number",
+        supported_entity: str = "CERTIFICATE_NUMBER",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
 

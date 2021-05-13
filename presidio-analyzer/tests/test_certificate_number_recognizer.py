@@ -18,17 +18,14 @@ def entities():
     "text, expected_len, expected_scores, expected_res",
     [
         # fmt: off
-        (
-            "AS1234567 B91234567 UU2345678",
-            3, (), ((0, 9), (10, 19), (20, 29),),
-        ),
+        ("AS1111111 D91111111", 2, (), ((0, 9),(10,19),),),
         ("AD2222222", 1, (), ((0, 9),),),
-        ("my certificate number is: AD2342346", 1, (), ((26,36),),),
+        ("my certificate number is: AD2222222", 1, (), ((26,35),),),
         ("The DEA number is  A61111111", 0, (), (),),
         # fmt: on
     ],
 )
-def test_when_all_credit_cards_then_succeed(
+def test_when_all_certificate_number_then_succeed(
     text,
     expected_len,
     expected_scores,
