@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Redact
+# Presidio.Model.Redact
 Replace with an empty string
 
 ## Properties

@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Api.AnalyzerApi
+# Presidio.Api.AnalyzerApi
 
 All URIs are relative to *http://localhost*
 
@@ -22,9 +22,9 @@ Recognizes PII entities in a given text and returns their types, locations and s
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Presidio.Api;
-using Microsoft.Presidio.Client;
-using Microsoft.Presidio.Model;
+using Presidio.Api;
+using Presidio.Client;
+using Presidio.Model;
 
 namespace Example
 {
@@ -91,9 +91,9 @@ Healthcheck
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Presidio.Api;
-using Microsoft.Presidio.Client;
-using Microsoft.Presidio.Model;
+using Presidio.Api;
+using Presidio.Client;
+using Presidio.Model;
 
 namespace Example
 {
@@ -158,9 +158,9 @@ Get the available PII recognizers for a given language
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Presidio.Api;
-using Microsoft.Presidio.Client;
-using Microsoft.Presidio.Model;
+using Presidio.Api;
+using Presidio.Client;
+using Presidio.Model;
 
 namespace Example
 {
@@ -229,9 +229,9 @@ Get the list of PII entities Presidio-Analyzer is capable of detecting
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Presidio.Api;
-using Microsoft.Presidio.Client;
-using Microsoft.Presidio.Model;
+using Presidio.Api;
+using Presidio.Client;
+using Presidio.Model;
 
 namespace Example
 {

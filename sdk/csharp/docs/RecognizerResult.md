@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.RecognizerResult
+# Presidio.Model.RecognizerResult
 
 ## Properties
 

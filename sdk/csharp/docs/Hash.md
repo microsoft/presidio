@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Hash
+# Presidio.Model.Hash
 Replace with hashed value
 
 ## Properties

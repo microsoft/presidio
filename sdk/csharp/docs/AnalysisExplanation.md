@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.AnalysisExplanation
+# Presidio.Model.AnalysisExplanation
 
 ## Properties
 

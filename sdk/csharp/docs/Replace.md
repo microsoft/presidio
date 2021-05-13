@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Replace
+# Presidio.Model.Replace
 Replace with a given value
 
 ## Properties

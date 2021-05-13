@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Decrypt
+# Presidio.Model.Decrypt
 Replace encrypted PII decrypted text
 
 ## Properties

@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.AnalyzeRequest
+# Presidio.Model.AnalyzeRequest
 
 ## Properties
 

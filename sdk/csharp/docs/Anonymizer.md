@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Anonymizer
+# Presidio.Model.Anonymizer
 
 ## Properties
 

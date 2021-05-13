@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Api.DeanonymizeApi
+# Presidio.Api.DeanonymizeApi
 
 All URIs are relative to *http://localhost*
 
@@ -17,9 +17,9 @@ Deanonymize Text
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Presidio.Api;
-using Microsoft.Presidio.Client;
-using Microsoft.Presidio.Model;
+using Presidio.Api;
+using Presidio.Client;
+using Presidio.Model;
 
 namespace Example
 {

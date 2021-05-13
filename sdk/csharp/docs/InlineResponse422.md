@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.InlineResponse422
+# Presidio.Model.InlineResponse422
 
 ## Properties
 

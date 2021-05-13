@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Encrypt
+# Presidio.Model.Encrypt
 Replace with an encrypted value
 
 ## Properties

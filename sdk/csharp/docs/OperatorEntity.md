@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.OperatorEntity
+# Presidio.Model.OperatorEntity
 
 ## Properties
 

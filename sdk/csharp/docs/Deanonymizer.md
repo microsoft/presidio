@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Deanonymizer
+# Presidio.Model.Deanonymizer
 
 ## Properties
 

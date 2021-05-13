@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.DeanonymizeRequest
+# Presidio.Model.DeanonymizeRequest
 
 ## Properties
 

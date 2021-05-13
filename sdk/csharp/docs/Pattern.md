@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.Pattern
+# Presidio.Model.Pattern
 
 ## Properties
 

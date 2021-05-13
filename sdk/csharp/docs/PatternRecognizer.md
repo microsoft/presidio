@@ -1,4 +1,4 @@
-# Microsoft.Presidio.Model.PatternRecognizer
+# Presidio.Model.PatternRecognizer
 A regular expressions or deny-list based recognizer
 
 ## Properties
