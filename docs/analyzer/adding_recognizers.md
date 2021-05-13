@@ -39,12 +39,14 @@ titles_recognizer = PatternRecognizer(supported_entity="TITLE",
 
 Calling the recognizer itself:
 
+<!--pytest-codeblocks:cont-->
 ```python
 titles_recognizer.analyze(text="Mr. Schmidt",entities="TITLE")
 ```
 
 Adding it to the list of recognizers:
 
+<!--pytest-codeblocks:cont-->
 ```python
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 
@@ -66,6 +68,7 @@ print(results)
 
 Alternatively, we can add the recognizer directly to the existing registry:
 
+<!--pytest-codeblocks:cont-->
 ```python
 from presidio_analyzer import AnalyzerEngine
 
@@ -88,14 +91,14 @@ To create a new recognizer via code:
 
     i. load: load a model / resource to be used during recognition
 
-    <!--exdown-skip-->
+    <!--pytest-codeblocks:skip-->
     ```python
     def load(self)
     ```
 
     ii. analyze: The main function to be called for getting entities out of the new recognizer:
 
-    <!--exdown-skip-->
+    <!--pytest-codeblocks:skip-->
     ```python
     def analyze(self, text, entities, nlp_artifacts)
     ```
