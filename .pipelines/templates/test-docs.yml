@@ -25,7 +25,8 @@ steps:
     
 - script: |
     set -eux  # fail on error    
-    pip install exdown 
+    pip install pytest-codeblocks==0.10.4
+    pip install pytest
     pip install presidio-analyzer
     pip install presidio-anonymizer
     pip install presidio-image-redactor
@@ -68,9 +69,7 @@ steps:
   displayName: Execute postman collection
   continueOnError: true  
 
-- task: PythonScript@0
-  displayName: 'Test python code in markdown files'
-  continueOnError: true
-  inputs:
-    scriptSource: 'filePath'
-    scriptPath: './.pipelines/templates/test-md.py'  
+- script: |    
+    python -m pytest ./docs --codeblocks
+  displayName: Test python code in markdown files
+  continueOnError: false
