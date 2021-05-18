@@ -26,7 +26,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_us_itins(
+def test_when_itin_in_text_then_all_us_itins_found(
     text,
     expected_len,
     expected_positions,

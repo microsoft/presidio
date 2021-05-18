@@ -360,7 +360,9 @@ def update_iban_checksum(iban):
         # fmt: on
     ],
 )
-def test_all_ibans(iban, expected_len, expected_res, recognizer, entities, max_score):
+def test_when_all_ibans_then_succeed(
+    iban, expected_len, expected_res, recognizer, entities, max_score
+):
     results = recognizer.analyze(iban, entities)
     assert len(results) == expected_len
     for res, (start, end) in zip(results, expected_res):

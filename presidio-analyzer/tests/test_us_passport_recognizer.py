@@ -24,7 +24,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_us_passports(
+def test_when_passport_in_text_then_all_us_passports_found(
     text,
     expected_len,
     expected_positions,

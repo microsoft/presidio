@@ -1,0 +1,20 @@
+{{ $fullname := include "presidio.anonymizer.fullname" . }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}
+  labels:
+    app: {{ $fullname }}
+    service: {{ $fullname }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  type: {{ .Values.anonymizer.service.type }}
+  ports:
+  - port: {{ .Values.anonymizer.service.externalPort }}
+    targetPort: {{ .Values.anonymizer.service.internalPort }}
+    protocol: TCP
+    name: {{ .Values.anonymizer.service.name }}
+  selector:
+    app: {{ $fullname }}

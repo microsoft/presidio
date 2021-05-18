@@ -26,7 +26,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_all_cryptos(
+def test_when_all_cryptos_then_succeed(
     text, expected_len, expected_positions, recognizer, entities, max_score
 ):
     results = recognizer.analyze(text, entities)

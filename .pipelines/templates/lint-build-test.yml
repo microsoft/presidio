@@ -1,0 +1,88 @@
+stages:
+    - stage: LintBuildTest
+      displayName: Presidio Build
+      jobs:
+          - job: Inclusivelint
+            displayName: 'Inclusive linting validation'
+            steps:
+                - template: ./inclusive-lint.yml
+
+          - job: SecurityAnalysis
+            displayName: Security Analysis
+            pool:
+                # CredScan only runs on Windows
+                vmImage: 'windows-latest'
+            steps:
+                - template: ./security-analysis.yml
+
+          - job: TestAnalyzer
+            displayName: Test Analyzer
+            dependsOn:
+                - 'Inclusivelint'
+            pool:
+                vmImage: 'ubuntu-16.04'
+            strategy:
+                matrix:
+                    Python36:
+                        python.version: '3.6'
+                    Python37:
+                        python.version: '3.7'
+                    Python38:
+                        python.version: '3.8'
+                    Python39:
+                        python.version: '3.9'
+
+            steps:
+                - task: UsePythonVersion@0
+                  inputs:
+                      versionSpec: '$(python.version)'
+                  displayName: 'Use Python $(python.version)'
+                - template: ./build-analyzer.yml
+
+          - job: TestAnonymizer
+            displayName: Test Anonymizer
+            dependsOn:
+                - 'Inclusivelint'
+            pool:
+                vmImage: 'ubuntu-16.04'
+            strategy:
+                matrix:
+                    Python36:
+                        python.version: '3.6'
+                    Python37:
+                        python.version: '3.7'
+                    Python38:
+                        python.version: '3.8'
+                    Python39:
+                        python.version: '3.9'
+
+            steps:
+                - task: UsePythonVersion@0
+                  inputs:
+                      versionSpec: '$(python.version)'
+                  displayName: 'Use Python $(python.version)'
+                - template: ./build-anonymizer.yml
+
+          - job: TestImageRedactor
+            displayName: Test Image Redactor
+            dependsOn:
+                - 'Inclusivelint'
+            pool:
+                vmImage: 'ubuntu-18.04'
+            strategy:
+                matrix:
+                    Python36:
+                        python.version: '3.6'
+                    Python37:
+                        python.version: '3.7'
+                    Python38:
+                        python.version: '3.8'
+                    Python39:
+                        python.version: '3.9'
+
+            steps:
+                - task: UsePythonVersion@0
+                  inputs:
+                      versionSpec: '$(python.version)'
+                  displayName: 'Use Python $(python.version)'
+                - template: ./build-image-redactor.yml

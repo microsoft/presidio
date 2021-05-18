@@ -28,7 +28,7 @@ class UsLicenseRecognizer(PatternRecognizer):
         Pattern(
             "Driver License - WA (weak)",
             r"\b((?=.*\d)([A-Z][A-Z0-9*]{11})|(?=.*\*)([A-Z][A-Z0-9*]{11}))\b",  # noqa: E501
-            0.4,
+            0.3,
         ),
         Pattern(
             "Driver License - Alphanumeric (weak)",
@@ -48,10 +48,8 @@ class UsLicenseRecognizer(PatternRecognizer):
         "permit",
         "lic",
         "identification",
-        "dl",
         "dls",
         "cdls",
-        "id",
         "lic#",
         "driving",
     ]

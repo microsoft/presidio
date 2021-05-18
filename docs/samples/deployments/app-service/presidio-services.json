@@ -1,0 +1,299 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "analyzer": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Choose if to deploy the Analyzer service"
+            }
+        },
+        "anonymizer": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Choose if to deploy the Anonymizer service"
+            }
+        },
+        "imageRedactor": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Choose if to deploy the Image Redactor service"
+            }
+        },
+        "analyzerWebAppName": {
+            "type": "string",
+            "defaultValue": "[concat('analyzer-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
+            "metadata": {
+                "description": "Analyzer Web app name."
+            }
+        },
+        "anonymizerWebAppName": {
+            "type": "string",
+            "defaultValue": "[concat('anonymizer-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
+            "metadata": {
+                "description": "Anonymizer Web app name."
+            }
+        },
+        "imageRedactorWebAppName": {
+            "type": "string",
+            "defaultValue": "[concat('image-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
+            "metadata": {
+                "description": "Image Redactor Web app name."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "singleAppServicePlan": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Choose if to deploy each service to its own App Service Plan or to share the plan."
+            }
+        },
+        "singleAppServicePlanSku": {
+            "type": "string",
+            "defaultValue": "P3V2",
+            "metadata": {
+                "description": "The sku of the shared App Service Plan. Only supported when singleAppServicePlan is true."
+            },
+            "allowedValues": ["P2V2", "P3V2", "P1V3", "P2V3", "P3V3", "I2", "I3"]
+        },
+        "analyzerSku": {
+            "type": "string",
+            "defaultValue": "P2V2",
+            "metadata": {
+                "description": "The SKU of Analyzer App Service Plan. Only supported when singleAppServicePlan is false."
+            },
+            "allowedValues": ["F2", "B2", "S2", "P2V2", "P1V3", "I2"]
+        },
+        "anonymizerSku": {
+            "type": "string",
+            "defaultValue": "P1V2",
+            "metadata": {
+                "description": "The SKU of Anonymizer App Service Plan. Only supported when singleAppServicePlan is false."
+            },
+            "allowedValues": ["F1", "B1", "S1", "P1V2", "P1V3", "I1"]
+        },
+        "imageRedactorSku": {
+            "type": "string",
+            "defaultValue": "P2V2",
+            "metadata": {
+                "description": "The SKU of Image Redactor App Service Plan. Only supported when singleAppServicePlan is false."
+            },
+            "allowedValues": ["F2", "B2", "S2", "P2V2", "P1V3", "I2"]
+        },
+        "imagesArePublic": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Are the images hosted on a public registry"
+            }
+        },
+        "analyzerImage": {
+            "type": "string",
+            "defaultValue": "mcr.microsoft.com/presidio-analyzer:latest",
+            "metadata": {
+                "description": "The full analyzer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "anonymizerImage": {
+            "type": "string",
+            "defaultValue": "mcr.microsoft.com/presidio-anonymizer:latest",
+            "metadata": {
+                "description": "The full anonymizer image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "imageRedactorImage": {
+            "type": "string",
+            "defaultValue": "mcr.microsoft.com/presidio-image-redactor:latest",
+            "metadata": {
+                "description": "The full image redactor image name. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "dockerRegsitryUrl": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The URL of docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "dockerRegistryUser": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The user name for docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "dockerRegistryPassword": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The user password for docker registry. Only required if image is not hosted on a public registry (imageIsPublic is false)"
+            }
+        },
+        "ipRestriction": {
+            "type": "string",
+            "defaultValue": "any",
+            "metadata": {
+                "description": "Optional IP range to restrict access to."
+            }
+        }
+    },
+    "variables": {
+        "sharedAppServicePlanName": "[concat('presidio-ServicePlan-', uniqueString(resourceGroup().id))]",
+        "analyzerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('analyzerWebAppName'), '-ServicePlan'))]",
+        "anonymizerServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('anonymizerWebAppName'), '-ServicePlan'))]",
+        "imageRedactorServicePlanName": "[if(parameters('singleAppServicePlan'), variables('sharedAppServicePlanName'), concat(parameters('imageRedactorWebAppName'), '-ServicePlan'))]",
+        "analyzerServicePlanSku": "[if(parameters('singleAppServicePlan'), parameters('singleAppServicePlanSku'), parameters('analyzerSku'))]",
+        "anonymizerServicePlanSku": "[if(parameters('singleAppServicePlan'), parameters('singleAppServicePlanSku'), parameters('anonymizerSku'))]",
+        "imageRedactorServicePlanSku": "[if(parameters('singleAppServicePlan'), parameters('singleAppServicePlanSku'), parameters('imageRedactorSku'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-anonymizer",
+            "condition": "[parameters('anonymizer')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webAppName": {
+                        "value": "[parameters('anonymizerWebAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('anonymizerServicePlanName')]"
+                    },
+                    "sku": {
+                        "value": "[variables('anonymizerServicePlanSku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "imageIsPublic": {
+                        "value": "[parameters('imagesArePublic')]"
+                    },
+                    "image": {
+                        "value": "[parameters('anonymizerImage')]"
+                    },
+                    "dockerRegsitryUrl": {
+                        "value": "[parameters('dockerRegsitryUrl')]"
+                    },
+                    "dockerRegistryUser": {
+                        "value": "[parameters('dockerRegistryUser')]"
+                    },
+                    "dockerRegistryPassword": {
+                        "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    "ipRestriction": {
+                        "value": "[parameters('ipRestriction')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-analyzer",
+            "condition": "[parameters('analyzer')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webAppName": {
+                        "value": "[parameters('analyzerWebAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('analyzerServicePlanName')]"
+                    },
+                    "sku": {
+                        "value": "[variables('analyzerServicePlanSku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "imageIsPublic": {
+                        "value": "[parameters('imagesArePublic')]"
+                    },
+                    "image": {
+                        "value": "[parameters('analyzerImage')]"
+                    },
+                    "dockerRegsitryUrl": {
+                        "value": "[parameters('dockerRegsitryUrl')]"
+                    },
+                    "dockerRegistryUser": {
+                        "value": "[parameters('dockerRegistryUser')]"
+                    },
+                    "dockerRegistryPassword": {
+                        "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    "ipRestriction": {
+                        "value": "[parameters('ipRestriction')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-image-redactor",
+            "condition": "[parameters('imageRedactor')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-app-service.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webAppName": {
+                        "value": "[parameters('imageRedactorWebAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('imageRedactorServicePlanName')]"
+                    },
+                    "sku": {
+                        "value": "[variables('imageRedactorServicePlanSku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "imageIsPublic": {
+                        "value": "[parameters('imagesArePublic')]"
+                    },
+                    "image": {
+                        "value": "[parameters('imageRedactorImage')]"
+                    },
+                    "dockerRegsitryUrl": {
+                        "value": "[parameters('dockerRegsitryUrl')]"
+                    },
+                    "dockerRegistryUser": {
+                        "value": "[parameters('dockerRegistryUser')]"
+                    },
+                    "dockerRegistryPassword": {
+                        "value": "[parameters('dockerRegistryPassword')]"
+                    },
+                    "ipRestriction": {
+                        "value": "[parameters('ipRestriction')]"
+                    }
+                }
+            }
+        }
+    ]
+}

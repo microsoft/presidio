@@ -1,0 +1,24 @@
+steps:
+  - task: Bash@3
+    displayName: 'Setup pipenv'
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -eux  # fail on error
+        python -m pip install --upgrade pip
+        python -m pip install pipenv
+        pipenv --python 3
+
+  - task: Bash@3
+    displayName: 'Install deps: Anonymizer'
+    inputs:
+      targetType: 'inline'
+      workingDirectory: 'presidio-anonymizer'
+      script: |
+        set -eux  # fail on error
+        pipenv sync --dev --sequential
+
+  - template: ./build-python.yml
+    parameters:
+      SERVICE: 'Anonymizer'
+      WORKING_FOLDER: 'presidio-anonymizer'

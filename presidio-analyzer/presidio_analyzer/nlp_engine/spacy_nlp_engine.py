@@ -1,13 +1,13 @@
+import logging
 from typing import Optional, Dict
 
 import spacy
 from spacy.language import Language
 from spacy.tokens import Doc
 
-from presidio_analyzer import PresidioLogger
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class SpacyNlpEngine(NlpEngine):
@@ -34,7 +34,7 @@ class SpacyNlpEngine(NlpEngine):
         logger.debug(f"Loading SpaCy models: {models.values()}")
 
         self.nlp = {
-            lang_code: spacy.load(model_name, disable=["parser", "tagger"])
+            lang_code: spacy.load(model_name, disable=["parser"])
             for lang_code, model_name in models.items()
         }
 

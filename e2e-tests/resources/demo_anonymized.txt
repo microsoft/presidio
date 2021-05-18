@@ -1,0 +1,20 @@
+Here are a few examples sentences we currently support:
+
+Hello, my name is <PERSON> and I live in <LOCATION>.
+My credit card number is <CREDIT_CARD> and my crypto wallet id is <CRYPTO>.
+
+On <DATE_TIME> I visited <DOMAIN_NAME> and sent an email to <EMAIL_ADDRESS>,  from the IP <IP_ADDRESS>.
+
+My passport: <US_PASSPORT> and my phone number: <PHONE_NUMBER>.
+
+This is a valid International Bank Account Number: <IBAN_CODE> . Can you please check the status on bank account <US_BANK_NUMBER>?
+
+<PERSON>'s social security number is <US_SSN>.  Her driver license? it is <US_DRIVER_LICENSE>.
+
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://<DOMAIN_NAME>
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment).
+Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+This project has adopted the Microsoft Open Source Code of Conduct.
+
+For more information see the Code of Conduct FAQ or contact <EMAIL_ADDRESS> with any additional questions or comments.

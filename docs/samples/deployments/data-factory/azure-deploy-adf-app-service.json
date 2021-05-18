@@ -1,0 +1,570 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dataFactoryName": {
+            "type": "string",
+            "metadata": {
+                "description": "Data Factory name"
+            },
+            "defaultValue": "[concat('presidioadf', uniqueString(resourceGroup().id))]"
+        },
+        "AzureBlobStorage_accountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Storage Account Name"
+            },
+            "defaultValue": "[concat('presidio', uniqueString(resourceGroup().id))]"
+        },
+        "AzureBlobStorage_cotainerName": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Storage Container Name"
+            },
+            "defaultValue": "presidio"
+        },
+        "AzureKeyVault_name": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Key Vault Name"
+            },
+            "defaultValue": "[concat('presidioakv', uniqueString(resourceGroup().id))]"
+        },
+        "AzureKeyVault_storageAccessKeySecretName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of storage access key secert in Key Vault"
+            },
+            "defaultValue": "access-token"
+        },
+        "AzureKeyVault_storageSASSecretName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of storage SAS token secert in Key Vault"
+            },
+            "defaultValue": "sas-token"
+        },
+        "Analyzer_appName": {
+            "type": "string",
+            "metadata": {
+                "description": "Analyzer App Service Name"
+            },
+            "defaultValue": "[concat('presidio-analyzer', uniqueString(resourceGroup().id))]"
+        },
+        "Anonymizer_appName": {
+            "type": "string",
+            "metadata": {
+                "description": "Anonymizer App Service Name"
+            },
+            "defaultValue": "[concat('presidio-anonymizer', uniqueString(resourceGroup().id))]"
+        },
+        "accountSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "signedServices": "b",
+                "signedPermission": "rw",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'P3D')]",
+                "signedResourceTypes": "o"
+            }
+        }
+    },
+    "variables": {
+        "AzureBlobStorage_connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('AzureBlobStorage_accountName'), ';EndpointSuffix=core.windows.net')]",
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName'))]",
+        "Dataset_url": "https://raw.githubusercontent.com/microsoft/presidio-research/master/tests/data/generated_large.txt",
+        "Analyzer_url": "[concat('https://', parameters('Analyzer_appName'), '.azurewebsites.net/analyze')]",
+        "Anonymizer_url": "[concat('https://', parameters('Anonymizer_appName'), '.azurewebsites.net/anonymize')]",
+        "AzureKeyVault_baseUrl": "[concat('https://', parameters('AzureKeyVault_name'), '.vault.azure.net/')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-app-services",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-services.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "imageRedactor": {
+                        "value": false
+                    },
+                    "analyzerWebAppName": {
+                        "value": "[parameters('Analyzer_appName')]"
+                    },
+                    "anonymizerWebAppName": {
+                        "value": "[parameters('Anonymizer_appName')]"
+                    },
+                    "location": {
+                        "value": "[resourceGroup().location]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-07-01",
+            "name": "[parameters('AzureBlobStorage_accountName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[parameters('AzureBlobStorage_accountName')]"
+            },
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "resources": [
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "name": "[concat('default/', parameters('AzureBlobStorage_cotainerName'))]",
+                    "dependsOn": [
+                        "[parameters('AzureBlobStorage_accountName')]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.DataFactory/factories",
+            "apiVersion": "2018-06-01",
+            "name": "[parameters('dataFactoryName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {},
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "resources": [
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/AzureBlobStorage')]",
+                    "type": "Microsoft.DataFactory/factories/linkedServices",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "annotations": [],
+                        "type": "AzureBlobStorage",
+                        "typeProperties": {
+                            "connectionString": "[variables('AzureBlobStorage_connectionString')]",
+                            "accountKey": {
+                                "type": "AzureKeyVaultSecret",
+                                "store": {
+                                    "referenceName": "StorageSecretsKeyVault",
+                                    "type": "LinkedServiceReference"
+                                },
+                                "secretName": "[parameters('AzureKeyVault_storageAccessKeySecretName')]"
+                            }
+                        }
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]",
+                        "[concat(variables('factoryId'), '/linkedServices/StorageSecretsKeyVault')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/datasetGithub')]",
+                    "type": "Microsoft.DataFactory/factories/linkedServices",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "annotations": [],
+                        "type": "RestService",
+                        "typeProperties": {
+                            "url": "[variables('Dataset_url')]",
+                            "enableServerCertificateValidation": true,
+                            "authenticationType": "Anonymous"
+                        }
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/StorageSecretsKeyVault')]",
+                    "type": "Microsoft.DataFactory/factories/linkedServices",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "annotations": [],
+                        "type": "AzureKeyVault",
+                        "typeProperties": {
+                            "baseUrl": "[variables('AzureKeyVault_baseUrl')]"
+                        }
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/GithubDataSet')]",
+                    "type": "Microsoft.DataFactory/factories/datasets",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "description": "JSON Dataset on GitHub",
+                        "linkedServiceName": {
+                            "referenceName": "datasetGithub",
+                            "type": "LinkedServiceReference"
+                        },
+                        "annotations": [],
+                        "type": "RestResource",
+                        "typeProperties": {},
+                        "schema": []
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]",
+                        "[concat(variables('factoryId'), '/linkedServices/datasetGithub')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/BlobStorageDataset')]",
+                    "type": "Microsoft.DataFactory/factories/datasets",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "description": "JSON Dataset on Azure Blob Storage",
+                        "linkedServiceName": {
+                            "referenceName": "AzureBlobStorage",
+                            "type": "LinkedServiceReference"
+                        },
+                        "annotations": [],
+                        "type": "Json",
+                        "typeProperties": {
+                            "location": {
+                                "type": "AzureBlobStorageLocation",
+                                "fileName": "sentances.json",
+                                "folderPath": "dataset",
+                                "container": "[parameters('AzureBlobStorage_cotainerName')]"
+                            }
+                        },
+                        "schema": {}
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]",
+                        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/Anonymize')]",
+                    "type": "Microsoft.DataFactory/factories/pipelines",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "activities": [
+                            {
+                                "name": "GetDataSet",
+                                "description": "Get the data set from GitHub to Azure Blob Storage",
+                                "type": "Copy",
+                                "dependsOn": [],
+                                "policy": {
+                                    "timeout": "7.00:00:00",
+                                    "retry": 0,
+                                    "retryIntervalInSeconds": 30,
+                                    "secureOutput": false,
+                                    "secureInput": false
+                                },
+                                "userProperties": [],
+                                "typeProperties": {
+                                    "source": {
+                                        "type": "RestSource",
+                                        "httpRequestTimeout": "00:01:40",
+                                        "requestInterval": "00.00:00:00.010",
+                                        "requestMethod": "GET"
+                                    },
+                                    "sink": {
+                                        "type": "JsonSink",
+                                        "storeSettings": {
+                                            "type": "AzureBlobStorageWriteSettings"
+                                        },
+                                        "formatSettings": {
+                                            "type": "JsonWriteSettings"
+                                        }
+                                    },
+                                    "enableStaging": false,
+                                    "translator": {
+                                        "type": "TabularTranslator",
+                                        "mappings": [
+                                            {
+                                                "source": {
+                                                    "path": "$['full_text']"
+                                                },
+                                                "sink": {
+                                                    "path": "full_text"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "inputs": [
+                                    {
+                                        "referenceName": "GithubDataSet",
+                                        "type": "DatasetReference",
+                                        "parameters": {}
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "referenceName": "BlobStorageDataset",
+                                        "type": "DatasetReference",
+                                        "parameters": {}
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "LoadSet",
+                                "description": "Load the data set to array for processing",
+                                "type": "Lookup",
+                                "dependsOn": [
+                                    {
+                                        "activity": "GetDataSet",
+                                        "dependencyConditions": [
+                                            "Succeeded"
+                                        ]
+                                    }
+                                ],
+                                "policy": {
+                                    "timeout": "7.00:00:00",
+                                    "retry": 0,
+                                    "retryIntervalInSeconds": 30,
+                                    "secureOutput": false,
+                                    "secureInput": false
+                                },
+                                "userProperties": [],
+                                "typeProperties": {
+                                    "source": {
+                                        "type": "JsonSource",
+                                        "storeSettings": {
+                                            "type": "AzureBlobStorageReadSettings",
+                                            "recursive": false,
+                                            "enablePartitionDiscovery": false
+                                        },
+                                        "formatSettings": {
+                                            "type": "JsonReadSettings"
+                                        }
+                                    },
+                                    "dataset": {
+                                        "referenceName": "BlobStorageDataset",
+                                        "type": "DatasetReference",
+                                        "parameters": {}
+                                    },
+                                    "firstRowOnly": false
+                                }
+                            },
+                            {
+                                "name": "SaveSet",
+                                "description": "Save each json document as a separate blob",
+                                "type": "ForEach",
+                                "dependsOn": [
+                                    {
+                                        "activity": "LoadSet",
+                                        "dependencyConditions": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    {
+                                        "activity": "GetSASToken",
+                                        "dependencyConditions": [
+                                            "Succeeded"
+                                        ]
+                                    }
+                                ],
+                                "userProperties": [],
+                                "typeProperties": {
+                                    "items": {
+                                        "value": "@activity('LoadSet').output.value",
+                                        "type": "Expression"
+                                    },
+                                    "activities": [
+                                        {
+                                            "name": "PresidioAnalyze",
+                                            "description": "Analyze text with presidio",
+                                            "type": "WebActivity",
+                                            "dependsOn": [],
+                                            "policy": {
+                                                "timeout": "7.00:00:00",
+                                                "retry": 0,
+                                                "retryIntervalInSeconds": 30,
+                                                "secureOutput": false,
+                                                "secureInput": false
+                                            },
+                                            "userProperties": [],
+                                            "typeProperties": {
+                                                "url": {
+                                                    "value": "[variables('Analyzer_url')]",
+                                                    "type": "Expression"
+                                                },
+                                                "method": "POST",
+                                                "headers": {
+                                                    "Content-Type": "application/json"
+                                                },
+                                                "body": {
+                                                    "value": "@concat('{\"text\":\"',replace(item().full_text, '\"', '\\\"'),'\",\"language\":\"en\"}')",
+                                                    "type": "Expression"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "name": "PresidioAnonymize",
+                                            "type": "WebActivity",
+                                            "description": "Anonymize text with presidio",
+                                            "dependsOn": [
+                                                {
+                                                    "activity": "PresidioAnalyze",
+                                                    "dependencyConditions": [
+                                                        "Succeeded"
+                                                    ]
+                                                }
+                                            ],
+                                            "policy": {
+                                                "timeout": "7.00:00:00",
+                                                "retry": 0,
+                                                "retryIntervalInSeconds": 30,
+                                                "secureOutput": false,
+                                                "secureInput": false
+                                            },
+                                            "userProperties": [],
+                                            "typeProperties": {
+                                                "url": {
+                                                    "value": "[variables('Anonymizer_url')]",
+                                                    "type": "Expression"
+                                                },
+                                                "method": "POST",
+                                                "headers": {
+                                                    "Content-Type": "application/json"
+                                                },
+                                                "body": {
+                                                    "value": "@concat('{\"text\":\"',replace(item().full_text, '\"', '\\\"'), '\",\"anonymizers\": {\"DEFAULT\": { \"type\": \"replace\", \"new_value\": \"ANONYMIZED\" }},\"analyzer_results\": ', activity('PresidioAnalyze').output. Response,'}')",
+                                                    "type": "Expression"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "name": "UploadBlob",
+                                            "type": "WebActivity",
+                                            "dependsOn": [
+                                                {
+                                                    "activity": "PresidioAnonymize",
+                                                    "dependencyConditions": [
+                                                        "Succeeded"
+                                                    ]
+                                                }
+                                            ],
+                                            "policy": {
+                                                "timeout": "7.00:00:00",
+                                                "retry": 0,
+                                                "retryIntervalInSeconds": 30,
+                                                "secureOutput": false,
+                                                "secureInput": false
+                                            },
+                                            "userProperties": [],
+                                            "typeProperties": {
+                                                "url": {
+                                                    "value": "[concat('@concat(''https://', parameters('AzureBlobStorage_accountName'), '.blob.core.windows.net/', parameters('AzureBlobStorage_cotainerName'), '/output/'', ''file'', string(rand(0,1000)), ''.txt?'', activity(''GetSASToken'').output.value)')]",
+                                                    "type": "Expression"
+                                                },
+                                                "method": "PUT",
+                                                "headers": {
+                                                    "x-ms-blob-type": "BlockBlob"
+                                                },
+                                                "body": {
+                                                    "value": "@activity('PresidioAnonymize').output.result",
+                                                    "type": "Expression"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "GetSASToken",
+                                "description": "Get storage account SAS Token from Azure Key Vault",
+                                "type": "WebActivity",
+                                "dependsOn": [],
+                                "policy": {
+                                    "timeout": "7.00:00:00",
+                                    "retry": 0,
+                                    "retryIntervalInSeconds": 30,
+                                    "secureOutput": false,
+                                    "secureInput": false
+                                },
+                                "userProperties": [],
+                                "typeProperties": {
+                                    "url": "[concat(variables('AzureKeyVault_baseUrl'), 'secrets/', parameters('AzureKeyVault_storageSASSecretName'), '?api-version=7.0')]",
+                                    "method": "GET",
+                                    "headers": {},
+                                    "authentication": {
+                                        "type": "MSI",
+                                        "resource": "https://vault.azure.net"
+                                    }
+                                }
+                            }
+                        ],
+                        "annotations": [],
+                        "lastPublishTime": "2021-03-15T17:44:33Z"
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]",
+                        "[concat(variables('factoryId'), '/datasets/GithubDataSet')]",
+                        "[concat(variables('factoryId'), '/datasets/BlobStorageDataset')]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2018-02-14",
+            "name": "[parameters('AzureKeyVault_name')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[parameters('AzureKeyVault_name')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName'))]"
+            ],
+            "properties": {
+                "enabledForDeployment": true,
+                "enabledForTemplateDeployment": true,
+                "enabledForDiskEncryption": true,
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName')), '2018-06-01', 'Full').identity.principalId]",
+                        "permissions": {
+                            "keys": [
+                                "get"
+                            ],
+                            "secrets": [
+                                "list",
+                                "get",
+                                "set"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "standard",
+                    "family": "A"
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-02-14",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', parameters('AzureKeyVault_name'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('AzureBlobStorage_accountName'))]"
+            ],
+            "name": "[concat(parameters('AzureKeyVault_name'), '/', parameters('AzureKeyVault_storageSASSecretName'))]",
+            "properties": {
+                "value": "[listAccountSas(parameters('AzureBlobStorage_accountName'), '2018-07-01', parameters('accountSasProperties')).accountSasToken]"
+            }
+        },
+        {
+            "apiVersion": "2018-02-14",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', parameters('AzureKeyVault_name'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('AzureBlobStorage_accountName'))]"
+            ],
+            "name": "[concat(parameters('AzureKeyVault_name'), '/', parameters('AzureKeyVault_storageAccessKeySecretName'))]",
+            "properties": {
+                "value": "[listKeys(parameters('AzureBlobStorage_accountName'), '2018-07-01').keys[0].value]"
+            }
+        }
+    ]
+}

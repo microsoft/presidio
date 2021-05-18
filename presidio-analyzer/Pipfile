@@ -4,11 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-spacy = "==2.3"
+spacy = "==3.0.5"
 regex = "*"
 tldextract = "*"
 numpy = "==1.19.3"
 flask = "==1.1.2"
+pyyaml = "*"
 
 [dev-packages]
 pytest = "*"

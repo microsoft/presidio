@@ -1,0 +1,33 @@
+steps:
+    - task: Bash@3
+      displayName: 'Install Tesseract'
+      inputs:
+          targetType: 'inline'
+          script: |
+              set -eux  # fail on error
+              sudo apt-get update 
+              sudo apt-get install tesseract-ocr -y
+              sudo apt show tesseract-ocr
+              sudo tesseract -v
+    - task: Bash@3
+      displayName: 'Setup pipenv'
+      inputs:
+          targetType: 'inline'
+          script: |
+              set -eux  # fail on error
+              python -m pip install --upgrade pip
+              python -m pip install pipenv
+              pipenv --python 3
+    - task: Bash@3
+      displayName: 'Install deps'
+      inputs:
+          targetType: 'inline'
+          workingDirectory: 'presidio-image-redactor'
+          script: |
+              set -eux  # fail on error
+              pipenv sync --dev --sequential
+              pipenv run python -m spacy download en_core_web_lg
+    - template: ./build-python.yml
+      parameters:
+          SERVICE: 'Image-Redactor'
+          WORKING_FOLDER: 'presidio-image-redactor'

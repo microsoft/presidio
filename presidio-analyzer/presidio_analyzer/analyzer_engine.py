@@ -1,16 +1,16 @@
 import json
 from typing import List, Optional, Dict, Union
+import logging
 
 from presidio_analyzer import (
     RecognizerRegistry,
     RecognizerResult,
     EntityRecognizer,
-    PresidioLogger,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NLP_ENGINES, NlpEngine
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class AnalyzerEngine:
@@ -24,10 +24,12 @@ class AnalyzerEngine:
     (for example SpacyNlpEngine)
     :param app_tracer: instance of type AppTracer, used to trace the logic
     used during each request for interpretability reasons.
-    :param enable_trace_pii: bool,
-    defines whether PII values should be traced or not.
+    :param log_decision_process: bool,
+    defines whether the decision process within the analyzer should be logged or not.
     :param default_score_threshold: Minimum confidence value
     for detected entities to be returned
+    :param supported_languages: List of possible languages this engine could be run on.
+    Used for loading the right NLP models and recognizers for these languages.
     """
 
     def __init__(
@@ -35,36 +37,37 @@ class AnalyzerEngine:
         registry: RecognizerRegistry = None,
         nlp_engine: NlpEngine = None,
         app_tracer: AppTracer = None,
-        enable_trace_pii: bool = False,
+        log_decision_process: bool = False,
         default_score_threshold: float = 0,
-        default_language: str = "en",
+        supported_languages: List[str] = None,
     ):
+        if not supported_languages:
+            supported_languages = ["en"]
 
         if not nlp_engine:
-            logger.info(
-                "nlp_engine not provided. Creating new " "SpacyNlpEngine instance"
-            )
-            nlp_engine = NLP_ENGINES["spacy"]()
+            logger.info("nlp_engine not provided, creating default.")
+            provider = NlpEngineProvider()
+            nlp_engine = provider.create_engine()
+
         if not registry:
-            logger.info(
-                "Recognizer registry not provided. "
-                "Creating default RecognizerRegistry instance"
-            )
+            logger.info("registry not provided, creating default.")
             registry = RecognizerRegistry()
         if not app_tracer:
             app_tracer = AppTracer()
         self.app_tracer = app_tracer
 
-        self.default_language = default_language
+        self.supported_languages = supported_languages
 
         self.nlp_engine = nlp_engine
         self.registry = registry
 
         # load all recognizers
         if not registry.recognizers:
-            registry.load_predefined_recognizers()
+            registry.load_predefined_recognizers(
+                nlp_engine=self.nlp_engine, languages=self.supported_languages
+            )
 
-        self.enable_trace_pii = enable_trace_pii
+        self.log_decision_process = log_decision_process
         self.default_score_threshold = default_score_threshold
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
@@ -75,10 +78,18 @@ class AnalyzerEngine:
         :return: List of [Recognizer] as a RecognizersAllResponse
         """
         if not language:
-            language = self.default_language
-        logger.info(f"Fetching all recognizers for language {language}")
-        recognizers = self.registry.get_recognizers(language=language, all_fields=True)
-        return recognizers
+            languages = self.supported_languages
+        else:
+            languages = [language]
+
+        recognizers = []
+        for language in languages:
+            logger.info(f"Fetching all recognizers for language {language}")
+            recognizers.extend(
+                self.registry.get_recognizers(language=language, all_fields=True)
+            )
+
+        return list(set(recognizers))
 
     def get_supported_entities(self, language: Optional[str] = None) -> List[str]:
         """
@@ -101,7 +112,8 @@ class AnalyzerEngine:
         entities: Optional[List[str]] = None,
         correlation_id: Optional[str] = None,
         score_threshold: Optional[float] = None,
-        trace: Optional[bool] = False,
+        return_decision_process: Optional[bool] = False,
+        ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -113,13 +125,32 @@ class AnalyzerEngine:
         :param correlation_id: cross call ID for this request
         :param score_threshold: A minimum value for which
         to return an identified entity
-        :param trace: Should tracing of the response occur or not
+        :param return_decision_process: Whether the analysis decision process steps
+        returned in the response.
+        :param ad_hoc_recognizers: List of recognizers which will be used only
+        for this specific request.
         :return: an array of the found entities in the text
+
+        :example:
+
+        >>> from presidio_analyzer import AnalyzerEngine
+
+        >>> # Set up the engine, loads the NLP module (spaCy model by default)
+        >>> # and other PII recognizers
+        >>> analyzer = AnalyzerEngine()
+
+        >>> # Call analyzer to get results
+        >>> results = analyzer.analyze(text='My phone number is 212-555-5555', entities=['PHONE_NUMBER'], language='en') # noqa D501
+        >>> print(results)
+        [type: PHONE_NUMBER, start: 19, end: 31, score: 0.85]
         """
         all_fields = not entities
 
         recognizers = self.registry.get_recognizers(
-            language=language, entities=entities, all_fields=all_fields
+            language=language,
+            entities=entities,
+            all_fields=all_fields,
+            ad_hoc_recognizers=ad_hoc_recognizers,
         )
 
         if all_fields:
@@ -131,7 +162,7 @@ class AnalyzerEngine:
         # a NlpArtifacts instance
         nlp_artifacts = self.nlp_engine.process_text(text, language)
 
-        if self.enable_trace_pii and trace:
+        if self.log_decision_process:
             self.app_tracer.trace(
                 correlation_id, "nlp artifacts:" + nlp_artifacts.to_json()
             )
@@ -150,14 +181,18 @@ class AnalyzerEngine:
             if current_results:
                 results.extend(current_results)
 
-        if trace:
+        if self.log_decision_process:
             self.app_tracer.trace(
-                correlation_id, json.dumps([result.to_json() for result in results])
+                correlation_id,
+                json.dumps([str(result.to_dict()) for result in results]),
             )
 
         # Remove duplicates or low score results
         results = EntityRecognizer.remove_duplicates(results)
         results = self.__remove_low_scores(results, score_threshold)
+
+        if not return_decision_process:
+            results = self.__remove_decision_process(results)
 
         return results
 
@@ -239,3 +274,14 @@ class AnalyzerEngine:
 
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
+
+    @staticmethod
+    def __remove_decision_process(
+        results: List[RecognizerResult],
+    ) -> List[RecognizerResult]:
+        """Remove decision process / analysis explanation from response."""
+
+        for result in results:
+            result.analysis_explanation = None
+
+        return results

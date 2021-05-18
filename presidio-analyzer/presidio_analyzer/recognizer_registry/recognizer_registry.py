@@ -1,9 +1,10 @@
-from typing import Optional, List, Iterable
+import copy
+import logging
+from typing import Optional, List, Iterable, Union, Type
 
-from presidio_analyzer import EntityRecognizer, PresidioLogger
-from presidio_analyzer.nlp_engine import NlpEngine
+from presidio_analyzer import EntityRecognizer
+from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, StanzaNlpEngine
 from presidio_analyzer.predefined_recognizers import (
-    NLP_RECOGNIZERS,
     CreditCardRecognizer,
     CryptoRecognizer,
     DomainRecognizer,
@@ -20,9 +21,10 @@ from presidio_analyzer.predefined_recognizers import (
     SgFinRecognizer,
     SpacyRecognizer,
     EsNifRecognizer,
+    StanzaRecognizer,
 )
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class RecognizerRegistry:
@@ -41,19 +43,19 @@ class RecognizerRegistry:
             self.recognizers = []
 
     def load_predefined_recognizers(
-        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = "spacy"
+        self, languages: Optional[List[str]] = None, nlp_engine: NlpEngine = None
     ) -> None:
         """
         Load the existing recognizers into memory.
 
         :param languages: List of languages for which to load recognizers
-        :param nlp_engine: The NLP engine to use. Default is 'spacy'.
+        :param nlp_engine: The NLP engine to use.
         :return: None
         """
         if not languages:
             languages = ["en"]
 
-        nlp_recognizer = NLP_RECOGNIZERS.get(nlp_engine, SpacyRecognizer)
+        nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
         recognizers_map = {
             "en": [
                 UsBankRecognizer,
@@ -84,11 +86,29 @@ class RecognizerRegistry:
             ]
             self.recognizers.extend(all_recognizers)
 
+    @staticmethod
+    def _get_nlp_recognizer(
+        nlp_engine: NlpEngine,
+    ) -> Union[Type[SpacyRecognizer], Type[StanzaRecognizer]]:
+        """Return the recognizer leveraging the selected NLP Engine."""
+
+        if not nlp_engine or isinstance(nlp_engine, SpacyNlpEngine):
+            return SpacyRecognizer
+        if isinstance(nlp_engine, StanzaNlpEngine):
+            return StanzaRecognizer
+        else:
+            logger.warning(
+                "nlp engine should be either SpacyNlpEngine or StanzaNlpEngine"
+            )
+            # Returning default
+            return SpacyRecognizer
+
     def get_recognizers(
         self,
         language: str,
         entities: Optional[List[str]] = None,
         all_fields: bool = False,
+        ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
     ) -> List[EntityRecognizer]:
         """
         Return a list of recognizers which supports the specified name and language.
@@ -96,6 +116,8 @@ class RecognizerRegistry:
         :param entities: the requested entities
         :param language: the requested language
         :param all_fields: a flag to return all fields of a requested language.
+        :param ad_hoc_recognizers: Additional recognizers provided by the user
+        as part of the request
         :return: A list of the recognizers which supports the supplied entities
         and language
         """
@@ -105,10 +127,12 @@ class RecognizerRegistry:
         if entities is None and all_fields is False:
             raise ValueError("No entities provided")
 
-        all_possible_recognizers = self.recognizers
+        all_possible_recognizers = copy.copy(self.recognizers)
+        if ad_hoc_recognizers:
+            all_possible_recognizers.extend(ad_hoc_recognizers)
 
         # filter out unwanted recognizers
-        to_return = []
+        to_return = set()
         if all_fields:
             to_return = [
                 rec
@@ -132,9 +156,9 @@ class RecognizerRegistry:
                         language,
                     )
                 else:
-                    to_return.extend(subset)
+                    to_return.update(set(subset))
 
-        logger.info(
+        logger.debug(
             "Returning a total of %s recognizers",
             str(len(to_return)),
         )
@@ -142,7 +166,7 @@ class RecognizerRegistry:
         if not to_return:
             raise ValueError("No matching recognizers were found to serve the request.")
 
-        return to_return
+        return list(to_return)
 
     def add_recognizer(self, recognizer: EntityRecognizer) -> None:
         """

@@ -1,0 +1,9 @@
+mkdocs
+mkdocs-material
+mkdocs-jupyter
+pymdown-extensions
+markdown
+mkdocstrings
+presidio_analyzer
+presidio_anonymizer
+presidio_image_redactor

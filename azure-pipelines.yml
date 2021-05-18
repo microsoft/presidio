@@ -1,213 +1,32 @@
-# Presidio PR validation and CI pipeline.
-# * PR Validation: security analysis, lint, unit test, functional tests
-# * CI: lint, unit test, functional tests, push to private Azure Container registry 
-#       and deploy to internal development environment
-
-trigger:
-  branches:
-    include:
-    - V2
-    - feature/push-containers-in-ci
-
+# Presidio PR validation: security analysis, lint, build, unit test, e2e tests
 pr:
   branches:
     include:
-      - V2
+      - main
 
-jobs:
-    #- job: validate
-    #  displayName: 'Validate PR pre-requisites'
-    #  steps:
-    #    - template: .pipelines/templates/validate-version.yml
-    #      parameters:
-    #        UPSTREAM_BRANCH: $(System.PullRequest.TargetBranch)
-
-    - job: inclusivelint
-      displayName: 'Inclusive linting validation'
-      steps:
-        - task: Bash@3
-          displayName: 'inclusive lint'
-          inputs:
-            targetType: 'inline'
-            script: |
-              npm install inclusivelint
-              npx inclusivelint -r -p .
-    
-    - job: SecurityAnalysis
-      displayName: Security Analysis
-      condition: ne(variables['Build.Reason'], 'IndividualCI')
-      pool:
-          # CredScan only runs on Windows
-          vmImage: 'windows-latest'
-      steps:
-        - template: .pipelines/templates/security-analysis.yml
-       
-    - job: 'TestAnalyzer'
-      displayName: Test Analyzer
-      dependsOn:
-      #- 'validate'
-      - 'inclusivelint'
-      - 'SecurityAnalysis'
-      condition: |
-        and
-        (
-          eq(dependencies.inclusivelint.result, 'Succeeded'),
-          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
-        )
-      pool:
-        vmImage: 'ubuntu-16.04'
-      strategy:
-        matrix:
-          Python36:
-            python.version: '3.6'
-          Python37:
-            python.version: '3.7'
-          Python38:
-            python.version: '3.8'
-
-      steps:
-        - task: UsePythonVersion@0
-          inputs:
-            versionSpec: '$(python.version)'
-          displayName: 'Use Python $(python.version)'
-
-        - task: Bash@3
-          displayName: 'Setup pipenv'
-          inputs:
-            targetType: 'inline'
-            script: |
-              set -eux  # fail on error
-              python -m pip install --upgrade pip
-              python -m pip install pipenv
-              pipenv --python 3
-
-        - task: Bash@3
-          displayName: 'Install deps'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-analyzer'
-            script: |
-              set -eux  # fail on error
-              pipenv sync --dev --sequential
-              pipenv run python -m spacy download en_core_web_lg
+variables:
+  - group: Presidio-V2-CI
         
-        - template: .pipelines/templates/build-python.yml
-          parameters:
-            SERVICE: 'Analyzer'
-            WORKING_FOLDER: 'presidio-analyzer'
-
-    - job: 'TestAnonymizer'
-      displayName: Test Anonymizer
-      dependsOn:
-      #- 'validate'
-      - 'inclusivelint'
-      - 'SecurityAnalysis'
-      condition: |
-        and
-        (
-          eq(dependencies.inclusivelint.result, 'Succeeded'),
-          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped')
-        )
-      pool:
-        vmImage: 'ubuntu-16.04'
-      strategy:
-        matrix:
-          Python36:
-            python.version: '3.6'
-          Python37:
-            python.version: '3.7'
-          Python38:
-            python.version: '3.8'
-
-      steps:
-        - task: UsePythonVersion@0
-          inputs:
-            versionSpec: '$(python.version)'
-          displayName: 'Use Python $(python.version)'
-
-        - task: Bash@3
-          displayName: 'Setup pipenv'
-          inputs:
-            targetType: 'inline'
-            script: |
-              set -eux  # fail on error
-              python -m pip install --upgrade pip
-              python -m pip install pipenv
-              pipenv --python 3
-
-        - task: Bash@3
-          displayName: 'Install deps: Anonymizer'
-          inputs:
-            targetType: 'inline'
-            workingDirectory: 'presidio-anonymizer'
-            script: |
-              set -eux  # fail on error
-              pipenv sync --dev --sequential
-
-        - template: .pipelines/templates/build-python.yml
-          parameters:
-            SERVICE: 'Anonymizer'
-            WORKING_FOLDER: 'presidio-anonymizer'
-
-    # Build containers only in CI
-    - job: BuildContainers
-      displayName: Build and Push Containers
-      condition: ${{ eq(variables['Build.Reason'], 'IndividualCI') }}
-      dependsOn:
-        - 'TestAnonymizer'
-        - 'TestAnalyzer'
+stages:
+  - template: .pipelines/templates/lint-build-test.yml
+  - stage: E2ETests
+    dependsOn: [] # Run E2ETests in parallel to LintBuildTest
+    displayName: E2E Tests
+    jobs:
+    - job: E2ETests
+      displayName: E2e Tests
       pool:
         vmImage: 'ubuntu-16.04'
       variables:
         REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
         TAG: ':$(Build.BuildId)'
       steps:
-        - template: .pipelines/templates/build-containers.yml
-          parameters:
-            REGISTRY_NAME: $(REGISTRY_NAME)
-            TAG: $(TAG)
-            AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
-        
-    - job: FunctionalTests
-      displayName: Functional Tests
-      dependsOn:
-        - 'BuildContainers'
-        - 'inclusivelint'
-        - 'SecurityAnalysis'
-      condition: |
-        and
-        (
-          eq(dependencies.inclusivelint.result, 'Succeeded'),
-          in(dependencies.SecurityAnalysis.result, 'Succeeded', 'Skipped'),
-          in(dependencies.BuildContainers.result, 'Succeeded', 'Skipped')
-        )
-      pool:
-        vmImage: 'ubuntu-16.04'
-      # Only set docker compose args in CI where we push them to ACR
-      ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
-        variables:
-          REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
-          TAG: ':$(Build.BuildId)'
-      steps:
-        # Build containers in PR or manual (not CI where they are pulled from ACT)
         - task: DockerCompose@0
-          condition: ne(variables['Build.Reason'], 'IndividualCI')
           displayName: Build Presidio Images
           inputs:
               action: Build services
               dockerComposeFile: docker-compose.yml
-        # Only pull container in CI where we push them to ACR
-        - task: DockerCompose@0
-          displayName: Pull Presidio Images from ACR
-          condition: eq(variables['Build.Reason'], 'IndividualCI')
-          inputs:
-              action: Run a Docker Compose command
-              dockerComposeCommand: pull
-              dockerComposeFile: docker-compose.yml  
-              containerregistrytype: Azure Container Registry
-              azureSubscriptionEndpoint: $(ACR_AZURE_SUBSCRIPTION)
-              azureContainerRegistry: '$(ACR_REGISTRY_NAME).azurecr.io'  
               dockerComposeFileArgs: |
                 REGISTRY_NAME=$(REGISTRY_NAME)
                 TAG=$(TAG)
-        - template: .pipelines/templates/functional-tests.yml
+        - template: .pipelines/templates/e2e-tests.yml

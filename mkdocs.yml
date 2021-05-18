@@ -1,0 +1,87 @@
+site_name: Microsoft Presidio
+site_url: https://microsoft.github.io/presidio
+site_description: PII anonymization for text and images.
+site_author: Microsoft
+
+repo_url: https://github.com/microsoft/presidio/
+edit_uri: ""
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - Installation: installation.md
+  - Text anonymization:
+    - Home: text_anonymization.md
+    - Presidio Analyzer:
+      - Analyzer Home: analyzer/index.md
+      - Developing PII recognizers:
+        - Tutorial : analyzer/adding_recognizers.md
+        - Best practices in developing recognizers : analyzer/developing_recognizers.md
+      - Multi-language support: analyzer/languages.md
+      - Tracing the decision process: analyzer/decision_process.md
+    - Presidio Anonymizer:
+      - Anonymizer Home: anonymizer/index.md
+      - Developing PII operators: anonymizer/adding_operators.md
+  - Image Redactor:
+      - Home: image-redactor/index.md
+
+  - Samples:
+    - Samples Home: samples/index.md
+    - Python: samples/python/index.md
+    - Docker: samples/docker/index.md
+    - Sample Deployments:
+      - Azure App Service: samples/deployments/app-service/index.md
+      - Kubernetes: samples/deployments/k8s/index.md
+      - Azure Databricks/Spark: samples/deployments/spark/index.md
+      - Azure Data Factory: samples/deployments/data-factory/index.md
+  - Supported entities: supported_entities.md
+  - Development and design:
+    - Design: design.md
+    - Setting up a development environment: development.md
+    - Build and release process: build_release.md
+    - Changes from V1 to V2: presidio_V2.md
+    - Python API reference:
+      - Presidio Analyzer Python API: api/analyzer_python.md
+      - Presidio Anonymizer Python API: api/anonymizer_python.md
+      - Presidio Image Redactor Python API: api/image_redactor_python.md
+    - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
+
+theme:
+  name: material
+  custom_dir: overrides
+  palette:
+      scheme: default
+      primary: blue grey
+      accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+  hide:
+    - toc
+  logo: assets/ms_icon.png
+  favicon: assets/ms_icon.png
+  features:
+    - navigation.instant
+    - navigation.tabs
+plugins:
+- search
+- mkdocstrings
+- mkdocs-jupyter
+
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/microsoft/presidio
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/_/microsoft-presidio
+    - icon: fontawesome/solid/envelope
+      link: mailto:presidio@microsoft.com
+
+markdown_extensions:
+  - meta
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.pathconverter
+  - pymdownx.tabbed

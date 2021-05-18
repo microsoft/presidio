@@ -1,4 +1,5 @@
 import datetime
+import logging
 from typing import List, Optional, Dict
 
 import regex as re
@@ -9,11 +10,10 @@ from presidio_analyzer import (
     RecognizerResult,
     EntityRecognizer,
     AnalysisExplanation,
-    PresidioLogger,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-logger = PresidioLogger("presidio-analyzer")
+logger = logging.getLogger("presidio-analyzer")
 
 
 class PatternRecognizer(LocalRecognizer):
@@ -22,7 +22,7 @@ class PatternRecognizer(LocalRecognizer):
 
     :param patterns: A list of patterns to detect
     :param deny_list: A list of words to detect,
-    in case our recognizer uses a predefined list of words (black list)
+    in case our recognizer uses a predefined list of words (deny list)
     :param context: list of context words
     """
 
@@ -43,7 +43,7 @@ class PatternRecognizer(LocalRecognizer):
         if not patterns and not deny_list:
             raise ValueError(
                 "Pattern recognizer should be initialized with patterns"
-                " or with black list"
+                " or with deny list"
             )
 
         super().__init__(
@@ -59,11 +59,11 @@ class PatternRecognizer(LocalRecognizer):
         self.context = context
 
         if deny_list:
-            black_list_pattern = self.__deny_list_to_regex(deny_list)
-            self.patterns.append(black_list_pattern)
-            self.black_list = deny_list
+            deny_list_pattern = self.__deny_list_to_regex(deny_list)
+            self.patterns.append(deny_list_pattern)
+            self.deny_list = deny_list
         else:
-            self.black_list = []
+            self.deny_list = []
 
     def load(self):  # noqa D102
         pass
@@ -227,7 +227,7 @@ class PatternRecognizer(LocalRecognizer):
         return_dict = super().to_dict()
 
         return_dict["patterns"] = [pat.to_dict() for pat in self.patterns]
-        return_dict["black_list"] = self.black_list
+        return_dict["deny_list"] = self.deny_list
         return_dict["context"] = self.context
         return_dict["supported_entity"] = return_dict["supported_entities"][0]
         del return_dict["supported_entities"]

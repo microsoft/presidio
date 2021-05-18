@@ -4,124 +4,67 @@
 
 ---
 
-[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI/Presidio-CI?branchName=master)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=129&branchName=master)
+[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=V2)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=207&branchName=V2)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
+[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
+[![PyPI package version](https://badge.fury.io/py/presidio-analyzer.svg)](https://badge.fury.io/py/presidio-analyzer.svg)
 
+
+Analyzer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
+
+Anonymizer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-anonymizer.svg)](https://pypi.python.org/pypi/presidio-anonymizer/)
+
+Image-Redactor [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-image-redactor.svg)](https://pypi.python.org/pypi/presidio-image-redactor/)
 
 ## What is Presidio
 
-Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive text is properly managed and governed. It provides fast **_analytics_** and **_anonymization_** for sensitive text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers and financial data.
-Presidio analyzes the text using predefined or custom recognizers to identify entities, patterns, formats, and checksums with relevant context. Presidio leverages docker and kubernetes for workloads at scale.
+Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.
 
-Presidio can be integrated into any data pipeline for intelligent PII scrubbing. It is open-source, transparent and scalable. Additionally, PII anonymization use-cases often require a different set of PII entities to be detected, some of which are domain or business specific. Presidio allows you to **customize or add new PII recognizers** via API or code to best fit your anonymization needs.
+![Presidio demo gif](docs/assets/changing_text.gif)
+
+### Goals
+
+- Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
+- Embrace extensibility and customizability to a specific business need.
+- Facilitate both fully automated and semi-automated PII de-identification flows on multiple platforms.
+
+### Main features
+
+1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
+2. Options for connecting to external PII detection models.
+3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
+4. **Customizability** in PII identification and anonymization.
+5. Module for **redacting PII text in images**.
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-## Demo
-
-[Try Presidio with your own data](https://aka.ms/presidio-demo)
-
-<p align="center">
-  <kbd>  
-  <img width="-100" height="-50" src="docs/assets/presidio_gif.gif">
-  </kbd>
-</p>
-
-## Overview
-
-- [Presidio Features](docs/overview.md#features)
-- [Presidio Input and Output](docs/overview.md#input-and-output)
-- [API Spec](presidio-api/cmd/presidio-api/docs/readme.md)
-- [The Technology Stack](docs/overview.md#the-technology-stack)
-- [Architecture](docs/design.md)
-
-## Presidio API
-
-[API Spec](presidio-api/cmd/presidio-api/docs/readme.md) - available APIs, request and response formats.
-
-[Presidio REST API Open API Spec](https://editor.swagger.io/?url=https://raw.githubusercontent.com/microsoft/presidio/master/presidio-api/cmd/presidio-api/docs/swagger.yaml)
-
-### API Samples
-
-- [Simple Text Analysis](docs/samples.md/#simple-text-analysis)
-- [Create Reusable Templates](docs/samples.md/#create-reusable-templates)
-- [Detect Specific Entities](docs/samples.md/#detect-specific-entities)
-- [Custom Anonymization](docs/samples.md/#custom-anonymization)
-- [Add Custom PII Entity Recognizer](docs/samples.md/#add-custom-pii-entity-recognizer)
-- [Image Anonymization](docs/samples.md/#image-anonymization)
-
-## Learn more
-
-More information can be found in [Presidio Documentation](https://microsoft.github.io/presidio/)
-
-- [Supported field types](docs/field_types.md)
-- [Database and storage scanner](docs/tutorial_scheduler.md)
-- [Adding new PII recognizers](docs/custom_fields.md)
-- [Generating Swagger file](presidio-api/cmd/presidio-api/docs/readme.md)
-- [Evaluating Presidio](https://github.com/microsoft/presidio-research)
-- [Proto packages for Presidio API](https://github.com/microsoft/presidio-genproto)
-
-## Deploying Presidio on a Kubernetes Cluster
-
-Follow the [Deployment Guidelines](docs/deploy.md) for details:
-
-- [Single click deployment on a Kubernetes Cluster](docs/deploy.md#single-click-deployment)
-- [Step by Step Deployment with customizable parameters on a Kubernetes Cluster](docs/deploy.md#step-by-step-deployment-with-customizable-parameters)
-
-## Developing Presidio
-
-- [Setting Up a Development Environment](docs/development.md)
-- [Adding Custom Fields](docs/custom_fields.md)
-- [Recognizers Development - Best Practices and Considerations](docs/developing_recognizers.md)
-- [Using the Analyzer Service](docs/tutorial_analyzer.md)
-- [Calling the different services](docs/tutorial_service.md)
-- [Connector Developer Guide](docs/tutorial_connector.md)
-
-### Deploy Presidio for Test and Dev
-
-- [Deploy locally using Docker](docs/deploy.md#the-easy-way-with-docker)
-- [Deploy locally using KIND](docs/deploy.md#deploy-locally-with-kind)
-- [Presidio-Analyzer as a standalone python package](docs/deploy.md#install-presidio-analyzer-as-a-python-package)
-
-## Current input/output components status
-
-| Module            | Feature              | Status             |
-| ----------------- | -------------------- | ------------------ |
-| API               | HTTP input           | :white_check_mark: |
-| Scanner           | MySQL                | :x:                |
-| Scanner           | MSSQL                | :x:                |
-| Scanner           | PostgreSQL           | :x:                |
-| Scanner           | Oracle               | :x:                |
-| Scanner           | Azure Blob Storage   | :white_check_mark: |
-| Scanner           | S3                   | :white_check_mark: |
-| Scanner           | Google Cloud Storage | :x:                |
-| Streams           | Kafka                | :white_check_mark: |
-| Streams           | Azure Event Hub      | :white_check_mark: |
-| Datasink (output) | MySQL                | :white_check_mark: |
-| Datasink (output) | MSSQL                | :white_check_mark: |
-| Datasink (output) | Oracle               | :x:                |
-| Datasink (output) | PostgreSQL           | :white_check_mark: |
-| Datasink (output) | Kafka                | :white_check_mark: |
-| Datasink (output) | Azure Event Hub      | :white_check_mark: |
-| Datasink (output) | Azure Blob Storage   | :white_check_mark: |
-| Datasink (output) | S3                   | :white_check_mark: |
-| Datasink (output) | Google Cloud Storage | :x:                |
-
-- :white_check_mark: - Working
-- :large_orange_diamond: - Partially supported (alpha)
-- :x: - Not supported yet
-
-## How to contact us?
-
-If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
-For other matters, please email presidio@microsoft.com
+### :notebook_with_decorative_cover: [Full documentation](https://microsoft.github.io/presidio)
+### :thought_balloon: [Try Presidio with your own data](https://aka.ms/presidio-demo) 
 
 
+## Installing Presidio
 
-:exclamation: **Note:** As we are in the process of defining the roadmap for Presidio, we will only accept PRs with bug fixes and no new features in the upcoming months.
+1. [Using pip](https://microsoft.github.io/presidio/installation/#using-pip)
+2. [Using Docker](https://microsoft.github.io/presidio/installation/#using-docker)
+3. [From source](https://microsoft.github.io/presidio/installation/#install-from-source)
+4. [Migrating from V1 to V2](./docs/presidio_V2.md)
+
+## Running Presidio
+1. [Getting started](https://microsoft.github.io/presidio/getting_started)
+2. [Setting up a development environment](https://microsoft.github.io/presidio/development)
+3. [PII anonymization in text](https://microsoft.github.io/presidio/text_anonymization)
+4. [PII anonymization in images](https://microsoft.github.io/presidio/image-redactor)
+5. [Usage samples and example deployments](https://microsoft.github.io/presidio/samples)
 
 ---
+
+## Support
+
+- Before you submit an issue, please go over the [documentation](https://microsoft.github.io/presidio/). 
+- For general discussions, please use the [Github repo's discussion board](https://github.com/microsoft/presidio/discussions).
+- If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
+- For other matters, please email [presidio@microsoft.com](mailto:presidio@microsoft.com).
 
 ## Contributing
 

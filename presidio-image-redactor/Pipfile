@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "==1.19.3"
+flask = "==1.1.2"
+pytesseract = "==0.3.7"
+presidio-analyzer = ">=1.9.0"
+pillow = "==8.1.1"
+matplotlib = "==3.3.4"
+
+[dev-packages]
+pytest = "*"
+flake8 = { version = "==3.7.9" }
+pep8-naming = "*"
+flake8-docstrings = "*"

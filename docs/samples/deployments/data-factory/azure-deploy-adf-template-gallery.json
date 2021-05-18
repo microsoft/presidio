@@ -1,0 +1,164 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AzureDataFactory_clientId": {
+            "type": "string",
+            "metadata": {
+                "description": "Client ID of Azure Data Factory Managed Identity"
+            }
+        },
+        "AzureBlobStorageTarget_accountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Target Storage Account Name"
+            },
+            "defaultValue": "[concat('presidio', uniqueString(resourceGroup().id))]"
+        },
+        "AzureBlobStorageTarget_cotainerName": {
+            "type": "string",
+            "metadata": {
+                "description": "Target Storage Container Name"
+            },
+            "defaultValue": "presidio"
+        },
+        "AzureKeyVault_name": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Key Vault Name"
+            },
+            "defaultValue": "[concat('presidioakv', uniqueString(resourceGroup().id))]"
+        },
+        "AzureKeyVault_storageSASSecretName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of storage SAS token secert in Key Vault"
+            },
+            "defaultValue": "sas-token"
+        },
+        "Analyzer_appName": {
+            "type": "string",
+            "metadata": {
+                "description": "Analyzer App Service Name"
+            },
+            "defaultValue": "[concat('presidio-analyzer', uniqueString(resourceGroup().id))]"
+        },
+        "Anonymizer_appName": {
+            "type": "string",
+            "metadata": {
+                "description": "Anonymizer App Service Name"
+            },
+            "defaultValue": "[concat('presidio-anonymizer', uniqueString(resourceGroup().id))]"
+        },
+        "accountSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "signedServices": "b",
+                "signedPermission": "rw",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'P3D')]",
+                "signedResourceTypes": "o"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "presidio-app-services",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/presidio/main/docs/samples/deployments/app-service/presidio-services.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "imageRedactor": {
+                        "value": false
+                    },
+                    "analyzerWebAppName": {
+                        "value": "[parameters('Analyzer_appName')]"
+                    },
+                    "anonymizerWebAppName": {
+                        "value": "[parameters('Anonymizer_appName')]"
+                    },
+                    "location": {
+                        "value": "[resourceGroup().location]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-07-01",
+            "name": "[parameters('AzureBlobStorageTarget_accountName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[parameters('AzureBlobStorageTarget_accountName')]"
+            },
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "resources": [
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "name": "[concat('default/', parameters('AzureBlobStorageTarget_cotainerName'))]",
+                    "dependsOn": [
+                        "[parameters('AzureBlobStorageTarget_accountName')]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2018-02-14",
+            "name": "[parameters('AzureKeyVault_name')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[parameters('AzureKeyVault_name')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('AzureBlobStorageTarget_accountName'))]"
+            ],
+            "properties": {
+                "enabledForDeployment": true,
+                "enabledForTemplateDeployment": true,
+                "enabledForDiskEncryption": true,
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[parameters('AzureDataFactory_clientId')]",
+                        "permissions": {
+                            "keys": [
+                                "get"
+                            ],
+                            "secrets": [
+                                "list",
+                                "get",
+                                "set"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "standard",
+                    "family": "A"
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-02-14",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', parameters('AzureKeyVault_name'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('AzureBlobStorageTarget_accountName'))]"
+            ],
+            "name": "[concat(parameters('AzureKeyVault_name'), '/', parameters('AzureKeyVault_storageSASSecretName'))]",
+            "properties": {
+                "value": "[listAccountSas(parameters('AzureBlobStorageTarget_accountName'), '2018-07-01', parameters('accountSasProperties')).accountSasToken]"
+            }
+        }
+    ]
+}
