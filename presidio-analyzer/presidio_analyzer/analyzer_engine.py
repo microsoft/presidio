@@ -1,11 +1,13 @@
+import collections
 import json
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Dict, Union, Iterator, Iterable
 import logging
 
 from presidio_analyzer import (
     RecognizerRegistry,
     RecognizerResult,
     EntityRecognizer,
+    DictAnalyzerResult,
 )
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
@@ -196,34 +198,73 @@ class AnalyzerEngine:
 
         return results
 
+    def analyze_list(
+        self, list_of_texts: Iterable[str], **kwargs
+    ) -> List[List[RecognizerResult]]:
+        """
+        Run analysis on a list of strings.
+
+        :param list_of_texts: Input data
+        :param kwargs: additional parameters to the analyze method
+        :return: List of List[RecognizerResult]
+        """
+        list_results = []
+        for text in list_of_texts:
+            results = self.analyze(text=text, **kwargs) if isinstance(text, str) else []
+            list_results.append(results)
+
+        return list_results
+
+    def analyze_dict(
+        self, input_dict: Dict[str, Union[str, Iterable[str]]], **kwargs
+    ) -> Iterator[DictAnalyzerResult]:
+        """
+        Run analysis on a full dictionary.
+
+        :param input_dict: Input data
+        :param kwargs: Additional parameters for the analyze method.
+        :return: Iterator with analyzer results per value
+        """
+
+        for key, value in input_dict.items():
+            if not value:
+                results = []
+            else:
+                if isinstance(value, str):
+                    results: List[RecognizerResult] = self.analyze(text=value, **kwargs)
+                elif isinstance(value, collections.Iterable):
+                    results: List[List[RecognizerResult]] = self.analyze_list(
+                        list_of_texts=value, key=key, **kwargs
+                    )
+                else:
+                    results = []
+
+            yield DictAnalyzerResult(key=key, value=value, recognizer_results=results)
+
     def analyze_batch(
         self,
-        batch_dict: Dict[str, List[str]],
-        language: str = "en",
+        batch_dict: Dict[str, object],
         keys_to_skip: Optional[List[str]] = None,
-        entities: Optional[List[str]] = None,
-        score_threshold: Optional[float] = None,
         **kwargs,  # noqa ANN003
-    ) -> Union[List[RecognizerResult], Dict[str, List[List[RecognizerResult]]]]:
+    ) -> Union[List[RecognizerResult], DictAnalyzerResult]:
         """
         Run analysis on a dictionary containing a list of values.
 
         Could be used for:
-        a. Identifying PII in specific keys on a json object
-        b. Identifying PII on a list of values, and not one-by-one.
-        :param batch_dict: A dictionary containing one or more keys with corresponding
-        lists of strings containing values to analyze,
-        or a single string to be processed.
+        a. Identifying PII in a table represented as a
+        dictionary of keys ad list of values per key.
+        a. Identifying PII in specific keys on a json object.
+        b. Identifying PII on a list of values.
+        :param data: Either a string, a dictionary of type Dict[str,object],
+        or a list of strings.
+
         For example, a table can be represented as a dictionary of columns,
         where the key is the column name
         and the value is the list of values for this column. If using Pandas,
         transform the data frame to a dict using df.to_dict(orient="list")
-        :param language: The language of the text
+        :para batch_dict: Input data
         :param keys_to_skip: List of keys to skip analysis for.
         In such case a list of entities should be provided.
-        :param entities: List of PII entities that should be looked for in the text.
-        If entities=None and all_fields=True then all entities are looked for.
-        :param score_threshold: value to ignore results with score lower than threshold
         :param kwargs: additional parameters for the analyze function
         :return: A dictionary containing the original keys, and a list of results
         (list of list of RecognizerResult) from the various recognizers.
@@ -250,9 +291,6 @@ class AnalyzerEngine:
             for text in list_of_texts:
                 analyzer_response = self.analyze(
                     text=text,
-                    language=language,
-                    entities=entities,
-                    score_threshold=score_threshold,
                     **kwargs,
                 )
                 per_text_responses.append(analyzer_response)

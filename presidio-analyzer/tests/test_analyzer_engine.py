@@ -490,6 +490,18 @@ def test_batch_on_simple_dict(nlp_engine):
     assert len(results["CITY"]) == 3
 
 
+def test_analyzer_dict_on_both_scalars_and_list(nlp_engine):
+    input_dict = {
+        "a": "My name is Robert",
+        "b": ["My phone is 054-3332111", "5"],
+        "c": "A",
+    }
+
+    analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
+    results = list(analyzer.analyze_dict(input_dict, language="en"))
+    print(results)
+
+
 def test_batch_on_simple_dict_with_skipping(nlp_engine):
     batch = {
         "PERSON": ["They call me Dan", "I'm Mark", "Ricardo is my name"],

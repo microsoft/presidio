@@ -5,6 +5,7 @@ import logging
 from presidio_analyzer.pattern import Pattern
 from presidio_analyzer.analysis_explanation import AnalysisExplanation
 from presidio_analyzer.recognizer_result import RecognizerResult
+from presidio_analyzer.dict_analyzer_result import DictAnalyzerResult
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 from presidio_analyzer.local_recognizer import LocalRecognizer
 from presidio_analyzer.pattern_recognizer import PatternRecognizer
@@ -33,6 +34,7 @@ __all__ = [
     "Pattern",
     "AnalysisExplanation",
     "RecognizerResult",
+    "DictAnalyzerResult",
     "EntityRecognizer",
     "LocalRecognizer",
     "PatternRecognizer",
