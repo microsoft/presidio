@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pydantic = "==1.7.4"
 spacy = "==3.0.5"
 regex = "*"
 tldextract = "*"
