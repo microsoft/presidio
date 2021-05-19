@@ -111,24 +111,22 @@ class TextAnalyticsRecognizer(RemoteRecognizer):
             Text Analytics detections.
         """
         if self.enabled:
-            result = self.text_analytics_client.recognize_pii_entities(
+            text_analytics_results = self.text_analytics_client.recognize_pii_entities(
                 [text], language="en"
             )
             category_names = [
-                category.name for category in self.text_analytics_categories
+                category.name.lower() for category in self.text_analytics_categories
             ]
-            return [
-                self._convert_to_recognizer_result(categorized_entity)
-                for categorized_entity in result[0].entities
-                if categorized_entity.category in category_names
-            ]
+            converted_results = [self._convert_to_recognizer_result(categorized_entity) for categorized_entity in
+                    text_analytics_results[0].entities if categorized_entity.category.lower() in category_names]
+            return converted_results
 
     def _convert_to_recognizer_result(self, categorized_entity):
         if categorized_entity.subcategory:
             entity_type = next(
                 filter(
                     lambda x: categorized_entity.subcategory == x.subcategory
-                    and categorized_entity.category == x.name,
+                    and categorized_entity.category.lower() == x.name.lower(),
                     self.text_analytics_categories,
                 )
             ).entity_type

@@ -11,5 +11,70 @@
 - name: EU Passport Number
   entity_type: PASSPORT_NUMBER
   languages: [en, es, fr, de, it, pt-pt]
-
-
+- name: Person
+  entity_type: PERSON
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: Address
+  entity_type: LOCATION
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: DateTime
+  entity_type: DATE
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: DateTime
+  subcategory: Time
+  entity_type: DATE_TIME
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: DateTime
+  subcategory: Date
+  entity_type: DATE_TIME
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: DateTime
+  subcategory: DateRange
+  entity_type: DATE_TIME
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: Date
+  entity_type: DATE_TIME
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: Phone Number
+  entity_type: PHONE_NUMBER
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt pt-br]
+- name: Organization
+  entity_type: ORGANIZATION
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: PersonType
+  entity_type: PROFESSION
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+- name: Credit Card Number
+  entity_type: CREDIT_CARD
+  languages: [en, es, fr, de, it, zh-hans, ja, ko, pt-pt, pt-br]
+# Identification numbers
+- name: EU Tax Identification Number (TIN)
+  entity_type: IDNUM
+  languages: [en, es, fr, de, it, pt-pt]
+- name: EU Social Security Number (SSN)
+  entity_type: IDNUM
+  languages: [en, es, fr, de, it, pt-pt]
+- name: EU passport number
+  entity_type: IDNUM
+  languages: [en, es, fr, de, it, pt-pt]
+- name: EU national identification number
+  entity_type: IDNUM
+  languages: [en, es, fr, de, it, pt-pt]
+- name: EU GPU coordinates
+  entity_type: IDNUM
+  languages: [en, es, fr, de, it, pt-pt]
+- name: U.S. Social Security Number (SSN)
+  entity_type: IDNUM
+  languages: [en]
+- name: U.S. or U.K. Passport Number
+  entity_type: IDNUM
+  languages: [en]
+- name: U.S. Individual Taxpayer Identification Number (ITIN)
+  entity_type: IDNUM
+  languages: [en]
+- name: U.S. Drug Enforcement Agency (DEA) Number
+  entity_type: IDNUM
+  languages: [en]
+- name: U.S. Bank Account Number
+  entity_type: IDNUM
+  languages: [en]
