@@ -7,6 +7,7 @@ from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, StanzaNlpEng
 from presidio_analyzer.predefined_recognizers import (
     CreditCardRecognizer,
     CryptoRecognizer,
+    DateRecognizer,
     DomainRecognizer,
     EmailRecognizer,
     IbanRecognizer,
@@ -71,6 +72,7 @@ class RecognizerRegistry:
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
+                DateRecognizer,
                 DomainRecognizer,
                 EmailRecognizer,
                 IbanRecognizer,
