@@ -2,6 +2,7 @@
 
 from .aba_routing_recognizer import AbaRoutingRecognizer
 from .credit_card_recognizer import CreditCardRecognizer
+from .certificate_number_recognizer import CertificateNumberRecognizer
 from .crypto_recognizer import CryptoRecognizer
 from .date_recognizer import DateRecognizer
 from .domain_recognizer import DomainRecognizer
@@ -25,6 +26,7 @@ NLP_RECOGNIZERS = {"spacy": SpacyRecognizer, "stanza": StanzaRecognizer}
 __all__ = [
     "AbaRoutingRecognizer",
     "CreditCardRecognizer",
+    "CertificateNumberRecognizer",
     "CryptoRecognizer",
     "DateRecognizer",
     "DomainRecognizer",
