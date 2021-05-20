@@ -54,7 +54,7 @@ class DateRecognizer(PatternRecognizer):
         ),
         Pattern(
             "dd-MMM-yyyy",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-\d{4})\b", # noqa: E501
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-\d{4})\b",  # noqa: E501
             0.6,
         ),
     ]
@@ -93,7 +93,7 @@ class DateRecognizer(PatternRecognizer):
         :param regex_flags:
         :return:
         """
-        regex_flags = regex_flags | re.IGNORECASE if regex_flags else re.DOTALL | re.MULTILINE| re.IGNORECASE # noqa: E501
+        regex_flags = regex_flags | re.IGNORECASE if regex_flags else re.DOTALL | re.MULTILINE | re.IGNORECASE  # noqa: E501
 
         return super().analyze(
             text=text,
