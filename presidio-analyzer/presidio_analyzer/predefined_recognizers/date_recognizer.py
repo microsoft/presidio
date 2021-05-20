@@ -5,6 +5,7 @@ from presidio_analyzer.nlp_engine import NlpArtifacts
 
 import regex as re
 
+
 class DateRecognizer(PatternRecognizer):
     """
     Recognize date using regex.
@@ -53,7 +54,7 @@ class DateRecognizer(PatternRecognizer):
         ),
         Pattern(
             "dd-MMM-yyyy",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-\d{4})\b",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-\d{4})\b", # noqa: E501
             0.6,
         ),
     ]
@@ -83,8 +84,16 @@ class DateRecognizer(PatternRecognizer):
         nlp_artifacts: NlpArtifacts = None,
         regex_flags: int = None,
     ) -> List[RecognizerResult]:
+        """
+        Analyzes text to detect PII using regular expressions or deny-lists.
 
-        regex_flags = regex_flags | re.IGNORECASE if regex_flags else re.DOTALL | re.MULTILINE| re.IGNORECASE 
+        :param text: Text to be analyzed
+        :param entities: Entities this recognizer can detect
+        :param nlp_artifacts: Output values from the NLP engine
+        :param regex_flags:
+        :return:
+        """
+        regex_flags = regex_flags | re.IGNORECASE if regex_flags else re.DOTALL | re.MULTILINE| re.IGNORECASE # noqa: E501
 
         return super().analyze(
             text=text,
