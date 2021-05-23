@@ -87,20 +87,15 @@ broadcasted_anonymizer = sc.broadcast(anonymizer)
 
 
 def anonymize_text(text: str) -> str:
-    try:
-        analyzer = broadcasted_analyzer.value
-        anonymizer = broadcasted_anonymizer.value
-        analyzer_results = analyzer.analyze(text=text, language="en")
-        anonymized_results = anonymizer.anonymize(
-            text=text,
-            analyzer_results=analyzer_results,
-            operators={
-                "DEFAULT": OperatorConfig("replace", {"new_value": "<ANONYMIZED>"})
-            },
-        )
-        return anonymized_results.text
-    except Exception as e:
-        print(f"An exception occurred. {e}")
+    analyzer = broadcasted_analyzer.value
+    anonymizer = broadcasted_anonymizer.value
+    analyzer_results = analyzer.analyze(text=text, language="en")
+    anonymized_results = anonymizer.anonymize(
+        text=text,
+        analyzer_results=analyzer_results,
+        operators={"DEFAULT": OperatorConfig("replace", {"new_value": "<ANONYMIZED>"})},
+    )
+    return anonymized_results.text
 
 
 def anonymize_series(s: pd.Series) -> pd.Series:

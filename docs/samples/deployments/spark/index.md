@@ -11,6 +11,7 @@ The following sample uses [Azure Databricks](https://docs.microsoft.com/en-us/az
 A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of [transform presidio notebook](./notebooks/02_transform_presidio_text.py), is the basis of the e2e sample which uses Azure Databricks as the Spark environment.
 
 ```python
+anonymized_column = "value" # name of column to anonymize
 analyzer = AnalyzerEngine()
 anonymizer = AnonymizerEngine()
 
@@ -20,20 +21,17 @@ broadcasted_anonymizer = sc.broadcast(anonymizer)
 
 # define a pandas UDF function and a series function over it.
 def anonymize_text(text: str) -> str:
-    try:
-        analyzer = broadcasted_analyzer.value
-        anonymizer = broadcasted_anonymizer.value
-        analyzer_results = analyzer.analyze(text=text, language="en")
-        anonymized_results = anonymizer.anonymize(
-            text=text,
-            analyzer_results=analyzer_results,
-            operators={
-                "DEFAULT": OperatorConfig("replace", {"new_value": "<ANONYMIZED>"})
-            },
-        )
-        return anonymized_results.text
-    except Exception as e:
-        print(f"An exception occurred. {e}")
+    analyzer = broadcasted_analyzer.value
+    anonymizer = broadcasted_anonymizer.value
+    analyzer_results = analyzer.analyze(text=text, language="en")
+    anonymized_results = anonymizer.anonymize(
+        text=text,
+        analyzer_results=analyzer_results,
+        operators={
+            "DEFAULT": OperatorConfig("replace", {"new_value": "<ANONYMIZED>"})
+        },
+    )
+    return anonymized_results.text
 
 
 def anonymize_series(s: pd.Series) -> pd.Series:
@@ -116,7 +114,7 @@ databricks fs cp "./setup/startup.sh" "dbfs:/FileStore/dependencies/startup.sh"
 
 ```
 
-[Setup the cluster](https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#init-scripts) to run the init script.
+Setup the cluster to run the [init script](https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#init-scripts).
 
 #### Upload presidio notebooks
 

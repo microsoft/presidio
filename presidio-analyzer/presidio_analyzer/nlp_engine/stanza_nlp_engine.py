@@ -2,7 +2,7 @@ import logging
 
 try:
     import stanza
-    from spacy_stanza import StanzaLanguage
+    import spacy_stanza
 except ImportError:
     stanza = None
 
@@ -32,11 +32,9 @@ class StanzaNlpEngine(SpacyNlpEngine):
         logger.debug(f"Loading Stanza models: {models.values()}")
 
         self.nlp = {
-            lang_code: StanzaLanguage(
-                stanza.Pipeline(
-                    model_name,
-                    processors="tokenize,pos,lemma,ner",
-                )
+            lang_code: spacy_stanza.load_pipeline(
+                model_name,
+                processors="tokenize,pos,lemma,ner",
             )
             for lang_code, model_name in models.items()
         }

@@ -49,3 +49,7 @@ Best practices for developing recognizers [are described here](docs/analyzer/dev
 ### Fixing Bugs and improving the code
 
 Please review the open [issues on Github](https://github.com/microsoft/presidio/issues) for known bugs and feature requests. We sometimes add 'good first issue' labels on those we believe are simpler, and 'advanced' labels on those which require more work or multiple changes across the solution.
+
+## Contacting Us
+
+For any questions, please email presidio@microsoft.com.
