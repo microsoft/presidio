@@ -62,15 +62,15 @@ Note that:
 ### Setup Azure Data Factory
 
 1. Go to the Data anonymization with Presidio template. Select existing connection or create a New connection to your source file store where you want to move files from. Be aware that DataSource_Folder and DataSource_File are reference to the same connection of your source file store.
-![ADF-Template-Load](Data-anonymization01.png)
+![ADF-Template-Load](images/data-anonymization-http-01.png)
 
 2. Select Use this template tab
 
 3. You'll see the pipeline, as in the following example:
-![ADF-Template-Pipeline](Data-anonymization02.png)
+![ADF-Template-Pipeline](images/data-anonymization-http-02.png)
 
 4. Select Debug, enter the Parameters, and then select Finish. The parameters are the container where you want to move files from and the container path where you want to move the anonymized files to.
-![ADF-Template-Parameters](Data-anonymization03.png)
+![ADF-Template-Parameters](images/data-anonymization-http-03.png)
 
 5. Review the result.
-![ADF-Template-Results](Data-anonymization04.png)
+![ADF-Template-Results](images/data-anonymization-http-04.png)
