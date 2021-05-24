@@ -61,7 +61,7 @@ By using Presidio as a Notebook step in ADF, we allow Databricks to scale presid
 
 ### Pre-requisite - Deploy Azure Databricks
 
-Provision and setup the datbricks cluster by following the steps in [presidio-spark sample](../spark/index.md#Azure-Databricks).
+Provision and setup the datbricks cluster by following the steps in [presidio-spark sample](../spark/index.md#Deploy-Infrastructure).
 Note the output key and export it as DATABRICKS_TOKEN environment variable.
 
 ### Deploy the ARM template

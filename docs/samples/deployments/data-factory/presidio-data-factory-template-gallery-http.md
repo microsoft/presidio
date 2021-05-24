@@ -4,7 +4,7 @@ This sample uses the built in [data anonymization template](https://github.com/A
 
 **Note that** given the solution architecture which call presidio services using HTTP, this sample should be used for up to 5000 files, each up to 200KB in size.
 The restrictions are based on ADF lookup-activity which is used to iterate the files in the storage container (up to 5000 records), and having Presidio as an HTTP endpoint with text being sent over network to be anonymized. 
-For larger sets please work with the [Data Anonymization with Presidio on Databricks](./presidio-data-factory-template-gallery-databricks) template.
+For larger sets please work with the [Data Anonymization with Presidio on Databricks](./presidio-data-factory-template-gallery-databricks.md) template.
 
 The sample deploys the following Azure Services:
 
