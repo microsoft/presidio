@@ -5,7 +5,7 @@ from tests import assert_result_within_score_range
 
 @pytest.fixture(scope="module")
 def entities():
-    return ["PERSON", "DATE_TIME"]
+    return ["PERSON", "DATE_TIME", "ORGANIZATION"]
 
 
 @pytest.fixture(scope="module")
@@ -39,6 +39,9 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("May 1st", 1, ((0, 7),), 1),
         ("May 1st, 1977", 1, ((0, 13),), 1),
         ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
+        # Test ORGANIZATION Entity
+        ("I work at Microsoft", 1, ((10, 19),), 2),
+        ("Amazon.com, Inc. is an American company", 1, ((0, 16),), 2),
         # fmt: on
     ],
 )
