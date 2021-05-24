@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pydantic = "==1.7.4"
 numpy = "==1.19.3"
 flask = "==1.1.2"
 pytesseract = "==0.3.7"
