@@ -7,6 +7,7 @@ from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, StanzaNlpEng
 from presidio_analyzer.predefined_recognizers import (
     CreditCardRecognizer,
     CryptoRecognizer,
+    DateRecognizer,
     DomainRecognizer,
     EmailRecognizer,
     IbanRecognizer,
@@ -71,6 +72,7 @@ class RecognizerRegistry:
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
+                DateRecognizer,
                 DomainRecognizer,
                 EmailRecognizer,
                 IbanRecognizer,
@@ -92,7 +94,7 @@ class RecognizerRegistry:
     ) -> Union[Type[SpacyRecognizer], Type[StanzaRecognizer]]:
         """Return the recognizer leveraging the selected NLP Engine."""
 
-        if not nlp_engine or isinstance(nlp_engine, SpacyNlpEngine):
+        if not nlp_engine or type(nlp_engine) == SpacyNlpEngine:
             return SpacyRecognizer
         if isinstance(nlp_engine, StanzaNlpEngine):
             return StanzaRecognizer
