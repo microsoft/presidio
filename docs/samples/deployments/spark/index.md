@@ -8,7 +8,7 @@ The following sample uses [Azure Databricks](https://docs.microsoft.com/en-us/az
 
 ## The basics of working with Presidio in Spark
 
-A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of [transform presidio notebook](./notebooks/02_transform_presidio_text.py), is the basis of the e2e sample which uses Azure Databricks as the Spark environment.
+A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of [transform presidio notebook](./notebooks/01_transform_presidio.py), is the basis of the e2e sample which uses Azure Databricks as the Spark environment.
 
 ```python
 anonymized_column = "value" # name of column to anonymize
