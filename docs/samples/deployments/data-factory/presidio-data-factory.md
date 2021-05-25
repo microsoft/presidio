@@ -17,13 +17,13 @@ The input file used by the samples is hosted on [presidio-research](https://gith
 
 By using Presidio as an HTTP endpoint, the user can select which infrastructure best suits their requirements. in this sample, Presidio is deployed to an Azure App Service, but other deployment targets can be used, such as [kubernetes](../k8s/index.md).
 
-![ADF-App-Service](adf-app-service-screenshot.png)
+![ADF-App-Service](images/adf-app-service-screenshot.png)
 
 ### Deploy the ARM template
 
-Create the Azure App Service and the ADF pipeline by clicking the Deploy-to-Azure button, or by running the following script to provision the [provided ARM template](./azure-deploy-adf-app-service.json).
+Create the Azure App Service and the ADF pipeline by clicking the Deploy-to-Azure button, or by running the following script to provision the [provided ARM template](./arm-templates/azure-deploy-adf-app-service.json).
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Fazure-deploy-adf-app-service.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Farm-templates%2Fazure-deploy-adf-app-service.json)
 
 
 ```bash
@@ -31,7 +31,7 @@ RESOURCE_GROUP=[Name of resource group]
 LOCATION=[location of resources]
 
 az group create --name $RESOURCE_GROUP --location $LOCATION
-az deployment group create -g $RESOURCE_GROUP --template-file ./azure-deploy-adf-app-service.json
+az deployment group create -g $RESOURCE_GROUP --template-file ./arm-templates/azure-deploy-adf-app-service.json
 ```
 
 Note that:
@@ -53,32 +53,29 @@ The template contains seven activities:
 * **PresidioAnonymize** - Sends the response from presidio analyzer to presidio anonymizer endpoint.
 * **UploadBlob** - Saves the anonymized response from presidio to a randomly named text file on the target Azure Blob Storage.
 
-
 ## Option 2: Presidio on Azure Databricks
 
 By using Presidio as a Notebook step in ADF, we allow Databricks to scale presidio according to the cluster capabilities and the input dataset. Using presidio as a native python package in pyspark can unlock more analysis and de-identifiaction scenarios.
 
-![ADF-Databricks](adf-databricks-screenshot.png)
+![ADF-Databricks](images/adf-databricks-screenshot.png)
 
 ### Pre-requisite - Deploy Azure Databricks
 
-Provision and setup the datbricks cluster by following the steps in [presidio-spark sample](../spark/index.md#Azure-Databricks). 
-**Note** that you should only create and configure the databricks cluster and not the storage account, which will be created in the next step.
+Provision and setup the datbricks cluster by following the steps in [presidio-spark sample](../spark/index.md#Deploy-Infrastructure).
+Note the output key and export it as DATABRICKS_TOKEN environment variable.
 
 ### Deploy the ARM template
 
-Create the rest of the services by running the following script which uses the [provided ARM template](./azure-deploy-adf-databricks.json).
+Create the rest of the services by running the following script which uses the [provided ARM template](./arm-templates/azure-deploy-adf-databricks.json).
 
 ```bash
 RESOURCE_GROUP=[Name of resource group]
 LOCATION=[location of resources]
-DATABRICKS_ACCESS_TOKEN=[Access token to databricks created in the presidio-spark sample]
-DATABRICKS_WORKSPACE_URL=[Databricks workspace URL without the https:// prefix]
-DATABRICKS_CLUSTER_ID=[Databricks presidio-ready cluster ID]
-DATABRICKS_NOTEBOOK_LOCATION=[Location of presidio notebook from the presidio-spark sample]
+DATABRICKS_HOST=https://$DATABRICKS_WORKSPACE_URL
+DATABRICKS_CLUSTER_ID=$(databricks clusters get --cluster-name presidio_cluster | jq -r .cluster_id)
+DATABRICKS_NOTEBOOK_LOCATION="/notebooks/01_transform_presidio"
 
-az group create --name $RESOURCE_GROUP --location $LOCATION
-az deployment group create -g $RESOURCE_GROUP --template-file ./azure-deploy-adf-databricks.json --parameters Databricks_accessToken=$DATABRICKS_ACCESS_TOKEN Databricks_clusterId=$DATABRICKS_CLUSTER_ID Databricks_notebookLocation=$DATABRICKS_NOTEBOOK_LOCATION Databricks_workSpaceUrl=$DATABRICKS_WORKSPACE_URL
+az deployment group create -g $RESOURCE_GROUP --template-file ./arm-templates/azure-deploy-adf-databricks.json --parameters Databricks_accessToken=$DATABRICKS_TOKEN Databricks_clusterId=$DATABRICKS_CLUSTER_ID Databricks_notebookLocation=$DATABRICKS_NOTEBOOK_LOCATION Databricks_workSpaceUrl=$DATABRICKS_HOST AzureBlobStorage_accountName=$STORAGE_ACCOUNT_NAME AzureBlobStorage_cotainerName=$STORAGE_CONTAINER_NAME
 ```
 
 Note that:

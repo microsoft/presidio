@@ -1,0 +1,9 @@
+{
+    "run_name": "Setup workspace",
+    "existing_cluster_id": "existing-clusters-id",
+    "libraries": [],
+    "timeout_seconds": 3600,
+    "notebook_task": {
+        "notebook_path": "/notebooks/00_setup"
+    }
+}
