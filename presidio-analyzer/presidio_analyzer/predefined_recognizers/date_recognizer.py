@@ -19,12 +19,12 @@ class DateRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "mm/dd/yyyy or mm/dd/yy",
-            r"\b(([1-9]|0[1-9]|1[0-2])/([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/(\d{4}|\d{2}))\b",
+            r"\b(([1-9]|0[1-9]|1[0-2])/([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/(\d{4}|\d{2}))\b", # noqa: E501
             0.6,
         ),
         Pattern(
             "dd/mm/yyyy or dd/mm/yy",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/([1-9]|0[1-9]|1[0-2])/(\d{4}|\d{2}))\b",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/([1-9]|0[1-9]|1[0-2])/(\d{4}|\d{2}))\b", # noqa: E501
             0.6,
         ),
         Pattern(
@@ -49,7 +49,7 @@ class DateRecognizer(PatternRecognizer):
         ),
         Pattern(
             "dd.mm.yyyy or dd.mm.yy",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])\.([1-9]|0[1-9]|1[0-2])\.(\d{4}|\d{2}))\b",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])\.([1-9]|0[1-9]|1[0-2])\.(\d{4}|\d{2}))\b", # noqa: E501
             0.6,
         ),
         Pattern(
@@ -64,7 +64,7 @@ class DateRecognizer(PatternRecognizer):
         ),
         Pattern(
             "dd-MMM or dd-MMM",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))\b",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))\b", # noqa: E501
             0.6,
         ),
     ]
