@@ -67,6 +67,11 @@ class DateRecognizer(PatternRecognizer):
             r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))\b",  # noqa: E501
             0.6,
         ),
+        Pattern(
+            "mm/yyyy or mm/yy",
+            r"\b(([1-9]|0[1-9]|1[0-2])/(\d{4}|\d{2}))\b",
+            0.01,
+        ),
     ]
 
     CONTEXT = ["date", "birthday"]
