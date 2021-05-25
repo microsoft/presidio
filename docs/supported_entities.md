@@ -23,7 +23,6 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |LOCATION|Name of politically or geographically defined location (cities, provinces, countries, international regions, bodies of water, mountains|Custom logic and context|
 |PERSON|A full person name, which can include first names, middle names or initials, and last names.|Custom logic and context|
 |PHONE_NUMBER|A telephone number|Custom logic, pattern match and context|
-|ORGANIZATION|Companies, agencies, institutions.|Custom logic and context|
 
 ### USA
 

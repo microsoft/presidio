@@ -26,7 +26,10 @@ class SpacyRecognizer(LocalRecognizer):
     is translated into a Presidio entity.
     """
 
-    ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON", "ORGANIZATION"]
+    ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON",
+                # "ORGANIZATION" - Less accurate with the default 'en_core_web_lg' model,
+                # can be used with more assurance when using 'en_core_web_trf'.
+                ]
 
     DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
 
