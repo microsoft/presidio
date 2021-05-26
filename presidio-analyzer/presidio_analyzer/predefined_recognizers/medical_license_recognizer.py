@@ -5,7 +5,7 @@ from presidio_analyzer import Pattern, PatternRecognizer
 # https://www.meditec.com/blog/dea-numbers-what-do-they-mean
 
 
-class CertificateNumberRecognizer(PatternRecognizer):
+class MedicalLicenseRecognizer(PatternRecognizer):
     """
     Recognize common Medical license numbers using regex + checksum.
 
@@ -37,7 +37,7 @@ class CertificateNumberRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "CERTIFICATE_NUMBER",
+        supported_entity: str = "MEDICAL_LICENSE",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
 

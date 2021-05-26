@@ -1,17 +1,17 @@
 import pytest
 
 from tests import assert_result
-from presidio_analyzer.predefined_recognizers import CertificateNumberRecognizer
+from presidio_analyzer.predefined_recognizers.medical_license_recognizer import MedicalLicenseRecognizer
 
 
 @pytest.fixture(scope="module")
 def cc_recognizer():
-    return CertificateNumberRecognizer()
+    return MedicalLicenseRecognizer()
 
 
 @pytest.fixture(scope="module")
 def entities():
-    return ["CERTIFICATE_NUMBER"]
+    return ["MEDICAL_LICENSE"]
 
 
 @pytest.mark.parametrize(
@@ -25,7 +25,7 @@ def entities():
         # fmt: on
     ],
 )
-def test_when_all_certificate_number_then_succeed(
+def test_when_all_medical_licence_number_then_succeed(
     text,
     expected_len,
     expected_scores,

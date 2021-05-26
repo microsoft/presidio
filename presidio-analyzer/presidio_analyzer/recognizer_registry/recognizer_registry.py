@@ -12,6 +12,7 @@ from presidio_analyzer.predefined_recognizers import (
     EmailRecognizer,
     IbanRecognizer,
     IpRecognizer,
+    MedicalLicenseRecognizer,
     NhsRecognizer,
     UsBankRecognizer,
     UsLicenseRecognizer,
@@ -77,6 +78,7 @@ class RecognizerRegistry:
                 EmailRecognizer,
                 IbanRecognizer,
                 IpRecognizer,
+                MedicalLicenseRecognizer,
                 nlp_recognizer,
             ],
         }

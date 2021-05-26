@@ -2,13 +2,13 @@
 
 from .aba_routing_recognizer import AbaRoutingRecognizer
 from .credit_card_recognizer import CreditCardRecognizer
-from .certificate_number_recognizer import CertificateNumberRecognizer
 from .crypto_recognizer import CryptoRecognizer
 from .date_recognizer import DateRecognizer
 from .domain_recognizer import DomainRecognizer
 from .email_recognizer import EmailRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
+from .medical_license_recognizer import MedicalLicenseRecognizer
 from .sg_fin_recognizer import SgFinRecognizer
 from .spacy_recognizer import SpacyRecognizer
 from .stanza_recognizer import StanzaRecognizer
@@ -26,7 +26,6 @@ NLP_RECOGNIZERS = {"spacy": SpacyRecognizer, "stanza": StanzaRecognizer}
 __all__ = [
     "AbaRoutingRecognizer",
     "CreditCardRecognizer",
-    "CertificateNumberRecognizer",
     "CryptoRecognizer",
     "DateRecognizer",
     "DomainRecognizer",
@@ -34,6 +33,7 @@ __all__ = [
     "IbanRecognizer",
     "IpRecognizer",
     "NhsRecognizer",
+    "MedicalLicenseRecognizer",
     "SgFinRecognizer",
     "SpacyRecognizer",
     "StanzaRecognizer",
