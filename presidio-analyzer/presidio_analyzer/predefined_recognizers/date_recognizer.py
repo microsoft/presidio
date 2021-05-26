@@ -18,13 +18,13 @@ class DateRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "mm/dd/yyyy",
-            r"\b(([1-9]|0[1-9]|1[0-2])/([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/\d{4})\b",
+            "mm/dd/yyyy or mm/dd/yy",
+            r"\b(([1-9]|0[1-9]|1[0-2])/([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/(\d{4}|\d{2}))\b",  # noqa: E501
             0.6,
         ),
         Pattern(
-            "dd/mm/yyyy",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/([1-9]|0[1-9]|1[0-2])/\d{4})\b",
+            "dd/mm/yyyy or dd/mm/yy",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])/([1-9]|0[1-9]|1[0-2])/(\d{4}|\d{2}))\b",  # noqa: E501
             0.6,
         ),
         Pattern(
@@ -48,14 +48,34 @@ class DateRecognizer(PatternRecognizer):
             0.6,
         ),
         Pattern(
-            "dd.mm.yyyy",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])\.([1-9]|0[1-9]|1[0-2])\.\d{4})\b",
+            "dd.mm.yyyy or dd.mm.yy",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])\.([1-9]|0[1-9]|1[0-2])\.(\d{4}|\d{2}))\b",  # noqa: E501
             0.6,
         ),
         Pattern(
-            "dd-MMM-yyyy",
-            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-\d{4})\b",  # noqa: E501
+            "dd-MMM-yyyy or dd-MMM-yy",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-(\d{4}|\d{2}))\b",  # noqa: E501
             0.6,
+        ),
+        Pattern(
+            "MMM-yyyy or MMM-yy",
+            r"\b((JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-(\d{4}|\d{2}))\b",  # noqa: E501
+            0.6,
+        ),
+        Pattern(
+            "dd-MMM or dd-MMM",
+            r"\b(([1-9]|0[1-9]|[1-2][0-9]|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))\b",  # noqa: E501
+            0.6,
+        ),
+        Pattern(
+            "mm/yyyy or m/yyyy",
+            r"\b(([1-9]|0[1-9]|1[0-2])/\d{4})\b",
+            0.2,
+        ),
+        Pattern(
+            "mm/yy or m/yy",
+            r"\b(([1-9]|0[1-9]|1[0-2])/\d{2})\b",
+            0.1,
         ),
     ]
 
