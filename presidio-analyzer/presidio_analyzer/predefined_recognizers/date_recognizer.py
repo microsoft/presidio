@@ -68,9 +68,14 @@ class DateRecognizer(PatternRecognizer):
             0.6,
         ),
         Pattern(
-            "mm/yyyy or mm/yy",
-            r"\b(([1-9]|0[1-9]|1[0-2])/(\d{4}|\d{2}))\b",
-            0.01,
+            "mm/yyyy or m/yyyy",
+            r"\b(([1-9]|0[1-9]|1[0-2])/\d{4})\b",
+            0.2,
+        ),
+        Pattern(
+            "mm/yy or m/yy",
+            r"\b(([1-9]|0[1-9]|1[0-2])/\d{2})\b",
+            0.1,
         ),
     ]
 
