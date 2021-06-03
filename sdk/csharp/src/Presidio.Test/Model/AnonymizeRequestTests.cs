@@ -32,13 +32,18 @@ namespace Presidio.Test.Model
     /// </remarks>
     public class AnonymizeRequestTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for AnonymizeRequest
-        //private AnonymizeRequest instance;
+
+        private AnonymizeRequest instance;
+        private List<RecognizerResult> results;
+        private Dictionary<string, Anonymizer> anonymizers;
 
         public AnonymizeRequestTests()
         {
-            // TODO uncomment below to create an instance of AnonymizeRequest
-            //instance = new AnonymizeRequest();
+            var encrypt = new Replace("replace", "val");
+            anonymizers = new Dictionary<string, Anonymizer>() {{"PERSON", new Anonymizer(encrypt)}};
+            var result = new RecognizerResult(start: 11, end: 24, score: 0.9, entityType: "PERSON");
+            results = new List<RecognizerResult>() {result};
+            instance = new AnonymizeRequest(text: "hello world", anonymizers: anonymizers, analyzerResults: results);
         }
 
         public void Dispose()
@@ -52,8 +57,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnonymizeRequestInstanceTest()
         {
-            // TODO uncomment below to test "IsType" AnonymizeRequest
-            //Assert.IsType<AnonymizeRequest>(instance);
+            Assert.IsType<AnonymizeRequest>(instance);
         }
 
 
@@ -63,7 +67,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-            // TODO unit test for the property 'Text'
+             Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Anonymizers'
@@ -71,7 +75,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnonymizersTest()
         {
-            // TODO unit test for the property 'Anonymizers'
+            Assert.Equal(instance.Anonymizers, anonymizers);
         }
         /// <summary>
         /// Test the property 'AnalyzerResults'
@@ -79,7 +83,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnalyzerResultsTest()
         {
-            // TODO unit test for the property 'AnalyzerResults'
+            Assert.Equal(instance.AnalyzerResults, results);
         }
 
     }

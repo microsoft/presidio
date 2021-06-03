@@ -32,13 +32,13 @@ namespace Presidio.Test.Model
     /// </remarks>
     public class AnalysisExplanationTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for AnalysisExplanation
-        //private AnalysisExplanation instance;
+        private AnalysisExplanation instance;
 
         public AnalysisExplanationTests()
         {
-            // TODO uncomment below to create an instance of AnalysisExplanation
-            //instance = new AnalysisExplanation();
+            instance = new AnalysisExplanation(recognizer:"recognizer", patternName:"patternName", pattern: "pattern",
+                originalScore:0.5, score:0.4, textualExplanation: "explanation", scoreContextImprovement:0.2, supportiveContextWord:"word",
+                validationResult:0.1);
         }
 
         public void Dispose()
@@ -52,8 +52,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnalysisExplanationInstanceTest()
         {
-            // TODO uncomment below to test "IsType" AnalysisExplanation
-            //Assert.IsType<AnalysisExplanation>(instance);
+            Assert.IsType<AnalysisExplanation>(instance);
         }
 
 
@@ -63,7 +62,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void RecognizerTest()
         {
-            // TODO unit test for the property 'Recognizer'
+             Assert.Equal(instance.Recognizer, "recognizer");
         }
         /// <summary>
         /// Test the property 'PatternName'
@@ -71,7 +70,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void PatternNameTest()
         {
-            // TODO unit test for the property 'PatternName'
+            Assert.Equal(instance.PatternName, "patternName");
         }
         /// <summary>
         /// Test the property 'Pattern'
@@ -79,7 +78,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void PatternTest()
         {
-            // TODO unit test for the property 'Pattern'
+            Assert.Equal(instance.Pattern, "pattern");
         }
         /// <summary>
         /// Test the property 'OriginalScore'
@@ -87,7 +86,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void OriginalScoreTest()
         {
-            // TODO unit test for the property 'OriginalScore'
+            Assert.Equal(instance.OriginalScore, 0.5);
         }
         /// <summary>
         /// Test the property 'Score'
@@ -95,7 +94,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void ScoreTest()
         {
-            // TODO unit test for the property 'Score'
+            Assert.Equal(instance.Score, 0.4);
         }
         /// <summary>
         /// Test the property 'TextualExplanation'
@@ -103,7 +102,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void TextualExplanationTest()
         {
-            // TODO unit test for the property 'TextualExplanation'
+            Assert.Equal(instance.TextualExplanation, "explanation");
         }
         /// <summary>
         /// Test the property 'ScoreContextImprovement'
@@ -111,7 +110,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void ScoreContextImprovementTest()
         {
-            // TODO unit test for the property 'ScoreContextImprovement'
+            Assert.Equal(instance.ScoreContextImprovement, 0.2);
         }
         /// <summary>
         /// Test the property 'SupportiveContextWord'
@@ -119,7 +118,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void SupportiveContextWordTest()
         {
-            // TODO unit test for the property 'SupportiveContextWord'
+            Assert.Equal(instance.SupportiveContextWord, "word");
         }
         /// <summary>
         /// Test the property 'ValidationResult'
@@ -127,7 +126,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void ValidationResultTest()
         {
-            // TODO unit test for the property 'ValidationResult'
+            Assert.Equal(instance.ValidationResult, 0.1);
         }
 
     }

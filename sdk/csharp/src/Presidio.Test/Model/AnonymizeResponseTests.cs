@@ -32,13 +32,16 @@ namespace Presidio.Test.Model
     /// </remarks>
     public class AnonymizeResponseTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for AnonymizeResponse
-        //private AnonymizeResponse instance;
+
+        private AnonymizeResponse instance;
+        private List<OperatorEntity> entities;
 
         public AnonymizeResponseTests()
         {
-            // TODO uncomment below to create an instance of AnonymizeResponse
-            //instance = new AnonymizeResponse();
+             var operatorEntity = new OperatorEntity(_operator: "hash", entityType: "PERSON", start: 10, end: 12,
+                text: "hello");
+            entities = new List<OperatorEntity>() { operatorEntity };
+            instance = new AnonymizeResponse(text:"hello world", items: entities);
         }
 
         public void Dispose()
@@ -52,8 +55,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnonymizeResponseInstanceTest()
         {
-            // TODO uncomment below to test "IsType" AnonymizeResponse
-            //Assert.IsType<AnonymizeResponse>(instance);
+            Assert.IsType<AnonymizeResponse>(instance);
         }
 
 
@@ -63,7 +65,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-            // TODO unit test for the property 'Text'
+            Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Items'
@@ -71,7 +73,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void ItemsTest()
         {
-            // TODO unit test for the property 'Items'
+            Assert.Equal(instance.Items, entities);
         }
 
     }

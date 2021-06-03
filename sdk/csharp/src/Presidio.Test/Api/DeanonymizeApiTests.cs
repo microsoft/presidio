@@ -19,8 +19,7 @@ using Xunit;
 
 using Presidio.Client;
 using Presidio.Api;
-// uncomment below to import models
-//using Presidio.Model;
+using Presidio.Model;
 
 namespace Presidio.Test.Api
 {
@@ -37,7 +36,7 @@ namespace Presidio.Test.Api
 
         public DeanonymizeApiTests()
         {
-            instance = new DeanonymizeApi();
+            instance = new DeanonymizeApi("http://127.0.0.1:3000/");
         }
 
         public void Dispose()
@@ -51,8 +50,7 @@ namespace Presidio.Test.Api
         [Fact]
         public void InstanceTest()
         {
-            // TODO uncomment below to test 'IsType' DeanonymizeApi
-            //Assert.IsType<DeanonymizeApi>(instance);
+            Assert.IsType<DeanonymizeApi>(instance);
         }
 
         /// <summary>
@@ -61,10 +59,16 @@ namespace Presidio.Test.Api
         [Fact]
         public void DeanonymizePostTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //DeanonymizeRequest deanonymizeRequest = null;
-            //var response = instance.DeanonymizePost(deanonymizeRequest);
-            //Assert.IsType<DeanonymizeResponse>(response);
+             var decrypt = new Decrypt("decrypt", "3t6w9z$C&F)J@NcR");
+            var deanonymizers = new Dictionary<string, Deanonymizer>() {{"PERSON", new Deanonymizer(decrypt)}};
+            var anonymizerResult = new AnonymizerResult(start: 11, end: 55, entityType: "PERSON");
+            var anonymizerResults = new List<AnonymizerResult>() {anonymizerResult};
+            DeanonymizeRequest body = new DeanonymizeRequest(
+                text: "My name is MnHePFVW1uQEWKNYRbc7c4AiFySIgh8XLiDq0n9w4qU=, you killed my father prepare to die.", deanonymizers: deanonymizers,
+                anonymizerResults: anonymizerResults);
+            var response = instance.DeanonymizePost(body);
+            Assert.IsType<DeanonymizeResponse>(response);
+            Assert.Equal(response.Text, "My name is Inigo Montoya, you killed my father prepare to die.");
         }
     }
 }

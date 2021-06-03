@@ -32,13 +32,11 @@ namespace Presidio.Test.Model
     /// </remarks>
     public class AnonymizerResultTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for AnonymizerResult
-        //private AnonymizerResult instance;
+        private AnonymizerResult instance;
 
         public AnonymizerResultTests()
         {
-            // TODO uncomment below to create an instance of AnonymizerResult
-            //instance = new AnonymizerResult();
+            instance = new AnonymizerResult(start: 10, end: 100, entityType: "PERSON");
         }
 
         public void Dispose()
@@ -52,8 +50,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnonymizerResultInstanceTest()
         {
-            // TODO uncomment below to test "IsType" AnonymizerResult
-            //Assert.IsType<AnonymizerResult>(instance);
+            Assert.IsType<AnonymizerResult>(instance);
         }
 
 
@@ -63,7 +60,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void StartTest()
         {
-            // TODO unit test for the property 'Start'
+            Assert.Equal(instance.Start, 10);
         }
         /// <summary>
         /// Test the property 'End'
@@ -71,7 +68,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void EndTest()
         {
-            // TODO unit test for the property 'End'
+            Assert.Equal(instance.End, 100);
         }
         /// <summary>
         /// Test the property 'EntityType'
@@ -79,7 +76,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void EntityTypeTest()
         {
-            // TODO unit test for the property 'EntityType'
+            Assert.Equal(instance.EntityType, "PERSON");
         }
 
     }

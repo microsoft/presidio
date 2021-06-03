@@ -32,13 +32,17 @@ namespace Presidio.Test.Model
     /// </remarks>
     public class DeanonymizeRequestTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for DeanonymizeRequest
-        //private DeanonymizeRequest instance;
+        private DeanonymizeRequest instance;
+        private Dictionary<string, Deanonymizer> deanonymizers;
+        private List<AnonymizerResult> results;
 
         public DeanonymizeRequestTests()
         {
-            // TODO uncomment below to create an instance of DeanonymizeRequest
-            //instance = new DeanonymizeRequest();
+            var decrypt = new Decrypt("decrypt", "3t6w9z$C&F)J@NcR");
+            deanonymizers = new Dictionary<string, Deanonymizer>() {{"PERSON", new Deanonymizer(decrypt)}};
+            var anonymizerResult = new AnonymizerResult(start: 11, end: 55, entityType: "PERSON");
+            results = new List<AnonymizerResult>() {anonymizerResult};
+            instance = new DeanonymizeRequest(text: "hello world", deanonymizers: deanonymizers, anonymizerResults: results);
         }
 
         public void Dispose()
@@ -52,8 +56,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void DeanonymizeRequestInstanceTest()
         {
-            // TODO uncomment below to test "IsType" DeanonymizeRequest
-            //Assert.IsType<DeanonymizeRequest>(instance);
+            Assert.IsType<DeanonymizeRequest>(instance);
         }
 
 
@@ -63,7 +66,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-            // TODO unit test for the property 'Text'
+            Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Deanonymizers'
@@ -71,7 +74,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void DeanonymizersTest()
         {
-            // TODO unit test for the property 'Deanonymizers'
+            Assert.Equal(instance.Deanonymizers, deanonymizers);
         }
         /// <summary>
         /// Test the property 'AnonymizerResults'
@@ -79,7 +82,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnonymizerResultsTest()
         {
-            // TODO unit test for the property 'AnonymizerResults'
+            Assert.Equal(instance.AnonymizerResults, results);
         }
 
     }

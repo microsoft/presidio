@@ -19,8 +19,7 @@ using Xunit;
 
 using Presidio.Client;
 using Presidio.Api;
-// uncomment below to import models
-//using Presidio.Model;
+using Presidio.Model;
 
 namespace Presidio.Test.Api
 {
@@ -37,7 +36,7 @@ namespace Presidio.Test.Api
 
         public AnalyzerApiTests()
         {
-            instance = new AnalyzerApi();
+            instance = new AnalyzerApi("http://127.0.0.1:3000/");
         }
 
         public void Dispose()
@@ -51,20 +50,21 @@ namespace Presidio.Test.Api
         [Fact]
         public void InstanceTest()
         {
-            // TODO uncomment below to test 'IsType' AnalyzerApi
-            //Assert.IsType<AnalyzerApi>(instance);
+            Assert.IsType<AnalyzerApi>(instance);
         }
 
         /// <summary>
         /// Test AnalyzePost
         /// </summary>
         [Fact]
-        public void AnalyzePostTest()
+         public void AnalyzePostTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //AnalyzeRequest analyzeRequest = null;
-            //var response = instance.AnalyzePost(analyzeRequest);
-            //Assert.IsType<List<RecognizerResultWithAnalysis>>(response);
+            AnalyzeRequest body =
+                new AnalyzeRequest(text: "My name is Inigo Montoya, you killed my father, prepare to die.",
+                    language: "en");
+            var response = instance.AnalyzePost(body);
+            Assert.Equal(response.Count, 1);
+            Assert.IsType<List<RecognizerResultWithAnalysis>>(response);
         }
 
         /// <summary>
@@ -73,9 +73,8 @@ namespace Presidio.Test.Api
         [Fact]
         public void HealthGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //var response = instance.HealthGet();
-            //Assert.IsType<string>(response);
+            var response = instance.HealthGet();
+            Assert.IsType<string>(response);
         }
 
         /// <summary>
@@ -84,11 +83,11 @@ namespace Presidio.Test.Api
         [Fact]
         public void RecognizersGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //string language = null;
-            //var response = instance.RecognizersGet(language);
-            //Assert.IsType<List<string>>(response);
+            string language = "en";
+            var response = instance.RecognizersGet(language);
+            Assert.IsType<List<string>>(response);
         }
+
 
         /// <summary>
         /// Test SupportedentitiesGet
@@ -96,10 +95,9 @@ namespace Presidio.Test.Api
         [Fact]
         public void SupportedentitiesGetTest()
         {
-            // TODO uncomment below to test the method and replace null with proper value
-            //string language = null;
-            //var response = instance.SupportedentitiesGet(language);
-            //Assert.IsType<List<string>>(response);
+            string language = null;
+            var response = instance.SupportedentitiesGet(language);
+            Assert.IsType<List<string>>(response);
         }
     }
 }

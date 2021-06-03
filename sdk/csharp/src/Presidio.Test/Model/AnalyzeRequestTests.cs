@@ -32,13 +32,13 @@ namespace Presidio.Test.Model
     /// </remarks>
     public class AnalyzeRequestTests : IDisposable
     {
-        // TODO uncomment below to declare an instance variable for AnalyzeRequest
-        //private AnalyzeRequest instance;
+
+        private AnalyzeRequest instance;
 
         public AnalyzeRequestTests()
         {
-            // TODO uncomment below to create an instance of AnalyzeRequest
-            //instance = new AnalyzeRequest();
+            var entities = new List<string>() { "test" };
+            instance = new AnalyzeRequest(text:"hello world", language:"en", correlationId:"1234", scoreThreshold:0.4, entities: entities, returnDecisionProcess: false);
         }
 
         public void Dispose()
@@ -52,8 +52,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void AnalyzeRequestInstanceTest()
         {
-            // TODO uncomment below to test "IsType" AnalyzeRequest
-            //Assert.IsType<AnalyzeRequest>(instance);
+            Assert.IsType<AnalyzeRequest>(instance);
         }
 
 
@@ -63,7 +62,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void TextTest()
         {
-            // TODO unit test for the property 'Text'
+            Assert.Equal(instance.Text, "hello world");
         }
         /// <summary>
         /// Test the property 'Language'
@@ -71,7 +70,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void LanguageTest()
         {
-            // TODO unit test for the property 'Language'
+            Assert.Equal(instance.Language, "en");
         }
         /// <summary>
         /// Test the property 'CorrelationId'
@@ -79,7 +78,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void CorrelationIdTest()
         {
-            // TODO unit test for the property 'CorrelationId'
+            Assert.Equal(instance.CorrelationId, "1234");
         }
         /// <summary>
         /// Test the property 'ScoreThreshold'
@@ -87,7 +86,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void ScoreThresholdTest()
         {
-            // TODO unit test for the property 'ScoreThreshold'
+            Assert.Equal(instance.ScoreThreshold, 0.4);
         }
         /// <summary>
         /// Test the property 'Entities'
@@ -95,7 +94,7 @@ namespace Presidio.Test.Model
         [Fact]
         public void EntitiesTest()
         {
-            // TODO unit test for the property 'Entities'
+            Assert.Equal(instance.Entities.Count, 1);
         }
         /// <summary>
         /// Test the property 'ReturnDecisionProcess'
@@ -103,16 +102,9 @@ namespace Presidio.Test.Model
         [Fact]
         public void ReturnDecisionProcessTest()
         {
-            // TODO unit test for the property 'ReturnDecisionProcess'
+            Assert.False(instance.ReturnDecisionProcess);
         }
-        /// <summary>
-        /// Test the property 'AdHocRecognizers'
-        /// </summary>
-        [Fact]
-        public void AdHocRecognizersTest()
-        {
-            // TODO unit test for the property 'AdHocRecognizers'
-        }
+
 
     }
 
