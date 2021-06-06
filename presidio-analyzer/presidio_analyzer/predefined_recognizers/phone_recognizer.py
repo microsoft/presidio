@@ -1,79 +1,99 @@
-from typing import Optional, List
+from typing import List
 
 import phonenumbers
 from phonenumbers import COUNTRY_CODE_TO_REGION_CODE
 from phonenumbers.geocoder import country_name_for_number
 
-from presidio_analyzer import Pattern, PatternRecognizer, RecognizerResult, LocalRecognizer
+from presidio_analyzer import RecognizerResult, LocalRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
-# from phonenumberutil import COUNTRY_CODE_TO_REGION_CODE, SUPPORTED_REGIONS
 
 
 ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
+INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
 
 
 class PhoneRecognizer(LocalRecognizer):
-    """
-    Recognize date using regex.
+    """Recognize multi-regional phone numbers.
 
-    :param patterns: List of patterns to be used by this recognizer
-    :param context: List of context words to increase confidence in detection
+     Using python-phonenumbers, along with fixed and regional context words.
     :param supported_language: Language this recognizer supports
-    :param supported_entity: The entity this recognizer can detect
+    :param supported_entities: The entities this recognizer can detect
     """
 
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
 
     def __init__(
-            self,
-            supported_language: str = "en",
-            supported_entities: List[str] = None,
+        self,
+        supported_language: str = "en",
+        supported_entities: List[str] = None,
     ):
-        supported_entities = self.get_supported_entities() if not supported_entities else supported_entities
+        supported_entities = (
+            self.get_supported_entities()
+            if not supported_entities
+            else supported_entities
+        )
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
         )
 
-    def load(self) -> None:
+    def load(self) -> None:  # noqa D102
         pass
 
-    def get_supported_entities(self):
-        return [value[0] + ENTITY_TYPE_SUFFIX for value in COUNTRY_CODE_TO_REGION_CODE.values()]
+    def get_supported_entities(self):  # noqa D102
+        return [
+            value[0] + ENTITY_TYPE_SUFFIX
+            for value in COUNTRY_CODE_TO_REGION_CODE.values()
+        ] + [INTERNATIONAL_ENTITY_TYPE]
 
     def analyze(
-            self,
-            text: str,
-            entities: List[str],
-            nlp_artifacts: NlpArtifacts = None,
-            regex_flags: int = None,
+        self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts = None
     ) -> List[RecognizerResult]:
-        """
-        Analyzes text to detect PII using regular expressions or deny-lists.
+        """Analyzes text to detect phone numbers using python-phonenumbers.
 
+        Iterates over entities, fetching regions, then matching regional
+        phone numbers patterns against the text.
         :param text: Text to be analyzed
         :param entities: Entities this recognizer can detect
-        :param nlp_artifacts: Output values from the NLP engine
-        :param regex_flags:
-        :return:
+        :param nlp_artifacts: Nullified for this recognizer
+        :return: List of phone numbers RecognizerResults
         """
         results = []
         for entity in entities:
             region = entity.replace(ENTITY_TYPE_SUFFIX, "")
             for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
-                number = match.number
-                possible_regions = COUNTRY_CODE_TO_REGION_CODE.get(number.country_code)
-                main_region = possible_regions[0]
-                international = match.raw_string.startswith("+")
-                if (international and entity == "INTERNATIONAL_PHONE_NUMBER") or not international:
-                    effective_entity_type = entity if entity == "INTERNATIONAL_PHONE_NUMBER" \
-                        else main_region + ENTITY_TYPE_SUFFIX
-                    result = RecognizerResult(entity_type=effective_entity_type,
-                                                 start=match.start,
-                                                 end=match.end,
-                                                 score=0.6)
-                    region_specific_context = self.CONTEXT + [country_name_for_number(number, self.supported_language)]
-                    results += [self.enhance_using_context(text, result, nlp_artifacts, region_specific_context)]
+                international_phone_prefix = match.raw_string.startswith("+")
+                if entity == INTERNATIONAL_ENTITY_TYPE and international_phone_prefix:
+                    results += [self._get_international_recognizer_result(match)]
+                # phone-numbers matches international numbers twice
+                elif not international_phone_prefix:
+                    results += [
+                        self._get_regional_recognizer_result(match, entity, text)
+                    ]
 
         return results
 
+    def _get_regional_recognizer_result(self, match, entity, text):
+        number = match.number
+        main_region_code = COUNTRY_CODE_TO_REGION_CODE.get(number.country_code)[0]
+        result = RecognizerResult(
+            entity_type=entity, start=match.start, end=match.end, score=0.6
+        )
+        # Enhance confidence using 'phone' related context and region code and name.
+        region_specific_context = (
+            self.CONTEXT
+            + [main_region_code]
+            + [country_name_for_number(number, self.supported_language)]
+        )
+        return self.enhance_using_context(
+            text, [result], None, region_specific_context
+        )[0]
+
+    @staticmethod
+    def _get_international_recognizer_result(match):
+        return RecognizerResult(
+            entity_type=INTERNATIONAL_ENTITY_TYPE,
+            start=match.start,
+            end=match.end,
+            score=0.6,
+        )
