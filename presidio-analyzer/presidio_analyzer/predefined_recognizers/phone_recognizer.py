@@ -4,10 +4,11 @@ import phonenumbers
 from phonenumbers import COUNTRY_CODE_TO_REGION_CODE
 from phonenumbers.geocoder import country_name_for_number
 
-from presidio_analyzer import RecognizerResult, LocalRecognizer
+from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 
+SCORE = 0.6
 ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
 INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
 
@@ -55,7 +56,7 @@ class PhoneRecognizer(LocalRecognizer):
         phone numbers patterns against the text.
         :param text: Text to be analyzed
         :param entities: Entities this recognizer can detect
-        :param nlp_artifacts: Nullified for this recognizer
+        :param nlp_artifacts: Additional metadata from the NLP engine
         :return: List of phone numbers RecognizerResults
         """
         results = []
@@ -68,16 +69,22 @@ class PhoneRecognizer(LocalRecognizer):
                 # phone-numbers matches international numbers twice
                 elif not international_phone_prefix:
                     results += [
-                        self._get_regional_recognizer_result(match, entity, text)
+                        self._get_regional_recognizer_result(
+                            match, entity, text, nlp_artifacts
+                        )
                     ]
 
         return results
 
-    def _get_regional_recognizer_result(self, match, entity, text):
+    def _get_regional_recognizer_result(self, match, entity, text, nlp_artifacts):
         number = match.number
         main_region_code = COUNTRY_CODE_TO_REGION_CODE.get(number.country_code)[0]
         result = RecognizerResult(
-            entity_type=entity, start=match.start, end=match.end, score=0.6
+            entity_type=entity,
+            start=match.start,
+            end=match.end,
+            score=SCORE,
+            analysis_explanation=PhoneRecognizer._get_analysis_explanation(),
         )
         # Enhance confidence using 'phone' related context and region code and name.
         region_specific_context = (
@@ -86,7 +93,7 @@ class PhoneRecognizer(LocalRecognizer):
             + [country_name_for_number(number, self.supported_language)]
         )
         return self.enhance_using_context(
-            text, [result], None, region_specific_context
+            text, [result], nlp_artifacts, region_specific_context
         )[0]
 
     @staticmethod
@@ -96,4 +103,13 @@ class PhoneRecognizer(LocalRecognizer):
             start=match.start,
             end=match.end,
             score=0.6,
+            analysis_explanation=PhoneRecognizer._get_analysis_explanation(),
+        )
+
+    @staticmethod
+    def _get_analysis_explanation():
+        return AnalysisExplanation(
+            recognizer=PhoneRecognizer.__class__.__name__,
+            original_score=SCORE,
+            textual_explanation="Recognized using PhoneRecognizer",
         )
