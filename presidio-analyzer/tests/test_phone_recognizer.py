@@ -9,7 +9,6 @@ def recognizer():
     return PhoneRecognizer()
 
 
-# Generate random address https://www.bitaddress.org/
 @pytest.mark.parametrize(
     "text, expected_len, entities, expected_positions, max_score",
     [
@@ -20,8 +19,8 @@ def recognizer():
         ("My Israeli number is 09-7625400", 0,
          ["INTERNATIONAL_PHONE_NUMBER", "US_PHONE_NUMBER"], ((60, 75), (16, 30),), 0.6),
         ("My Israeli number is 09-7625400", 1, ["IL_PHONE_NUMBER"], ((21, 31), ), 0.6),
-        ("My Israeli number is 09-7625400", 125,
-         PhoneRecognizer().get_supported_entities(), (125 * ()), 0.6),
+        ("My Israeli number is 09-7625400", 2,
+         PhoneRecognizer().get_supported_entities(), (2 * ()), 0.6),
         # fmt: on
     ],
 )

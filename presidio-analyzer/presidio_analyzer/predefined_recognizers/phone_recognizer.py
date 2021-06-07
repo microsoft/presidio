@@ -22,19 +22,18 @@ class PhoneRecognizer(LocalRecognizer):
     """
 
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
+    DEFAULT_SUPPORTED_COUNTRY_CODES = ("US", "UK", "DE", "FE", "IL")
 
     def __init__(
         self,
         supported_language: str = "en",
-        supported_entities: List[str] = None,
+        supported_entities: List[str] = [
+            code + ENTITY_TYPE_SUFFIX for code in DEFAULT_SUPPORTED_COUNTRY_CODES
+        ],
     ):
-        supported_entities = (
-            self.get_supported_entities()
-            if not supported_entities
-            else supported_entities
-        )
+        self.supported_entities = supported_entities
         super().__init__(
-            supported_entities=supported_entities,
+            supported_entities=self.get_supported_entities(),
             supported_language=supported_language,
         )
 
@@ -42,10 +41,15 @@ class PhoneRecognizer(LocalRecognizer):
         pass
 
     def get_supported_entities(self):  # noqa D102
-        return [
-            value[0] + ENTITY_TYPE_SUFFIX
-            for value in COUNTRY_CODE_TO_REGION_CODE.values()
-        ] + [INTERNATIONAL_ENTITY_TYPE]
+        return (
+            self.supported_entities
+            if self.supported_entities
+            else [
+                value[0] + ENTITY_TYPE_SUFFIX
+                for value in COUNTRY_CODE_TO_REGION_CODE.values()
+            ]
+            + [INTERNATIONAL_ENTITY_TYPE]
+        )
 
     def analyze(
         self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts = None
