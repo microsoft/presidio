@@ -29,7 +29,8 @@ class PhoneRecognizer(LocalRecognizer):
         supported_language: str = "en",
         supported_entities: List[str] = [
             code + ENTITY_TYPE_SUFFIX for code in DEFAULT_SUPPORTED_COUNTRY_CODES
-        ],
+        ]
+        + [INTERNATIONAL_ENTITY_TYPE],
     ):
         self.supported_entities = supported_entities
         super().__init__(
@@ -48,7 +49,6 @@ class PhoneRecognizer(LocalRecognizer):
                 value[0] + ENTITY_TYPE_SUFFIX
                 for value in COUNTRY_CODE_TO_REGION_CODE.values()
             ]
-            + [INTERNATIONAL_ENTITY_TYPE]
         )
 
     def analyze(
