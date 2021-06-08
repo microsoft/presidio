@@ -10,6 +10,7 @@ pytesseract = "==0.3.7"
 presidio-analyzer = ">=1.9.0"
 pillow = "==8.1.1"
 matplotlib = "==3.3.4"
+pydantic = "1.7.4"
 
 [dev-packages]
 pytest = "*"

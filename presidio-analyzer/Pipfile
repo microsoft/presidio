@@ -10,6 +10,7 @@ tldextract = "*"
 numpy = "==1.19.3"
 flask = "==1.1.2"
 pyyaml = "*"
+pydantic = "1.7.4"
 
 [dev-packages]
 pytest = "*"
