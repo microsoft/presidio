@@ -9,8 +9,20 @@ All notable changes to this project will be documented in this file.
 
 ### Deprecated
 
+## [2.2.2] - 09.06.2021
+### Changed
+#### Analyzer:
+* Databricks based template in Azure Data Factory docs
+* Adding ORGANIZATION recognizer docs
+* Bumped pydantic from 1.7.3 to 1.7.4
+* Updated call to stanza via spacy-stanza
+* Added DATE_TIME recognizer
+* Added Medical Licence recognizer
+* Bumped spacy from 3.0.5 to 3.0.6
+
 ## [2.2.1] - 10.05.2021
 ### Changed
+#### Analyzer:
 * Create CODE_OF_CONDUCT
 * ADF templates docs
 * Fix spark sample to run presidio in broadcast
@@ -23,9 +35,6 @@ All notable changes to this project will be documented in this file.
 * Added custom lambda anonymizer
 * Added add pii_verify_engine to the image-redactor
 
-
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.1...HEAD
-[2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
 
 ## [2.2.0] - 12.04.2021
 ### Changed
@@ -48,5 +57,6 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.0...HEAD
-[2.2.0]: https://github.com/microsoft/presidio/compare/2.1.0...2.2.0
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.2...HEAD
+[2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
+[2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
