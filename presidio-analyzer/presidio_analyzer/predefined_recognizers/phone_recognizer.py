@@ -67,7 +67,7 @@ class PhoneRecognizer(LocalRecognizer):
         results = []
         for entity in entities:
             region = entity.replace(ENTITY_TYPE_SUFFIX, "")
-            if region in SUPPORTED_REGIONS:
+            if region in SUPPORTED_REGIONS or entity is INTERNATIONAL_ENTITY_TYPE:
                 for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
                     international_phone_prefix = match.raw_string.startswith("+")
                     if entity == INTERNATIONAL_ENTITY_TYPE \
