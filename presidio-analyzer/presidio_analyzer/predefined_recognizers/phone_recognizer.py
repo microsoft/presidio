@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 import phonenumbers
-from phonenumbers import COUNTRY_CODE_TO_REGION_CODE
+from phonenumbers import COUNTRY_CODE_TO_REGION_CODE, SUPPORTED_REGIONS
 from phonenumbers.geocoder import country_name_for_number
 
 from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
@@ -67,18 +67,19 @@ class PhoneRecognizer(LocalRecognizer):
         results = []
         for entity in entities:
             region = entity.replace(ENTITY_TYPE_SUFFIX, "")
-            for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
-                international_phone_prefix = match.raw_string.startswith("+")
-                if entity == INTERNATIONAL_ENTITY_TYPE \
-                        and international_phone_prefix:
-                    results += [self._get_international_recognizer_result(match)]
-                # phone-numbers matches international numbers twice
-                elif not international_phone_prefix:
-                    results += [
-                        self._get_regional_recognizer_result(
-                            match, entity, text, nlp_artifacts
-                        )
-                    ]
+            if region in SUPPORTED_REGIONS:
+                for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
+                    international_phone_prefix = match.raw_string.startswith("+")
+                    if entity == INTERNATIONAL_ENTITY_TYPE \
+                            and international_phone_prefix:
+                        results += [self._get_international_recognizer_result(match)]
+                    # phone-numbers matches international numbers twice
+                    elif not international_phone_prefix:
+                        results += [
+                            self._get_regional_recognizer_result(
+                                match, entity, text, nlp_artifacts
+                            )
+                        ]
 
         return results
 
