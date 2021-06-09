@@ -29,11 +29,12 @@ class PhoneRecognizer(LocalRecognizer):
         supported_language: str = "en",
         supported_entities: List[str] = [
             code + ENTITY_TYPE_SUFFIX for code in DEFAULT_SUPPORTED_COUNTRY_CODES
-        ]
-        + [INTERNATIONAL_ENTITY_TYPE],
+        ],
+        support_international=True
     ):
         self.context = context
-        self.supported_entities = supported_entities
+        self.supported_entities = supported_entities + [INTERNATIONAL_ENTITY_TYPE]\
+            if support_international else supported_entities
         super().__init__(
             supported_entities=self.get_supported_entities(),
             supported_language=supported_language,
