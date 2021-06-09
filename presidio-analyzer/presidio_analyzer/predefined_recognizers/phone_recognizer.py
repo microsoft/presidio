@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import phonenumbers
 from phonenumbers import COUNTRY_CODE_TO_REGION_CODE
@@ -6,11 +6,6 @@ from phonenumbers.geocoder import country_name_for_number
 
 from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 from presidio_analyzer.nlp_engine import NlpArtifacts
-
-
-SCORE = 0.6
-ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
-INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
 
 
 class PhoneRecognizer(LocalRecognizer):
@@ -21,17 +16,22 @@ class PhoneRecognizer(LocalRecognizer):
     :param supported_entities: The entities this recognizer can detect
     """
 
+    SCORE = 0.6
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
     DEFAULT_SUPPORTED_COUNTRY_CODES = ("US", "UK", "DE", "FE", "IL")
+    ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
+    INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
 
     def __init__(
         self,
+        context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
         supported_entities: List[str] = [
             code + ENTITY_TYPE_SUFFIX for code in DEFAULT_SUPPORTED_COUNTRY_CODES
         ]
         + [INTERNATIONAL_ENTITY_TYPE],
     ):
+        self.context = context
         self.supported_entities = supported_entities
         super().__init__(
             supported_entities=self.get_supported_entities(),
@@ -46,7 +46,7 @@ class PhoneRecognizer(LocalRecognizer):
             self.supported_entities
             if self.supported_entities
             else [
-                value[0] + ENTITY_TYPE_SUFFIX
+                value[0] + self.ENTITY_TYPE_SUFFIX
                 for value in COUNTRY_CODE_TO_REGION_CODE.values()
             ]
         )
@@ -65,10 +65,10 @@ class PhoneRecognizer(LocalRecognizer):
         """
         results = []
         for entity in entities:
-            region = entity.replace(ENTITY_TYPE_SUFFIX, "")
+            region = entity.replace(self.ENTITY_TYPE_SUFFIX, "")
             for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
                 international_phone_prefix = match.raw_string.startswith("+")
-                if entity == INTERNATIONAL_ENTITY_TYPE and international_phone_prefix:
+                if entity == self.INTERNATIONAL_ENTITY_TYPE and international_phone_prefix:
                     results += [self._get_international_recognizer_result(match)]
                 # phone-numbers matches international numbers twice
                 elif not international_phone_prefix:
@@ -87,12 +87,12 @@ class PhoneRecognizer(LocalRecognizer):
             entity_type=entity,
             start=match.start,
             end=match.end,
-            score=SCORE,
-            analysis_explanation=PhoneRecognizer._get_analysis_explanation(),
+            score=self.SCORE,
+            analysis_explanation=self._get_analysis_explanation(),
         )
         # Enhance confidence using 'phone' related context and region code and name.
         region_specific_context = (
-            self.CONTEXT
+            self.context
             + [main_region_code]
             + [country_name_for_number(number, self.supported_language)]
         )
@@ -100,20 +100,18 @@ class PhoneRecognizer(LocalRecognizer):
             text, [result], nlp_artifacts, region_specific_context
         )[0]
 
-    @staticmethod
-    def _get_international_recognizer_result(match):
+    def _get_international_recognizer_result(self, match):
         return RecognizerResult(
-            entity_type=INTERNATIONAL_ENTITY_TYPE,
+            entity_type=self.INTERNATIONAL_ENTITY_TYPE,
             start=match.start,
             end=match.end,
             score=0.6,
-            analysis_explanation=PhoneRecognizer._get_analysis_explanation(),
+            analysis_explanation=self._get_analysis_explanation(),
         )
 
-    @staticmethod
-    def _get_analysis_explanation():
+    def _get_analysis_explanation(self):
         return AnalysisExplanation(
             recognizer=PhoneRecognizer.__class__.__name__,
-            original_score=SCORE,
+            original_score=self.SCORE,
             textual_explanation="Recognized using PhoneRecognizer",
         )
