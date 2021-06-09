@@ -7,6 +7,8 @@ from phonenumbers.geocoder import country_name_for_number
 from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
+ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
+INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
 
 class PhoneRecognizer(LocalRecognizer):
     """Recognize multi-regional phone numbers.
@@ -19,8 +21,6 @@ class PhoneRecognizer(LocalRecognizer):
     SCORE = 0.6
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
     DEFAULT_SUPPORTED_COUNTRY_CODES = ("US", "UK", "DE", "FE", "IL")
-    ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
-    INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
 
     def __init__(
         self,
@@ -46,7 +46,7 @@ class PhoneRecognizer(LocalRecognizer):
             self.supported_entities
             if self.supported_entities
             else [
-                value[0] + self.ENTITY_TYPE_SUFFIX
+                value[0] + ENTITY_TYPE_SUFFIX
                 for value in COUNTRY_CODE_TO_REGION_CODE.values()
             ]
         )
@@ -65,10 +65,10 @@ class PhoneRecognizer(LocalRecognizer):
         """
         results = []
         for entity in entities:
-            region = entity.replace(self.ENTITY_TYPE_SUFFIX, "")
+            region = entity.replace(ENTITY_TYPE_SUFFIX, "")
             for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
                 international_phone_prefix = match.raw_string.startswith("+")
-                if entity == self.INTERNATIONAL_ENTITY_TYPE \
+                if entity == INTERNATIONAL_ENTITY_TYPE \
                         and international_phone_prefix:
                     results += [self._get_international_recognizer_result(match)]
                 # phone-numbers matches international numbers twice
@@ -103,7 +103,7 @@ class PhoneRecognizer(LocalRecognizer):
 
     def _get_international_recognizer_result(self, match):
         return RecognizerResult(
-            entity_type=self.INTERNATIONAL_ENTITY_TYPE,
+            entity_type=INTERNATIONAL_ENTITY_TYPE,
             start=match.start,
             end=match.end,
             score=0.6,
