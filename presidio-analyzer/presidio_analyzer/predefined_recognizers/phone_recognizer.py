@@ -68,7 +68,8 @@ class PhoneRecognizer(LocalRecognizer):
             region = entity.replace(self.ENTITY_TYPE_SUFFIX, "")
             for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
                 international_phone_prefix = match.raw_string.startswith("+")
-                if entity == self.INTERNATIONAL_ENTITY_TYPE and international_phone_prefix:
+                if entity == self.INTERNATIONAL_ENTITY_TYPE \
+                        and international_phone_prefix:
                     results += [self._get_international_recognizer_result(match)]
                 # phone-numbers matches international numbers twice
                 elif not international_phone_prefix:
