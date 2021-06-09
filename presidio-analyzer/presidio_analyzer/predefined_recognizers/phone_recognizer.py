@@ -10,6 +10,7 @@ from presidio_analyzer.nlp_engine import NlpArtifacts
 ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
 INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
 
+
 class PhoneRecognizer(LocalRecognizer):
     """Recognize multi-regional phone numbers.
 
