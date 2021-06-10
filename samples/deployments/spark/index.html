@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/samples/deployments/spark/">
       
       <link rel="icon" href="../../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
     
     
       
@@ -24,10 +24,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.bde7dde4.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ca7ac06f.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ef6f36e2.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.f1a3b89f.min.css">
         
           
           
@@ -769,6 +769,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#the-basics-of-working-with-presidio-in-spark" class="md-nav__link">
+    The basics of working with Presidio in Spark
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pre-requisites" class="md-nav__link">
     Pre-requisites
   </a>
@@ -777,16 +784,64 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#azure-storage" class="md-nav__link">
-    Azure Storage
+  <a href="#deploy-infrastructure" class="md-nav__link">
+    Deploy Infrastructure
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#azure-databricks" class="md-nav__link">
-    Azure Databricks
+  <a href="#setup-databricks" class="md-nav__link">
+    Setup Databricks
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-an-existing-cluster" class="md-nav__link">
+    Configure an existing cluster
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure an existing cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-up-secret-scope-and-secrets-for-storage-account" class="md-nav__link">
+    Set up secret scope and secrets for storage account
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upload-or-update-cluster-init-scripts" class="md-nav__link">
+    Upload or update cluster init scripts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upload-presidio-notebooks" class="md-nav__link">
+    Upload presidio notebooks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-cluster-environment" class="md-nav__link">
+    Update cluster environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mount-the-storage-container" class="md-nav__link">
+    Mount the storage container
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -804,15 +859,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#import-notebook-to-databricks" class="md-nav__link">
-    Import notebook to databricks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configure-the-notebook" class="md-nav__link">
-    Configure the notebook
+  <a href="#configure-presidio-transformation-notebook" class="md-nav__link">
+    Configure Presidio transformation notebook
   </a>
   
 </li>
@@ -1055,6 +1103,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#the-basics-of-working-with-presidio-in-spark" class="md-nav__link">
+    The basics of working with Presidio in Spark
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pre-requisites" class="md-nav__link">
     Pre-requisites
   </a>
@@ -1063,16 +1118,64 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#azure-storage" class="md-nav__link">
-    Azure Storage
+  <a href="#deploy-infrastructure" class="md-nav__link">
+    Deploy Infrastructure
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#azure-databricks" class="md-nav__link">
-    Azure Databricks
+  <a href="#setup-databricks" class="md-nav__link">
+    Setup Databricks
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-an-existing-cluster" class="md-nav__link">
+    Configure an existing cluster
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure an existing cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-up-secret-scope-and-secrets-for-storage-account" class="md-nav__link">
+    Set up secret scope and secrets for storage account
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upload-or-update-cluster-init-scripts" class="md-nav__link">
+    Upload or update cluster init scripts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upload-presidio-notebooks" class="md-nav__link">
+    Upload presidio notebooks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-cluster-environment" class="md-nav__link">
+    Update cluster environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mount-the-storage-container" class="md-nav__link">
+    Mount the storage container
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1090,15 +1193,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#import-notebook-to-databricks" class="md-nav__link">
-    Import notebook to databricks
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configure-the-notebook" class="md-nav__link">
-    Configure the notebook
+  <a href="#configure-presidio-transformation-notebook" class="md-nav__link">
+    Configure Presidio transformation notebook
   </a>
   
 </li>
@@ -1129,122 +1225,110 @@
                 
                 
                 <h1 id="anonymize-pii-using-presidio-on-spark">Anonymize PII using Presidio on Spark</h1>
-<p>You can leverages presidio to perform data anonymization as part of spark notebooks.
-The following sample uses <a href="https://docs.microsoft.com/en-us/azure/databricks/">Azure Databricks</a> and simple text files hosted on <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/">Azure Blob Storage</a>. However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.</p>
+<p>You can leverages presidio to perform data anonymization as part of spark notebooks.</p>
+<p>The following sample uses <a href="https://docs.microsoft.com/en-us/azure/databricks/">Azure Databricks</a> and simple text files hosted on <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/">Azure Blob Storage</a>. However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.</p>
 <p><strong>Note</strong> that this code works for Databricks runtime 8.1 (spark 3.1.1) and the libraries described <a href="https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/8.1">here</a>.</p>
+<h2 id="the-basics-of-working-with-presidio-in-spark">The basics of working with Presidio in Spark</h2>
+<p>A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of <a href="notebooks/01_transform_presidio/">transform presidio notebook</a>, is the basis of the e2e sample which uses Azure Databricks as the Spark environment.</p>
+<div class="highlight"><pre><span></span><code><span class="n">anonymized_column</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span> <span class="c1"># name of column to anonymize</span>
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
+<span class="n">anonymizer</span> <span class="o">=</span> <span class="n">AnonymizerEngine</span><span class="p">()</span>
+
+<span class="c1"># broadcast the engines to the cluster nodes</span>
+<span class="n">broadcasted_analyzer</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">analyzer</span><span class="p">)</span>
+<span class="n">broadcasted_anonymizer</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">anonymizer</span><span class="p">)</span>
+
+<span class="c1"># define a pandas UDF function and a series function over it.</span>
+<span class="k">def</span> <span class="nf">anonymize_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">analyzer</span> <span class="o">=</span> <span class="n">broadcasted_analyzer</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">anonymizer</span> <span class="o">=</span> <span class="n">broadcasted_anonymizer</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+    <span class="n">anonymized_results</span> <span class="o">=</span> <span class="n">anonymizer</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+        <span class="n">analyzer_results</span><span class="o">=</span><span class="n">analyzer_results</span><span class="p">,</span>
+        <span class="n">operators</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;new_value&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ANONYMIZED&gt;&quot;</span><span class="p">})</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">anonymized_results</span><span class="o">.</span><span class="n">text</span>
+
+
+<span class="k">def</span> <span class="nf">anonymize_series</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">anonymize_text</span><span class="p">)</span>
+
+
+<span class="c1"># define a the function as pandas UDF</span>
+<span class="n">anonymize</span> <span class="o">=</span> <span class="n">pandas_udf</span><span class="p">(</span><span class="n">anonymize_series</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="n">StringType</span><span class="p">())</span>
+
+<span class="c1"># apply the udf</span>
+<span class="n">anonymized_df</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+    <span class="n">anonymized_column</span><span class="p">,</span> <span class="n">anonymize</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="n">anonymized_column</span><span class="p">))</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="pre-requisites">Pre-requisites</h2>
-<p>Provision and setup the required infrastrucutre</p>
-<h3 id="azure-storage">Azure Storage</h3>
-<p>Provision an Azure storage account using the following script.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>resource group name<span class="o">]</span>
-<span class="nv">STORAGE_ACCOUNT_NAME</span><span class="o">=[</span>storage account name<span class="o">]</span>
-<span class="nv">STORAGE_CONTAINER_NAME</span><span class="o">=[</span>blob container name<span class="o">]</span>
-<span class="nv">DATABRICKS_WORKSPACE_NAME</span><span class="o">=[</span>databricks workspace name<span class="o">]</span>
-<span class="nv">DATABRICKS_SKU</span><span class="o">=[</span>basic/standard/premium<span class="o">]</span>
-<span class="nv">LOCATION</span><span class="o">=[</span>location<span class="o">]</span>
+<p>If you do not have an instance of Azure Databricks, follow through with the following steps to provision and setup the required infrastrucutre.</p>
+<p>If you do have a Databricks workspace and a cluster you wish to configure to run Presidio, jump over to the <a href="#Configure-an-existing-cluster">Configure an existing cluster</a> section.</p>
+<h3 id="deploy-infrastructure">Deploy Infrastructure</h3>
+<p>Provision the Azure resources by running the following script.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>resource group name<span class="o">]</span>
+<span class="nb">export</span> <span class="nv">STORAGE_ACCOUNT_NAME</span><span class="o">=[</span>storage account name<span class="o">]</span>
+<span class="nb">export</span> <span class="nv">STORAGE_CONTAINER_NAME</span><span class="o">=[</span>blob container name<span class="o">]</span>
+<span class="nb">export</span> <span class="nv">DATABRICKS_WORKSPACE_NAME</span><span class="o">=[</span>databricks workspace name<span class="o">]</span>
+<span class="nb">export</span> <span class="nv">DATABRICKS_SKU</span><span class="o">=[</span>basic/standard/premium<span class="o">]</span>
+<span class="nb">export</span> <span class="nv">LOCATION</span><span class="o">=[</span>location<span class="o">]</span>
 
-<span class="c1"># Create the storage account</span>
+<span class="c1"># Create the resource group</span>
 az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
-az storage account create --name <span class="nv">$STORAGE_ACCOUNT_NAME</span> --resource-group <span class="nv">$RESOURCE_GROUP</span>
 
-<span class="c1"># Get the storage account access key</span>
-<span class="nv">STORAGE_ACCESS_KEY</span><span class="o">=</span><span class="k">$(</span>az storage account keys list --account-name <span class="nv">$STORAGE_ACCOUNT_NAME</span> --resource-group <span class="nv">$RESOURCE_GROUP</span> --query <span class="s1">&#39;[0].value&#39;</span> -o tsv<span class="k">)</span>
+<span class="c1"># Use ARM template to build the resources and get back the workspace URL</span>
+<span class="nv">deployment_response</span><span class="o">=</span><span class="k">$(</span>az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./docs/samples/deployments/spark/arm-template/databricks.json  --parameters <span class="nv">location</span><span class="o">=</span><span class="nv">$LOCATION</span> <span class="nv">workspaceName</span><span class="o">=</span><span class="nv">$DATABRICKS_WORKSPACE_NAME</span> <span class="nv">storageAccountName</span><span class="o">=</span><span class="nv">$STORAGE_ACCOUNT_NAME</span> <span class="nv">containerName</span><span class="o">=</span><span class="nv">$STORAGE_CONTAINER_NAME</span><span class="k">)</span>
 
-<span class="c1"># Create a blob container</span>
-az storage container create -n <span class="nv">$STORAGE_CONTAINER_NAME</span> --account-name <span class="nv">$STORAGE_ACCOUNT_NAME</span>
+<span class="nb">export</span> <span class="nv">DATABRICKS_WORKSPACE_URL</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$deployment_response</span> <span class="p">|</span> jq -r <span class="s2">&quot;.properties.outputs.workspaceUrl.value&quot;</span><span class="k">)</span>
+<span class="nb">export</span> <span class="nv">DATABRICKS_WORKSPACE_ID</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$deployment_response</span> <span class="p">|</span> jq -r <span class="s2">&quot;.properties.outputs.workspaceId.value&quot;</span><span class="k">)</span>
 </code></pre></div>
-<h3 id="azure-databricks">Azure Databricks</h3>
-<p>Provision an Azure databricks service using the following script.</p>
-<div class="highlight"><pre><span></span><code>az extension add --name databricks
-
-az databricks workspace create --resource-group <span class="nv">$RESOURCE_GROUP</span>  --name <span class="nv">$DATABRICKS_WORKSPACE_NAME</span> --sku <span class="nv">$DATABRICKS_SKU</span>
+<h3 id="setup-databricks">Setup Databricks</h3>
+<p>The following script will setup a new cluster in the databricks workspace and prepare it to run presidio anonymization jobs.
+Once finished, the script will output an access key which you can use when working with databricks cli.</p>
+<div class="highlight"><pre><span></span><code>sh ./scripts/configure_databricks.sh
 </code></pre></div>
-<p>Initialze a cluster, either using the <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/create">Azure databricks UI</a> or by following up the next script using <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/create">databricks cli</a>.
-Note that the provided template uses a memory optimized VM type Standard DS12 v2. That allows spark to have enough memory per CPU core to parallelize the Presidio Analyzer.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Configure databricks token. for host name use https://[databricks region name].azuredatabricks.net. for token acquire a PAT using the following guide: https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/authentication#--generate-a-personal-access-token</span>
-<span class="c1"># </span>
-databricks configure --token
+<h3 id="configure-an-existing-cluster">Configure an existing cluster</h3>
+<p>Only follow through with the steps in this section if you have an existing databricks workspace and clsuter you wish to configure to run presidio. If you've followed through with the "Deploy Infrastructure" and "Setup Databricks" sections you do not have to run the script in this section.</p>
+<h4 id="set-up-secret-scope-and-secrets-for-storage-account">Set up secret scope and secrets for storage account</h4>
+<p>Add an Azure Storage account key to secret scope.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">STORAGE_PRIMARY_KEY</span><span class="o">=[</span>Primary key of storage account<span class="o">]</span>
 
-databricks clusters create --json <span class="s2">&quot;{ </span>
-<span class="s2">    \&quot;cluster_name\&quot;: \&quot;presidio\&quot;,</span>
-<span class="s2">    \&quot;spark_version\&quot;: \&quot;7.5.x-scala2.12\&quot;, </span>
-<span class="s2">    \&quot;autoscale\&quot;: {</span>
-<span class="s2">        \&quot;min_workers\&quot;: 2,</span>
-<span class="s2">        \&quot;max_workers\&quot;: 8</span>
-<span class="s2">    },</span>
-<span class="s2">    \&quot;azure_attributes\&quot;: { </span>
-<span class="s2">        \&quot;first_on_demand\&quot;: 1, </span>
-<span class="s2">        \&quot;availability\&quot;: \&quot;ON_DEMAND_AZURE\&quot;, </span>
-<span class="s2">        \&quot;spot_bid_max_price\&quot;: -1 </span>
-<span class="s2">    }, </span>
-<span class="s2">    \&quot;node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
-<span class="s2">    \&quot;driver_node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
-<span class="s2">    \&quot;spark_env_vars\&quot;: { </span>
-<span class="s2">        \&quot;PYSPARK_PYTHON\&quot;: \&quot;/databricks/python3/bin/python3\&quot; </span>
-<span class="s2">    }, </span>
-<span class="s2">    \&quot;autotermination_minutes\&quot;: 120, </span>
-<span class="s2">    \&quot;enable_elastic_disk\&quot;: true, </span>
-<span class="s2">    \&quot;cluster_source\&quot;: \&quot;UI\&quot;</span>
-<span class="s2">}&quot;</span>
-
-<span class="c1"># Note the cluster ID.</span>
+databricks secrets create-scope --scope storage_scope --initial-manage-principal users
+databricks secrets put --scope storage_scope --key storage_account_access_key --string-value <span class="s2">&quot;</span><span class="nv">$STORAGE_PRIMARY_KEY</span><span class="s2">&quot;</span>
 </code></pre></div>
-<p>Configure the cluster by uploading the provided startup script and setting it as part of the cluster initialization process. this stage will load the required Presidio and Azure Storage libraries to the cluster. You can follow through the next script to perform this stage using the databricks cli, or using the <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/init-scripts#--configure-a-cluster-scoped-init-script">databricks UI</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Upload the init script to the file system</span>
-databricks fs cp ./startup.sh dbfs:/FileStore/dependencies/startup.sh
-
-<span class="c1"># set the cluster init script</span>
-databricks clusters edit --json <span class="s2">&quot;{</span>
-<span class="s2">    \&quot;cluster_name\&quot;: \&quot;presidio\&quot;,</span>
-<span class="s2">    \&quot;spark_version\&quot;: \&quot;7.5.x-scala2.12\&quot;, </span>
-<span class="s2">    \&quot;autoscale\&quot;: {</span>
-<span class="s2">        \&quot;min_workers\&quot;: 2,</span>
-<span class="s2">        \&quot;max_workers\&quot;: 8</span>
-<span class="s2">    },</span>
-<span class="s2">    \&quot;azure_attributes\&quot;: { </span>
-<span class="s2">        \&quot;first_on_demand\&quot;: 1, </span>
-<span class="s2">        \&quot;availability\&quot;: \&quot;ON_DEMAND_AZURE\&quot;, </span>
-<span class="s2">        \&quot;spot_bid_max_price\&quot;: -1 </span>
-<span class="s2">    }, </span>
-<span class="s2">    \&quot;node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
-<span class="s2">    \&quot;driver_node_type_id\&quot;: \&quot;Standard_DS12_v2\&quot;, </span>
-<span class="s2">    \&quot;spark_env_vars\&quot;: { </span>
-<span class="s2">        \&quot;PYSPARK_PYTHON\&quot;: \&quot;/databricks/python3/bin/python3\&quot; </span>
-<span class="s2">    }, </span>
-<span class="s2">    \&quot;autotermination_minutes\&quot;: 120, </span>
-<span class="s2">    \&quot;enable_elastic_disk\&quot;: true, </span>
-<span class="s2">    \&quot;cluster_source\&quot;: \&quot;UI\&quot;,</span>
-<span class="s2">    \&quot;init_scripts\&quot;: [</span>
-<span class="s2">        {</span>
-<span class="s2">            \&quot;dbfs\&quot;: {</span>
-<span class="s2">                \&quot;destination\&quot;: \&quot;dbfs:/FileStore/dependencies/startup.sh\&quot;</span>
-<span class="s2">            }</span>
-<span class="s2">        }</span>
-<span class="s2">    ],</span>
-<span class="s2">    \&quot;cluster_id\&quot;: \&quot;[your cluster id]\&quot;</span>
-<span class="s2">}&quot;</span>
+<h4 id="upload-or-update-cluster-init-scripts">Upload or update cluster init scripts</h4>
+<p>Presidio libraries are loaded to the cluster on init.
+Upload the cluster setup script or add its content to the existing cluster's init script.</p>
+<div class="highlight"><pre><span></span><code>databricks fs cp <span class="s2">&quot;./setup/startup.sh&quot;</span> <span class="s2">&quot;dbfs:/FileStore/dependencies/startup.sh&quot;</span>
 </code></pre></div>
+<p>Setup the cluster to run the <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#init-scripts">init script</a>.</p>
+<h4 id="upload-presidio-notebooks">Upload presidio notebooks</h4>
+<div class="highlight"><pre><span></span><code>databricks workspace import_dir <span class="s2">&quot;./notebooks&quot;</span> <span class="s2">&quot;/notebooks&quot;</span> --overwrite
+</code></pre></div>
+<h4 id="update-cluster-environment">Update cluster environment</h4>
+<p>Add the following <a href="https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#environment-variables">environment variables</a> to your databricks cluster:</p>
+<div class="highlight"><pre><span></span><code><span class="s2">&quot;STORAGE_MOUNT_NAME&quot;</span>: <span class="s2">&quot;/mnt/files&quot;</span>
+<span class="s2">&quot;STORAGE_CONTAINER_NAME&quot;</span>: <span class="o">[</span>Blob container name<span class="o">]</span>
+<span class="s2">&quot;STORAGE_ACCOUNT_NAME&quot;</span>: <span class="o">[</span>Storage account name<span class="o">]</span>
+</code></pre></div>
+<h4 id="mount-the-storage-container">Mount the storage container</h4>
+<p>Run the notebook 00_setup to mount the storage account to databricks.</p>
 <h2 id="running-the-sample">Running the sample</h2>
-<h3 id="import-notebook-to-databricks">Import notebook to databricks</h3>
-<p>Upload the provided notebook, either by using the <a href="https://docs.microsoft.com/en-us/azure/databricks/notebooks/notebooks-manage#--import-a-notebook">databricks UI</a> or by following up the next script using databricks cli.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># upload the notebook to a shared folder in the workspace</span>
-databricks workspace import_dir . /Shared/presidio/
-</code></pre></div>
-<h3 id="configure-the-notebook">Configure the notebook</h3>
-<p>Open the notebook from the location where it was stored in the previous step and attach it to the configured cluster.
+<h3 id="configure-presidio-transformation-notebook">Configure Presidio transformation notebook</h3>
+<p>From Databricks workspace, under notebooks folder, open the provided 01_transform_presidio notebook and attach it to the cluster preisidio_cluster.
 Run the first code-cell and note the following parameters on the top end of the notebook (notebook widgets) and set them accordingly</p>
 <ul>
-<li>Blob Storage Account Name - Name of the storage account ($STORAGE_ACCOUNT_NAME)</li>
-<li>Blob Container Name - Name of the blob container ($STORAGE_CONTAINER_NAME)</li>
-<li>Storage Account Access Key - Storage account access key ($STORAGE_ACCESS_KEY)</li>
-</ul>
-<p>Additionaly, the following parameters have a default value, which you can change.</p>
-<ul>
-<li>Input Folder - a folder on the container where input files are found.</li>
+<li>Input File Format - text (selected).</li>
+<li>Input path - a folder on the container where input files are found.</li>
 <li>Output Folder - a folder on the container where output files will be written to.</li>
+<li>Column to Anonymize - value (selected).</li>
 </ul>
 <h3 id="run-the-notebook">Run the notebook</h3>
-<p>Upload a file to the blob storage input folder, using any preferd method (<a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal">Azure Portal</a>, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-storage-explorer">Azure Storage Explorer</a>, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli">Azure CLI</a>).</p>
+<p>Upload a text file to the blob storage input folder, using any preferd method (<a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal">Azure Portal</a>, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-storage-explorer">Azure Storage Explorer</a>, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli">Azure CLI</a>).</p>
 <div class="highlight"><pre><span></span><code>az storage blob upload --account-name <span class="nv">$STORAGE_ACCOUNT_NAME</span>  --container <span class="nv">$STORAGE_CONTAINER_NAME</span> --file ./<span class="o">[</span>file name<span class="o">]</span> --name input/<span class="o">[</span>file name<span class="o">]</span>
 </code></pre></div>
 <p>Run the notebook cells, the output should be csv files which contain two columns, the original file name, and the anonymized content of that file.</p>
@@ -1266,7 +1350,8 @@ Run the first code-cell and note the following parameters on the top end of the 
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../k8s/" class="md-footer__link md-footer__link--prev" rel="prev">
+        
+        <a href="../k8s/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Kubernetes" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -1281,7 +1366,8 @@ Run the first code-cell and note the following parameters on the top end of the 
         </a>
       
       
-        <a href="../data-factory/" class="md-footer__link md-footer__link--next" rel="next">
+        
+        <a href="../data-factory/" class="md-footer__link md-footer__link--next" aria-label="Next: Azure Data Factory" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
@@ -1344,10 +1430,10 @@ Run the first code-cell and note the following parameters on the top end of the 
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.76f349be.min.js"></script>
       
     
   </body>

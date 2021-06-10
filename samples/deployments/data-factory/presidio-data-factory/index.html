@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory/">
       
       <link rel="icon" href="../../../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
     
     
       
@@ -24,10 +24,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.bde7dde4.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.ca7ac06f.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ef6f36e2.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.f1a3b89f.min.css">
         
           
           
@@ -1042,15 +1042,15 @@ The second sample leverage the code for using <a href="../../spark/">Presidio on
 <p>The input file used by the samples is hosted on <a href="https://github.com/microsoft/presidio-research/">presidio-research</a> repository. It is setup as a variable on the provided ARM template and used by Azure Data Factory as the input source.</p>
 <h2 id="option-1-presidio-as-an-http-rest-endpoint">Option 1: Presidio as an HTTP REST endpoint</h2>
 <p>By using Presidio as an HTTP endpoint, the user can select which infrastructure best suits their requirements. in this sample, Presidio is deployed to an Azure App Service, but other deployment targets can be used, such as <a href="../../k8s/">kubernetes</a>.</p>
-<p><img alt="ADF-App-Service" src="../adf-app-service-screenshot.png" /></p>
+<p><img alt="ADF-App-Service" src="../images/adf-app-service-screenshot.png" /></p>
 <h3 id="deploy-the-arm-template">Deploy the ARM template</h3>
-<p>Create the Azure App Service and the ADF pipeline by clicking the Deploy-to-Azure button, or by running the following script to provision the <a href="../azure-deploy-adf-app-service.json">provided ARM template</a>.</p>
-<p><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Fazure-deploy-adf-app-service.json"><img alt="Deploy to Azure" src="https://aka.ms/deploytoazurebutton" /></a></p>
+<p>Create the Azure App Service and the ADF pipeline by clicking the Deploy-to-Azure button, or by running the following script to provision the <a href="../arm-templates/azure-deploy-adf-app-service.json">provided ARM template</a>.</p>
+<p><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Farm-templates%2Fazure-deploy-adf-app-service.json"><img alt="Deploy to Azure" src="https://aka.ms/deploytoazurebutton" /></a></p>
 <div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>Name of resource group<span class="o">]</span>
 <span class="nv">LOCATION</span><span class="o">=[</span>location of resources<span class="o">]</span>
 
 az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
-az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./azure-deploy-adf-app-service.json
+az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./arm-templates/azure-deploy-adf-app-service.json
 </code></pre></div>
 <p>Note that:</p>
 <ul>
@@ -1071,21 +1071,19 @@ az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template
 </ul>
 <h2 id="option-2-presidio-on-azure-databricks">Option 2: Presidio on Azure Databricks</h2>
 <p>By using Presidio as a Notebook step in ADF, we allow Databricks to scale presidio according to the cluster capabilities and the input dataset. Using presidio as a native python package in pyspark can unlock more analysis and de-identifiaction scenarios.</p>
-<p><img alt="ADF-Databricks" src="../adf-databricks-screenshot.png" /></p>
+<p><img alt="ADF-Databricks" src="../images/adf-databricks-screenshot.png" /></p>
 <h3 id="pre-requisite-deploy-azure-databricks">Pre-requisite - Deploy Azure Databricks</h3>
-<p>Provision and setup the datbricks cluster by following the steps in <a href="../../spark/#Azure-Databricks">presidio-spark sample</a>. 
-<strong>Note</strong> that you should only create and configure the databricks cluster and not the storage account, which will be created in the next step.</p>
+<p>Provision and setup the datbricks cluster by following the steps in <a href="../../spark/#Deploy-Infrastructure">presidio-spark sample</a>.
+Note the output key and export it as DATABRICKS_TOKEN environment variable.</p>
 <h3 id="deploy-the-arm-template_1">Deploy the ARM template</h3>
-<p>Create the rest of the services by running the following script which uses the <a href="../azure-deploy-adf-databricks.json">provided ARM template</a>.</p>
+<p>Create the rest of the services by running the following script which uses the <a href="../arm-templates/azure-deploy-adf-databricks.json">provided ARM template</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>Name of resource group<span class="o">]</span>
 <span class="nv">LOCATION</span><span class="o">=[</span>location of resources<span class="o">]</span>
-<span class="nv">DATABRICKS_ACCESS_TOKEN</span><span class="o">=[</span>Access token to databricks created <span class="k">in</span> the presidio-spark sample<span class="o">]</span>
-<span class="nv">DATABRICKS_WORKSPACE_URL</span><span class="o">=[</span>Databricks workspace URL without the https:// prefix<span class="o">]</span>
-<span class="nv">DATABRICKS_CLUSTER_ID</span><span class="o">=[</span>Databricks presidio-ready cluster ID<span class="o">]</span>
-<span class="nv">DATABRICKS_NOTEBOOK_LOCATION</span><span class="o">=[</span>Location of presidio notebook from the presidio-spark sample<span class="o">]</span>
+<span class="nv">DATABRICKS_HOST</span><span class="o">=</span>https://<span class="nv">$DATABRICKS_WORKSPACE_URL</span>
+<span class="nv">DATABRICKS_CLUSTER_ID</span><span class="o">=</span><span class="k">$(</span>databricks clusters get --cluster-name presidio_cluster <span class="p">|</span> jq -r .cluster_id<span class="k">)</span>
+<span class="nv">DATABRICKS_NOTEBOOK_LOCATION</span><span class="o">=</span><span class="s2">&quot;/notebooks/01_transform_presidio&quot;</span>
 
-az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
-az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./azure-deploy-adf-databricks.json --parameters <span class="nv">Databricks_accessToken</span><span class="o">=</span><span class="nv">$DATABRICKS_ACCESS_TOKEN</span> <span class="nv">Databricks_clusterId</span><span class="o">=</span><span class="nv">$DATABRICKS_CLUSTER_ID</span> <span class="nv">Databricks_notebookLocation</span><span class="o">=</span><span class="nv">$DATABRICKS_NOTEBOOK_LOCATION</span> <span class="nv">Databricks_workSpaceUrl</span><span class="o">=</span><span class="nv">$DATABRICKS_WORKSPACE_URL</span>
+az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./arm-templates/azure-deploy-adf-databricks.json --parameters <span class="nv">Databricks_accessToken</span><span class="o">=</span><span class="nv">$DATABRICKS_TOKEN</span> <span class="nv">Databricks_clusterId</span><span class="o">=</span><span class="nv">$DATABRICKS_CLUSTER_ID</span> <span class="nv">Databricks_notebookLocation</span><span class="o">=</span><span class="nv">$DATABRICKS_NOTEBOOK_LOCATION</span> <span class="nv">Databricks_workSpaceUrl</span><span class="o">=</span><span class="nv">$DATABRICKS_HOST</span> <span class="nv">AzureBlobStorage_accountName</span><span class="o">=</span><span class="nv">$STORAGE_ACCOUNT_NAME</span> <span class="nv">AzureBlobStorage_cotainerName</span><span class="o">=</span><span class="nv">$STORAGE_CONTAINER_NAME</span>
 </code></pre></div>
 <p>Note that:
 Two keys are read from Azure Storage and imported to Azure Key Vault, the account Access Token and a SAS token, using ARM template built in <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions">functions</a>: <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listaccountsas">listAccountSas</a> and <a href="https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys">listKeys</a>.</p>
@@ -1164,10 +1162,10 @@ Two keys are read from Azure Storage and imported to Azure Key Vault, the accoun
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.76f349be.min.js"></script>
       
     
   </body>

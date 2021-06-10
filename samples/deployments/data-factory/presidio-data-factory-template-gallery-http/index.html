@@ -13,21 +13,21 @@
         <meta name="author" content="Microsoft">
       
       
-        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory-template-gallery/">
+        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/deployments/data-factory/presidio-data-factory-template-gallery-http/">
       
       <link rel="icon" href="../../../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
     
     
       
-        <title>Anonymize PII entities using Azure Data Factory template - Microsoft Presidio</title>
+        <title>Anonymize PII entities in text using Azure Data Factory template and Presidio as an HTTP service - Microsoft Presidio</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.bde7dde4.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.ca7ac06f.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ef6f36e2.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.f1a3b89f.min.css">
         
           
           
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#anonymize-pii-entities-using-azure-data-factory-template" class="md-skip">
+        <a href="#anonymize-pii-entities-in-text-using-azure-data-factory-template-and-presidio-as-an-http-service" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Anonymize PII entities using Azure Data Factory template
+              Anonymize PII entities in text using Azure Data Factory template and Presidio as an HTTP service
             
           </span>
         </div>
@@ -1001,16 +1001,18 @@
               
                 
                 
-                <h1 id="anonymize-pii-entities-using-azure-data-factory-template">Anonymize PII entities using Azure Data Factory template</h1>
-<p>This sample uses the built in data anonymization template of Azure Data Factory which is a part of the Template Gallery to move a set of text files from one location to another while anonymizing their content. It leverages the code for using <a href="../../app-service/">Presidio on Azure App Service</a> to call Presidio as an HTTP REST endpoint in the Azure Data Factory (ADF) pipeline while parsing and storing each file as an Azure Blob Storage.</p>
+                <h1 id="anonymize-pii-entities-in-text-using-azure-data-factory-template-and-presidio-as-an-http-service">Anonymize PII entities in text using Azure Data Factory template and Presidio as an HTTP service</h1>
+<p>This sample uses the built in <a href="https://github.com/Azure/Azure-DataFactory/tree/main/templates/Data%20Anonymization%20with%20Presidio%20as%20an%20HTTP%20service">data anonymization template</a> of Azure Data Factory which is a part of the Template Gallery to move a set of text files from one location to another while anonymizing their content. It leverages the code for using <a href="../../app-service/">Presidio on Azure App Service</a> to call Presidio as an HTTP REST endpoint in the Azure Data Factory (ADF) pipeline while parsing and storing each file as an Azure Blob Storage.</p>
+<p><strong>Note that</strong> given the solution architecture which call presidio services using HTTP, this sample should be used for up to 5000 files, each up to 200KB in size.
+The restrictions are based on ADF lookup-activity which is used to iterate the files in the storage container (up to 5000 records), and having Presidio as an HTTP endpoint with text being sent over network to be anonymized. 
+For larger sets please work with the <a href="../presidio-data-factory-template-gallery-databricks/">Data Anonymization with Presidio on Databricks</a> template.</p>
 <p>The sample deploys the following Azure Services:</p>
 <ul>
 <li>Azure KeyVault - Holds the access keys for Azure Storage to avoid having keys and secrets in the code.</li>
-<li>Azure Storage - Persistence layer of this sample.</li>
+<li>Azure Storage - The target storage account where data will be persisted.</li>
 <li>Azure App Service - Host presidio to anonymize the data.</li>
 </ul>
-<p>Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline.</p>
-<p><strong>Note that</strong> given the solution architecture which call presidio services using HTTP, it is optimal for use with a small-to-medium number of files, each with a small-to-medium content size. working with larger file stores or large files will have better performance when using <a href="../presidio-data-factory/#option-2-presidio-on-azure-databricks">presidio with databricks</a>. </p>
+<p>Additionaly you should already have an instance of Azure Data Factory which host and orchestrate the transformation pipeline and a storage account which holds the source files.</p>
 <h2 id="about-this-solution-template">About this Solution Template</h2>
 <p>This template gets the files from your source file-based store. It then anonymizes the content and uploads each of them to the destination store.</p>
 <p>The template contains eight activities:</p>
@@ -1036,13 +1038,13 @@
 <h2 id="how-to-use-this-solution-template">How to use this Solution Template</h2>
 <p>To use this template you should first setup the required infrastructure for the sample to run, then setup the template in Azure Data Factory.</p>
 <h3 id="setup-presidio">Setup Presidio</h3>
-<p>Create the Azure App Service, the storage accounts and an Azure Key Vault by clicking the Deploy-to-Azure button, or by running the following script to provision the <a href="../azure-deploy-adf-template-gallery.json">provided ARM template</a>.</p>
-<p><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Fazure-deploy-adf-template-gallery.json"><img alt="Deploy to Azure" src="https://aka.ms/deploytoazurebutton" /></a></p>
+<p>Create the Azure App Service, the storage accounts and an Azure Key Vault by clicking the Deploy-to-Azure button, or by running the following script to provision the <a href="../arm-templates/azure-deploy-adf-template-gallery-http.json">provided ARM template</a>.</p>
+<p><a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fdocs%2Fsamples%2Fdeployments%2Fdata-factory%2Farm-templates%2Fazure-deploy-adf-template-gallery-http.json"><img alt="Deploy to Azure" src="https://aka.ms/deploytoazurebutton" /></a></p>
 <div class="highlight"><pre><span></span><code><span class="nv">RESOURCE_GROUP</span><span class="o">=[</span>Name of resource group<span class="o">]</span>
 <span class="nv">LOCATION</span><span class="o">=[</span>location of resources<span class="o">]</span>
 
 az group create --name <span class="nv">$RESOURCE_GROUP</span> --location <span class="nv">$LOCATION</span>
-az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./azure-deploy-adf-template-gallery.json
+az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template-file ./arm-templates/azure-deploy-adf-template-gallery-http.json
 </code></pre></div>
 <p>Note that:</p>
 <ul>
@@ -1052,23 +1054,23 @@ az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template
 <h3 id="setup-azure-data-factory">Setup Azure Data Factory</h3>
 <ol>
 <li>
-<p>Go to the Data anonymization with Presidio template. Select existing connection or create a New connection to your source file store where you want to move files from. Be aware that DataSource_Folder and DataSource_File are reference to the same connection of your source file store.
-<img alt="ADF-Template-Load" src="../Data-anonymization01.png" /></p>
+<p>Go to the Data anonymization with Presidio as an HTTP service template. Select existing connection or create a New connection to your source file store where you want to move files from. Be aware that DataSource_Folder and DataSource_File are reference to the same connection of your source file store.
+<img alt="ADF-Template-Load" src="../images/data-anonymization-http-01.png" /></p>
 </li>
 <li>
 <p>Select Use this template tab</p>
 </li>
 <li>
 <p>You'll see the pipeline, as in the following example:
-<img alt="ADF-Template-Pipeline" src="../Data-anonymization02.png" /></p>
+<img alt="ADF-Template-Pipeline" src="../images/data-anonymization-http-02.png" /></p>
 </li>
 <li>
 <p>Select Debug, enter the Parameters, and then select Finish. The parameters are the container where you want to move files from and the container path where you want to move the anonymized files to.
-<img alt="ADF-Template-Parameters" src="../Data-anonymization03.png" /></p>
+<img alt="ADF-Template-Parameters" src="../images/data-anonymization-http-03.png" /></p>
 </li>
 <li>
 <p>Review the result.
-<img alt="ADF-Template-Results" src="../Data-anonymization04.png" /></p>
+<img alt="ADF-Template-Results" src="../images/data-anonymization-http-04.png" /></p>
 </li>
 </ol>
                 
@@ -1134,10 +1136,10 @@ az deployment group create -g <span class="nv">$RESOURCE_GROUP</span> --template
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../../assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.1d3bfcf1.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.76f349be.min.js"></script>
       
     
   </body>
