@@ -16,8 +16,9 @@ stages:
                   persistCredentials: true
                 - task: UsePythonVersion@0
                 - script: |
-                      set -eux  # fail on error     
-                      pip install --upgrade pip      
-                      pip install wheel                                 
+                      set -eux  # fail on error
+                      pip install --upgrade pip
+                      pip install wheel
+                      pip install livereload
                       pip install -r docs/requirements-docs.txt
                       mkdocs gh-deploy
