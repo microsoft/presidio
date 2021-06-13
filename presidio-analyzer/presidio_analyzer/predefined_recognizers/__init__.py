@@ -12,6 +12,7 @@ from .medical_license_recognizer import MedicalLicenseRecognizer
 from .sg_fin_recognizer import SgFinRecognizer
 from .spacy_recognizer import SpacyRecognizer
 from .stanza_recognizer import StanzaRecognizer
+from .phone_recognizer import PhoneRecognizer
 from .uk_nhs_recognizer import NhsRecognizer
 from .us_bank_recognizer import UsBankRecognizer
 from .us_driver_license_recognizer import UsLicenseRecognizer
@@ -37,6 +38,7 @@ __all__ = [
     "SgFinRecognizer",
     "SpacyRecognizer",
     "StanzaRecognizer",
+    "PhoneRecognizer",
     "UsBankRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",
