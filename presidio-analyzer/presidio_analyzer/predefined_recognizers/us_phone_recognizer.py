@@ -23,7 +23,7 @@ class UsPhoneRecognizer(PatternRecognizer):
         Pattern("Phone (weak)", r"(\b\d{10}\b)", 0.05),
     ]
 
-    CONTEXT = ["phone", "number", "telephone", "cell", "mobile", "call"]
+    CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
 
     def __init__(
         self,

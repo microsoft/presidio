@@ -36,6 +36,7 @@ setuptools.setup(
         "tldextract==3.1.0",
         "pyyaml==5.4.1",
         "pydantic==1.7.4",
+        "phonenumbers==8.12.24",
     ],
     include_package_data=True,
     license="MIT",
