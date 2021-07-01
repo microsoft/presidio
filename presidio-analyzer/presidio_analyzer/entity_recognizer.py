@@ -388,7 +388,7 @@ class EntityRecognizer:
         :return: List[RecognizerResult]
         """
         results = list(set(results))
-        results = sorted(results, key=lambda x: (-x.score, x.start, x.end - x.start))
+        results = sorted(results, key=lambda x: (-x.score, x.start, -(x.end - x.start)))
         filtered_results = []
 
         for result in results:
