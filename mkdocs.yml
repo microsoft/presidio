@@ -18,6 +18,7 @@ nav:
         - Tutorial : analyzer/adding_recognizers.md
         - Best practices in developing recognizers : analyzer/developing_recognizers.md
       - Multi-language support: analyzer/languages.md
+      - Customizing the NLP model: analyzer/customizing_nlp_models.md
       - Tracing the decision process: analyzer/decision_process.md
     - Presidio Anonymizer:
       - Anonymizer Home: anonymizer/index.md
@@ -62,7 +63,8 @@ theme:
   favicon: assets/ms_icon.png
   features:
     - navigation.instant
-    - navigation.tabs
+    # - navigation.tabs
+    # - navigation.tabs.sticky
 plugins:
 - search
 - mkdocstrings
