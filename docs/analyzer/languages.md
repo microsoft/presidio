@@ -67,5 +67,5 @@ analyzer.analyze(text="My name is David", language="en")
 
 When packaging the code into a Docker container, NLP models are automatically installed.
 To define which models should be installed,
-update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/conf/default.yaml) file. This file is read during
+update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/default.yaml) file. This file is read during
 the `docker build` phase and the models defined in it are installed automatically.

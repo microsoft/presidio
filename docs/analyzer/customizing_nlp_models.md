@@ -88,7 +88,7 @@ Configuration can be done in two ways:
     print(results_english)
     ```
 
-- **Via configuration**: Set up the models which should be used in the [default `conf` file](https://github.com/microsoft/presidio/blob/master/presidio-analyzer/conf/default.yaml).
+- **Via configuration**: Set up the models which should be used in the [default `conf` file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/default.yaml).
 
     An example Conf file:
 
