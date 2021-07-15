@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/anonymizer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.10">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ca7ac06f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1fe995fd.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.f1a3b89f.min.css">
@@ -166,129 +166,6 @@
       
       
         
-          
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../.." class="md-tabs__link">
-      Home
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../getting_started/" class="md-tabs__link">
-      Getting Started
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../installation/" class="md-tabs__link">
-      Installation
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../text_anonymization/" class="md-tabs__link">
-        Text anonymization
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../image-redactor/" class="md-tabs__link">
-        Image Redactor
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../samples/" class="md-tabs__link">
-        Samples
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../supported_entities/" class="md-tabs__link">
-      Supported entities
-    </a>
-  </li>
-
-      
-        
-  
-  
-    
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../design/" class="md-tabs__link md-tabs__link--active">
-        Development and design
-      </a>
-    </li>
-  
-
-      
-    </ul>
-  </div>
-</nav>
-        
       
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
@@ -300,10 +177,8 @@
                   <div class="md-sidebar__inner">
                     
 
-  
 
-
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
@@ -500,6 +375,18 @@
     <li class="md-nav__item">
       <a href="../../analyzer/languages/" class="md-nav__link">
         Multi-language support
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analyzer/customizing_nlp_models/" class="md-nav__link">
+        Customizing the NLP model
       </a>
     </li>
   
@@ -3306,7 +3193,7 @@
 
 
 
-<h2 class="doc doc-heading" id="presidio_anonymizer.anonymizer_engine">
+<h2 id="presidio_anonymizer.anonymizer_engine" class="doc doc-heading">
         <code>anonymizer_engine</code>
 
 
@@ -3332,7 +3219,7 @@
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.anonymizer_engine.AnonymizerEngine">
+<h3 id="presidio_anonymizer.anonymizer_engine.AnonymizerEngine" class="doc doc-heading">
         <code>AnonymizerEngine</code>
 
 
@@ -3364,7 +3251,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.anonymizer_engine.AnonymizerEngine.anonymize">
+<h4 id="presidio_anonymizer.anonymizer_engine.AnonymizerEngine.anonymize" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">anonymize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="p">,</span> <span class="n">operators</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -3457,7 +3344,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.anonymizer_engine.AnonymizerEngine.get_anonymizers">
+<h4 id="presidio_anonymizer.anonymizer_engine.AnonymizerEngine.get_anonymizers" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_anonymizers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3507,7 +3394,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_anonymizer.core">
+<h2 id="presidio_anonymizer.core" class="doc doc-heading">
         <code>core</code>
 
 
@@ -3539,7 +3426,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.core.engine_base">
+<h3 id="presidio_anonymizer.core.engine_base" class="doc doc-heading">
         <code>engine_base</code>
 
 
@@ -3564,7 +3451,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.core.engine_base.EngineBase">
+<h4 id="presidio_anonymizer.core.engine_base.EngineBase" class="doc doc-heading">
         <code>EngineBase</code>
 
 
@@ -3615,7 +3502,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.core.text_replace_builder">
+<h3 id="presidio_anonymizer.core.text_replace_builder" class="doc doc-heading">
         <code>text_replace_builder</code>
 
 
@@ -3640,7 +3527,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.core.text_replace_builder.TextReplaceBuilder">
+<h4 id="presidio_anonymizer.core.text_replace_builder.TextReplaceBuilder" class="doc doc-heading">
         <code>TextReplaceBuilder</code>
 
 
@@ -3669,7 +3556,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.core.text_replace_builder.TextReplaceBuilder.get_text_in_position">
+<h5 id="presidio_anonymizer.core.text_replace_builder.TextReplaceBuilder.get_text_in_position" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_text_in_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></code>
 
 
@@ -3743,7 +3630,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.core.text_replace_builder.TextReplaceBuilder.replace_text_get_insertion_index">
+<h5 id="presidio_anonymizer.core.text_replace_builder.TextReplaceBuilder.replace_text_get_insertion_index" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">replace_text_get_insertion_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replacement_text</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></code>
 
 
@@ -3865,7 +3752,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_anonymizer.deanonymize_engine">
+<h2 id="presidio_anonymizer.deanonymize_engine" class="doc doc-heading">
         <code>deanonymize_engine</code>
 
 
@@ -3890,7 +3777,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.deanonymize_engine.DeanonymizeEngine">
+<h3 id="presidio_anonymizer.deanonymize_engine.DeanonymizeEngine" class="doc doc-heading">
         <code>DeanonymizeEngine</code>
 
 
@@ -3919,7 +3806,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.deanonymize_engine.DeanonymizeEngine.deanonymize">
+<h4 id="presidio_anonymizer.deanonymize_engine.DeanonymizeEngine.deanonymize" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">deanonymize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">operators</span><span class="p">)</span></code>
 
 
@@ -4003,7 +3890,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.deanonymize_engine.DeanonymizeEngine.get_deanonymizers">
+<h4 id="presidio_anonymizer.deanonymize_engine.DeanonymizeEngine.get_deanonymizers" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_deanonymizers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -4053,7 +3940,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_anonymizer.entities">
+<h2 id="presidio_anonymizer.entities" class="doc doc-heading">
         <code>entities</code>
 
 
@@ -4085,7 +3972,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.entities.engine">
+<h3 id="presidio_anonymizer.entities.engine" class="doc doc-heading">
         <code>engine</code>
 
 
@@ -4117,7 +4004,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.entities.engine.anonymizer_result">
+<h4 id="presidio_anonymizer.entities.engine.anonymizer_result" class="doc doc-heading">
         <code>anonymizer_result</code>
 
 
@@ -4141,7 +4028,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult">
+<h5 id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult" class="doc doc-heading">
         <code>AnonymizerResult</code>
 
 
@@ -4169,7 +4056,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult.__init__">
+<h6 id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult.__init__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4237,7 +4124,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult.from_json">
+<h6 id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult.from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_json</span><span class="p">(</span><span class="n">json</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4300,7 +4187,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult.from_operator_result">
+<h6 id="presidio_anonymizer.entities.engine.anonymizer_result.AnonymizerResult.from_operator_result" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_operator_result</span><span class="p">(</span><span class="n">operator_result</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4395,7 +4282,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.entities.engine.operator_config">
+<h4 id="presidio_anonymizer.entities.engine.operator_config" class="doc doc-heading">
         <code>operator_config</code>
 
 
@@ -4419,7 +4306,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig">
+<h5 id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig" class="doc doc-heading">
         <code>OperatorConfig</code>
 
 
@@ -4447,7 +4334,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig.__eq__">
+<h6 id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig.__eq__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4479,7 +4366,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig.__init__">
+<h6 id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig.__init__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operator_name</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4548,7 +4435,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig.from_json">
+<h6 id="presidio_anonymizer.entities.engine.operator_config.OperatorConfig.from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_json</span><span class="p">(</span><span class="n">params</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4648,7 +4535,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.entities.engine.pii_entity">
+<h4 id="presidio_anonymizer.entities.engine.pii_entity" class="doc doc-heading">
         <code>pii_entity</code>
 
 
@@ -4672,7 +4559,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.entities.engine.pii_entity.PIIEntity">
+<h5 id="presidio_anonymizer.entities.engine.pii_entity.PIIEntity" class="doc doc-heading">
         <code>PIIEntity</code>
 
 
@@ -4700,7 +4587,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.pii_entity.PIIEntity.__eq__">
+<h6 id="presidio_anonymizer.entities.engine.pii_entity.PIIEntity.__eq__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4732,7 +4619,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.pii_entity.PIIEntity.__gt__">
+<h6 id="presidio_anonymizer.entities.engine.pii_entity.PIIEntity.__gt__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4785,7 +4672,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result">
+<h4 id="presidio_anonymizer.entities.engine.recognizer_result" class="doc doc-heading">
         <code>recognizer_result</code>
 
 
@@ -4811,7 +4698,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult">
+<h5 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult" class="doc doc-heading">
         <code>RecognizerResult</code>
 
 
@@ -4878,7 +4765,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__eq__">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__eq__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4949,7 +4836,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__gt__">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__gt__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5020,7 +4907,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__hash__">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__hash__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5072,7 +4959,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__str__">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.__str__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5107,7 +4994,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.contains">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.contains" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5173,7 +5060,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.equal_indices">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.equal_indices" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">equal_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5239,7 +5126,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.from_json">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5318,7 +5205,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.has_conflict">
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.has_conflict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">has_conflict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5415,7 +5302,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result">
+<h4 id="presidio_anonymizer.entities.engine.result" class="doc doc-heading">
         <code>result</code>
 
 
@@ -5447,7 +5334,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result">
+<h5 id="presidio_anonymizer.entities.engine.result.engine_result" class="doc doc-heading">
         <code>engine_result</code>
 
 
@@ -5472,7 +5359,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult">
+<h6 id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult" class="doc doc-heading">
         <code>EngineResult</code>
 
 
@@ -5500,7 +5387,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h7 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.__eq__">
+<h7 id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.__eq__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5536,7 +5423,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h7 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.__init__">
+<h7 id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.__init__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5599,7 +5486,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h7 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.add_item">
+<h7 id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.add_item" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></code>
 
 
@@ -5648,7 +5535,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h7 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.normalize_item_indexes">
+<h7 id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.normalize_item_indexes" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">normalize_item_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -5678,7 +5565,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h7 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.set_text">
+<h7 id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.set_text" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></code>
 
 
@@ -5705,7 +5592,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h7 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.to_json">
+<h7 id="presidio_anonymizer.entities.engine.result.engine_result.EngineResult.to_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -5754,7 +5641,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.operator_result">
+<h5 id="presidio_anonymizer.entities.engine.result.operator_result" class="doc doc-heading">
         <code>operator_result</code>
 
 
@@ -5778,7 +5665,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h6 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.operator_result.OperatorResult">
+<h6 id="presidio_anonymizer.entities.engine.result.operator_result.OperatorResult" class="doc doc-heading">
         <code>OperatorResult</code>
 
 
@@ -5806,7 +5693,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h7 class="doc doc-heading" id="presidio_anonymizer.entities.engine.result.operator_result.OperatorResult.__eq__">
+<h7 id="presidio_anonymizer.entities.engine.result.operator_result.OperatorResult.__eq__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5920,7 +5807,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.entities.invalid_exception">
+<h3 id="presidio_anonymizer.entities.invalid_exception" class="doc doc-heading">
         <code>invalid_exception</code>
 
 
@@ -5945,7 +5832,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.entities.invalid_exception.InvalidParamException">
+<h4 id="presidio_anonymizer.entities.invalid_exception.InvalidParamException" class="doc doc-heading">
         <code>InvalidParamException</code>
 
 
@@ -6006,7 +5893,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_anonymizer.operators">
+<h2 id="presidio_anonymizer.operators" class="doc doc-heading">
         <code>operators</code>
 
 
@@ -6038,7 +5925,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.aes_cipher">
+<h3 id="presidio_anonymizer.operators.aes_cipher" class="doc doc-heading">
         <code>aes_cipher</code>
 
 
@@ -6062,7 +5949,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.aes_cipher.AESCipher">
+<h4 id="presidio_anonymizer.operators.aes_cipher.AESCipher" class="doc doc-heading">
         <code>AESCipher</code>
 
 
@@ -6090,7 +5977,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.aes_cipher.AESCipher.decrypt">
+<h5 id="presidio_anonymizer.operators.aes_cipher.AESCipher.decrypt" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">decrypt</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -6173,7 +6060,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.aes_cipher.AESCipher.encrypt">
+<h5 id="presidio_anonymizer.operators.aes_cipher.AESCipher.encrypt" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">encrypt</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -6257,7 +6144,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.aes_cipher.AESCipher.is_valid_key_size">
+<h5 id="presidio_anonymizer.operators.aes_cipher.AESCipher.is_valid_key_size" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">is_valid_key_size</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -6349,7 +6236,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.custom">
+<h3 id="presidio_anonymizer.operators.custom" class="doc doc-heading">
         <code>custom</code>
 
 
@@ -6374,7 +6261,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.custom.Custom">
+<h4 id="presidio_anonymizer.operators.custom.Custom" class="doc doc-heading">
         <code>Custom</code>
 
 
@@ -6404,7 +6291,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.custom.Custom.operate">
+<h5 id="presidio_anonymizer.operators.custom.Custom.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -6447,7 +6334,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.custom.Custom.operator_name">
+<h5 id="presidio_anonymizer.operators.custom.Custom.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -6474,7 +6361,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.custom.Custom.operator_type">
+<h5 id="presidio_anonymizer.operators.custom.Custom.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -6501,7 +6388,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.custom.Custom.validate">
+<h5 id="presidio_anonymizer.operators.custom.Custom.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></code>
 
 
@@ -6556,7 +6443,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.decrypt">
+<h3 id="presidio_anonymizer.operators.decrypt" class="doc doc-heading">
         <code>decrypt</code>
 
 
@@ -6580,7 +6467,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.decrypt.Decrypt">
+<h4 id="presidio_anonymizer.operators.decrypt.Decrypt" class="doc doc-heading">
         <code>Decrypt</code>
 
 
@@ -6610,7 +6497,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.decrypt.Decrypt.operate">
+<h5 id="presidio_anonymizer.operators.decrypt.Decrypt.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -6686,7 +6573,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.decrypt.Decrypt.operator_name">
+<h5 id="presidio_anonymizer.operators.decrypt.Decrypt.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -6713,7 +6600,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.decrypt.Decrypt.operator_type">
+<h5 id="presidio_anonymizer.operators.decrypt.Decrypt.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -6740,7 +6627,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.decrypt.Decrypt.validate">
+<h5 id="presidio_anonymizer.operators.decrypt.Decrypt.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -6822,7 +6709,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.encrypt">
+<h3 id="presidio_anonymizer.operators.encrypt" class="doc doc-heading">
         <code>encrypt</code>
 
 
@@ -6846,7 +6733,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.encrypt.Encrypt">
+<h4 id="presidio_anonymizer.operators.encrypt.Encrypt" class="doc doc-heading">
         <code>Encrypt</code>
 
 
@@ -6875,7 +6762,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.encrypt.Encrypt.operate">
+<h5 id="presidio_anonymizer.operators.encrypt.Encrypt.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -6953,7 +6840,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.encrypt.Encrypt.operator_name">
+<h5 id="presidio_anonymizer.operators.encrypt.Encrypt.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -6980,7 +6867,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.encrypt.Encrypt.operator_type">
+<h5 id="presidio_anonymizer.operators.encrypt.Encrypt.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -7007,7 +6894,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.encrypt.Encrypt.validate">
+<h5 id="presidio_anonymizer.operators.encrypt.Encrypt.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -7089,7 +6976,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.hash">
+<h3 id="presidio_anonymizer.operators.hash" class="doc doc-heading">
         <code>hash</code>
 
 
@@ -7114,7 +7001,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.hash.Hash">
+<h4 id="presidio_anonymizer.operators.hash.Hash" class="doc doc-heading">
         <code>Hash</code>
 
 
@@ -7146,7 +7033,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.hash.Hash.operate">
+<h5 id="presidio_anonymizer.operators.hash.Hash.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -7198,7 +7085,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.hash.Hash.operator_name">
+<h5 id="presidio_anonymizer.operators.hash.Hash.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -7225,7 +7112,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.hash.Hash.operator_type">
+<h5 id="presidio_anonymizer.operators.hash.Hash.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -7252,7 +7139,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.hash.Hash.validate">
+<h5 id="presidio_anonymizer.operators.hash.Hash.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -7307,7 +7194,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.mask">
+<h3 id="presidio_anonymizer.operators.mask" class="doc doc-heading">
         <code>mask</code>
 
 
@@ -7332,7 +7219,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.mask.Mask">
+<h4 id="presidio_anonymizer.operators.mask.Mask" class="doc doc-heading">
         <code>Mask</code>
 
 
@@ -7363,7 +7250,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.mask.Mask.operate">
+<h5 id="presidio_anonymizer.operators.mask.Mask.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -7446,7 +7333,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.mask.Mask.operator_name">
+<h5 id="presidio_anonymizer.operators.mask.Mask.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -7473,7 +7360,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.mask.Mask.operator_type">
+<h5 id="presidio_anonymizer.operators.mask.Mask.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -7500,7 +7387,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.mask.Mask.validate">
+<h5 id="presidio_anonymizer.operators.mask.Mask.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -7583,7 +7470,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.operator">
+<h3 id="presidio_anonymizer.operators.operator" class="doc doc-heading">
         <code>operator</code>
 
 
@@ -7609,7 +7496,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.operator.Operator">
+<h4 id="presidio_anonymizer.operators.operator.Operator" class="doc doc-heading">
         <code>Operator</code>
 
 
@@ -7637,7 +7524,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.operator.Operator.operate">
+<h5 id="presidio_anonymizer.operators.operator.Operator.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -7665,7 +7552,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.operator.Operator.operator_name">
+<h5 id="presidio_anonymizer.operators.operator.Operator.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -7693,7 +7580,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.operator.Operator.operator_type">
+<h5 id="presidio_anonymizer.operators.operator.Operator.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -7721,7 +7608,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.operator.Operator.validate">
+<h5 id="presidio_anonymizer.operators.operator.Operator.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -7759,7 +7646,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.operator.OperatorType">
+<h4 id="presidio_anonymizer.operators.operator.OperatorType" class="doc doc-heading">
         <code>OperatorType</code>
 
 
@@ -7811,7 +7698,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.operators_factory">
+<h3 id="presidio_anonymizer.operators.operators_factory" class="doc doc-heading">
         <code>operators_factory</code>
 
 
@@ -7835,7 +7722,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.operators_factory.OperatorsFactory">
+<h4 id="presidio_anonymizer.operators.operators_factory.OperatorsFactory" class="doc doc-heading">
         <code>OperatorsFactory</code>
 
 
@@ -7864,7 +7751,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.operators_factory.OperatorsFactory.create_operator_class">
+<h5 id="presidio_anonymizer.operators.operators_factory.OperatorsFactory.create_operator_class" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_operator_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operator_name</span><span class="p">,</span> <span class="n">operator_type</span><span class="p">)</span></code>
 
 
@@ -7945,7 +7832,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.operators_factory.OperatorsFactory.get_anonymizers">
+<h5 id="presidio_anonymizer.operators.operators_factory.OperatorsFactory.get_anonymizers" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_anonymizers</span><span class="p">()</span></code>
 
   <span class="doc doc-properties">
@@ -7980,7 +7867,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.operators_factory.OperatorsFactory.get_deanonymizers">
+<h5 id="presidio_anonymizer.operators.operators_factory.OperatorsFactory.get_deanonymizers" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_deanonymizers</span><span class="p">()</span></code>
 
   <span class="doc doc-properties">
@@ -8037,7 +7924,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.redact">
+<h3 id="presidio_anonymizer.operators.redact" class="doc doc-heading">
         <code>redact</code>
 
 
@@ -8062,7 +7949,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.redact.Redact">
+<h4 id="presidio_anonymizer.operators.redact.Redact" class="doc doc-heading">
         <code>Redact</code>
 
 
@@ -8090,7 +7977,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.redact.Redact.operate">
+<h5 id="presidio_anonymizer.operators.redact.Redact.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -8132,7 +8019,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.redact.Redact.operator_name">
+<h5 id="presidio_anonymizer.operators.redact.Redact.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -8159,7 +8046,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.redact.Redact.operator_type">
+<h5 id="presidio_anonymizer.operators.redact.Redact.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -8186,7 +8073,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.redact.Redact.validate">
+<h5 id="presidio_anonymizer.operators.redact.Redact.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -8235,7 +8122,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.operators.replace">
+<h3 id="presidio_anonymizer.operators.replace" class="doc doc-heading">
         <code>replace</code>
 
 
@@ -8260,7 +8147,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.operators.replace.Replace">
+<h4 id="presidio_anonymizer.operators.replace.Replace" class="doc doc-heading">
         <code>Replace</code>
 
 
@@ -8289,7 +8176,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.replace.Replace.operate">
+<h5 id="presidio_anonymizer.operators.replace.Replace.operate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -8334,7 +8221,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.replace.Replace.operator_name">
+<h5 id="presidio_anonymizer.operators.replace.Replace.operator_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -8361,7 +8248,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.replace.Replace.operator_type">
+<h5 id="presidio_anonymizer.operators.replace.Replace.operator_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -8388,7 +8275,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.operators.replace.Replace.validate">
+<h5 id="presidio_anonymizer.operators.replace.Replace.validate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -8447,7 +8334,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_anonymizer.services">
+<h2 id="presidio_anonymizer.services" class="doc doc-heading">
         <code>services</code>
 
 
@@ -8478,7 +8365,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.services.app_entities_convertor">
+<h3 id="presidio_anonymizer.services.app_entities_convertor" class="doc doc-heading">
         <code>app_entities_convertor</code>
 
 
@@ -8502,7 +8389,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor">
+<h4 id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor" class="doc doc-heading">
         <code>AppEntitiesConvertor</code>
 
 
@@ -8530,7 +8417,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.analyzer_results_from_json">
+<h5 id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.analyzer_results_from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">analyzer_results_from_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -8588,7 +8475,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.check_custom_operator">
+<h5 id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.check_custom_operator" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">check_custom_operator</span><span class="p">(</span><span class="n">operators</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -8619,7 +8506,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.deanonymize_entities_from_json">
+<h5 id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.deanonymize_entities_from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">deanonymize_entities_from_json</span><span class="p">(</span><span class="n">json</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -8703,7 +8590,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h5 class="doc doc-heading" id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.operators_config_from_json">
+<h5 id="presidio_anonymizer.services.app_entities_convertor.AppEntitiesConvertor.operators_config_from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">operators_config_from_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -8786,7 +8673,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h3 class="doc doc-heading" id="presidio_anonymizer.services.validators">
+<h3 id="presidio_anonymizer.services.validators" class="doc doc-heading">
         <code>validators</code>
 
 
@@ -8812,7 +8699,7 @@ and replaces the PII entities with the desired anonymizers.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.services.validators.validate_parameter">
+<h4 id="presidio_anonymizer.services.validators.validate_parameter" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_parameter</span><span class="p">(</span><span class="n">parameter_value</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_type</span><span class="p">)</span></code>
 
 
@@ -8851,7 +8738,7 @@ InvalidParamException with the parameter_name as content.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.services.validators.validate_parameter_exists">
+<h4 id="presidio_anonymizer.services.validators.validate_parameter_exists" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_parameter_exists</span><span class="p">(</span><span class="n">parameter_value</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">)</span></code>
 
 
@@ -8881,7 +8768,7 @@ InvalidParamException with the parameter_name as content.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.services.validators.validate_parameter_in_range">
+<h4 id="presidio_anonymizer.services.validators.validate_parameter_in_range" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_parameter_in_range</span><span class="p">(</span><span class="n">values_range</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_type</span><span class="p">)</span></code>
 
 
@@ -8925,7 +8812,7 @@ parameter_name as content.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.services.validators.validate_parameter_not_empty">
+<h4 id="presidio_anonymizer.services.validators.validate_parameter_not_empty" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_parameter_not_empty</span><span class="p">(</span><span class="n">parameter_value</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">)</span></code>
 
 
@@ -8955,7 +8842,7 @@ parameter_name as content.</p>
 
 
 
-<h4 class="doc doc-heading" id="presidio_anonymizer.services.validators.validate_type">
+<h4 id="presidio_anonymizer.services.validators.validate_type" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_type</span><span class="p">(</span><span class="n">parameter_value</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_type</span><span class="p">)</span></code>
 
 
@@ -9117,10 +9004,10 @@ as content.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.76f349be.min.js"></script>
+      <script src="../../assets/javascripts/bundle.ddd52ceb.min.js"></script>
       
     
   </body>

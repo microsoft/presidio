@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/analyzer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.10">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ca7ac06f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1fe995fd.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.f1a3b89f.min.css">
@@ -166,129 +166,6 @@
       
       
         
-          
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../.." class="md-tabs__link">
-      Home
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../getting_started/" class="md-tabs__link">
-      Getting Started
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../installation/" class="md-tabs__link">
-      Installation
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../text_anonymization/" class="md-tabs__link">
-        Text anonymization
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../image-redactor/" class="md-tabs__link">
-        Image Redactor
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../samples/" class="md-tabs__link">
-        Samples
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../supported_entities/" class="md-tabs__link">
-      Supported entities
-    </a>
-  </li>
-
-      
-        
-  
-  
-    
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../design/" class="md-tabs__link md-tabs__link--active">
-        Development and design
-      </a>
-    </li>
-  
-
-      
-    </ul>
-  </div>
-</nav>
-        
       
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
@@ -300,10 +177,8 @@
                   <div class="md-sidebar__inner">
                     
 
-  
 
-
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
@@ -500,6 +375,18 @@
     <li class="md-nav__item">
       <a href="../../analyzer/languages/" class="md-nav__link">
         Multi-language support
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analyzer/customizing_nlp_models/" class="md-nav__link">
+        Customizing the NLP model
       </a>
     </li>
   
@@ -2189,7 +2076,7 @@
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.analyzer_engine.AnalyzerEngine.analyze">
+<h2 id="presidio_analyzer.analyzer_engine.AnalyzerEngine.analyze" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">correlation_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_decision_process</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2388,7 +2275,7 @@ print(results)
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.analyzer_engine.AnalyzerEngine.get_recognizers">
+<h2 id="presidio_analyzer.analyzer_engine.AnalyzerEngine.get_recognizers" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_recognizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2466,7 +2353,7 @@ print(results)
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.analyzer_engine.AnalyzerEngine.get_supported_entities">
+<h2 id="presidio_analyzer.analyzer_engine.AnalyzerEngine.get_supported_entities" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2588,7 +2475,7 @@ print(results)
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.add_recognizer">
+<h2 id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.add_recognizer" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">add_recognizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">)</span></code>
 
 
@@ -2641,7 +2528,7 @@ print(results)
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.get_recognizers">
+<h2 id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.get_recognizers" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_recognizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">all_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2781,7 +2668,7 @@ print(results)
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.load_predefined_recognizers">
+<h2 id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.load_predefined_recognizers" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">load_predefined_recognizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">languages</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nlp_engine</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2890,7 +2777,7 @@ print(results)
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.remove_recognizer">
+<h2 id="presidio_analyzer.recognizer_registry.recognizer_registry.RecognizerRegistry.remove_recognizer" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">remove_recognizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizer_name</span><span class="p">)</span></code>
 
 
@@ -3026,7 +2913,7 @@ Recognizers which hold the logic for recognizing specific PII entities.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.analyze">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.analyze" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">)</span></code>
 
 
@@ -3110,7 +2997,7 @@ Recognizers which hold the logic for recognizing specific PII entities.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.enhance_using_context">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.enhance_using_context" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">enhance_using_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">raw_results</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">,</span> <span class="n">recognizer_context_words</span><span class="p">)</span></code>
 
 
@@ -3236,7 +3123,7 @@ indeed of that PII entity type</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.from_dict">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.from_dict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_dict</span><span class="p">(</span><span class="n">entity_recognizer_dict</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -3290,7 +3177,7 @@ indeed of that PII entity type</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.get_supported_entities">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.get_supported_entities" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3336,7 +3223,7 @@ indeed of that PII entity type</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.get_supported_language">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.get_supported_language" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_supported_language</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3382,7 +3269,7 @@ indeed of that PII entity type</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.get_version">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.get_version" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3428,7 +3315,7 @@ indeed of that PII entity type</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.load">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.load" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3460,7 +3347,7 @@ indeed of that PII entity type</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.remove_duplicates">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.remove_duplicates" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -3556,7 +3443,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.entity_recognizer.EntityRecognizer.to_dict">
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.to_dict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3677,7 +3564,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.remote_recognizer.RemoteRecognizer.analyze">
+<h2 id="presidio_analyzer.remote_recognizer.RemoteRecognizer.analyze" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">)</span></code>
 
 
@@ -3763,7 +3650,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.remote_recognizer.RemoteRecognizer.get_supported_entities">
+<h2 id="presidio_analyzer.remote_recognizer.RemoteRecognizer.get_supported_entities" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3805,7 +3692,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.remote_recognizer.RemoteRecognizer.load">
+<h2 id="presidio_analyzer.remote_recognizer.RemoteRecognizer.load" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -3912,7 +3799,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern_recognizer.PatternRecognizer.analyze">
+<h2 id="presidio_analyzer.pattern_recognizer.PatternRecognizer.analyze" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">regex_flags</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -4020,7 +3907,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern_recognizer.PatternRecognizer.build_regex_explanation">
+<h2 id="presidio_analyzer.pattern_recognizer.PatternRecognizer.build_regex_explanation" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">build_regex_explanation</span><span class="p">(</span><span class="n">recognizer_name</span><span class="p">,</span> <span class="n">pattern_name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">original_score</span><span class="p">,</span> <span class="n">validation_result</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4131,7 +4018,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern_recognizer.PatternRecognizer.from_dict">
+<h2 id="presidio_analyzer.pattern_recognizer.PatternRecognizer.from_dict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_dict</span><span class="p">(</span><span class="n">entity_recognizer_dict</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4167,7 +4054,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern_recognizer.PatternRecognizer.invalidate_result">
+<h2 id="presidio_analyzer.pattern_recognizer.PatternRecognizer.invalidate_result" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">invalidate_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern_text</span><span class="p">)</span></code>
 
 
@@ -4237,7 +4124,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern_recognizer.PatternRecognizer.load">
+<h2 id="presidio_analyzer.pattern_recognizer.PatternRecognizer.load" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -4264,7 +4151,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern_recognizer.PatternRecognizer.to_dict">
+<h2 id="presidio_analyzer.pattern_recognizer.PatternRecognizer.to_dict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -4299,7 +4186,7 @@ have identical start and ends and types.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern_recognizer.PatternRecognizer.validate_result">
+<h2 id="presidio_analyzer.pattern_recognizer.PatternRecognizer.validate_result" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">validate_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern_text</span><span class="p">)</span></code>
 
 
@@ -4400,7 +4287,7 @@ tokens and lemmas which can be used by any recognizer</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.nlp_artifacts.NlpArtifacts.set_keywords">
+<h2 id="presidio_analyzer.nlp_engine.nlp_artifacts.NlpArtifacts.set_keywords" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">set_keywords</span><span class="p">(</span><span class="n">nlp_engine</span><span class="p">,</span> <span class="n">lemmas</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4456,7 +4343,7 @@ tokens and lemmas which can be used by any recognizer</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.nlp_artifacts.NlpArtifacts.to_json">
+<h2 id="presidio_analyzer.nlp_engine.nlp_artifacts.NlpArtifacts.to_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -4524,7 +4411,7 @@ on tokens.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.is_punct">
+<h2 id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.is_punct" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">is_punct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
 
@@ -4556,7 +4443,7 @@ on tokens.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.is_stopword">
+<h2 id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.is_stopword" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">is_stopword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
 
@@ -4588,7 +4475,7 @@ on tokens.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_text">
+<h2 id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_text" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
 
@@ -4650,7 +4537,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.__init__">
+<h2 id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.__init__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">models</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -4711,7 +4598,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.get_nlp">
+<h2 id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.get_nlp" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_nlp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
 
@@ -4777,7 +4664,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.is_punct">
+<h2 id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.is_punct" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">is_punct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
 
@@ -4809,7 +4696,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.is_stopword">
+<h2 id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.is_stopword" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">is_stopword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
 
@@ -4841,7 +4728,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.process_text">
+<h2 id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.process_text" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
 
@@ -4931,7 +4818,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.nlp_engine.nlp_engine_provider.NlpEngineProvider.create_engine">
+<h2 id="presidio_analyzer.nlp_engine.nlp_engine_provider.NlpEngineProvider.create_engine" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -5058,7 +4945,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.__eq__">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.__eq__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5129,7 +5016,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.__gt__">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.__gt__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5200,7 +5087,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.__hash__">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.__hash__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5252,7 +5139,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.__repr__">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.__repr__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5282,7 +5169,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.__str__">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.__str__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5317,7 +5204,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.append_analysis_explenation_text">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.append_analysis_explenation_text" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">append_analysis_explenation_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></code>
 
 
@@ -5345,7 +5232,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.contained_in">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.contained_in" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">contained_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5391,7 +5278,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.contains">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.contains" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5457,7 +5344,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.equal_indices">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.equal_indices" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">equal_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5523,7 +5410,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.from_json">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.from_json" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5602,7 +5489,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.has_conflict">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.has_conflict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">has_conflict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5677,7 +5564,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.intersects">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.intersects" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">intersects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
 
 
@@ -5730,7 +5617,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.recognizer_result.RecognizerResult.to_dict">
+<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.to_dict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -5839,7 +5726,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern.Pattern.__repr__">
+<h2 id="presidio_analyzer.pattern.Pattern.__repr__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5869,7 +5756,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern.Pattern.__str__">
+<h2 id="presidio_analyzer.pattern.Pattern.__str__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5899,7 +5786,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern.Pattern.from_dict">
+<h2 id="presidio_analyzer.pattern.Pattern.from_dict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">from_dict</span><span class="p">(</span><span class="n">pattern_dict</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -5969,7 +5856,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_analyzer.pattern.Pattern.to_dict">
+<h2 id="presidio_analyzer.pattern.Pattern.to_dict" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -6117,10 +6004,10 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.76f349be.min.js"></script>
+      <script src="../../assets/javascripts/bundle.ddd52ceb.min.js"></script>
       
     
   </body>

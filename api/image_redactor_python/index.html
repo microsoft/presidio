@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/image_redactor_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.10">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ca7ac06f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1fe995fd.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.f1a3b89f.min.css">
@@ -166,129 +166,6 @@
       
       
         
-          
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../.." class="md-tabs__link">
-      Home
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../getting_started/" class="md-tabs__link">
-      Getting Started
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../installation/" class="md-tabs__link">
-      Installation
-    </a>
-  </li>
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../text_anonymization/" class="md-tabs__link">
-        Text anonymization
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../image-redactor/" class="md-tabs__link">
-        Image Redactor
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../samples/" class="md-tabs__link">
-        Samples
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  <li class="md-tabs__item">
-    <a href="../../supported_entities/" class="md-tabs__link">
-      Supported entities
-    </a>
-  </li>
-
-      
-        
-  
-  
-    
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../design/" class="md-tabs__link md-tabs__link--active">
-        Development and design
-      </a>
-    </li>
-  
-
-      
-    </ul>
-  </div>
-</nav>
-        
       
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
@@ -300,10 +177,8 @@
                   <div class="md-sidebar__inner">
                     
 
-  
 
-
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
       
@@ -500,6 +375,18 @@
     <li class="md-nav__item">
       <a href="../../analyzer/languages/" class="md-nav__link">
         Multi-language support
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analyzer/customizing_nlp_models/" class="md-nav__link">
+        Customizing the NLP model
       </a>
     </li>
   
@@ -1152,7 +1039,7 @@
 
 
 
-<h2 class="doc doc-heading" id="presidio_image_redactor.image_redactor_engine.ImageRedactorEngine.redact">
+<h2 id="presidio_image_redactor.image_redactor_engine.ImageRedactorEngine.redact" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">redact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></code>
 
 
@@ -1177,7 +1064,7 @@ manipulate it.</p>
   <tbody>
       <tr>
         <td><code>image</code></td>
-        <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/Users/sharon/dev/presidio/docsenv/lib/python3.7/site-packages/PIL/Image.py&#39;&gt;</code></td>
+        <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.9.6/x64/lib/python3.9/site-packages/PIL/Image.py&#39;&gt;</code></td>
         <td><p>PIL Image to be processed</p></td>
         <td><em>required</em></td>
       </tr>
@@ -1199,7 +1086,7 @@ manipulate it.</p>
   </thead>
   <tbody>
     <tr>
-      <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/Users/sharon/dev/presidio/docsenv/lib/python3.7/site-packages/PIL/Image.py&#39;&gt;</code></td>
+      <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.9.6/x64/lib/python3.9/site-packages/PIL/Image.py&#39;&gt;</code></td>
       <td><p>the redacted image</p></td>
     </tr>
   </tbody>
@@ -1302,7 +1189,7 @@ manipulate it.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.analyze">
+<h2 id="presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.analyze" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
@@ -1384,7 +1271,7 @@ manipulate it.</p>
 
 
 
-<h2 class="doc doc-heading" id="presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes">
+<h2 id="presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">map_analyzer_results_to_bounding_boxes</span><span class="p">(</span><span class="n">text_analyzer_results</span><span class="p">,</span> <span class="n">ocr_result</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -1603,10 +1490,10 @@ and word (in ocr dict) in the text.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.76f349be.min.js"></script>
+      <script src="../../assets/javascripts/bundle.ddd52ceb.min.js"></script>
       
     
   </body>

@@ -7,3 +7,4 @@ mkdocstrings
 presidio_analyzer
 presidio_anonymizer
 presidio_image_redactor
+jupyter_contrib_nbextensions
