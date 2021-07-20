@@ -1,7 +1,7 @@
 parameters:
 - name: UPSTREAM_BRANCH
   type: string
-  default: remotes/origin/master
+  default: remotes/origin/main
 steps:
 - task: Bash@3
   displayName: 'Verify version change'
