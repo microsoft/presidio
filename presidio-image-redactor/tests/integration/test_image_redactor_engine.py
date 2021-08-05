@@ -28,7 +28,7 @@ def test_given_image_without_text_and_fill_then_image_does_not_change():
     redacted_image = ImageRedactorEngine().redact(image, red_fill)
     assert compare_images(redacted_image, image)
 
-def test_that_kwargs_work_for_redact_method():
+def test_given_analzyer_kwargs_then_different_entities_are_redacted():
     """
     Tests that kwargs such as entities and score_threshold are available for redact method
     """
