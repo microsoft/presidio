@@ -18,7 +18,9 @@ class ImageRedactorEngine:
             self.image_analyzer_engine = image_analyzer_engine
 
     def redact(
-        self, image: Image, fill: Union[int, Tuple[int, int, int]] = (0, 0, 0), **kwargs,
+        self, image: Image,
+        fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
+        **kwargs,
     ) -> Image:
         """Redact method to redact the given image.
 
