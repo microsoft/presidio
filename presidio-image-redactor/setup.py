@@ -9,6 +9,7 @@ requirements = [
     "pytesseract==0.3.7",
     "presidio-analyzer>=1.9.0",
     "matplotlib==3.3.4",
+    "pydantic==1.7.4",
 ]
 
 test_requirements = ["pytest>=3", "flake8==3.7.9"]

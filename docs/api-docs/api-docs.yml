@@ -11,7 +11,7 @@ info:
     url: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
   license:
     name: MIT
-    url: 'https://github.com/microsoft/presidio/blob/master/LICENSE'
+    url: 'https://github.com/microsoft/presidio/blob/main/LICENSE'
 externalDocs:
   description: Presidio documentation.
   url: 'https://microsoft.github.io/presidio/'
