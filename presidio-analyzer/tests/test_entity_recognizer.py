@@ -100,3 +100,36 @@ def test_when_remove_duplicates_different_then_entity_not_removed():
     ]
     results = EntityRecognizer.remove_duplicates(arr)
     assert len(results) == 2
+
+
+def test_when_remove_duplicates_contained_shorter_length_results_removed():
+    arr = [
+        RecognizerResult(
+            start=0,
+            end=10,
+            score=0.5,
+            entity_type="x",
+            analysis_explanation=AnalysisExplanation(
+                recognizer="test",
+                original_score=0,
+                pattern_name="test",
+                pattern="test",
+                validation_result=None,
+            ),
+        ),
+        RecognizerResult(
+            start=0,
+            end=5,
+            score=0.5,
+            entity_type="x",
+            analysis_explanation=AnalysisExplanation(
+                recognizer="test",
+                original_score=0,
+                pattern_name="test",
+                pattern="test",
+                validation_result=None,
+            ),
+        ),
+    ]
+    results = EntityRecognizer.remove_duplicates(arr)
+    assert len(results) == 1

@@ -15,11 +15,11 @@ Pre-requisites:
 - Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract#installing-tesseract) by following the
   instructions on how to install it for your operating system.
 
-  !!! note "Note"
-    For now, image redactor only supports version 4.0.0
+!!! attention "Attention"
+    For now, image redactor only supports tesseract version 4.0.0
 
 === "Using pip"
-    
+
     !!! note "Note"
         Consider installing the Presidio python packages on a virtual environment like venv or conda.
     
@@ -32,7 +32,7 @@ Pre-requisites:
     ```
 
 === "Using Docker"
-    
+
     !!! note "Note"
         This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
     
@@ -45,7 +45,7 @@ Pre-requisites:
     ```
 
 === "From source"
-    
+
     First, clone the Presidio repo. [See here for instructions](../installation.md#install-from-source).
     
     Then, build the presidio-image-redactor container:
@@ -58,7 +58,7 @@ Pre-requisites:
 ## Getting started
 
 === "Python"
-    
+
     Once the Presidio-image-redactor package is installed, run this simple script:
     
     ```python
@@ -82,7 +82,7 @@ Pre-requisites:
     ```
 
 === "As an HTTP server"
-    
+
     You can run presidio image redactor as an http server using either python runtime or using a docker container.
     
     #### Using docker container
