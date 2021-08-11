@@ -27,3 +27,16 @@ def test_given_image_without_text_and_fill_then_image_does_not_change():
     image = get_resource_image("no_ocr.jpg")
     redacted_image = ImageRedactorEngine().redact(image, red_fill)
     assert compare_images(redacted_image, image)
+
+def test_given_analzyer_kwargs_then_different_entities_are_redacted():
+    """
+    Tests that kwargs such as entities and score_threshold are available for redact method
+    """
+    # Image with PII entities 
+    image = get_resource_image("kwargs_test.jpg")
+    redacted_image_no_args = ImageRedactorEngine().redact(image)
+    redacted_image_entities_args = ImageRedactorEngine().redact(image, entities=['PERSON', 'LOCATION'])
+    redacted_image_score_args = ImageRedactorEngine().redact(image, score_threshold=1)
+    assert not compare_images(redacted_image_no_args, redacted_image_entities_args)
+    assert not compare_images(redacted_image_no_args, redacted_image_score_args)
+    assert not compare_images(redacted_image_entities_args, redacted_image_score_args)
