@@ -21,6 +21,7 @@ from .us_passport_recognizer import UsPassportRecognizer
 from .us_phone_recognizer import UsPhoneRecognizer
 from .us_ssn_recognizer import UsSsnRecognizer
 from .es_nif_recognizer import EsNifRecognizer
+from .au_abn_recognizer import AuAbnRecognizer
 
 NLP_RECOGNIZERS = {"spacy": SpacyRecognizer, "stanza": StanzaRecognizer}
 
@@ -49,4 +50,5 @@ __all__ = [
     "SpacyRecognizer",
     "StanzaRecognizer",
     "NLP_RECOGNIZERS",
+    "AuAbnRecognizer",
 ]
