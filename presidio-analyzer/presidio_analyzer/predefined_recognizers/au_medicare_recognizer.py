@@ -66,7 +66,7 @@ class AuMedicareRecognizer(PatternRecognizer):
         medicare_list = [int(digit) for digit in text]
 
         # Set weights based on digit position
-        weight = [1,3,7,9,1,3,7,9]
+        weight = [1, 3, 7, 9, 1, 3, 7, 9]
 
         # Perform checksums
         sum_product = 0

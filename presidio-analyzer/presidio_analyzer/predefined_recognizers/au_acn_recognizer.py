@@ -5,7 +5,9 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class AuAcnRecognizer(PatternRecognizer):
     """
-    Recognizes Australian Company Number ("ACN") using regex, context words, and checksum.
+    Recognizes Australian Company Number ("ACN").
+
+    Recognizes ACN using regex, context words, and checksum.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -67,7 +69,7 @@ class AuAcnRecognizer(PatternRecognizer):
         acn_list = [int(digit) for digit in text]
 
         # Set weights based on digit position
-        weight = [8,7,6,5,4,3,2,1]
+        weight = [8, 7, 6, 5, 4, 3, 2, 1]
 
         # Perform checksums
         sum_product = 0

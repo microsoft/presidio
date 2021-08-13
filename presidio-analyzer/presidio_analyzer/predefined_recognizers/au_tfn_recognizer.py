@@ -5,7 +5,9 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class AuTfnRecognizer(PatternRecognizer):
     """
-    Recognizes Australian Tax File Numbers ("TFN") using regex, context words, and checksum.
+    Recognizes Australian Tax File Numbers ("TFN").
+
+    Uses regex, context words, and checksum to recognize TFN.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -67,7 +69,7 @@ class AuTfnRecognizer(PatternRecognizer):
         tfn_list = [int(digit) for digit in text]
 
         # Set weights based on digit position
-        weight = [1,4,3,7,5,8,6,9,10]
+        weight = [1, 4, 3, 7, 5, 8, 6, 9, 10]
 
         # Perform checksums
         sum_product = 0

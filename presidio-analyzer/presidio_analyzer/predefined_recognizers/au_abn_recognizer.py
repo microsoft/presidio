@@ -5,7 +5,9 @@ from presidio_analyzer import Pattern, PatternRecognizer
 
 class AuAbnRecognizer(PatternRecognizer):
     """
-    Recognizes Australian Business Number ("ABN") using regex, context words, and checksum.
+    Recognizes Australian Business Number ("ABN").
+
+    Recognizes ABN using regex, context words, and checksum.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -67,10 +69,10 @@ class AuAbnRecognizer(PatternRecognizer):
         abn_list = [int(digit) for digit in text]
 
         # Set weights based on digit position
-        weight = [10,1,3,5,7,9,11,13,15,17,19]
+        weight = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
 
         # Perform checksums
-        abn_list[0] = 9 if abn_list[0] == 0 else abn_list[0] -1
+        abn_list[0] = 9 if abn_list[0] == 0 else abn_list[0] - 1
         sum_product = 0
         for i in range(11):
             sum_product += abn_list[i] * weight[i]
