@@ -3,9 +3,9 @@ from typing import Optional, List, Tuple
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
-class AuAbnRecognizer(PatternRecognizer):
+class AuAcnRecognizer(PatternRecognizer):
     """
-    Recognizes Australian Business Number ("ABN") using regex, context words, and checksum.
+    Recognizes Australian Company Number ("ACN") using regex, context words, and checksum.
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
@@ -18,20 +18,20 @@ class AuAbnRecognizer(PatternRecognizer):
 
     PATTERNS = [
         Pattern(
-            "ABN (Medium)",
-            r"\b\d{2}\s\d{3}\s\d{3}\s\d{3}\b",
+            "ACN (Medium)",
+            r"\b\d{3}\s\d{3}\s\d{3}\b",
             0.5,
         ),
         Pattern(
-            "ABN (Low)",
-            r"\b\d{11}\b",
+            "ACN (Low)",
+            r"\b\d{9}\b",
             0.3,
         ),
     ]
 
     CONTEXT = [
-        "australian business number",
-        "abn",
+        "australian company number",
+        "acn",
     ]
 
     def __init__(
@@ -39,7 +39,7 @@ class AuAbnRecognizer(PatternRecognizer):
         patterns: Optional[List[Pattern]] = None,
         context: Optional[List[str]] = None,
         supported_language: str = "en",
-        supported_entity: str = "AU_ABN",
+        supported_entity: str = "AU_ACN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
     ):
         self.replacement_pairs = (
@@ -64,18 +64,18 @@ class AuAbnRecognizer(PatternRecognizer):
         """
         # Pre-processing before validation checks
         text = self.__sanitize_value(pattern_text, self.replacement_pairs)
-        abn_list = [int(digit) for digit in text]
+        acn_list = [int(digit) for digit in text]
 
         # Set weights based on digit position
-        weight = [10,1,3,5,7,9,11,13,15,17,19]
+        weight = [8,7,6,5,4,3,2,1]
 
         # Perform checksums
-        abn_list[0] = 9 if abn_list[0] == 0 else abn_list[0] -1
         sum_product = 0
-        for i in range(11):
-            sum_product += abn_list[i] * weight[i]
-        remainder = sum_product % 89
-        if remainder == 0:
+        for i in range(8):
+            sum_product += acn_list[i] * weight[i]
+        remainder = sum_product % 10
+        complement = 10 - remainder
+        if complement == acn_list[-1]:
             result = True
         else:
             result = None
