@@ -1,36 +1,35 @@
 import pytest
 
 from tests import assert_result_within_score_range
-from presidio_analyzer.predefined_recognizers import AuAcnRecognizer
+from presidio_analyzer.predefined_recognizers import AuTfnRecognizer
 
 
 @pytest.fixture(scope="module")
 def recognizer():
-    return AuAcnRecognizer()
+    return AuTfnRecognizer()
 
 
 @pytest.fixture(scope="module")
 def entities():
-    return ["AU_ACN"]
+    return ["AU_TFN"]
 
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
-        # Valid formatting and valid ACNs 
-        ("000 000 019", 1, ((0, 11),), ((1.0, 1.0),), ),
-        ("005 499 981", 1, ((0, 11),), ((1.0, 1.0),), ),
-        ("006249976", 1, ((0, 9),), ((1.0, 1.0),), ),
-        # Valid formatting but invalid ACNs 
+        # Valid formatting and valid TFNs 
+        ("876 543 210", 1, ((0, 11),), ((1.0, 1.0),), ),
+        ("876543210", 1, ((0, 9),), ((1.0, 1.0),), ),
+        # Valid formatting but invalid TFNs 
         ("824 753 557", 1, ((0, 11),), ((0.5, 0.5),),),
         ("824753557", 1, ((0, 9),), ((0.3, 0.3),),),
-        # Invalid formatting and ACNs.  
+        # Invalid formatting and TFNs.  
         ("5282475355632", 0, (), (),),
         ("52824753556AF", 0, (), (),),
         ("51 824 753 5564", 0, (), (),),
     ],
 )
-def test_when_all_acns_then_succeed(
+def test_when_all_tfns_then_succeed(
     text,
     expected_len,
     expected_positions,
