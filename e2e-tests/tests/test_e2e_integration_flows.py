@@ -200,16 +200,11 @@ def test_demo_website_text_returns_correct_anonymized_version():
     text = " ".join(text_into_rows)
     language = "en"
     score_threshold = 0.35
-    entities = ["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT",
-     "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", "UK_NHS",
-      "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS",
-       "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME", "MEDICAL_LICENSE",]
 
     analyzer_request = {
         "text": text,
         "language": language,
         "score_threshold": score_threshold,
-        "entities": entities
     }
 
     # Call analyzer

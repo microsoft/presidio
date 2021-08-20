@@ -22,12 +22,12 @@ class AuTfnRecognizer(PatternRecognizer):
         Pattern(
             "TFN (Medium)",
             r"\b\d{3}\s\d{3}\s\d{3}\b",
-            0.5,
+            0.1,
         ),
         Pattern(
             "TFN (Low)",
             r"\b\d{9}\b",
-            0.3,
+            0.01,
         ),
     ]
 

@@ -20,12 +20,12 @@ class AuMedicareRecognizer(PatternRecognizer):
         Pattern(
             "Australian Medicare Number (Medium)",
             r"\b[2-6]\d{3}\s\d{5}\s\d\b",
-            0.5,
+            0.1,
         ),
         Pattern(
             "Australian Medicare Number (Low)",
             r"\b[2-6]\d{9}\b",
-            0.3,
+            0.01,
         ),
     ]
 
