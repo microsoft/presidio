@@ -7,7 +7,11 @@ class AuAcnRecognizer(PatternRecognizer):
     """
     Recognizes Australian Company Number ("ACN").
 
-    Recognizes ACN using regex, context words, and checksum.
+    The Australian Company Number (ACN) is a nine digit number
+    with the last digit being a check digit calculated using a 
+    modified modulus 10 calculation.
+    This recognizer identifies ACN using regex, context words, and checksum.
+    Reference: https://asic.gov.au/for-business/registering-a-company/steps-to-register-a-company/australian-company-numbers/australian-company-number-digit-check/
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection

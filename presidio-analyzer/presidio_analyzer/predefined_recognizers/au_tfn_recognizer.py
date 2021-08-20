@@ -7,7 +7,12 @@ class AuTfnRecognizer(PatternRecognizer):
     """
     Recognizes Australian Tax File Numbers ("TFN").
 
-    Uses regex, context words, and checksum to recognize TFN.
+    The tax file number (TFN) is a unique identifier issued by the Australian Taxation Office 
+    to each taxpaying entity — an individual, company, superannuation fund, partnership, or trust.
+    The TFN consists of a nine digit number, usually presented in the format NNN NNN NNN.
+    TFN includes a check digit for detecting erroneous number based on simple modulo 11.   
+    This recognizer uses regex, context words, and checksum to identify TFN.
+    Reference: https://www.ato.gov.au/individuals/tax-file-number/
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection

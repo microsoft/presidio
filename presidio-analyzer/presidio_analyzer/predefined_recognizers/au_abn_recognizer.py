@@ -7,7 +7,12 @@ class AuAbnRecognizer(PatternRecognizer):
     """
     Recognizes Australian Business Number ("ABN").
 
-    Recognizes ABN using regex, context words, and checksum.
+    The Australian Business Number (ABN) is a unique 11 digit identifier issued 
+    to all entities registered in the Australian Business Register (ABR).
+    The 11 digit ABN is structured as a 9 digit identifier with two leading check digits. 
+    The leading check digits are derived using a modulus 89 calculation. 
+    This recognizer identifies ABN using regex, context words and checksum. 
+    Reference: https://abr.business.gov.au/Help/AbnFormat
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
