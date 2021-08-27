@@ -8,7 +8,8 @@ class AuMedicareRecognizer(PatternRecognizer):
     Recognizes Australian Medicare number using regex, context words, and checksum.
 
     Medicare number is a unique identifier issued by Australian Government
-    that enables the cardholder to receive a rebates of medical expenses under Australia's Medicare system.
+    that enables the cardholder to receive a rebates of medical expenses
+    under Australia's Medicare system.
     It uses a modulus 10 checksum scheme to validate the number.
     Reference: https://en.wikipedia.org/wiki/Medicare_card_(Australia)
 
