@@ -53,6 +53,15 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |--- |--- |--- |
 |FIN/NRIC| A National Registration Identification Card | Pattern match and context |
 
+### Australia
+
+|FieldType|Description|Detection Method|
+|--- |--- |--- |
+|AU_ABN| The Australian Business Number (ABN) is a unique 11 digit identifier issued to all entities registered in the Australian Business Register (ABR). | Pattern match, context, and checksum |
+|AU_ACN| An Australian Company Number is a unique nine-digit number issued by the Australian Securities and Investments Commission to every company registered under the Commonwealth Corporations Act 2001 as an identifier. | Pattern match, context, and checksum |
+|AU_TFN| The tax file number (TFN) is a unique identifier issued by the Australian Taxation Office to each taxpaying entity | Pattern match, context, and checksum |
+|AU_MEDICARE| Medicare number is a unique identifier issued by Australian Government that enables the cardholder to receive a rebates of medical expenses under Australia's Medicare system| Pattern match, context, and checksum |
+
 ## Adding a custom PII entity
 
 See [this documentation](analyzer/adding_recognizers.md) for instructions on how to add a new Recognizer for a new type of PII entity.
