@@ -24,6 +24,10 @@ from presidio_analyzer.predefined_recognizers import (
     SpacyRecognizer,
     EsNifRecognizer,
     StanzaRecognizer,
+    AuAbnRecognizer,
+    AuAcnRecognizer,
+    AuTfnRecognizer,
+    AuMedicareRecognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -68,6 +72,10 @@ class RecognizerRegistry:
                 UsSsnRecognizer,
                 NhsRecognizer,
                 SgFinRecognizer,
+                AuAbnRecognizer,
+                AuAcnRecognizer,
+                AuTfnRecognizer,
+                AuMedicareRecognizer,
             ],
             "es": [EsNifRecognizer],
             "ALL": [
