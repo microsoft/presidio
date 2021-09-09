@@ -47,14 +47,8 @@ text = (
 analyzer_results = analyzer.analyze(
     text=text, entities=["EMAIL_ADDRESS"], language="en"
 )
-print("Origina Text: ", text)
-print("Analyzer result:", analyzer_results, "\n")
+print(f"Original Text: {text}")
+print(f"Analyzer result: {analyzer_results}\n")
 
-print(
-    "Reverse lambda result: ",
-    anonymize_reverse_lambda(analyzer_results, text).text,
-    "\n",
-)
-print(
-    "Faker lambda result: ", anonymize_faker_lambda(analyzer_results, text).text, "\n"
-)
+print(f"Reverse lambda result: {anonymize_reverse_lambda(analyzer_results, text).text}")
+print(f"Faker lambda result: {anonymize_faker_lambda(analyzer_results, text).text}")

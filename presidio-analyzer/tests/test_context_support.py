@@ -1,7 +1,13 @@
 import os
 import pytest
 
-from presidio_analyzer import PatternRecognizer, Pattern
+from presidio_analyzer import (
+    PatternRecognizer,
+    Pattern,
+    RecognizerRegistry,
+    AnalyzerEngine,
+    EntityRecognizer,
+)
 from presidio_analyzer.predefined_recognizers import (
     AbaRoutingRecognizer,
     # CreditCardRecognizer,
@@ -112,3 +118,29 @@ def test_when_context_custom_recognizer_then_succeed(nlp_engine, mock_nlp_artifa
     assert len(results_without_context) == len(results_with_context)
     for res_wo, res_w in zip(results_without_context, results_with_context):
         assert res_wo.score < res_w.score
+
+
+def test_when_window_size_changes_confidence_changes():
+    # Define the regex pattern
+    regex = r"(\b\d{5}(?:\-\d{4})?\b)"  # very weak regex pattern
+    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
+
+    # Define the recognizer with the defined pattern
+    zipcode_recognizer = PatternRecognizer(
+        supported_entity="US_ZIP_CODE",
+        patterns=[zipcode_pattern],
+        context=["zip", "zipcode"],
+    )
+
+    registry = RecognizerRegistry()
+    registry.add_recognizer(zipcode_recognizer)
+    analyzer = AnalyzerEngine(registry=registry)
+    EntityRecognizer.CONTEXT_PREFIX_COUNT = 5
+    before_result = analyzer.analyze(text="My zip code is 90210", language="en")
+    before_score = before_result[0].score
+
+    EntityRecognizer.CONTEXT_PREFIX_COUNT = 1
+    after_result = analyzer.analyze(text="My zip code is 90210", language="en")
+    after_score = after_result[0].score
+
+    assert after_score < before_score
