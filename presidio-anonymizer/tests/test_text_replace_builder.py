@@ -1,6 +1,6 @@
 import pytest
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
+from presidio_anonymizer.core import TextReplaceBuilder
 
 
 @pytest.mark.parametrize(

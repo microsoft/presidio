@@ -1,12 +1,11 @@
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities.engine import PIIEntity
-from presidio_anonymizer.entities.engine.result import OperatorResult
+from presidio_anonymizer.entities import PIIEntity, OperatorResult
 
 
 class AnonymizerResult(PIIEntity):
-    """Information about the encrypted entity."""
+    """Information about the anonymized entity."""
 
     def __init__(self, start: int, end: int, entity_type: str) -> "AnonymizerResult":
         """

@@ -2,7 +2,7 @@
 import json
 from typing import List
 
-from presidio_anonymizer.entities.engine.result import OperatorResult
+from presidio_anonymizer.entities import OperatorResult
 
 
 class EngineResult:
@@ -41,6 +41,14 @@ class EngineResult:
     def to_json(self) -> str:
         """Return a json string serializing this instance."""
         return json.dumps(self, default=lambda x: x.__dict__)
+
+    def __repr__(self):
+        """Return a string representation of the object."""
+
+        items_repr = (
+            ",\n    ".join([str(item) for item in self.items]) if self.items else ""
+        )
+        return f"text: {self.text}.\nitems:\n[\n    {items_repr}\n]\n"
 
     def __eq__(self, other) -> bool:
         """Verify two instances are equal.
