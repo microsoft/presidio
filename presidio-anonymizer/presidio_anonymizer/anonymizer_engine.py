@@ -2,9 +2,7 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.entities import OperatorConfig
-from presidio_anonymizer.entities import RecognizerResult
-from presidio_anonymizer.entities import EngineResult
+from presidio_anonymizer.entities import OperatorConfig, RecognizerResult, EngineResult
 from presidio_anonymizer.core import EngineBase
 from presidio_anonymizer.operators import OperatorType
 
