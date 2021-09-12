@@ -1,4 +1,7 @@
-"""Keep the previous module structure for backward compatibility."""
-from ..operator_config import OperatorConfig
+"""Engine request entities."""
+from .pii_entity import PIIEntity
+from .operator_config import OperatorConfig
+from .recognizer_result import RecognizerResult
+from .anonymizer_result import AnonymizerResult
 
-__all__ = ["OperatorConfig"]
+__all__ = ["PIIEntity", "OperatorConfig", "RecognizerResult", "AnonymizerResult"]

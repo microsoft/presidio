@@ -4,8 +4,8 @@ from typing import List, Dict
 
 from presidio_anonymizer.core.engine_base import EngineBase
 from presidio_anonymizer.entities import OperatorConfig
-from presidio_anonymizer.entities.anonymizer_result import AnonymizerResult
-from presidio_anonymizer.entities.engine_result import EngineResult
+from presidio_anonymizer.entities.engine.anonymizer_result import AnonymizerResult
+from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
 from presidio_anonymizer.operators import OperatorType
 
 

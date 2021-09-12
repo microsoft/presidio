@@ -6,7 +6,7 @@ Represents the findings of detected entity.
 import logging
 from typing import Dict
 
-from presidio_anonymizer.entities import PIIEntity
+from presidio_anonymizer.entities.engine import PIIEntity
 from presidio_anonymizer.services.validators import validate_parameter_exists
 
 
