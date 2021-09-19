@@ -29,10 +29,10 @@ class Decrypt(Operator):
         encoded_key = params.get(self.KEY).encode("utf8")
         encryption_method = params.get(self.ENCRYPTION_METHOD)
         radix = params.get(self.RADIX,64)
-        encrypted_text = None
+        decrypted_text = None
         if encryption_method == "FPEFF31":
             fpe_tweak = params.get(self.FPE_TWEAK).encode("utf8")
-            encrypted_text = FPEFF31Cipher.decrypt(encoded_key, fpe_tweak, text, radix)
+            decrypted_text = FPEFF31Cipher.decrypt(encoded_key, fpe_tweak, text, radix)
         else:
             decrypted_text = AESCipher.decrypt(key=encoded_key, text=text)
         return decrypted_text
