@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 flask = "==1.1.2"
 pycryptodome = "==3.10.1"
+pyFPE = ">=0.10.0"
 
 [dev-packages]
 pytest = "*"
