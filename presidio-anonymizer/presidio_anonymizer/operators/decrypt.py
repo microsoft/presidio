@@ -5,6 +5,7 @@ from presidio_anonymizer.operators import Operator
 from presidio_anonymizer.operators import OperatorType
 from presidio_anonymizer.operators.aes_cipher import AESCipher
 from presidio_anonymizer.services.validators import validate_parameter
+from presidio_anonymizer.operators.ff3_1_cipher import FPEFF31Cipher
 
 
 class Decrypt(Operator):
@@ -12,6 +13,9 @@ class Decrypt(Operator):
 
     NAME = "decrypt"
     KEY = "key"
+    ENCRYPTION_METHOD = "encryption"
+    FPE_TWEAK = "tweak"
+    RADIX = "radix"
 
     def operate(self, text: str = None, params: Dict = None) -> str:
         """
@@ -23,7 +27,14 @@ class Decrypt(Operator):
         :return: The encrypted text
         """
         encoded_key = params.get(self.KEY).encode("utf8")
-        decrypted_text = AESCipher.decrypt(key=encoded_key, text=text)
+        encryption_method = params.get(self.ENCRYPTION_METHOD)
+        radix = params.get(self.RADIX,64)
+        encrypted_text = None
+        if encryption_method == "FPEFF31":
+            fpe_tweak = params.get(self.FPE_TWEAK).encode("utf8")
+            encrypted_text = FPEFF31Cipher.decrypt(encoded_key, fpe_tweak, text, radix)
+        else:
+            decrypted_text = AESCipher.decrypt(key=encoded_key, text=text)
         return decrypted_text
 
     def validate(self, params: Dict = None) -> None:
