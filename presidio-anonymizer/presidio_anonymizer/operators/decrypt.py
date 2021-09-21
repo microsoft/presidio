@@ -28,7 +28,7 @@ class Decrypt(Operator):
         """
         encoded_key = params.get(self.KEY).encode("utf8")
         encryption_method = params.get(self.ENCRYPTION_METHOD)
-        radix = params.get(self.RADIX,64)
+        radix = params.get(self.RADIX, 64)
         decrypted_text = None
         if encryption_method == "FPEFF31":
             fpe_tweak = params.get(self.FPE_TWEAK).encode("utf8")

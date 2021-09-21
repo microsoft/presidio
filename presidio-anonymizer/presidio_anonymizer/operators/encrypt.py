@@ -8,6 +8,12 @@ from presidio_anonymizer.operators.ff3_1_cipher import FPEFF31Cipher
 
 
 def format_align_digits(text, reference_text):
+    """
+    reformat digits  in text to align with non-digit separators for refence format.
+
+    :param text: text to format
+    :param reference_text: formatting reference
+    """
     if len(text) != len(reference_text):
         for idx, t in enumerate(reference_text):
             if not t.isdigit():
@@ -38,13 +44,15 @@ class Encrypt(Operator):
         if encryption_method == "FPEFF31":
             fpe_tweak = params.get(self.FPE_TWEAK).encode("utf8")
             radix = params.get(self.RADIX, 64)
-            text_scrubbed:str=None
+            text_scrubbed: str = None
             if radix == 10:
                 text_scrubbed = "".join(t for t in text if t.isdigit())
-                encrypted_text: str = FPEFF31Cipher.encrypt(encoded_key, fpe_tweak, text_scrubbed, radix)
+                encrypted_text: str = \
+                    FPEFF31Cipher.encrypt(encoded_key, fpe_tweak, text_scrubbed, radix)
                 encrypted_text = format_align_digits(encrypted_text, text)
             else:
-                encrypted_text:str = FPEFF31Cipher.encrypt(encoded_key, fpe_tweak, text, radix)
+                encrypted_text: str = \
+                    FPEFF31Cipher.encrypt(encoded_key, fpe_tweak, text, radix)
 
         else:
             encrypted_text = AESCipher.encrypt(encoded_key, text)
