@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 import phonenumbers
-from phonenumbers import SUPPORTED_REGIONS
 from phonenumbers.geocoder import country_name_for_number
 
 from presidio_analyzer import (
@@ -26,12 +25,14 @@ class PhoneRecognizer(LocalRecognizer):
 
     SCORE = 0.6
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
+    DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
 
     def __init__(
         self,
         context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
-        supported_regions=SUPPORTED_REGIONS,
+        # For all regions, use phonenumbers.SUPPORTED_REGIONS
+        supported_regions=DEFAULT_SUPPORTED_REGIONS,
     ):
         self.context = context
         self.supported_regions = supported_regions
