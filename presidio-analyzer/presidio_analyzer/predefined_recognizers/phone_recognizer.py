@@ -25,14 +25,14 @@ class PhoneRecognizer(LocalRecognizer):
 
     SCORE = 0.5
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
-    DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
+    LOW_LENIENCY_CODES = {"PA", "SO"}  # Matching '1234567' on leniency=1
 
     def __init__(
         self,
         context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
-        supported_regions=DEFAULT_SUPPORTED_REGIONS,
+        supported_regions=phonenumbers.SUPPORTED_REGIONS - LOW_LENIENCY_CODES,
     ):
         self.context = context
         self.supported_regions = supported_regions
