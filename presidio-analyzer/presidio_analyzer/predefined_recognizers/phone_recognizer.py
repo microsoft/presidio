@@ -4,7 +4,12 @@ import phonenumbers
 from phonenumbers import SUPPORTED_REGIONS
 from phonenumbers.geocoder import country_name_for_number
 
-from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation, EntityRecognizer
+from presidio_analyzer import (
+    RecognizerResult,
+    LocalRecognizer,
+    AnalysisExplanation,
+    EntityRecognizer,
+)
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
@@ -26,7 +31,7 @@ class PhoneRecognizer(LocalRecognizer):
         self,
         context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
-        supported_regions=SUPPORTED_REGIONS
+        supported_regions=SUPPORTED_REGIONS,
     ):
         self.context = context
         self.supported_regions = supported_regions
@@ -56,7 +61,9 @@ class PhoneRecognizer(LocalRecognizer):
         results = []
         for region in self.supported_regions:
             for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
-                results += [self._get_recognizer_result(match, text, region, nlp_artifacts)]
+                results += [
+                    self._get_recognizer_result(match, text, region, nlp_artifacts)
+                ]
 
         return EntityRecognizer.remove_duplicates(results)
 
@@ -72,17 +79,16 @@ class PhoneRecognizer(LocalRecognizer):
 
         # Enhance confidence using 'phone' related context and region code and name.
         return self.enhance_using_context(
-            text, [result], nlp_artifacts, self._get_region_specific_context(number, region)
+            text,
+            [result],
+            nlp_artifacts,
+            self._get_region_specific_context(number, region),
         )[0]
 
     def _get_region_specific_context(self, number, region):
         country_name = country_name_for_number(number, self.supported_language)
         country_name_in_words = country_name.lower().split(" ")
-        return (
-                self.context
-                + country_name_in_words
-                + [region.lower()]
-        )
+        return self.context + country_name_in_words + [region.lower()]
 
     def _get_analysis_explanation(self):
         return AnalysisExplanation(
