@@ -1,10 +1,10 @@
 from typing import List, Optional
 
 import phonenumbers
-from phonenumbers import COUNTRY_CODE_TO_REGION_CODE, SUPPORTED_REGIONS
+from phonenumbers import SUPPORTED_REGIONS
 from phonenumbers.geocoder import country_name_for_number
 
-from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation
+from presidio_analyzer import RecognizerResult, LocalRecognizer, AnalysisExplanation, EntityRecognizer
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
 ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
@@ -21,20 +21,15 @@ class PhoneRecognizer(LocalRecognizer):
 
     SCORE = 0.6
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
-    DEFAULT_SUPPORTED_COUNTRY_CODES = ("US", "UK", "DE", "FE", "IL")
 
     def __init__(
         self,
         context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
-        supported_entities: List[str] = [
-            code + ENTITY_TYPE_SUFFIX for code in DEFAULT_SUPPORTED_COUNTRY_CODES
-        ],
-        support_international=True
+        supported_regions=SUPPORTED_REGIONS
     ):
         self.context = context
-        self.supported_entities = supported_entities + [INTERNATIONAL_ENTITY_TYPE]\
-            if support_international else supported_entities
+        self.supported_regions = supported_regions
         super().__init__(
             supported_entities=self.get_supported_entities(),
             supported_language=supported_language,
@@ -44,14 +39,7 @@ class PhoneRecognizer(LocalRecognizer):
         pass
 
     def get_supported_entities(self):  # noqa D102
-        return (
-            self.supported_entities
-            if self.supported_entities
-            else [
-                value[0] + ENTITY_TYPE_SUFFIX
-                for value in COUNTRY_CODE_TO_REGION_CODE.values()
-            ]
-        )
+        return ["PHONE_NUMBER"]
 
     def analyze(
         self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts = None
@@ -66,51 +54,34 @@ class PhoneRecognizer(LocalRecognizer):
         :return: List of phone numbers RecognizerResults
         """
         results = []
-        for entity in entities:
-            region = entity.replace(ENTITY_TYPE_SUFFIX, "")
-            if region in SUPPORTED_REGIONS or entity is INTERNATIONAL_ENTITY_TYPE:
-                for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
-                    international_phone_prefix = match.raw_string.startswith("+")
-                    if entity == INTERNATIONAL_ENTITY_TYPE \
-                            and international_phone_prefix:
-                        results += [self._get_international_recognizer_result(match)]
-                    # phone-numbers matches international numbers twice
-                    elif not international_phone_prefix:
-                        results += [
-                            self._get_regional_recognizer_result(
-                                match, entity, text, nlp_artifacts
-                            )
-                        ]
+        for region in self.supported_regions:
+            for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
+                results += [self._get_recognizer_result(match, text, region, nlp_artifacts)]
 
-        return results
+        return EntityRecognizer.remove_duplicates(results)
 
-    def _get_regional_recognizer_result(self, match, entity, text, nlp_artifacts):
+    def _get_recognizer_result(self, match, text, region, nlp_artifacts):
         number = match.number
-        main_region_code = COUNTRY_CODE_TO_REGION_CODE.get(number.country_code)[0]
         result = RecognizerResult(
-            entity_type=entity,
+            entity_type="PHONE_NUMBER",
             start=match.start,
             end=match.end,
             score=self.SCORE,
             analysis_explanation=self._get_analysis_explanation(),
         )
+
         # Enhance confidence using 'phone' related context and region code and name.
-        region_specific_context = (
-            self.context
-            + [main_region_code]
-            + [country_name_for_number(number, self.supported_language)]
-        )
         return self.enhance_using_context(
-            text, [result], nlp_artifacts, region_specific_context
+            text, [result], nlp_artifacts, self._get_region_specific_context(number, region)
         )[0]
 
-    def _get_international_recognizer_result(self, match):
-        return RecognizerResult(
-            entity_type=INTERNATIONAL_ENTITY_TYPE,
-            start=match.start,
-            end=match.end,
-            score=0.6,
-            analysis_explanation=self._get_analysis_explanation(),
+    def _get_region_specific_context(self, number, region):
+        country_name = country_name_for_number(number, self.supported_language)
+        country_name_in_words = country_name.lower().split(" ")
+        return (
+                self.context
+                + country_name_in_words
+                + [region.lower()]
         )
 
     def _get_analysis_explanation(self):

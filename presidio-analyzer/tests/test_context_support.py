@@ -5,7 +5,7 @@ from presidio_analyzer import PatternRecognizer, Pattern
 from presidio_analyzer.predefined_recognizers import (
     AbaRoutingRecognizer,
     # CreditCardRecognizer,
-    UsPhoneRecognizer,
+    PhoneRecognizer,
     # DomainRecognizer,
     UsItinRecognizer,
     UsLicenseRecognizer,
@@ -23,7 +23,7 @@ def recognizers():
     rec_map = {
         "IP_ADDRESS": IpRecognizer(),
         "US_SSN": UsSsnRecognizer(),
-        "PHONE_NUMBER": UsPhoneRecognizer(),
+        "PHONE_NUMBER": PhoneRecognizer(),
         "ABA_ROUTING_NUMBER": AbaRoutingRecognizer(),
         "US_ITIN": UsItinRecognizer(),
         "US_DRIVER_LICENSE": UsLicenseRecognizer(),
