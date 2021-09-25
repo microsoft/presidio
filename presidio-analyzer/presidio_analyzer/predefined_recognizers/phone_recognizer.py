@@ -23,7 +23,7 @@ class PhoneRecognizer(LocalRecognizer):
     :param supported_entities: The entities this recognizer can detect
     """
 
-    SCORE = 0.6
+    SCORE = 0.3
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
     DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
 
