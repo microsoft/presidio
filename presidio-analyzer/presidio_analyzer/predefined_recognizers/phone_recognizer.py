@@ -23,7 +23,7 @@ class PhoneRecognizer(LocalRecognizer):
     :param supported_entities: The entities this recognizer can detect
     """
 
-    SCORE = 0.3
+    SCORE = 0.5
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
     DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
 
@@ -61,7 +61,7 @@ class PhoneRecognizer(LocalRecognizer):
         """
         results = []
         for region in self.supported_regions:
-            for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=0):
+            for match in phonenumbers.PhoneNumberMatcher(text, region, leniency=1):
                 results += [
                     self._get_recognizer_result(match, text, region, nlp_artifacts)
                 ]
