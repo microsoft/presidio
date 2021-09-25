@@ -23,9 +23,9 @@ class PhoneRecognizer(LocalRecognizer):
     :param supported_entities: The entities this recognizer can detect
     """
 
-    SCORE = 0.5
+    SCORE = 0.4
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
-    LOW_LENIENCY_CODES = {"PA", "SO"}  # Matching '1234567' on leniency=1
+    LOW_LENIENCY_CODES = {"PA", "SO", "NF"}  # Matching '1234567' on leniency=1
 
     def __init__(
         self,

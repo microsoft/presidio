@@ -90,7 +90,7 @@ def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     )
 
     assert len(results) == 2
-    medium_regex_score = 0.5
+    medium_regex_score = 0.4
     context_similarity_factor = 0.35  # PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
     expected_score = medium_regex_score + context_similarity_factor
