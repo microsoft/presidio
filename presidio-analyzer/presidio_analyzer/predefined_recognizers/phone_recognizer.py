@@ -73,7 +73,7 @@ class PhoneRecognizer(LocalRecognizer):
             start=match.start,
             end=match.end,
             score=self.SCORE,
-            analysis_explanation=self._get_analysis_explanation(),
+            analysis_explanation=self._get_analysis_explanation(region),
         )
 
         # Enhance confidence using 'phone' related context and region code and name.
@@ -89,9 +89,10 @@ class PhoneRecognizer(LocalRecognizer):
         country_name_in_words = country_name.lower().split(" ")
         return self.context + country_name_in_words + [region.lower()]
 
-    def _get_analysis_explanation(self):
+    def _get_analysis_explanation(self, region):
         return AnalysisExplanation(
             recognizer=PhoneRecognizer.__class__.__name__,
             original_score=self.SCORE,
-            textual_explanation="Recognized using PhoneRecognizer",
+            textual_explanation=f"Recognized as {region} region phone number, "
+            f"using PhoneRecognizer",
         )
