@@ -24,7 +24,7 @@
 
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities.engine import OperatorConfig
+from presidio_anonymizer.entities import OperatorConfig
 from pyspark.sql.types import StringType
 from pyspark.sql.functions import input_file_name, regexp_replace
 from pyspark.sql.functions import col, pandas_udf

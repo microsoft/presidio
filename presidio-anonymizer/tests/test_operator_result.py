@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.entities.engine.result import OperatorResult
+from presidio_anonymizer.entities import OperatorResult
 
 
 def test_given_decrypt_result_item_then_all_params_exist():
