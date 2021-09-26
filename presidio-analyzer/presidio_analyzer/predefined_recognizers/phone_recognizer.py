@@ -11,9 +11,6 @@ from presidio_analyzer import (
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-ENTITY_TYPE_SUFFIX = "_PHONE_NUMBER"
-INTERNATIONAL_ENTITY_TYPE = "INTERNATIONAL_PHONE_NUMBER"
-
 
 class PhoneRecognizer(LocalRecognizer):
     """Recognize multi-regional phone numbers.
@@ -25,14 +22,14 @@ class PhoneRecognizer(LocalRecognizer):
 
     SCORE = 0.4
     CONTEXT = ["phone", "number", "telephone", "cell", "cellphone", "mobile", "call"]
-    LOW_LENIENCY_CODES = {"PA", "SO", "NF"}  # Matching '1234567' on leniency=1
+    DEFAULT_SUPPORTED_REGIONS = ("US", "UK", "DE", "FE", "IL", "IN", "CA", "BR")
 
     def __init__(
         self,
         context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
-        supported_regions=phonenumbers.SUPPORTED_REGIONS - LOW_LENIENCY_CODES,
+        supported_regions=DEFAULT_SUPPORTED_REGIONS,
     ):
         self.context = context
         self.supported_regions = supported_regions
