@@ -16,8 +16,9 @@ class PhoneRecognizer(LocalRecognizer):
     """Recognize multi-regional phone numbers.
 
      Using python-phonenumbers, along with fixed and regional context words.
+    :param context: Base context words for enhancing the assurance scores.
     :param supported_language: Language this recognizer supports
-    :param supported_entities: The entities this recognizer can detect
+    :param supported_regions: The regions for phone number matching and validation
     """
 
     SCORE = 0.4
