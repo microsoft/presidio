@@ -7,8 +7,7 @@ from pathlib import Path
 from flask import Flask, request, jsonify, Response
 from werkzeug.exceptions import BadRequest, HTTPException
 
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
+from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
 
@@ -59,7 +58,8 @@ class Server:
                 raise BadRequest("Custom type anonymizer is not supported")
 
             analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
-                content.get("analyzer_results"))
+                content.get("analyzer_results")
+            )
             anoymizer_result = self.anonymizer.anonymize(
                 text=content.get("text"),
                 analyzer_results=analyzer_results,
@@ -74,14 +74,17 @@ class Server:
                 raise BadRequest("Invalid request json")
             text = content.get("text")
             deanonymize_entities = AppEntitiesConvertor.deanonymize_entities_from_json(
-                content)
+                content
+            )
             deanonymize_config = AppEntitiesConvertor.operators_config_from_json(
-                content.get("deanonymizers"))
+                content.get("deanonymizers")
+            )
             deanonymized_response = self.deanonymize.deanonymize(
                 text=text, entities=deanonymize_entities, operators=deanonymize_config
             )
-            return Response(deanonymized_response.to_json(),
-                            mimetype="application/json")
+            return Response(
+                deanonymized_response.to_json(), mimetype="application/json"
+            )
 
         @self.app.route("/anonymizers", methods=["GET"])
         def anonymizers():
