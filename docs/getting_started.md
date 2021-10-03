@@ -68,3 +68,4 @@ Using Presidio's modules as Python packages to get started
 - [PII detection in text](analyzer/index.md)
 - [PII anonymization in text](anonymizer/index.md)
 - [PII redaction in images](image-redactor/index.md)
+- [Discussion board](https://github.com/microsoft/presidio/discussions)
