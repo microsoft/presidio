@@ -13,6 +13,9 @@ A typical use case of Presidio in Spark is transforming a text column in a data 
 ```python
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
+from pyspark import SparkContext
+
+sc = SparkContext.getOrCreate()
 
 
 anonymized_column = "value" # name of column to anonymize
