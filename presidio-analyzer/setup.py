@@ -32,7 +32,7 @@ setuptools.setup(
     tests_require=["pytest", "flake8==3.7.9"],
     install_requires=[
         "spacy==3.0.6",
-        "regex==2020.11.13",
+        "regex>=2020.11.13",
         "tldextract==3.1.0",
         "pyyaml==5.4.1",
         "pydantic==1.7.4",
