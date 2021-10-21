@@ -35,7 +35,7 @@ class RecognizerResult:
         self.score = score
         self.analysis_explanation = analysis_explanation
 
-    def append_analysis_explenation_text(self, text: str) -> None:
+    def append_analysis_explanation_text(self, text: str) -> None:
         """Add text to the analysis explanation."""
         if self.analysis_explanation:
             self.analysis_explanation.append_textual_explanation_line(text)
