@@ -18,7 +18,7 @@ stages:
       - job: BuildAndPushContainers
         displayName: Build and Push Containers
         pool:
-          vmImage: 'ubuntu-18.04'
+          vmImage: 'ubuntu-latest'
         variables:
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
           TAG: ':$(Build.BuildId)'
