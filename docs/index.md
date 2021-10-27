@@ -28,9 +28,8 @@ bitcoin wallets, US phone numbers, financial data and more.
 !!! warning "Warning"
     Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-## Demo
 
-[Try Presidio with your own data](https://aka.ms/presidio-demo)
+## [Demo](https://aka.ms/presidio-demo) | [Frequently Asked Questions](faq.md)
 
 ## Presidio's modules
 
