@@ -142,8 +142,17 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
-        "deanonymizers": {"NUMBER": {"type": "decrypt", "key": "1111111111111111"}},
-        "anonymizer_results": [{"start": 0, "end": len(text), "entity_type": "NUMBER"}],
+        "deanonymizers": {
+            "NUMBER": {
+                "type": "decrypt",
+                "key": "1111111111111111"
+            }
+        },
+        "anonymizer_results": [{
+            "start": 0,
+            "end": len(text),
+            "entity_type": "NUMBER"
+        }],
     }
 
     response_status, response_content = deanonymize(json.dumps(request_body))
@@ -159,8 +168,17 @@ def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_retur
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz + YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
-        "deanonymizers": {"NUMBER": {"type": "decrypt", "key": "invalidkey"}},
-        "anonymizer_results": [{"start": 0, "end": len(text), "entity_type": "NUMBER"}],
+        "deanonymizers": {
+            "NUMBER": {
+                "type": "decrypt",
+                "key": "invalidkey"
+            }
+        },
+        "anonymizer_results": [{
+            "start": 0,
+            "end": len(text),
+            "entity_type": "NUMBER"
+        }],
     }
 
     response_status, response_content = deanonymize(json.dumps(request_body))
@@ -234,10 +252,8 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
     key = "1111111111111111"
     anonymize_request = {
         "text": text_for_encryption,
-        "anonymizers": {
-            "DEFAULT": {"type": "encrypt", "key": key},
-            "TITLE": {"type": "encrypt", "key": "2222222222222222"},
-        },
+        "anonymizers": {"DEFAULT": {"type": "encrypt", "key": key},
+                        "TITLE": {"type": "encrypt", "key": "2222222222222222"}},
         "analyzer_results": [
             {
                 "start": 0,
@@ -250,7 +266,7 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
                 "end": len(text_for_encryption),
                 "score": 0.8,
                 "entity_type": "TITLE",
-            },
+            }
         ],
     }
     _, anonymize_response_content = anonymize(json.dumps(anonymize_request))
@@ -259,8 +275,14 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
     decrypt_request = {
         "text": encrypted_text,
         "deanonymizers": {
-            "DEFAULT": {"type": "decrypt", "key": "1111111111111111"},
-            "TITLE": {"type": "decrypt", "key": "2222222222222222"},
+            "DEFAULT": {
+                "type": "decrypt",
+                "key": "1111111111111111"
+            },
+            "TITLE": {
+                "type": "decrypt",
+                "key": "2222222222222222"
+            }
         },
         "anonymizer_results": [
             {
@@ -272,7 +294,7 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
                 "start": 50,
                 "end": 114,
                 "entity_type": "TITLE",
-            },
+            }
         ],
     }
 
