@@ -1,4 +1,0 @@
-requests
-pytest
-file:../presidio-analyzer
-file:../presidio-anonymizer
