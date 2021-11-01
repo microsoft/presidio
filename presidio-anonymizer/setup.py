@@ -39,7 +39,7 @@ setup(
     license="MIT license",
     include_package_data=True,
     keywords="presidio_anonymizer",
-    install_requires=["pycryptodome==3.10.1"],
+    install_requires=["pycryptodome==3.11.0"],
     packages=find_packages(include=["presidio_anonymizer", "presidio_anonymizer.*"]),
     test_suite="tests",
     tests_require=test_requirements,
