@@ -21,11 +21,13 @@ Image-Redactor [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presid
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.
 
-## [Full documentation](https://microsoft.github.io/presidio) | [Frequently Asked Questions](docs/faq.md) | [Demo](https://aka.ms/presidio-demo) 
----
-
-
 ![Presidio demo gif](docs/assets/changing_text.gif)
+
+---
+### :blue_book: [Full documentation](https://microsoft.github.io/presidio) 
+### :question: [Frequently Asked Questions](docs/faq.md)
+### :thought_balloon: [Demo](https://aka.ms/presidio-demo) 
+---
 
 ### Goals
 
