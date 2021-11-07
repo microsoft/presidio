@@ -4,16 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "==1.19.3"
-flask = "==1.1.2"
-pytesseract = "==0.3.7"
-presidio-analyzer = "==2.2.21"
-pillow = "==8.3.2"
-matplotlib = "==3.3.4"
-pydantic = "1.7.4"
+flask = ">=1.1.2"
+pytesseract = ">=0.3.7"
+presidio-analyzer = ">=2.2.0"
+pillow = ">=8.3.2"
+matplotlib = ">=3.3.4"
 
 [dev-packages]
 pytest = "*"
-flake8 = { version = "==3.9.2" }
+flake8 = { version = ">=3.9.2" }
 pep8-naming = "*"
 flake8-docstrings = "*"
