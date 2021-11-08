@@ -10,10 +10,10 @@ nav:
   - Home: index.md
   - Getting Started: getting_started.md
   - Installation: installation.md
-  - Text anonymization:
+  - Handling text:
     - Home: text_anonymization.md
     - Presidio Analyzer:
-      - Analyzer Home: analyzer/index.md
+      - Home: analyzer/index.md
       - Developing PII recognizers:
         - Tutorial : analyzer/adding_recognizers.md
         - Best practices in developing recognizers : analyzer/developing_recognizers.md
@@ -21,20 +21,10 @@ nav:
       - Customizing the NLP model: analyzer/customizing_nlp_models.md
       - Tracing the decision process: analyzer/decision_process.md
     - Presidio Anonymizer:
-      - Anonymizer Home: anonymizer/index.md
+      - Home: anonymizer/index.md
       - Developing PII operators: anonymizer/adding_operators.md
-  - Image Redactor:
-      - Home: image-redactor/index.md
-
-  - Samples:
-    - Samples Home: samples/index.md
-    - Python: samples/python/index.md
-    - Docker: samples/docker/index.md
-    - Sample Deployments:
-      - Azure App Service: samples/deployments/app-service/index.md
-      - Kubernetes: samples/deployments/k8s/index.md
-      - Azure Databricks/Spark: samples/deployments/spark/index.md
-      - Azure Data Factory: samples/deployments/data-factory/index.md
+  - Handling images: image-redactor/index.md
+  - Samples: samples/index.md
   - Supported entities: supported_entities.md
   - Development and design:
     - Design: design.md
@@ -46,7 +36,7 @@ nav:
       - Presidio Anonymizer Python API: api/anonymizer_python.md
       - Presidio Image Redactor Python API: api/image_redactor_python.md
     - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
-
+  - FAQ: faq.md
 theme:
   name: material
   custom_dir: overrides

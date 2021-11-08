@@ -65,7 +65,7 @@ stages:
       displayName: Build and Push Containers
       dependsOn: version
       pool:
-        vmImage: 'ubuntu-16.04'
+        vmImage: 'ubuntu-latest'
       variables:
         version: $[ dependencies.Version.outputs['setVer.version'] ]
         REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
@@ -90,7 +90,7 @@ stages:
       displayName: Build and Push Image Redactor Container
       dependsOn: imageVersion
       pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: 'ubuntu-latest'
       variables:
           version: $[ dependencies.ImageVersion.outputs['setImageVer.imageVersion'] ]
           REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'

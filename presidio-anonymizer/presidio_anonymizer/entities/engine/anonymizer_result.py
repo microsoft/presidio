@@ -6,7 +6,7 @@ from presidio_anonymizer.entities.engine.result import OperatorResult
 
 
 class AnonymizerResult(PIIEntity):
-    """Information about the encrypted entity."""
+    """Information about the anonymized entity."""
 
     def __init__(self, start: int, end: int, entity_type: str) -> "AnonymizerResult":
         """

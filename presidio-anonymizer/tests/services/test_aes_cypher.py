@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.operators.aes_cipher import AESCipher
+from presidio_anonymizer.operators import AESCipher
 
 
 @pytest.mark.parametrize(
