@@ -60,11 +60,11 @@ class EngineBase(ABC):
             # ordered from end to start, and the indexes will be normalized
             # from start to end once the loop ends and the text length is deterministic.
             result_item = OperatorResult(
-                changed_text,
-                operator_metadata.operator_name,
                 0,
                 index_from_end,
                 operator.entity_type,
+                changed_text,
+                operator_metadata.operator_name,
             )
             engine_result.add_item(result_item)
 

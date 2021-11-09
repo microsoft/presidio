@@ -2,7 +2,7 @@ from typing import List, Dict
 
 from presidio_anonymizer.entities import InvalidParamException
 from presidio_anonymizer.entities import (
-    AnonymizerResult,
+    OperatorResult,
     OperatorConfig,
     RecognizerResult,
 )
@@ -40,7 +40,7 @@ class AppEntitiesConvertor:
         return {}
 
     @staticmethod
-    def deanonymize_entities_from_json(json: Dict) -> List["AnonymizerResult"]:
+    def deanonymize_entities_from_json(json: Dict) -> List["OperatorResult"]:
         """
         Create DecryptEntity list.
 
@@ -54,13 +54,13 @@ class AppEntitiesConvertor:
                 "entity_type":"PHONE_NUMBER"
             }],
         }
-        :return: List[AnonymizerResult]
+        :return: List[OperatorResult]
         """
         items = []
         decrypt_entity = json.get("anonymizer_results")
         if decrypt_entity:
             for result in decrypt_entity:
-                items.append(AnonymizerResult.from_json(result))
+                items.append(OperatorResult.from_json(result))
         return items
 
     @staticmethod

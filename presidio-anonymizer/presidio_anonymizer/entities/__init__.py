@@ -3,7 +3,6 @@ from .invalid_exception import InvalidParamException
 from .engine.pii_entity import PIIEntity
 from .engine.operator_config import OperatorConfig
 from .engine.recognizer_result import RecognizerResult
-from .engine.anonymizer_result import AnonymizerResult
 from .engine.result.engine_result import EngineResult
 from .engine.result.operator_result import OperatorResult
 
@@ -13,6 +12,5 @@ __all__ = [
     "OperatorConfig",
     "OperatorResult",
     "RecognizerResult",
-    "AnonymizerResult",
     "EngineResult",
 ]
