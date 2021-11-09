@@ -23,6 +23,12 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ![Presidio demo gif](docs/assets/changing_text.gif)
 
+---
+### :blue_book: [Full documentation](https://microsoft.github.io/presidio) 
+### :question: [Frequently Asked Questions](docs/faq.md)
+### :thought_balloon: [Demo](https://aka.ms/presidio-demo) 
+---
+
 ### Goals
 
 - Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
@@ -38,9 +44,6 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 5. Module for **redacting PII text in images**.
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
-
-### :notebook_with_decorative_cover: [Full documentation](https://microsoft.github.io/presidio)
-### :thought_balloon: [Try Presidio with your own data](https://aka.ms/presidio-demo) 
 
 
 ## Installing Presidio
