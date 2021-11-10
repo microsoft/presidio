@@ -32,9 +32,9 @@ setuptools.setup(
     tests_require=["pytest", "flake8>=3.7.9"],
     install_requires=[
         "spacy==3.0.6",
-        "regex=*",
-        "tldextract=*",
-        "pyyaml=*",
+        "regex",
+        "tldextract",
+        "pyyaml",
         "phonenumbers>=8.12",
     ],
     include_package_data=True,
