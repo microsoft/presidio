@@ -6,7 +6,7 @@ WORKDIR /usr/bin/${NAME}
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv
-RUN pipenv sync
+RUN pipenv install
 
 COPY . /usr/bin/${NAME}/
 
