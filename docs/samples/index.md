@@ -6,10 +6,11 @@
 | Usage       | Python Notebook        | [Customizing Presidio Analyzer](python/customizing_presidio_analyzer.ipynb)                                                                     |
 | Usage       | Python                 | [Remote Recognizer](python/example_remote_recognizer.py)                                                                                        |
 | Usage       | Python                 | [Text Analytics as a Remote Recognizer](python/text_analytics/index.md)                                                                         |
-| Usage       | Python                 | [Integrating with external services](python/integrating_with_external_services.ipynb)                                                           |
+| Usage       | Python Notebook        | [Integrating with external services](python/integrating_with_external_services.ipynb)                                                           |
 | Usage       | Python                 | [Passing a lambda as a Presidio anonymizer using Faker](python/example_custom_lambda_anonymizer.py)                                             |
-| Usage       | Python                 | [Analyzing structured / semi-structured data in batch](python/batch_processing.ipynb)                                                           |
-| Usage       | Python                 | [Getting the identified entity value using a custom Operator](python/getting_entity_values.ipynb)                                               |
+| Usage       | Python Notebook        | [Encrypting and Decrypting identified entities](python/encrypt_decrypt.ipynb)                                                           |
+| Usage       | Python Notebook        | [Analyzing structured / semi-structured data in batch](python/batch_processing.ipynb)                                                           |
+| Usage       | Python Notebook        | [Getting the identified entity value using a custom Operator](python/getting_entity_values.ipynb)                                               |
 | Usage       | REST API (postman)     | [Presidio as a REST endpoint](docker/index.md)                                                                                                  |
 | Deployment  | App Service            | [Presidio with App Service](deployments/app-service/index.md)                                                                                   |
 | Deployment  | Kubernetes             | [Presidio with Kubernetes](deployments/k8s/index.md)                                                                                            |
