@@ -4,11 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "==1.1.2"
-pycryptodome = "==3.10.1"
+flask = ">=1.1"
+pycryptodome = ">=3.10"
 
 [dev-packages]
 pytest = "*"
-flake8 = { version = "==3.7.9" }
+flake8 = { version = ">=3.7.9" }
 pep8-naming = "*"
 flake8-docstrings = "*"
+pre_commit = "*"
