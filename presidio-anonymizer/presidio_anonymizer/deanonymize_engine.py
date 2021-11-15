@@ -3,8 +3,7 @@ import logging
 from typing import List, Dict
 
 from presidio_anonymizer.core.engine_base import EngineBase
-from presidio_anonymizer.entities import OperatorConfig, OperatorResult
-from presidio_anonymizer.entities.engine.result.engine_result import EngineResult
+from presidio_anonymizer.entities import OperatorConfig, OperatorResult, EngineResult
 from presidio_anonymizer.operators import OperatorType
 
 

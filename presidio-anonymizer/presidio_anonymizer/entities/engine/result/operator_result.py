@@ -12,11 +12,11 @@ class OperatorResult(PIIEntity):
         end: int,
         entity_type: str,
         text: str = None,
-        operator_name: str = None,
+        operator: str = None,
     ):
         PIIEntity.__init__(self, start, end, entity_type)
         self.text = text
-        self.operator = operator_name
+        self.operator = operator
 
     def __repr__(self):
         """Return a string representation of the object."""
@@ -57,18 +57,18 @@ class OperatorResult(PIIEntity):
             "key": "1111111111111111",
             "entity_type":"PERSON",
             "text":"resulted_text",
-            "operator_name":"encrypt",
+            "operator":"encrypt",
         }
         """
         start = json.get("start")
         end = json.get("end")
         entity_type = json.get("entity_type")
         text = json.get("text")
-        operator_name = json.get("operator_name")
+        operator = json.get("operator")
         return cls(
             start=start,
             end=end,
             entity_type=entity_type,
             text=text,
-            operator_name=operator_name,
+            operator=operator,
         )

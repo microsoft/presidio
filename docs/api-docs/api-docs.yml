@@ -448,7 +448,7 @@ components:
           type: array
           description: "Array of anonymized PIIs"
           items:
-            $ref: "#/components/schemas/AnonymizerResult"
+            $ref: "#/components/schemas/OperatorResult"
 
 
     RecognizerResult:
@@ -472,24 +472,6 @@ components:
           format: double
           description: "The PII detection score"
           example: 0.8
-        entity_type:
-          $ref: "#/components/schemas/EntityTypes"
-
-    AnonymizerResult:
-      type: object
-      required:
-        - start
-        - end
-        - entity_type
-      properties:
-        start:
-          type: integer
-          description: "Where the anonymized PII starts"
-          example: 24
-        end:
-          type: integer
-          description: "Where the anonymized PII ends"
-          example: 32
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
 
@@ -705,9 +687,13 @@ components:
           type: array
           description: "Array of anonymized entities"
           items:
-            $ref: "#/components/schemas/OperatorEntity"
+            $ref: "#/components/schemas/OperatorResult"
 
-    OperatorEntity:
+    OperatorResult:
+      required:
+        - start
+        - end
+        - entity_type
       type: object
       properties:
         operator:
@@ -735,7 +721,7 @@ components:
           type: array
           description: "Array of deanonymized entities"
           items:
-            $ref: "#/components/schemas/OperatorEntity"
+            $ref: "#/components/schemas/OperatorResult"
 
   responses:
     400BadRequest:

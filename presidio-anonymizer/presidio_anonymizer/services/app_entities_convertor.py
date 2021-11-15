@@ -56,12 +56,12 @@ class AppEntitiesConvertor:
         }
         :return: List[OperatorResult]
         """
-        items = []
         decrypt_entity = json.get("anonymizer_results")
-        if decrypt_entity:
-            for result in decrypt_entity:
-                items.append(OperatorResult.from_json(result))
-        return items
+        return (
+            [OperatorResult.from_json(result) for result in decrypt_entity]
+            if decrypt_entity
+            else []
+        )
 
     @staticmethod
     def check_custom_operator(operators: Dict[str, OperatorConfig]):

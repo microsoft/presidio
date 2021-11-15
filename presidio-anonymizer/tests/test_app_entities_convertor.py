@@ -152,6 +152,14 @@ def test_given_invalid_json_then_we_fail_to_convert():
         AppEntitiesConvertor.deanonymize_entities_from_json(data)
 
 
+def test_given_nullified_anonymizer_results_json_we_convert_it_to_empty_entities_list():
+    data = {
+        "text": "THIS IS MY TEXT",
+    }
+    decrypted_entities = AppEntitiesConvertor.deanonymize_entities_from_json(data)
+    assert len(decrypted_entities) == 0
+
+
 def test_given_custom_operator_then_expected_result_returned():
     result = True
     anonymizers = {
