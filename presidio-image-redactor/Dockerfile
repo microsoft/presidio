@@ -12,7 +12,7 @@ COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv
 RUN pipenv install
 
-RUN pipenv run pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.2.0/en_core_web_lg-3.2.0-py3-none-any.whl
+RUN pipenv run python -m spacy download en_core_web_lg
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}

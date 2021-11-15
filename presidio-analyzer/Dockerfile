@@ -11,7 +11,7 @@ RUN pipenv install
 # install nlp models specified in conf/default.yaml
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
-RUN pipenv run pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.2.0/en_core_web_lg-3.2.0-py3-none-any.whl
+RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
