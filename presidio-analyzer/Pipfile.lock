@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "68d053979d6374c9015842fcd9e0483ee9e58ade6e94e2877de24dee50cdf5d4"
+            "sha256": "a7e1cc9d7584f37b4e9697364362df34c89dfbe24b5928c2a3005f257872621d"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -185,10 +185,11 @@
         },
         "langcodes": {
             "hashes": [
-                "sha256:779a6da5036f87b6b56c180b2782ab111ddd6aa9157670a9b918402b0e07cd93"
+                "sha256:4d89fc9acb6e9c8fdef70bcdf376113a3db09b67285d9e1d534de6d8818e7e69",
+                "sha256:794d07d5a28781231ac335a1561b8442f8648ca07cd518310aeb45d6f0807ef6"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==3.2.1"
+            "version": "==3.3.0"
         },
         "markupsafe": {
             "hashes": [
@@ -344,11 +345,11 @@
         },
         "phonenumbers": {
             "hashes": [
-                "sha256:e29717fcf86d68082fc6e42ca07e52bff863b6e0b354edd1644ba15c35ef213d",
-                "sha256:fa91fff1cefee6873c78f08c767f341a7658c849ffb74b605cb38cefef0e76fa"
+                "sha256:355956697047bc89efd89909373a0bdc50ac725c5613b2684a478d6b408a4010",
+                "sha256:dbc560992844a059f56c7c0c6a587904e65d956740bbfb7e39589980bc9055b8"
             ],
             "index": "pypi",
-            "version": "==8.12.36"
+            "version": "==8.12.37"
         },
         "preshed": {
             "hashes": [
@@ -644,7 +645,7 @@
                 "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7",
                 "sha256:f1d25edafde516b146ecd0613dabcc61409817af4766fbbcfb8d1ad4ec441a34"
             ],
-            "markers": "python_version < '3.8' and python_version < '3.8'",
+            "index": "pypi",
             "version": "==3.10.0.2"
         },
         "urllib3": {
@@ -943,7 +944,7 @@
                 "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7",
                 "sha256:f1d25edafde516b146ecd0613dabcc61409817af4766fbbcfb8d1ad4ec441a34"
             ],
-            "markers": "python_version < '3.8' and python_version < '3.8'",
+            "index": "pypi",
             "version": "==3.10.0.2"
         },
         "virtualenv": {
