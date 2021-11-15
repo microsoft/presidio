@@ -271,7 +271,7 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     )
     expected_response.add_item(
         OperatorResult(
-            operator_name="replace",
+            operator="replace",
             entity_type="US_DRIVER_LICENSE",
             start=28,
             end=47,
@@ -280,7 +280,7 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     )
     expected_response.add_item(
         OperatorResult(
-            operator_name="replace",
+            operator="replace",
             entity_type="PERSON",
             start=0,
             end=8,
