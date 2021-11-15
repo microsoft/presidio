@@ -16,8 +16,8 @@ steps:
       workingDirectory: 'presidio-analyzer'
       script: |
         set -eux  # fail on error
-        pipenv install --dev --sequential
-        pipenv run pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.2.0/en_core_web_lg-3.2.0-py3-none-any.whl
+        pipenv sync --dev --sequential
+        pipenv run python -m spacy download en_core_web_lg
 
   - template: ./build-python.yml
     parameters:

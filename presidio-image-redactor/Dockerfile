@@ -10,7 +10,7 @@ RUN tesseract -v
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv
-RUN pipenv install
+RUN pipenv sync
 
 # Remove once analyzer is bumped
 RUN pipenv run pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.0.0/en_core_web_lg-3.0.0.tar.gz
