@@ -9,6 +9,22 @@ All notable changes to this project will be documented in this file.
 
 ### Deprecated
 
+## [2.2.23] - 16.11.2021
+### Changed
+#### Analyzer:
+* Added multi-regional phone number recognizer.
+* Fixed duplicated entities removal.
+* Added sample for structured / semi-structured data in batch.
+* Dependencies version bumps.
+
+#### Anonymizer:
+* Added sample for getting an identified entity value using a custom Operator.
+* Changed packages/imports .
+* Added repr to classes.
+* Added encryption and decryption samples.
+* Remove AnonymizerResult in favor of OperatorResult, for an easier anonymization-deanonymization.
+* Anonymizaer and Deanonymizaer to return `operator_name` instead of `operator` in OperatorResult.
+
 ## [2.2.2] - 09.06.2021
 ### Changed
 #### Analyzer:
@@ -57,6 +73,7 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.2...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.23...HEAD
+[2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
 [2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
 [2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
