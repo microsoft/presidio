@@ -1,22 +1,54 @@
 
-<!DOCTYPE html>
-
-<html class="no-js" lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<meta content="PII anonymization for text and images." name="description"/>
-<meta content="Microsoft" name="author"/>
-<link href="https://microsoft.github.io/presidio/anonymizer/" rel="canonical"/>
-<link href="../assets/ms_icon.png" rel="icon"/>
-<meta content="mkdocs-1.2.2, mkdocs-material-7.3.1" name="generator"/>
-<title>Anonymizer Home - Microsoft Presidio</title>
-<link href="../assets/stylesheets/main.1c75ef36.min.css" rel="stylesheet"/>
-<link href="../assets/stylesheets/palette.3f5d1f46.min.css" rel="stylesheet"/>
-<meta content="#546d78" name="theme-color"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
-<style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="PII anonymization for text and images.">
+      
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+        <link rel="canonical" href="https://microsoft.github.io/presidio/anonymizer/">
+      
+      <link rel="icon" href="../assets/ms_icon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
+    
+      
+        <title>Home - Microsoft Presidio</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a57b2b03.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#546d78">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -24,536 +56,941 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "5pd40fk720");
 </script>
-</head>
-<body data-md-color-accent="indigo" data-md-color-primary="blue-grey" data-md-color-scheme="default" dir="ltr">
-<script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
-<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
-<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
-<label class="md-overlay" for="__drawer"></label>
-<div data-md-component="skip">
-<a class="md-skip" href="#presidio-anonymizer">
+
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#presidio-anonymizer" class="md-skip">
           Skip to content
         </a>
-</div>
-<div data-md-component="announce">
-</div>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
 <header class="md-header" data-md-component="header">
-<nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="Microsoft Presidio" class="md-header__button md-logo" data-md-component="logo" href=".." title="Microsoft Presidio">
-<img alt="logo" src="../assets/ms_icon.png"/>
-</a>
-<label class="md-header__button md-icon" for="__drawer">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
-</label>
-<div class="md-header__title" data-md-component="header-title">
-<div class="md-header__ellipsis">
-<div class="md-header__topic">
-<span class="md-ellipsis">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Microsoft Presidio" class="md-header__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
+      
+  <img src="../assets/ms_icon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
             Microsoft Presidio
           </span>
-</div>
-<div class="md-header__topic" data-md-component="header-topic">
-<span class="md-ellipsis">
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
             
-              Anonymizer Home
+              Home
             
           </span>
-</div>
-</div>
-</div>
-<label class="md-header__button md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
-</label>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
 <div class="md-search" data-md-component="search" role="dialog">
-<label class="md-search__overlay" for="__search"></label>
-<div class="md-search__inner" role="search">
-<form class="md-search__form" name="search">
-<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
-<label class="md-search__icon md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
-</label>
-<nav aria-label="Search" class="md-search__options">
-<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" type="reset">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
-</button>
-</nav>
-</form>
-<div class="md-search__output">
-<div class="md-search__scrollwrap" data-md-scrollfix="">
-<div class="md-search-result" data-md-component="search-result">
-<div class="md-search-result__meta">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
             Initializing search
           </div>
-<ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="md-header__source">
-<a class="md-source" data-md-component="source" href="https://github.com/microsoft/presidio/" title="Go to repository">
-<div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
-</div>
-<div class="md-source__repository">
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
     GitHub
   </div>
 </a>
-</div>
-</nav>
+      </div>
+    
+  </nav>
+  
 </header>
-<div class="md-container" data-md-component="container">
-<main class="md-main" data-md-component="main">
-<div class="md-main__inner md-grid">
-<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
-<label class="md-nav__title" for="__drawer">
-<a aria-label="Microsoft Presidio" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Microsoft Presidio">
-<img alt="logo" src="../assets/ms_icon.png"/>
-</a>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Microsoft Presidio" class="md-nav__button md-logo" aria-label="Microsoft Presidio" data-md-component="logo">
+      
+  <img src="../assets/ms_icon.png" alt="logo">
+
+    </a>
     Microsoft Presidio
   </label>
-<div class="md-nav__source">
-<a class="md-source" data-md-component="source" href="https://github.com/microsoft/presidio/" title="Go to repository">
-<div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
-</div>
-<div class="md-source__repository">
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
     GitHub
   </div>
 </a>
-</div>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="..">
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
         Home
       </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../getting_started/">
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
         Getting Started
       </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../installation/">
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
         Installation
       </a>
-</li>
-<li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
-<label class="md-nav__link" for="__nav_4">
-          Text anonymization
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Handling text
           <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Text anonymization" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_4">
-<span class="md-nav__icon md-icon"></span>
-          Text anonymization
         </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../text_anonymization/">
+      
+      <nav class="md-nav" aria-label="Handling text" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Handling text
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../text_anonymization/" class="md-nav__link">
         Home
       </a>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" id="__nav_4_2" type="checkbox"/>
-<label class="md-nav__link" for="__nav_4_2">
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
           Presidio Analyzer
           <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Presidio Analyzer" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_4_2">
-<span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Presidio Analyzer" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
           Presidio Analyzer
         </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../analyzer/">
-        Analyzer Home
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyzer/" class="md-nav__link">
+        Home
       </a>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_2" id="__nav_4_2_2" type="checkbox"/>
-<label class="md-nav__link" for="__nav_4_2_2">
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_2" type="checkbox" id="__nav_4_2_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2_2">
           Developing PII recognizers
           <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Developing PII recognizers" class="md-nav" data-md-level="3">
-<label class="md-nav__title" for="__nav_4_2_2">
-<span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Developing PII recognizers" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_2_2">
+          <span class="md-nav__icon md-icon"></span>
           Developing PII recognizers
         </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../analyzer/adding_recognizers/">
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyzer/adding_recognizers/" class="md-nav__link">
         Tutorial
       </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../analyzer/developing_recognizers/">
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyzer/developing_recognizers/" class="md-nav__link">
         Best practices in developing recognizers
       </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../analyzer/languages/">
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyzer/languages/" class="md-nav__link">
         Multi-language support
       </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../analyzer/customizing_nlp_models/">
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyzer/customizing_nlp_models/" class="md-nav__link">
         Customizing the NLP model
       </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../analyzer/decision_process/">
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyzer/decision_process/" class="md-nav__link">
         Tracing the decision process
       </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" id="__nav_4_3" type="checkbox"/>
-<label class="md-nav__link" for="__nav_4_3">
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3">
           Presidio Anonymizer
           <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Presidio Anonymizer" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_4_3">
-<span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Presidio Anonymizer" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_3">
+          <span class="md-nav__icon md-icon"></span>
           Presidio Anonymizer
         </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-          Anonymizer Home
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
           <span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
-        Anonymizer Home
-      </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#installation">
-    Installation
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#getting-started">
-    Getting started
-  </a>
-<nav aria-label="Getting started" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#using-docker-container">
-    Using docker container
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#using-python-runtime">
-    Using python runtime
-  </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#built-in-operators">
-    Built-in operators
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#handling-overlaps-between-entities">
-    Handling overlaps between entities
-  </a>
-<nav aria-label="Handling overlaps between entities" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#additional-examples-for-overlapping-pii-scenarios">
-    Additional examples for overlapping PII scenarios
-  </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#creating-a-new-operator">
-    Creating a new operator
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#api-reference">
-    API reference
-  </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="adding_operators/">
-        Developing PII operators
-      </a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
-<label class="md-nav__link" for="__nav_5">
-          Image Redactor
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Image Redactor" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_5">
-<span class="md-nav__icon md-icon"></span>
-          Image Redactor
         </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../image-redactor/">
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Home
       </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" id="__nav_6" type="checkbox"/>
-<label class="md-nav__link" for="__nav_6">
-          Samples
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Samples" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_6">
-<span class="md-nav__icon md-icon"></span>
-          Samples
-        </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../samples/">
-        Samples Home
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../samples/python/">
-        Python
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../samples/docker/">
-        Docker
-      </a>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" id="__nav_6_4" type="checkbox"/>
-<label class="md-nav__link" for="__nav_6_4">
-          Sample Deployments
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Sample Deployments" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_6_4">
-<span class="md-nav__icon md-icon"></span>
-          Sample Deployments
-        </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../samples/deployments/app-service/">
-        Azure App Service
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../samples/deployments/k8s/">
-        Kubernetes
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../samples/deployments/spark/">
-        Azure Databricks/Spark
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../samples/deployments/data-factory/">
-        Azure Data Factory
-      </a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../supported_entities/">
-        Supported entities
-      </a>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" id="__nav_8" type="checkbox"/>
-<label class="md-nav__link" for="__nav_8">
-          Development and design
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Development and design" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_8">
-<span class="md-nav__icon md-icon"></span>
-          Development and design
-        </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../design/">
-        Design
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../development/">
-        Setting up a development environment
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../build_release/">
-        Build and release process
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../presidio_V2/">
-        Changes from V1 to V2
-      </a>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_5" id="__nav_8_5" type="checkbox"/>
-<label class="md-nav__link" for="__nav_8_5">
-          Python API reference
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Python API reference" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_8_5">
-<span class="md-nav__icon md-icon"></span>
-          Python API reference
-        </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../api/analyzer_python/">
-        Presidio Analyzer Python API
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../api/anonymizer_python/">
-        Presidio Anonymizer Python API
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../api/image_redactor_python/">
-        Presidio Image Redactor Python API
-      </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank">
-        REST API reference
-      </a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-</div>
-<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#installation">
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
     Installation
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#getting-started">
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
     Getting started
   </a>
-<nav aria-label="Getting started" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#using-docker-container">
+  
+    <nav class="md-nav" aria-label="Getting started">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-docker-container" class="md-nav__link">
     Using docker container
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#using-python-runtime">
+        
+          <li class="md-nav__item">
+  <a href="#using-python-runtime" class="md-nav__link">
     Using python runtime
   </a>
+  
 </li>
-</ul>
-</nav>
+        
+      </ul>
+    </nav>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#built-in-operators">
+      
+        <li class="md-nav__item">
+  <a href="#built-in-operators" class="md-nav__link">
     Built-in operators
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#handling-overlaps-between-entities">
+      
+        <li class="md-nav__item">
+  <a href="#handling-overlaps-between-entities" class="md-nav__link">
     Handling overlaps between entities
   </a>
-<nav aria-label="Handling overlaps between entities" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#additional-examples-for-overlapping-pii-scenarios">
+  
+    <nav class="md-nav" aria-label="Handling overlaps between entities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additional-examples-for-overlapping-pii-scenarios" class="md-nav__link">
     Additional examples for overlapping PII scenarios
   </a>
+  
 </li>
-</ul>
-</nav>
+        
+      </ul>
+    </nav>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#creating-a-new-operator">
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-new-operator" class="md-nav__link">
     Creating a new operator
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#api-reference">
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
     API reference
   </a>
+  
 </li>
-</ul>
+      
+    </ul>
+  
 </nav>
-</div>
-</div>
-</div>
-<div class="md-content" data-md-component="content">
-<article class="md-content__inner md-typeset">
-<h1 id="presidio-anonymizer">Presidio Anonymizer</h1>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="adding_operators/" class="md-nav__link">
+        Developing PII operators
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../image-redactor/" class="md-nav__link">
+        Handling images
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samples/" class="md-nav__link">
+        Samples
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../supported_entities/" class="md-nav__link">
+        Supported entities
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          Development and design
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Development and design" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Development and design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        Design
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development/" class="md-nav__link">
+        Setting up a development environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build_release/" class="md-nav__link">
+        Build and release process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../presidio_V2/" class="md-nav__link">
+        Changes from V1 to V2
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_5" type="checkbox" id="__nav_8_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_5">
+          Python API reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Python API reference" data-md-level="2">
+        <label class="md-nav__title" for="__nav_8_5">
+          <span class="md-nav__icon md-icon"></span>
+          Python API reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/analyzer_python/" class="md-nav__link">
+        Presidio Analyzer Python API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/anonymizer_python/" class="md-nav__link">
+        Presidio Anonymizer Python API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/image_redactor_python/" class="md-nav__link">
+        Presidio Image Redactor Python API
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank" class="md-nav__link">
+        REST API reference
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        FAQ
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    Getting started
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting started">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-docker-container" class="md-nav__link">
+    Using docker container
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-python-runtime" class="md-nav__link">
+    Using python runtime
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-operators" class="md-nav__link">
+    Built-in operators
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handling-overlaps-between-entities" class="md-nav__link">
+    Handling overlaps between entities
+  </a>
+  
+    <nav class="md-nav" aria-label="Handling overlaps between entities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additional-examples-for-overlapping-pii-scenarios" class="md-nav__link">
+    Additional examples for overlapping PII scenarios
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-new-operator" class="md-nav__link">
+    Creating a new operator
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    API reference
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="presidio-anonymizer">Presidio Anonymizer</h1>
 <p>The Presidio anonymizer is a Python based module
 for anonymizing detected PII text entities with desired values.
 Presidio anonymizer supports both anonymization and deanonymization
 by applying different operators. Operators are built-in text manipulation classes
 which can be easily extended.</p>
-<p><img alt="Anonymizer Design" src="../assets/anonymizer-design.png"/></p>
+<p><img alt="Anonymizer Design" src="../assets/anonymizer-design.png" /></p>
 <p>The Presidio-Anonymizer package contains both <code>Anonymizers</code> and <code>Deanonymizers</code>.</p>
 <ul>
 <li><em>Anonymizers</em> are used to replace a PII entity text
@@ -562,7 +999,7 @@ with some other value by applying a certain operator (e.g. replace, mask, redact
   (e.g. to decrypt an encrypted text).</li>
 </ul>
 <h2 id="installation">Installation</h2>
-<div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><label for="__tabbed_1_1">Using pip</label><div class="tabbed-content">
+<div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Using pip</label><div class="tabbed-content">
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Consider installing the Presidio python packages on a virtual environment like venv or conda.</p>
@@ -571,7 +1008,7 @@ with some other value by applying a certain operator (e.g. replace, mask, redact
 <div class="highlight"><pre><span></span><code>pip install presidio-anonymizer
 </code></pre></div>
 </div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio"><label for="__tabbed_1_2">Using Docker</label><div class="tabbed-content">
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Using Docker</label><div class="tabbed-content">
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This requires Docker to be installed. <a href="https://docs.docker.com/get-docker/">Download Docker</a>.</p>
@@ -583,16 +1020,16 @@ docker pull mcr.microsoft.com/presidio-anonymizer
 docker run -d -p <span class="m">5001</span>:3000 mcr.microsoft.com/presidio-anonymizer:latest
 </code></pre></div>
 </div>
-<input id="__tabbed_1_3" name="__tabbed_1" type="radio"><label for="__tabbed_1_3">From source</label><div class="tabbed-content">
+<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">From source</label><div class="tabbed-content">
 <p>First, clone the Presidio repo. <a href="../installation/#install-from-source">See here for instructions</a>.</p>
 <p>Then, build the presidio-anonymizer container:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span> presidio-anonymizer
 docker build . -t presidio/presidio-anonymizer
 </code></pre></div>
 </div>
-</input></input></input></div>
+</div>
 <h2 id="getting-started">Getting started</h2>
-<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio"><label for="__tabbed_2_1">Python</label><div class="tabbed-content">
+<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Python</label><div class="tabbed-content">
 <p>Simple example:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">AnonymizerEngine</span>
 <span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">RecognizerResult</span><span class="p">,</span> <span class="n">OperatorConfig</span>
@@ -604,12 +1041,12 @@ docker build . -t presidio/presidio-anonymizer
 <span class="c1"># analyzer results (potentially coming from presidio-analyzer) and</span>
 <span class="c1"># Operators to get the anonymization output:</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span>
-    <span class="n">text</span><span class="o">=</span><span class="s2">"My name is Bond, James Bond"</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is Bond, James Bond&quot;</span><span class="p">,</span>
     <span class="n">analyzer_results</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">RecognizerResult</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="s2">"PERSON"</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
-        <span class="n">RecognizerResult</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="s2">"PERSON"</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
+        <span class="n">RecognizerResult</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
+        <span class="n">RecognizerResult</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">operators</span><span class="o">=</span><span class="p">{</span><span class="s2">"PERSON"</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">"replace"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"new_value"</span><span class="p">:</span> <span class="s2">"BIP"</span><span class="p">})},</span>
+    <span class="n">operators</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;new_value&quot;</span><span class="p">:</span> <span class="s2">&quot;BIP&quot;</span><span class="p">})},</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
@@ -617,7 +1054,7 @@ docker build . -t presidio/presidio-anonymizer
 <p>This example takes the output of the <code>AnonymizerEngine</code> 
 containing an encrypted PII entity, and decrypts it back to the original text:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">DeanonymizeEngine</span>
-<span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">AnonymizerResult</span><span class="p">,</span> <span class="n">OperatorConfig</span>
+<span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">OperatorResult</span><span class="p">,</span> <span class="n">OperatorConfig</span>
 
 <span class="c1"># Initialize the engine:</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">DeanonymizeEngine</span><span class="p">()</span>
@@ -625,17 +1062,17 @@ containing an encrypted PII entity, and decrypts it back to the original text:</
 <span class="c1"># Invoke the deanonymize function with the text, anonymizer results and</span>
 <span class="c1"># Operators to define the deanonymization type.</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">deanonymize</span><span class="p">(</span>
-    <span class="n">text</span><span class="o">=</span><span class="s2">"My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=&quot;</span><span class="p">,</span>
     <span class="n">entities</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">AnonymizerResult</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="s2">"PERSON"</span><span class="p">),</span>
+        <span class="n">OperatorResult</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;PERSON&quot;</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">operators</span><span class="o">=</span><span class="p">{</span><span class="s2">"DEFAULT"</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">"decrypt"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"key"</span><span class="p">:</span> <span class="s2">"WmZq4t7w!z%C&amp;F)J"</span><span class="p">})},</span>
+    <span class="n">operators</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="s2">&quot;decrypt&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;WmZq4t7w!z%C&amp;F)J&quot;</span><span class="p">})},</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div>
 </div>
-<input id="__tabbed_2_2" name="__tabbed_2" type="radio"><label for="__tabbed_2_2">As an HTTP server</label><div class="tabbed-content">
+<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">As an HTTP server</label><div class="tabbed-content">
 <p>You can run presidio anonymizer as an http server using either python runtime or using a docker container.</p>
 <h4 id="using-docker-container">Using docker container</h4>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span> presidio-anonymizer
@@ -651,69 +1088,69 @@ python app.py
 
 Anonymize:
 
-curl -XPOST http://localhost:3000/anonymize -H <span class="s2">"Content-Type: application/json"</span> -d @payload
+curl -XPOST http://localhost:3000/anonymize -H <span class="s2">&quot;Content-Type: application/json&quot;</span> -d @payload
 
 payload example:
 <span class="o">{</span>
-<span class="s2">"text"</span>: <span class="s2">"hello world, my name is Jane Doe. My number is: 034453334"</span>,
-<span class="s2">"anonymizers"</span>: <span class="o">{</span>
-    <span class="s2">"PHONE_NUMBER"</span>: <span class="o">{</span>
-        <span class="s2">"type"</span>: <span class="s2">"mask"</span>,
-        <span class="s2">"masking_char"</span>: <span class="s2">"*"</span>,
-        <span class="s2">"chars_to_mask"</span>: <span class="m">4</span>,
-        <span class="s2">"from_end"</span>: <span class="nb">true</span>
+<span class="s2">&quot;text&quot;</span>: <span class="s2">&quot;hello world, my name is Jane Doe. My number is: 034453334&quot;</span>,
+<span class="s2">&quot;anonymizers&quot;</span>: <span class="o">{</span>
+    <span class="s2">&quot;PHONE_NUMBER&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;type&quot;</span>: <span class="s2">&quot;mask&quot;</span>,
+        <span class="s2">&quot;masking_char&quot;</span>: <span class="s2">&quot;*&quot;</span>,
+        <span class="s2">&quot;chars_to_mask&quot;</span>: <span class="m">4</span>,
+        <span class="s2">&quot;from_end&quot;</span>: <span class="nb">true</span>
     <span class="o">}</span>
 <span class="o">}</span>,
-<span class="s2">"analyzer_results"</span>: <span class="o">[</span>
+<span class="s2">&quot;analyzer_results&quot;</span>: <span class="o">[</span>
     <span class="o">{</span>
-        <span class="s2">"start"</span>: <span class="m">24</span>,
-        <span class="s2">"end"</span>: <span class="m">32</span>,
-        <span class="s2">"score"</span>: <span class="m">0</span>.8,
-        <span class="s2">"entity_type"</span>: <span class="s2">"NAME"</span>
+        <span class="s2">&quot;start&quot;</span>: <span class="m">24</span>,
+        <span class="s2">&quot;end&quot;</span>: <span class="m">32</span>,
+        <span class="s2">&quot;score&quot;</span>: <span class="m">0</span>.8,
+        <span class="s2">&quot;entity_type&quot;</span>: <span class="s2">&quot;NAME&quot;</span>
     <span class="o">}</span>,
     <span class="o">{</span>
-        <span class="s2">"start"</span>: <span class="m">24</span>,
-        <span class="s2">"end"</span>: <span class="m">28</span>,
-        <span class="s2">"score"</span>: <span class="m">0</span>.8,
-        <span class="s2">"entity_type"</span>: <span class="s2">"FIRST_NAME"</span>
+        <span class="s2">&quot;start&quot;</span>: <span class="m">24</span>,
+        <span class="s2">&quot;end&quot;</span>: <span class="m">28</span>,
+        <span class="s2">&quot;score&quot;</span>: <span class="m">0</span>.8,
+        <span class="s2">&quot;entity_type&quot;</span>: <span class="s2">&quot;FIRST_NAME&quot;</span>
     <span class="o">}</span>,
     <span class="o">{</span>
-        <span class="s2">"start"</span>: <span class="m">29</span>,
-        <span class="s2">"end"</span>: <span class="m">32</span>,
-        <span class="s2">"score"</span>: <span class="m">0</span>.6,
-        <span class="s2">"entity_type"</span>: <span class="s2">"LAST_NAME"</span>
+        <span class="s2">&quot;start&quot;</span>: <span class="m">29</span>,
+        <span class="s2">&quot;end&quot;</span>: <span class="m">32</span>,
+        <span class="s2">&quot;score&quot;</span>: <span class="m">0</span>.6,
+        <span class="s2">&quot;entity_type&quot;</span>: <span class="s2">&quot;LAST_NAME&quot;</span>
     <span class="o">}</span>,
     <span class="o">{</span>
-        <span class="s2">"start"</span>: <span class="m">48</span>,
-        <span class="s2">"end"</span>: <span class="m">57</span>,
-        <span class="s2">"score"</span>: <span class="m">0</span>.95,
-        <span class="s2">"entity_type"</span>: <span class="s2">"PHONE_NUMBER"</span>
+        <span class="s2">&quot;start&quot;</span>: <span class="m">48</span>,
+        <span class="s2">&quot;end&quot;</span>: <span class="m">57</span>,
+        <span class="s2">&quot;score&quot;</span>: <span class="m">0</span>.95,
+        <span class="s2">&quot;entity_type&quot;</span>: <span class="s2">&quot;PHONE_NUMBER&quot;</span>
     <span class="o">}</span>
 <span class="o">]}</span>
 
 Deanonymize:
 
-curl -XPOST http://localhost:3000/deanonymize -H <span class="s2">"Content-Type: application/json"</span> -d @payload
+curl -XPOST http://localhost:3000/deanonymize -H <span class="s2">&quot;Content-Type: application/json&quot;</span> -d @payload
 
 payload example:
 <span class="o">{</span>
-<span class="s2">"text"</span>: <span class="s2">"My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="</span>,
-<span class="s2">"deanonymizers"</span>: <span class="o">{</span>
-    <span class="s2">"PERSON"</span>: <span class="o">{</span>
-        <span class="s2">"type"</span>: <span class="s2">"decrypt"</span>,
-        <span class="s2">"key"</span>: <span class="s2">"WmZq4t7w!z%C&amp;F)J"</span>
+<span class="s2">&quot;text&quot;</span>: <span class="s2">&quot;My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=&quot;</span>,
+<span class="s2">&quot;deanonymizers&quot;</span>: <span class="o">{</span>
+    <span class="s2">&quot;PERSON&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;type&quot;</span>: <span class="s2">&quot;decrypt&quot;</span>,
+        <span class="s2">&quot;key&quot;</span>: <span class="s2">&quot;WmZq4t7w!z%C&amp;F)J&quot;</span>
     <span class="o">}</span>
 <span class="o">}</span>,
-<span class="s2">"anonymizer_results"</span>: <span class="o">[</span>
+<span class="s2">&quot;anonymizer_results&quot;</span>: <span class="o">[</span>
     <span class="o">{</span>
-        <span class="s2">"start"</span>: <span class="m">11</span>,
-        <span class="s2">"end"</span>: <span class="m">55</span>,
-        <span class="s2">"entity_type"</span>: <span class="s2">"PERSON"</span>
+        <span class="s2">&quot;start&quot;</span>: <span class="m">11</span>,
+        <span class="s2">&quot;end&quot;</span>: <span class="m">55</span>,
+        <span class="s2">&quot;entity_type&quot;</span>: <span class="s2">&quot;PERSON&quot;</span>
     <span class="o">}</span>
 <span class="o">]}</span>
 </code></pre></div>
 </div>
-</input></input></div>
+</div>
 <h2 id="built-in-operators">Built-in operators</h2>
 <table>
 <thead>
@@ -729,7 +1166,7 @@ payload example:
 <td>Anonymize</td>
 <td>replace</td>
 <td>Replace the PII with desired value</td>
-<td><code>new_value</code>: replaces existing text with the given value.<br/> If <code>new_value</code> is not supplied or empty, default behavior will be: &lt;entity_type&gt; e.g: &lt;PHONE_NUMBER&gt;</td>
+<td><code>new_value</code>: replaces existing text with the given value.<br> If <code>new_value</code> is not supplied or empty, default behavior will be: &lt;entity_type> e.g: &lt;PHONE_NUMBER></td>
 </tr>
 <tr>
 <td>Anonymize</td>
@@ -741,13 +1178,13 @@ payload example:
 <td>Anonymize</td>
 <td>hash</td>
 <td>Hashes the PII text</td>
-<td><code>hash_type</code>: sets the type of hashing. Can be either <code>sha256</code>, <code>sha512</code> or <code>md5</code>. <br/> The default hash type is <code>sha256</code>.</td>
+<td><code>hash_type</code>: sets the type of hashing. Can be either <code>sha256</code>, <code>sha512</code> or <code>md5</code>. <br> The default hash type is <code>sha256</code>.</td>
 </tr>
 <tr>
 <td>Anonymize</td>
 <td>mask</td>
 <td>Replace the PII with a given character</td>
-<td><code>chars_to_mask</code>: the amount of characters out of the PII that should be replaced. <br/> <code>masking_char</code>: the character to be replaced with. <br/> <code>from_end</code>: Whether to mask the PII from it's end.</td>
+<td><code>chars_to_mask</code>: the amount of characters out of the PII that should be replaced. <br> <code>masking_char</code>: the character to be replaced with. <br> <code>from_end</code>: Whether to mask the PII from it's end.</td>
 </tr>
 <tr>
 <td>Anonymize</td>
@@ -773,7 +1210,7 @@ payload example:
 <p class="admonition-title">Note</p>
 <p>When performing anonymization, if anonymizers map is empty or "DEFAULT" key is not stated, the default
 anonymization operator is "replace" for all entities. The replacing value will be the entity type
-e.g.: &lt;PHONE_NUMBER&gt;</p>
+e.g.: &lt;PHONE_NUMBER></p>
 </div>
 <h2 id="handling-overlaps-between-entities">Handling overlaps between entities</h2>
 <p>As the input text could potentially have overlapping PII entities, there are different
@@ -782,20 +1219,20 @@ anonymization scenarios:</p>
 <li><strong>No overlap (single PII)</strong>: When there is no overlap in spans of entities,
     Presidio Anonymizer uses a given or default anonymization operator to anonymize
     and replace the PII text entity.</li>
-<li><strong>Full overlap of PII entitie spans</strong>: When entities have overlapping substrings,<br>
+<li><strong>Full overlap of PII entitie spans</strong>: When entities have overlapping substrings,<br />
     the PII with the higher score will be taken.
-    Between PIIs with identical scores, the selection is arbitrary.</br></li>
+    Between PIIs with identical scores, the selection is arbitrary.</li>
 <li><strong>One PII is contained in another</strong>: Presidio Anonymizer will use the PII with the larger text even if it's score is lower.</li>
 <li>
 <p><strong>Partial intersection</strong>: Presidio Anonymizer will anonymize each individually and will return a concatenation of the anonymized text.
     For example:
     For the text</p>
-<div class="highlight"><pre><span></span><code>I'm George Washington Square Park.
+<div class="highlight"><pre><span></span><code>I&#39;m George Washington Square Park.
 </code></pre></div>
 <p>Assuming one entity is <code>George Washington</code> and the other is <code>Washington State Park</code>
 and assuming we're using the default anonymizer,
 the result would be:</p>
-<div class="highlight"><pre><span></span><code>I'm &lt;PERSON&gt;&lt;LOCATION&gt;.
+<div class="highlight"><pre><span></span><code>I&#39;m &lt;PERSON&gt;&lt;LOCATION&gt;.
 </code></pre></div>
 </li>
 </ul>
@@ -842,68 +1279,111 @@ for more information.</p>
 the <a href="https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Anonymizer">API Spec</a>
 for the Anonymizer REST API reference details
 and <a href="../api/anonymizer_python/">Anonymizer Python API</a> for Python API reference.</p>
-</article>
-</div>
-</div>
-</main>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
 <footer class="md-footer">
-<nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Tracing the decision process" class="md-footer__link md-footer__link--prev" href="../analyzer/decision_process/" rel="prev">
-<div class="md-footer__button md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
-</div>
-<div class="md-footer__title">
-<div class="md-ellipsis">
-<span class="md-footer__direction">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../analyzer/decision_process/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tracing the decision process" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
                 Previous
               </span>
               Tracing the decision process
             </div>
-</div>
-</a>
-<a aria-label="Next: Developing PII operators" class="md-footer__link md-footer__link--next" href="adding_operators/" rel="next">
-<div class="md-footer__title">
-<div class="md-ellipsis">
-<span class="md-footer__direction">
+          </div>
+        </a>
+      
+      
+        
+        <a href="adding_operators/" class="md-footer__link md-footer__link--next" aria-label="Next: Developing PII operators" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
                 Next
               </span>
               Developing PII operators
             </div>
-</div>
-<div class="md-footer__button md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
-</div>
-</a>
-</nav>
-<div class="md-footer-meta md-typeset">
-<div class="md-footer-meta__inner md-grid">
-<div class="md-footer-copyright">
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
         
         
           Made with
-          <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
             Material for MkDocs
           </a>
-</div>
-<div class="md-footer-social">
-<a class="md-footer-social__link" href="https://github.com/microsoft/presidio" rel="noopener" target="_blank" title="github.com">
-<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg>
-</a>
-<a class="md-footer-social__link" href="https://hub.docker.com/_/microsoft-presidio" rel="noopener" target="_blank" title="hub.docker.com">
-<svg viewbox="0 0 640 512" xmlns="http://www.w3.org/2000/svg"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"></path></svg>
-</a>
-<a class="md-footer-social__link" href="mailto:presidio@microsoft.com" rel="noopener" target="_blank" title="">
-<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path></svg>
-</a>
-</div>
-</div>
-</div>
+        
+        
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/microsoft/presidio" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://hub.docker.com/_/microsoft-presidio" target="_blank" rel="noopener" title="hub.docker.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+      </a>
+    
+      
+      
+      <a href="mailto:presidio@microsoft.com" target="_blank" rel="noopener" title="" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
 </footer>
-</div>
-<div class="md-dialog" data-md-component="dialog">
-<div class="md-dialog__inner md-typeset"></div>
-</div>
-<script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.e99e714c.min.js", "version": null}</script>
-<script src="../assets/javascripts/bundle.c7d1b464.min.js"></script>
-</body>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.b1047164.min.js"></script>
+      
+    
+  </body>
 </html>
