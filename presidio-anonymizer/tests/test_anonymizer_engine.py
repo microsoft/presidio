@@ -166,5 +166,5 @@ def _operate(
     assert operators["DEFAULT"]
     assert operator == OperatorType.Anonymize
     return EngineResult(
-        "Number: I am your new text!", [OperatorResult("text", "hash", 0, 35, "type")]
+        "Number: I am your new text!", [OperatorResult(0, 35, "type", "text", "hash")]
     )

@@ -1,17 +1,22 @@
 from typing import Dict
 
+from presidio_anonymizer.entities import PIIEntity
 
-class OperatorResult:
+
+class OperatorResult(PIIEntity):
     """A class to hold data for engines results either anonymize or deanonymize."""
 
     def __init__(
-        self, text: str, operator_name: str, start: int, end: int, entity_type: str
+        self,
+        start: int,
+        end: int,
+        entity_type: str,
+        text: str = None,
+        operator: str = None,
     ):
-        self.start = start
-        self.end = end
-        self.entity_type = entity_type
+        PIIEntity.__init__(self, start, end, entity_type)
         self.text = text
-        self.operator = operator_name
+        self.operator = operator
 
     def __repr__(self):
         """Return a string representation of the object."""
@@ -38,4 +43,32 @@ class OperatorResult:
             and self.entity_type == other.entity_type
             and self.operator == other.operator
             and self.text == other.text
+        )
+
+    @classmethod
+    def from_json(cls, json: Dict) -> "OperatorResult":
+        """
+        Create OperatorResult from user json.
+
+        :param json: json representation for this operator result. For example:
+        {
+            "start": 0,
+            "end": 10,
+            "key": "1111111111111111",
+            "entity_type":"PERSON",
+            "text":"resulted_text",
+            "operator":"encrypt",
+        }
+        """
+        start = json.get("start")
+        end = json.get("end")
+        entity_type = json.get("entity_type")
+        text = json.get("text")
+        operator = json.get("operator")
+        return cls(
+            start=start,
+            end=end,
+            entity_type=entity_type,
+            text=text,
+            operator=operator,
         )

@@ -6,10 +6,10 @@ from presidio_anonymizer.entities.engine.result import OperatorResult
 
 
 class EngineResult:
-    """Anonymizer result."""
+    """Engine result."""
 
     def __init__(self, text: str = None, items: List[OperatorResult] = None):
-        """Create AnonymizerResult entity.
+        """Create EngineResult entity.
 
         :param text: The anonymized text.
         :param items: List of PII entities and the indices
@@ -48,7 +48,7 @@ class EngineResult:
         items_repr = (
             ",\n    ".join([str(item) for item in self.items]) if self.items else ""
         )
-        return f"text: {self.text}.\nitems:\n[\n    {items_repr}\n]\n"
+        return f"text: {self.text}\nitems:\n[\n    {items_repr}\n]\n"
 
     def __eq__(self, other) -> bool:
         """Verify two instances are equal.

@@ -5,7 +5,7 @@ from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
 from presidio_anonymizer.entities import (
     InvalidParamException,
     RecognizerResult,
-    AnonymizerResult,
+    OperatorResult,
     OperatorConfig,
 )
 from presidio_anonymizer.operators import Decrypt
@@ -14,7 +14,7 @@ from presidio_anonymizer.operators import Decrypt
 def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully():
     text = "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
     encryption_results = [
-        AnonymizerResult(start=11, end=55, entity_type="PERSON"),
+        OperatorResult(start=11, end=55, entity_type="PERSON"),
     ]
     engine = DeanonymizeEngine()
     decryption = engine.deanonymize(
@@ -33,7 +33,7 @@ def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully
 def test_given_short_key_then_we_fail():
     text = "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
     encryption_results = [
-        AnonymizerResult(start=11, end=55, entity_type="PERSON"),
+        OperatorResult(start=11, end=55, entity_type="PERSON"),
     ]
     engine = DeanonymizeEngine()
     expected_result = "Invalid input, key must be of length 128, 192 or 256 bits"
@@ -60,9 +60,8 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     )
 
     assert len(actual_anonymize_result.items) == 1
-    anonymized_entities = [
-        AnonymizerResult.from_operator_result(actual_anonymize_result.items[0])
-    ]
+    anonymized_entities = actual_anonymize_result.items
+
     engine = DeanonymizeEngine()
     decryption = engine.deanonymize(
         actual_anonymize_result.text,

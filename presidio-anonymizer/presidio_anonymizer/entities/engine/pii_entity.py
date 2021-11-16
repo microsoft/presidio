@@ -12,8 +12,9 @@ from presidio_anonymizer.services.validators import (
 class PIIEntity(ABC):
     """Abstract class to hold the text we are going to operate on metadata."""
 
+    logger = logging.getLogger("presidio-anonymizer")
+
     def __init__(self, start: int, end: int, entity_type: str):
-        self.logger = logging.getLogger("presidio-anonymizer")
         self.start = start
         self.end = end
         self.entity_type = entity_type

@@ -163,7 +163,7 @@ This example take the output of the AnonymizerEngine with encrypted PII entities
 and decrypt it back to the original text:
 ```python
 from presidio_anonymizer import DeanonymizeEngine
-from presidio_anonymizer.entities import AnonymizerResult, OperatorConfig
+from presidio_anonymizer.entities import OperatorResult, OperatorConfig
 
 # Initialize the engine with logger.
 engine = DeanonymizeEngine()
@@ -173,7 +173,7 @@ engine = DeanonymizeEngine()
 result = engine.deanonymize(
     text="My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0=",
     entities=[
-        AnonymizerResult(start=11, end=55, entity_type="PERSON"),
+        OperatorResult(start=11, end=55, entity_type="PERSON"),
     ],
     operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})},
 )
