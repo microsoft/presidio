@@ -26,7 +26,7 @@
 
 ### What is Presidio?
 
-Presidio (Origin from Latin praesidium ‘protection, garrison’) helps to ensure sensitive data is properly managed and governed. It provides fast identification and anonymization modules for private entities in text and images. It is fully customizable and pluggable, can be adapted it to your needs and be deployed into various environments.
+Presidio (Origin from Latin praesidium ‘protection, garrison’) helps to ensure sensitive data is properly managed and governed. It provides fast identification and anonymization modules for private entities in text and images. It is fully customizable and pluggable, can be adapted to your needs and be deployed into various environments.
 
 !!! note "Note"
     Presidio is a library or SDK rather than a service. It is meant to be customized to the user's or organization's specific needs.
