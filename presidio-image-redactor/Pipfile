@@ -9,6 +9,7 @@ pytesseract = ">=0.3.7"
 presidio-analyzer = ">=2.2.0"
 pillow = ">=8.3.2"
 matplotlib = ">=3.3.4"
+typing-extensions = "*"
 
 [dev-packages]
 pytest = "*"
