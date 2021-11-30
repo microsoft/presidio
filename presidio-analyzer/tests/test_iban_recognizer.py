@@ -356,7 +356,8 @@ def update_iban_checksum(iban):
             ((24, 58),),
         ),
         ("Slash as iban separator: AL47/2121/1009/0000/0002/3569/8741", 0, (),),
-        ("Dalla's Pizza | 3843 Peartree Road, Bamblee, SD 20241 440-600-5124", 0, ())
+        ("Dalla's Pizza | 3843 Peartree Road, Bamblee, SD 20241 440-600-5124", 0, ()),
+        ("AL47212110090000000235698741 ALL CAPS", 1, ((0, 28),),)
         # fmt: on
     ],
 )
