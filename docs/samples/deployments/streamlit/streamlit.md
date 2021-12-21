@@ -9,7 +9,7 @@ The app is based on the [streamlit](https://streamlit.io/) package.
 pip install streamlit pandas presidio-analyzer presidio-anonymizer
 ```
 
-2. Save the following code into a file (e.g. `presidio_app.py`)
+2. Copy the following code into a file (e.g. `presidio_streamlit.py`), or download the [presidio_streamlit.py](presidio_streamlit.py) file.
 3. *Optional*: Update the `analyzer_engine` and `anonymizer_engine` functions for your specific implementation 
 3. Run `streamlit run presidio_app.py`
 
