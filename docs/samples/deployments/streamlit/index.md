@@ -11,7 +11,11 @@ pip install streamlit pandas presidio-analyzer presidio-anonymizer
 
 2. Download the [presidio_streamlit.py](presidio_streamlit.py) file.
 3. *Optional*: Update the `analyzer_engine` and `anonymizer_engine` functions for your specific implementation 
-3. Run `streamlit run presidio_app.py`
+3. Start the app:
+
+```sh
+streamlit run presidio_streamlit.py
+```
 
 ## Output
 Output should be similar to this screenshot:
