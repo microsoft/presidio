@@ -1,0 +1,146 @@
+# Integrating external Flair model with Presidio
+# This is a basic way to include Flair as a 3rd party recognizer for Presidio-Analyzer.
+
+from presidio_analyzer import AnalysisExplanation, EntityRecognizer, RecognizerResult, AnalyzerEngine
+from presidio_analyzer.nlp_engine import NlpArtifacts
+
+from flair.data import Sentence
+from flair.models import SequenceTagger
+
+from typing import List
+
+class FlairRecognizer(EntityRecognizer):
+    
+    
+    def __init__(
+        self,
+        supported_language: str = "en",
+        supported_entities: List[str] = [],
+        ner_strength: float = 0.85,
+        name: str = "flairRecognizer",
+        version: str = "0.1",
+        model: SequenceTagger = None,
+    ):
+        self.supported_language = supported_language
+        self.supported_entities = supported_entities
+        self.ner_strength = ner_strength
+        self.version = version   
+        self.name = name
+        self.model = SequenceTagger.load('ner')
+        
+        super().__init__(
+            supported_entities=self.get_supported_entities(),
+            supported_language=supported_language,
+            name="Flair Analytics"
+        )
+    
+    def get_supported_entities(self) -> List[str]:
+        """
+        Supported Entities by flair.
+
+        :return: List of the supported entities.
+        """
+        return self.model.tag_dictionary.get_items() #['E-LOC', 'I-LOC', 'S-LOC', ....]   
+    
+    def load(self) -> None:
+        """No loading is required."""
+        pass
+
+
+    # Class to use Flair with Presidio as an external recognizer.
+    def analyze(
+        self, text: str, entities: List[str] = [], nlp_artifacts: NlpArtifacts = None
+    ) -> List[RecognizerResult]:
+        """
+        Analyze text using Text Analytics.
+
+        :param text: The text for analysis.
+        :param entities: Not working properly for this recognizer.
+        :param nlp_artifacts: Not used by this recognizer.
+        :return: The list of Presidio RecognizerResult constructed from the recognized
+            Flair detections.
+        """
+            
+        sentences = Sentence(text)        
+        
+        self.model.predict(sentences)
+    
+
+        return [
+            self._convert_to_recognizer_result(categorized_entity)
+            for categorized_entity in sentences.get_spans('ner')
+        ]
+
+
+    def _convert_to_recognizer_result(
+        self, categorized_entity
+    ) -> RecognizerResult:
+
+        entity_type = categorized_entity.tag
+        
+        explanation = FlairRecognizer._build_explanation(
+            original_score=round(categorized_entity.score, 2),
+            entity_type=entity_type
+        )
+        
+        flair_results = RecognizerResult(
+            entity_type=entity_type,
+            start=categorized_entity.start_pos,
+            end=categorized_entity.end_pos,
+            score=round(categorized_entity.score, 2),
+            analysis_explanation=explanation
+        )
+        
+        return flair_results
+
+
+    @staticmethod
+    def _build_explanation(
+        original_score: float, entity_type: str
+    ) -> AnalysisExplanation:
+        """
+        Create explanation for why this result was detected.
+
+        :param original_score: Score given by this recognizer
+        :param explanation: Explanation string
+        :return:
+        """
+        explanation = AnalysisExplanation(
+            recognizer=FlairRecognizer.__class__.__name__,
+            original_score=original_score,
+            textual_explanation=f"Identified as {entity_type} by Flair Recognizer",
+        )
+
+        return explanation
+
+
+# Define Presidio Analyzer
+analyzer = AnalyzerEngine()
+
+# Define a text to identify entities
+text = 'Antoni Gaudi is the most famous architect in Barcelona, La Sagrada Familia is not finished yet, but you can enjoy its stone magic forest.'
+
+# Analyze text with Presidio.
+results = analyzer.analyze(text, language='en')
+for entity in results:
+    print(f'type: {entity.entity_type},\t start: {entity.start}, \t end: {entity.end},\
+          score: {entity.score},\t entity: {text[entity.start:entity.end]}')
+
+# type: PERSON,	 start: 0, 	 end: 12,          score: 0.85,	 entity: Antoni Gaudi
+# type: LOCATION,	 start: 45, 	 end: 54,          score: 0.85,	 entity: Barcelona
+
+# Include our Flair recognizer to the analyzer
+flair_recognizer = FlairRecognizer()
+analyzer.registry.add_recognizer(flair_recognizer)
+
+# Analyze text with Presidio and our Flair analyzer.
+results = analyzer.analyze(text, language='en')
+for entity in results:
+    print(f'type: {entity.entity_type},\t start: {entity.start}, \t end: {entity.end},\
+          score: {entity.score},\t entity: {text[entity.start:entity.end]}')
+
+# type: PER,	 start: 0, 	 end: 12,          score: 1.0,	 entity: Antoni Gaudi
+# type: LOC,	 start: 45, 	 end: 54,          score: 0.99,	 entity: Barcelona
+# type: PERSON,	 start: 0, 	 end: 12,          score: 0.85,	 entity: Antoni Gaudi
+# type: LOCATION,	 start: 45, 	 end: 54,          score: 0.85,	 entity: Barcelona
+# type: ORG,	 start: 56, 	 end: 74,          score: 0.76,	 entity: La Sagrada Familia
