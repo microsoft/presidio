@@ -17,5 +17,6 @@
 | Deployment  | Spark/Azure Databricks | [Presidio with Spark](deployments/spark/index.md)                                                                                               |
 | Deployment  | Azure Data Factory with App Service    | [ETL for small dataset](deployments/data-factory/presidio-data-factory.md#option-1-presidio-as-an-http-rest-endpoint)           |
 | Deployment  | Azure Data Factory with Databricks   | [ETL for large datasets](deployments/data-factory/presidio-data-factory.md#option-2-presidio-on-azure-databricks)                 |
-| Usage  | Azure Data Factory     | [Add Presidio as an HTTP service to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-http.md)                |
-| Usage  | Azure Data Factory     | [Add Presidio on Databricks to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md)               |
+| ADF Pipeline  | Azure Data Factory     | [Add Presidio as an HTTP service to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-http.md)                |
+| ADF Pipeline  | Azure Data Factory     | [Add Presidio on Databricks to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md)               |
+| Demo | Streamlit          | [Create a simple demo app using Streamlit](python/streamlit/index.md)
