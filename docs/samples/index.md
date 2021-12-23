@@ -19,4 +19,4 @@
 | Deployment  | Azure Data Factory with Databricks   | [ETL for large datasets](deployments/data-factory/presidio-data-factory.md#option-2-presidio-on-azure-databricks)                 |
 | ADF Pipeline  | Azure Data Factory     | [Add Presidio as an HTTP service to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-http.md)                |
 | ADF Pipeline  | Azure Data Factory     | [Add Presidio on Databricks to your Azure Data Factory](deployments/data-factory/presidio-data-factory-template-gallery-databricks.md)               |
-| Demo | Streamlit          | [Create a simple demo app using Streamlit](deployments/streamlit/index.md)
+| Demo | Streamlit          | [Create a simple demo app using Streamlit](python/streamlit/index.md)

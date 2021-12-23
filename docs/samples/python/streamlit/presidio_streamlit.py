@@ -24,20 +24,10 @@ def get_supported_entities():
     return analyzer_engine().get_supported_entities()
 
 
-def get_supported_anonymizers():
-    return anonymizer_engine().get_anonymizers()
-
-
-def analyze(text, entities, analyzer_engine, score_threshold):
-    if "All" in entities:
-        entities = None
-    return analyzer_engine.analyze(
-        text=text,
-        language="en",
-        entities=entities,
-        score_threshold=score_threshold,
-        return_decision_process=True,
-    )
+def analyze(**kwargs):
+    if "entities" not in kwargs or "All" in kwargs["entities"]:
+        kwargs["entities"] = None
+    return analyzer_engine().analyze(**kwargs)
 
 
 def anonymize(text, analyze_results):
@@ -65,19 +55,22 @@ st_threhsold = st.sidebar.slider(
     label="Acceptance threshold", min_value=0.0, max_value=1.0, value=0.35
 )
 
+st_return_decision_process = st.sidebar.checkbox("Add analysis explanations in json")
+
 st.sidebar.info(
     "Presidio is an open source framework for PII detection and anonymization. "
     "For more info visit [aka.ms/presidio](https://aka.ms/presidio)"
 )
 
+
 # Main panel
-analyzer_load_state = st.info(f"Starting Presidio analyzer...")
+analyzer_load_state = st.info("Starting Presidio analyzer...")
 engine = analyzer_engine()
 analyzer_load_state.empty()
 
 
 # Create two columns for before and after
-col1, col2 = st.beta_columns(2)
+col1, col2 = st.columns(2)
 
 # Before:
 col1.subheader("Input string:")
@@ -95,8 +88,9 @@ col2.subheader("Output:")
 st_analyze_results = analyze(
     text=st_text,
     entities=st_entities,
-    analyzer_engine=engine,
+    language="en",
     score_threshold=st_threhsold,
+    return_decision_process=st_return_decision_process,
 )
 st_anonymize_results = anonymize(st_text, st_analyze_results)
 col2.text_area(label="", value=st_anonymize_results, height=400)
@@ -104,19 +98,21 @@ col2.text_area(label="", value=st_anonymize_results, height=400)
 
 # table result
 st.subheader("Findings")
-df = pd.DataFrame.from_records([r.to_dict() for r in st_analyze_results])
-df = df[["entity_type", "start", "end", "score"]].rename(
-    {
-        "entity_type": "Entity type",
-        "start": "Start",
-        "end": "End",
-        "score": "Confidence",
-    },
-    axis=1,
-)
+if st_analyze_results:
+    df = pd.DataFrame.from_records([r.to_dict() for r in st_analyze_results])
+    df = df[["entity_type", "start", "end", "score"]].rename(
+        {
+            "entity_type": "Entity type",
+            "start": "Start",
+            "end": "End",
+            "score": "Confidence",
+        },
+        axis=1,
+    )
 
-
-st.dataframe(df, width=1000)
+    st.dataframe(df, width=1000)
+else:
+    st.text("No findings")
 
 
 # json result
@@ -125,5 +121,4 @@ class ToDictEncoder(JSONEncoder):
         return o.to_dict()
 
 
-if st.button("Show analyzer results json"):
-    st.json(json.dumps(st_analyze_results, cls=ToDictEncoder))
+st.json(json.dumps(st_analyze_results, cls=ToDictEncoder))

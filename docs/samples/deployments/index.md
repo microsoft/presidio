@@ -4,4 +4,3 @@
 - [Kubernetes](k8s/index.md)
 - [Spark/Azure Databricks](spark/index.md)
 - [Azure Data Factory](data-factory/index.md)
-- [Streamlit (simple demo app)](streamlit/index.md)
