@@ -19,7 +19,8 @@ logger = logging.getLogger("presidio-analyzer")
 
 class FlairRecognizer(EntityRecognizer):
 
-    ENTITIES = ["ORGANIZATION", "MISCELLANEOUS", "LOCATION", "PERSON",
+    ENTITIES = ["ORGANIZATION", "LOCATION", "PERSON",
+                #  "MISCELLANEOUS" # - There are no direct correlation with Presidio entities.
                 ]
 
     DEFAULT_EXPLANATION = "Identified as {} by Flair's Named Entity Recognition"
@@ -27,9 +28,8 @@ class FlairRecognizer(EntityRecognizer):
     CHECK_LABEL_GROUPS = [
         ({"LOCATION"}, {"LOC"}),
         ({"PERSON"}, {"PER"}),
-        ({"MISCELLANEOUS"}, {"MISC"}),
         ({"ORGANIZATION"}, {"ORG"}),
-        
+        # ({"MISCELLANEOUS"}, {"MISC"}), #- There are no direct correlation with Presidio entities.
     ]
     
     MODEL_LANGUAGES = {
@@ -42,18 +42,18 @@ class FlairRecognizer(EntityRecognizer):
 
     def __init__(
         self,
-        supported_language: str = "en",
+        supported_language: str = 'en',
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
         name: str = "flairRecognizer",
-        version: str = "0.2",
+        version: str = "0.3",
         model: SequenceTagger = None,
     ):
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
         )
-        supported_entities = supported_entities if supported_entities else self.ENTITIES
-        supported_language = supported_language if supported_language else 'en'
+        supported_entities = supported_entities if supported_entities else self.ENTITIES        
+        self.model = SequenceTagger.load(self.MODEL_LANGUAGES.get(supported_language))
 
         super().__init__(
             supported_entities=supported_entities,
@@ -75,7 +75,7 @@ class FlairRecognizer(EntityRecognizer):
 
     # Class to use Flair with Presidio as an external recognizer.
     def analyze(
-        self, text: str, entities: List[str] = [], nlp_artifacts: NlpArtifacts = None, language: str = 'en'
+        self, text: str, entities: List[str] = [], nlp_artifacts: NlpArtifacts = None
     ) -> List[RecognizerResult]: 
         """
         Analyze text using Text Analytics.
@@ -90,13 +90,7 @@ class FlairRecognizer(EntityRecognizer):
 
         results = []
         
-        if language not in self.MODEL_LANGUAGES:
-            logger.warning("Selected language is not supported.")
-            return result
-        
-        
         sentences = Sentence(text)  
-        self.model = SequenceTagger.load(self.MODEL_LANGUAGES.get(language))
         self.model.predict(sentences)
         
         # If there are no specific list of entities, we will look for all of it.
@@ -169,8 +163,8 @@ class FlairRecognizer(EntityRecognizer):
         )
 
     
-if __name__ == '__main__':
-    
+if __name__ == '__main__':   
+
     from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 
 
