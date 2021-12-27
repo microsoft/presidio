@@ -75,7 +75,7 @@ class FlairRecognizer(EntityRecognizer):
 
     # Class to use Flair with Presidio as an external recognizer.
     def analyze(
-        self, text: str, entities: List[str] = [], language: str = 'en'
+        self, text: str, entities: List[str] = [], nlp_artifacts: NlpArtifacts = None, language: str = 'en'
     ) -> List[RecognizerResult]: 
         """
         Analyze text using Text Analytics.
