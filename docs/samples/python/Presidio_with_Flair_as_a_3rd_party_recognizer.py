@@ -171,18 +171,17 @@ class FlairRecognizer(EntityRecognizer):
     
 if __name__ == '__main__':
     
-    # Illustrative example only: Run Presidio analyzer
-    # using Flair as an external PII detection mechanism.
-        
-    rec = FlairRecognizer()
-    text='Antoni Gaudi was the first architect of Sagrada Familia, a Catholic cathedral in Barcelona.'
-    
-    results = rec.analyze(
-        text=text, 
-        entities=["ORGANIZATION", "MISCELLANEOUS", "LOCATION", "PERSON"], 
-        language='en'
-    )
-    
-    for entity in results:
-        print(f'type: {entity.entity_type}, start: {entity.start}, end: {entity.end},\
-        score: {entity.score}, entity: {text[entity.start:entity.end]}') 
+    from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+
+    flair_recognizer = FlairRecognizer() # This would download a very large (+2GB) model on the first run
+
+    registry = RecognizerRegistry()
+    registry.add_recognizer(flair_recognizer)
+
+    analyzer = AnalyzerEngine(registry=registry)
+
+    results = analyzer.analyze("My name is Christopher and I live in Irbid", language="en", return_decision_process=True)
+    for result in results:
+        print(result)
+        print(result.analysis_explanation)
