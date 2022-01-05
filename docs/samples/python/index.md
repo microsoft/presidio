@@ -13,3 +13,4 @@ Presidio service can be used as python packages inside python scripts
 5. [Custom Anonymizer with lambda expression](example_custom_lambda_anonymizer.py)
 6. [Running Presidio on structured / semi-structured data in batch](batch_processing.ipynb)
 7. [Getting the detected text value using a custom operator](getting_entity_values.ipynb)
+8. [Creating a simple demo website](streamlit/index.md)
