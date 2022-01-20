@@ -52,7 +52,6 @@ class FlairRecognizer(EntityRecognizer):
         supported_language: str = 'en',
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
-        #version: str = "0.4",
         model: SequenceTagger = None,
     ):
         self.check_label_groups = (
