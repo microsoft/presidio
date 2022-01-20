@@ -21,7 +21,7 @@ class FlairRecognizer(EntityRecognizer):
 
     ENTITIES = [ "LOCATION", "PERSON",
                 #"ORGANIZATION",
-                #"MISCELLANEOUS"   # - There is no direct correlation with Presidio entities.
+                #"MISCELLANEOUS"   # - There are no direct correlation with Presidio entities.
                 ]
 
     DEFAULT_EXPLANATION = "Identified as {} by Flair's Named Entity Recognition"
@@ -30,7 +30,7 @@ class FlairRecognizer(EntityRecognizer):
         ({"LOCATION"}, {"LOC","LOCATION"}),
         ({"PERSON"}, {"PER"}),
         #({"ORGANIZATION"}, {"ORG"}),
-        #({"MISCELLANEOUS"}, {"MISC"}),   # - There is no direct correlation with Presidio entities.
+        #({"MISCELLANEOUS"}, {"MISC"}),   # - There are no direct correlation with Presidio entities.
     ]
     
     MODEL_LANGUAGES = {
@@ -44,7 +44,7 @@ class FlairRecognizer(EntityRecognizer):
             'PER': 'PERSON',
             'LOC': 'LOCATION',
             #'ORG': 'ORGANIZATION',
-            #'MISC': 'MISCELLANEOUS'   # - There is no direct correlation with Presidio entities.
+            #'MISC': 'MISCELLANEOUS'   # - There are no direct correlation with Presidio entities.
         }
 
     def __init__(
