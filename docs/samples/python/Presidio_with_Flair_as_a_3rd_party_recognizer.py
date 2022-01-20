@@ -19,17 +19,18 @@ logger = logging.getLogger("presidio-analyzer")
 
 class FlairRecognizer(EntityRecognizer):
 
-    ENTITIES = ["ORGANIZATION", "LOCATION", "PERSON",
-                #  "MISCELLANEOUS" # - There are no direct correlation with Presidio entities.
+    ENTITIES = [ "LOCATION", "PERSON",
+                #"ORGANIZATION",
+                #"MISCELLANEOUS"   # - There is no direct correlation with Presidio entities.
                 ]
 
     DEFAULT_EXPLANATION = "Identified as {} by Flair's Named Entity Recognition"
 
     CHECK_LABEL_GROUPS = [
-        ({"LOCATION"}, {"LOC"}),
+        ({"LOCATION"}, {"LOC","LOCATION"}),
         ({"PERSON"}, {"PER"}),
-        ({"ORGANIZATION"}, {"ORG"}),
-        # ({"MISCELLANEOUS"}, {"MISC"}), #- There are no direct correlation with Presidio entities.
+        #({"ORGANIZATION"}, {"ORG"}),
+        #({"MISCELLANEOUS"}, {"MISC"}),   # - There is no direct correlation with Presidio entities.
     ]
     
     MODEL_LANGUAGES = {
@@ -39,22 +40,28 @@ class FlairRecognizer(EntityRecognizer):
         'nl': 'flair/ner-dutch-large'
     }
         
+    PRESIDIO_EQUIVALENCES = {
+            'PER': 'PERSON',
+            'LOC': 'LOCATION',
+            #'ORG': 'ORGANIZATION',
+            #'MISC': 'MISCELLANEOUS'   # - There is no direct correlation with Presidio entities.
+        }
 
     def __init__(
         self,
         supported_language: str = 'en',
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
-        name: str = "flairRecognizer",
-        version: str = "0.3",
+        #version: str = "0.4",
         model: SequenceTagger = None,
     ):
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
         )
-        supported_entities = supported_entities if supported_entities else self.ENTITIES        
-        self.model = SequenceTagger.load(self.MODEL_LANGUAGES.get(supported_language))
-
+        
+        supported_entities = supported_entities if supported_entities else self.ENTITIES   
+        self.model = model if model else SequenceTagger.load(self.MODEL_LANGUAGES.get(supported_language))
+        
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
@@ -97,7 +104,6 @@ class FlairRecognizer(EntityRecognizer):
         if not entities:
             entities = self.supported_entities
         
-        
         for entity in entities:
             if entity not in self.supported_entities:
                 continue
@@ -106,8 +112,8 @@ class FlairRecognizer(EntityRecognizer):
                 if not self.__check_label(entity, ent.labels[0].value, self.check_label_groups):
                     continue
                 textual_explanation = self.DEFAULT_EXPLANATION.format(ent.labels[0].value)
-                explanation = self._build_explanation(
-                    round(ent.score,2), ent.tag, textual_explanation
+                explanation = self.build_flair_explanation(
+                    round(ent.score,2), textual_explanation
                 )
                 flair_result = self._convert_to_recognizer_result(ent,explanation)
                  
@@ -119,8 +125,9 @@ class FlairRecognizer(EntityRecognizer):
     def _convert_to_recognizer_result(
         self, entity, explanation
     ) -> RecognizerResult:
-
-        entity_type = entity.tag
+        
+   
+        entity_type = self.PRESIDIO_EQUIVALENCES.get(entity.tag, entity.tag)
         flair_score = round(entity.score, 2)
 
         flair_results = RecognizerResult(
@@ -134,9 +141,8 @@ class FlairRecognizer(EntityRecognizer):
         return flair_results
 
 
-    @staticmethod
-    def _build_explanation(
-        original_score: float, entity_type: str, explanation: str
+    def build_flair_explanation(
+        self, original_score: float, explanation: str
     ) -> AnalysisExplanation:
         """
         Create explanation for why this result was detected.
@@ -145,13 +151,11 @@ class FlairRecognizer(EntityRecognizer):
         :param explanation: Explanation string
         :return:
         """
-        
         explanation = AnalysisExplanation(
-            recognizer=FlairRecognizer.__class__.__name__,
+            recognizer=self.__class__.__name__,
             original_score=original_score,
             textual_explanation=explanation,
         )
-
         return explanation
     
     @staticmethod
@@ -175,7 +179,7 @@ if __name__ == '__main__':
 
     analyzer = AnalyzerEngine(registry=registry)
 
-    results = analyzer.analyze("My name is Christopher and I live in Irbid", language="en", return_decision_process=True)
+    results = analyzer.analyze("My name is Christopher and I live in Irbid.", language="en", return_decision_process=True)
     for result in results:
         print(result)
         print(result.analysis_explanation)
