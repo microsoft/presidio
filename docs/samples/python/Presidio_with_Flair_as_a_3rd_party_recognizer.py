@@ -27,7 +27,7 @@ class FlairRecognizer(EntityRecognizer):
     DEFAULT_EXPLANATION = "Identified as {} by Flair's Named Entity Recognition"
 
     CHECK_LABEL_GROUPS = [
-        ({"LOCATION"}, {"LOC","LOCATION"}),
+        ({"LOCATION"}, {"LOC"}),
         ({"PERSON"}, {"PER"}),
         #({"ORGANIZATION"}, {"ORG"}),
         #({"MISCELLANEOUS"}, {"MISC"}),   # - There are no direct correlation with Presidio entities.
