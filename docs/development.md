@@ -77,22 +77,24 @@ Follow these steps when starting to work on a Presidio service with Pipenv:
     pip freeze
     ```
 
-
 #### Dependency lock using Pipenv
 
 In some cases we would like to lock the dependencies used by each package. To lock dependencies, first update the Pipfile file, then run the following command:
+
 ```sh
 pipenv lock
 ```
+
 Lock considerations:
-1. Consider running `pipenv lock` on a Python 3.6 environment. Using Python 3.6 makes sure the lock would apply to all Python versions supported by Presidio (3.6 and on).
+
+1. Consider running `pipenv lock` on a Python 3.7 environment. Using Python 3.7 makes sure the lock would apply to all Python versions supported by Presidio (3.7 and on).
 2. Consider locking on mac/linux and not Windows to support all platforms. In windows you can use [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
-For example, use conda to create a Python 3.6 environment:
+For example, use conda to create a Python 3.7 environment:
 
 ```sh
-conda create -n presidio_36 python=3.6
-conda activate presidio_36
+conda create -n presidio_37 python=3.7
+conda activate presidio_37
 # in the package's directory:
 pipenv lock
 ```
@@ -250,7 +252,6 @@ On Windows CMD / Powershell:
 ```shell
 run.bat
 ```
-
 
 ### Linting
 
