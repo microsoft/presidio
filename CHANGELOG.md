@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Changed
+#### Analyzer:
+* Fixed issue when IBAN followed by all caps can't be recognized
 
 ### Removed
 
