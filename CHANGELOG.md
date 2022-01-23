@@ -3,9 +3,14 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [2.2.24] - 23.01.2022
 ### Changed
-#### Analyzer:
 * Fixed issue when IBAN followed by all caps can't be recognized
+* Updated dependencies in Pipfile.lock
+* Removed official Python 3.6 support and added support for 3.10
+* Added docs for creating a streamlit app
+* Added docs for using Flair
 
 ### Removed
 
