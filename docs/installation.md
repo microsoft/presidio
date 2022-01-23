@@ -10,20 +10,18 @@ Presidio suite using `pip` (as Python packages) or using `Docker` (As containeri
 ## Using pip
 
 !!! note "Note"
-	Consider installing the Presidio python packages
-	on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
-	or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
+ Consider installing the Presidio python packages
+ on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
+ or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
 ### Supported Python Versions
 
 Presidio is supported for the following python versions:
 
-* 3.6
 * 3.7
 * 3.8
 * 3.9
-
-We may drop support for Python 3.6 in the future
+* 3.10
 
 ### PII anonymization on text
 
@@ -39,8 +37,8 @@ python -m spacy download en_core_web_lg
 
 For a more detailed installation of each package, refer to the specific documentation:
 
--   [presidio-analyzer](analyzer/index.md).
--   [presidio-anonymizer](anonymizer/index.md).
+* [presidio-analyzer](analyzer/index.md).
+* [presidio-anonymizer](anonymizer/index.md).
 
 ### PII redaction in images
 
@@ -62,7 +60,7 @@ Presidio can expose REST endpoints for each service using Flask and Docker.
 To download the Presidio Docker containers, run the following command:
 
 !!! note "Note"
-	This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
+ This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
 
 ### For PII anonymization in text
 
@@ -99,13 +97,13 @@ API reference and example calls can be found [here](api.md).
 
 To install Presidio from source, first clone the repo:
 
--   using HTTPS
+* using HTTPS
 
 ```sh
 git clone https://github.com/microsoft/presidio.git
 ```
 
--   Using SSH
+* Using SSH
 
 ```sh
 git clone git@github.com:microsoft/presidio.git
@@ -114,7 +112,7 @@ git clone git@github.com:microsoft/presidio.git
 Then, build the containers locally.
 
 !!! note "Note"
-	Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
+ Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
 
 From the root folder of the repo:
 
