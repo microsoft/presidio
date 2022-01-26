@@ -9,14 +9,13 @@
         <meta name="description" content="PII anonymization for text and images.">
       
       
-      
         <meta name="author" content="Microsoft">
       
       
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/anonymizer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
     
     
       
@@ -24,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6e60f8b8.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
         
           
           
@@ -41,13 +40,13 @@
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
-    
     
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -69,7 +68,6 @@
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
   
     
-    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -85,6 +83,7 @@
     <div data-md-component="announce">
       
     </div>
+    
     
       
 
@@ -120,8 +119,7 @@
       <label class="md-header__button md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
       </label>
-      
-<div class="md-search" data-md-component="search" role="dialog">
+      <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
@@ -153,8 +151,7 @@
     
     
       <div class="md-header__source">
-        
-<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -198,8 +195,7 @@
   </label>
   
     <div class="md-nav__source">
-      
-<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -714,7 +710,6 @@
       </a>
       
         
-
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
@@ -1937,7 +1932,6 @@
                   <div class="md-sidebar__inner">
                     
 
-
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -3093,8 +3087,8 @@
             <article class="md-content__inner md-typeset">
               
                 
-                
-                <h1 id="presidio-anonymizer-api-reference">Presidio Anonymizer API Reference</h1>
+
+<h1 id="presidio-anonymizer-api-reference">Presidio Anonymizer API Reference</h1>
 
 
   <div class="doc doc-object doc-module">
@@ -3163,6 +3157,134 @@ AnonymizerEngine            (<a title="presidio_anonymizer.core.engine_base.Engi
 <p>Handles the entire logic of the Presidio-anonymizer. Gets the original text
 and replaces the PII entities with the desired anonymizers.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/anonymizer_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnonymizerEngine</span><span class="p">(</span><span class="n">EngineBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AnonymizerEngine class.</span>
+
+<span class="sd">    Handles the entire logic of the Presidio-anonymizer. Gets the original text</span>
+<span class="sd">    and replaces the PII entities with the desired anonymizers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">EngineBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">anonymize</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">analyzer_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+        <span class="n">operators</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperatorConfig</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EngineResult</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Anonymize method to anonymize the given text.</span>
+
+<span class="sd">        :param text: the text we are anonymizing</span>
+<span class="sd">        :param analyzer_results: A list of RecognizerResult class -&gt; The results we</span>
+<span class="sd">        received from the analyzer</span>
+<span class="sd">        :param operators: The configuration of the anonymizers we would like</span>
+<span class="sd">        to use for each entity e.g.: {&quot;PHONE_NUMBER&quot;:OperatorConfig(&quot;redact&quot;, {})}</span>
+<span class="sd">        received from the analyzer</span>
+<span class="sd">        :return: the anonymized text and a list of information about the</span>
+<span class="sd">        anonymized entities.</span>
+
+<span class="sd">        :example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from presidio_anonymizer import AnonymizerEngine</span>
+<span class="sd">        &gt;&gt;&gt; from presidio_anonymizer.entities import RecognizerResult, OperatorConfig</span>
+
+<span class="sd">        &gt;&gt;&gt; # Initialize the engine with logger.</span>
+<span class="sd">        &gt;&gt;&gt; engine = AnonymizerEngine()</span>
+
+<span class="sd">        &gt;&gt;&gt; # Invoke the anonymize function with the text, analyzer results and</span>
+<span class="sd">        &gt;&gt;&gt; # Operators to define the anonymization type.</span>
+<span class="sd">        &gt;&gt;&gt; result = engine.anonymize(</span>
+<span class="sd">        &gt;&gt;&gt;     text=&quot;My name is Bond, James Bond&quot;,</span>
+<span class="sd">        &gt;&gt;&gt;     analyzer_results=[RecognizerResult(entity_type=&quot;PERSON&quot;,</span>
+<span class="sd">        &gt;&gt;&gt;                                        start=11,</span>
+<span class="sd">        &gt;&gt;&gt;                                        end=15,</span>
+<span class="sd">        &gt;&gt;&gt;                                        score=0.8),</span>
+<span class="sd">        &gt;&gt;&gt;                       RecognizerResult(entity_type=&quot;PERSON&quot;,</span>
+<span class="sd">        &gt;&gt;&gt;                                        start=17,</span>
+<span class="sd">        &gt;&gt;&gt;                                        end=27,</span>
+<span class="sd">        &gt;&gt;&gt;                                        score=0.8)],</span>
+<span class="sd">        &gt;&gt;&gt;     operators={&quot;PERSON&quot;: OperatorConfig(&quot;replace&quot;, {&quot;new_value&quot;: &quot;BIP&quot;})}</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        text: My name is BIP, BIP.</span>
+<span class="sd">        items:</span>
+<span class="sd">        [</span>
+<span class="sd">            {&#39;start&#39;: 16, &#39;end&#39;: 19, &#39;entity_type&#39;: &#39;PERSON&#39;,</span>
+<span class="sd">             &#39;text&#39;: &#39;BIP&#39;, &#39;operator&#39;: &#39;replace&#39;},</span>
+<span class="sd">            {&#39;start&#39;: 11, &#39;end&#39;: 14, &#39;entity_type&#39;: &#39;PERSON&#39;,</span>
+<span class="sd">             &#39;text&#39;: &#39;BIP&#39;, &#39;operator&#39;: &#39;replace&#39;}</span>
+<span class="sd">        ]</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">analyzer_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_conflicts_and_get_text_manipulation_data</span><span class="p">(</span>
+            <span class="n">analyzer_results</span>
+        <span class="p">)</span>
+
+        <span class="n">operators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__check_or_add_default_operator</span><span class="p">(</span><span class="n">operators</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="p">,</span> <span class="n">operators</span><span class="p">,</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_remove_conflicts_and_get_text_manipulation_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterate the list and create a sorted unique results list from it.</span>
+
+<span class="sd">        Only insert results which are:</span>
+<span class="sd">        1. Indices are not contained in other result.</span>
+<span class="sd">        2. Have the same indices as other results but with larger score.</span>
+<span class="sd">        :return: List</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">unique_text_metadata_elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># This list contains all elements which we need to check a single result</span>
+        <span class="c1"># against. If a result is dropped, it can also be dropped from this list</span>
+        <span class="c1"># since it is intersecting with another result and we selected the other one.</span>
+        <span class="n">other_elements</span> <span class="o">=</span> <span class="n">analyzer_results</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">analyzer_results</span><span class="p">:</span>
+            <span class="n">other_elements</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">result_conflicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__is_result_conflicted_with_other_elements</span><span class="p">(</span>
+                <span class="n">other_elements</span><span class="p">,</span> <span class="n">result</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result_conflicted</span><span class="p">:</span>
+                <span class="n">other_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="n">unique_text_metadata_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;removing element </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2"> from results list due to conflict&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">unique_text_metadata_elements</span>
+
+    <span class="k">def</span> <span class="nf">get_anonymizers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of supported anonymizers.&quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operators_factory</span><span class="o">.</span><span class="n">get_anonymizers</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__is_result_conflicted_with_other_elements</span><span class="p">(</span><span class="n">other_elements</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">has_conflict</span><span class="p">(</span><span class="n">other_element</span><span class="p">)</span> <span class="k">for</span> <span class="n">other_element</span> <span class="ow">in</span> <span class="n">other_elements</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__check_or_add_default_operator</span><span class="p">(</span>
+        <span class="n">operators</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperatorConfig</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperatorConfig</span><span class="p">]:</span>
+        <span class="n">default_operator</span> <span class="o">=</span> <span class="n">OperatorConfig</span><span class="p">(</span><span class="n">DEFAULT</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">operators</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">default_operator</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">operators</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">):</span>
+            <span class="n">operators</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_operator</span>
+        <span class="k">return</span> <span class="n">operators</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3465,6 +3587,102 @@ EngineBase            (<span title="abc.ABC">ABC</span>)
 
       <p>Handle the logic of operations over the text using the operators.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/core/engine_base.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">EngineBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handle the logic of operations over the text using the operators.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operators_factory</span> <span class="o">=</span> <span class="n">OperatorsFactory</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_operate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pii_entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PIIEntity</span><span class="p">],</span>
+        <span class="n">operators_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperatorConfig</span><span class="p">],</span>
+        <span class="n">operator_type</span><span class="p">:</span> <span class="n">OperatorType</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EngineResult</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Operate will do the operations required by the user over the text.</span>
+
+<span class="sd">        :param text: the text we need to operate on.</span>
+<span class="sd">        :param pii_entities: data about the text entities we want to operate over.</span>
+<span class="sd">        :param operators_metadata: dictionary where the key is the entity_type and what</span>
+<span class="sd">        :type operator_type: either anonymize or deanonymize</span>
+<span class="sd">        we want to perform over this entity_type.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text_replace_builder</span> <span class="o">=</span> <span class="n">TextReplaceBuilder</span><span class="p">(</span><span class="n">original_text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">engine_result</span> <span class="o">=</span> <span class="n">EngineResult</span><span class="p">()</span>
+        <span class="n">sorted_pii_entities</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pii_entities</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">operator</span> <span class="ow">in</span> <span class="n">sorted_pii_entities</span><span class="p">:</span>
+            <span class="n">text_to_operate_on</span> <span class="o">=</span> <span class="n">text_replace_builder</span><span class="o">.</span><span class="n">get_text_in_position</span><span class="p">(</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">end</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;performing operation </span><span class="si">{</span><span class="n">operator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">operator_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_entity_operator_metadata</span><span class="p">(</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">operators_metadata</span>
+            <span class="p">)</span>
+            <span class="n">changed_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__operate_on_text</span><span class="p">(</span>
+                <span class="n">operator</span><span class="p">,</span> <span class="n">text_to_operate_on</span><span class="p">,</span> <span class="n">operator_metadata</span><span class="p">,</span> <span class="n">operator_type</span>
+            <span class="p">)</span>
+            <span class="n">index_from_end</span> <span class="o">=</span> <span class="n">text_replace_builder</span><span class="o">.</span><span class="n">replace_text_get_insertion_index</span><span class="p">(</span>
+                <span class="n">changed_text</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">end</span>
+            <span class="p">)</span>
+
+            <span class="c1"># The following creates an intermediate list of result entities,</span>
+            <span class="c1"># ordered from end to start, and the indexes will be normalized</span>
+            <span class="c1"># from start to end once the loop ends and the text length is deterministic.</span>
+            <span class="n">result_item</span> <span class="o">=</span> <span class="n">OperatorResult</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="n">index_from_end</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">entity_type</span><span class="p">,</span>
+                <span class="n">changed_text</span><span class="p">,</span>
+                <span class="n">operator_metadata</span><span class="o">.</span><span class="n">operator_name</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">engine_result</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">result_item</span><span class="p">)</span>
+
+        <span class="n">engine_result</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">text_replace_builder</span><span class="o">.</span><span class="n">output_text</span><span class="p">)</span>
+        <span class="n">engine_result</span><span class="o">.</span><span class="n">normalize_item_indexes</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">engine_result</span>
+
+    <span class="k">def</span> <span class="nf">__operate_on_text</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text_metadata</span><span class="p">:</span> <span class="n">PIIEntity</span><span class="p">,</span>
+        <span class="n">text_to_operate_on</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">operator_metadata</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="p">,</span>
+        <span class="n">operator_type</span><span class="p">:</span> <span class="n">OperatorType</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">entity_type</span> <span class="o">=</span> <span class="n">text_metadata</span><span class="o">.</span><span class="n">entity_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;getting operator for </span><span class="si">{</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operators_factory</span><span class="o">.</span><span class="n">create_operator_class</span><span class="p">(</span>
+            <span class="n">operator_metadata</span><span class="o">.</span><span class="n">operator_name</span><span class="p">,</span> <span class="n">operator_type</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;validating operator </span><span class="si">{</span><span class="n">operator</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">operator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">operator_metadata</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">operator_metadata</span><span class="o">.</span><span class="n">params</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;operating on </span><span class="si">{</span><span class="n">entity_type</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">operator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">operated_on_text</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">operate</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text_to_operate_on</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">operated_on_text</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__get_entity_operator_metadata</span><span class="p">(</span>
+        <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">operators_metadata</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorConfig</span><span class="p">:</span>
+        <span class="c1"># We try to get the operator from the list by entity_type.</span>
+        <span class="c1"># If it does not exist, we get the default from the list.</span>
+        <span class="k">if</span> <span class="n">operators_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">operators_metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">operator</span> <span class="o">=</span> <span class="n">operators_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">entity_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">operator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">operator</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">operators_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3542,6 +3760,66 @@ TextReplaceBuilder        </code>
 
       <p>Creates new text according to users request.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/core/text_replace_builder.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">TextReplaceBuilder</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Creates new text according to users request.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_text_not_empty</span><span class="p">(</span><span class="n">original_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span> <span class="o">=</span> <span class="n">original_text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_replacement_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_len</span>
+
+    <span class="k">def</span> <span class="nf">__validate_text_not_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;invalid input, json is missing text field&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="s2">&quot;Invalid input, text can not be empty&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_text_in_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get part of the text inside the original text.</span>
+
+<span class="sd">        :param start: start position of inner text</span>
+<span class="sd">        :param end: end position of inner text</span>
+<span class="sd">        :return: str - part of the original text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_position_in_text</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">replace_text_get_insertion_index</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">replacement_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace text in a specific position with the text.</span>
+
+<span class="sd">        :param replacement_text: new text to replace the old text according to indices</span>
+<span class="sd">        :param start: the startpoint to replace the text</span>
+<span class="sd">        :param end: the endpoint to replace the text</span>
+<span class="sd">        :return: The index of inserted text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">end_of_text_index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_replacement_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_replacement_index</span> <span class="o">=</span> <span class="n">start</span>
+
+        <span class="n">before_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span>
+        <span class="n">after_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span><span class="p">[</span><span class="n">end_of_text_index</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span> <span class="o">=</span> <span class="n">before_text</span> <span class="o">+</span> <span class="n">replacement_text</span> <span class="o">+</span> <span class="n">after_text</span>
+
+        <span class="c1"># The replace algorithm is replacing the text from end to start.</span>
+        <span class="c1"># calculate and return the start point from the end.</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">after_text</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">replacement_text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__validate_position_in_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Validate the start and end position match the text length.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_len</span> <span class="o">&lt;</span> <span class="n">start</span> <span class="ow">or</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_len</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid analyzer result, start: </span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> and end: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">, while text length is only </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text_len</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3794,6 +4072,37 @@ DeanonymizeEngine            (<a title="presidio_anonymizer.core.engine_base.Eng
 
       <p>Deanonymize text that was previously anonymized.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/deanonymize_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DeanonymizeEngine</span><span class="p">(</span><span class="n">EngineBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Deanonymize text that was previously anonymized.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+        <span class="n">EngineBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">deanonymize</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OperatorResult</span><span class="p">],</span>
+        <span class="n">operators</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperatorConfig</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EngineResult</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receive the text, entities and operators to perform deanonymization over.</span>
+
+<span class="sd">        :param operators: the operators to apply on the anonymizer result entities</span>
+<span class="sd">        :param text: the full text with the encrypted entities</span>
+<span class="sd">        :param entities: list of encrypted entities</span>
+<span class="sd">        :return: EngineResult - the new text and data about the deanonymized entities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">operators</span><span class="p">,</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Deanonymize</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_deanonymizers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of supported deanonymizers.&quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operators_factory</span><span class="o">.</span><span class="n">get_deanonymizers</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">names</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4047,6 +4356,58 @@ OperatorConfig        </code>
 
       <p>Hold the data of the required operator.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/entities/engine/operator_config.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperatorConfig</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Hold the data of the required operator.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operator_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an operator config instance.</span>
+
+<span class="sd">        :param operator_name: the name of the operator we want to work with</span>
+<span class="sd">        :param params: the parameters the operator needs in order to work</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator_name</span> <span class="o">=</span> <span class="n">operator_name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_fields</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;operator_name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">, params: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperatorConfig&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create OperatorConfig from json.</span>
+
+<span class="sd">        :param params: json e.g.: {</span>
+<span class="sd">            &quot;type&quot;: &quot;mask&quot;,</span>
+<span class="sd">            &quot;masking_char&quot;: &quot;*&quot;,</span>
+<span class="sd">            &quot;chars_to_mask&quot;: 4,</span>
+<span class="sd">            &quot;from_end&quot;: true</span>
+<span class="sd">        }</span>
+<span class="sd">        :return: OperatorConfig</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">operator_name</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">operator_name</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">operator_name</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;OperatorConfig&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Verify two OperatorConfigs are equal.&quot;&quot;&quot;</span>
+        <span class="n">operator_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator_name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">operator_name</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">params</span> <span class="ow">and</span> <span class="n">operator_name</span>
+
+    <span class="k">def</span> <span class="nf">__validate_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">validate_parameter_not_empty</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">operator_name</span><span class="p">,</span> <span class="s2">&quot;operator config&quot;</span><span class="p">,</span> <span class="s2">&quot;operator_name&quot;</span>
+        <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4327,6 +4688,56 @@ PIIEntity            (<span title="abc.ABC">ABC</span>)
 
       <p>Abstract class to hold the text we are going to operate on metadata.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/entities/engine/pii_entity.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PIIEntity</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract class to hold the text we are going to operate on metadata.&quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">=</span> <span class="n">entity_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_fields</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;start: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;end: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;entity_type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check one entity is greater then other by the text end index.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check two text metadata entities are equal.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">entity_type</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__validate_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">validate_parameter_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">validate_parameter_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">validate_parameter_not_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="s2">&quot;entity_type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid input, result start and end must be positive&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid input, start index &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;must be smaller than end index &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4543,6 +4954,121 @@ RecognizerResult            (<a title="presidio_anonymizer.entities.engine.pii_e
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RecognizerResult</span><span class="p">(</span><span class="n">PIIEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recognizer Result represents the findings of the detected entity.</span>
+
+<span class="sd">    Result of a recognizer analyzing the text.</span>
+
+<span class="sd">    :param entity_type: the type of the entity</span>
+<span class="sd">    :param start: the start location of the detected entity</span>
+<span class="sd">    :param end: the end location of the detected entity</span>
+<span class="sd">    :param score: the score of the detection</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">PIIEntity</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="n">validate_parameter_exists</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="s2">&quot;analyzer result&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create RecognizerResult from json.</span>
+
+<span class="sd">        :param data: e.g. {</span>
+<span class="sd">            &quot;start&quot;: 24,</span>
+<span class="sd">            &quot;end&quot;: 32,</span>
+<span class="sd">            &quot;score&quot;: 0.8,</span>
+<span class="sd">            &quot;entity_type&quot;: &quot;NAME&quot;</span>
+<span class="sd">        }</span>
+<span class="sd">        :return: RecognizerResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+        <span class="n">entity_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;entity_type&quot;</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if one result is greater by using the results indices in the text.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check two results are equal by using all class fields.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">equal_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">entity_type</span>
+        <span class="n">equal_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">score</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_indices</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">and</span> <span class="n">equal_type</span> <span class="ow">and</span> <span class="n">equal_score</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hash the result data by using all class fields.</span>
+
+<span class="sd">        :return: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;start: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;end: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;score: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">has_conflict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if two recognizer results are conflicted or not.</span>
+
+<span class="sd">        I have a conflict if:</span>
+<span class="sd">        1. My indices are the same as the other and my score is lower.</span>
+<span class="sd">        2. If my indices are contained in another.</span>
+
+<span class="sd">        :param other: RecognizerResult</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_indices</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">score</span>
+        <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if one result is contained or equal to another result.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+
+    <span class="k">def</span> <span class="nf">equal_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the indices are equal between two results.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -5167,6 +5693,63 @@ EngineResult        </code>
 
       <p>Engine result.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/entities/engine/result/engine_result.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">EngineResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Engine result.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OperatorResult</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create EngineResult entity.</span>
+
+<span class="sd">        :param text: The anonymized text.</span>
+<span class="sd">        :param items: List of PII entities and the indices</span>
+<span class="sd">         of their replacements in the anonymized text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">items</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">items</span>
+
+    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set a text.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">OperatorResult</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add an item.</span>
+
+<span class="sd">        :param item: an item to add to the list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">normalize_item_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Normalize the indexes to be index from start.&quot;&quot;&quot;</span>
+        <span class="n">text_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">result_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="n">result_item</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">text_len</span> <span class="o">-</span> <span class="n">result_item</span><span class="o">.</span><span class="n">end</span>
+            <span class="n">result_item</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">result_item</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_item</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a json string serializing this instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the object.&quot;&quot;&quot;</span>
+
+        <span class="n">items_repr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">    &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">])</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;text: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="se">\n</span><span class="s2">items:</span><span class="se">\n</span><span class="s2">[</span><span class="se">\n</span><span class="s2">    </span><span class="si">{</span><span class="n">items_repr</span><span class="si">}</span><span class="se">\n</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Verify two instances are equal.</span>
+
+<span class="sd">        Returns true if the two instances are equal, false otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -5509,6 +6092,79 @@ OperatorResult            (<a title="presidio_anonymizer.entities.engine.pii_ent
 
       <p>A class to hold data for engines results either anonymize or deanonymize.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/entities/engine/result/operator_result.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperatorResult</span><span class="p">(</span><span class="n">PIIEntity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class to hold data for engines results either anonymize or deanonymize.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">operator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">PIIEntity</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">operator</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return object as Dict.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;OperatorResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify two OperatorResults are equal.</span>
+
+<span class="sd">        :param other: OperatorResult</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">entity_type</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">operator</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperatorResult&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create OperatorResult from user json.</span>
+
+<span class="sd">        :param json: json representation for this operator result. For example:</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;start&quot;: 0,</span>
+<span class="sd">            &quot;end&quot;: 10,</span>
+<span class="sd">            &quot;key&quot;: &quot;1111111111111111&quot;,</span>
+<span class="sd">            &quot;entity_type&quot;:&quot;PERSON&quot;,</span>
+<span class="sd">            &quot;text&quot;:&quot;resulted_text&quot;,</span>
+<span class="sd">            &quot;operator&quot;:&quot;encrypt&quot;,</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+        <span class="n">entity_type</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;entity_type&quot;</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+        <span class="n">operator</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;operator&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">operator</span><span class="o">=</span><span class="n">operator</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -5812,6 +6468,19 @@ InvalidParamException            (<span title="Exception">Exception</span>)
       <p>Throw exception with error when user input is not valid.</p>
 <p>param msg: Message to be added to the exception</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/entities/invalid_exception.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">InvalidParamException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Throw exception with error when user input is not valid.</span>
+
+<span class="sd">    param msg: Message to be added to the exception</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">err_msg</span> <span class="o">=</span> <span class="n">msg</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">err_msg</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -5929,6 +6598,56 @@ AESCipher        </code>
 
       <p>Advanced Encryption Standard (aka Rijndael) en/decryption in CBC mode.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/aes_cipher.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AESCipher</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Advanced Encryption Standard (aka Rijndael) en/decryption in CBC mode.&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Encrypts a text using AES cypher in CBC mode.</span>
+
+<span class="sd">        Uses padding and random IV.</span>
+<span class="sd">        :param key: AES encryption key in bytes.</span>
+<span class="sd">        :param text: The text for encryption.</span>
+<span class="sd">        :returns: The encrypted text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">encoded_text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">padded_text</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="n">encoded_text</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
+        <span class="n">iv</span> <span class="o">=</span> <span class="n">Random</span><span class="o">.</span><span class="n">new</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
+        <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+        <span class="n">encrypted_text</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">iv</span> <span class="o">+</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">padded_text</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">encrypted_text</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decrypts a previously AES-CBC encrypted text.</span>
+
+<span class="sd">        :param key: AES encryption key in bytes.</span>
+<span class="sd">        :param text: The text for decryption.</span>
+<span class="sd">        :returns: The decrypted text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">decoded_text</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">iv</span> <span class="o">=</span> <span class="n">decoded_text</span><span class="p">[:</span> <span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">]</span>
+        <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+        <span class="n">decrypted_text</span> <span class="o">=</span> <span class="n">unpad</span><span class="p">(</span>
+            <span class="n">cipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">decoded_text</span><span class="p">[</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span> <span class="p">:]),</span> <span class="n">AES</span><span class="o">.</span><span class="n">block_size</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">decrypted_text</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_valid_key_size</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate key size for AES.</span>
+
+<span class="sd">        :param key: AES encryption key in bytes.</span>
+<span class="sd">        :returns: True if the key is of valid size, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">in</span> <span class="n">AES</span><span class="o">.</span><span class="n">key_size</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -6244,6 +6963,41 @@ Custom            (<a title="presidio_anonymizer.operators.operator.Operator" hr
       <p>Replace PII text entity with the results of a function executed on the PII text.</p>
 <p>The function retrun type must be a string</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/custom.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Custom</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace PII text entity with the results of a function executed on the PII text.</span>
+
+<span class="sd">    The function retrun type must be a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LAMBDA</span> <span class="o">=</span> <span class="s2">&quot;lambda&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;:return: result of function executed on the text.&quot;&quot;&quot;</span>
+        <span class="n">new_val</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LAMBDA</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_val</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate the provided function is returning a string.&quot;&quot;&quot;</span>
+        <span class="n">new_val</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LAMBDA</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">new_val</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_val</span><span class="p">(</span><span class="s2">&quot;PII&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="s2">&quot;Function return type must be a str&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="s2">&quot;New value must be a callable function&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;custom&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -6451,6 +7205,52 @@ Decrypt            (<a title="presidio_anonymizer.operators.operator.Operator" h
 
       <p>Decrypt text to from its encrypted form.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/decrypt.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Decrypt</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decrypt text to from its encrypted form.&quot;&quot;&quot;</span>
+
+    <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;decrypt&quot;</span>
+    <span class="n">KEY</span> <span class="o">=</span> <span class="s2">&quot;key&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decrypt the text.</span>
+
+<span class="sd">        :param text: The text for decryption.</span>
+<span class="sd">        :param params:</span>
+<span class="sd">            **key* The key supplied by the user for the encryption.</span>
+<span class="sd">        :return: The encrypted text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">encoded_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
+        <span class="n">decrypted_text</span> <span class="o">=</span> <span class="n">AESCipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">encoded_key</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">decrypted_text</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate Decrypt parameters.</span>
+
+<span class="sd">        :param params:</span>
+<span class="sd">            * *key* The key supplied by the user for the encryption.</span>
+<span class="sd">                    Should be a string of 128, 192 or 256 bits length.</span>
+<span class="sd">        :raises InvalidParamException in case on an invalid parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">)</span>
+        <span class="n">validate_parameter</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AESCipher</span><span class="o">.</span><span class="n">is_valid_key_size</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid input, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="si">}</span><span class="s2"> must be of length 128, 192 or 256 bits&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NAME</span>
+
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Deanonymize</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -6719,6 +7519,51 @@ Encrypt            (<a title="presidio_anonymizer.operators.operator.Operator" h
 
       <p>Anonymizes text to an encrypted form, or it to be restored using decrypted.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/encrypt.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Encrypt</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Anonymizes text to an encrypted form, or it to be restored using decrypted.&quot;&quot;&quot;</span>
+
+    <span class="n">KEY</span> <span class="o">=</span> <span class="s2">&quot;key&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Anonymize the text with an encrypted text.</span>
+
+<span class="sd">        :param text: The text for encryption.</span>
+<span class="sd">        :param params:</span>
+<span class="sd">            * *key* The key supplied by the user for the encryption.</span>
+<span class="sd">        :return: The encrypted text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">encoded_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
+        <span class="n">encrypted_text</span> <span class="o">=</span> <span class="n">AESCipher</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">encoded_key</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">encrypted_text</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate Encrypt parameters.</span>
+
+<span class="sd">        :param params:</span>
+<span class="sd">            * *key* The key supplied by the user for the encryption.</span>
+<span class="sd">                    Should be a string of 128, 192 or 256 bits length.</span>
+<span class="sd">        :raises InvalidParamException in case on an invalid parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">)</span>
+        <span class="n">validate_parameter</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AESCipher</span><span class="o">.</span><span class="n">is_valid_key_size</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid input, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY</span><span class="si">}</span><span class="s2"> must be of length 128, 192 or 256 bits&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;encrypt&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -6989,6 +7834,52 @@ Hash            (<a title="presidio_anonymizer.operators.operator.Operator" href
 
       <p>Hash given text with sha256/sha512/md5 algorithm.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/hash.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Hash</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Hash given text with sha256/sha512/md5 algorithm.&quot;&quot;&quot;</span>
+
+    <span class="n">HASH_TYPE</span> <span class="o">=</span> <span class="s2">&quot;hash_type&quot;</span>
+    <span class="n">SHA256</span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span>
+    <span class="n">SHA512</span> <span class="o">=</span> <span class="s2">&quot;sha512&quot;</span>
+    <span class="n">MD5</span> <span class="o">=</span> <span class="s2">&quot;md5&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hash given value using sha256.</span>
+
+<span class="sd">        :return: hashed original text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hash_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_hash_type_or_default</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">hash_switcher</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SHA256</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">sha256</span><span class="p">(</span><span class="n">s</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SHA512</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">sha512</span><span class="p">(</span><span class="n">s</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">MD5</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">md5</span><span class="p">(</span><span class="n">s</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">hash_switcher</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hash_type</span><span class="p">)(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate the hash type is string and in range of allowed hash types.&quot;&quot;&quot;</span>
+        <span class="n">validate_parameter_in_range</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SHA256</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SHA512</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MD5</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_hash_type_or_default</span><span class="p">(</span><span class="n">params</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">HASH_TYPE</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;hash&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_hash_type_or_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HASH_TYPE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SHA256</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -7209,6 +8100,75 @@ Mask            (<a title="presidio_anonymizer.operators.operator.Operator" href
 
       <p>Mask the given text with given value.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/mask.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Mask</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mask the given text with given value.&quot;&quot;&quot;</span>
+
+    <span class="n">CHARS_TO_MASK</span> <span class="o">=</span> <span class="s2">&quot;chars_to_mask&quot;</span>
+    <span class="n">FROM_END</span> <span class="o">=</span> <span class="s2">&quot;from_end&quot;</span>
+    <span class="n">MASKING_CHAR</span> <span class="o">=</span> <span class="s2">&quot;masking_char&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mask a given amount of text with a given character.</span>
+
+<span class="sd">        :param text: the text to be masked</span>
+<span class="sd">        :param params:</span>
+<span class="sd">            masking_char: The character to be masked with</span>
+<span class="sd">            chars_to_mask: The amount of characters to mask</span>
+<span class="sd">            from_end: Whether to mask the text from it&#39;s end</span>
+<span class="sd">        :return: the masked text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">effective_chars_to_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_effective_chars_to_mask</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CHARS_TO_MASK</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">from_end</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FROM_END</span><span class="p">)</span>
+        <span class="n">masking_char</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MASKING_CHAR</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anonymized_text</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">effective_chars_to_mask</span><span class="p">,</span> <span class="n">from_end</span><span class="p">,</span> <span class="n">masking_char</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the parameters for mask.</span>
+
+<span class="sd">        :param params:</span>
+<span class="sd">            masking_char: The character to be masked with</span>
+<span class="sd">            chars_to_mask: The amount of characters to mask</span>
+<span class="sd">            from_end: Whether to mask the text from it&#39;s end</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">masking_char</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MASKING_CHAR</span><span class="p">)</span>
+        <span class="n">validate_parameter</span><span class="p">(</span><span class="n">masking_char</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MASKING_CHAR</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">masking_char</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid input, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">MASKING_CHAR</span><span class="si">}</span><span class="s2"> must be a character&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">validate_parameter</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CHARS_TO_MASK</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHARS_TO_MASK</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">validate_parameter</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FROM_END</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">FROM_END</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;mask&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_effective_chars_to_mask</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">chars_to_mask</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">chars_to_mask</span><span class="p">)</span> <span class="k">if</span> <span class="n">chars_to_mask</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_anonymized_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">chars_to_mask</span><span class="p">,</span> <span class="n">from_end</span><span class="p">,</span> <span class="n">masking_char</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">from_end</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">masking_char</span> <span class="o">*</span> <span class="n">chars_to_mask</span> <span class="o">+</span> <span class="n">text</span><span class="p">[</span><span class="n">chars_to_mask</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mask_from_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">chars_to_mask</span>
+            <span class="k">return</span> <span class="n">text</span><span class="p">[:</span><span class="n">mask_from_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">masking_char</span> <span class="o">*</span> <span class="n">chars_to_mask</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -7488,6 +8448,32 @@ Operator            (<span title="abc.ABC">ABC</span>)
 
       <p>Operator abstract class to be implemented by each operator.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/operator.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Operator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Operator abstract class to be implemented by each operator.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Operate method to be implemented in each operator.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate each operator parameters.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -7640,6 +8626,15 @@ OperatorType            (<span title="enum.Enum">Enum</span>)
 
       <p>Operator type either anonymize or decrypt to separate the operators.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/operator.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperatorType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Operator type either anonymize or decrypt to separate the operators.&quot;&quot;&quot;</span>
+
+    <span class="n">Anonymize</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">Deanonymize</span> <span class="o">=</span> <span class="mi">2</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -7717,6 +8712,76 @@ OperatorsFactory        </code>
 
       <p>Operators factory to get the correct operator class.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/operators_factory.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperatorsFactory</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Operators factory to get the correct operator class.&quot;&quot;&quot;</span>
+
+    <span class="n">_anonymizers</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_deanonymizers</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_operator_class</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_operator_class</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">operator_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">operator_type</span><span class="p">:</span> <span class="n">OperatorType</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operator</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract the operator class from the operators list.</span>
+
+<span class="sd">        :param operator_type: Either Anonymize or Decrypt to defer between operators.</span>
+<span class="sd">        :type operator_name: operator name.</span>
+<span class="sd">        :return: operator class entity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">operators_by_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_operators_classes</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">operator_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">operators_by_type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No such operator type </span><span class="si">{</span><span class="n">operator_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid operator type &#39;</span><span class="si">{</span><span class="n">operator_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="n">operator_class</span> <span class="o">=</span> <span class="n">operators_by_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">operator_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">operator_class</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No such operator class </span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid operator class &#39;</span><span class="si">{</span><span class="n">operator_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;applying class </span><span class="si">{</span><span class="n">operator_class</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">operator_class</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__get_operators_classes</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_operator_class</span><span class="p">:</span>
+            <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_operator_class</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span><span class="p">:</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">get_anonymizers</span><span class="p">(),</span>
+                <span class="n">OperatorType</span><span class="o">.</span><span class="n">Deanonymize</span><span class="p">:</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">get_deanonymizers</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_operator_class</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_anonymizers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Operator&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return all anonymizers classes currently available.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_anonymizers</span><span class="p">:</span>
+            <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_anonymizers</span> <span class="o">=</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">__get_operators_by_type</span><span class="p">(</span>
+                <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_anonymizers</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_deanonymizers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Operator&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return all deanonymizers classes currently available.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_deanonymizers</span><span class="p">:</span>
+            <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_deanonymizers</span> <span class="o">=</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">__get_operators_by_type</span><span class="p">(</span>
+                <span class="n">OperatorType</span><span class="o">.</span><span class="n">Deanonymize</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">OperatorsFactory</span><span class="o">.</span><span class="n">_deanonymizers</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__get_operators_by_type</span><span class="p">(</span><span class="n">operator_type</span><span class="p">:</span> <span class="n">OperatorType</span><span class="p">):</span>
+        <span class="n">operators</span> <span class="o">=</span> <span class="n">Operator</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">operator_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span> <span class="bp">cls</span>
+            <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">operators</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">operator_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">==</span> <span class="n">operator_type</span>
+        <span class="p">}</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -7943,6 +9008,28 @@ Redact            (<a title="presidio_anonymizer.operators.operator.Operator" hr
 
       <p>Redact the string - empty value.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/redact.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Redact</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Redact the string - empty value.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;:return: an empty value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Redact does not require any paramters so no validation is needed.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;redact&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -8143,6 +9230,34 @@ Replace            (<a title="presidio_anonymizer.operators.operator.Operator" h
 
       <p>Receives new text to replace old PII text entity with.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/operators/replace.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Replace</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Receives new text to replace old PII text entity with.&quot;&quot;&quot;</span>
+
+    <span class="n">NEW_VALUE</span> <span class="o">=</span> <span class="s2">&quot;new_value&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;:return: new_value.&quot;&quot;&quot;</span>
+        <span class="n">new_val</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NEW_VALUE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_val</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;entity_type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">new_val</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate the new value is string.&quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NEW_VALUE</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">NEW_VALUE</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;replace&quot;</span>
+
+    <span class="k">def</span> <span class="nf">operator_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperatorType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return operator type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperatorType</span><span class="o">.</span><span class="n">Anonymize</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -8386,6 +9501,69 @@ AppEntitiesConvertor        </code>
 
       <p>Assisting class to convert API json entities to engine entities.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/services/app_entities_convertor.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AppEntitiesConvertor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Assisting class to convert API json entities to engine entities.&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">analyzer_results_from_json</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;RecognizerResult&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Go over analyzer results, validate them and convert to List[RecognizerResult].</span>
+
+<span class="sd">        :param data: contains the anonymizers and analyzer_results_json</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidParamException</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid input, &quot;</span> <span class="s2">&quot;request must contain analyzer results&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">RecognizerResult</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">analyzer_result</span><span class="p">)</span> <span class="k">for</span> <span class="n">analyzer_result</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">operators_config_from_json</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;OperatorConfig&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Go over the operators list and get the relevant create operator config entity.</span>
+
+<span class="sd">        :param data: contains the list of configuration</span>
+<span class="sd">        value - OperatorConfig</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">OperatorConfig</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">operator_json</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">operator_json</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">deanonymize_entities_from_json</span><span class="p">(</span><span class="n">json</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;OperatorResult&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create DecryptEntity list.</span>
+
+<span class="sd">        :param json:</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;text&quot;: text,</span>
+<span class="sd">            &quot;encrypt_results&quot;: [{</span>
+<span class="sd">                &quot;start&quot;: 0,</span>
+<span class="sd">                &quot;end&quot;: 10,</span>
+<span class="sd">                &quot;key&quot;: &quot;1111111111111111&quot;,</span>
+<span class="sd">                &quot;entity_type&quot;:&quot;PHONE_NUMBER&quot;</span>
+<span class="sd">            }],</span>
+<span class="sd">        }</span>
+<span class="sd">        :return: List[OperatorResult]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">decrypt_entity</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anonymizer_results&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">OperatorResult</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">decrypt_entity</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">decrypt_entity</span>
+            <span class="k">else</span> <span class="p">[]</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">check_custom_operator</span><span class="p">(</span><span class="n">operators</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperatorConfig</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Check if an operator is of type custom.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">([</span><span class="n">config</span><span class="o">.</span><span class="n">operator_name</span> <span class="o">==</span> <span class="s2">&quot;custom&quot;</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">operators</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -8895,11 +10073,6 @@ as content.</p>
     </div>
 
   </div>
-                
-              
-              
-                
-
 
               
             </article>
@@ -8908,8 +10081,7 @@ as content.</p>
         
       </main>
       
-        
-<footer class="md-footer">
+        <footer class="md-footer">
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
@@ -8948,45 +10120,44 @@ as content.</p>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-        
-          Made with
-          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-            Material for MkDocs
-          </a>
-        
-        
-      </div>
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
       
-  <div class="md-footer-social">
+        <div class="md-social">
+  
+    
     
       
       
-        
-        
-      
-      <a href="https://github.com/microsoft/presidio" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
-      </a>
+    
+    <a href="https://github.com/microsoft/presidio" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
     
       
       
-        
-        
-      
-      <a href="https://hub.docker.com/_/microsoft-presidio" target="_blank" rel="noopener" title="hub.docker.com" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
-      </a>
     
-      
-      
-      <a href="mailto:presidio@microsoft.com" target="_blank" rel="noopener" title="" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>
-      </a>
+    <a href="https://hub.docker.com/_/microsoft-presidio" target="_blank" rel="noopener" title="hub.docker.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+    </a>
+  
     
-  </div>
-
+    
+    <a href="mailto:presidio@microsoft.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>
+    </a>
+  
+</div>
+      
     </div>
   </div>
 </footer>
@@ -8995,10 +10166,10 @@ as content.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
+      <script src="../../assets/javascripts/bundle.960e086b.min.js"></script>
       
     
   </body>

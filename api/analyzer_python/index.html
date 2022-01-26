@@ -9,14 +9,13 @@
         <meta name="description" content="PII anonymization for text and images.">
       
       
-      
         <meta name="author" content="Microsoft">
       
       
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/analyzer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.8">
     
     
       
@@ -24,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6e60f8b8.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
         
           
           
@@ -41,13 +40,13 @@
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
-    
     
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -69,7 +68,6 @@
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
   
     
-    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -85,6 +83,7 @@
     <div data-md-component="announce">
       
     </div>
+    
     
       
 
@@ -120,8 +119,7 @@
       <label class="md-header__button md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
       </label>
-      
-<div class="md-search" data-md-component="search" role="dialog">
+      <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
@@ -153,8 +151,7 @@
     
     
       <div class="md-header__source">
-        
-<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -198,8 +195,7 @@
   </label>
   
     <div class="md-nav__source">
-      
-<a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/microsoft/presidio/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -700,7 +696,6 @@
       </a>
       
         
-
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
@@ -1359,7 +1354,6 @@
                   <div class="md-sidebar__inner">
                     
 
-
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -1937,8 +1931,8 @@
             <article class="md-content__inner md-typeset">
               
                 
-                
-                <h1 id="presidio-analyzer-api-reference">Presidio Analyzer API Reference</h1>
+
+<h1 id="presidio-analyzer-api-reference">Presidio Analyzer API Reference</h1>
 <h2 id="analyzerengine">AnalyzerEngine</h2>
 
 
@@ -1999,6 +1993,219 @@
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/analyzer_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnalyzerEngine</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for Presidio Analyzer.</span>
+
+<span class="sd">    Orchestrating the detection of PII entities and all related logic.</span>
+
+<span class="sd">    :param registry: instance of type RecognizerRegistry</span>
+<span class="sd">    :param nlp_engine: instance of type NlpEngine</span>
+<span class="sd">    (for example SpacyNlpEngine)</span>
+<span class="sd">    :param app_tracer: instance of type AppTracer, used to trace the logic</span>
+<span class="sd">    used during each request for interpretability reasons.</span>
+<span class="sd">    :param log_decision_process: bool,</span>
+<span class="sd">    defines whether the decision process within the analyzer should be logged or not.</span>
+<span class="sd">    :param default_score_threshold: Minimum confidence value</span>
+<span class="sd">    for detected entities to be returned</span>
+<span class="sd">    :param supported_languages: List of possible languages this engine could be run on.</span>
+<span class="sd">    Used for loading the right NLP models and recognizers for these languages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">registry</span><span class="p">:</span> <span class="n">RecognizerRegistry</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nlp_engine</span><span class="p">:</span> <span class="n">NlpEngine</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">app_tracer</span><span class="p">:</span> <span class="n">AppTracer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_decision_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">default_score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">supported_languages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">supported_languages</span><span class="p">:</span>
+            <span class="n">supported_languages</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_engine</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;nlp_engine not provided, creating default.&quot;</span><span class="p">)</span>
+            <span class="n">provider</span> <span class="o">=</span> <span class="n">NlpEngineProvider</span><span class="p">()</span>
+            <span class="n">nlp_engine</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">registry</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;registry not provided, creating default.&quot;</span><span class="p">)</span>
+            <span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">app_tracer</span><span class="p">:</span>
+            <span class="n">app_tracer</span> <span class="o">=</span> <span class="n">AppTracer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_tracer</span> <span class="o">=</span> <span class="n">app_tracer</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">supported_languages</span> <span class="o">=</span> <span class="n">supported_languages</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engine</span> <span class="o">=</span> <span class="n">nlp_engine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registry</span> <span class="o">=</span> <span class="n">registry</span>
+
+        <span class="c1"># load all recognizers</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">registry</span><span class="o">.</span><span class="n">recognizers</span><span class="p">:</span>
+            <span class="n">registry</span><span class="o">.</span><span class="n">load_predefined_recognizers</span><span class="p">(</span>
+                <span class="n">nlp_engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nlp_engine</span><span class="p">,</span> <span class="n">languages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_languages</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_decision_process</span> <span class="o">=</span> <span class="n">log_decision_process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_score_threshold</span> <span class="o">=</span> <span class="n">default_score_threshold</span>
+
+    <span class="k">def</span> <span class="nf">get_recognizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of PII recognizers currently loaded.</span>
+
+<span class="sd">        :param language: Return the recognizers supporting a given language.</span>
+<span class="sd">        :return: List of [Recognizer] as a RecognizersAllResponse</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">language</span><span class="p">:</span>
+            <span class="n">languages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_languages</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">languages</span> <span class="o">=</span> <span class="p">[</span><span class="n">language</span><span class="p">]</span>
+
+        <span class="n">recognizers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fetching all recognizers for language </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">recognizers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_recognizers</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">,</span> <span class="n">all_fields</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">recognizers</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of the entities that can be detected.</span>
+
+<span class="sd">        :param language: Return only entities supported in a specific language.</span>
+<span class="sd">        :return: List of entity names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">recognizers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_recognizers</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">)</span>
+        <span class="n">supported_entities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">recognizer</span> <span class="ow">in</span> <span class="n">recognizers</span><span class="p">:</span>
+            <span class="n">supported_entities</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">recognizer</span><span class="o">.</span><span class="n">get_supported_entities</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">supported_entities</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">correlation_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">score_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_decision_process</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ad_hoc_recognizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find PII entities in text using different PII recognizers for a given language.</span>
+
+<span class="sd">        :param text: the text to analyze</span>
+<span class="sd">        :param language: the language of the text</span>
+<span class="sd">        :param entities: List of PII entities that should be looked for in the text.</span>
+<span class="sd">        If entities=None then all entities are looked for.</span>
+<span class="sd">        :param correlation_id: cross call ID for this request</span>
+<span class="sd">        :param score_threshold: A minimum value for which</span>
+<span class="sd">        to return an identified entity</span>
+<span class="sd">        :param return_decision_process: Whether the analysis decision process steps</span>
+<span class="sd">        returned in the response.</span>
+<span class="sd">        :param ad_hoc_recognizers: List of recognizers which will be used only</span>
+<span class="sd">        for this specific request.</span>
+<span class="sd">        :return: an array of the found entities in the text</span>
+
+<span class="sd">        :example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from presidio_analyzer import AnalyzerEngine</span>
+
+<span class="sd">        &gt;&gt;&gt; # Set up the engine, loads the NLP module (spaCy model by default)</span>
+<span class="sd">        &gt;&gt;&gt; # and other PII recognizers</span>
+<span class="sd">        &gt;&gt;&gt; analyzer = AnalyzerEngine()</span>
+
+<span class="sd">        &gt;&gt;&gt; # Call analyzer to get results</span>
+<span class="sd">        &gt;&gt;&gt; results = analyzer.analyze(text=&#39;My phone number is 212-555-5555&#39;, entities=[&#39;PHONE_NUMBER&#39;], language=&#39;en&#39;) # noqa D501</span>
+<span class="sd">        &gt;&gt;&gt; print(results)</span>
+<span class="sd">        [type: PHONE_NUMBER, start: 19, end: 31, score: 0.85]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_fields</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">entities</span>
+
+        <span class="n">recognizers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_recognizers</span><span class="p">(</span>
+            <span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">,</span>
+            <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
+            <span class="n">all_fields</span><span class="o">=</span><span class="n">all_fields</span><span class="p">,</span>
+            <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="n">ad_hoc_recognizers</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">all_fields</span><span class="p">:</span>
+            <span class="c1"># Since all_fields=True, list all entities by iterating</span>
+            <span class="c1"># over all recognizers</span>
+            <span class="n">entities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_supported_entities</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">)</span>
+
+        <span class="c1"># run the nlp pipeline over the given text, store the results in</span>
+        <span class="c1"># a NlpArtifacts instance</span>
+        <span class="n">nlp_artifacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engine</span><span class="o">.</span><span class="n">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_decision_process</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app_tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
+                <span class="n">correlation_id</span><span class="p">,</span> <span class="s2">&quot;nlp artifacts:&quot;</span> <span class="o">+</span> <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+            <span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">recognizer</span> <span class="ow">in</span> <span class="n">recognizers</span><span class="p">:</span>
+            <span class="c1"># Lazy loading of the relevant recognizers</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">is_loaded</span><span class="p">:</span>
+                <span class="n">recognizer</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+                <span class="n">recognizer</span><span class="o">.</span><span class="n">is_loaded</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># analyze using the current recognizer and append the results</span>
+            <span class="n">current_results</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="o">=</span><span class="n">nlp_artifacts</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">current_results</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_decision_process</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app_tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
+                <span class="n">correlation_id</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]),</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Remove duplicates or low score results</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_low_scores</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">score_threshold</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">return_decision_process</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_decision_process</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">__remove_low_scores</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove results for which the confidence is lower than the threshold.</span>
+
+<span class="sd">        :param results: List of RecognizerResult</span>
+<span class="sd">        :param score_threshold: float value for minimum possible confidence</span>
+<span class="sd">        :return: List[RecognizerResult]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">score_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">score_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_score_threshold</span>
+
+        <span class="n">new_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;=</span> <span class="n">score_threshold</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">new_results</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__remove_decision_process</span><span class="p">(</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Remove decision process / analysis explanation from response.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">analysis_explanation</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2398,6 +2605,183 @@ print(results)
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/recognizer_registry/recognizer_registry.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RecognizerRegistry</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect, register and hold all recognizers to be used by the analyzer.</span>
+
+<span class="sd">    :param recognizers: An optional list of recognizers,</span>
+<span class="sd">    that will be available instead of the predefined recognizers</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">recognizers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span> <span class="o">=</span> <span class="n">recognizers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">load_predefined_recognizers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">languages</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nlp_engine</span><span class="p">:</span> <span class="n">NlpEngine</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the existing recognizers into memory.</span>
+
+<span class="sd">        :param languages: List of languages for which to load recognizers</span>
+<span class="sd">        :param nlp_engine: The NLP engine to use.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">languages</span><span class="p">:</span>
+            <span class="n">languages</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span>
+
+        <span class="n">nlp_recognizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nlp_recognizer</span><span class="p">(</span><span class="n">nlp_engine</span><span class="p">)</span>
+        <span class="n">recognizers_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;en&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">UsBankRecognizer</span><span class="p">,</span>
+                <span class="n">UsLicenseRecognizer</span><span class="p">,</span>
+                <span class="n">UsItinRecognizer</span><span class="p">,</span>
+                <span class="n">UsPassportRecognizer</span><span class="p">,</span>
+                <span class="n">UsSsnRecognizer</span><span class="p">,</span>
+                <span class="n">NhsRecognizer</span><span class="p">,</span>
+                <span class="n">SgFinRecognizer</span><span class="p">,</span>
+                <span class="n">AuAbnRecognizer</span><span class="p">,</span>
+                <span class="n">AuAcnRecognizer</span><span class="p">,</span>
+                <span class="n">AuTfnRecognizer</span><span class="p">,</span>
+                <span class="n">AuMedicareRecognizer</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;es&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">EsNifRecognizer</span><span class="p">],</span>
+            <span class="s2">&quot;ALL&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">CreditCardRecognizer</span><span class="p">,</span>
+                <span class="n">CryptoRecognizer</span><span class="p">,</span>
+                <span class="n">DateRecognizer</span><span class="p">,</span>
+                <span class="n">DomainRecognizer</span><span class="p">,</span>
+                <span class="n">EmailRecognizer</span><span class="p">,</span>
+                <span class="n">IbanRecognizer</span><span class="p">,</span>
+                <span class="n">IpRecognizer</span><span class="p">,</span>
+                <span class="n">MedicalLicenseRecognizer</span><span class="p">,</span>
+                <span class="n">nlp_recognizer</span><span class="p">,</span>
+                <span class="n">PhoneRecognizer</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">lang</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+            <span class="n">lang_recognizers</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="p">()</span> <span class="k">for</span> <span class="n">rc</span> <span class="ow">in</span> <span class="n">recognizers_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[])]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lang_recognizers</span><span class="p">)</span>
+            <span class="n">all_recognizers</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">rc</span><span class="p">(</span><span class="n">supported_language</span><span class="o">=</span><span class="n">lang</span><span class="p">)</span> <span class="k">for</span> <span class="n">rc</span> <span class="ow">in</span> <span class="n">recognizers_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ALL&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">all_recognizers</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_nlp_recognizer</span><span class="p">(</span>
+        <span class="n">nlp_engine</span><span class="p">:</span> <span class="n">NlpEngine</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">SpacyRecognizer</span><span class="p">],</span> <span class="n">Type</span><span class="p">[</span><span class="n">StanzaRecognizer</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the recognizer leveraging the selected NLP Engine.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_engine</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">nlp_engine</span><span class="p">)</span> <span class="o">==</span> <span class="n">SpacyNlpEngine</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SpacyRecognizer</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nlp_engine</span><span class="p">,</span> <span class="n">StanzaNlpEngine</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">StanzaRecognizer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;nlp engine should be either SpacyNlpEngine or StanzaNlpEngine&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># Returning default</span>
+            <span class="k">return</span> <span class="n">SpacyRecognizer</span>
+
+    <span class="k">def</span> <span class="nf">get_recognizers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">all_fields</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ad_hoc_recognizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of recognizers which supports the specified name and language.</span>
+
+<span class="sd">        :param entities: the requested entities</span>
+<span class="sd">        :param language: the requested language</span>
+<span class="sd">        :param all_fields: a flag to return all fields of a requested language.</span>
+<span class="sd">        :param ad_hoc_recognizers: Additional recognizers provided by the user</span>
+<span class="sd">        as part of the request</span>
+<span class="sd">        :return: A list of the recognizers which supports the supplied entities</span>
+<span class="sd">        and language</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">language</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No language provided&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">entities</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">all_fields</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No entities provided&quot;</span><span class="p">)</span>
+
+        <span class="n">all_possible_recognizers</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ad_hoc_recognizers</span><span class="p">:</span>
+            <span class="n">all_possible_recognizers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ad_hoc_recognizers</span><span class="p">)</span>
+
+        <span class="c1"># filter out unwanted recognizers</span>
+        <span class="n">to_return</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">all_fields</span><span class="p">:</span>
+            <span class="n">to_return</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">rec</span>
+                <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">all_possible_recognizers</span>
+                <span class="k">if</span> <span class="n">language</span> <span class="o">==</span> <span class="n">rec</span><span class="o">.</span><span class="n">supported_language</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">rec</span>
+                    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">all_possible_recognizers</span>
+                    <span class="k">if</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">supported_entities</span>
+                    <span class="ow">and</span> <span class="n">language</span> <span class="o">==</span> <span class="n">rec</span><span class="o">.</span><span class="n">supported_language</span>
+                <span class="p">]</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Entity </span><span class="si">%s</span><span class="s2"> doesn&#39;t have the corresponding&quot;</span>
+                        <span class="s2">&quot; recognizer in language : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">entity</span><span class="p">,</span>
+                        <span class="n">language</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">to_return</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">subset</span><span class="p">))</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Returning a total of </span><span class="si">%s</span><span class="s2"> recognizers&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">to_return</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">to_return</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No matching recognizers were found to serve the request.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">to_return</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_recognizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">:</span> <span class="n">EntityRecognizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new recognizer to the list of recognizers.</span>
+
+<span class="sd">        :param recognizer: Recognizer to add</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recognizer</span><span class="p">,</span> <span class="n">EntityRecognizer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input is not of type EntityRecognizer&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recognizer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">remove_recognizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove a recognizer based on its name.</span>
+
+<span class="sd">        :param recognizer_name: Name of recognizer to remove</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_recognizers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">rec</span> <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span> <span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">recognizer_name</span>
+        <span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Removed </span><span class="si">%s</span><span class="s2"> recognizers which had the name </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_recognizers</span><span class="p">)),</span>
+            <span class="n">recognizer_name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recognizers</span> <span class="o">=</span> <span class="n">new_recognizers</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -2833,6 +3217,411 @@ Recognizers which hold the logic for recognizing specific PII entities.</p>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">EntityRecognizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing an abstract PII entity recognizer.</span>
+
+<span class="sd">    EntityRecognizer is an abstract class to be inherited by</span>
+<span class="sd">    Recognizers which hold the logic for recognizing specific PII entities.</span>
+
+<span class="sd">    :param supported_entities: the entities supported by this recognizer</span>
+<span class="sd">    (for example, phone number, address, etc.)</span>
+<span class="sd">    :param supported_language: the language supported by this recognizer.</span>
+<span class="sd">    The supported langauge code is iso6391Name</span>
+<span class="sd">    :param name: the name of this recognizer (optional)</span>
+<span class="sd">    :param version: the recognizer current version</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MIN_SCORE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">MAX_SCORE</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">CONTEXT_SIMILARITY_THRESHOLD</span> <span class="o">=</span> <span class="mf">0.65</span>
+    <span class="n">CONTEXT_SIMILARITY_FACTOR</span> <span class="o">=</span> <span class="mf">0.35</span>
+    <span class="n">MIN_SCORE_WITH_CONTEXT_SIMILARITY</span> <span class="o">=</span> <span class="mf">0.4</span>
+    <span class="n">CONTEXT_PREFIX_COUNT</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">CONTEXT_SUFFIX_COUNT</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">supported_entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">supported_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">supported_entities</span> <span class="o">=</span> <span class="n">supported_entities</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>  <span class="c1"># assign class name as name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">supported_language</span> <span class="o">=</span> <span class="n">supported_language</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loaded recognizer: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_loaded</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the recognizer assets if needed.</span>
+
+<span class="sd">        (e.g. machine learning models)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyze text to identify entities.</span>
+
+<span class="sd">        :param text: The text to be analyzed</span>
+<span class="sd">        :param entities: The list of entities this recognizer is able to detect</span>
+<span class="sd">        :param nlp_artifacts: A group of attributes which are the result of</span>
+<span class="sd">        an NLP process over the input text.</span>
+<span class="sd">        :return: List of results detected by this recognizer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the list of entities this recognizer can identify.</span>
+
+<span class="sd">        :return: A list of the supported entities by this recognizer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_entities</span>
+
+    <span class="k">def</span> <span class="nf">get_supported_language</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the language this recognizer can support.</span>
+
+<span class="sd">        :return: A list of the supported language by this recognizer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_language</span>
+
+    <span class="k">def</span> <span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the version of this recognizer.</span>
+
+<span class="sd">        :return: The current version of this recognizer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize self to dictionary.</span>
+
+<span class="sd">        :return: a dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">return_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;supported_entities&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_entities</span><span class="p">,</span>
+            <span class="s2">&quot;supported_language&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_language</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">return_dict</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">entity_recognizer_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;EntityRecognizer&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create EntityRecognizer from a dict input.</span>
+
+<span class="sd">        :param entity_recognizer_dict: Dict containing keys and values for instantiation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">entity_recognizer_dict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">enhance_using_context</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">raw_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+        <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span><span class="p">,</span>
+        <span class="n">recognizer_context_words</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update results in case surrounding words are relevant to the context words.</span>
+
+<span class="sd">        Using the surrounding words of the actual word matches, look</span>
+<span class="sd">        for specific strings that if found contribute to the score</span>
+<span class="sd">        of the result, improving the confidence that the match is</span>
+<span class="sd">        indeed of that PII entity type</span>
+
+<span class="sd">        :param text: The actual text that was analyzed</span>
+<span class="sd">        :param raw_results: Recognizer results which didn&#39;t take</span>
+<span class="sd">                            context into consideration</span>
+<span class="sd">        :param nlp_artifacts: The nlp artifacts contains elements</span>
+<span class="sd">                              such as lemmatized tokens for better</span>
+<span class="sd">                              accuracy of the context enhancement process</span>
+<span class="sd">        :param recognizer_context_words: The words the current recognizer</span>
+<span class="sd">                                         supports (words to lookup)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create a deep copy of the results object so we can manipulate it</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">raw_results</span><span class="p">)</span>
+
+        <span class="c1"># Sanity</span>
+        <span class="k">if</span> <span class="n">nlp_artifacts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">]. NLP artifacts were not provided&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">results</span>
+        <span class="k">if</span> <span class="n">recognizer_context_words</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">recognizer_context_words</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;recognizer &#39;</span><span class="si">%s</span><span class="s2">&#39; does not support context &quot;</span> <span class="s2">&quot;enhancement&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">results</span>
+
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="c1"># extract lemmatized context from the surrounding of the match</span>
+
+            <span class="n">word</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">start</span> <span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">end</span><span class="p">]</span>
+
+            <span class="n">surrounding_words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extract_surrounding_words</span><span class="p">(</span>
+                <span class="n">nlp_artifacts</span><span class="o">=</span><span class="n">nlp_artifacts</span><span class="p">,</span> <span class="n">word</span><span class="o">=</span><span class="n">word</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">start</span>
+            <span class="p">)</span>
+
+            <span class="n">supportive_context_word</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__find_supportive_word_in_context</span><span class="p">(</span>
+                <span class="n">surrounding_words</span><span class="p">,</span> <span class="n">recognizer_context_words</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">supportive_context_word</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONTEXT_SIMILARITY_FACTOR</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MIN_SCORE_WITH_CONTEXT_SIMILARITY</span><span class="p">)</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">MAX_SCORE</span><span class="p">)</span>
+
+                <span class="c1"># Update the explainability object with context information</span>
+                <span class="c1"># helped improving the score</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">analysis_explanation</span><span class="o">.</span><span class="n">set_supportive_context_word</span><span class="p">(</span>
+                    <span class="n">supportive_context_word</span>
+                <span class="p">)</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">analysis_explanation</span><span class="o">.</span><span class="n">set_improved_score</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__context_to_keywords</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__find_supportive_word_in_context</span><span class="p">(</span>
+        <span class="n">context_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">recognizer_context_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find words in the text which are relevant for context evaluation.</span>
+
+<span class="sd">        A word is considered a supportive context word if there&#39;s exact match</span>
+<span class="sd">        between a keyword in context_text and any keyword in context_list.</span>
+
+<span class="sd">        :param context_list words before and after the matched entity within</span>
+<span class="sd">               a specified window size</span>
+<span class="sd">        :param recognizer_context_list a list of words considered as</span>
+<span class="sd">                context keywords manually specified by the recognizer&#39;s author</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># If the context list is empty, no need to continue</span>
+        <span class="k">if</span> <span class="n">context_list</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">recognizer_context_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">word</span>
+
+        <span class="k">for</span> <span class="n">predefined_context_word</span> <span class="ow">in</span> <span class="n">recognizer_context_list</span><span class="p">:</span>
+            <span class="c1"># result == true only if any of the predefined context words</span>
+            <span class="c1"># is found exactly or as a substring in any of the collected</span>
+            <span class="c1"># context words</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="kc">True</span>
+                    <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">context_list</span>
+                    <span class="k">if</span> <span class="n">predefined_context_word</span> <span class="ow">in</span> <span class="n">keyword</span>
+                <span class="p">),</span>
+                <span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found context keyword &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">predefined_context_word</span><span class="p">)</span>
+                <span class="n">word</span> <span class="o">=</span> <span class="n">predefined_context_word</span>
+                <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">word</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__add_n_words</span><span class="p">(</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_words</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">lemmas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">lemmatized_filtered_keywords</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">is_backward</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare a string of context words.</span>
+
+<span class="sd">        Return a list of words which surrounds a lemma at a given index.</span>
+<span class="sd">        The words will be collected only if exist in the filtered array</span>
+
+<span class="sd">        :param index: index of the lemma that its surrounding words we want</span>
+<span class="sd">        :param n_words: number of words to take</span>
+<span class="sd">        :param lemmas: array of lemmas</span>
+<span class="sd">        :param lemmatized_filtered_keywords: the array of filtered</span>
+<span class="sd">               lemmas from the original sentence,</span>
+<span class="sd">        :param is_backward: if true take the preceeding words, if false,</span>
+<span class="sd">                            take the successing words</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="n">context_words</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># The entity itself is no interest to us...however we want to</span>
+        <span class="c1"># consider it anyway for cases were it is attached with no spaces</span>
+        <span class="c1"># to an interesting context word, so we allow it and add 1 to</span>
+        <span class="c1"># the number of collected words</span>
+
+        <span class="c1"># collect at most n words (in lower case)</span>
+        <span class="n">remaining</span> <span class="o">=</span> <span class="n">n_words</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lemmas</span><span class="p">)</span> <span class="ow">and</span> <span class="n">remaining</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lower_lemma</span> <span class="o">=</span> <span class="n">lemmas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">lower_lemma</span> <span class="ow">in</span> <span class="n">lemmatized_filtered_keywords</span><span class="p">:</span>
+                <span class="n">context_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lower_lemma</span><span class="p">)</span>
+                <span class="n">remaining</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">is_backward</span> <span class="k">else</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">context_words</span>
+
+    <span class="k">def</span> <span class="nf">__add_n_words_forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_words</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">lemmas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">lemmatized_filtered_keywords</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_n_words</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">n_words</span><span class="p">,</span> <span class="n">lemmas</span><span class="p">,</span> <span class="n">lemmatized_filtered_keywords</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__add_n_words_backward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_words</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">lemmas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">lemmatized_filtered_keywords</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_n_words</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">n_words</span><span class="p">,</span> <span class="n">lemmas</span><span class="p">,</span> <span class="n">lemmatized_filtered_keywords</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_find_index_of_match_token</span><span class="p">(</span>
+        <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">tokens_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>  <span class="c1"># noqa ANN001</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># we use the known start index of the original word to find the actual</span>
+        <span class="c1"># token at that index, we are not checking for equivilance since the</span>
+        <span class="c1"># token might be just a substring of that word (e.g. for phone number</span>
+        <span class="c1"># 555-124564 the first token might be just &#39;555&#39; or for a match like &#39;</span>
+        <span class="c1"># rocket&#39; the actual token will just be &#39;rocket&#39; hence the misalignment</span>
+        <span class="c1"># of indices)</span>
+        <span class="c1"># Note: we are iterating over the original tokens (not the lemmatized)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="c1"># Either we found a token with the exact location, or</span>
+            <span class="c1"># we take a token which its characters indices covers</span>
+            <span class="c1"># the index we are looking for.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">tokens_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">start</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">start</span> <span class="o">&lt;</span> <span class="n">tokens_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)):</span>
+                <span class="c1"># found the interesting token, the one that around it</span>
+                <span class="c1"># we take n words, we save the matching lemma</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Did not find word &#39;&quot;</span> <span class="o">+</span> <span class="n">word</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span>
+                <span class="s2">&quot;in the list of tokens although it &quot;</span>
+                <span class="s2">&quot;is expected to be found&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">i</span>
+
+    <span class="k">def</span> <span class="nf">__extract_surrounding_words</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Extract words surrounding another given word.</span>
+
+<span class="sd">        The text from which the context is extracted is given in the nlp</span>
+<span class="sd">        doc.</span>
+
+<span class="sd">        :param nlp_artifacts: An abstraction layer which holds different</span>
+<span class="sd">                              items which are the result of a NLP pipeline</span>
+<span class="sd">                              execution on a given text</span>
+<span class="sd">        :param word: The word to look for context around</span>
+<span class="sd">        :param start: The start index of the word in the original text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Skipping context extraction due to &quot;</span> <span class="s2">&quot;lack of NLP artifacts&quot;</span><span class="p">)</span>
+            <span class="c1"># if there are no nlp artifacts, this is ok, we can</span>
+            <span class="c1"># extract context and we return a valid, yet empty</span>
+            <span class="c1"># context</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Get the already prepared words in the given text, in their</span>
+        <span class="c1"># LEMMATIZED version</span>
+        <span class="n">lemmatized_keywords</span> <span class="o">=</span> <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">keywords</span>
+
+        <span class="c1"># since the list of tokens is not necessarily aligned</span>
+        <span class="c1"># with the actual index of the match, we look for the</span>
+        <span class="c1"># token index which corresponds to the match</span>
+        <span class="n">token_index</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">_find_index_of_match_token</span><span class="p">(</span>
+            <span class="n">word</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">tokens</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">tokens_indices</span>
+        <span class="p">)</span>
+
+        <span class="c1"># index i belongs to the PII entity, take the preceding n words</span>
+        <span class="c1"># and the successing m words into a context list</span>
+
+        <span class="n">backward_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_n_words_backward</span><span class="p">(</span>
+            <span class="n">token_index</span><span class="p">,</span>
+            <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">CONTEXT_PREFIX_COUNT</span><span class="p">,</span>
+            <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">lemmas</span><span class="p">,</span>
+            <span class="n">lemmatized_keywords</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">forward_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__add_n_words_forward</span><span class="p">(</span>
+            <span class="n">token_index</span><span class="p">,</span>
+            <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">CONTEXT_SUFFIX_COUNT</span><span class="p">,</span>
+            <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">lemmas</span><span class="p">,</span>
+            <span class="n">lemmatized_keywords</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">context_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">context_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">backward_context</span><span class="p">)</span>
+        <span class="n">context_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">forward_context</span><span class="p">)</span>
+        <span class="n">context_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">context_list</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Context list is: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context_list</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">context_list</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove duplicate results.</span>
+
+<span class="sd">        Remove duplicates in case the two results</span>
+<span class="sd">        have identical start and ends and types.</span>
+<span class="sd">        :param results: List[RecognizerResult]</span>
+<span class="sd">        :return: List[RecognizerResult]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">start</span><span class="p">)))</span>
+        <span class="n">filtered_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">to_keep</span> <span class="o">=</span> <span class="n">result</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filtered_results</span>  <span class="c1"># equals based comparison</span>
+            <span class="k">if</span> <span class="n">to_keep</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">filtered</span> <span class="ow">in</span> <span class="n">filtered_results</span><span class="p">:</span>
+                    <span class="c1"># If result is contained in one of the other results</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">contained_in</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+                        <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">==</span> <span class="n">filtered</span><span class="o">.</span><span class="n">entity_type</span>
+                    <span class="p">):</span>
+                        <span class="n">to_keep</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">to_keep</span><span class="p">:</span>
+                <span class="n">filtered_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filtered_results</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3491,6 +4280,53 @@ have identical start and ends and types.</p>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/remote_recognizer.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RemoteRecognizer</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">EntityRecognizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A configuration for a recognizer that runs on a different process / remote machine.</span>
+
+<span class="sd">    :param supported_entities: A list of entities this recognizer can identify</span>
+<span class="sd">    :param name: name of recognizer</span>
+<span class="sd">    :param supported_language: The language this recognizer can detect entities in</span>
+<span class="sd">    :param version: Version of this recognizer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">supported_entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">supported_language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">supported_entities</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">supported_language</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa D102</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span>
+    <span class="p">):</span>  <span class="c1"># noqa ANN201</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call an external service for PII detection.</span>
+
+<span class="sd">        :param text: text to be analyzed</span>
+<span class="sd">        :param entities: Entities that should be looked for</span>
+<span class="sd">        :param nlp_artifacts: Additional metadata from the NLP engine</span>
+<span class="sd">        :return: List of identified PII entities</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 1. Call the external service.</span>
+        <span class="c1"># 2. Translate results into List[RecognizerResult]</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>  <span class="c1"># noqa D102</span>
+        <span class="k">pass</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -3679,6 +4515,12 @@ have identical start and ends and types.</p>
 
       <p>PII entity recognizer which runs on the same process as the AnalyzerEngine.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/local_recognizer.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LocalRecognizer</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">EntityRecognizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;PII entity recognizer which runs on the same process as the AnalyzerEngine.&quot;&quot;&quot;</span>
+</code></pre></div>
+        </details>
 
 
     </div>
@@ -3726,6 +4568,237 @@ have identical start and ends and types.</p>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/pattern_recognizer.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PatternRecognizer</span><span class="p">(</span><span class="n">LocalRecognizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PII entity recognizer using regular expressions or deny-lists.</span>
+
+<span class="sd">    :param patterns: A list of patterns to detect</span>
+<span class="sd">    :param deny_list: A list of words to detect,</span>
+<span class="sd">    in case our recognizer uses a predefined list of words (deny list)</span>
+<span class="sd">    :param context: list of context words</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">supported_entity</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">supported_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+        <span class="n">patterns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Pattern</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">deny_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">supported_entity</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Pattern recognizer should be initialized with entity&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">patterns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">deny_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Pattern recognizer should be initialized with patterns&quot;</span>
+                <span class="s2">&quot; or with deny list&quot;</span>
+            <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">supported_entities</span><span class="o">=</span><span class="p">[</span><span class="n">supported_entity</span><span class="p">],</span>
+            <span class="n">supported_language</span><span class="o">=</span><span class="n">supported_language</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">patterns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span> <span class="o">=</span> <span class="n">patterns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">context</span>
+
+        <span class="k">if</span> <span class="n">deny_list</span><span class="p">:</span>
+            <span class="n">deny_list_pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__deny_list_to_regex</span><span class="p">(</span><span class="n">deny_list</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deny_list_pattern</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deny_list</span> <span class="o">=</span> <span class="n">deny_list</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deny_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa D102</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">regex_flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyzes text to detect PII using regular expressions or deny-lists.</span>
+
+<span class="sd">        :param text: Text to be analyzed</span>
+<span class="sd">        :param entities: Entities this recognizer can detect</span>
+<span class="sd">        :param nlp_artifacts: Output values from the NLP engine</span>
+<span class="sd">        :param regex_flags:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+            <span class="n">pattern_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__analyze_patterns</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">regex_flags</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">pattern_result</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">:</span>
+                <span class="c1"># try to improve the results score using the surrounding</span>
+                <span class="c1"># context words</span>
+                <span class="n">enhanced_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enhance_using_context</span><span class="p">(</span>
+                    <span class="n">text</span><span class="p">,</span> <span class="n">pattern_result</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
+                <span class="p">)</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">enhanced_result</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">pattern_result</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pattern_result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__deny_list_to_regex</span><span class="p">(</span><span class="n">deny_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Pattern</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a list of word to a matching regex.</span>
+
+<span class="sd">        To be analyzed by the regex engine as a part of the analyze logic.</span>
+
+<span class="sd">        :param deny_list: the list of words to detect</span>
+<span class="sd">        :return:the regex of the words for detection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(?:^|(?&lt;= ))(&quot;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">deny_list</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)(?:(?= )|$)&quot;</span>
+        <span class="k">return</span> <span class="n">Pattern</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;deny_list&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the pattern logic e.g., by running checksum on a detected pattern.</span>
+
+<span class="sd">        :param pattern_text: the text to validated.</span>
+<span class="sd">        Only the part in text that was detected by the regex engine</span>
+<span class="sd">        :return: A bool indicating whether the validation was successful.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">invalidate_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Logic to check for result invalidation by running pruning logic.</span>
+
+<span class="sd">        For example, each SSN number group should not consist of all the same digits.</span>
+
+<span class="sd">        :param pattern_text: the text to validated.</span>
+<span class="sd">        Only the part in text that was detected by the regex engine</span>
+<span class="sd">        :return: A bool indicating whether the result is invalidated</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">build_regex_explanation</span><span class="p">(</span>
+        <span class="n">recognizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pattern_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">original_score</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">validation_result</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnalysisExplanation</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct an explanation for why this entity was detected.</span>
+
+<span class="sd">        :param recognizer_name: Name of recognizer detecting the entity</span>
+<span class="sd">        :param pattern_name: Regex pattern name which detected the entity</span>
+<span class="sd">        :param pattern: Regex pattern logic</span>
+<span class="sd">        :param original_score: Score given by the recognizer</span>
+<span class="sd">        :param validation_result: Whether validation was used and its result</span>
+<span class="sd">        :return: Analysis explanation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">explanation</span> <span class="o">=</span> <span class="n">AnalysisExplanation</span><span class="p">(</span>
+            <span class="n">recognizer</span><span class="o">=</span><span class="n">recognizer_name</span><span class="p">,</span>
+            <span class="n">original_score</span><span class="o">=</span><span class="n">original_score</span><span class="p">,</span>
+            <span class="n">pattern_name</span><span class="o">=</span><span class="n">pattern_name</span><span class="p">,</span>
+            <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span>
+            <span class="n">validation_result</span><span class="o">=</span><span class="n">validation_result</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">explanation</span>
+
+    <span class="k">def</span> <span class="nf">__analyze_patterns</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate all patterns in the provided text.</span>
+
+<span class="sd">        Including words in the provided deny-list</span>
+
+<span class="sd">        :param text: text to analyze</span>
+<span class="sd">        :param flags: regex flags</span>
+<span class="sd">        :return: A list of RecognizerResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span> <span class="k">if</span> <span class="n">flags</span> <span class="k">else</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+            <span class="n">match_start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">regex</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
+            <span class="n">match_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">match_start_time</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;--- match_time[</span><span class="si">%s</span><span class="s2">]: </span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
+                <span class="n">pattern</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">match_time</span><span class="o">.</span><span class="n">seconds</span><span class="p">,</span>
+                <span class="n">match_time</span><span class="o">.</span><span class="n">microseconds</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+                <span class="n">current_match</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+                <span class="c1"># Skip empty results</span>
+                <span class="k">if</span> <span class="n">current_match</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">score</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">score</span>
+
+                <span class="n">validation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_result</span><span class="p">(</span><span class="n">current_match</span><span class="p">)</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_regex_explanation</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pattern</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pattern</span><span class="o">.</span><span class="n">regex</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">validation_result</span>
+                <span class="p">)</span>
+                <span class="n">pattern_result</span> <span class="o">=</span> <span class="n">RecognizerResult</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">supported_entities</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">description</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">validation_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">validation_result</span><span class="p">:</span>
+                        <span class="n">pattern_result</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">MAX_SCORE</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">pattern_result</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">MIN_SCORE</span>
+
+                <span class="n">invalidation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">invalidate_result</span><span class="p">(</span><span class="n">current_match</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">invalidation_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">invalidation_result</span><span class="p">:</span>
+                    <span class="n">pattern_result</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">MIN_SCORE</span>
+
+                <span class="k">if</span> <span class="n">pattern_result</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">MIN_SCORE</span><span class="p">:</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pattern_result</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Serialize instance into a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">return_dict</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+        <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;patterns&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pat</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="p">]</span>
+        <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;deny_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deny_list</span>
+        <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
+        <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;supported_entity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;supported_entities&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;supported_entities&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">return_dict</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">entity_recognizer_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PatternRecognizer&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create instance from a serialized dict.&quot;&quot;&quot;</span>
+        <span class="n">patterns</span> <span class="o">=</span> <span class="n">entity_recognizer_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;patterns&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">patterns</span><span class="p">:</span>
+            <span class="n">patterns_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">Pattern</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">pat</span><span class="p">)</span> <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">]</span>
+            <span class="n">entity_recognizer_dict</span><span class="p">[</span><span class="s2">&quot;patterns&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">patterns_list</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">entity_recognizer_dict</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4214,6 +5287,74 @@ have identical start and ends and types.</p>
 <p>processing over a given text, it holds attributes such as entities,
 tokens and lemmas which can be used by any recognizer</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/nlp_engine/nlp_artifacts.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NlpArtifacts</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NlpArtifacts is an abstraction layer over the results of an NLP pipeline.</span>
+
+<span class="sd">    processing over a given text, it holds attributes such as entities,</span>
+<span class="sd">    tokens and lemmas which can be used by any recognizer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Span</span><span class="p">],</span>
+        <span class="n">tokens</span><span class="p">:</span> <span class="n">Doc</span><span class="p">,</span>
+        <span class="n">tokens_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">lemmas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">nlp_engine</span><span class="p">,</span>  <span class="c1"># noqa ANN001</span>
+        <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">entities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="n">tokens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lemmas</span> <span class="o">=</span> <span class="n">lemmas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokens_indices</span> <span class="o">=</span> <span class="n">tokens_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_keywords</span><span class="p">(</span><span class="n">nlp_engine</span><span class="p">,</span> <span class="n">lemmas</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_keywords</span><span class="p">(</span>
+        <span class="n">nlp_engine</span><span class="p">,</span> <span class="n">lemmas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># noqa ANN001</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return keywords fpr text.</span>
+
+<span class="sd">        Extracts lemmas with certain conditions as keywords.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_engine</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">lemmas</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_engine</span><span class="o">.</span><span class="n">is_stopword</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">nlp_engine</span><span class="o">.</span><span class="n">is_punct</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;-PRON-&quot;</span>
+            <span class="ow">and</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;be&quot;</span>
+        <span class="p">]</span>
+
+        <span class="c1"># best effort, try even further to break tokens into sub tokens,</span>
+        <span class="c1"># this can result in reducing false negatives</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">]</span>
+
+        <span class="c1"># splitting the list can, if happened, will result in list of lists,</span>
+        <span class="c1"># we flatten the list</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">keywords</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">keywords</span>
+
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Convert nlp artifacts to json.&quot;&quot;&quot;</span>
+
+        <span class="n">return_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Converting spaCy tokens and spans to string as they are not serializable</span>
+        <span class="k">if</span> <span class="s2">&quot;tokens&quot;</span> <span class="ow">in</span> <span class="n">return_dict</span><span class="p">:</span>
+            <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;entities&quot;</span> <span class="ow">in</span> <span class="n">return_dict</span><span class="p">:</span>
+            <span class="n">return_dict</span><span class="p">[</span><span class="s2">&quot;entities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">return_dict</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4339,6 +5480,37 @@ tokens and lemmas which can be used by any recognizer</p>
 <p>It provides NLP preprocessing functionality as well as other queries
 on tokens.</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/nlp_engine/nlp_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NlpEngine</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NlpEngine is an abstraction layer over the nlp module.</span>
+
+<span class="sd">    It provides NLP preprocessing functionality as well as other queries</span>
+<span class="sd">    on tokens.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NlpArtifacts</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Execute the NLP pipeline on the given text and language.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">is_stopword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return true if the given word is a stop word.</span>
+
+<span class="sd">        (within the given language)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">is_punct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return true if the given word is a punctuation word.</span>
+
+<span class="sd">        (within the given language)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4463,6 +5635,80 @@ on tokens.</p>
 on tokens.
 The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/nlp_engine/spacy_nlp_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SpacyNlpEngine</span><span class="p">(</span><span class="n">NlpEngine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SpacyNlpEngine is an abstraction layer over the nlp module.</span>
+
+<span class="sd">    It provides processing functionality as well as other queries</span>
+<span class="sd">    on tokens.</span>
+<span class="sd">    The SpacyNlpEngine uses SpaCy as its NLP module</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">engine_name</span> <span class="o">=</span> <span class="s2">&quot;spacy&quot;</span>
+    <span class="n">is_available</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">spacy</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">models</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a wrapper on spaCy functionality.</span>
+
+<span class="sd">        :param models: Dictionary with the name of the spaCy model per language.</span>
+<span class="sd">        For example: models = {&quot;en&quot;: &quot;en_core_web_lg&quot;}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">models</span><span class="p">:</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;en&quot;</span><span class="p">:</span> <span class="s2">&quot;en_core_web_lg&quot;</span><span class="p">}</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading SpaCy models: </span><span class="si">{</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">lang_code</span><span class="p">:</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;parser&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">lang_code</span><span class="p">,</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NlpArtifacts</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Execute the SpaCy NLP pipeline on the given text and language.&quot;&quot;&quot;</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">](</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_to_nlp_artifact</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_stopword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return true if the given word is a stop word.</span>
+
+<span class="sd">        (within the given language)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">]</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="n">word</span><span class="p">]</span><span class="o">.</span><span class="n">is_stop</span>
+
+    <span class="k">def</span> <span class="nf">is_punct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return true if the given word is a punctuation word.</span>
+
+<span class="sd">        (within the given language).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">]</span><span class="o">.</span><span class="n">vocab</span><span class="p">[</span><span class="n">word</span><span class="p">]</span><span class="o">.</span><span class="n">is_punct</span>
+
+    <span class="k">def</span> <span class="nf">get_nlp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Language</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the language model loaded for a language.</span>
+
+<span class="sd">        :param language: Name of language</span>
+<span class="sd">        :return: Language model from spaCy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_doc_to_nlp_artifact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Doc</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NlpArtifacts</span><span class="p">:</span>
+        <span class="n">lemmas</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+        <span class="n">tokens_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">idx</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+        <span class="n">entities</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span>
+        <span class="k">return</span> <span class="n">NlpArtifacts</span><span class="p">(</span>
+            <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
+            <span class="n">tokens</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+            <span class="n">tokens_indices</span><span class="o">=</span><span class="n">tokens_indices</span><span class="p">,</span>
+            <span class="n">lemmas</span><span class="o">=</span><span class="n">lemmas</span><span class="p">,</span>
+            <span class="n">nlp_engine</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4745,6 +5991,113 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/nlp_engine/nlp_engine_provider.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NlpEngineProvider</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create different NLP engines from configuration.</span>
+
+<span class="sd">    :param nlp_engines: List of available NLP engines.</span>
+<span class="sd">    Default: (SpacyNlpEngine, StanzaNlpEngine)</span>
+<span class="sd">    :param nlp_configuration: Dict containing nlp configuration</span>
+<span class="sd">    Example configuration:</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;nlp_engine_name&quot;: &quot;spacy&quot;,</span>
+<span class="sd">                &quot;models&quot;: [{&quot;lang_code&quot;: &quot;en&quot;,</span>
+<span class="sd">                            &quot;model_name&quot;: &quot;en_core_web_lg&quot;</span>
+<span class="sd">                          }]</span>
+<span class="sd">            }</span>
+<span class="sd">    Nlp engine names available by default: spacy, stanza.</span>
+<span class="sd">    :param conf_file: Path to yaml file containing nlp engine configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nlp_engines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">conf_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nlp_configuration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_engines</span><span class="p">:</span>
+            <span class="n">nlp_engines</span> <span class="o">=</span> <span class="p">(</span><span class="n">SpacyNlpEngine</span><span class="p">,</span> <span class="n">StanzaNlpEngine</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">engine</span><span class="o">.</span><span class="n">engine_name</span><span class="p">:</span> <span class="n">engine</span> <span class="k">for</span> <span class="n">engine</span> <span class="ow">in</span> <span class="n">nlp_engines</span> <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">is_available</span>
+        <span class="p">}</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Loaded these available nlp engines: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">conf_file</span> <span class="ow">and</span> <span class="n">nlp_configuration</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Either conf_file or nlp_configuration should be provided, not both.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nlp_configuration</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span> <span class="o">=</span> <span class="n">nlp_configuration</span>
+
+        <span class="k">if</span> <span class="n">conf_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_nlp_conf</span><span class="p">(</span><span class="n">conf_file</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">conf_file</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">nlp_configuration</span><span class="p">:</span>
+            <span class="n">conf_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_full_conf_path</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading default conf file from </span><span class="si">{</span><span class="n">conf_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_nlp_conf</span><span class="p">(</span><span class="n">conf_file</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NlpEngine</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create an NLP engine instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Illegal nlp configuration. &quot;</span>
+                <span class="s2">&quot;Configuration should include nlp_engine_name and models &quot;</span>
+                <span class="s2">&quot;(list of model_name for each lang_code).&quot;</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nlp_engine_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="p">[</span><span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">]</span>
+            <span class="n">nlp_engine_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span><span class="p">[</span><span class="n">nlp_engine_name</span><span class="p">]</span>
+            <span class="n">nlp_engine_opts</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">m</span><span class="p">[</span><span class="s2">&quot;lang_code&quot;</span><span class="p">]:</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;model_name&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="p">[</span><span class="s2">&quot;models&quot;</span><span class="p">]</span>
+            <span class="p">}</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">nlp_engine_class</span><span class="p">(</span><span class="n">nlp_engine_opts</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Created NLP engine: </span><span class="si">{</span><span class="n">engine</span><span class="o">.</span><span class="n">engine_name</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Loaded models: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">nlp</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">engine</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong NLP engine configuration&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_read_nlp_conf</span><span class="p">(</span><span class="n">conf_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Read the nlp configuration from a provided yaml file.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">conf_file</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">nlp_configuration</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">:</span> <span class="s2">&quot;spacy&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;lang_code&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;en_core_web_lg&quot;</span><span class="p">}],</span>
+            <span class="p">}</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;configuration file </span><span class="si">{</span><span class="n">conf_file</span><span class="si">}</span><span class="s2"> not found.  &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Using default config: </span><span class="si">{</span><span class="n">nlp_configuration</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nlp_configuration</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">conf_file</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">nlp_configuration</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_full_conf_path</span><span class="p">(</span>
+        <span class="n">default_conf_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;default.yaml&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a Path to the default conf file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;conf&quot;</span><span class="p">,</span> <span class="n">default_conf_file</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -4872,6 +6225,173 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RecognizerResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recognizer Result represents the findings of the detected entity.</span>
+
+<span class="sd">    Result of a recognizer analyzing the text.</span>
+
+<span class="sd">    :param entity_type: the type of the entity</span>
+<span class="sd">    :param start: the start location of the detected entity</span>
+<span class="sd">    :param end: the end location of the detected entity</span>
+<span class="sd">    :param score: the score of the detection</span>
+<span class="sd">    :param analysis_explanation: contains the explanation of why this</span>
+<span class="sd">                                 entity was identified</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-analyzer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">analysis_explanation</span><span class="p">:</span> <span class="n">AnalysisExplanation</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">=</span> <span class="n">entity_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_explanation</span> <span class="o">=</span> <span class="n">analysis_explanation</span>
+
+    <span class="k">def</span> <span class="nf">append_analysis_explanation_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add text to the analysis explanation.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_explanation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analysis_explanation</span><span class="o">.</span><span class="n">append_textual_explanation_line</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize self to dictionary.</span>
+
+<span class="sd">        :return: a dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create RecognizerResult from json.</span>
+
+<span class="sd">        :param data: e.g. {</span>
+<span class="sd">            &quot;start&quot;: 24,</span>
+<span class="sd">            &quot;end&quot;: 32,</span>
+<span class="sd">            &quot;score&quot;: 0.8,</span>
+<span class="sd">            &quot;entity_type&quot;: &quot;NAME&quot;</span>
+<span class="sd">        }</span>
+<span class="sd">        :return: RecognizerResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+        <span class="n">entity_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;entity_type&quot;</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">intersects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if self intersects with a different RecognizerResult.</span>
+
+<span class="sd">        :return: If intersecting, returns the number of</span>
+<span class="sd">        intersecting characters.</span>
+<span class="sd">        If not, returns 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if they do not overlap the intersection is 0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="c1"># otherwise the intersection is min(end) - max(start)</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">contained_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if self is contained in a different RecognizerResult.</span>
+
+<span class="sd">        :return: true if contained</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+
+    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if one result is contained or equal to another result.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+
+    <span class="k">def</span> <span class="nf">equal_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the indices are equal between two results.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if one result is greater by using the results indices in the text.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check two results are equal by using all class fields.</span>
+
+<span class="sd">        :param other: another RecognizerResult</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">equal_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">entity_type</span>
+        <span class="n">equal_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">score</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_indices</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">and</span> <span class="n">equal_type</span> <span class="ow">and</span> <span class="n">equal_score</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hash the result data by using all class fields.</span>
+
+<span class="sd">        :return: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of the instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;start: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;end: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;score: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">has_conflict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if two recognizer results are conflicted or not.</span>
+
+<span class="sd">        I have a conflict if:</span>
+<span class="sd">        1. My indices are the same as the other and my score is lower.</span>
+<span class="sd">        2. If my indices are contained in another.</span>
+
+<span class="sd">        :param other: RecognizerResult</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_indices</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">score</span>
+        <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -5653,6 +7173,51 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
       </tr>
   </tbody>
 </table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/pattern.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Pattern</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that represents a regex pattern.</span>
+
+<span class="sd">    :param name: the name of the pattern</span>
+<span class="sd">    :param regex: the regex pattern to detect</span>
+<span class="sd">    :param score: the pattern&#39;s strength (values varies 0-1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">regex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Turn this instance into a dictionary.</span>
+
+<span class="sd">        :return: a dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">return_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="s2">&quot;regex&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">return_dict</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pattern_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Pattern&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load an instance from a dictionary.</span>
+
+<span class="sd">        :param pattern_dict: a dictionary holding the pattern&#39;s parameters</span>
+<span class="sd">        :return: a Pattern instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">pattern_dict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return string representation of instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return string representation of instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</code></pre></div>
+        </details>
 
 
 
@@ -5851,11 +7416,6 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     </div>
 
   </div>
-                
-              
-              
-                
-
 
               
             </article>
@@ -5864,8 +7424,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
         
       </main>
       
-        
-<footer class="md-footer">
+        <footer class="md-footer">
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
@@ -5904,45 +7463,44 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-        
-          Made with
-          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-            Material for MkDocs
-          </a>
-        
-        
-      </div>
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
       
-  <div class="md-footer-social">
+        <div class="md-social">
+  
+    
     
       
       
-        
-        
-      
-      <a href="https://github.com/microsoft/presidio" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
-      </a>
+    
+    <a href="https://github.com/microsoft/presidio" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
     
       
       
-        
-        
-      
-      <a href="https://hub.docker.com/_/microsoft-presidio" target="_blank" rel="noopener" title="hub.docker.com" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
-      </a>
     
-      
-      
-      <a href="mailto:presidio@microsoft.com" target="_blank" rel="noopener" title="" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>
-      </a>
+    <a href="https://hub.docker.com/_/microsoft-presidio" target="_blank" rel="noopener" title="hub.docker.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+    </a>
+  
     
-  </div>
-
+    
+    <a href="mailto:presidio@microsoft.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>
+    </a>
+  
+</div>
+      
     </div>
   </div>
 </footer>
@@ -5951,10 +7509,10 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
+      <script src="../../assets/javascripts/bundle.960e086b.min.js"></script>
       
     
   </body>
