@@ -3,9 +3,14 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [2.2.24] - 23.01.2022
 ### Changed
-#### Analyzer:
 * Fixed issue when IBAN followed by all caps can't be recognized
+* Updated dependencies in Pipfile.lock
+* Removed official Python 3.6 support and added support for 3.10
+* Added docs for creating a streamlit app
+* Added docs for using Flair
 
 ### Removed
 
@@ -75,7 +80,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.23...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.24...HEAD
+[2.2.24]: https://github.com/microsoft/presidio/compare/2.2.23...2.2.24
 [2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
 [2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
 [2.2.1]: https://github.com/microsoft/presidio/compare/2.2.0...2.2.1
