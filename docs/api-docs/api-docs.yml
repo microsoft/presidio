@@ -397,6 +397,13 @@ components:
           description: "list of recognizers to be used in the context of this request only (ad-hoc)."
           items:
             $ref: "#/components/schemas/PatternRecognizer"
+        context:
+          type: array
+          description: "list of context words which may help to raise recognized entities confidance"
+          items:
+            description: "The context word"
+            type: string
+            example: "address"
 
     AnonymizeRequest:
       type: object

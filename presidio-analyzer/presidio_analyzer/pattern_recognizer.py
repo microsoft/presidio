@@ -88,16 +88,7 @@ class PatternRecognizer(LocalRecognizer):
 
         if self.patterns:
             pattern_result = self.__analyze_patterns(text, regex_flags)
-
-            if pattern_result and self.context:
-                # try to improve the results score using the surrounding
-                # context words
-                enhanced_result = self.enhance_using_context(
-                    text, pattern_result, nlp_artifacts, self.context
-                )
-                results.extend(enhanced_result)
-            elif pattern_result:
-                results.extend(pattern_result)
+            results.extend(pattern_result)
 
         return results
 
@@ -203,7 +194,12 @@ class PatternRecognizer(LocalRecognizer):
                     self.name, pattern.name, pattern.regex, score, validation_result
                 )
                 pattern_result = RecognizerResult(
-                    self.supported_entities[0], start, end, score, description
+                    self.supported_entities[0],
+                    start,
+                    end,
+                    score,
+                    description,
+                    self.name,
                 )
 
                 if validation_result is not None:
