@@ -15,6 +15,7 @@ from presidio_analyzer.predefined_recognizers import (
     MedicalLicenseRecognizer,
     NhsRecognizer,
     PhoneRecognizer,
+    UrlRecognizer,
     UsBankRecognizer,
     UsLicenseRecognizer,
     UsItinRecognizer,
@@ -88,6 +89,7 @@ class RecognizerRegistry:
                 MedicalLicenseRecognizer,
                 nlp_recognizer,
                 PhoneRecognizer,
+                UrlRecognizer,
             ],
         }
         for lang in languages:

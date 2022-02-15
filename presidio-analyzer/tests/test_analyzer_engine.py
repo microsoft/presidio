@@ -633,3 +633,24 @@ def test_ad_hoc_when_no_other_recognizers_are_requested_returns_only_ad_hoc_resu
     )
 
     assert "ZIP" in [resp.entity_type for resp in responses]
+
+
+def test_when_analyze_with_multiple_predefined_recognizers_one_contained_in_another_then_succeed(
+    loaded_registry, unit_test_guid, nlp_engine, max_score
+):
+    text = "The url is http://www.microsoft.com"
+    language = "en"
+    entities = ["URL", "DOMAIN_NAME"]
+    analyzer_engine_with_spacy = AnalyzerEngine(
+        registry=loaded_registry, nlp_engine=nlp_engine
+    )
+    results = analyzer_engine_with_spacy.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        entities=entities,
+        language=language,
+    )
+
+    assert len(results) == 2
+    assert_result(results[0], "URL", 11, 35, max_score)
+    assert_result(results[1], "DOMAIN_NAME", 18, 35, max_score)

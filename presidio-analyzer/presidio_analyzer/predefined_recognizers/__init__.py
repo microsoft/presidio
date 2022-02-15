@@ -14,6 +14,7 @@ from .sg_fin_recognizer import SgFinRecognizer
 from .spacy_recognizer import SpacyRecognizer
 from .stanza_recognizer import StanzaRecognizer
 from .uk_nhs_recognizer import NhsRecognizer
+from .url_recognizer import UrlRecognizer
 from .us_bank_recognizer import UsBankRecognizer
 from .us_driver_license_recognizer import UsLicenseRecognizer
 from .us_itin_recognizer import UsItinRecognizer
@@ -43,6 +44,7 @@ __all__ = [
     "SpacyRecognizer",
     "StanzaRecognizer",
     "PhoneRecognizer",
+    "UrlRecognizer",
     "UsBankRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",
