@@ -9,6 +9,10 @@ from presidio_analyzer import (
 )
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
+from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
+from presidio_analyzer.context_aware_enhancers.lemma_context_aware_enhancer import (
+    LemmaContextAwareEnhancer,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -40,6 +44,7 @@ class AnalyzerEngine:
         log_decision_process: bool = False,
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
+        context_aware_enhancer: ContextAwareEnhancer = None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -69,6 +74,15 @@ class AnalyzerEngine:
 
         self.log_decision_process = log_decision_process
         self.default_score_threshold = default_score_threshold
+
+        if not context_aware_enhancer:
+            logger.info(
+                "context aware enhancer not provided, creating default"
+                + " lemma based enhancer."
+            )
+            context_aware_enhancer = LemmaContextAwareEnhancer()
+
+        self.context_aware_enhancer = context_aware_enhancer
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
         """
@@ -114,6 +128,7 @@ class AnalyzerEngine:
         score_threshold: Optional[float] = None,
         return_decision_process: Optional[bool] = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
+        context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -187,12 +202,23 @@ class AnalyzerEngine:
                 json.dumps([str(result.to_dict()) for result in results]),
             )
 
+        # Update results in case surrounding words are relevant to the context words.
+        results = self.context_aware_enhancer.enhance_using_context(
+            text=text,
+            raw_results=results,
+            nlp_artifacts=nlp_artifacts,
+            recognizers=recognizers,
+            context=context,
+        )
+
         # Remove duplicates or low score results
         results = EntityRecognizer.remove_duplicates(results)
         results = self.__remove_low_scores(results, score_threshold)
 
         if not return_decision_process:
             results = self.__remove_decision_process(results)
+
+        results = self.__remove_recognizer_name(results)
 
         return results
 
@@ -220,5 +246,16 @@ class AnalyzerEngine:
 
         for result in results:
             result.analysis_explanation = None
+
+        return results
+
+    @staticmethod
+    def __remove_recognizer_name(
+        results: List[RecognizerResult],
+    ) -> List[RecognizerResult]:
+        """Remove recognizer name which is used for context enhancer from response."""
+
+        for result in results:
+            del result.recognizer_name
 
         return results
