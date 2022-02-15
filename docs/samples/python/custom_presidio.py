@@ -1,20 +1,36 @@
 from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern
 
-analyzer = AnalyzerEngine()
+if __name__ == "__main__":
 
-text1 = "Professor Plum, in the Dining Room, with the candlestick"
+    analyzer = AnalyzerEngine()
 
-titles_list = ["Sir", "Ma'am", "Madam", "Mr.", "Mrs.", "Ms.", "Miss", "Dr.", "Professor"]
-titles_recognizer = PatternRecognizer(supported_entity="TITLE", deny_list=titles_list)
-analyzer.registry.add_recognizer(titles_recognizer)
+    text1 = "Professor Plum, in the Dining Room, with the candlestick"
 
-result = analyzer.analyze(text=text1, language='en')
-print(f"\nDeny List result:\n {result}")
+    titles_list = [
+        "Sir",
+        "Ma'am",
+        "Madam",
+        "Mr.",
+        "Mrs.",
+        "Ms.",
+        "Miss",
+        "Dr.",
+        "Professor",
+    ]
+    titles_recognizer = PatternRecognizer(
+        supported_entity="TITLE", deny_list=titles_list
+    )
+    analyzer.registry.add_recognizer(titles_recognizer)
 
-text2 = "I live in 510 Broad st."
+    result = analyzer.analyze(text=text1, language="en")
+    print(f"\nDeny List result:\n {result}")
 
-numbers_pattern = Pattern(name="numbers_pattern",regex="\d+", score = 0.5)
-number_recognizer = PatternRecognizer(supported_entity="NUMBER", patterns = [numbers_pattern])
+    text2 = "I live in 510 Broad st."
 
-result = number_recognizer.analyze(text=text2, entities=["NUMBER"])
-print(f"\nRegex result:\n {result}")
+    numbers_pattern = Pattern(name="numbers_pattern", regex=r"\d+", score=0.5)
+    number_recognizer = PatternRecognizer(
+        supported_entity="NUMBER", patterns=[numbers_pattern]
+    )
+
+    result = number_recognizer.analyze(text=text2, entities=["NUMBER"])
+    print(f"\nRegex result:\n {result}")

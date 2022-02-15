@@ -12,25 +12,30 @@ from presidio_anonymizer import AnonymizerEngine
 # Helper methods
 @st.cache(allow_output_mutation=True)
 def analyzer_engine():
+    """Return AnalyzerEngine."""
     return AnalyzerEngine()
 
 
 @st.cache(allow_output_mutation=True)
 def anonymizer_engine():
+    """Return AnonymizerEngine."""
     return AnonymizerEngine()
 
 
 def get_supported_entities():
+    """Return supported entities from the Analyzer Engine."""
     return analyzer_engine().get_supported_entities()
 
 
 def analyze(**kwargs):
+    """Analyze input using Analyzer engine and input arguments (kwargs)."""
     if "entities" not in kwargs or "All" in kwargs["entities"]:
         kwargs["entities"] = None
     return analyzer_engine().analyze(**kwargs)
 
 
 def anonymize(text, analyze_results):
+    """Anonymize identified input using Presidio Abonymizer."""
 
     res = anonymizer_engine().anonymize(text, analyze_results)
     return res.text
@@ -117,7 +122,10 @@ else:
 
 # json result
 class ToDictEncoder(JSONEncoder):
+    """Encode dict to json."""
+
     def default(self, o):
+        """Encode to JSON using to_dict."""
         return o.to_dict()
 
 
