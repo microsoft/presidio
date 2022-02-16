@@ -1,5 +1,5 @@
 """
-This is an example implementation of a RemoteRecognizer.
+Example implementation of a RemoteRecognizer.
 
 Remote recognizers call external APIs
 to get additional PII identification capabilities.
@@ -76,7 +76,7 @@ class ExampleRemoteRecognizer(RemoteRecognizer):
         """Call an external service for PII detection."""
 
         payload = {"text": text, "language": self.supported_language}
-        
+
         response = requests.post(
             self.pii_identification_url,
             json=payload,
