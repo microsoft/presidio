@@ -9,6 +9,8 @@ class UrlRecognizer(PatternRecognizer):
     """
     Recognize urls using regex.
 
+    The regex was taken from https://github.com/madisonmay/CommonRegex
+
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
@@ -77,6 +79,13 @@ class UrlRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def validate_result(self, pattern_text: str):  # noqa D102
+    def validate_result(self, pattern_text: str):
+        """
+        Validate the pattern logic by using tldextract python package.
+
+        :param pattern_text: the text to validated.
+        Only the part in text that was detected by the regex engine
+        :return: A bool indicating whether the validation was successful.
+        """
         result = tldextract.extract(pattern_text)
         return result.fqdn != "" or result.subdomain != ""
