@@ -55,7 +55,7 @@ class UrlRecognizer(PatternRecognizer):
                 r"?:tr)|(?:tt)|(?:tv)|(?:tw)|(?:tz)|( "
                 r"?:ua)|(?:ug)|(?:uk)|(?:us)|(?:uy)|(?:uz)|(?:va)|(?:vc)|(?:ve)|("
                 r"?:vg)|(?:vi)|(?:vn)|(?:vu)|(?:wf)|(?:ws)|(?:ye)|(?:yt)|(?:za)|("
-                r"?:zm)|(?:zw))(?:(/?)[^\s()<>]+)?)",
+                r"?:zm)|(?:zw))(?:/[^\s()<>]+|/)?)",
                 0.6)
     ]
 

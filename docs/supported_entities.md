@@ -24,7 +24,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |PERSON|A full person name, which can include first names, middle names or initials, and last names.|Custom logic and context|
 |PHONE_NUMBER|A telephone number|Custom logic, pattern match and context|
 |MEDICAL_LICENSE|Common medical license numbers.|Pattern match, context and checksum|
-
+|URL|A URL (Uniform Resource Locator), unique identifier used to locate a resource on the Internet|Pattern match, context and top level url validation|
 ### USA
 
 |FieldType|Description|Detection Method|

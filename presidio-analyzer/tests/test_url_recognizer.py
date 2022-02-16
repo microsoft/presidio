@@ -21,6 +21,7 @@ def entities():
         # Valid URLs
         ("https://www.microsoft.com/", 1, ((0, 26),), ((0.6, "max"),),),
         ("http://www.microsoft.com/", 1, ((0, 25),), ((0.6, "max"),),),
+        ("http://www.microsoft.com", 1, ((0, 24),), ((0.6, "max"),),),
         ("www.microsoft.com", 1, ((0, 17),), ((0.6, "max"),),),
         ("The url is www.microsoft.com", 1, ((11, 28),), ((0.6, "max"),),),
         ("microsoft.com", 1, ((0, 13),), ((0.6, "max"),),),
