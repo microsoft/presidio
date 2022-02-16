@@ -263,13 +263,8 @@ def test_given_endpoint_larger_then_start_point_then_we_fail():
     )
 
 
-def test_given_endpoint_equal_to_start_point_then_we_fail():
-    with pytest.raises(InvalidParamException) as e:
-        create_recognizer_result("entity", 0, 0, 0)
-    assert (
-        e.value.err_msg == "Invalid input, start index '0' "
-        "must be smaller than end index '0'"
-    )
+def test_given_endpoint_equal_to_start_point_then_we_succeed():
+    assert create_recognizer_result("entity", 0, 0, 0)
 
 
 @pytest.mark.parametrize(
