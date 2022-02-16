@@ -9,7 +9,7 @@ from presidio_anonymizer.entities import (
 from presidio_anonymizer.operators import AESCipher
 
 
-def test_given_name_and_phone_number_then_we_anonymize_correctly_2():
+def test_given_url_at_the_end_then_we_redact_is_successfully():
     text = "The url is http://microsoft.com"
     anonymizer_config = {
         "DOMAIN_NAME": OperatorConfig(
