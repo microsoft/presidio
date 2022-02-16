@@ -18,7 +18,9 @@ def test_given_text_then_we_replace_the_original_with_anonymized_correctly(
     original_text, start, end, anonymized_text, expected, expected_end_text
 ):
     text_replace_builder = TextReplaceBuilder(original_text)
-    end_text_num = text_replace_builder.replace_text_get_insertion_index(anonymized_text, start, end)
+    end_text_num = text_replace_builder.replace_text_get_insertion_index(
+        anonymized_text, start, end
+    )
     assert text_replace_builder.output_text == expected
     assert expected_end_text == end_text_num
 
