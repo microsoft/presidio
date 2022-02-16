@@ -9,6 +9,28 @@ from presidio_anonymizer.entities import (
 from presidio_anonymizer.operators import AESCipher
 
 
+def test_given_name_and_phone_number_then_we_anonymize_correctly_2():
+    text = "The url is http://microsofy.com"
+    anonymizer_config = {
+        "DOMAIN_NAME": OperatorConfig(
+            "redact"
+        ),
+        "URL": OperatorConfig(
+            "redact"
+        ),
+    }
+
+    analyzer_results = [
+        RecognizerResult(start=11, end=31, score=1.0, entity_type="URL"),
+        RecognizerResult(start=18, end=31, score=1.0, entity_type="DOMAIN_NAME"),
+    ]
+    expected_result = (
+        '{"text": "The url is ", "items": [{"start": 11, "end": 11, "entity_type": '
+        '"URL", "text": "", "operator": "redact"}]}'
+    )
+    run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
+
+
 def test_given_operator_decrypt_then_we_fail():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizers_config = {"DEFAULT": OperatorConfig("decrypt", {"key": "key"})}
@@ -185,9 +207,6 @@ def run_engine_and_validate(
         )
     except Exception as e:
         actual_anonymize_result = str(e)
-    print("********")
-    print(actual_anonymize_result.to_json())
-    print("********")
     assert actual_anonymize_result.to_json() == expected_result
 
 
