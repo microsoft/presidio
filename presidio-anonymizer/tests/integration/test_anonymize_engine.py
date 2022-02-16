@@ -10,7 +10,7 @@ from presidio_anonymizer.operators import AESCipher
 
 
 def test_given_name_and_phone_number_then_we_anonymize_correctly_2():
-    text = "The url is http://microsofy.com"
+    text = "The url is http://microsoft.com"
     anonymizer_config = {
         "DOMAIN_NAME": OperatorConfig(
             "redact"
