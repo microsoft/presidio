@@ -27,6 +27,7 @@ setuptools.setup(
         "presidio_analyzer.predefined_recognizers",
         "presidio_analyzer.nlp_engine",
         "presidio_analyzer.recognizer_registry",
+        "presidio_analyzer.context_aware_enhancers",
     ],
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8>=3.7.9"],
