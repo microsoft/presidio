@@ -85,7 +85,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         for result in results:
             # get recognizer matching the result
             recognizer = recognizers_dict[result.recognizer_name]
-            if recognizer.context is None or recognizer.context == []:
+            if not recognizer.context:
                 logger.debug(
                     "recognizer '%s' does not support context enhancement",
                     recognizer.name,

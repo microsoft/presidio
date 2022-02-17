@@ -25,7 +25,6 @@ class ContextAwareEnhancer:
 
     MIN_SCORE = 0
     MAX_SCORE = 1.0
-    ADDITIONAL_RECOGNIZED_CONTEXT_KEY = "additional_recognized_context"
 
     def __init__(
         self,

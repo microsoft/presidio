@@ -10,9 +10,7 @@ from presidio_analyzer import (
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
-from presidio_analyzer.context_aware_enhancers.lemma_context_aware_enhancer import (
-    LemmaContextAwareEnhancer,
-)
+from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 
 logger = logging.getLogger("presidio-analyzer")
 
