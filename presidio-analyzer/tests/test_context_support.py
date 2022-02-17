@@ -86,6 +86,76 @@ def mock_nlp_artifacts():
     return NlpArtifacts([], [], [], [], None, "en")
 
 
+@pytest.fixture(scope="module")
+def ip_recognizer():
+    return IpRecognizer()
+
+
+def test_when_text_with_aditional_context_lemma_based_context_enhancer_then_analysis_explanation_include_correct_supportive_context_word(  # noqa: E501
+    nlp_engine, lemma_context, ip_recognizer
+):
+    """This test checks that LemmaContextAwareEnhancer uses supportive context
+    word from analyze input.
+
+    when passing a closer word to the recognized entity, the enhancer should return
+    that word as  supportive_context_word instead of the recognizer context word
+    """
+    text = "My IP Address is 10.128.35.14"
+    nlp_artifacts = nlp_engine.process_text(text, "en")
+    recognizer_results = ip_recognizer.analyze(text, nlp_artifacts)
+    results_without_additional_context = lemma_context.enhance_using_context(
+        text, recognizer_results, nlp_artifacts, [ip_recognizer]
+    )
+    results_with_additional_context = lemma_context.enhance_using_context(
+        text, recognizer_results, nlp_artifacts, [ip_recognizer], ["Address"]
+    )
+
+    assert (
+        results_without_additional_context[
+            0
+        ].analysis_explanation.supportive_context_word
+        == "ip"
+    )
+    assert (
+        results_with_additional_context[0].analysis_explanation.supportive_context_word
+        == "address"
+    )
+
+
+def test_when_text_with_only_aditional_context_lemma_based_context_enhancer_then_analysis_explanation_include_correct_supportive_context_word(  # noqa: E501
+    nlp_engine, lemma_context, ip_recognizer
+):
+    """This test checks that LemmaContextAwareEnhancer uses supportive context
+    word from analyze input.
+
+    when passing a close word to the recognized entity which that word is set in the
+    input context of the enhancer, the enhancer should return that word as
+    supportive_context_word and raise score
+    """
+    text = "My Address is 10.128.35.14"
+    nlp_artifacts = nlp_engine.process_text(text, "en")
+    recognizer_results = ip_recognizer.analyze(text, nlp_artifacts)
+    results_without_additional_context = lemma_context.enhance_using_context(
+        text, recognizer_results, nlp_artifacts, [ip_recognizer]
+    )
+    results_with_additional_context = lemma_context.enhance_using_context(
+        text, recognizer_results, nlp_artifacts, [ip_recognizer], ["Address"]
+    )
+
+    assert results_without_additional_context[0].score == 0.6
+    assert (
+        results_without_additional_context[
+            0
+        ].analysis_explanation.supportive_context_word
+        == ""
+    )
+    assert (
+        results_with_additional_context[0].analysis_explanation.supportive_context_word
+        == "address"
+    )
+    assert results_with_additional_context[0].score == 0.95
+
+
 def test_when_text_with_context_then_improves_score(
     dataset, nlp_engine, mock_nlp_artifacts, lemma_context, recognizers_list
 ):

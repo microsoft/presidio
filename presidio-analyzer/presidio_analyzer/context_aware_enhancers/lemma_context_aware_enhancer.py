@@ -74,8 +74,11 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         for recognizer in recognizers:
             recognizers_dict[recognizer.name] = recognizer
 
+        # Create empty list in None or lowercase all context words in the list
         if not context:
             context = []
+        else:
+            context = [word.lower() for word in context]
 
         # Sanity
         if nlp_artifacts is None:
