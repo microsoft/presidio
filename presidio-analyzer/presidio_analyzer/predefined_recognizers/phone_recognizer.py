@@ -62,7 +62,7 @@ class PhoneRecognizer(LocalRecognizer):
                 results += [
                     self._get_recognizer_result(match, text, region, nlp_artifacts)
                 ]
-        # return results
+
         return EntityRecognizer.remove_duplicates(results)
 
     def _get_recognizer_result(self, match, text, region, nlp_artifacts):
