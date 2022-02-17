@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from tldextract import tldextract
+import validators
 
 from presidio_analyzer import Pattern, PatternRecognizer
 
@@ -87,5 +87,4 @@ class UrlRecognizer(PatternRecognizer):
         Only the part in text that was detected by the regex engine
         :return: A bool indicating whether the validation was successful.
         """
-        result = tldextract.extract(pattern_text)
-        return result.fqdn != "" or result.subdomain != ""
+        return validators.url(pattern_text)
