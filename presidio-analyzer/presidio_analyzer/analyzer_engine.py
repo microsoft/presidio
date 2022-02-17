@@ -32,6 +32,9 @@ class AnalyzerEngine:
     for detected entities to be returned
     :param supported_languages: List of possible languages this engine could be run on.
     Used for loading the right NLP models and recognizers for these languages.
+    :param context_aware_enhancer: instance of type ContextAwareEnhancer for enhancing
+    confidence score based on context words, (LemmaContextAwareEnhancer will be created
+    by default if None passed)
     """
 
     def __init__(
