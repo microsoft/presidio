@@ -86,6 +86,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             return results
 
         for result in results:
+            current_context = copy.copy(context)
             # get recognizer matching the result
             recognizer = recognizers_dict[result.recognizer_name]
             if not recognizer.context:
@@ -95,10 +96,10 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                 )
             else:
                 # combine other sources of context with recognizer context
-                context.extend(recognizer.context)
+                current_context.extend(recognizer.context)
 
             # extract lemmatized context from the surrounding of the match
-            if len(context) > 0:
+            if len(current_context) > 0:
                 word = text[result.start : result.end]
 
                 surrounding_words = self.__extract_surrounding_words(
@@ -106,7 +107,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                 )
 
                 supportive_context_word = self.__find_supportive_word_in_context(
-                    surrounding_words, context
+                    surrounding_words, current_context
                 )
                 if supportive_context_word != "":
                     result.score += self.context_similarity_factor
