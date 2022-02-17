@@ -36,6 +36,7 @@ setuptools.setup(
         "tldextract",
         "pyyaml",
         "phonenumbers>=8.12",
+        "validators"
     ],
     include_package_data=True,
     license="MIT",
