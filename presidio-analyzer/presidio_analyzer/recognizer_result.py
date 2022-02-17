@@ -16,9 +16,10 @@ class RecognizerResult:
     :param score: the score of the detection
     :param analysis_explanation: contains the explanation of why this
                                  entity was identified
-    :param recognizer_name: name of recognizer which recognized the entity+
+    :param recognizer_name: name of recognizer which recognized the entity
     :param recognized_metadata: a dictionary of metadata to be used in
-    reconizer specific cases, for example specific recognized context words
+    recognizer specific cases, for example specific recognized context words
+    and recognizer name
     """
 
     logger = logging.getLogger("presidio-analyzer")

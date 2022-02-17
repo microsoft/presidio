@@ -17,7 +17,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
     Context words might enhance confidence score of a recogized entity,
     LemmaContextAwareEnhancer is an implementation of Lemma based context aware logic,
     it compares spacy lemmas of each word in context of the matched entity to given
-    context and the reconizer context words,
+    context and the recongizer context words,
     if matched it enhance the recognized entity confidence score by a given factor.
 
     :param context_similarity_factor: How much to enhance confidence of match entity
