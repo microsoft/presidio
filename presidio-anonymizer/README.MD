@@ -10,7 +10,7 @@ entities with desired values.
 ### Deploy Presidio anonymizer to Azure
 
 Use the following button to deploy presidio anonymizer to your Azure subscription.
-
+ 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2Fpresidio%2Fmain%2Fpresidio-anonymizer%2Fdeploytoazure.json)
 
 
