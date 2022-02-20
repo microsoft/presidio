@@ -72,7 +72,7 @@ class PhoneRecognizer(LocalRecognizer):
             end=match.end,
             score=self.SCORE,
             analysis_explanation=self._get_analysis_explanation(region),
-            recognized_metadata={RecognizerResult.RECOGNIZER_NAME_KEY: self.name},
+            recognition_metadata={RecognizerResult.RECOGNIZER_NAME_KEY: self.name},
         )
 
         return result

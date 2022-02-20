@@ -35,10 +35,10 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
     expected_response = """
     [
         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
-        "analysis_explanation": null, "recognized_metadata": {"recognizer_name": "SpacyRecognizer"}
+        "analysis_explanation": null, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}
         },
         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, 
-        "analysis_explanation": null, "recognized_metadata": {"recognizer_name": "UsLicenseRecognizer"}
+        "analysis_explanation": null, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}
         }
     ]
     """
@@ -79,7 +79,7 @@ def test_given_a_correct_analyze_input_high_threashold_then_anonymize_partially(
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation": null, "recognized_metadata": {"recognizer_name": "SpacyRecognizer"}}
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation": null, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}}
     ]
     """
 
@@ -125,7 +125,7 @@ def test_given_a_correct_analyze_input_with_high_threshold_and_unmatched_entitie
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation": null, "recognized_metadata": {"recognizer_name": "SpacyRecognizer"}}
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation": null, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}}
     ]
     """
 
@@ -165,10 +165,10 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
     expected_response = """
     [
         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
-        "analysis_explanation": null, "recognized_metadata": {"recognizer_name": "SpacyRecognizer"}
+        "analysis_explanation": null, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}
         },
         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, 
-        "analysis_explanation": null, "recognized_metadata": {"recognizer_name": "UsLicenseRecognizer"}
+        "analysis_explanation": null, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}
         }
     ]
     """

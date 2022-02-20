@@ -199,7 +199,7 @@ class PatternRecognizer(LocalRecognizer):
                     end=end,
                     score=score,
                     analysis_explanation=description,
-                    recognized_metadata={
+                    recognition_metadata={
                         RecognizerResult.RECOGNIZER_NAME_KEY: self.name
                     },
                 )

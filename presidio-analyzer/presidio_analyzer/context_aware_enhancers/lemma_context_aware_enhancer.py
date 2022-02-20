@@ -87,7 +87,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         for result in results:
             # get recognizer matching the result
             recognizer = recognizers_dict[
-                result.recognized_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                result.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
             ]
 
             # skip recognizer result if the recognizer doen't support

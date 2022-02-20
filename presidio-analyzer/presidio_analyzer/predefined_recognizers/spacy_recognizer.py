@@ -107,7 +107,7 @@ class SpacyRecognizer(LocalRecognizer):
                     end=ent.end_char,
                     score=self.ner_strength,
                     analysis_explanation=explanation,
-                    recognized_metadata={
+                    recognition_metadata={
                         RecognizerResult.RECOGNIZER_NAME_KEY: self.name
                     },
                 )

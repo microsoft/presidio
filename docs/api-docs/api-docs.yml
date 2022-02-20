@@ -55,7 +55,7 @@ paths:
                           "score": 0.85, "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition",
                           "score_context_improvement": 0, "supportive_context_word": "", "validation_result": null
                         },
-                        "recognized_metadata": {
+                        "recognition_metadata": {
                           "recognizer_name": "SpacyRecognizer"
                         }
                       },
@@ -67,7 +67,7 @@ paths:
                           "score_context_improvement": 0.3499999999999999, "supportive_context_word": "driver",
                           "validation_result": null
                         },
-                        "recognized_metadata": {
+                        "recognition_metadata": {
                           "recognizer_name": "UsLicenseRecognizer"
                         }
                       }
@@ -81,7 +81,7 @@ paths:
                         "entity_type": "US_DRIVER_LICENSE",
                         "score": 0.6499999999999999,
                         "start": 30,
-                        "recognized_metadata": {
+                        "recognition_metadata": {
                           "recognizer_name": "UsLicenseRecognizer"
                         }
                       }
@@ -490,7 +490,7 @@ components:
           example: 0.8
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
-        recognized_metadata:
+        recognition_metadata:
           type: object
           $ref: "#/components/schemas/RecognizedMetadata"
 
