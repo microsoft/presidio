@@ -54,6 +54,9 @@ paths:
                           "recognizer": "SpacyRecognizer", "pattern_name": null, "pattern": null, "original_score": 0.85,
                           "score": 0.85, "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition",
                           "score_context_improvement": 0, "supportive_context_word": "", "validation_result": null
+                        },
+                        "recognized_metadata": {
+                          "recognizer_name": "SpacyRecognizer"
                         }
                       },
                       { "entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999,
@@ -63,6 +66,9 @@ paths:
                           "original_score": 0.3, "score": 0.6499999999999999, "textual_explanation": null,
                           "score_context_improvement": 0.3499999999999999, "supportive_context_word": "driver",
                           "validation_result": null
+                        },
+                        "recognized_metadata": {
+                          "recognizer_name": "UsLicenseRecognizer"
                         }
                       }
                     ]
@@ -74,7 +80,10 @@ paths:
                         "end": 38,
                         "entity_type": "US_DRIVER_LICENSE",
                         "score": 0.6499999999999999,
-                        "start": 30
+                        "start": 30,
+                        "recognized_metadata": {
+                          "recognizer_name": "UsLicenseRecognizer"
+                        }
                       }
                     ]
 
@@ -302,7 +311,7 @@ components:
                     "context": ["zip", "code"],
                     "supported_entity":"ZIP"
                     }
-        ]
+                  ]
                 }
 
     AnonymizeRequest:
@@ -481,6 +490,16 @@ components:
           example: 0.8
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
+        recognized_metadata:
+          type: object
+          $ref: "#/components/schemas/RecognizedMetadata"
+
+    RecognizedMetadata:
+      type: object
+      properties:
+        recognizer_name:
+          type: string
+          description: "Name of recognizer that made the decision"
 
     RecognizerResultWithAnaysisExplanation:
       allOf:
