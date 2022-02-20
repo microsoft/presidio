@@ -9,7 +9,10 @@ class UrlRecognizer(PatternRecognizer):
     """
     Recognize urls using regex.
 
-    The regex was taken from https://github.com/madisonmay/CommonRegex
+    This application uses Open Source components:
+    Project: CommonRegex https://github.com/madisonmay/CommonRegex
+    Copyright (c) 2014 Madison May
+    License (MIT)  https://github.com/madisonmay/CommonRegex/blob/master/LICENSE
 
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
