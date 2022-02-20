@@ -11,7 +11,6 @@ flask = ">=1.1"
 pyyaml = "*"
 phonenumbers = ">=8.12"
 typing-extensions = "*"
-validators = "*"
 
 [dev-packages]
 pytest = "*"

@@ -1,7 +1,5 @@
 from typing import List, Optional
 
-import validators
-
 from presidio_analyzer import Pattern, PatternRecognizer
 
 
@@ -21,8 +19,8 @@ class UrlRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        Pattern("Url",
-                r"(?i)((?:https?://|www\d{0,3}[.])?[a-z0-9.\-]+[.](?:(?:com)|("
+        Pattern("Standard Url",
+                r"(?i)(?:https?://)((www\d{0,3}[.])?[a-z0-9.\-]+[.](?:(?:com)|("
                 r"?:edu)|(?:gov)|(?:int)|(?:mil)|( "
                 r"?:net)|(?:onl)|(?:org)|(?:pro)|(?:red)|(?:tel)|(?:uno)|(?:xxx)|("
                 r"?:ac)|(?:ad)|(?:ae)|(?:af)|(?:ag)|( "
@@ -61,7 +59,48 @@ class UrlRecognizer(PatternRecognizer):
                 r"?:ua)|(?:ug)|(?:uk)|(?:us)|(?:uy)|(?:uz)|(?:va)|(?:vc)|(?:ve)|("
                 r"?:vg)|(?:vi)|(?:vn)|(?:vu)|(?:wf)|(?:ws)|(?:ye)|(?:yt)|(?:za)|("
                 r"?:zm)|(?:zw))(?:/[^\s()<>]+|/)?)",
-                0.6)
+                0.6),
+        Pattern("Non schema URL",
+                r"(?i)((www\d{0,3}[.])?[a-z0-9.\-]+[.](?:(?:com)|("
+                r"?:edu)|(?:gov)|(?:int)|(?:mil)|( "
+                r"?:net)|(?:onl)|(?:org)|(?:pro)|(?:red)|(?:tel)|(?:uno)|(?:xxx)|("
+                r"?:ac)|(?:ad)|(?:ae)|(?:af)|(?:ag)|( "
+                r"?:ai)|(?:al)|(?:am)|(?:an)|(?:ao)|(?:aq)|(?:ar)|(?:as)|(?:at)|("
+                r"?:au)|(?:aw)|(?:ax)|(?:az)|(?:ba)|( "
+                r"?:bb)|(?:bd)|(?:be)|(?:bf)|(?:bg)|(?:bh)|(?:bi)|(?:bj)|(?:bm)|("
+                r"?:bn)|(?:bo)|(?:br)|(?:bs)|(?:bt)|( "
+                r"?:bv)|(?:bw)|(?:by)|(?:bz)|(?:ca)|(?:cc)|(?:cd)|(?:cf)|(?:cg)|("
+                r"?:ch)|(?:ci)|(?:ck)|(?:cl)|(?:cm)|( "
+                r"?:cn)|(?:co)|(?:cr)|(?:cu)|(?:cv)|(?:cw)|(?:cx)|(?:cy)|(?:cz)|("
+                r"?:de)|(?:dj)|(?:dk)|(?:dm)|(?:do)|( "
+                r"?:dz)|(?:ec)|(?:ee)|(?:eg)|(?:er)|(?:es)|(?:et)|(?:eu)|(?:fi)|("
+                r"?:fj)|(?:fk)|(?:fm)|(?:fo)|(?:fr)|( "
+                r"?:ga)|(?:gb)|(?:gd)|(?:ge)|(?:gf)|(?:gg)|(?:gh)|(?:gi)|(?:gl)|("
+                r"?:gm)|(?:gn)|(?:gp)|(?:gq)|(?:gr)|( "
+                r"?:gs)|(?:gt)|(?:gu)|(?:gw)|(?:gy)|(?:hk)|(?:hm)|(?:hn)|(?:hr)|("
+                r"?:ht)|(?:hu)|(?:id)|(?:ie)|(?:il)|( "
+                r"?:im)|(?:in)|(?:io)|(?:iq)|(?:ir)|(?:is)|(?:it)|(?:je)|(?:jm)|("
+                r"?:jo)|(?:jp)|(?:ke)|(?:kg)|(?:kh)|( "
+                r"?:ki)|(?:km)|(?:kn)|(?:kp)|(?:kr)|(?:kw)|(?:ky)|(?:kz)|(?:la)|("
+                r"?:lb)|(?:lc)|(?:li)|(?:lk)|(?:lr)|( "
+                r"?:ls)|(?:lt)|(?:lu)|(?:lv)|(?:ly)|(?:ma)|(?:mc)|(?:md)|(?:me)|("
+                r"?:mg)|(?:mh)|(?:mk)|(?:ml)|(?:mm)|( "
+                r"?:mn)|(?:mo)|(?:mp)|(?:mq)|(?:mr)|(?:ms)|(?:mt)|(?:mu)|(?:mv)|("
+                r"?:mw)|(?:mx)|(?:my)|(?:mz)|(?:na)|( "
+                r"?:nc)|(?:ne)|(?:nf)|(?:ng)|(?:ni)|(?:nl)|(?:no)|(?:np)|(?:nr)|("
+                r"?:nu)|(?:nz)|(?:om)|(?:pa)|(?:pe)|( "
+                r"?:pf)|(?:pg)|(?:ph)|(?:pk)|(?:pl)|(?:pm)|(?:pn)|(?:pr)|(?:ps)|("
+                r"?:pt)|(?:pw)|(?:py)|(?:qa)|(?:re)|( "
+                r"?:ro)|(?:rs)|(?:ru)|(?:rw)|(?:sa)|(?:sb)|(?:sc)|(?:sd)|(?:se)|("
+                r"?:sg)|(?:sh)|(?:si)|(?:sj)|(?:sk)|( "
+                r"?:sl)|(?:sm)|(?:sn)|(?:so)|(?:sr)|(?:st)|(?:su)|(?:sv)|(?:sx)|("
+                r"?:sy)|(?:sz)|(?:tc)|(?:td)|(?:tf)|( "
+                r"?:tg)|(?:th)|(?:tj)|(?:tk)|(?:tl)|(?:tm)|(?:tn)|(?:to)|(?:tp)|("
+                r"?:tr)|(?:tt)|(?:tv)|(?:tw)|(?:tz)|( "
+                r"?:ua)|(?:ug)|(?:uk)|(?:us)|(?:uy)|(?:uz)|(?:va)|(?:vc)|(?:ve)|("
+                r"?:vg)|(?:vi)|(?:vn)|(?:vu)|(?:wf)|(?:ws)|(?:ye)|(?:yt)|(?:za)|("
+                r"?:zm)|(?:zw))(?:/[^\s()<>]+|/)?)",
+                0.5)
     ]
 
     CONTEXT = ["url", "website", "link"]
@@ -81,13 +120,3 @@ class UrlRecognizer(PatternRecognizer):
             context=context,
             supported_language=supported_language,
         )
-
-    def validate_result(self, pattern_text: str):
-        """
-        Validate the pattern logic by using tldextract python package.
-
-        :param pattern_text: the text to validated.
-        Only the part in text that was detected by the regex engine
-        :return: A bool indicating whether the validation was successful.
-        """
-        return validators.url(pattern_text)

@@ -4,7 +4,6 @@ from .aba_routing_recognizer import AbaRoutingRecognizer
 from .credit_card_recognizer import CreditCardRecognizer
 from .crypto_recognizer import CryptoRecognizer
 from .date_recognizer import DateRecognizer
-from .domain_recognizer import DomainRecognizer
 from .email_recognizer import EmailRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
@@ -33,7 +32,6 @@ __all__ = [
     "CreditCardRecognizer",
     "CryptoRecognizer",
     "DateRecognizer",
-    "DomainRecognizer",
     "EmailRecognizer",
     "IbanRecognizer",
     "IpRecognizer",

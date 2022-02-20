@@ -3,7 +3,7 @@ Here are a few examples sentences we currently support:
 Hello, my name is <PERSON> and I live in <LOCATION>.
 My credit card number is <CREDIT_CARD> and my crypto wallet id is <CRYPTO>.
 
-On <DATE_TIME> I visited <DOMAIN_NAME> and sent an email to <EMAIL_ADDRESS>,  from the IP <IP_ADDRESS>.
+On <DATE_TIME> I visited <URL> and sent an email to <EMAIL_ADDRESS>,  from the IP <IP_ADDRESS>.
 
 My passport: <US_PASSPORT> and my phone number: <PHONE_NUMBER>.
 
