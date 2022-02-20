@@ -50,7 +50,7 @@ class PIIEntity(ABC):
             raise InvalidParamException(
                 "Invalid input, result start and end must be positive"
             )
-        if self.start >= self.end:
+        if self.start > self.end:
             raise InvalidParamException(
                 f"Invalid input, start index '{self.start}' "
                 f"must be smaller than end index '{self.end}'"
