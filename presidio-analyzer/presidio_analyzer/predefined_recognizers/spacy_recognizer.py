@@ -102,12 +102,14 @@ class SpacyRecognizer(LocalRecognizer):
                     self.ner_strength, textual_explanation
                 )
                 spacy_result = RecognizerResult(
-                    entity,
-                    ent.start_char,
-                    ent.end_char,
-                    self.ner_strength,
-                    explanation,
-                    self.name,
+                    entity_type=entity,
+                    start=ent.start_char,
+                    end=ent.end_char,
+                    score=self.ner_strength,
+                    analysis_explanation=explanation,
+                    recognized_metadata={
+                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                    },
                 )
                 results.append(spacy_result)
 

@@ -16,11 +16,13 @@ class RecognizerResult:
     :param score: the score of the detection
     :param analysis_explanation: contains the explanation of why this
                                  entity was identified
-    :param recognizer_name: name of recognizer which recognized the entity
     :param recognized_metadata: a dictionary of metadata to be used in
     recognizer specific cases, for example specific recognized context words
     and recognizer name
     """
+
+    RECOGNIZER_NAME_KEY = "recognizer_name"
+    """this holds the key of recognizer name inside recognized_metadata dictinary"""
 
     logger = logging.getLogger("presidio-analyzer")
 
@@ -31,7 +33,6 @@ class RecognizerResult:
         end: int,
         score: float,
         analysis_explanation: AnalysisExplanation = None,
-        recognizer_name: str = None,
         recognized_metadata: Dict = None,
     ):
 
@@ -40,7 +41,6 @@ class RecognizerResult:
         self.end = end
         self.score = score
         self.analysis_explanation = analysis_explanation
-        self.recognizer_name = recognizer_name
         self.recognized_metadata = recognized_metadata
 
     def append_analysis_explanation_text(self, text: str) -> None:

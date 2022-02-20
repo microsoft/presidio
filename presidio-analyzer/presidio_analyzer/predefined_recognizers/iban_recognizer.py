@@ -151,12 +151,14 @@ class IbanRecognizer(PatternRecognizer):
                         self.name, pattern.name, pattern.regex, score, validation_result
                     )
                     pattern_result = RecognizerResult(
-                        self.supported_entities[0],
-                        start,
-                        end,
-                        score,
-                        description,
-                        self.name,
+                        entity_type=self.supported_entities[0],
+                        start=start,
+                        end=end,
+                        score=score,
+                        analysis_explanation=description,
+                        recognized_metadata={
+                            RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                        },
                     )
 
                     if validation_result is not None:

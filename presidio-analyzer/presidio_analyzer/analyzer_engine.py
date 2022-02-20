@@ -224,8 +224,6 @@ class AnalyzerEngine:
         if not return_decision_process:
             results = self.__remove_decision_process(results)
 
-        results = self.__remove_recognizer_name(results)
-
         return results
 
     def __remove_low_scores(
@@ -252,16 +250,5 @@ class AnalyzerEngine:
 
         for result in results:
             result.analysis_explanation = None
-
-        return results
-
-    @staticmethod
-    def __remove_recognizer_name(
-        results: List[RecognizerResult],
-    ) -> List[RecognizerResult]:
-        """Remove recognizer name which is used for context enhancer from response."""
-
-        for result in results:
-            del result.recognizer_name
 
         return results

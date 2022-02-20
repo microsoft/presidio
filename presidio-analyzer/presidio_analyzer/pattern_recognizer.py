@@ -199,7 +199,9 @@ class PatternRecognizer(LocalRecognizer):
                     end=end,
                     score=score,
                     analysis_explanation=description,
-                    recognizer_name=self.name,
+                    recognized_metadata={
+                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                    },
                 )
 
                 if validation_result is not None:
