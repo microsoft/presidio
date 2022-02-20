@@ -9,8 +9,10 @@ from presidio_analyzer import (
 )
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
-from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
-from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
+from presidio_analyzer.context_aware_enhancers import (
+    ContextAwareEnhancer,
+    LemmaContextAwareEnhancer,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -45,7 +47,7 @@ class AnalyzerEngine:
         log_decision_process: bool = False,
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
-        context_aware_enhancer: ContextAwareEnhancer = None,
+        context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -77,7 +79,7 @@ class AnalyzerEngine:
         self.default_score_threshold = default_score_threshold
 
         if not context_aware_enhancer:
-            logger.info(
+            logger.debug(
                 "context aware enhancer not provided, creating default"
                 + " lemma based enhancer."
             )
@@ -145,6 +147,8 @@ class AnalyzerEngine:
         returned in the response.
         :param ad_hoc_recognizers: List of recognizers which will be used only
         for this specific request.
+        :param context: List of context words to enhance confidence score if matched
+        with the recognized entity's recognizer context
         :return: an array of the found entities in the text
 
         :example:
@@ -203,7 +207,8 @@ class AnalyzerEngine:
                 json.dumps([str(result.to_dict()) for result in results]),
             )
 
-        # Update results in case surrounding words are relevant to the context words.
+        # Update results in case surrounding words or external context are relevant to
+        # the context words.
         results = self.context_aware_enhancer.enhance_using_context(
             text=text,
             raw_results=results,

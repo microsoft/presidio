@@ -87,62 +87,73 @@ def mock_nlp_artifacts():
 
 
 @pytest.fixture(scope="module")
-def ip_recognizer():
-    return IpRecognizer()
+def us_license_recognizer():
+    return UsLicenseRecognizer()
 
 
 def test_when_text_with_aditional_context_lemma_based_context_enhancer_then_analysis_explanation_include_correct_supportive_context_word(  # noqa: E501
-    nlp_engine, lemma_context, ip_recognizer
+    nlp_engine, lemma_context, us_license_recognizer
 ):
     """This test checks that LemmaContextAwareEnhancer uses supportive context
-    word from analyze input.
+    word from analyze input as if it was in the text itself.
 
-    when passing a closer word to the recognized entity, the enhancer should return
-    that word as  supportive_context_word instead of the recognizer context word
+    when passing a word which doesn't apear in the text but is defined as context in
+    the recognizer which recongnized this the recognized entity, the enhancer should
+    return that word as supportive_context_word instead of other recognizer context word
     """
-    text = "My IP Address is 10.128.35.14"
+    text = "John Smith license is AC432223"
     nlp_artifacts = nlp_engine.process_text(text, "en")
-    recognizer_results = ip_recognizer.analyze(text, nlp_artifacts)
+    recognizer_results = us_license_recognizer.analyze(text, nlp_artifacts)
     results_without_additional_context = lemma_context.enhance_using_context(
-        text, recognizer_results, nlp_artifacts, [ip_recognizer]
+        text, recognizer_results, nlp_artifacts, [us_license_recognizer]
     )
     results_with_additional_context = lemma_context.enhance_using_context(
-        text, recognizer_results, nlp_artifacts, [ip_recognizer], ["Address"]
+        text,
+        recognizer_results,
+        nlp_artifacts,
+        [us_license_recognizer],
+        ["Drivers license"],
     )
 
     assert (
         results_without_additional_context[
             0
         ].analysis_explanation.supportive_context_word
-        == "ip"
+        == "license"
     )
     assert (
         results_with_additional_context[0].analysis_explanation.supportive_context_word
-        == "address"
+        == "driver"
     )
 
 
 def test_when_text_with_only_aditional_context_lemma_based_context_enhancer_then_analysis_explanation_include_correct_supportive_context_word(  # noqa: E501
-    nlp_engine, lemma_context, ip_recognizer
+    nlp_engine, lemma_context, us_license_recognizer
 ):
     """This test checks that LemmaContextAwareEnhancer uses supportive context
-    word from analyze input.
+    word from analyze input as if it was in the text itself but no other words apear
+    in text to support context enhancment.
 
-    when passing a close word to the recognized entity which that word is set in the
-    input context of the enhancer, the enhancer should return that word as
-    supportive_context_word and raise score
+    when passing a word which doesn't apear in the text but is defined as context in
+    the recognizer which recongnized this the recognized entity and there's no other
+    word in the text tp support context, the enhancer should
+    return that word as supportive_context_word and raise the score.
     """
-    text = "My Address is 10.128.35.14"
+    text = "John Smith D.R is AC432223"
     nlp_artifacts = nlp_engine.process_text(text, "en")
-    recognizer_results = ip_recognizer.analyze(text, nlp_artifacts)
+    recognizer_results = us_license_recognizer.analyze(text, nlp_artifacts)
     results_without_additional_context = lemma_context.enhance_using_context(
-        text, recognizer_results, nlp_artifacts, [ip_recognizer]
+        text, recognizer_results, nlp_artifacts, [us_license_recognizer]
     )
     results_with_additional_context = lemma_context.enhance_using_context(
-        text, recognizer_results, nlp_artifacts, [ip_recognizer], ["Address"]
+        text,
+        recognizer_results,
+        nlp_artifacts,
+        [us_license_recognizer],
+        ["Driver license"],
     )
 
-    assert results_without_additional_context[0].score == 0.6
+    assert results_without_additional_context[0].score == 0.3
     assert (
         results_without_additional_context[
             0
@@ -151,9 +162,9 @@ def test_when_text_with_only_aditional_context_lemma_based_context_enhancer_then
     )
     assert (
         results_with_additional_context[0].analysis_explanation.supportive_context_word
-        == "address"
+        == "driver"
     )
-    assert results_with_additional_context[0].score == 0.95
+    assert results_with_additional_context[0].score == 0.6499999999999999
 
 
 def test_when_text_with_context_then_improves_score(

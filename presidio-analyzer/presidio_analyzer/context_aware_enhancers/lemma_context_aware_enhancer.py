@@ -49,7 +49,8 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """
-        Update results in case surrounding words are relevant to the context words.
+        Update results in case the lemmas of surrounding words or input context
+        words are identical to the context words.
 
         Using the surrounding words of the actual word matches, look
         for specific strings that if found contribute to the score
@@ -64,15 +65,13 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                               accuracy of the context enhancement process
         :param recognizers: the list of recognizers
         :param context: list of context words
-        """
+        """  # noqa D205 D400
 
         # create a deep copy of the results object so we can manipulate it
         results = copy.deepcopy(raw_results)
 
         # create recongnizer context dictionary
-        recognizers_dict = dict()
-        for recognizer in recognizers:
-            recognizers_dict[recognizer.name] = recognizer
+        recognizers_dict = {recognizer.name: recognizer for recognizer in recognizers}
 
         # Create empty list in None or lowercase all context words in the list
         if not context:
@@ -86,42 +85,42 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             return results
 
         for result in results:
-            current_context = copy.copy(context)
             # get recognizer matching the result
             recognizer = recognizers_dict[result.recognizer_name]
+
+            # skip recognizer result if the recognizer doen't support
+            # context enhancement
             if not recognizer.context:
                 logger.debug(
                     "recognizer '%s' does not support context enhancement",
                     recognizer.name,
                 )
-            else:
-                # combine other sources of context with recognizer context
-                current_context.extend(recognizer.context)
+                continue
 
             # extract lemmatized context from the surrounding of the match
-            if len(current_context) > 0:
-                word = text[result.start : result.end]
+            word = text[result.start : result.end]
 
-                surrounding_words = self.__extract_surrounding_words(
-                    nlp_artifacts=nlp_artifacts, word=word, start=result.start
+            surrounding_words = self.__extract_surrounding_words(
+                nlp_artifacts=nlp_artifacts, word=word, start=result.start
+            )
+
+            # combine other sources of context with surrounding words
+            surrounding_words.extend(context)
+
+            supportive_context_word = self.__find_supportive_word_in_context(
+                surrounding_words, recognizer.context
+            )
+            if supportive_context_word != "":
+                result.score += self.context_similarity_factor
+                result.score = max(result.score, self.min_score_with_context_similarity)
+                result.score = min(result.score, ContextAwareEnhancer.MAX_SCORE)
+
+                # Update the explainability object with context information
+                # helped improving the score
+                result.analysis_explanation.set_supportive_context_word(
+                    supportive_context_word
                 )
-
-                supportive_context_word = self.__find_supportive_word_in_context(
-                    surrounding_words, current_context
-                )
-                if supportive_context_word != "":
-                    result.score += self.context_similarity_factor
-                    result.score = max(
-                        result.score, self.min_score_with_context_similarity
-                    )
-                    result.score = min(result.score, ContextAwareEnhancer.MAX_SCORE)
-
-                    # Update the explainability object with context information
-                    # helped improving the score
-                    result.analysis_explanation.set_supportive_context_word(
-                        supportive_context_word
-                    )
-                    result.analysis_explanation.set_improved_score(result.score)
+                result.analysis_explanation.set_improved_score(result.score)
         return results
 
     @staticmethod
@@ -178,7 +177,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         :param start: The start index of the word in the original text
         """
         if not nlp_artifacts.tokens:
-            logger.info("Skipping context extraction due to " "lack of NLP artifacts")
+            logger.info("Skipping context extraction due to lack of NLP artifacts")
             # if there are no nlp artifacts, this is ok, we can
             # extract context and we return a valid, yet empty
             # context
@@ -191,7 +190,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         # since the list of tokens is not necessarily aligned
         # with the actual index of the match, we look for the
         # token index which corresponds to the match
-        token_index = EntityRecognizer._find_index_of_match_token(
+        token_index = self._find_index_of_match_token(
             word, start, nlp_artifacts.tokens, nlp_artifacts.tokens_indices
         )
 

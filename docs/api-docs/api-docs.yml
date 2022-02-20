@@ -399,7 +399,7 @@ components:
             $ref: "#/components/schemas/PatternRecognizer"
         context:
           type: array
-          description: "list of context words which may help to raise recognized entities confidance"
+          description: "list of context words which may help to raise recognized entities confidence"
           items:
             description: "The context word"
             type: string
