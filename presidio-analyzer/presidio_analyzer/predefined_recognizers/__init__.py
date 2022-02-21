@@ -4,7 +4,6 @@ from .aba_routing_recognizer import AbaRoutingRecognizer
 from .credit_card_recognizer import CreditCardRecognizer
 from .crypto_recognizer import CryptoRecognizer
 from .date_recognizer import DateRecognizer
-from .domain_recognizer import DomainRecognizer
 from .email_recognizer import EmailRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
@@ -14,6 +13,7 @@ from .sg_fin_recognizer import SgFinRecognizer
 from .spacy_recognizer import SpacyRecognizer
 from .stanza_recognizer import StanzaRecognizer
 from .uk_nhs_recognizer import NhsRecognizer
+from .url_recognizer import UrlRecognizer
 from .us_bank_recognizer import UsBankRecognizer
 from .us_driver_license_recognizer import UsLicenseRecognizer
 from .us_itin_recognizer import UsItinRecognizer
@@ -32,7 +32,6 @@ __all__ = [
     "CreditCardRecognizer",
     "CryptoRecognizer",
     "DateRecognizer",
-    "DomainRecognizer",
     "EmailRecognizer",
     "IbanRecognizer",
     "IpRecognizer",
@@ -43,6 +42,7 @@ __all__ = [
     "SpacyRecognizer",
     "StanzaRecognizer",
     "PhoneRecognizer",
+    "UrlRecognizer",
     "UsBankRecognizer",
     "UsItinRecognizer",
     "UsLicenseRecognizer",

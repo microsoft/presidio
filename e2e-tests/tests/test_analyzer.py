@@ -234,7 +234,7 @@ def test_given_a_correct_input_for_supported_entities_then_expect_a_correct_resp
     expected_response = """
         ["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", "CRYPTO", 
         "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE", 
-        "NRP", "US_ITIN", "DOMAIN_NAME", "MEDICAL_LICENSE", "AU_ABN", "AU_ACN", "AU_TFN", "AU_MEDICARE"]
+        "NRP", "US_ITIN", "MEDICAL_LICENSE", "AU_ABN", "AU_ACN", "AU_TFN", "AU_MEDICARE", "URL"]
     """
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
@@ -266,8 +266,8 @@ def test_given_an_illegal_input_for_supported_entities_then_igonre_and_proceed()
     expected_response = """ 
         ["PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "SG_NRIC_FIN", "LOCATION", "CREDIT_CARD", 
          "CRYPTO", "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS",
-          "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "DOMAIN_NAME", "MEDICAL_LICENSE", "AU_ABN", 
-          "AU_ACN", "AU_TFN", "AU_MEDICARE"]
+          "PERSON", "IBAN_CODE", "NRP", "US_ITIN", "MEDICAL_LICENSE", "AU_ABN", 
+          "AU_ACN", "AU_TFN", "AU_MEDICARE", "URL"]
     """
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
