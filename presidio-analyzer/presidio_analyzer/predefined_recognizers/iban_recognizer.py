@@ -56,7 +56,7 @@ class IbanRecognizer(PatternRecognizer):
     def __init__(
         self,
         patterns: List[str] = None,
-        context: List[str] = None,
+        context: List[str] = CONTEXT,
         supported_language: str = "en",
         supported_entity: str = "IBAN_CODE",
         exact_match: bool = False,
@@ -69,7 +69,6 @@ class IbanRecognizer(PatternRecognizer):
         self.BOSEOS = bos_eos if exact_match else ()
         self.flags = regex_flags
         patterns = patterns if patterns else self.PATTERNS
-        context = context if context else self.CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

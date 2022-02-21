@@ -51,7 +51,6 @@ class AuAcnRecognizer(PatternRecognizer):
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
-        context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
         super().__init__(
             supported_entity=supported_entity,

@@ -36,12 +36,11 @@ class UsBankRecognizer(PatternRecognizer):
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
-        context: Optional[List[str]] = None,
+        context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
         supported_entity: str = "US_BANK_NUMBER",
     ):
         patterns = patterns if patterns else self.PATTERNS
-        context = context if context else self.CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

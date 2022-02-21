@@ -21,8 +21,15 @@ class RemoteRecognizer(ABC, EntityRecognizer):
         name: Optional[str],
         supported_language: str,
         version: str,
+        context: Optional[List[str]] = None,
     ):
-        super().__init__(supported_entities, name, supported_language, version)
+        super().__init__(
+            supported_entities=supported_entities,
+            name=name,
+            supported_language=supported_language,
+            version=version,
+            context=context,
+        )
 
     @abstractmethod
     def load(self):  # noqa D102

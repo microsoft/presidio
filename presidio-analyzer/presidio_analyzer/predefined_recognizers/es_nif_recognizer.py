@@ -29,7 +29,7 @@ class EsNifRecognizer(PatternRecognizer):
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
-        context: Optional[List[str]] = None,
+        context: Optional[List[str]] = CONTEXT,
         supported_language: str = "es",
         supported_entity: str = "ES_NIF",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
@@ -37,7 +37,6 @@ class EsNifRecognizer(PatternRecognizer):
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
-        context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
         super().__init__(
             supported_entity=supported_entity,

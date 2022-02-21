@@ -36,6 +36,7 @@ class PhoneRecognizer(LocalRecognizer):
         super().__init__(
             supported_entities=self.get_supported_entities(),
             supported_language=supported_language,
+            context=context,
         )
 
     def load(self) -> None:  # noqa D102

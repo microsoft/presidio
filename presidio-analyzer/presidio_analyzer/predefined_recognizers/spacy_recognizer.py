@@ -51,6 +51,7 @@ class SpacyRecognizer(LocalRecognizer):
         supported_entities: Optional[List[str]] = None,
         ner_strength: float = 0.85,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
+        context: Optional[List[str]] = None,
     ):
         self.ner_strength = ner_strength
         self.check_label_groups = (
@@ -58,7 +59,9 @@ class SpacyRecognizer(LocalRecognizer):
         )
         supported_entities = supported_entities if supported_entities else self.ENTITIES
         super().__init__(
-            supported_entities=supported_entities, supported_language=supported_language
+            supported_entities=supported_entities,
+            supported_language=supported_language,
+            context=context,
         )
 
     def load(self) -> None:  # noqa D102

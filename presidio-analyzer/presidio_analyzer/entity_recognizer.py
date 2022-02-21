@@ -1,6 +1,6 @@
 import logging
 from abc import abstractmethod
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from presidio_analyzer import RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
@@ -21,12 +21,12 @@ class EntityRecognizer:
     The supported langauge code is iso6391Name
     :param name: the name of this recognizer (optional)
     :param version: the recognizer current version
+    :param context: a list of words which can help boost confidence score
+    when they appear in context of the matched entity
     """
 
     MIN_SCORE = 0
     MAX_SCORE = 1.0
-
-    context = []
 
     def __init__(
         self,
@@ -34,6 +34,7 @@ class EntityRecognizer:
         name: str = None,
         supported_language: str = "en",
         version: str = "0.0.1",
+        context: Optional[List[str]] = None,
     ):
 
         self.supported_entities = supported_entities
@@ -46,6 +47,7 @@ class EntityRecognizer:
         self.supported_language = supported_language
         self.version = version
         self.is_loaded = False
+        self.context = context if context else []
 
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
