@@ -122,37 +122,6 @@ class EntityRecognizer:
         return cls(**entity_recognizer_dict)
 
     @staticmethod
-    def _find_index_of_match_token(
-        word: str, start: int, tokens, tokens_indices: List[int]  # noqa ANN001
-    ) -> int:
-        found = False
-        # we use the known start index of the original word to find the actual
-        # token at that index, we are not checking for equivilance since the
-        # token might be just a substring of that word (e.g. for phone number
-        # 555-124564 the first token might be just '555' or for a match like '
-        # rocket' the actual token will just be 'rocket' hence the misalignment
-        # of indices)
-        # Note: we are iterating over the original tokens (not the lemmatized)
-        i = -1
-        for i, token in enumerate(tokens, 0):
-            # Either we found a token with the exact location, or
-            # we take a token which its characters indices covers
-            # the index we are looking for.
-            if (tokens_indices[i] == start) or (start < tokens_indices[i] + len(token)):
-                # found the interesting token, the one that around it
-                # we take n words, we save the matching lemma
-                found = True
-                break
-
-        if not found:
-            raise ValueError(
-                "Did not find word '" + word + "' "
-                "in the list of tokens although it "
-                "is expected to be found"
-            )
-        return i
-
-    @staticmethod
     def remove_duplicates(results: List[RecognizerResult]) -> List[RecognizerResult]:
         """
         Remove duplicate results.
