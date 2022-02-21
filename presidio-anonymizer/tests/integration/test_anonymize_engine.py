@@ -12,9 +12,6 @@ from presidio_anonymizer.operators import AESCipher
 def test_given_url_at_the_end_then_we_redact_is_successfully():
     text = "The url is http://microsoft.com"
     anonymizer_config = {
-        "DOMAIN_NAME": OperatorConfig(
-            "redact"
-        ),
         "URL": OperatorConfig(
             "redact"
         ),
@@ -22,7 +19,7 @@ def test_given_url_at_the_end_then_we_redact_is_successfully():
 
     analyzer_results = [
         RecognizerResult(start=11, end=31, score=1.0, entity_type="URL"),
-        RecognizerResult(start=18, end=31, score=1.0, entity_type="DOMAIN_NAME"),
+        RecognizerResult(start=18, end=31, score=1.0, entity_type="URL"),
     ]
     expected_result = (
         '{"text": "The url is ", "items": [{"start": 11, "end": 11, "entity_type": '
