@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2.25] - 21.02.2022
+### Changed
+#### Analyzer:
+* Added a URL recognizer
+* Removed the former DOMAIN_NAME recognizer
+
+
 ## [2.2.24] - 23.01.2022
 ### Changed
 * Fixed issue when IBAN followed by all caps can't be recognized

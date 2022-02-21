@@ -263,7 +263,7 @@ def test_when_entities_is_none_then_return_all_fields(loaded_registry):
     assert response is not None
     assert "CREDIT_CARD" in returned_entities
     assert "PHONE_NUMBER" in returned_entities
-    assert "DOMAIN_NAME" in returned_entities
+    assert "URL" in returned_entities
 
 
 def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
@@ -282,7 +282,7 @@ def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
     assert response is not None
     assert "PERSON" in returned_entities
     assert "LOCATION" in returned_entities
-    assert "DOMAIN_NAME" in returned_entities
+    assert "URL" in returned_entities
 
 
 def test_when_analyze_then_apptracer_has_value(
@@ -414,7 +414,7 @@ def test_when_get_supported_fields_then_return_all_languages(
 
     assert len(entities) == 3
     assert "CREDIT_CARD" in entities
-    assert "DOMAIN_NAME" in entities
+    assert "URL" in entities
     assert "PHONE_NUMBER" in entities
 
 
