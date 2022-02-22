@@ -9,6 +9,10 @@ from presidio_analyzer import (
 )
 from presidio_analyzer.app_tracer import AppTracer
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
+from presidio_analyzer.context_aware_enhancers import (
+    ContextAwareEnhancer,
+    LemmaContextAwareEnhancer,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -30,6 +34,9 @@ class AnalyzerEngine:
     for detected entities to be returned
     :param supported_languages: List of possible languages this engine could be run on.
     Used for loading the right NLP models and recognizers for these languages.
+    :param context_aware_enhancer: instance of type ContextAwareEnhancer for enhancing
+    confidence score based on context words, (LemmaContextAwareEnhancer will be created
+    by default if None passed)
     """
 
     def __init__(
@@ -40,6 +47,7 @@ class AnalyzerEngine:
         log_decision_process: bool = False,
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
+        context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -69,6 +77,15 @@ class AnalyzerEngine:
 
         self.log_decision_process = log_decision_process
         self.default_score_threshold = default_score_threshold
+
+        if not context_aware_enhancer:
+            logger.debug(
+                "context aware enhancer not provided, creating default"
+                + " lemma based enhancer."
+            )
+            context_aware_enhancer = LemmaContextAwareEnhancer()
+
+        self.context_aware_enhancer = context_aware_enhancer
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
         """
@@ -114,6 +131,7 @@ class AnalyzerEngine:
         score_threshold: Optional[float] = None,
         return_decision_process: Optional[bool] = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
+        context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -129,6 +147,8 @@ class AnalyzerEngine:
         returned in the response.
         :param ad_hoc_recognizers: List of recognizers which will be used only
         for this specific request.
+        :param context: List of context words to enhance confidence score if matched
+        with the recognized entity's recognizer context
         :return: an array of the found entities in the text
 
         :example:
@@ -186,6 +206,16 @@ class AnalyzerEngine:
                 correlation_id,
                 json.dumps([str(result.to_dict()) for result in results]),
             )
+
+        # Update results in case surrounding words or external context are relevant to
+        # the context words.
+        results = self.context_aware_enhancer.enhance_using_context(
+            text=text,
+            raw_results=results,
+            nlp_artifacts=nlp_artifacts,
+            recognizers=recognizers,
+            context=context,
+        )
 
         # Remove duplicates or low score results
         results = EntityRecognizer.remove_duplicates(results)

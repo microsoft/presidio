@@ -17,8 +17,8 @@ def test_given_a_correct_analyze_input_then_return_full_response():
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null}
+        {"entity_type": "PERSON", "start": 0, "end": 10, "recognition_metadata": {"recognizer_name":"SpacyRecognizer"}, "score": 0.85, "analysis_explanation":null},
+        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "recognition_metadata": {"recognizer_name":"UsLicenseRecognizer"}, "score": 0.6499999999999999, "analysis_explanation":null}
     ]
     """
     assert response_status == 200
@@ -38,7 +38,7 @@ def test_given_analyze_threshold_input_then_return_result_above_threshold():
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
+        {"entity_type": "PERSON", "start": 0, "end": 10, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, 
         "analysis_explanation": null
         }
     ]
@@ -163,8 +163,8 @@ def test_given_return_decision_process_false_for_analyze_input_then_return_respo
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation": null},
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation": null}
+        {"entity_type": "PERSON", "start": 0, "end": 10, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, "analysis_explanation": null},
+        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}, "score": 0.6499999999999999, "analysis_explanation": null}
     ]
     """
     assert response_status == 200
@@ -175,27 +175,84 @@ def test_given_return_decision_process_false_for_analyze_input_then_return_respo
 def test_given_decision_process_enabled_for_analyze_input_then_return_response_with_decision_process():
     request_body = """
     {
-        "text": "John Smith drivers license is AC432223", "language": "en", "return_decision_process": true
+        "text": "John Smith license is AC432223", "language": "en", "return_decision_process": true
     }
     """
     response_status, response_content = analyze(request_body)
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
+        {"entity_type": "PERSON", "start": 0, "end": 10, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"},"score": 0.85, 
         "analysis_explanation": {
             "recognizer": "SpacyRecognizer", "pattern_name": null, "pattern": null, "original_score": 0.85, "score": 0.85, 
             "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition", 
             "score_context_improvement": 0, "supportive_context_word": "", "validation_result": null 
             }
         },
-        {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, 
+        {"entity_type": "US_DRIVER_LICENSE", "start": 22, "end": 30, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}, "score": 0.6499999999999999, 
         "analysis_explanation": {
             "recognizer": "UsLicenseRecognizer", "pattern_name": "Driver License - Alphanumeric (weak)", 
             "pattern": "\\\\b([A-Z][0-9]{3,6}|[A-Z][0-9]{5,9}|[A-Z][0-9]{6,8}|[A-Z][0-9]{4,8}|[A-Z][0-9]{9,11}|[A-Z]{1,2}[0-9]{5,6}|H[0-9]{8}|V[0-9]{6}|X[0-9]{8}|A-Z]{2}[0-9]{2,5}|[A-Z]{2}[0-9]{3,7}|[0-9]{2}[A-Z]{3}[0-9]{5,6}|[A-Z][0-9]{13,14}|[A-Z][0-9]{18}|[A-Z][0-9]{6}R|[A-Z][0-9]{9}|[A-Z][0-9]{1,12}|[0-9]{9}[A-Z]|[A-Z]{2}[0-9]{6}[A-Z]|[0-9]{8}[A-Z]{2}|[0-9]{3}[A-Z]{2}[0-9]{4}|[A-Z][0-9][A-Z][0-9][A-Z]|[0-9]{7,8}[A-Z])\\\\b", 
             "original_score": 0.3, "score": 0.6499999999999999, "textual_explanation": null, 
-            "score_context_improvement": 0.3499999999999999, "supportive_context_word": "driver", "validation_result": null
+            "score_context_improvement": 0.3499999999999999, "supportive_context_word": "license", "validation_result": null
             }
+        }
+    ]
+    """
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decision_process_enabled_for_analyze_input_with_aditional_context_then_return_response_with_decision_process_and_correct_supportive_context_word():
+    request_body = """
+    {
+        "text": "John Smith D.L. is AC432223", "language": "en", "return_decision_process": true, "context": ["Driver license"]
+    }
+    """
+    response_status, response_content = analyze(request_body)
+
+    expected_response = """
+    [
+        {
+            "analysis_explanation": {
+                "original_score": 0.85,
+                "pattern": null,
+                "pattern_name": null,
+                "recognizer": "SpacyRecognizer",
+                "score": 0.85,
+                "score_context_improvement": 0,
+                "supportive_context_word": "",
+                "textual_explanation": "Identified as PERSON by Spacy\'s Named Entity Recognition",
+                "validation_result": null
+            },
+            "end": 15,
+            "entity_type": "PERSON",
+            "recognition_metadata": {
+                "recognizer_name": "SpacyRecognizer"
+            },
+            "score": 0.85,
+            "start": 0
+        },
+        {
+            "analysis_explanation": {
+                "original_score": 0.3,
+                "pattern": "\\\\b([A-Z][0-9]{3,6}|[A-Z][0-9]{5,9}|[A-Z][0-9]{6,8}|[A-Z][0-9]{4,8}|[A-Z][0-9]{9,11}|[A-Z]{1,2}[0-9]{5,6}|H[0-9]{8}|V[0-9]{6}|X[0-9]{8}|A-Z]{2}[0-9]{2,5}|[A-Z]{2}[0-9]{3,7}|[0-9]{2}[A-Z]{3}[0-9]{5,6}|[A-Z][0-9]{13,14}|[A-Z][0-9]{18}|[A-Z][0-9]{6}R|[A-Z][0-9]{9}|[A-Z][0-9]{1,12}|[0-9]{9}[A-Z]|[A-Z]{2}[0-9]{6}[A-Z]|[0-9]{8}[A-Z]{2}|[0-9]{3}[A-Z]{2}[0-9]{4}|[A-Z][0-9][A-Z][0-9][A-Z]|[0-9]{7,8}[A-Z])\\\\b",
+                "pattern_name": "Driver License - Alphanumeric (weak)",
+                "recognizer": "UsLicenseRecognizer",
+                "score": 0.6499999999999999,
+                "score_context_improvement": 0.3499999999999999,
+                "supportive_context_word": "driver",
+                "textual_explanation": null,
+                "validation_result": null
+            },
+            "end": 27,
+            "entity_type": "US_DRIVER_LICENSE",
+            "recognition_metadata": {
+                "recognizer_name": "UsLicenseRecognizer"
+            },
+            "score": 0.6499999999999999,
+            "start": 19
         }
     ]
     """
@@ -214,7 +271,7 @@ def test_given_analyze_entities_input_then_return_results_only_with_those_entiti
 
     expected_response = """
     [ 
-        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, 
+        {"entity_type": "PERSON", "start": 0, "end": 10, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, 
         "analysis_explanation": null
         }
     ]
@@ -300,9 +357,9 @@ def test_given_ad_hoc_pattern_recognizer_the_right_entities_are_returned():
 
     expected_response = """
      [
-         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
-         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null},
-         {"entity_type": "ZIP", "start": 50, "end": 55, "score": 0.01, "analysis_explanation":null}
+         {"entity_type": "PERSON", "start": 0, "end": 10, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}, "score": 0.6499999999999999, "analysis_explanation":null},
+         {"entity_type": "ZIP", "start": 50, "end": 55, "recognition_metadata": {"recognizer_name": "Zip code Recognizer"}, "score": 0.01, "analysis_explanation":null}
      ]
      """
     assert response_status == 200
@@ -369,9 +426,9 @@ def test_given_ad_hoc_pattern_recognizer_context_raises_confidence():
 
     expected_response = """
      [
-         {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85, "analysis_explanation":null},
-         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999, "analysis_explanation":null},
-         {"entity_type": "ZIP", "start": 50, "end": 55, "score": 0.4, "analysis_explanation":null}
+         {"entity_type": "PERSON", "start": 0, "end": 10, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}, "score": 0.6499999999999999, "analysis_explanation":null},
+         {"entity_type": "ZIP", "start": 50, "end": 55, "recognition_metadata": {"recognizer_name": "Zip code Recognizer"}, "score": 0.4, "analysis_explanation":null}
      ]
      """
     assert response_status == 200
@@ -405,9 +462,9 @@ def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
 
     expected_response = """
      [
-         {"entity_type": "PERSON", "start": 4, "end": 14, "score": 0.85, "analysis_explanation":null},
-         {"entity_type": "US_DRIVER_LICENSE", "start": 36, "end": 44, "score": 0.6499999999999999, "analysis_explanation":null},
-         {"entity_type": "MR_TITLE", "start": 0, "end": 3, "score": 1.0, "analysis_explanation":null}
+         {"entity_type": "PERSON", "start": 4, "end": 14, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "US_DRIVER_LICENSE", "start": 36, "end": 44, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}, "score": 0.6499999999999999, "analysis_explanation":null},
+         {"entity_type": "MR_TITLE", "start": 0, "end": 3, "recognition_metadata": {"recognizer_name": "Mr. Recognizer"}, "score": 1.0, "analysis_explanation":null}
      ]
      """
     assert response_status == 200

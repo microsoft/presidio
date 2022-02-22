@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 import phonenumbers
-from phonenumbers.geocoder import country_name_for_number
 
 from presidio_analyzer import (
     RecognizerResult,
@@ -37,6 +36,7 @@ class PhoneRecognizer(LocalRecognizer):
         super().__init__(
             supported_entities=self.get_supported_entities(),
             supported_language=supported_language,
+            context=context,
         )
 
     def load(self) -> None:  # noqa D102
@@ -67,27 +67,16 @@ class PhoneRecognizer(LocalRecognizer):
         return EntityRecognizer.remove_duplicates(results)
 
     def _get_recognizer_result(self, match, text, region, nlp_artifacts):
-        number = match.number
         result = RecognizerResult(
             entity_type="PHONE_NUMBER",
             start=match.start,
             end=match.end,
             score=self.SCORE,
             analysis_explanation=self._get_analysis_explanation(region),
+            recognition_metadata={RecognizerResult.RECOGNIZER_NAME_KEY: self.name},
         )
 
-        # Enhance confidence using 'phone' related context and region code and name.
-        return self.enhance_using_context(
-            text,
-            [result],
-            nlp_artifacts,
-            self._get_region_specific_context(number, region),
-        )[0]
-
-    def _get_region_specific_context(self, number, region):
-        country_name = country_name_for_number(number, self.supported_language)
-        country_name_in_words = country_name.lower().split(" ")
-        return self.context + country_name_in_words + [region.lower()]
+        return result
 
     def _get_analysis_explanation(self, region):
         return AnalysisExplanation(

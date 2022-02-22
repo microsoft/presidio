@@ -65,6 +65,7 @@ class Server:
                     entities=req_data.entities,
                     return_decision_process=req_data.return_decision_process,
                     ad_hoc_recognizers=req_data.ad_hoc_recognizers,
+                    context=req_data.context,
                 )
 
                 return Response(

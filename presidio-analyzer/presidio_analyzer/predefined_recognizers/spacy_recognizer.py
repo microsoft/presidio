@@ -26,10 +26,14 @@ class SpacyRecognizer(LocalRecognizer):
     is translated into a Presidio entity.
     """
 
-    ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON",
-                # "ORGANIZATION" - Less accurate with the 'en_core_web_lg' model,
-                # can be used with more assurance when using 'en_core_web_trf'.
-                ]
+    ENTITIES = [
+        "DATE_TIME",
+        "NRP",
+        "LOCATION",
+        "PERSON",
+        # "ORGANIZATION" - Less accurate with the 'en_core_web_lg' model,
+        # can be used with more assurance when using 'en_core_web_trf'.
+    ]
 
     DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
 
@@ -47,6 +51,7 @@ class SpacyRecognizer(LocalRecognizer):
         supported_entities: Optional[List[str]] = None,
         ner_strength: float = 0.85,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
+        context: Optional[List[str]] = None,
     ):
         self.ner_strength = ner_strength
         self.check_label_groups = (
@@ -54,7 +59,9 @@ class SpacyRecognizer(LocalRecognizer):
         )
         supported_entities = supported_entities if supported_entities else self.ENTITIES
         super().__init__(
-            supported_entities=supported_entities, supported_language=supported_language
+            supported_entities=supported_entities,
+            supported_language=supported_language,
+            context=context,
         )
 
     def load(self) -> None:  # noqa D102
@@ -98,7 +105,14 @@ class SpacyRecognizer(LocalRecognizer):
                     self.ner_strength, textual_explanation
                 )
                 spacy_result = RecognizerResult(
-                    entity, ent.start_char, ent.end_char, self.ner_strength, explanation
+                    entity_type=entity,
+                    start=ent.start_char,
+                    end=ent.end_char,
+                    score=self.ner_strength,
+                    analysis_explanation=explanation,
+                    recognition_metadata={
+                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                    },
                 )
                 results.append(spacy_result)
 

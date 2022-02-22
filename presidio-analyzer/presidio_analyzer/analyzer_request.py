@@ -33,3 +33,4 @@ class AnalyzerRequest:
             self.ad_hoc_recognizers = [
                 PatternRecognizer.from_dict(rec) for rec in ad_hoc_recognizers
             ]
+        self.context = req_data.get("context")

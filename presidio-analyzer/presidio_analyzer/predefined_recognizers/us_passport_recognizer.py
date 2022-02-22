@@ -22,11 +22,10 @@ class UsPassportRecognizer(PatternRecognizer):
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
-        context: Optional[List[str]] = None,
+        context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
         supported_entity: str = "US_PASSPORT",
     ):
-        context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
         super().__init__(
             supported_entity=supported_entity,

@@ -84,12 +84,11 @@ class DateRecognizer(PatternRecognizer):
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
-        context: Optional[List[str]] = None,
+        context: Optional[List[str]] = CONTEXT,
         supported_language: str = "en",
         supported_entity: str = "DATE_TIME",
     ):
         patterns = patterns if patterns else self.PATTERNS
-        context = context if context else self.CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,
@@ -113,11 +112,15 @@ class DateRecognizer(PatternRecognizer):
         :param regex_flags:
         :return:
         """
-        regex_flags = regex_flags | re.IGNORECASE if regex_flags else re.DOTALL | re.MULTILINE | re.IGNORECASE  # noqa: E501
+        regex_flags = (
+            regex_flags | re.IGNORECASE
+            if regex_flags
+            else re.DOTALL | re.MULTILINE | re.IGNORECASE
+        )  # noqa: E501
 
         return super().analyze(
             text=text,
             entities=entities,
             nlp_artifacts=nlp_artifacts,
-            regex_flags=regex_flags
+            regex_flags=regex_flags,
         )
