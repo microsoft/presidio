@@ -6,9 +6,29 @@ All notable changes to this project will be documented in this file.
 
 ## [2.2.25] - 21.02.2022
 ### Changed
-#### Analyzer:
+
+#### Analyzer
+
 * Added a URL recognizer
-* Removed the former DOMAIN_NAME recognizer
+* Added a new capability for creating new logic for context detection. See [ContextAwareEnhancer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/context_aware_enhancer.py) and [LemmaContextAwareEnhancer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/lemma_context_aware_enhancer.py). Documentation would be added on a future release.
+Furthermore, it is now possible to pass context words thruogh the `analyze` method (or via API) and those would be taken into account for context enhancement. 
+
+
+
+#### Anonymizer
+
+* Bug fix for entities at the end of a sentence.
+
+#### Docs
+
+- Formatted (black/flake8) the Python examples.
+
+### Removed
+
+#### Analyzer
+
+* Removed the DOMAIN_NAME recognizer. This change means that the `DOMAIN_NAME` entity is no longer returned by Presidio. `URL` would be returned instead, and would catch full addresses and not just domain names (`https://www.microsoft.com/a/b.html` and not just `www.microsoft.com`)
+
 
 
 ## [2.2.24] - 23.01.2022
@@ -87,7 +107,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.24...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.25...HEAD
+[2.2.25]: https://github.com/microsoft/presidio/compare/2.2.24...2.2.25
 [2.2.24]: https://github.com/microsoft/presidio/compare/2.2.23...2.2.24
 [2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
 [2.2.2]: https://github.com/microsoft/presidio/compare/2.2.1...2.2.2
