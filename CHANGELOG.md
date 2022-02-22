@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file.
 
 * Added a URL recognizer
 * Added a new capability for creating new logic for context detection. See [ContextAwareEnhancer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/context_aware_enhancer.py) and [LemmaContextAwareEnhancer](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/context_aware_enhancers/lemma_context_aware_enhancer.py). Documentation would be added on a future release.
+Furthermore, it is now possible to pass context words thruogh the `analyze` method (or via API) and those would be taken into account for context enhancement. 
+
+
 
 #### Anonymizer
 
