@@ -26,12 +26,12 @@ class PhoneRecognizer(LocalRecognizer):
 
     def __init__(
         self,
-        context: Optional[List[str]] = CONTEXT,
+        context: Optional[List[str]] = None,
         supported_language: str = "en",
         # For all regions, use phonenumbers.SUPPORTED_REGIONS
         supported_regions=DEFAULT_SUPPORTED_REGIONS,
     ):
-        self.context = context
+        context = context if context else self.CONTEXT
         self.supported_regions = supported_regions
         super().__init__(
             supported_entities=self.get_supported_entities(),

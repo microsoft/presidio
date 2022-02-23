@@ -51,6 +51,7 @@ class CreditCardRecognizer(PatternRecognizer):
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
         patterns = patterns if patterns else self.PATTERNS
+        context = context if context else self.CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,
