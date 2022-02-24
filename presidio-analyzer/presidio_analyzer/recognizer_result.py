@@ -41,6 +41,13 @@ class RecognizerResult:
         self.end = end
         self.score = score
         self.analysis_explanation = analysis_explanation
+
+        if not recognition_metadata:
+            self.logger.debug(
+                "recognition_metadata should be passed, "
+                "containing a recognizer_name value"
+            )
+
         self.recognition_metadata = recognition_metadata
 
     def append_analysis_explanation_text(self, text: str) -> None:

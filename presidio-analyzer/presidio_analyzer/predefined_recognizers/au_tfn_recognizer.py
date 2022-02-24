@@ -49,7 +49,7 @@ class AuTfnRecognizer(PatternRecognizer):
     def __init__(
         self,
         patterns: Optional[List[Pattern]] = None,
-        context: Optional[List[str]] = CONTEXT,
+        context: Optional[List[str]] = None,
         supported_language: str = "en",
         supported_entity: str = "AU_TFN",
         replacement_pairs: Optional[List[Tuple[str, str]]] = None,
@@ -58,6 +58,7 @@ class AuTfnRecognizer(PatternRecognizer):
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
         patterns = patterns if patterns else self.PATTERNS
+        context = context if context else self.CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,
