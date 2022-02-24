@@ -2,7 +2,7 @@ from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.predefined_recognizers import (
     CreditCardRecognizer,
     PhoneRecognizer,
-    UrlRecognizer
+    UrlRecognizer,
 )
 
 

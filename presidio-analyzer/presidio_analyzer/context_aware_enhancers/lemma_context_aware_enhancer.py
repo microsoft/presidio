@@ -81,16 +81,29 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
 
         # Sanity
         if nlp_artifacts is None:
-            logger.warning("[%s]. NLP artifacts were not provided", self.name)
+            logger.warning("NLP artifacts were not provided")
             return results
 
         for result in results:
-            # get recognizer matching the result
-            recognizer = recognizers_dict[
-                result.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
-            ]
+            recognizer = None
+            # get recognizer matching the result, if found.
+            if (
+                result.recognition_metadata
+                and RecognizerResult.RECOGNIZER_NAME_KEY
+                in result.recognition_metadata.keys()
+            ):
+                recognizer = recognizers_dict.get(
+                    result.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                )
 
-            # skip recognizer result if the recognizer doen't support
+            if not recognizer:
+                logger.debug(
+                    "Recognizer name not found as part of the "
+                    "recognition_metadata dict in the RecognizerResult. "
+                )
+                continue
+
+            # skip recognizer result if the recognizer doesn't support
             # context enhancement
             if not recognizer.context:
                 logger.debug(

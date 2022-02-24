@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 
 from presidio_analyzer import (
@@ -5,6 +7,8 @@ from presidio_analyzer import (
     PatternRecognizer,
     Pattern,
     RecognizerRegistry,
+    EntityRecognizer,
+    RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
@@ -633,3 +637,24 @@ def test_ad_hoc_when_no_other_recognizers_are_requested_returns_only_ad_hoc_resu
     )
 
     assert "ZIP" in [resp.entity_type for resp in responses]
+
+
+def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
+    class MockRecognizer(EntityRecognizer):
+        def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+            return [RecognizerResult("TEST", 50, 60, 0.5)]
+
+    mock_recognizer = MockRecognizer(supported_entities=["TEST"])
+
+    registry = RecognizerRegistry()
+    registry.add_recognizer(mock_recognizer)
+
+    analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
+    results = analyzer_engine.analyze("ABC", language="en")
+
+    assert len(results) == 1
+
+    assert results[0].entity_type == "TEST"
+    assert results[0].start == 50
+    assert results[0].end == 60
+    assert results[0].score == 0.5
