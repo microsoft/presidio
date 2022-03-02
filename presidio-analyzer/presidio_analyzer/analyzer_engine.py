@@ -208,8 +208,8 @@ class AnalyzerEngine:
             )
 
         # ensure recognition metadata in results
-        current_results = self.__ensure_recognition_metadata(
-            current_results, recognizer
+        results = self.__ensure_recognition_metadata(
+            results, recognizer
         )
 
         # Update results in case surrounding words or external context are relevant to
