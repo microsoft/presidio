@@ -14,10 +14,10 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
     """
     A class representing a lemma based context aware enhancer logic.
 
-    Context words might enhance confidence score of a recogized entity,
+    Context words might enhance confidence score of a recognized entity,
     LemmaContextAwareEnhancer is an implementation of Lemma based context aware logic,
     it compares spacy lemmas of each word in context of the matched entity to given
-    context and the recongizer context words,
+    context and the recognizer context words,
     if matched it enhance the recognized entity confidence score by a given factor.
 
     :param context_similarity_factor: How much to enhance confidence of match entity
@@ -67,10 +67,10 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         :param context: list of context words
         """  # noqa D205 D400
 
-        # create a deep copy of the results object so we can manipulate it
+        # create a deep copy of the results object, so we can manipulate it
         results = copy.deepcopy(raw_results)
 
-        # create recongnizer context dictionary
+        # create recognizer context dictionary
         recognizers_dict = {recognizer.name: recognizer for recognizer in recognizers}
 
         # Create empty list in None or lowercase all context words in the list
@@ -115,23 +115,21 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             # extract lemmatized context from the surrounding of the match
             word = text[result.start : result.end]
 
-            surrounding_words = self.__extract_surrounding_words(
-                nlp_artifacts=nlp_artifacts, word=word, start=result.start
-            )
+            surrounding_words = self._extract_surrounding_words(
+                nlp_artifacts=nlp_artifacts, word=word, start=result.start)
 
             # combine other sources of context with surrounding words
             surrounding_words.extend(context)
 
-            supportive_context_word = self.__find_supportive_word_in_context(
-                surrounding_words, recognizer.context
-            )
+            supportive_context_word = self._find_supportive_word_in_context(
+                surrounding_words, recognizer.context)
             if supportive_context_word != "":
                 result.score += self.context_similarity_factor
                 result.score = max(result.score, self.min_score_with_context_similarity)
                 result.score = min(result.score, ContextAwareEnhancer.MAX_SCORE)
 
                 # Update the explainability object with context information
-                # helped improving the score
+                # helped to improve the score
                 result.analysis_explanation.set_supportive_context_word(
                     supportive_context_word
                 )
@@ -139,7 +137,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         return results
 
     @staticmethod
-    def __find_supportive_word_in_context(
+    def _find_supportive_word_in_context(
         context_list: List[str], recognizer_context_list: List[str]
     ) -> str:
         """
@@ -177,7 +175,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
 
         return word
 
-    def __extract_surrounding_words(
+    def _extract_surrounding_words(
         self, nlp_artifacts: NlpArtifacts, word: str, start: int
     ) -> List[str]:
         """Extract words surrounding another given word.
@@ -212,18 +210,12 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         # index i belongs to the PII entity, take the preceding n words
         # and the successing m words into a context list
 
-        backward_context = self.__add_n_words_backward(
-            token_index,
-            self.context_prefix_count,
-            nlp_artifacts.lemmas,
-            lemmatized_keywords,
-        )
-        forward_context = self.__add_n_words_forward(
-            token_index,
-            self.context_suffix_count,
-            nlp_artifacts.lemmas,
-            lemmatized_keywords,
-        )
+        backward_context = self._add_n_words_backward(
+            token_index, self.context_prefix_count,
+            nlp_artifacts.lemmas, lemmatized_keywords)
+        forward_context = self._add_n_words_forward(
+            token_index, self.context_suffix_count,
+            nlp_artifacts.lemmas, lemmatized_keywords)
 
         context_list = []
         context_list.extend(backward_context)
@@ -264,7 +256,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         return i
 
     @staticmethod
-    def __add_n_words(
+    def _add_n_words(
         index: int,
         n_words: int,
         lemmas: List[str],
@@ -302,24 +294,22 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             i = i - 1 if is_backward else i + 1
         return context_words
 
-    def __add_n_words_forward(
+    def _add_n_words_forward(
         self,
         index: int,
         n_words: int,
         lemmas: List[str],
         lemmatized_filtered_keywords: List[str],
     ) -> List[str]:
-        return self.__add_n_words(
-            index, n_words, lemmas, lemmatized_filtered_keywords, False
-        )
+        return self._add_n_words(
+            index, n_words, lemmas, lemmatized_filtered_keywords, False)
 
-    def __add_n_words_backward(
+    def _add_n_words_backward(
         self,
         index: int,
         n_words: int,
         lemmas: List[str],
         lemmatized_filtered_keywords: List[str],
     ) -> List[str]:
-        return self.__add_n_words(
-            index, n_words, lemmas, lemmatized_filtered_keywords, True
-        )
+        return self._add_n_words(
+            index, n_words, lemmas, lemmatized_filtered_keywords, True)

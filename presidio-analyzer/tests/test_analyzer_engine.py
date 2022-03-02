@@ -658,3 +658,4 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
     assert results[0].start == 50
     assert results[0].end == 60
     assert results[0].score == 0.5
+    assert results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
