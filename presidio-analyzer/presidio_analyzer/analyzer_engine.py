@@ -223,9 +223,6 @@ class AnalyzerEngine:
                 json.dumps([str(result.to_dict()) for result in results]),
             )
 
-        # ensure recognizer name exists in recognition metadata inside all results
-        self.__add_recognizer_name_if_not_exitsts(results, recognizer)
-
         # Update results in case surrounding words or external context are relevant to
         # the context words.
         results = self.context_aware_enhancer.enhance_using_context(
