@@ -199,6 +199,10 @@ class AnalyzerEngine:
                 text=text, entities=entities, nlp_artifacts=nlp_artifacts
             )
             if current_results:
+                # ensure recognizer name exists in recognition metadata inside
+                # all results
+                self.__add_recognizer_name_if_not_exists(current_results, recognizer)
+
                 results.extend(current_results)
 
         if self.log_decision_process:
@@ -241,6 +245,26 @@ class AnalyzerEngine:
 
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
+
+    def __add_recognizer_name_if_not_exists(
+        self, results: List[RecognizerResult], recognizer: EntityRecognizer
+    ):
+        """Ensure recognition metadata with recognizer name existence.
+
+        Ensure recognizer result list contains recognizer name inside recognition
+        metadata dictionary, and if not create it. recognizer_name is needed
+        for context aware enhancement
+
+        :param results: List of RecognizerResult
+        :param recognizer: Entity recognizer
+        """
+        for result in results:
+            if not result.recognition_metadata:
+                result.recognition_metadata = dict()
+            if RecognizerResult.RECOGNIZER_NAME_KEY not in result.recognition_metadata:
+                result.recognition_metadata[
+                    RecognizerResult.RECOGNIZER_NAME_KEY
+                ] = recognizer.name
 
     @staticmethod
     def __remove_decision_process(
