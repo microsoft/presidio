@@ -21,8 +21,12 @@ class RecognizerResult:
     and recognizer name
     """
 
+    """this holds the key of recognizer name inside recognition_metadata dictionary"""
     RECOGNIZER_NAME_KEY = "recognizer_name"
-    """this holds the key of recognizer name inside recognition_metadata dictinary"""
+
+    """this holds the key of a flag which is set to true if the result enhanced by 
+    context"""
+    IS_SCORE_ENHANCED_BY_CONTEXT_KEY = "is_score_enhanced_by_context"
 
     logger = logging.getLogger("presidio-analyzer")
 

@@ -86,6 +86,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
 
         for result in results:
             recognizer = None
+            is_result_score_boosted_by_context = False
             # get recognizer matching the result, if found.
             if (
                 result.recognition_metadata
@@ -95,6 +96,14 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
                 recognizer = recognizers_dict.get(
                     result.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
                 )
+
+                is_result_score_boosted_by_context = True if result.recognition_metadata.get(
+                    RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY) else False
+
+            # skip context enhancement if already boosted by recognizer level
+            if is_result_score_boosted_by_context:
+                logger.debug("result score already boosted, skipping")
+                continue
 
             if not recognizer:
                 logger.debug(

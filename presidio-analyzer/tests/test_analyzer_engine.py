@@ -10,6 +10,8 @@ from presidio_analyzer import (
     EntityRecognizer,
     RecognizerResult,
 )
+from presidio_analyzer.context_aware_enhancers.context_aware_enhanceable_recognizer_interface import \
+    ContextAwareEnhanceableRecognizerInterface
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
     SpacyNlpEngine,

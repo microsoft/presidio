@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 from presidio_analyzer import PatternRecognizer, Pattern
