@@ -640,22 +640,35 @@ def test_ad_hoc_when_no_other_recognizers_are_requested_returns_only_ad_hoc_resu
 
 
 def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
-    class MockRecognizer(EntityRecognizer):
+    class MockRecognizer1(EntityRecognizer):
         def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
-            return [RecognizerResult("TEST", 50, 60, 0.5)]
+            return [RecognizerResult("TEST1", 50, 60, 0.5)]
 
-    mock_recognizer = MockRecognizer(supported_entities=["TEST"])
+    class MockRecognizer2(EntityRecognizer):
+        def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+            # pass lower score in mock due to sorting algorithm
+            return [RecognizerResult("TEST2", 50, 60, 0.4)]
+
+    mock_recognizer1 = MockRecognizer1(supported_entities=["TEST1"])
+    mock_recognizer2 = MockRecognizer2(supported_entities=["TEST2"])
 
     registry = RecognizerRegistry()
-    registry.add_recognizer(mock_recognizer)
+    registry.add_recognizer(mock_recognizer1)
+    registry.add_recognizer(mock_recognizer2)
 
     analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
     results = analyzer_engine.analyze("ABC", language="en")
 
-    assert len(results) == 1
+    assert len(results) == 2
 
-    assert results[0].entity_type == "TEST"
+    assert results[0].entity_type == "TEST1"
     assert results[0].start == 50
     assert results[0].end == 60
     assert results[0].score == 0.5
-    assert results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
+    assert results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer1"
+
+    assert results[1].entity_type == "TEST2"
+    assert results[1].start == 50
+    assert results[1].end == 60
+    assert results[1].score == 0.4
+    assert results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer2"

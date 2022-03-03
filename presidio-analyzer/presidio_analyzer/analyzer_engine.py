@@ -199,6 +199,9 @@ class AnalyzerEngine:
                 text=text, entities=entities, nlp_artifacts=nlp_artifacts
             )
             if current_results:
+                # ensure recognizer name exists in recognition metadata inside all results
+                self.__add_recognizer_name_if_not_exists(current_results, recognizer)
+
                 results.extend(current_results)
 
         if self.log_decision_process:
@@ -206,9 +209,6 @@ class AnalyzerEngine:
                 correlation_id,
                 json.dumps([str(result.to_dict()) for result in results]),
             )
-
-        # ensure recognizer name exists in recognition metadata inside all results
-        self.__add_recognizer_name_if_not_exitsts(results, recognizer)
 
         # Update results in case surrounding words or external context are relevant to
         # the context words.
@@ -245,7 +245,7 @@ class AnalyzerEngine:
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
 
-    def __add_recognizer_name_if_not_exitsts(
+    def __add_recognizer_name_if_not_exists(
         self, results: List[RecognizerResult], recognizer: EntityRecognizer
     ):
         """Ensure recognition metadata with recognizer name existence.
