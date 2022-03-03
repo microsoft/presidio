@@ -199,7 +199,8 @@ class AnalyzerEngine:
                 text=text, entities=entities, nlp_artifacts=nlp_artifacts
             )
             if current_results:
-                # ensure recognizer name exists in recognition metadata inside all results
+                # ensure recognizer name exists in recognition metadata inside
+                # all results
                 self.__add_recognizer_name_if_not_exists(current_results, recognizer)
 
                 results.extend(current_results)
