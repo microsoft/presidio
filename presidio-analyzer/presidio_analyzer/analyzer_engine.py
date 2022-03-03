@@ -40,14 +40,14 @@ class AnalyzerEngine:
     """
 
     def __init__(
-            self,
-            registry: RecognizerRegistry = None,
-            nlp_engine: NlpEngine = None,
-            app_tracer: AppTracer = None,
-            log_decision_process: bool = False,
-            default_score_threshold: float = 0,
-            supported_languages: List[str] = None,
-            context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
+        self,
+        registry: RecognizerRegistry = None,
+        nlp_engine: NlpEngine = None,
+        app_tracer: AppTracer = None,
+        log_decision_process: bool = False,
+        default_score_threshold: float = 0,
+        supported_languages: List[str] = None,
+        context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -123,15 +123,15 @@ class AnalyzerEngine:
         return list(set(supported_entities))
 
     def analyze(
-            self,
-            text: str,
-            language: str,
-            entities: Optional[List[str]] = None,
-            correlation_id: Optional[str] = None,
-            score_threshold: Optional[float] = None,
-            return_decision_process: Optional[bool] = False,
-            ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
-            context: Optional[List[str]] = None,
+        self,
+        text: str,
+        language: str,
+        entities: Optional[List[str]] = None,
+        correlation_id: Optional[str] = None,
+        score_threshold: Optional[float] = None,
+        return_decision_process: Optional[bool] = False,
+        ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
+        context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -208,9 +208,7 @@ class AnalyzerEngine:
             )
 
         # ensure recognition metadata in results
-        results = self.__ensure_recognition_metadata(
-            results, recognizer
-        )
+        self.__ensure_recognition_metadata(results, recognizer)
 
         # Update results in case surrounding words or external context are relevant to
         # the context words.
@@ -232,7 +230,7 @@ class AnalyzerEngine:
         return results
 
     def __remove_low_scores(
-            self, results: List[RecognizerResult], score_threshold: float = None
+        self, results: List[RecognizerResult], score_threshold: float = None
     ) -> List[RecognizerResult]:
         """
         Remove results for which the confidence is lower than the threshold.
@@ -248,10 +246,8 @@ class AnalyzerEngine:
         return new_results
 
     def __ensure_recognition_metadata(
-            self,
-            results: List[RecognizerResult],
-            recognizer: EntityRecognizer
-    ) -> List[RecognizerResult]:
+        self, results: List[RecognizerResult], recognizer: EntityRecognizer
+    ):
         """Ensure recognition metadata with recognizer name existence.
 
         Ensure recognizer result list contains recognizer name inside recognition
@@ -265,15 +261,15 @@ class AnalyzerEngine:
             if not result.recognition_metadata:
                 result.recognition_metadata = dict()
             if not result.recognition_metadata.get(
-                    RecognizerResult.RECOGNIZER_NAME_KEY):
+                RecognizerResult.RECOGNIZER_NAME_KEY
+            ):
                 result.recognition_metadata[
                     RecognizerResult.RECOGNIZER_NAME_KEY
                 ] = recognizer.name
-        return results
 
     @staticmethod
     def __remove_decision_process(
-            results: List[RecognizerResult],
+        results: List[RecognizerResult],
     ) -> List[RecognizerResult]:
         """Remove decision process / analysis explanation from response."""
 
