@@ -207,8 +207,8 @@ class AnalyzerEngine:
                 json.dumps([str(result.to_dict()) for result in results]),
             )
 
-        # ensure recognition metadata in results
-        self.__ensure_recognition_metadata(results, recognizer)
+        # ensure recognizer name exists in recognition metadata inside all results
+        self.__add_recognizer_name_if_not_exitsts(results, recognizer)
 
         # Update results in case surrounding words or external context are relevant to
         # the context words.
@@ -245,7 +245,7 @@ class AnalyzerEngine:
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
 
-    def __ensure_recognition_metadata(
+    def __add_recognizer_name_if_not_exitsts(
         self, results: List[RecognizerResult], recognizer: EntityRecognizer
     ):
         """Ensure recognition metadata with recognizer name existence.
@@ -260,9 +260,7 @@ class AnalyzerEngine:
         for result in results:
             if not result.recognition_metadata:
                 result.recognition_metadata = dict()
-            if not result.recognition_metadata.get(
-                RecognizerResult.RECOGNIZER_NAME_KEY
-            ):
+            if RecognizerResult.RECOGNIZER_NAME_KEY not in result.recognition_metadata:
                 result.recognition_metadata[
                     RecognizerResult.RECOGNIZER_NAME_KEY
                 ] = recognizer.name
