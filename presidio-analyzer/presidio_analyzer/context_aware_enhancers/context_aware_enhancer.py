@@ -13,8 +13,8 @@ class ContextAwareEnhancer:
     """
     A class representing an abstract context aware enhancer.
 
-    Context words might enhance confidence score of a recogized entity,
-    ContextAwareEnhancer is an abstract class to be inheritted by a context aware
+    Context words might enhance confidence score of a recognized entity,
+    ContextAwareEnhancer is an abstract class to be inherited by a context aware
     enhancer logic.
 
     :param context_similarity_factor: How much to enhance confidence of match entity
