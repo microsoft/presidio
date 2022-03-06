@@ -36,6 +36,7 @@ nav:
       - Presidio Anonymizer Python API: api/anonymizer_python.md
       - Presidio Image Redactor Python API: api/image_redactor_python.md
     - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
+  - Community: community.md
   - FAQ: faq.md
 theme:
   name: material
