@@ -1,4 +1,6 @@
-from typing import List
+import copy
+from abc import ABC
+from typing import List, Optional
 
 import pytest
 
@@ -10,8 +12,6 @@ from presidio_analyzer import (
     EntityRecognizer,
     RecognizerResult,
 )
-from presidio_analyzer.context_aware_enhancers.context_aware_enhanceable_recognizer_interface import \
-    ContextAwareEnhanceableRecognizerInterface
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
     SpacyNlpEngine,
@@ -642,11 +642,11 @@ def test_ad_hoc_when_no_other_recognizers_are_requested_returns_only_ad_hoc_resu
 
 
 def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
-    class MockRecognizer1(EntityRecognizer):
+    class MockRecognizer1(EntityRecognizer, ABC):
         def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
-            return [RecognizerResult("TEST1", 50, 60, 0.5)]
+            return [RecognizerResult("TEST1", 10, 30, 0.5)]
 
-    class MockRecognizer2(EntityRecognizer):
+    class MockRecognizer2(EntityRecognizer, ABC):
         def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
             # pass lower score in mock due to sorting algorithm
             return [RecognizerResult("TEST2", 50, 60, 0.4)]
@@ -664,8 +664,8 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
     assert len(results) == 2
 
     assert results[0].entity_type == "TEST1"
-    assert results[0].start == 50
-    assert results[0].end == 60
+    assert results[0].start == 10
+    assert results[0].end == 30
     assert results[0].score == 0.5
     assert results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer1"
 
@@ -674,3 +674,49 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
     assert results[1].end == 60
     assert results[1].score == 0.4
     assert results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer2"
+
+
+def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_engine):
+    class MockRecognizer(EntityRecognizer, ABC):
+        def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+            return [
+                RecognizerResult("TEST", 10, 30, 0.5),
+                # pass lower score in mock due to sorting algorithm
+                RecognizerResult("TEST", 50, 60, 0.4)]
+
+        def enhance_using_context(self,
+                                  text: str,
+                                  raw_results: List[RecognizerResult],
+                                  nlp_artifacts: NlpArtifacts,
+                                  context: Optional[List[str]] = None,
+                                  ) -> List[RecognizerResult]:
+            results = copy.deepcopy(raw_results)
+            results[0].score += 0.4
+            results[1].score += 0.4
+            results[0].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY] = True
+            results[1].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY] = True
+            return results
+
+    mock_recognizer = MockRecognizer(supported_entities=["TEST"])
+
+    registry = RecognizerRegistry()
+    registry.add_recognizer(mock_recognizer)
+
+    analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
+    recognizer_results = analyzer_engine.analyze("ABC", language="en")
+
+    assert len(recognizer_results) == 2
+
+    assert recognizer_results[0].entity_type == "TEST"
+    assert recognizer_results[0].start == 10
+    assert recognizer_results[0].end == 30
+    assert recognizer_results[0].score == 0.9
+    assert recognizer_results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
+    assert recognizer_results[0].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
+    assert recognizer_results[0].entity_type == "TEST"
+    assert recognizer_results[1].start == 50
+    assert recognizer_results[1].end == 60
+    assert recognizer_results[1].score == 0.8
+    assert recognizer_results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
+    assert recognizer_results[1].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
+

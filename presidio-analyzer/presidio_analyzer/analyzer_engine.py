@@ -8,8 +8,6 @@ from presidio_analyzer import (
     EntityRecognizer,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.context_aware_enhancers.context_aware_enhanceable_recognizer_interface import \
-    ContextAwareEnhanceableRecognizerInterface
 from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
@@ -206,12 +204,10 @@ class AnalyzerEngine:
                 self.__add_recognizer_name_if_not_exists(current_results, recognizer)
 
                 # enhance score using context in recognizer level if implemented
-                if issubclass(type(recognizer), ContextAwareEnhanceableRecognizerInterface):
-                    current_results = recognizer.enhance_using_context(
+                current_results = recognizer.enhance_using_context(
                         text=text,
                         raw_results=current_results,
                         nlp_artifacts=nlp_artifacts,
-                        recognizers=recognizers,
                         context=context,
                     )
 
