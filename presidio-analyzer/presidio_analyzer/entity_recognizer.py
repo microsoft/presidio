@@ -1,4 +1,3 @@
-import copy
 import logging
 from abc import abstractmethod
 from typing import List, Dict, Optional
