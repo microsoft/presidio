@@ -82,16 +82,18 @@ class EntityRecognizer:
         return None
 
     def enhance_using_context(
-            self,
-            text: str,
-            raw_results: List[RecognizerResult],
-            nlp_artifacts: NlpArtifacts,
-            context: Optional[List[str]] = None,
+        self,
+        text: str,
+        raw_results: List[RecognizerResult],
+        nlp_artifacts: NlpArtifacts,
+        context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
-        """
+        """Enhance confidence score using context of the entity.
+
         Override this method in derived class in case a custom logic
         is needed, otherwise return value will be equal to
         raw_results.
+
         in case a result score is boosted, derived class need to update
         result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
 

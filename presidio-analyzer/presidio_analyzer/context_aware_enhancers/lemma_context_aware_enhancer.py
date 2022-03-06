@@ -114,7 +114,8 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
 
             # skip context enhancement if already boosted by recognizer level
             if result.recognition_metadata.get(
-                    RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY):
+                RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
+            ):
                 logger.debug("result score already boosted, skipping")
                 continue
 
@@ -122,13 +123,15 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             word = text[result.start : result.end]
 
             surrounding_words = self._extract_surrounding_words(
-                nlp_artifacts=nlp_artifacts, word=word, start=result.start)
+                nlp_artifacts=nlp_artifacts, word=word, start=result.start
+            )
 
             # combine other sources of context with surrounding words
             surrounding_words.extend(context)
 
             supportive_context_word = self._find_supportive_word_in_context(
-                surrounding_words, recognizer.context)
+                surrounding_words, recognizer.context
+            )
             if supportive_context_word != "":
                 result.score += self.context_similarity_factor
                 result.score = max(result.score, self.min_score_with_context_similarity)
@@ -217,11 +220,17 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         # and the successing m words into a context list
 
         backward_context = self._add_n_words_backward(
-            token_index, self.context_prefix_count,
-            nlp_artifacts.lemmas, lemmatized_keywords)
+            token_index,
+            self.context_prefix_count,
+            nlp_artifacts.lemmas,
+            lemmatized_keywords,
+        )
         forward_context = self._add_n_words_forward(
-            token_index, self.context_suffix_count,
-            nlp_artifacts.lemmas, lemmatized_keywords)
+            token_index,
+            self.context_suffix_count,
+            nlp_artifacts.lemmas,
+            lemmatized_keywords,
+        )
 
         context_list = []
         context_list.extend(backward_context)
@@ -308,7 +317,8 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         lemmatized_filtered_keywords: List[str],
     ) -> List[str]:
         return self._add_n_words(
-            index, n_words, lemmas, lemmatized_filtered_keywords, False)
+            index, n_words, lemmas, lemmatized_filtered_keywords, False
+        )
 
     def _add_n_words_backward(
         self,
@@ -318,4 +328,5 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         lemmatized_filtered_keywords: List[str],
     ) -> List[str]:
         return self._add_n_words(
-            index, n_words, lemmas, lemmatized_filtered_keywords, True)
+            index, n_words, lemmas, lemmatized_filtered_keywords, True
+        )

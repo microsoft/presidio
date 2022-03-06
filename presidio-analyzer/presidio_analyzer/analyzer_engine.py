@@ -205,11 +205,11 @@ class AnalyzerEngine:
 
                 # enhance score using context in recognizer level if implemented
                 current_results = recognizer.enhance_using_context(
-                        text=text,
-                        raw_results=current_results,
-                        nlp_artifacts=nlp_artifacts,
-                        context=context,
-                    )
+                    text=text,
+                    raw_results=current_results,
+                    nlp_artifacts=nlp_artifacts,
+                    context=context,
+                )
 
                 results.extend(current_results)
 
