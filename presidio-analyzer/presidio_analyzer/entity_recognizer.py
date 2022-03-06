@@ -106,8 +106,7 @@ class EntityRecognizer:
         :param context: list of context words
         """
         # deep copy and return a new list because its mutable
-        results = copy.deepcopy(raw_results)
-        return results
+        return raw_results
 
     def get_supported_entities(self) -> List[str]:
         """
