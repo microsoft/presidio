@@ -199,24 +199,20 @@ class AnalyzerEngine:
                 text=text, entities=entities, nlp_artifacts=nlp_artifacts
             )
             if current_results:
-                # ensure recognizer name exists in recognition metadata inside
-                # all results
+                # add recognizer name to recognition metadata inside results
+                # if not exists
                 self.__add_recognizer_name_if_not_exists(current_results, recognizer)
-
-                # enhance score using context in recognizer level if implemented
-                current_results = recognizer.enhance_using_context(
-                    text=text,
-                    raw_results=current_results,
-                    nlp_artifacts=nlp_artifacts,
-                    context=context,
-                )
-
                 results.extend(current_results)
 
-        if self.log_decision_process:
-            self.app_tracer.trace(
-                correlation_id,
-                json.dumps([str(result.to_dict()) for result in results]),
+        # enhance score using context in recognizer level if implemented
+        for recognizer in recognizers:
+            results = recognizer.enhance_using_context(
+                text=text,
+                # each recognizer will get access to all recognizer results
+                # to allow related entities contex enhancement
+                raw_results=results,
+                nlp_artifacts=nlp_artifacts,
+                context=context,
             )
 
         # Update results in case surrounding words or external context are relevant to
@@ -228,6 +224,12 @@ class AnalyzerEngine:
             recognizers=recognizers,
             context=context,
         )
+
+        if self.log_decision_process:
+            self.app_tracer.trace(
+                correlation_id,
+                json.dumps([str(result.to_dict()) for result in results]),
+            )
 
         # Remove duplicates or low score results
         results = EntityRecognizer.remove_duplicates(results)
