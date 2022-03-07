@@ -104,7 +104,6 @@ class EntityRecognizer:
                               accuracy of the context enhancement process
         :param context: list of context words
         """
-        # deep copy and return a new list because its mutable
         return raw_results
 
     def get_supported_entities(self) -> List[str]:
