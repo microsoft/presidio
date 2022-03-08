@@ -100,8 +100,8 @@ class EntityRecognizer:
         :param text: The actual text that was analyzed
         :param raw_recognizer_results: Recognizer results which didn't take
             context into consideration
-        :param other_raw_recognizer_results: Other recognizer results which didn't take
-            context into consideration to allow related entity context enhancement
+        :param other_raw_recognizer_results: Other recognizer results matched in
+        the given text to allow related entity context enhancement
         :param nlp_artifacts: The nlp artifacts contains elements
                               such as lemmatized tokens for better
                               accuracy of the context enhancement process
