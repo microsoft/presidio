@@ -98,7 +98,7 @@ class EntityRecognizer:
         result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
 
         :param text: The actual text that was analyzed
-        :param raw_recognizer_results: This recognizer's results, to be updated 
+        :param raw_recognizer_results: This recognizer's results, to be updated
         based on recognizer specific context.
         :param other_raw_recognizer_results: Other recognizer results matched in
         the given text to allow related entity context enhancement
