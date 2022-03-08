@@ -686,11 +686,12 @@ def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_en
 
         def enhance_using_context(self,
                                   text: str,
-                                  raw_results: List[RecognizerResult],
+                                  raw_recognizer_results: List[RecognizerResult],
+                                  other_raw_recognizer_results: List[RecognizerResult],
                                   nlp_artifacts: NlpArtifacts,
                                   context: Optional[List[str]] = None,
                                   ) -> List[RecognizerResult]:
-            results = copy.deepcopy(raw_results)
+            results = copy.deepcopy(raw_recognizer_results)
             results[0].score += 0.4
             results[1].score += 0.4
             results[0].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY] = True

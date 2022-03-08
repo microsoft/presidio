@@ -244,18 +244,27 @@ class AnalyzerEngine:
         :param recognizers: the list of recognizers
         :param context: list of context words
         """
-        results = copy.deepcopy(raw_results)
+        results = []
 
         # enhance score using context in recognizer level if implemented
         for recognizer in recognizers:
-            results = recognizer.enhance_using_context(
+            recognizer_results = [r for r in raw_results if r.recognition_metadata[
+                RecognizerResult.RECOGNIZER_NAME_KEY] == recognizer.name]
+            other_recognizer_results = [r for r in raw_results if r.recognition_metadata[
+               RecognizerResult.RECOGNIZER_NAME_KEY] != recognizer.name]
+
+            recognizer_results = recognizer.enhance_using_context(
                 text=text,
                 # each recognizer will get access to all recognizer results
                 # to allow related entities contex enhancement
-                raw_results=results,
+                raw_recognizer_results=recognizer_results,
+                other_raw_recognizer_results=other_recognizer_results,
                 nlp_artifacts=nlp_artifacts,
                 context=context,
             )
+
+            results.extend(recognizer_results)
+
         # Update results in case surrounding words or external context are relevant to
         # the context words.
         results = self.context_aware_enhancer.enhance_using_context(

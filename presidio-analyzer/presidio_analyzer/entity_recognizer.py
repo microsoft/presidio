@@ -83,7 +83,8 @@ class EntityRecognizer:
     def enhance_using_context(
         self,
         text: str,
-        raw_results: List[RecognizerResult],
+        raw_recognizer_results: List[RecognizerResult],
+        other_raw_recognizer_results: List[RecognizerResult],
         nlp_artifacts: NlpArtifacts,
         context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
@@ -97,14 +98,16 @@ class EntityRecognizer:
         result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
 
         :param text: The actual text that was analyzed
-        :param raw_results: Recognizer results which didn't take
-                            context into consideration
+        :param raw_recognizer_results: Recognizer results which didn't take
+            context into consideration
+        :param other_raw_recognizer_results: Other recognizer results which didn't take
+            context into consideration to allow related entity context enhancement
         :param nlp_artifacts: The nlp artifacts contains elements
                               such as lemmatized tokens for better
                               accuracy of the context enhancement process
         :param context: list of context words
         """
-        return raw_results
+        return raw_recognizer_results
 
     def get_supported_entities(self) -> List[str]:
         """
