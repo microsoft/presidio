@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 from typing import List, Optional
@@ -8,7 +9,7 @@ from presidio_analyzer import (
     EntityRecognizer,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
 from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
     LemmaContextAwareEnhancer,
@@ -204,25 +205,8 @@ class AnalyzerEngine:
                 self.__add_recognizer_name_if_not_exists(current_results, recognizer)
                 results.extend(current_results)
 
-        # enhance score using context in recognizer level if implemented
-        for recognizer in recognizers:
-            results = recognizer.enhance_using_context(
-                text=text,
-                # each recognizer will get access to all recognizer results
-                # to allow related entities contex enhancement
-                raw_results=results,
-                nlp_artifacts=nlp_artifacts,
-                context=context,
-            )
-
-        # Update results in case surrounding words or external context are relevant to
-        # the context words.
-        results = self.context_aware_enhancer.enhance_using_context(
-            text=text,
-            raw_results=results,
-            nlp_artifacts=nlp_artifacts,
-            recognizers=recognizers,
-            context=context,
+        results = self._enhance_using_context(
+            text, results, nlp_artifacts, recognizers, context
         )
 
         if self.log_decision_process:
@@ -237,6 +221,50 @@ class AnalyzerEngine:
 
         if not return_decision_process:
             results = self.__remove_decision_process(results)
+
+        return results
+
+    def _enhance_using_context(
+        self,
+        text: str,
+        raw_results: List[RecognizerResult],
+        nlp_artifacts: NlpArtifacts,
+        recognizers: List[EntityRecognizer],
+        context: Optional[List[str]] = None,
+    ) -> List[RecognizerResult]:
+        """
+        Enhance confidence score using context words.
+
+        :param text: The actual text that was analyzed
+        :param raw_results: Recognizer results which didn't take
+                            context into consideration
+        :param nlp_artifacts: The nlp artifacts contains elements
+                              such as lemmatized tokens for better
+                              accuracy of the context enhancement process
+        :param recognizers: the list of recognizers
+        :param context: list of context words
+        """
+        results = copy.deepcopy(raw_results)
+
+        # enhance score using context in recognizer level if implemented
+        for recognizer in recognizers:
+            results = recognizer.enhance_using_context(
+                text=text,
+                # each recognizer will get access to all recognizer results
+                # to allow related entities contex enhancement
+                raw_results=results,
+                nlp_artifacts=nlp_artifacts,
+                context=context,
+            )
+        # Update results in case surrounding words or external context are relevant to
+        # the context words.
+        results = self.context_aware_enhancer.enhance_using_context(
+            text=text,
+            raw_results=results,
+            nlp_artifacts=nlp_artifacts,
+            recognizers=recognizers,
+            context=context,
+        )
 
         return results
 
