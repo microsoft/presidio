@@ -1,4 +1,3 @@
-import copy
 import json
 import logging
 from typing import List, Optional
@@ -246,13 +245,21 @@ class AnalyzerEngine:
         """
         results = []
 
-        # enhance score using context in recognizer level if implemented
         for recognizer in recognizers:
-            recognizer_results = [r for r in raw_results if r.recognition_metadata[
-                RecognizerResult.RECOGNIZER_NAME_KEY] == recognizer.name]
-            other_recognizer_results = [r for r in raw_results if r.recognition_metadata[
-               RecognizerResult.RECOGNIZER_NAME_KEY] != recognizer.name]
+            recognizer_results = [
+                r
+                for r in raw_results
+                if r.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                == recognizer.name
+            ]
+            other_recognizer_results = [
+                r
+                for r in raw_results
+                if r.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                != recognizer.name
+            ]
 
+            # enhance score using context in recognizer level if implemented
             recognizer_results = recognizer.enhance_using_context(
                 text=text,
                 # each recognizer will get access to all recognizer results
