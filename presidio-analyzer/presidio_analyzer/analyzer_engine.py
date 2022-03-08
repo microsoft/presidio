@@ -8,7 +8,7 @@ from presidio_analyzer import (
     EntityRecognizer,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
 from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
     LemmaContextAwareEnhancer,
@@ -199,17 +199,78 @@ class AnalyzerEngine:
                 text=text, entities=entities, nlp_artifacts=nlp_artifacts
             )
             if current_results:
-                # ensure recognizer name exists in recognition metadata inside
-                # all results
+                # add recognizer name to recognition metadata inside results
+                # if not exists
                 self.__add_recognizer_name_if_not_exists(current_results, recognizer)
-
                 results.extend(current_results)
+
+        results = self._enhance_using_context(
+            text, results, nlp_artifacts, recognizers, context
+        )
 
         if self.log_decision_process:
             self.app_tracer.trace(
                 correlation_id,
                 json.dumps([str(result.to_dict()) for result in results]),
             )
+
+        # Remove duplicates or low score results
+        results = EntityRecognizer.remove_duplicates(results)
+        results = self.__remove_low_scores(results, score_threshold)
+
+        if not return_decision_process:
+            results = self.__remove_decision_process(results)
+
+        return results
+
+    def _enhance_using_context(
+        self,
+        text: str,
+        raw_results: List[RecognizerResult],
+        nlp_artifacts: NlpArtifacts,
+        recognizers: List[EntityRecognizer],
+        context: Optional[List[str]] = None,
+    ) -> List[RecognizerResult]:
+        """
+        Enhance confidence score using context words.
+
+        :param text: The actual text that was analyzed
+        :param raw_results: Recognizer results which didn't take
+                            context into consideration
+        :param nlp_artifacts: The nlp artifacts contains elements
+                              such as lemmatized tokens for better
+                              accuracy of the context enhancement process
+        :param recognizers: the list of recognizers
+        :param context: list of context words
+        """
+        results = []
+
+        for recognizer in recognizers:
+            recognizer_results = [
+                r
+                for r in raw_results
+                if r.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                == recognizer.name
+            ]
+            other_recognizer_results = [
+                r
+                for r in raw_results
+                if r.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                != recognizer.name
+            ]
+
+            # enhance score using context in recognizer level if implemented
+            recognizer_results = recognizer.enhance_using_context(
+                text=text,
+                # each recognizer will get access to all recognizer results
+                # to allow related entities contex enhancement
+                raw_recognizer_results=recognizer_results,
+                other_raw_recognizer_results=other_recognizer_results,
+                nlp_artifacts=nlp_artifacts,
+                context=context,
+            )
+
+            results.extend(recognizer_results)
 
         # Update results in case surrounding words or external context are relevant to
         # the context words.
@@ -220,13 +281,6 @@ class AnalyzerEngine:
             recognizers=recognizers,
             context=context,
         )
-
-        # Remove duplicates or low score results
-        results = EntityRecognizer.remove_duplicates(results)
-        results = self.__remove_low_scores(results, score_threshold)
-
-        if not return_decision_process:
-            results = self.__remove_decision_process(results)
 
         return results
 

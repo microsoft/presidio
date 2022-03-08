@@ -15,6 +15,10 @@ class EntityRecognizer:
     EntityRecognizer is an abstract class to be inherited by
     Recognizers which hold the logic for recognizing specific PII entities.
 
+    EntityRecognizer exposes a method called enhance_using_context which
+    can be overridden in case a custom context aware enhancement is needed
+    in derived class of a recognizer.
+
     :param supported_entities: the entities supported by this recognizer
     (for example, phone number, address, etc.)
     :param supported_language: the language supported by this recognizer.
@@ -75,6 +79,35 @@ class EntityRecognizer:
         :return: List of results detected by this recognizer.
         """
         return None
+
+    def enhance_using_context(
+        self,
+        text: str,
+        raw_recognizer_results: List[RecognizerResult],
+        other_raw_recognizer_results: List[RecognizerResult],
+        nlp_artifacts: NlpArtifacts,
+        context: Optional[List[str]] = None,
+    ) -> List[RecognizerResult]:
+        """Enhance confidence score using context of the entity.
+
+        Override this method in derived class in case a custom logic
+        is needed, otherwise return value will be equal to
+        raw_results.
+
+        in case a result score is boosted, derived class need to update
+        result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
+
+        :param text: The actual text that was analyzed
+        :param raw_recognizer_results: This recognizer's results, to be updated
+        based on recognizer specific context.
+        :param other_raw_recognizer_results: Other recognizer results matched in
+        the given text to allow related entity context enhancement
+        :param nlp_artifacts: The nlp artifacts contains elements
+                              such as lemmatized tokens for better
+                              accuracy of the context enhancement process
+        :param context: list of context words
+        """
+        return raw_recognizer_results
 
     def get_supported_entities(self) -> List[str]:
         """
