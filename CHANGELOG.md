@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2.2.27] - 08.03.2022
+### Changed
+
+#### Analyzer
+* Improved context mechanisms to support recognizer level context enhacenement and cross-entity context support
+
+## [2.2.26] - 23.02.2022
+### Changed
+
+#### Analyzer
+Bug fix in context support
 
 ## [2.2.25] - 21.02.2022
 ### Changed
@@ -107,7 +117,9 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.25...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.26...HEAD
+[2.2.27]: https://github.com/microsoft/presidio/compare/2.2.26...2.2.27
+[2.2.26]: https://github.com/microsoft/presidio/compare/2.2.25...2.2.26
 [2.2.25]: https://github.com/microsoft/presidio/compare/2.2.24...2.2.25
 [2.2.24]: https://github.com/microsoft/presidio/compare/2.2.23...2.2.24
 [2.2.23]: https://github.com/microsoft/presidio/compare/2.2.2...2.2.23
