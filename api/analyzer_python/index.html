@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/analyzer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.1">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.e8d9bf0c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2d9f7617.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -38,8 +38,9 @@
     
       
         
+        
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
@@ -836,6 +837,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.enhance_using_context" class="md-nav__link">
+    enhance_using_context()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.from_dict" class="md-nav__link">
     from_dict()
   </a>
@@ -1334,6 +1342,21 @@
   
   
     <li class="md-nav__item">
+      <a href="../../community/" class="md-nav__link">
+        Community
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../faq/" class="md-nav__link">
         FAQ
       </a>
@@ -1488,6 +1511,13 @@
         <li class="md-nav__item">
   <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.analyze" class="md-nav__link">
     analyze()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.enhance_using_context" class="md-nav__link">
+    enhance_using_context()
   </a>
   
 </li>
@@ -2184,13 +2214,78 @@
                 <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="o">=</span><span class="n">nlp_artifacts</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">current_results</span><span class="p">:</span>
+                <span class="c1"># add recognizer name to recognition metadata inside results</span>
+                <span class="c1"># if not exists</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__add_recognizer_name_if_not_exists</span><span class="p">(</span><span class="n">current_results</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">)</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_results</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enhance_using_context</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">,</span> <span class="n">recognizers</span><span class="p">,</span> <span class="n">context</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_decision_process</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">app_tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
                 <span class="n">correlation_id</span><span class="p">,</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]),</span>
             <span class="p">)</span>
+
+        <span class="c1"># Remove duplicates or low score results</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_low_scores</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">score_threshold</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">return_decision_process</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_decision_process</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">_enhance_using_context</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">raw_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+        <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span><span class="p">,</span>
+        <span class="n">recognizers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">],</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enhance confidence score using context words.</span>
+
+<span class="sd">        :param text: The actual text that was analyzed</span>
+<span class="sd">        :param raw_results: Recognizer results which didn&#39;t take</span>
+<span class="sd">                            context into consideration</span>
+<span class="sd">        :param nlp_artifacts: The nlp artifacts contains elements</span>
+<span class="sd">                              such as lemmatized tokens for better</span>
+<span class="sd">                              accuracy of the context enhancement process</span>
+<span class="sd">        :param recognizers: the list of recognizers</span>
+<span class="sd">        :param context: list of context words</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">recognizer</span> <span class="ow">in</span> <span class="n">recognizers</span><span class="p">:</span>
+            <span class="n">recognizer_results</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">r</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">raw_results</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span><span class="p">]</span>
+                <span class="o">==</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">]</span>
+            <span class="n">other_recognizer_results</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">r</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">raw_results</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span><span class="p">]</span>
+                <span class="o">!=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">]</span>
+
+            <span class="c1"># enhance score using context in recognizer level if implemented</span>
+            <span class="n">recognizer_results</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">enhance_using_context</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+                <span class="c1"># each recognizer will get access to all recognizer results</span>
+                <span class="c1"># to allow related entities contex enhancement</span>
+                <span class="n">raw_recognizer_results</span><span class="o">=</span><span class="n">recognizer_results</span><span class="p">,</span>
+                <span class="n">other_raw_recognizer_results</span><span class="o">=</span><span class="n">other_recognizer_results</span><span class="p">,</span>
+                <span class="n">nlp_artifacts</span><span class="o">=</span><span class="n">nlp_artifacts</span><span class="p">,</span>
+                <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">recognizer_results</span><span class="p">)</span>
 
         <span class="c1"># Update results in case surrounding words or external context are relevant to</span>
         <span class="c1"># the context words.</span>
@@ -2201,13 +2296,6 @@
             <span class="n">recognizers</span><span class="o">=</span><span class="n">recognizers</span><span class="p">,</span>
             <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="c1"># Remove duplicates or low score results</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_low_scores</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">score_threshold</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">return_decision_process</span><span class="p">:</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_decision_process</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">results</span>
 
@@ -2226,6 +2314,26 @@
 
         <span class="n">new_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;=</span> <span class="n">score_threshold</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">new_results</span>
+
+    <span class="k">def</span> <span class="nf">__add_recognizer_name_if_not_exists</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">recognizer</span><span class="p">:</span> <span class="n">EntityRecognizer</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ensure recognition metadata with recognizer name existence.</span>
+
+<span class="sd">        Ensure recognizer result list contains recognizer name inside recognition</span>
+<span class="sd">        metadata dictionary, and if not create it. recognizer_name is needed</span>
+<span class="sd">        for context aware enhancement</span>
+
+<span class="sd">        :param results: List of RecognizerResult</span>
+<span class="sd">        :param recognizer: Entity recognizer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span>
+                    <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">name</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__remove_decision_process</span><span class="p">(</span>
@@ -2437,23 +2545,20 @@ print(results)
             <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="o">=</span><span class="n">nlp_artifacts</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">current_results</span><span class="p">:</span>
+            <span class="c1"># add recognizer name to recognition metadata inside results</span>
+            <span class="c1"># if not exists</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__add_recognizer_name_if_not_exists</span><span class="p">(</span><span class="n">current_results</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">)</span>
             <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_results</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enhance_using_context</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">,</span> <span class="n">recognizers</span><span class="p">,</span> <span class="n">context</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_decision_process</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app_tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
             <span class="n">correlation_id</span><span class="p">,</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]),</span>
         <span class="p">)</span>
-
-    <span class="c1"># Update results in case surrounding words or external context are relevant to</span>
-    <span class="c1"># the context words.</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_aware_enhancer</span><span class="o">.</span><span class="n">enhance_using_context</span><span class="p">(</span>
-        <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
-        <span class="n">raw_results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
-        <span class="n">nlp_artifacts</span><span class="o">=</span><span class="n">nlp_artifacts</span><span class="p">,</span>
-        <span class="n">recognizers</span><span class="o">=</span><span class="n">recognizers</span><span class="p">,</span>
-        <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
-    <span class="p">)</span>
 
     <span class="c1"># Remove duplicates or low score results</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
@@ -3231,6 +3336,9 @@ print(results)
       <p>A class representing an abstract PII entity recognizer.</p>
 <p>EntityRecognizer is an abstract class to be inherited by
 Recognizers which hold the logic for recognizing specific PII entities.</p>
+<p>EntityRecognizer exposes a method called enhance_using_context which
+can be overridden in case a custom context aware enhancement is needed
+in derived class of a recognizer.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -3283,6 +3391,10 @@ Recognizers which hold the logic for recognizing specific PII entities.</p>
 
 <span class="sd">    EntityRecognizer is an abstract class to be inherited by</span>
 <span class="sd">    Recognizers which hold the logic for recognizing specific PII entities.</span>
+
+<span class="sd">    EntityRecognizer exposes a method called enhance_using_context which</span>
+<span class="sd">    can be overridden in case a custom context aware enhancement is needed</span>
+<span class="sd">    in derived class of a recognizer.</span>
 
 <span class="sd">    :param supported_entities: the entities supported by this recognizer</span>
 <span class="sd">    (for example, phone number, address, etc.)</span>
@@ -3344,6 +3456,35 @@ Recognizers which hold the logic for recognizing specific PII entities.</p>
 <span class="sd">        :return: List of results detected by this recognizer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">enhance_using_context</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">raw_recognizer_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+        <span class="n">other_raw_recognizer_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+        <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Enhance confidence score using context of the entity.</span>
+
+<span class="sd">        Override this method in derived class in case a custom logic</span>
+<span class="sd">        is needed, otherwise return value will be equal to</span>
+<span class="sd">        raw_results.</span>
+
+<span class="sd">        in case a result score is boosted, derived class need to update</span>
+<span class="sd">        result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</span>
+
+<span class="sd">        :param text: The actual text that was analyzed</span>
+<span class="sd">        :param raw_recognizer_results: This recognizer&#39;s results, to be updated</span>
+<span class="sd">        based on recognizer specific context.</span>
+<span class="sd">        :param other_raw_recognizer_results: Other recognizer results matched in</span>
+<span class="sd">        the given text to allow related entity context enhancement</span>
+<span class="sd">        :param nlp_artifacts: The nlp artifacts contains elements</span>
+<span class="sd">                              such as lemmatized tokens for better</span>
+<span class="sd">                              accuracy of the context enhancement process</span>
+<span class="sd">        :param context: list of context words</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">raw_recognizer_results</span>
 
     <span class="k">def</span> <span class="nf">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -3519,6 +3660,106 @@ Recognizers which hold the logic for recognizing specific PII entities.</p>
 <span class="sd">    :return: List of results detected by this recognizer.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.enhance_using_context" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">enhance_using_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">raw_recognizer_results</span><span class="p">,</span> <span class="n">other_raw_recognizer_results</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Enhance confidence score using context of the entity.</p>
+<p>Override this method in derived class in case a custom logic
+is needed, otherwise return value will be equal to
+raw_results.</p>
+<p>in case a result score is boosted, derived class need to update
+result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>text</code></td>
+        <td><code>str</code></td>
+        <td><p>The actual text that was analyzed</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>raw_recognizer_results</code></td>
+        <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
+        <td><p>This recognizer's results, to be updated based on recognizer specific context.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>other_raw_recognizer_results</code></td>
+        <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
+        <td><p>Other recognizer results matched in the given text to allow related entity context enhancement</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>nlp_artifacts</code></td>
+        <td><code>NlpArtifacts</code></td>
+        <td><p>The nlp artifacts contains elements such as lemmatized tokens for better accuracy of the context enhancement process</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>context</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>list of context words</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">enhance_using_context</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">raw_recognizer_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+    <span class="n">other_raw_recognizer_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span>
+    <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Enhance confidence score using context of the entity.</span>
+
+<span class="sd">    Override this method in derived class in case a custom logic</span>
+<span class="sd">    is needed, otherwise return value will be equal to</span>
+<span class="sd">    raw_results.</span>
+
+<span class="sd">    in case a result score is boosted, derived class need to update</span>
+<span class="sd">    result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</span>
+
+<span class="sd">    :param text: The actual text that was analyzed</span>
+<span class="sd">    :param raw_recognizer_results: This recognizer&#39;s results, to be updated</span>
+<span class="sd">    based on recognizer specific context.</span>
+<span class="sd">    :param other_raw_recognizer_results: Other recognizer results matched in</span>
+<span class="sd">    the given text to allow related entity context enhancement</span>
+<span class="sd">    :param nlp_artifacts: The nlp artifacts contains elements</span>
+<span class="sd">                          such as lemmatized tokens for better</span>
+<span class="sd">                          accuracy of the context enhancement process</span>
+<span class="sd">    :param context: list of context words</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">raw_recognizer_results</span>
 </code></pre></div>
         </details>
     </div>
@@ -5920,8 +6161,12 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 <span class="sd">    and recognizer name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="sd">&quot;&quot;&quot;this holds the key of recognizer name inside recognition_metadata dictionary&quot;&quot;&quot;</span>
     <span class="n">RECOGNIZER_NAME_KEY</span> <span class="o">=</span> <span class="s2">&quot;recognizer_name&quot;</span>
-    <span class="sd">&quot;&quot;&quot;this holds the key of recognizer name inside recognition_metadata dictinary&quot;&quot;&quot;</span>
+
+    <span class="sd">&quot;&quot;&quot;this holds a key of a flag inside recognition_metadata dictionary</span>
+<span class="sd">    which is set to true if the result enhanced by context&quot;&quot;&quot;</span>
+    <span class="n">IS_SCORE_ENHANCED_BY_CONTEXT_KEY</span> <span class="o">=</span> <span class="s2">&quot;is_score_enhanced_by_context&quot;</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-analyzer&quot;</span><span class="p">)</span>
 
@@ -6093,6 +6338,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
+
   <div class="doc doc-object doc-attribute">
 
 
@@ -6105,7 +6351,8 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
     <div class="doc doc-contents ">
 
-      <p>this holds the key of recognizer name inside recognition_metadata dictinary</p>
+      <p>this holds a key of a flag inside recognition_metadata dictionary
+which is set to true if the result enhanced by context</p>
     </div>
 
   </div>
@@ -7222,7 +7469,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8aa65030.min.js"></script>
+      <script src="../../assets/javascripts/bundle.467223ff.min.js"></script>
       
     
   </body>
