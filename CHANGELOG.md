@@ -117,7 +117,7 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.26...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.27...HEAD
 [2.2.27]: https://github.com/microsoft/presidio/compare/2.2.26...2.2.27
 [2.2.26]: https://github.com/microsoft/presidio/compare/2.2.25...2.2.26
 [2.2.25]: https://github.com/microsoft/presidio/compare/2.2.24...2.2.25
