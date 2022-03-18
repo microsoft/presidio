@@ -26,6 +26,7 @@ class NlpArtifacts:
         self.lemmas = lemmas
         self.tokens_indices = tokens_indices
         self.keywords = self.set_keywords(nlp_engine, lemmas, language)
+        self.nlp_engine = nlp_engine
 
     @staticmethod
     def set_keywords(
