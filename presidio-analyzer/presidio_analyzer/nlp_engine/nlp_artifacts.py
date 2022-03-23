@@ -26,6 +26,7 @@ class NlpArtifacts:
         self.lemmas = lemmas
         self.tokens_indices = tokens_indices
         self.keywords = self.set_keywords(nlp_engine, lemmas, language)
+        self.nlp_engine = nlp_engine
 
     @staticmethod
     def set_keywords(
@@ -60,6 +61,9 @@ class NlpArtifacts:
         """Convert nlp artifacts to json."""
 
         return_dict = self.__dict__.copy()
+
+        # Ignore NLP engine as it's not serializable currently
+        del return_dict['nlp_engine']
 
         # Converting spaCy tokens and spans to string as they are not serializable
         if "tokens" in return_dict:
