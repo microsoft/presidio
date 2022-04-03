@@ -217,6 +217,9 @@ class PatternRecognizer(LocalRecognizer):
                 if pattern_result.score > EntityRecognizer.MIN_SCORE:
                     results.append(pattern_result)
 
+                # Update analysis explanation score following validation or invalidation
+                description.score = pattern_result.score
+
         results = EntityRecognizer.remove_duplicates(results)
         return results
 
