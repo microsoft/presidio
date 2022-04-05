@@ -1,10 +1,13 @@
+from typing import List
+
 import pytest
+
+from presidio_analyzer import Pattern, RecognizerResult
+from presidio_analyzer import PatternRecognizer
 
 # https://www.datatrans.ch/showcase/test-cc-numbers
 # https://www.freeformatter.com/credit-card-number-generator-validator.html
 from tests import assert_result
-from presidio_analyzer import Pattern
-from presidio_analyzer import PatternRecognizer
 
 
 class MockRecognizer(PatternRecognizer):
@@ -105,3 +108,22 @@ def test_when_taken_from_dict_then_returns_instance():
     assert pattern_recognizer.patterns[1].name == "p2"
     assert pattern_recognizer.patterns[1].score == 0.8
     assert pattern_recognizer.patterns[1].regex == "([0-9]{1,9})"
+
+
+def test_when_validation_occurs_then_analysis_explanation_is_updated():
+
+    patterns = [Pattern(name="test_pattern", regex="([0-9]{1,9})", score=0.5)]
+    mock_recognizer = MockRecognizer(
+        entity="TEST",
+        patterns=patterns,
+        deny_list=None,
+        name="MockRecognizer",
+        context=None,
+    )
+
+    results: List[RecognizerResult] = mock_recognizer.analyze(
+        text="Testing 1 2 3", entities=["TEST"]
+    )
+
+    assert results[0].analysis_explanation.original_score == 0.5
+    assert results[0].analysis_explanation.score == 1
