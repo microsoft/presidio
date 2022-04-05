@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from presidio_analyzer import (
@@ -139,3 +141,50 @@ def test_when_remove_pattern_recognizer_then_item_removed():
 
     # Expects zero custom recognizers
     assert len(recognizer_registry.recognizers) == 0
+
+
+def test_add_recognizer_from_dict():
+    registry = RecognizerRegistry()
+    recognizer = {
+        "name": "Zip code Recognizer",
+        "supported_language": "de",
+        "patterns": [
+            {
+                "name": "zip code (weak)",
+                "regex": "(\\b\\d{5}(?:\\-\\d{4})?\\b)",
+                "score": 0.01,
+            }
+        ],
+        "context": ["zip", "code"],
+        "supported_entity": "ZIP",
+    }
+    registry.add_pattern_recognizer_from_dict(recognizer)
+
+    assert len(registry.recognizers) == 1
+    assert registry.recognizers[0].name == "Zip code Recognizer"
+
+
+def test_recognizer_registry_add_from_yaml_file():
+    this_path = Path(__file__).parent.absolute()
+    test_yaml = Path(this_path, "conf/recognizers.yaml")
+
+    registry = RecognizerRegistry()
+    registry.add_recognizers_from_yaml(test_yaml)
+
+    assert len(registry.recognizers) == 2
+    zip_recogizer: PatternRecognizer = registry.get_recognizers(
+        language="de", entities=["ZIP"]
+    )[0]
+    assert zip_recogizer.name == "Zip code Recognizer"
+    assert zip_recogizer.supported_language == "de"
+    assert zip_recogizer.supported_entities == ["ZIP"]
+    assert len(zip_recogizer.patterns) == 1
+
+    titles_recogizer: PatternRecognizer = registry.get_recognizers(
+        language="en", entities=["TITLE"]
+    )[0]
+    assert titles_recogizer.name == "Titles recognizer"
+    assert titles_recogizer.supported_language == "en"
+    assert titles_recogizer.supported_entities == ["TITLE"]
+    assert len(titles_recogizer.patterns) == 1  # deny-list turns into a pattern
+    assert len(titles_recogizer.deny_list) == 6
