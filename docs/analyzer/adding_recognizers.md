@@ -42,7 +42,7 @@ Calling the recognizer itself:
 
 <!--pytest-codeblocks:cont-->
 ```python
-titles_recognizer.analyze(text="Mr. Schmidt",entities="TITLE")
+titles_recognizer.analyze(text="Mr. Schmidt", entities="TITLE")
 ```
 
 Adding it to the list of recognizers:
@@ -197,6 +197,71 @@ These recognizers, in JSON form, are added to the `/analyze` request and are onl
 In both examples, the `/analyze` request is extended with a list of `ad_hoc_recognizers`, which could be either `patterns`, `deny_list` or both.
 
 Additional examples can be found in the [OpenAPI spec](../api-docs/api-docs.html).
+
+### Reading pattern recognizers from YAML
+
+Recognizers can be loaded from a YAML file, which allows users to add recognition logic without writing code.
+Here's an example YAML file:
+
+``` yaml
+recognizers:
+  -
+    name: "Zip code Recognizer"
+    supported_language: "de"
+    patterns:
+      -
+         name: "zip code (weak)"
+         regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+         score: 0.01
+    context:
+     - zip
+     - code
+    supported_entity: "ZIP"
+  -
+    name: "Titles recognizer"
+    supported_language: "en"
+    supported_entity: "TITLE"
+    deny_list:
+      - Mr.
+      - Mrs.
+      - Ms.
+      - Miss
+      - Dr.
+      - Prof.
+```
+
+Once the YAML file is created, it can be loaded into the `RecognizerRegistry` instance.
+
+This example creates a `RecognizerRegistry` holding only the recognizers in the YAML file:
+
+ <!--pytest-codeblocks:skip-->
+``` python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+yaml_file = "recognizers.yaml"
+registry = RecognizerRegistry()
+registry.add_recognizers_from_yaml(yaml_file)
+
+analyzer = AnalyzerEngine(registry=registry)
+# analyzer.analyze(...)
+```
+
+This example adds the new recognizers to the predefined recognizers in Presidio:
+
+ <!--pytest-codeblocks:skip-->
+``` python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+yaml_file = "recognizers.yaml"
+registry = RecognizerRegistry()
+registry.load_predefined_recognizers()
+
+registry.add_recognizers_from_yaml(yaml_file)
+
+analyzer = AnalyzerEngine()
+# analyzer.analyze(...)
+```
+
 
 Further reading:
 
