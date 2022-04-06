@@ -2,8 +2,8 @@
 
 This tutorials covers different customization use cases to:
 
-1. Adapt Presidio to detect new types of PII entities
-2. Adapt Presidio to detect PII entities in a new language
+1. Adapt Presidio to detect new types of PII entities.
+2. Adapt Presidio to detect PII entities in a new language.
 3. Embed new types of detection modules into Presidio, to improve the coverage of the service.
 4. Operate on identified entities: simple de-identification, custom operators and encryption.
 
