@@ -1,4 +1,4 @@
-# Example 5: Supporting new languages
+# Example 5: Supporting new models and languages
 
 Two main parts in Presidio handle the text, and should be adapted if a new language is required:
 
@@ -53,4 +53,4 @@ print(results_english)
 
 Some languages are not supported by spaCy/Stanza, or have very limited support in those. In this case, other frameworks could be leveraged. (see [example 4](04_external_services.md) for more information).
 
-Since Presidio requires a spaCy model to be passed, we propose to use a simple spaCy pipeline such as `en_core_web_sm` as the NLP engine's model (even if Presidio is not used for English), and an external framework/service as the Named Entity Recognition (NER) model.
+Since Presidio requires a spaCy model to be passed, we propose to use a simple spaCy pipeline such as `en_core_web_sm` as the NLP engine's model, and a recognizer calling an external framework/service as the Named Entity Recognition (NER) model.

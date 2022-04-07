@@ -15,8 +15,8 @@ nav:
     - Deny-list recognizers: tutorial/01_deny_list.md
     - Regex recognizers: tutorial/02_regex.md
     - Rule-based recognizers: tutorial/03_rule_based.md
-    - External models/services: tutorial/04_external_services.md
-    - Additional languages: tutorial/05_languages.md
+    - Additional models/languages: tutorial/05_languages.md
+    - External services: tutorial/04_external_services.md
     - Context enhancement: tutorial/06_context.md
     - Decision process: tutorial/07_decision_process.md
     - No-code recognizers: tutorial/08_no_code.md
