@@ -8,23 +8,8 @@ edit_uri: ""
 
 nav:
   - Home: index.md
-  - Getting Started: getting_started.md
-  - Installation: installation.md
-  - Handling text:
-    - Home: text_anonymization.md
-    - Presidio Analyzer:
-      - Home: analyzer/index.md
-      - Developing PII recognizers:
-        - Tutorial : analyzer/adding_recognizers.md
-        - Best practices in developing recognizers : analyzer/developing_recognizers.md
-      - Multi-language support: analyzer/languages.md
-      - Customizing the NLP model: analyzer/customizing_nlp_models.md
-      - Tracing the decision process: analyzer/decision_process.md
-    - Presidio Anonymizer:
-      - Home: anonymizer/index.md
-      - Developing PII operators: anonymizer/adding_operators.md
-  - Handling images: image-redactor/index.md
-  - Tutorial: 
+  - Quickstart: getting_started.md
+  - Step by step tutorial: 
     - Home: tutorial/index.md
     - Getting started: tutorial/00_getting_started.md
     - Deny-list recognizers: tutorial/01_deny_list.md
@@ -39,19 +24,34 @@ nav:
     - Simple anonymization: tutorial/10_simple_anonymization.md
     - Custom anonymization: tutorial/11_custom_anonymization.md
     - Encryption/Decryption: tutorial/12_encryption.md
-
+  - Docs:
+    - Installation: installation.md
+    - Handling text:
+      - Home: text_anonymization.md
+      - Presidio Analyzer:
+        - Home: analyzer/index.md
+        - Developing PII recognizers:
+          - Tutorial : analyzer/adding_recognizers.md
+          - Best practices in developing recognizers : analyzer/developing_recognizers.md
+        - Multi-language support: analyzer/languages.md
+        - Customizing the NLP model: analyzer/customizing_nlp_models.md
+        - Tracing the decision process: analyzer/decision_process.md
+      - Presidio Anonymizer:
+        - Home: anonymizer/index.md
+        - Developing PII operators: anonymizer/adding_operators.md
+    - Handling images: image-redactor/index.md
+    - Supported entities: supported_entities.md
+    - Development and design:
+      - Design: design.md
+      - Setting up a development environment: development.md
+      - Build and release process: build_release.md
+      - Changes from V1 to V2: presidio_V2.md
+      - Python API reference:
+        - Presidio Analyzer Python API: api/analyzer_python.md
+        - Presidio Anonymizer Python API: api/anonymizer_python.md
+        - Presidio Image Redactor Python API: api/image_redactor_python.md
+      - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
   - Samples: samples/index.md
-  - Supported entities: supported_entities.md
-  - Development and design:
-    - Design: design.md
-    - Setting up a development environment: development.md
-    - Build and release process: build_release.md
-    - Changes from V1 to V2: presidio_V2.md
-    - Python API reference:
-      - Presidio Analyzer Python API: api/analyzer_python.md
-      - Presidio Anonymizer Python API: api/anonymizer_python.md
-      - Presidio Image Redactor Python API: api/image_redactor_python.md
-    - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
   - Community: community.md
   - FAQ: faq.md
 theme:
