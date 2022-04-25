@@ -188,3 +188,19 @@ def test_recognizer_registry_add_from_yaml_file():
     assert titles_recogizer.supported_entities == ["TITLE"]
     assert len(titles_recogizer.patterns) == 1  # deny-list turns into a pattern
     assert len(titles_recogizer.deny_list) == 6
+
+
+def test_recognizer_registry_exception_missing_yaml_file():
+    test_yaml = Path("missing.yaml")
+    with pytest.raises(IOError):
+        registry = RecognizerRegistry()
+        registry.add_recognizers_from_yaml(test_yaml)
+
+
+def test_recognizer_registry_exception_erroneous_yaml():
+    this_path = Path(__file__).parent.absolute()
+    test_yaml = Path(this_path, "conf/recognizers_error.yaml")
+
+    with pytest.raises(TypeError):
+        registry = RecognizerRegistry()
+        registry.add_recognizers_from_yaml(test_yaml)

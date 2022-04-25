@@ -229,22 +229,8 @@ class RecognizerRegistry:
         r"""
         Read YAML file and load recognizers into the recognizer registry.
 
-        Example YAML file:
-        ---
-        recognizers:
-          - name: Zip code Recognizer
-            supported_language: de
-            patterns:
-              - name: zip code (weak)
-                regex: '(\b\d{5}(?:\-\d{4})?\b)\'
-                score: 0.01
-            context:
-              - zip
-              - code
-            supported_entity: ZIP
-
-
-        :param yml_path: Path to YAML file
+        See example yaml file here:
+        https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml
 
         :example:
         >>> yaml_file = "recognizers.yaml"
@@ -253,8 +239,18 @@ class RecognizerRegistry:
 
         """
 
-        with open(yml_path, "r") as stream:
-            yaml_recognizers = yaml.safe_load(stream)
+        try:
+            with open(yml_path, "r") as stream:
+                yaml_recognizers = yaml.safe_load(stream)
 
-        for yaml_recognizer in yaml_recognizers["recognizers"]:
-            self.add_pattern_recognizer_from_dict(yaml_recognizer)
+            for yaml_recognizer in yaml_recognizers["recognizers"]:
+                self.add_pattern_recognizer_from_dict(yaml_recognizer)
+        except IOError as io_error:
+            print(f"Error reading file {yml_path}")
+            raise io_error
+        except yaml.YAMLError as yaml_error:
+            print(f"Failed to parse file {yml_path}")
+            raise yaml_error
+        except TypeError as yaml_error:
+            print(f"Failed to parse file {yml_path}")
+            raise yaml_error

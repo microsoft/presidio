@@ -201,34 +201,7 @@ Additional examples can be found in the [OpenAPI spec](../api-docs/api-docs.html
 ### Reading pattern recognizers from YAML
 
 Recognizers can be loaded from a YAML file, which allows users to add recognition logic without writing code.
-Here's an example YAML file:
-
-``` yaml
-recognizers:
-  -
-    name: "Zip code Recognizer"
-    supported_language: "de"
-    patterns:
-      -
-         name: "zip code (weak)"
-         regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
-         score: 0.01
-    context:
-     - zip
-     - code
-    supported_entity: "ZIP"
-  -
-    name: "Titles recognizer"
-    supported_language: "en"
-    supported_entity: "TITLE"
-    deny_list:
-      - Mr.
-      - Mrs.
-      - Ms.
-      - Miss
-      - Dr.
-      - Prof.
-```
+An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml).
 
 Once the YAML file is created, it can be loaded into the `RecognizerRegistry` instance.
 
@@ -243,7 +216,7 @@ registry = RecognizerRegistry()
 registry.add_recognizers_from_yaml(yaml_file)
 
 analyzer = AnalyzerEngine(registry=registry)
-# analyzer.analyze(...)
+analyzer.analyze(text="Mr. and Mrs. Smith", language="en")
 ```
 
 This example adds the new recognizers to the predefined recognizers in Presidio:
@@ -259,9 +232,8 @@ registry.load_predefined_recognizers()
 registry.add_recognizers_from_yaml(yaml_file)
 
 analyzer = AnalyzerEngine()
-# analyzer.analyze(...)
+analyzer.analyze(text="Mr. and Mrs. Smith", language="en")
 ```
-
 
 Further reading:
 
