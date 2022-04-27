@@ -1,8 +1,11 @@
 import copy
 import logging
-from typing import Optional, List, Iterable, Union, Type
+from pathlib import Path
+from typing import Optional, List, Iterable, Union, Type, Dict
 
-from presidio_analyzer import EntityRecognizer
+import yaml
+
+from presidio_analyzer import EntityRecognizer, PatternRecognizer
 from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, StanzaNlpEngine
 from presidio_analyzer.predefined_recognizers import (
     CreditCardRecognizer,
@@ -206,3 +209,48 @@ class RecognizerRegistry:
             recognizer_name,
         )
         self.recognizers = new_recognizers
+
+    def add_pattern_recognizer_from_dict(self, recognizer_dict: Dict):
+        """
+        Load a pattern recognizer from a Dict into the recognizer registry.
+
+        :param recognizer_dict: Dict holding a serialization of an PatternRecognizer
+
+        :example:
+        >>> registry = RecognizerRegistry()
+        >>> recognizer = { "name": "Titles Recognizer", "supported_language": "de","supported_entity": "TITLE", "deny_list": ["Mr.","Mrs."]} # noqa: E501
+        >>> registry.add_pattern_recognizer_from_dict(recognizer)
+        """
+
+        recognizer = PatternRecognizer.from_dict(recognizer_dict)
+        self.add_recognizer(recognizer)
+
+    def add_recognizers_from_yaml(self, yml_path: Union[str, Path]):
+        r"""
+        Read YAML file and load recognizers into the recognizer registry.
+
+        See example yaml file here:
+        https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml
+
+        :example:
+        >>> yaml_file = "recognizers.yaml"
+        >>> registry = RecognizerRegistry()
+        >>> registry.add_recognizers_from_yaml(yaml_file)
+
+        """
+
+        try:
+            with open(yml_path, "r") as stream:
+                yaml_recognizers = yaml.safe_load(stream)
+
+            for yaml_recognizer in yaml_recognizers["recognizers"]:
+                self.add_pattern_recognizer_from_dict(yaml_recognizer)
+        except IOError as io_error:
+            print(f"Error reading file {yml_path}")
+            raise io_error
+        except yaml.YAMLError as yaml_error:
+            print(f"Failed to parse file {yml_path}")
+            raise yaml_error
+        except TypeError as yaml_error:
+            print(f"Failed to parse file {yml_path}")
+            raise yaml_error

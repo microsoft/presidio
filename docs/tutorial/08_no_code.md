@@ -7,34 +7,7 @@ No-code pattern recognizers can be helpful in two scenarios:
 
 Regular expression or deny-list based recognizers can be written in a YAML file, and added to the list of recognizers in Presidio.
 
-An example YAML file:
-
-``` yaml
-recognizers:
-  -
-    name: "Zip code Recognizer"
-    supported_language: "de"
-    patterns:
-      -
-         name: "zip code (weak)"
-         regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
-         score: 0.01
-    context:
-     - zip
-     - code
-    supported_entity: "ZIP"
-  -
-    name: "Titles recognizer"
-    supported_language: "en"
-    supported_entity: "TITLE"
-    deny_list:
-      - Mr.
-      - Mrs.
-      - Ms.
-      - Miss
-      - Dr.
-      - Prof.
-```
+An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml).
 
 For more information on the schema, see the `PatternRecognizer` definition on the [API Docs](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Analyzer)).
 
@@ -51,7 +24,7 @@ registry = RecognizerRegistry()
 registry.add_recognizers_from_yaml(yaml_file)
 
 analyzer = AnalyzerEngine(registry=registry)
-# analyzer.analyze(...)
+analyzer.analyze(text="Mr. and Mrs. Smith", language="en")
 ```
 
 This example adds the new recognizers to the predefined recognizers in Presidio:
