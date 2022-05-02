@@ -24,6 +24,8 @@ class PatternRecognizer(LocalRecognizer):
     :param deny_list: A list of words to detect,
     in case our recognizer uses a predefined list of words (deny list)
     :param context: list of context words
+    :param deny_list_score: confidence score for a term
+    identified using a deny-list
     """
 
     def __init__(
