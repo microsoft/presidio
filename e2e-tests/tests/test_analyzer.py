@@ -445,13 +445,13 @@ def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
             {
             "name": "Mr. Recognizer",
             "supported_language": "en",
-            "deny_list": ["Mr", "Mr.", "Mister"],
+            "deny_list": ["Mr.", "Mister"],
             "supported_entity":"MR_TITLE"
             },
             {
             "name": "Ms. Recognizer",
             "supported_language": "en",
-            "deny_list": ["Ms", "Ms.", "Miss", "Mrs", "Mrs."],
+            "deny_list": ["Ms.", "Miss", "Mrs."],
             "supported_entity":"MS_TITLE"
             }
         ]
