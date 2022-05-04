@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.28] - 04.05.2022
+### Changed
+#### Analyzer
+* Improved deny-list regex and customizability
+* Added documentation for existing spaCy models
+* Bugfix in analysis explanation scores
+
+#### Image redactor
+* PIL version updated to 9.0.1
+
+### Added
+#### Analyzer
+* Recognizers can be loaded from YAML
+
+
 ## [2.2.27] - 08.03.2022
 ### Changed
 
@@ -117,7 +132,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.27...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.28...HEAD
+[2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28
 [2.2.27]: https://github.com/microsoft/presidio/compare/2.2.26...2.2.27
 [2.2.26]: https://github.com/microsoft/presidio/compare/2.2.25...2.2.26
 [2.2.25]: https://github.com/microsoft/presidio/compare/2.2.24...2.2.25
