@@ -2,15 +2,19 @@ from typing import List
 
 import pytest
 
-from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import RecognizerResult, OperatorConfig
+from presidio_anonymizer.entities import (
+    InvalidParamException,
+    RecognizerResult,
+    OperatorConfig,
+)
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
 
 
 def test_given_valid_json_then_anonymizers_config_list_created_successfully():
     content = get_content()
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
-        content.get("anonymizers"))
+        content.get("anonymizers")
+    )
     assert len(anonymizers_config) == 2
     phone_number_anonymizer = anonymizers_config.get("PHONE_NUMBER")
     assert phone_number_anonymizer.params == {
@@ -51,9 +55,7 @@ def test_given_valid_json_then_analyzer_results_list_created_successfully():
     analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(content)
     assert len(analyzer_results) == len(content)
     for result_a in analyzer_results:
-        same_result_in_content = __find_element(
-            content, result_a.entity_type
-        )
+        same_result_in_content = __find_element(content, result_a.entity_type)
         assert same_result_in_content
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
@@ -64,9 +66,7 @@ def test_given_empty_analyzer_results_then_list_created_successfully():
     analyzer_results = AppEntitiesConvertor.analyzer_results_from_json([])
     assert len(analyzer_results) == len([])
     for result_a in analyzer_results:
-        same_result_in_content = __find_element(
-            [], result_a.entity_type
-        )
+        same_result_in_content = __find_element([], result_a.entity_type)
         assert same_result_in_content
         assert result_a.score == same_result_in_content.get("score")
         assert result_a.start == same_result_in_content.get("start")
@@ -78,16 +78,26 @@ def test_given_empty_analyzer_results_then_list_created_successfully():
     [
         ({"anonymizers": {}}, {}),
         ({}, {}),
-        ({"anonymizers": {"PHONE": {"type": "replace"}}},
-         {"PHONE": OperatorConfig("replace")}),
-        ({"anonymizers": {
-            "PHONE": {"type": "redact", "param": "param", "param_1": "param_1"}}},
-         {"PHONE": OperatorConfig("redact",
-                                  {"param": "param", "param_1": "param_1"})})
+        (
+            {"anonymizers": {"PHONE": {"type": "replace"}}},
+            {"PHONE": OperatorConfig("replace")},
+        ),
+        (
+            {
+                "anonymizers": {
+                    "PHONE": {"type": "redact", "param": "param", "param_1": "param_1"}
+                }
+            },
+            {
+                "PHONE": OperatorConfig(
+                    "redact", {"param": "param", "param_1": "param_1"}
+                )
+            },
+        ),
     ],
 )
 def test_given_anonymizers_json_then_we_create_properties_properly(
-        anonymizer_json, result
+    anonymizer_json, result
 ):
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
         anonymizer_json.get("anonymizers")
@@ -99,16 +109,14 @@ def test_given_anonymizers_json_then_we_create_properties_properly(
     "analyzer_json, result",
     [
         ([], []),
-        ([{
-            "start": 24,
-            "end": 32,
-            "score": 0.8,
-            "entity_type": "NAME"
-        }], [RecognizerResult("NAME", 24, 32, 0.8)]),
+        (
+            [{"start": 24, "end": 32, "score": 0.8, "entity_type": "NAME"}],
+            [RecognizerResult("NAME", 24, 32, 0.8)],
+        ),
     ],
 )
 def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_returned(
-        analyzer_json, result
+    analyzer_json, result
 ):
     analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(analyzer_json)
 
@@ -118,11 +126,7 @@ def test_given_anonymize_called_with_multiple_scenarios_then_expected_results_re
 def test_given_valid_json_then_we_convert_it_to_decrypt_entities_list():
     data = {
         "text": "THIS IS MY TEXT",
-        "anonymizer_results": [{
-            "start": 0,
-            "end": 5,
-            "entity_type": "PHONE"
-        }],
+        "anonymizer_results": [{"start": 0, "end": 5, "entity_type": "PHONE"}],
     }
     decrypted_entities = AppEntitiesConvertor.deanonymize_entities_from_json(data)
     assert len(decrypted_entities) == 1
@@ -134,22 +138,33 @@ def test_given_valid_json_then_we_convert_it_to_decrypt_entities_list():
 def test_given_invalid_json_then_we_fail_to_convert():
     data = {
         "text": "THIS IS MY TEXT",
-        "anonymizer_results": [{
-            "start": 0,
-            "end": 5,
-            "key": "1111111111111111",
-        }],
+        "anonymizer_results": [
+            {
+                "start": 0,
+                "end": 5,
+                "key": "1111111111111111",
+            }
+        ],
     }
-    with pytest.raises(InvalidParamException,
-                       match="Invalid input, result must contain entity_type"):
+    with pytest.raises(
+        InvalidParamException, match="Invalid input, result must contain entity_type"
+    ):
         AppEntitiesConvertor.deanonymize_entities_from_json(data)
+
+
+def test_given_nullified_anonymizer_results_json_we_convert_it_to_empty_entities_list():
+    data = {
+        "text": "THIS IS MY TEXT",
+    }
+    decrypted_entities = AppEntitiesConvertor.deanonymize_entities_from_json(data)
+    assert len(decrypted_entities) == 0
 
 
 def test_given_custom_operator_then_expected_result_returned():
     result = True
     anonymizers = {
-            "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
-            "PHONE_NUMBER": {"type": "custom", "lambda": "lambda x: x[::-1]"}
+        "DEFAULT": {"type": "replace", "new_value": "ANONYMIZED"},
+        "PHONE_NUMBER": {"type": "custom", "lambda": "lambda x: x[::-1]"},
     }
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(anonymizers)
     assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == result
@@ -159,7 +174,8 @@ def test_given_no_custom_operator_then_expected_result_returned():
     result = False
     content = get_content()
     anonymizers_config = AppEntitiesConvertor.operators_config_from_json(
-        content.get("anonymizers"))
+        content.get("anonymizers")
+    )
     assert AppEntitiesConvertor.check_custom_operator(anonymizers_config) == result
 
 

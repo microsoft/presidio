@@ -1,6 +1,7 @@
 # Supporting detection of new types of PII entities
 
 Presidio can be extended to support detection of new types of PII entities, and to support additional languages.
+These PII recognizers could be added **via code** or **ad-hoc as part of the request**.
 
 ## Introduction to recognizer development
 
@@ -41,7 +42,7 @@ Calling the recognizer itself:
 
 <!--pytest-codeblocks:cont-->
 ```python
-titles_recognizer.analyze(text="Mr. Schmidt",entities="TITLE")
+titles_recognizer.analyze(text="Mr. Schmidt", entities="TITLE")
 ```
 
 Adding it to the list of recognizers:
@@ -112,6 +113,8 @@ To create a new recognizer via code:
 
 2. Add it to the recognizer registry using `registry.add_recognizer(my_recognizer)`.
 
+For more examples, see the [Customizing Presidio Analyzer](../samples/python/customizing_presidio_analyzer.ipynb) jupyter notebook.
+
 ### Creating a remote recognizer
 
 A remote recognizer is an `EntityRecognizer` object interacting with an external service. The external service could be a 3rd party PII detection service or a custom service deployed in parallel to Presidio.
@@ -133,7 +136,7 @@ To add a recognizer to the list of pre-defined recognizers:
 3. Add the recognizer to the `recognizers_map` dict in the `RecognizerRegistry.load_predefined_recognizers` method. In this map, the key is the language the recognizer supports, and the value is the class itself. If your recognizer detects entities in multiple languages, add it to under the "ALL" key.
 4. Optional: Update documentation (e.g., the [supported entities list](../supported_entities.md)).
 
-## Azure Text Analytics recognizer
+### Azure Text Analytics recognizer
 
 On how to integrate Presidio with Azure Text Analytics,
 and a sample for a Text Analytics Remote Recognizer, refer to the
@@ -195,10 +198,46 @@ In both examples, the `/analyze` request is extended with a list of `ad_hoc_reco
 
 Additional examples can be found in the [OpenAPI spec](../api-docs/api-docs.html).
 
-## PII detection in different languages
+### Reading pattern recognizers from YAML
 
-For recognizers in new languages, refer to the [languages documentation](languages.md).
+Recognizers can be loaded from a YAML file, which allows users to add recognition logic without writing code.
+An example YAML file can be found [here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/example_recognizers.yaml).
 
-## Considerations when creating recognizers
+Once the YAML file is created, it can be loaded into the `RecognizerRegistry` instance.
 
-[Best practices for developing PII recognizers](developing_recognizers.md).
+This example creates a `RecognizerRegistry` holding only the recognizers in the YAML file:
+
+ <!--pytest-codeblocks:skip-->
+``` python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+yaml_file = "recognizers.yaml"
+registry = RecognizerRegistry()
+registry.add_recognizers_from_yaml(yaml_file)
+
+analyzer = AnalyzerEngine(registry=registry)
+analyzer.analyze(text="Mr. and Mrs. Smith", language="en")
+```
+
+This example adds the new recognizers to the predefined recognizers in Presidio:
+
+ <!--pytest-codeblocks:skip-->
+``` python
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+
+yaml_file = "recognizers.yaml"
+registry = RecognizerRegistry()
+registry.load_predefined_recognizers()
+
+registry.add_recognizers_from_yaml(yaml_file)
+
+analyzer = AnalyzerEngine()
+analyzer.analyze(text="Mr. and Mrs. Smith", language="en")
+```
+
+Further reading:
+
+1. [PII detection in different languages](languages.md).
+1. [Customizing the NLP model](customizing_nlp_models.md).
+1. [Best practices for developing PII recognizers](developing_recognizers.md).
+1. [Code samples for customizing Presidio Analyzer with new recognizers](../samples/python/customizing_presidio_analyzer.ipynb).

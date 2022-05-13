@@ -1,88 +1,90 @@
 import pytest
 
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import RecognizerResult, OperatorConfig
-from presidio_anonymizer.operators.aes_cipher import AESCipher
+from presidio_anonymizer.entities import (
+    InvalidParamException,
+    RecognizerResult,
+    OperatorConfig,
+)
+from presidio_anonymizer.operators import AESCipher
+
+
+def test_given_url_at_the_end_then_we_redact_is_successfully():
+    text = "The url is http://microsoft.com"
+    anonymizer_config = {
+        "URL": OperatorConfig(
+            "redact"
+        ),
+    }
+
+    analyzer_results = [
+        RecognizerResult(start=11, end=31, score=1.0, entity_type="URL"),
+        RecognizerResult(start=18, end=31, score=1.0, entity_type="URL"),
+    ]
+    expected_result = (
+        '{"text": "The url is ", "items": [{"start": 11, "end": 11, "entity_type": '
+        '"URL", "text": "", "operator": "redact"}]}'
+    )
+    run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
 def test_given_operator_decrypt_then_we_fail():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizers_config = {"DEFAULT": OperatorConfig("decrypt", {"key": "key"})}
     analyzer_results = [
-        RecognizerResult(
-            start=24,
-            end=32,
-            score=0.8,
-            entity_type="NAME"
-        ),
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),
     ]
     engine = AnonymizerEngine()
     with pytest.raises(
-            InvalidParamException,
-            match="Invalid operator class 'decrypt'.",
+        InvalidParamException,
+        match="Invalid operator class 'decrypt'.",
     ):
-        engine.anonymize(
-            text, analyzer_results, anonymizers_config
-        )
+        engine.anonymize(text, analyzer_results, anonymizers_config)
 
 
 def test_given_name_and_phone_number_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
-    anonymizer_config = {"DEFAULT": OperatorConfig("mask", {"masking_char": "*",
-                                                            "chars_to_mask": 20,
-                                                            "from_end": False}),
-                         "PHONE_NUMBER": OperatorConfig("mask", {"masking_char": "*",
-                                                                 "chars_to_mask": 6,
-                                                                 "from_end": True})
-                         }
-    analyzer_results = [
-        RecognizerResult(
-            start=24,
-            end=32,
-            score=0.8,
-            entity_type="NAME"
+    anonymizer_config = {
+        "DEFAULT": OperatorConfig(
+            "mask", {"masking_char": "*", "chars_to_mask": 20, "from_end": False}
         ),
-        RecognizerResult(
-            start=48,
-            end=57,
-            score=0.95,
-            entity_type="PHONE_NUMBER"
-        )
+        "PHONE_NUMBER": OperatorConfig(
+            "mask", {"masking_char": "*", "chars_to_mask": 6, "from_end": True}
+        ),
+    }
+    analyzer_results = [
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),
+        RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER"),
     ]
-    expected_result = ('{"text": "hello world, my name is ********. My number is: '
-                       '03-******4", "items": [{"start": 48, "end": 57, "entity_type": '
-                       '"PHONE_NUMBER", "text": "03-******", "operator": "mask"}, '
-                       '{"start": 24, "end": 32, "entity_type": "NAME", '
-                       '"text": "********", "operator": "mask"}]}')
+    expected_result = (
+        '{"text": "hello world, my name is ********. My number is: '
+        '03-******4", "items": [{"start": 48, "end": 57, "entity_type": '
+        '"PHONE_NUMBER", "text": "03-******", "operator": "mask"}, '
+        '{"start": 24, "end": 32, "entity_type": "NAME", '
+        '"text": "********", "operator": "mask"}]}'
+    )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
 def test_given_name_and_phone_number_without_anonymizers_then_we_use_default():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
-    anonymizer_config = {"ABC": OperatorConfig("mask", {"masking_char": "*",
-                                                        "chars_to_mask": 6,
-                                                        "from_end": True})}
-    analyzer_results = [
-        RecognizerResult(
-            start=24,
-            end=32,
-            score=0.8,
-            entity_type="NAME"
-        ),
-        RecognizerResult(
-            start=48,
-            end=57,
-            score=0.95,
-            entity_type="PHONE_NUMBER"
+    anonymizer_config = {
+        "ABC": OperatorConfig(
+            "mask", {"masking_char": "*", "chars_to_mask": 6, "from_end": True}
         )
+    }
+    analyzer_results = [
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),
+        RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER"),
     ]
-    expected_result = ('{"text": "hello world, my name is <NAME>. My number is: '
-                       '<PHONE_NUMBER>4", "items": [{"start": 46, "end": 60, '
-                       '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
-                       '"operator": "replace"}, {"start": 24, "end": 30, '
-                       '"entity_type": "NAME", "text": "<NAME>", '
-                       '"operator": "replace"}]}')
+    expected_result = (
+        '{"text": "hello world, my name is <NAME>. My number is: '
+        '<PHONE_NUMBER>4", "items": [{"start": 46, "end": 60, '
+        '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
+        '"operator": "replace"}, {"start": 24, "end": 30, '
+        '"entity_type": "NAME", "text": "<NAME>", '
+        '"operator": "replace"}]}'
+    )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
@@ -90,27 +92,20 @@ def test_given_redact_and_replace_then_we_anonymize_successfully():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {
         "NAME": OperatorConfig("redact", {"new_value": "ANONYMIZED"}),
-        "PHONE_NUMBER": OperatorConfig("replace", {"new_value": ""})}
+        "PHONE_NUMBER": OperatorConfig("replace", {"new_value": ""}),
+    }
     analyzer_results = [
-        RecognizerResult(
-            start=24,
-            end=32,
-            score=0.8,
-            entity_type="NAME"
-        ),
-        RecognizerResult(
-            start=48,
-            end=57,
-            score=0.95,
-            entity_type="PHONE_NUMBER"
-        )
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),
+        RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER"),
     ]
-    expected_result = ('{"text": "hello world, my name is . My number is: '
-                       '<PHONE_NUMBER>4", "items": [{"start": 40, "end": 54, '
-                       '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
-                       '"operator": "replace"}, {"start": 24, "end": 24, '
-                       '"entity_type": "NAME", "text": "", "operator": '
-                       '"redact"}]}')
+    expected_result = (
+        '{"text": "hello world, my name is . My number is: '
+        '<PHONE_NUMBER>4", "items": [{"start": 40, "end": 54, '
+        '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
+        '"operator": "replace"}, {"start": 24, "end": 24, '
+        '"entity_type": "NAME", "text": "", "operator": '
+        '"redact"}]}'
+    )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
@@ -118,53 +113,25 @@ def test_given_intersacting_entities_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {}
     analyzer_results = [
-        RecognizerResult(
-            start=24,
-            end=32,
-            score=0.6,
-            entity_type="FULL_NAME"
-        ),
-        RecognizerResult(
-            start=48,
-            end=56,
-            score=0.95,
-            entity_type="PHONE_NUMBER"
-        ),
-        RecognizerResult(
-            start=54,
-            end=57,
-            score=0.8,
-            entity_type="SSN"
-        ),
-        RecognizerResult(
-            start=24,
-            end=28,
-            score=0.9,
-            entity_type="FIRST_NAME"
-        ),
-        RecognizerResult(
-            start=29,
-            end=33,
-            score=0.6,
-            entity_type="LAST_NAME"
-        ),
-        RecognizerResult(
-            start=24,
-            end=30,
-            score=0.8,
-            entity_type="NAME"
-        )
+        RecognizerResult(start=24, end=32, score=0.6, entity_type="FULL_NAME"),
+        RecognizerResult(start=48, end=56, score=0.95, entity_type="PHONE_NUMBER"),
+        RecognizerResult(start=54, end=57, score=0.8, entity_type="SSN"),
+        RecognizerResult(start=24, end=28, score=0.9, entity_type="FIRST_NAME"),
+        RecognizerResult(start=29, end=33, score=0.6, entity_type="LAST_NAME"),
+        RecognizerResult(start=24, end=30, score=0.8, entity_type="NAME"),
     ]
-    expected_result = ('{"text": "hello world, my name is <FULL_NAME><LAST_NAME> My '
-                       'number is: <PHONE_NUMBER><SSN>4", "items": [{"start": 75, '
-                       '"end": 80, "entity_type": "SSN", "text": "<SSN>", '
-                       '"operator": "replace"}, {"start": 61, "end": 75, '
-                       '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
-                       '"operator": "replace"}, {"start": 35, "end": 46, '
-                       '"entity_type": "LAST_NAME", "text": "<LAST_NAME>", '
-                       '"operator": "replace"}, {"start": 24, "end": 35, '
-                       '"entity_type": "FULL_NAME", "text": "<FULL_NAME>", '
-                       '"operator": "replace"}]}')
+    expected_result = (
+        '{"text": "hello world, my name is <FULL_NAME><LAST_NAME> My '
+        'number is: <PHONE_NUMBER><SSN>4", "items": [{"start": 75, '
+        '"end": 80, "entity_type": "SSN", "text": "<SSN>", '
+        '"operator": "replace"}, {"start": 61, "end": 75, '
+        '"entity_type": "PHONE_NUMBER", "text": "<PHONE_NUMBER>", '
+        '"operator": "replace"}, {"start": 35, "end": 46, '
+        '"entity_type": "LAST_NAME", "text": "<LAST_NAME>", '
+        '"operator": "replace"}, {"start": 24, "end": 35, '
+        '"entity_type": "FULL_NAME", "text": "<FULL_NAME>", '
+        '"operator": "replace"}]}'
+    )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
@@ -217,39 +184,19 @@ def test_given_hash_then_we_anonymize_correctly(hash_type, result):
     params = {}
     if hash_type:
         params = {"hash_type": hash_type}
-    anonymizer_config = {
-        "DEFAULT": OperatorConfig("hash", params)}
+    anonymizer_config = {"DEFAULT": OperatorConfig("hash", params)}
     analyzer_results = [
-        RecognizerResult(
-            start=48,
-            end=57,
-            score=0.95,
-            entity_type="PHONE_NUMBER"
-        ),
-        RecognizerResult(
-            start=24,
-            end=28,
-            score=0.8,
-            entity_type="FIRST_NAME"
-        ),
-        RecognizerResult(
-            start=29,
-            end=32,
-            score=0.6,
-            entity_type="LAST_NAME"
-        ),
-        RecognizerResult(
-            start=24,
-            end=32,
-            score=0.8,
-            entity_type="NAME"
-        )
+        RecognizerResult(start=48, end=57, score=0.95, entity_type="PHONE_NUMBER"),
+        RecognizerResult(start=24, end=28, score=0.8, entity_type="FIRST_NAME"),
+        RecognizerResult(start=29, end=32, score=0.6, entity_type="LAST_NAME"),
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),
     ]
     run_engine_and_validate(text, anonymizer_config, analyzer_results, result)
 
 
-def run_engine_and_validate(text: str, anonymizers_config, analyzer_results,
-                            expected_result):
+def run_engine_and_validate(
+    text: str, anonymizers_config, analyzer_results, expected_result
+):
     engine = AnonymizerEngine()
     try:
         actual_anonymize_result = engine.anonymize(
@@ -257,26 +204,23 @@ def run_engine_and_validate(text: str, anonymizers_config, analyzer_results,
         )
     except Exception as e:
         actual_anonymize_result = str(e)
-    print("********")
-    print(actual_anonymize_result.to_json())
-    print("********")
     assert actual_anonymize_result.to_json() == expected_result
 
 
 def test_given_anonymize_called_with_error_scenarios_then_expected_errors_returned():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizers = {
-        "PHONE_NUMBER": OperatorConfig("mask", {"masking_char": "non_character",
-                                                "chars_to_mask": 6,
-                                                "from_end": True})}
+        "PHONE_NUMBER": OperatorConfig(
+            "mask",
+            {"masking_char": "non_character", "chars_to_mask": 6, "from_end": True},
+        )
+    }
     analyzer_results = [RecognizerResult("PHONE_NUMBER", 48, 57, 0.95)]
 
     engine = AnonymizerEngine()
 
     try:
-        actual_anonymize_result = engine.anonymize(
-            text, analyzer_results, anonymizers
-        )
+        actual_anonymize_result = engine.anonymize(text, analyzer_results, anonymizers)
     except Exception as e:
         actual_anonymize_result = str(e)
 

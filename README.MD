@@ -4,7 +4,7 @@
 
 ---
 
-[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=V2)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=207&branchName=V2)
+[![Build Status](https://dev.azure.com/csedevil/Presidio/_apis/build/status/Presidio-CI%20V2?branchName=main)](https://dev.azure.com/csedevil/Presidio/_build/latest?definitionId=212&branchName=main)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
@@ -23,6 +23,13 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ![Presidio demo gif](docs/assets/changing_text.gif)
 
+---
+### :blue_book: [Full documentation](https://microsoft.github.io/presidio) 
+### :question: [Frequently Asked Questions](docs/faq.md)
+### :thought_balloon: [Demo](https://aka.ms/presidio-demo) 
+### :flight_departure: [Examples](https://microsoft.github.io/presidio/samples/) 
+---
+
 ### Goals
 
 - Allow organizations to preserve privacy in a simpler way by democratizing de-identification technologies and introducing transparency in decisions.
@@ -38,9 +45,6 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 5. Module for **redacting PII text in images**.
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
-
-### :notebook_with_decorative_cover: [Full documentation](https://microsoft.github.io/presidio)
-### :thought_balloon: [Try Presidio with your own data](https://aka.ms/presidio-demo) 
 
 
 ## Installing Presidio

@@ -1,0 +1,24 @@
+recognizers:
+  -
+    name: "Zip code Recognizer"
+    supported_language: "de"
+    patterns:
+      -
+         name: "zip code (weak)"
+         regex: "(\\b\\d{5}(?:\\-\\d{4})?\\b)"
+         score: 0.01
+    context:
+     - zip
+     - code
+    supported_entity: "ZIP"
+  -
+    name: "Titles recognizer"
+    supported_language: "en"
+    supported_entity: "TITLE"
+    deny_list:
+      - Mr.
+      - Mrs.
+      - Ms.
+      - Miss
+      - Dr.
+      - Prof.

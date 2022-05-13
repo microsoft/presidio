@@ -42,8 +42,8 @@ class NhsRecognizer(PatternRecognizer):
         self.replacement_pairs = (
             replacement_pairs if replacement_pairs else [("-", ""), (" ", "")]
         )
-        context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
+        context = context if context else self.CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

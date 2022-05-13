@@ -1,7 +1,6 @@
 import pytest
 
-from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import RecognizerResult
+from presidio_anonymizer.entities import InvalidParamException, RecognizerResult
 
 
 @pytest.mark.parametrize(
@@ -59,7 +58,7 @@ def test_given_recognizer_results_with_same_indices_then_indices_are_equal():
     # fmt: on
 )
 def test_given_recognizer_results_with_different_indices_then_indices_are_not_equal(
-        start, end
+    start, end
 ):
     first = create_recognizer_result("entity", 0, 5, 10)
     second = create_recognizer_result("entity", 0, start, end)
@@ -102,7 +101,7 @@ def test_given_identical_recognizer_results_then_they_are_equal():
     # fmt: on
 )
 def test_given_different_recognizer_result_then_they_are_not_equal(
-        entity_type, score, start, end
+    entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 0, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -129,7 +128,7 @@ def test_given_recognizer_result_then_their_hash_is_equal():
     # fmt: on
 )
 def test_given_different_recognizer_results_then_hash_is_not_equal(
-        entity_type, score, start, end
+    entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 0, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -149,7 +148,7 @@ def test_given_different_recognizer_results_then_hash_is_not_equal(
     # fmt: on
 )
 def test_given_recognizer_results_with_conflicting_indices_then_there_is_a_conflict(
-        entity_type, score, start, end
+    entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 2, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -168,7 +167,7 @@ def test_given_recognizer_results_with_conflicting_indices_then_there_is_a_confl
     # fmt: on
 )
 def test_given_recognizer_results_with_no_conflicting_indices_then_there_is_no_conflict(
-        entity_type, score, start, end
+    entity_type, score, start, end
 ):
     first = create_recognizer_result("bla", 0.2, 2, 10)
     second = create_recognizer_result(entity_type, score, start, end)
@@ -205,7 +204,7 @@ def test_given_recognizer_results_with_no_conflicting_indices_then_there_is_no_c
     # fmt: on
 )
 def test_given_json_for_creating_recognizer_result_without_text_then_creation_fails(
-        request_json, result_text
+    request_json, result_text
 ):
     with pytest.raises(InvalidParamException) as e:
         RecognizerResult.from_json(request_json)
@@ -259,18 +258,13 @@ def test_given_endpoint_larger_then_start_point_then_we_fail():
     with pytest.raises(InvalidParamException) as e:
         create_recognizer_result("entity", 0, 10, 0)
     assert (
-            e.value.err_msg == "Invalid input, start index '10' "
-                               "must be smaller than end index '0'"
+        e.value.err_msg == "Invalid input, start index '10' "
+        "must be smaller than end index '0'"
     )
 
 
-def test_given_endpoint_equal_to_start_point_then_we_fail():
-    with pytest.raises(InvalidParamException) as e:
-        create_recognizer_result("entity", 0, 0, 0)
-    assert (
-            e.value.err_msg == "Invalid input, start index '0' "
-                               "must be smaller than end index '0'"
-    )
+def test_given_endpoint_equal_to_start_point_then_we_succeed():
+    assert create_recognizer_result("entity", 0, 0, 0)
 
 
 @pytest.mark.parametrize(
@@ -285,8 +279,8 @@ def test_given_endpoint_equal_to_start_point_then_we_fail():
 )
 def test_given_negative_start_or_endpoint_then_we_fail(start, end):
     with pytest.raises(
-            InvalidParamException,
-            match="Invalid input, result start and end must be positive",
+        InvalidParamException,
+        match="Invalid input, result start and end must be positive",
     ):
         create_recognizer_result("entity", 0, start, end)
 

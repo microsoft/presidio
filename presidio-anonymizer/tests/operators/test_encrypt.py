@@ -2,9 +2,8 @@ from unittest import mock
 
 import pytest
 
-from presidio_anonymizer.operators.encrypt import Encrypt
+from presidio_anonymizer.operators import Encrypt, AESCipher
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.operators.aes_cipher import AESCipher
 
 
 @mock.patch.object(AESCipher, "encrypt")

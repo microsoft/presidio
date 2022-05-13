@@ -38,7 +38,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         ("I bought my car in May", 1, ((19, 22),), 1),
         ("May 1st", 1, ((0, 7),), 1),
         ("May 1st, 1977", 1, ((0, 13),), 1),
-        ("I bought my car on May 1st, 1977", 1, ((19, 32),), 1),
+        ("I bought my car on May 1st, 1977", 2, ((19, 26), (28, 32)), 1),
         # fmt: on
     ],
 )
@@ -65,7 +65,7 @@ def test_when_using_spacy_then_all_spacy_result_found(
 def test_when_person_in_text_then_person_full_name_complex_found(
     nlp_engine, nlp_recognizer, entities
 ):
-    text = "Richard (Rick) C. Henderson"
+    text = "William Bill Alexander"
     results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
 
     assert len(results) > 0

@@ -16,7 +16,17 @@ class RecognizerResult:
     :param score: the score of the detection
     :param analysis_explanation: contains the explanation of why this
                                  entity was identified
+    :param recognition_metadata: a dictionary of metadata to be used in
+    recognizer specific cases, for example specific recognized context words
+    and recognizer name
     """
+
+    """this holds the key of recognizer name inside recognition_metadata dictionary"""
+    RECOGNIZER_NAME_KEY = "recognizer_name"
+
+    """this holds a key of a flag inside recognition_metadata dictionary
+    which is set to true if the result enhanced by context"""
+    IS_SCORE_ENHANCED_BY_CONTEXT_KEY = "is_score_enhanced_by_context"
 
     logger = logging.getLogger("presidio-analyzer")
 
@@ -27,6 +37,7 @@ class RecognizerResult:
         end: int,
         score: float,
         analysis_explanation: AnalysisExplanation = None,
+        recognition_metadata: Dict = None,
     ):
 
         self.entity_type = entity_type
@@ -35,7 +46,15 @@ class RecognizerResult:
         self.score = score
         self.analysis_explanation = analysis_explanation
 
-    def append_analysis_explenation_text(self, text: str) -> None:
+        if not recognition_metadata:
+            self.logger.debug(
+                "recognition_metadata should be passed, "
+                "containing a recognizer_name value"
+            )
+
+        self.recognition_metadata = recognition_metadata
+
+    def append_analysis_explanation_text(self, text: str) -> None:
         """Add text to the analysis explanation."""
         if self.analysis_explanation:
             self.analysis_explanation.append_textual_explanation_line(text)

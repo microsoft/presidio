@@ -1,8 +1,5 @@
 """The core text functionality."""
-from .text_replace_builder import TextReplaceBuilder
 from .engine_base import EngineBase
+from .text_replace_builder import TextReplaceBuilder
 
-__all__ = [
-    "TextReplaceBuilder",
-    "EngineBase"
-]
+__all__ = ["EngineBase", "TextReplaceBuilder"]

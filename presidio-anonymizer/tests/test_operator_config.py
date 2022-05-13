@@ -1,29 +1,26 @@
 import pytest
 
-from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import OperatorConfig
+from presidio_anonymizer.entities import InvalidParamException, OperatorConfig
 
 
 def test_given_valid_json_then_we_parse_it_to_operator_config():
-    operator_config = OperatorConfig.from_json({
-        "type": "mask",
+    operator_config = OperatorConfig.from_json(
+        {"type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": True}
+    )
+    assert operator_config.operator_name == "mask"
+    assert operator_config.params == {
         "masking_char": "*",
         "chars_to_mask": 4,
-        "from_end": True
-    })
-    assert operator_config.operator_name == "mask"
-    assert operator_config.params == {"masking_char": "*", "chars_to_mask": 4,
-                                      "from_end": True}
+        "from_end": True,
+    }
 
 
 def test_given_invalid_json_then_we_fail_to_parse_it_to_operator_config():
     expected_error = "Invalid input, operator config must contain operator_name"
     with pytest.raises(InvalidParamException, match=expected_error):
-        OperatorConfig.from_json({
-            "masking_char": "*",
-            "chars_to_mask": 4,
-            "from_end": True
-        })
+        OperatorConfig.from_json(
+            {"masking_char": "*", "chars_to_mask": 4, "from_end": True}
+        )
 
 
 def test_given_two_identical_entities_then_we_verify_they_are_equal():

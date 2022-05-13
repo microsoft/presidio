@@ -4,15 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-spacy = "==3.0.5"
+spacy = ">=3.2.0"
 regex = "*"
 tldextract = "*"
-numpy = "==1.19.3"
-flask = "==1.1.2"
+flask = ">=1.1"
 pyyaml = "*"
+phonenumbers = ">=8.12"
+typing-extensions = "*"
 
 [dev-packages]
 pytest = "*"
-flake8= {version = "==3.7.9"}
+flake8= {version = ">=3.7.9"}
 pep8-naming = "*"
 flake8-docstrings = "*"
+pre_commit = "*"

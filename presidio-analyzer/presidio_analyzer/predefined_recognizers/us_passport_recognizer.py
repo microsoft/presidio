@@ -26,8 +26,8 @@ class UsPassportRecognizer(PatternRecognizer):
         supported_language: str = "en",
         supported_entity: str = "US_PASSPORT",
     ):
-        context = context if context else self.CONTEXT
         patterns = patterns if patterns else self.PATTERNS
+        context = context if context else self.CONTEXT
         super().__init__(
             supported_entity=supported_entity,
             patterns=patterns,

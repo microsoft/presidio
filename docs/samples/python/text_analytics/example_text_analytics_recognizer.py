@@ -1,5 +1,5 @@
 """
-This is an example implementation of a TextAnalyticsRecognizer.
+An example implementation of a TextAnalyticsRecognizer.
 
 Calls an existing Azure Text Analytics instance
 to get additional PII identification capabilities.
@@ -38,9 +38,7 @@ class TextAnalyticsEntityCategory:
 
 
 class TextAnalyticsClient:
-    """
-    Calls pii recognition endpoint, and holds DTO constants.
-    """
+    """Client for Microsoft Text Analytics."""
 
     CATEGORY = "category"
     SUBCATEGORY = "subcategory"
@@ -54,6 +52,8 @@ class TextAnalyticsClient:
         endpoint: str,
     ):
         """
+        Call pii recognition endpoint, and holds DTO constants.
+
         :param text_analytics_key: The key used to authenticate to Text Analytics Azure
             Instance.
         :param text_analytics_endpoint: Supported Cognitive Services or Text Analytics
@@ -64,6 +64,8 @@ class TextAnalyticsClient:
 
     def recognize_pii_entities(self, text: str, language: str) -> List[Dict]:
         """
+        Return identified PII entities from Text Analytics.
+
         :param text: The text for analysis.
         :param language: The text language.
         :return: List of PII entities recognized by Text Analytics
@@ -218,10 +220,7 @@ class TextAnalyticsRecognizer(RemoteRecognizer):
 
     @staticmethod
     def _get_conf_file_categories(file_location):
-        """
-        Load the Presidio-supported TextAnalyticsEntityCategory
-        from a yaml configuration file.
-        """
+        """Load the Presidio-supported TextAnalyticsEntityCategory from a yaml configuration file."""  # noqa E501
         categories_file = yaml.safe_load(open(file_location))
         return [TextAnalyticsEntityCategory(**category) for category in categories_file]
 
@@ -231,7 +230,7 @@ if __name__ == "__main__":
     from presidio_analyzer import AnalyzerEngine
 
     # Instruction for setting up Text Analytics and fetch instance key and endpoint:
-    # https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cognitive-services/text-analytics/includes/create-text-analytics-resource.md
+    # https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cognitive-services/text-analytics/includes/create-text-analytics-resource.md # noqa E501
     text_analytics_recognizer = TextAnalyticsRecognizer(
         text_analytics_key="<YOUR_TEXT_ANALYTICS_KEY>",
         text_analytics_endpoint="<YOUR_TEXT_ANALYTICS_ENDPOINT>",

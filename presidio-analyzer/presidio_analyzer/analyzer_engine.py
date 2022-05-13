@@ -10,7 +10,11 @@ from presidio_analyzer import (
     DictAnalyzerResult,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
+from presidio_analyzer.context_aware_enhancers import (
+    ContextAwareEnhancer,
+    LemmaContextAwareEnhancer,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -32,6 +36,9 @@ class AnalyzerEngine:
     for detected entities to be returned
     :param supported_languages: List of possible languages this engine could be run on.
     Used for loading the right NLP models and recognizers for these languages.
+    :param context_aware_enhancer: instance of type ContextAwareEnhancer for enhancing
+    confidence score based on context words, (LemmaContextAwareEnhancer will be created
+    by default if None passed)
     """
 
     def __init__(
@@ -42,6 +49,7 @@ class AnalyzerEngine:
         log_decision_process: bool = False,
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
+        context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -71,6 +79,15 @@ class AnalyzerEngine:
 
         self.log_decision_process = log_decision_process
         self.default_score_threshold = default_score_threshold
+
+        if not context_aware_enhancer:
+            logger.debug(
+                "context aware enhancer not provided, creating default"
+                + " lemma based enhancer."
+            )
+            context_aware_enhancer = LemmaContextAwareEnhancer()
+
+        self.context_aware_enhancer = context_aware_enhancer
 
     def get_recognizers(self, language: Optional[str] = None) -> List[EntityRecognizer]:
         """
@@ -116,6 +133,7 @@ class AnalyzerEngine:
         score_threshold: Optional[float] = None,
         return_decision_process: Optional[bool] = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
+        context: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -131,6 +149,8 @@ class AnalyzerEngine:
         returned in the response.
         :param ad_hoc_recognizers: List of recognizers which will be used only
         for this specific request.
+        :param context: List of context words to enhance confidence score if matched
+        with the recognized entity's recognizer context
         :return: an array of the found entities in the text
 
         :example:
@@ -181,7 +201,14 @@ class AnalyzerEngine:
                 text=text, entities=entities, nlp_artifacts=nlp_artifacts
             )
             if current_results:
+                # add recognizer name to recognition metadata inside results
+                # if not exists
+                self.__add_recognizer_name_if_not_exists(current_results, recognizer)
                 results.extend(current_results)
+
+        results = self._enhance_using_context(
+            text, results, nlp_artifacts, recognizers, context
+        )
 
         if self.log_decision_process:
             self.app_tracer.trace(
@@ -297,6 +324,67 @@ class AnalyzerEngine:
             response[key] = per_text_responses
         return response
 
+    def _enhance_using_context(
+        self,
+        text: str,
+        raw_results: List[RecognizerResult],
+        nlp_artifacts: NlpArtifacts,
+        recognizers: List[EntityRecognizer],
+        context: Optional[List[str]] = None,
+    ) -> List[RecognizerResult]:
+        """
+        Enhance confidence score using context words.
+
+        :param text: The actual text that was analyzed
+        :param raw_results: Recognizer results which didn't take
+                            context into consideration
+        :param nlp_artifacts: The nlp artifacts contains elements
+                              such as lemmatized tokens for better
+                              accuracy of the context enhancement process
+        :param recognizers: the list of recognizers
+        :param context: list of context words
+        """
+        results = []
+
+        for recognizer in recognizers:
+            recognizer_results = [
+                r
+                for r in raw_results
+                if r.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                == recognizer.name
+            ]
+            other_recognizer_results = [
+                r
+                for r in raw_results
+                if r.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                != recognizer.name
+            ]
+
+            # enhance score using context in recognizer level if implemented
+            recognizer_results = recognizer.enhance_using_context(
+                text=text,
+                # each recognizer will get access to all recognizer results
+                # to allow related entities contex enhancement
+                raw_recognizer_results=recognizer_results,
+                other_raw_recognizer_results=other_recognizer_results,
+                nlp_artifacts=nlp_artifacts,
+                context=context,
+            )
+
+            results.extend(recognizer_results)
+
+        # Update results in case surrounding words or external context are relevant to
+        # the context words.
+        results = self.context_aware_enhancer.enhance_using_context(
+            text=text,
+            raw_results=results,
+            nlp_artifacts=nlp_artifacts,
+            recognizers=recognizers,
+            context=context,
+        )
+
+        return results
+
     def __remove_low_scores(
         self, results: List[RecognizerResult], score_threshold: float = None
     ) -> List[RecognizerResult]:
@@ -312,6 +400,26 @@ class AnalyzerEngine:
 
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
+
+    def __add_recognizer_name_if_not_exists(
+        self, results: List[RecognizerResult], recognizer: EntityRecognizer
+    ):
+        """Ensure recognition metadata with recognizer name existence.
+
+        Ensure recognizer result list contains recognizer name inside recognition
+        metadata dictionary, and if not create it. recognizer_name is needed
+        for context aware enhancement
+
+        :param results: List of RecognizerResult
+        :param recognizer: Entity recognizer
+        """
+        for result in results:
+            if not result.recognition_metadata:
+                result.recognition_metadata = dict()
+            if RecognizerResult.RECOGNIZER_NAME_KEY not in result.recognition_metadata:
+                result.recognition_metadata[
+                    RecognizerResult.RECOGNIZER_NAME_KEY
+                ] = recognizer.name
 
     @staticmethod
     def __remove_decision_process(

@@ -40,7 +40,9 @@ class IbanRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "IBAN Generic",
-            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2,7})([ \-]?[A-Z0-9]{1,3})?\b",  # noqa
+            r"\b([A-Z]{2}[ \-]?[0-9]{2})(?=(?:[ \-]?[A-Z0-9]){9,30})((?:[ \-]?[A-Z0-9]{3,5}){2})"  # noqa
+            r"([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?([ \-]?[A-Z0-9]{3,5})?"  # noqa
+            r"([ \-]?[A-Z0-9]{1,3})?\b",  # noqa
             0.5,
         ),
     ]
@@ -106,16 +108,7 @@ class IbanRecognizer(PatternRecognizer):
 
         if self.patterns:
             pattern_result = self.__analyze_patterns(text)
-
-            if pattern_result and self.context:
-                # try to improve the results score using the surrounding
-                # context words
-                enhanced_result = self.enhance_using_context(
-                    text, pattern_result, nlp_artifacts, self.context
-                )
-                results.extend(enhanced_result)
-            elif pattern_result:
-                results.extend(pattern_result)
+            results.extend(pattern_result)
 
         return results
 
@@ -158,7 +151,14 @@ class IbanRecognizer(PatternRecognizer):
                         self.name, pattern.name, pattern.regex, score, validation_result
                     )
                     pattern_result = RecognizerResult(
-                        self.supported_entities[0], start, end, score, description
+                        entity_type=self.supported_entities[0],
+                        start=start,
+                        end=end,
+                        score=score,
+                        analysis_explanation=description,
+                        recognition_metadata={
+                            RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                        },
                     )
 
                     if validation_result is not None:

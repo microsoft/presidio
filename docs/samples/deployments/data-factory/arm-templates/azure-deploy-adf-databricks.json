@@ -82,32 +82,11 @@
         "AzureBlobStorage_connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('AzureBlobStorage_accountName'), ';EndpointSuffix=core.windows.net')]",
         "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName'))]",
         "Dataset_url": "https://raw.githubusercontent.com/microsoft/presidio-research/master/tests/data/generated_large.txt",
-        "AzureKeyVault_baseUrl": "[concat('https://', parameters('AzureKeyVault_name'), '.vault.azure.net/')]"
+        "AzureKeyVault_baseUrl": "[concat('https://', parameters('AzureKeyVault_name'), '.vault.azure.net/')]",
+        "storageAccountId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('AzureBlobStorage_accountName'))]"
+
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2018-07-01",
-            "name": "[parameters('AzureBlobStorage_accountName')]",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "[parameters('AzureBlobStorage_accountName')]"
-            },
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "StorageV2",
-            "resources": [
-                {
-                    "type": "blobServices/containers",
-                    "apiVersion": "2018-03-01-preview",
-                    "name": "[concat('default/', parameters('AzureBlobStorage_cotainerName'))]",
-                    "dependsOn": [
-                        "[parameters('AzureBlobStorage_accountName')]"
-                    ]
-                }
-            ]
-        },
         {
             "type": "Microsoft.DataFactory/factories",
             "apiVersion": "2018-06-01",
@@ -253,12 +232,6 @@
                                 "type": "DatabricksNotebook",
                                 "dependsOn": [
                                     {
-                                        "activity": "GetSecret",
-                                        "dependencyConditions": [
-                                            "Succeeded"
-                                        ]
-                                    },
-                                    {
                                         "activity": "SaveBlobs",
                                         "dependencyConditions": [
                                             "Succeeded"
@@ -276,40 +249,11 @@
                                 "typeProperties": {
                                     "notebookPath": "[parameters('Databricks_notebookLocation')]",
                                     "baseParameters": {
-                                        "storage_account_name": "[parameters('AzureBlobStorage_accountName')]",
-                                        "storage_container_name": "[parameters('AzureBlobStorage_cotainerName')]",
-                                        "storage_account_access_key": {
-                                            "value": "@activity('GetSecret').output.value",
-                                            "type": "Expression"
-                                        }
                                     }
                                 },
                                 "linkedServiceName": {
                                     "referenceName": "PresidioDatabricks",
                                     "type": "LinkedServiceReference"
-                                }
-                            },
-                            {
-                                "name": "GetSecret",
-                                "description": "Get storage account key from Azure Key Vault",
-                                "type": "WebActivity",
-                                "dependsOn": [],
-                                "policy": {
-                                    "timeout": "7.00:00:00",
-                                    "retry": 0,
-                                    "retryIntervalInSeconds": 30,
-                                    "secureOutput": false,
-                                    "secureInput": false
-                                },
-                                "userProperties": [],
-                                "typeProperties": {
-                                    "url": "[concat(variables('AzureKeyVault_baseUrl'), 'secrets/', parameters('AzureKeyVault_storageAccessKeySecretName'), '?api-version=7.0')]",
-                                    "method": "GET",
-                                    "headers": {},
-                                    "authentication": {
-                                        "type": "MSI",
-                                        "resource": "https://vault.azure.net"
-                                    }
                                 }
                             },
                             {
@@ -544,24 +488,22 @@
             "apiVersion": "2018-02-14",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('AzureKeyVault_name'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('AzureBlobStorage_accountName'))]"
+                "[concat('Microsoft.KeyVault/vaults/', parameters('AzureKeyVault_name'))]"
             ],
             "name": "[concat(parameters('AzureKeyVault_name'), '/', parameters('AzureKeyVault_storageSASSecretName'))]",
             "properties": {
-                "value": "[listAccountSas(parameters('AzureBlobStorage_accountName'), '2018-07-01', parameters('accountSasProperties')).accountSasToken]"
+                "value": "[listAccountSas(variables('storageAccountId'), '2018-07-01', parameters('accountSasProperties')).accountSasToken]"
             }
         },
         {
             "apiVersion": "2018-02-14",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('AzureKeyVault_name'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('AzureBlobStorage_accountName'))]"
+                "[concat('Microsoft.KeyVault/vaults/', parameters('AzureKeyVault_name'))]"
             ],
             "name": "[concat(parameters('AzureKeyVault_name'), '/', parameters('AzureKeyVault_storageAccessKeySecretName'))]",
             "properties": {
-                "value": "[listKeys(parameters('AzureBlobStorage_accountName'), '2018-07-01').keys[0].value]"
+                "value": "[listKeys(variables('storageAccountId'), '2018-07-01').keys[0].value]"
             }
         }
     ]

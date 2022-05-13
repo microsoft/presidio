@@ -7,11 +7,7 @@ from presidio_anonymizer.services.validators import validate_parameter_not_empty
 class OperatorConfig:
     """Hold the data of the required operator."""
 
-    def __init__(
-            self,
-            operator_name: str,
-            params: Dict = None
-    ):
+    def __init__(self, operator_name: str, params: Dict = None):
         """
         Create an operator config instance.
 
@@ -25,8 +21,12 @@ class OperatorConfig:
         self.params = params
         self.__validate_fields()
 
+    def __repr__(self):
+        """Return a string representation of the object."""
+        return f"operator_name: {self.operator_name}, params: {self.params}"
+
     @classmethod
-    def from_json(cls, params: Dict) -> 'OperatorConfig':
+    def from_json(cls, params: Dict) -> "OperatorConfig":
         """
         Create OperatorConfig from json.
 
@@ -43,12 +43,12 @@ class OperatorConfig:
             params.pop("type")
         return cls(operator_name, params)
 
-    def __eq__(self, other: 'OperatorConfig'):
+    def __eq__(self, other: "OperatorConfig"):
         """Verify two OperatorConfigs are equal."""
         operator_name = self.operator_name == other.operator_name
-        return (self.params == other.params
-                and operator_name)
+        return self.params == other.params and operator_name
 
     def __validate_fields(self):
-        validate_parameter_not_empty(self.operator_name, "operator config",
-                                     "operator_name")
+        validate_parameter_not_empty(
+            self.operator_name, "operator config", "operator_name"
+        )

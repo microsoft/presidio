@@ -1,3 +1,7 @@
+import copy
+from abc import ABC
+from typing import List, Optional
+
 import pytest
 
 from presidio_analyzer import (
@@ -5,6 +9,8 @@ from presidio_analyzer import (
     PatternRecognizer,
     Pattern,
     RecognizerRegistry,
+    EntityRecognizer,
+    RecognizerResult,
 )
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
@@ -90,7 +96,7 @@ def test_when_analyze_with_multiple_predefined_recognizers_then_succeed(
     )
 
     assert len(results) == 2
-    medium_regex_score = 0.5  # see UsPhoneRecognizer.PATTERNS
+    medium_regex_score = 0.4
     context_similarity_factor = 0.35  # PatternRecognizer.CONTEXT_SIMILARITY_FACTOR
     assert_result(results[0], "CREDIT_CARD", 14, 33, max_score)
     expected_score = medium_regex_score + context_similarity_factor
@@ -263,7 +269,7 @@ def test_when_entities_is_none_then_return_all_fields(loaded_registry):
     assert response is not None
     assert "CREDIT_CARD" in returned_entities
     assert "PHONE_NUMBER" in returned_entities
-    assert "DOMAIN_NAME" in returned_entities
+    assert "URL" in returned_entities
 
 
 def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
@@ -282,7 +288,7 @@ def test_when_entities_is_none_all_recognizers_loaded_then_return_all_fields(
     assert response is not None
     assert "PERSON" in returned_entities
     assert "LOCATION" in returned_entities
-    assert "DOMAIN_NAME" in returned_entities
+    assert "URL" in returned_entities
 
 
 def test_when_analyze_then_apptracer_has_value(
@@ -414,7 +420,7 @@ def test_when_get_supported_fields_then_return_all_languages(
 
     assert len(entities) == 3
     assert "CREDIT_CARD" in entities
-    assert "DOMAIN_NAME" in entities
+    assert "URL" in entities
     assert "PHONE_NUMBER" in entities
 
 
@@ -669,3 +675,85 @@ def test_ad_hoc_when_no_other_recognizers_are_requested_returns_only_ad_hoc_resu
     )
 
     assert "ZIP" in [resp.entity_type for resp in responses]
+
+
+def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
+    class MockRecognizer1(EntityRecognizer, ABC):
+        def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+            return [RecognizerResult("TEST1", 10, 30, 0.5)]
+
+    class MockRecognizer2(EntityRecognizer, ABC):
+        def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+            # pass lower score in mock due to sorting algorithm
+            return [RecognizerResult("TEST2", 50, 60, 0.4)]
+
+    mock_recognizer1 = MockRecognizer1(supported_entities=["TEST1"])
+    mock_recognizer2 = MockRecognizer2(supported_entities=["TEST2"])
+
+    registry = RecognizerRegistry()
+    registry.add_recognizer(mock_recognizer1)
+    registry.add_recognizer(mock_recognizer2)
+
+    analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
+    results = analyzer_engine.analyze("ABC", language="en")
+
+    assert len(results) == 2
+
+    assert results[0].entity_type == "TEST1"
+    assert results[0].start == 10
+    assert results[0].end == 30
+    assert results[0].score == 0.5
+    assert results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer1"
+
+    assert results[1].entity_type == "TEST2"
+    assert results[1].start == 50
+    assert results[1].end == 60
+    assert results[1].score == 0.4
+    assert results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer2"
+
+
+def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_engine):
+    class MockRecognizer(EntityRecognizer, ABC):
+        def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts):
+            return [
+                RecognizerResult("TEST", 10, 30, 0.5),
+                # pass lower score in mock due to sorting algorithm
+                RecognizerResult("TEST", 50, 60, 0.4)]
+
+        def enhance_using_context(self,
+                                  text: str,
+                                  raw_recognizer_results: List[RecognizerResult],
+                                  other_raw_recognizer_results: List[RecognizerResult],
+                                  nlp_artifacts: NlpArtifacts,
+                                  context: Optional[List[str]] = None,
+                                  ) -> List[RecognizerResult]:
+            results = copy.deepcopy(raw_recognizer_results)
+            results[0].score += 0.4
+            results[1].score += 0.4
+            results[0].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY] = True
+            results[1].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY] = True
+            return results
+
+    mock_recognizer = MockRecognizer(supported_entities=["TEST"])
+
+    registry = RecognizerRegistry()
+    registry.add_recognizer(mock_recognizer)
+
+    analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
+    recognizer_results = analyzer_engine.analyze("ABC", language="en")
+
+    assert len(recognizer_results) == 2
+
+    assert recognizer_results[0].entity_type == "TEST"
+    assert recognizer_results[0].start == 10
+    assert recognizer_results[0].end == 30
+    assert recognizer_results[0].score == 0.9
+    assert recognizer_results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
+    assert recognizer_results[0].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
+    assert recognizer_results[0].entity_type == "TEST"
+    assert recognizer_results[1].start == 50
+    assert recognizer_results[1].end == 60
+    assert recognizer_results[1].score == 0.8
+    assert recognizer_results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
+    assert recognizer_results[1].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
+

@@ -1,147 +1,158 @@
 # Anonymize PII using Presidio on Spark
 
 You can leverages presidio to perform data anonymization as part of spark notebooks.
+
 The following sample uses [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) and simple text files hosted on [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/). However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.
 
 **Note** that this code works for Databricks runtime 8.1 (spark 3.1.1) and the libraries described [here](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/8.1).
 
+## The basics of working with Presidio in Spark
+
+A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of [transform presidio notebook](./notebooks/01_transform_presidio.py), is the basis of the e2e sample which uses Azure Databricks as the Spark environment.
+
+```python
+anonymized_column = "value" # name of column to anonymize
+analyzer = AnalyzerEngine()
+anonymizer = AnonymizerEngine()
+
+# broadcast the engines to the cluster nodes
+broadcasted_analyzer = sc.broadcast(analyzer)
+broadcasted_anonymizer = sc.broadcast(anonymizer)
+
+# define a pandas UDF function and a series function over it.
+def anonymize_text(text: str) -> str:
+    analyzer = broadcasted_analyzer.value
+    anonymizer = broadcasted_anonymizer.value
+    analyzer_results = analyzer.analyze(text=text, language="en")
+    anonymized_results = anonymizer.anonymize(
+        text=text,
+        analyzer_results=analyzer_results,
+        operators={
+            "DEFAULT": OperatorConfig("replace", {"new_value": "<ANONYMIZED>"})
+        },
+    )
+    return anonymized_results.text
+
+
+def anonymize_series(s: pd.Series) -> pd.Series:
+    return s.apply(anonymize_text)
+
+
+# define a the function as pandas UDF
+anonymize = pandas_udf(anonymize_series, returnType=StringType())
+
+# apply the udf
+anonymized_df = input_df.withColumn(
+    anonymized_column, anonymize(col(anonymized_column))
+)
+
+```
+
 ## Pre-requisites
 
-Provision and setup the required infrastrucutre
+If you do not have an instance of Azure Databricks, follow through with the following steps to provision and setup the required infrastrucutre.
 
-### Azure Storage
+If you do have a Databricks workspace and a cluster you wish to configure to run Presidio, jump over to the [Configure an existing cluster](#Configure-an-existing-cluster) section.
 
-Provision an Azure storage account using the following script.
+### Deploy Infrastructure
+
+Provision the Azure resources by running the following script.
 
 ``` bash
-RESOURCE_GROUP=[resource group name]
-STORAGE_ACCOUNT_NAME=[storage account name]
-STORAGE_CONTAINER_NAME=[blob container name]
-DATABRICKS_WORKSPACE_NAME=[databricks workspace name]
-DATABRICKS_SKU=[basic/standard/premium]
-LOCATION=[location]
+export RESOURCE_GROUP=[resource group name]
+export STORAGE_ACCOUNT_NAME=[storage account name]
+export STORAGE_CONTAINER_NAME=[blob container name]
+export DATABRICKS_WORKSPACE_NAME=[databricks workspace name]
+export DATABRICKS_SKU=[basic/standard/premium]
+export LOCATION=[location]
 
-# Create the storage account
+# Create the resource group
 az group create --name $RESOURCE_GROUP --location $LOCATION
-az storage account create --name $STORAGE_ACCOUNT_NAME --resource-group $RESOURCE_GROUP
 
-# Get the storage account access key
-STORAGE_ACCESS_KEY=$(az storage account keys list --account-name $STORAGE_ACCOUNT_NAME --resource-group $RESOURCE_GROUP --query '[0].value' -o tsv)
+# Use ARM template to build the resources and get back the workspace URL
+deployment_response=$(az deployment group create -g $RESOURCE_GROUP --template-file ./docs/samples/deployments/spark/arm-template/databricks.json  --parameters location=$LOCATION workspaceName=$DATABRICKS_WORKSPACE_NAME storageAccountName=$STORAGE_ACCOUNT_NAME containerName=$STORAGE_CONTAINER_NAME)
 
-# Create a blob container
-az storage container create -n $STORAGE_CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME
+export DATABRICKS_WORKSPACE_URL=$(echo $deployment_response | jq -r ".properties.outputs.workspaceUrl.value")
+export DATABRICKS_WORKSPACE_ID=$(echo $deployment_response | jq -r ".properties.outputs.workspaceId.value")
+
 ```
 
-### Azure Databricks
+### Setup Databricks
 
-Provision an Azure databricks service using the following script.
+The following script will setup a new cluster in the databricks workspace and prepare it to run presidio anonymization jobs.
+Once finished, the script will output an access key which you can use when working with databricks cli.
+
+``` bash
+
+sh ./scripts/configure_databricks.sh
+
+```
+
+### Configure an existing cluster
+
+Only follow through with the steps in this section if you have an existing databricks workspace and clsuter you wish to configure to run presidio. If you've followed through with the "Deploy Infrastructure" and "Setup Databricks" sections you do not have to run the script in this section.
+
+#### Set up secret scope and secrets for storage account
+
+Add an Azure Storage account key to secret scope.
+
+``` bash
+STORAGE_PRIMARY_KEY=[Primary key of storage account]
+
+databricks secrets create-scope --scope storage_scope --initial-manage-principal users
+databricks secrets put --scope storage_scope --key storage_account_access_key --string-value "$STORAGE_PRIMARY_KEY"
+
+```
+
+#### Upload or update cluster init scripts
+
+Presidio libraries are loaded to the cluster on init.
+Upload the cluster setup script or add its content to the existing cluster's init script.
 
 ```bash
-az extension add --name databricks
+databricks fs cp "./setup/startup.sh" "dbfs:/FileStore/dependencies/startup.sh"
 
-az databricks workspace create --resource-group $RESOURCE_GROUP  --name $DATABRICKS_WORKSPACE_NAME --sku $DATABRICKS_SKU
 ```
 
-Initialze a cluster, either using the [Azure databricks UI](https://docs.microsoft.com/en-us/azure/databricks/clusters/create) or by following up the next script using [databricks cli](https://docs.microsoft.com/en-us/azure/databricks/clusters/create).
-Note that the provided template uses a memory optimized VM type Standard DS12 v2. That allows spark to have enough memory per CPU core to parallelize the Presidio Analyzer.
+Setup the cluster to run the [init script](https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#init-scripts).
+
+#### Upload presidio notebooks
 
 ```bash
-# Configure databricks token. for host name use https://[databricks region name].azuredatabricks.net. for token acquire a PAT using the following guide: https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/authentication#--generate-a-personal-access-token
-# 
-databricks configure --token
+databricks workspace import_dir "./notebooks" "/notebooks" --overwrite
 
-databricks clusters create --json "{ 
-    \"cluster_name\": \"presidio\",
-    \"spark_version\": \"7.5.x-scala2.12\", 
-    \"autoscale\": {
-        \"min_workers\": 2,
-        \"max_workers\": 8
-    },
-    \"azure_attributes\": { 
-        \"first_on_demand\": 1, 
-        \"availability\": \"ON_DEMAND_AZURE\", 
-        \"spot_bid_max_price\": -1 
-    }, 
-    \"node_type_id\": \"Standard_DS12_v2\", 
-    \"driver_node_type_id\": \"Standard_DS12_v2\", 
-    \"spark_env_vars\": { 
-        \"PYSPARK_PYTHON\": \"/databricks/python3/bin/python3\" 
-    }, 
-    \"autotermination_minutes\": 120, 
-    \"enable_elastic_disk\": true, 
-    \"cluster_source\": \"UI\"
-}"
-
-# Note the cluster ID.
 ```
 
-Configure the cluster by uploading the provided startup script and setting it as part of the cluster initialization process. this stage will load the required Presidio and Azure Storage libraries to the cluster. You can follow through the next script to perform this stage using the databricks cli, or using the [databricks UI](https://docs.microsoft.com/en-us/azure/databricks/clusters/init-scripts#--configure-a-cluster-scoped-init-script).
+#### Update cluster environment
+
+Add the following [environment variables](https://docs.microsoft.com/en-us/azure/databricks/clusters/configure#environment-variables) to your databricks cluster:
 
 ```bash
-# Upload the init script to the file system
-databricks fs cp ./startup.sh dbfs:/FileStore/dependencies/startup.sh
+"STORAGE_MOUNT_NAME": "/mnt/files"
+"STORAGE_CONTAINER_NAME": [Blob container name]
+"STORAGE_ACCOUNT_NAME": [Storage account name]
 
-# set the cluster init script
-databricks clusters edit --json "{
-    \"cluster_name\": \"presidio\",
-    \"spark_version\": \"7.5.x-scala2.12\", 
-    \"autoscale\": {
-        \"min_workers\": 2,
-        \"max_workers\": 8
-    },
-    \"azure_attributes\": { 
-        \"first_on_demand\": 1, 
-        \"availability\": \"ON_DEMAND_AZURE\", 
-        \"spot_bid_max_price\": -1 
-    }, 
-    \"node_type_id\": \"Standard_DS12_v2\", 
-    \"driver_node_type_id\": \"Standard_DS12_v2\", 
-    \"spark_env_vars\": { 
-        \"PYSPARK_PYTHON\": \"/databricks/python3/bin/python3\" 
-    }, 
-    \"autotermination_minutes\": 120, 
-    \"enable_elastic_disk\": true, 
-    \"cluster_source\": \"UI\",
-    \"init_scripts\": [
-        {
-            \"dbfs\": {
-                \"destination\": \"dbfs:/FileStore/dependencies/startup.sh\"
-            }
-        }
-    ],
-    \"cluster_id\": \"[your cluster id]\"
-}"
 ```
+
+#### Mount the storage container
+
+Run the notebook 00_setup to mount the storage account to databricks.
 
 ## Running the sample
 
-### Import notebook to databricks
+### Configure Presidio transformation notebook
 
-Upload the provided notebook, either by using the [databricks UI](https://docs.microsoft.com/en-us/azure/databricks/notebooks/notebooks-manage#--import-a-notebook) or by following up the next script using databricks cli.
-
-```bash
-# upload the notebook to a shared folder in the workspace
-databricks workspace import_dir . /Shared/presidio/
-
-```
-
-### Configure the notebook
-
-Open the notebook from the location where it was stored in the previous step and attach it to the configured cluster.
+From Databricks workspace, under notebooks folder, open the provided 01_transform_presidio notebook and attach it to the cluster preisidio_cluster.
 Run the first code-cell and note the following parameters on the top end of the notebook (notebook widgets) and set them accordingly
 
-* Blob Storage Account Name - Name of the storage account ($STORAGE_ACCOUNT_NAME)
-* Blob Container Name - Name of the blob container ($STORAGE_CONTAINER_NAME)
-* Storage Account Access Key - Storage account access key ($STORAGE_ACCESS_KEY)
-
-Additionaly, the following parameters have a default value, which you can change.
-
-* Input Folder - a folder on the container where input files are found.
+* Input File Format - text (selected).
+* Input path - a folder on the container where input files are found.
 * Output Folder - a folder on the container where output files will be written to.
+* Column to Anonymize - value (selected).
 
 ### Run the notebook
 
-Upload a file to the blob storage input folder, using any preferd method ([Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal), [Azure Storage Explorer](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-storage-explorer), [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli)).
+Upload a text file to the blob storage input folder, using any preferd method ([Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal), [Azure Storage Explorer](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-storage-explorer), [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli)).
 
 ```bash
 az storage blob upload --account-name $STORAGE_ACCOUNT_NAME  --container $STORAGE_CONTAINER_NAME --file ./[file name] --name input/[file name]

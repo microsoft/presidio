@@ -1,15 +1,18 @@
 from typing import List, Dict
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.entities.engine import AnonymizerResult, OperatorConfig
-from presidio_anonymizer.entities.engine import RecognizerResult
+from presidio_anonymizer.entities import (
+    OperatorResult,
+    OperatorConfig,
+    RecognizerResult,
+)
 
 
 class AppEntitiesConvertor:
     """Assisting class to convert API json entities to engine entities."""
 
     @staticmethod
-    def analyzer_results_from_json(data: List[Dict]) -> List['RecognizerResult']:
+    def analyzer_results_from_json(data: List[Dict]) -> List["RecognizerResult"]:
         """
         Go over analyzer results, validate them and convert to List[RecognizerResult].
 
@@ -22,9 +25,7 @@ class AppEntitiesConvertor:
         return [RecognizerResult.from_json(analyzer_result) for analyzer_result in data]
 
     @staticmethod
-    def operators_config_from_json(
-            data: Dict
-    ) -> Dict[str, 'OperatorConfig']:
+    def operators_config_from_json(data: Dict) -> Dict[str, "OperatorConfig"]:
         """
         Go over the operators list and get the relevant create operator config entity.
 
@@ -32,13 +33,14 @@ class AppEntitiesConvertor:
         value - OperatorConfig
         """
         if data is not None:
-            return {key: OperatorConfig.from_json(operator_json) for
-                    (key, operator_json)
-                    in data.items()}
+            return {
+                key: OperatorConfig.from_json(operator_json)
+                for (key, operator_json) in data.items()
+            }
         return {}
 
     @staticmethod
-    def deanonymize_entities_from_json(json: Dict) -> List['AnonymizerResult']:
+    def deanonymize_entities_from_json(json: Dict) -> List["OperatorResult"]:
         """
         Create DecryptEntity list.
 
@@ -52,14 +54,14 @@ class AppEntitiesConvertor:
                 "entity_type":"PHONE_NUMBER"
             }],
         }
-        :return: List[AnonymizerResult]
+        :return: List[OperatorResult]
         """
-        items = []
         decrypt_entity = json.get("anonymizer_results")
-        if decrypt_entity:
-            for result in decrypt_entity:
-                items.append(AnonymizerResult.from_json(result))
-        return items
+        return (
+            [OperatorResult.from_json(result) for result in decrypt_entity]
+            if decrypt_entity
+            else []
+        )
 
     @staticmethod
     def check_custom_operator(operators: Dict[str, OperatorConfig]):

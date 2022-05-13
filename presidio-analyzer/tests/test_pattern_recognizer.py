@@ -1,10 +1,12 @@
+import re
+from typing import List
+
 import pytest
 
-# https://www.datatrans.ch/showcase/test-cc-numbers
-# https://www.freeformatter.com/credit-card-number-generator-validator.html
-from tests import assert_result
-from presidio_analyzer import Pattern
+from presidio_analyzer import Pattern, RecognizerResult
 from presidio_analyzer import PatternRecognizer
+
+from tests import assert_result
 
 
 class MockRecognizer(PatternRecognizer):
@@ -105,3 +107,97 @@ def test_when_taken_from_dict_then_returns_instance():
     assert pattern_recognizer.patterns[1].name == "p2"
     assert pattern_recognizer.patterns[1].score == 0.8
     assert pattern_recognizer.patterns[1].regex == "([0-9]{1,9})"
+
+
+def test_when_validation_occurs_then_analysis_explanation_is_updated():
+
+    patterns = [Pattern(name="test_pattern", regex="([0-9]{1,9})", score=0.5)]
+    mock_recognizer = MockRecognizer(
+        entity="TEST",
+        patterns=patterns,
+        deny_list=None,
+        name="MockRecognizer",
+        context=None,
+    )
+
+    results: List[RecognizerResult] = mock_recognizer.analyze(
+        text="Testing 1 2 3", entities=["TEST"]
+    )
+
+    assert results[0].analysis_explanation.original_score == 0.5
+    assert results[0].analysis_explanation.score == 1
+
+
+@pytest.mark.parametrize(
+    "text, expected_len, deny_list",
+    [
+        ("Mr. PLUM", 1, ["Mr.", "Mrs."]),
+        ("...Mr...PLUM...", 1, ["Mr.", "Mrs."]),
+        ("..MMr...PLUM...", 0, ["Mr.", "Mrs."]),
+        ("Mrr PLUM...", 0, ["Mr.", "Mrs."]),
+        ("\\Mr.\\ PLUM...", 1, ["Mr.", "Mrs."]),
+        ("\\Mr.\\ PLUM...,Mrs. Plum", 2, ["Mr.", "Mrs."]),
+        ("", 0, ["Mr.", "Mrs."]),
+        ("MMrrrMrs.", 0, ["Mr.", "Mrs."]),
+        ("\\Mrs.", 1, ["Mr.", "Mrs."]),
+        ("A B is an entity", 1, ["A B", "B C"]),
+        ("A is not an entity", 0, ["A B", "B C"]),
+        ("A B C", 1, ["A B", "B C"]),
+        ("A B B C", 2, ["A B", "B C"]),
+        ("Hi A.,.\\.B Hi", 1, ["A.,.\\.B"]),
+    ],
+)
+def test_deny_list_non_space_separator_identified_correctly(
+    text, expected_len, deny_list
+):
+    recognizer = PatternRecognizer(
+        supported_entity="TITLE",
+        name="TitlesRecognizer",
+        supported_language="en",
+        deny_list=deny_list,
+    )
+
+    result = recognizer.analyze(text, entities=["TITLE"])
+
+    assert len(result) == expected_len
+
+
+def test_deny_list_score_change():
+    deny_list = ["Mr.", "Mrs."]
+    recognizer = PatternRecognizer(
+        supported_entity="TITLE",
+        name="TitlesRecognizer",
+        supported_language="en",
+        deny_list=deny_list,
+        deny_list_score=0.64,
+    )
+
+    result = recognizer.analyze(text="Mrs. Kennedy", entities=["TITLE"])
+    assert result[0].score == 0.64
+
+
+@pytest.mark.parametrize(
+    "text,flag,expected_len",
+    [("mrs. Kennedy", re.IGNORECASE, 1), ("mrs. Kennedy", None, 0)],
+)
+def test_deny_list_regex_flags(text, flag, expected_len):
+    deny_list = ["Mr.", "Mrs."]
+    recognizer = PatternRecognizer(
+        supported_entity="TITLE",
+        name="TitlesRecognizer",
+        supported_language="en",
+        deny_list=deny_list,
+    )
+
+    result = recognizer.analyze(text=text, entities=["TITLE"], regex_flags=flag)
+    assert len(result) == expected_len
+
+
+def test_empty_deny_list_raises_value_error():
+    with pytest.raises(ValueError):
+        PatternRecognizer(
+            supported_entity="TITLE",
+            name="TitlesRecognizer",
+            supported_language="en",
+            deny_list=[],
+        )

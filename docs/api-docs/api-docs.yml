@@ -11,7 +11,7 @@ info:
     url: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
   license:
     name: MIT
-    url: 'https://github.com/microsoft/presidio/blob/master/LICENSE'
+    url: 'https://github.com/microsoft/presidio/blob/main/LICENSE'
 externalDocs:
   description: Presidio documentation.
   url: 'https://microsoft.github.io/presidio/'
@@ -54,6 +54,9 @@ paths:
                           "recognizer": "SpacyRecognizer", "pattern_name": null, "pattern": null, "original_score": 0.85,
                           "score": 0.85, "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition",
                           "score_context_improvement": 0, "supportive_context_word": "", "validation_result": null
+                        },
+                        "recognition_metadata": {
+                          "recognizer_name": "SpacyRecognizer"
                         }
                       },
                       { "entity_type": "US_DRIVER_LICENSE", "start": 30, "end": 38, "score": 0.6499999999999999,
@@ -63,6 +66,9 @@ paths:
                           "original_score": 0.3, "score": 0.6499999999999999, "textual_explanation": null,
                           "score_context_improvement": 0.3499999999999999, "supportive_context_word": "driver",
                           "validation_result": null
+                        },
+                        "recognition_metadata": {
+                          "recognizer_name": "UsLicenseRecognizer"
                         }
                       }
                     ]
@@ -74,7 +80,10 @@ paths:
                         "end": 38,
                         "entity_type": "US_DRIVER_LICENSE",
                         "score": 0.6499999999999999,
-                        "start": 30
+                        "start": 30,
+                        "recognition_metadata": {
+                          "recognizer_name": "UsLicenseRecognizer"
+                        }
                       }
                     ]
 
@@ -140,7 +149,7 @@ paths:
               example:
                 [ "PHONE_NUMBER", "US_DRIVER_LICENSE", "US_PASSPORT", "LOCATION", "CREDIT_CARD", "CRYPTO",
                   "UK_NHS", "US_SSN", "US_BANK_NUMBER", "EMAIL_ADDRESS", "DATE_TIME", "IP_ADDRESS", "PERSON", "IBAN_CODE",
-                  "NRP", "US_ITIN", "DOMAIN_NAME" ]
+                  "NRP", "US_ITIN", "MEDICAL_LICENSE", "URL" ]
 
   /anonymize:
     post:
@@ -302,7 +311,7 @@ components:
                     "context": ["zip", "code"],
                     "supported_entity":"ZIP"
                     }
-        ]
+                  ]
                 }
 
     AnonymizeRequest:
@@ -397,6 +406,13 @@ components:
           description: "list of recognizers to be used in the context of this request only (ad-hoc)."
           items:
             $ref: "#/components/schemas/PatternRecognizer"
+        context:
+          type: array
+          description: "list of context words which may help to raise recognized entities confidence"
+          items:
+            description: "The context word"
+            type: string
+            example: "address"
 
     AnonymizeRequest:
       type: object
@@ -448,7 +464,7 @@ components:
           type: array
           description: "Array of anonymized PIIs"
           items:
-            $ref: "#/components/schemas/AnonymizerResult"
+            $ref: "#/components/schemas/OperatorResult"
 
 
     RecognizerResult:
@@ -474,24 +490,16 @@ components:
           example: 0.8
         entity_type:
           $ref: "#/components/schemas/EntityTypes"
+        recognition_metadata:
+          type: object
+          $ref: "#/components/schemas/RecognizedMetadata"
 
-    AnonymizerResult:
+    RecognizedMetadata:
       type: object
-      required:
-        - start
-        - end
-        - entity_type
       properties:
-        start:
-          type: integer
-          description: "Where the anonymized PII starts"
-          example: 24
-        end:
-          type: integer
-          description: "Where the anonymized PII ends"
-          example: 32
-        entity_type:
-          $ref: "#/components/schemas/EntityTypes"
+        recognizer_name:
+          type: string
+          description: "Name of recognizer that made the decision"
 
     RecognizerResultWithAnaysisExplanation:
       allOf:
@@ -705,9 +713,13 @@ components:
           type: array
           description: "Array of anonymized entities"
           items:
-            $ref: "#/components/schemas/OperatorEntity"
+            $ref: "#/components/schemas/OperatorResult"
 
-    OperatorEntity:
+    OperatorResult:
+      required:
+        - start
+        - end
+        - entity_type
       type: object
       properties:
         operator:
@@ -735,7 +747,7 @@ components:
           type: array
           description: "Array of deanonymized entities"
           items:
-            $ref: "#/components/schemas/OperatorEntity"
+            $ref: "#/components/schemas/OperatorResult"
 
   responses:
     400BadRequest:

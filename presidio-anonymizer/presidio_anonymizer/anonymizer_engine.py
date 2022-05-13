@@ -2,10 +2,8 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.core.engine_base import EngineBase
-from presidio_anonymizer.entities.engine import OperatorConfig
-from presidio_anonymizer.entities.engine import RecognizerResult
-from presidio_anonymizer.entities.engine.result import EngineResult
+from presidio_anonymizer.entities import OperatorConfig, RecognizerResult, EngineResult
+from presidio_anonymizer.core import EngineBase
 from presidio_anonymizer.operators import OperatorType
 
 DEFAULT = "replace"
@@ -25,10 +23,10 @@ class AnonymizerEngine(EngineBase):
         EngineBase.__init__(self)
 
     def anonymize(
-            self,
-            text: str,
-            analyzer_results: List[RecognizerResult],
-            operators: Optional[Dict[str, OperatorConfig]] = None
+        self,
+        text: str,
+        analyzer_results: List[RecognizerResult],
+        operators: Optional[Dict[str, OperatorConfig]] = None,
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -40,16 +38,53 @@ class AnonymizerEngine(EngineBase):
         received from the analyzer
         :return: the anonymized text and a list of information about the
         anonymized entities.
+
+        :example:
+
+        >>> from presidio_anonymizer import AnonymizerEngine
+        >>> from presidio_anonymizer.entities import RecognizerResult, OperatorConfig
+
+        >>> # Initialize the engine with logger.
+        >>> engine = AnonymizerEngine()
+
+        >>> # Invoke the anonymize function with the text, analyzer results and
+        >>> # Operators to define the anonymization type.
+        >>> result = engine.anonymize(
+        >>>     text="My name is Bond, James Bond",
+        >>>     analyzer_results=[RecognizerResult(entity_type="PERSON",
+        >>>                                        start=11,
+        >>>                                        end=15,
+        >>>                                        score=0.8),
+        >>>                       RecognizerResult(entity_type="PERSON",
+        >>>                                        start=17,
+        >>>                                        end=27,
+        >>>                                        score=0.8)],
+        >>>     operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})}
+        >>> )
+
+        >>> print(result)
+        text: My name is BIP, BIP.
+        items:
+        [
+            {'start': 16, 'end': 19, 'entity_type': 'PERSON',
+             'text': 'BIP', 'operator': 'replace'},
+            {'start': 11, 'end': 14, 'entity_type': 'PERSON',
+             'text': 'BIP', 'operator': 'replace'}
+        ]
+
+
         """
         analyzer_results = self._remove_conflicts_and_get_text_manipulation_data(
-            analyzer_results)
+            analyzer_results
+        )
 
         operators = self.__check_or_add_default_operator(operators)
 
         return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
 
-    def _remove_conflicts_and_get_text_manipulation_data(self, analyzer_results: List[
-            RecognizerResult]) -> List[RecognizerResult]:
+    def _remove_conflicts_and_get_text_manipulation_data(
+        self, analyzer_results: List[RecognizerResult]
+    ) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
 
@@ -66,7 +101,8 @@ class AnonymizerEngine(EngineBase):
         for result in analyzer_results:
             other_elements.remove(result)
             result_conflicted = self.__is_result_conflicted_with_other_elements(
-                other_elements, result)
+                other_elements, result
+            )
             if not result_conflicted:
                 other_elements.append(result)
                 unique_text_metadata_elements.append(result)
@@ -83,13 +119,14 @@ class AnonymizerEngine(EngineBase):
 
     @staticmethod
     def __is_result_conflicted_with_other_elements(other_elements, result):
-        return any([result.has_conflict(other_element) for other_element in
-                    other_elements])
+        return any(
+            [result.has_conflict(other_element) for other_element in other_elements]
+        )
 
     @staticmethod
-    def __check_or_add_default_operator(operators: Dict[
-        str, OperatorConfig]) -> \
-            Dict[str, OperatorConfig]:
+    def __check_or_add_default_operator(
+        operators: Dict[str, OperatorConfig]
+    ) -> Dict[str, OperatorConfig]:
         default_operator = OperatorConfig(DEFAULT)
         if not operators:
             return {"DEFAULT": default_operator}

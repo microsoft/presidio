@@ -7,15 +7,19 @@ from .replace import Replace
 from .custom import Custom
 from .encrypt import Encrypt
 from .decrypt import Decrypt
+from .aes_cipher import AESCipher
 from .operators_factory import OperatorsFactory
 
-__all__ = ["OperatorType",
-           "Operator",
-           "Hash",
-           "Mask",
-           "Redact",
-           "Replace",
-           "Custom",
-           "Encrypt",
-           "Decrypt",
-           "OperatorsFactory"]
+__all__ = [
+    "OperatorType",
+    "Operator",
+    "Hash",
+    "Mask",
+    "Redact",
+    "Replace",
+    "Custom",
+    "Encrypt",
+    "Decrypt",
+    "AESCipher",
+    "OperatorsFactory",
+]

@@ -24,6 +24,8 @@ class PatternRecognizer(LocalRecognizer):
     :param deny_list: A list of words to detect,
     in case our recognizer uses a predefined list of words (deny list)
     :param context: list of context words
+    :param deny_list_score: confidence score for a term
+    identified using a deny-list
     """
 
     def __init__(
@@ -34,6 +36,7 @@ class PatternRecognizer(LocalRecognizer):
         patterns: List[Pattern] = None,
         deny_list: List[str] = None,
         context: List[str] = None,
+        deny_list_score: float = 1.0,
         version: str = "0.0.1",
     ):
 
@@ -57,9 +60,10 @@ class PatternRecognizer(LocalRecognizer):
         else:
             self.patterns = patterns
         self.context = context
+        self.deny_list_score = deny_list_score
 
         if deny_list:
-            deny_list_pattern = self.__deny_list_to_regex(deny_list)
+            deny_list_pattern = self._deny_list_to_regex(deny_list)
             self.patterns.append(deny_list_pattern)
             self.deny_list = deny_list
         else:
@@ -88,31 +92,24 @@ class PatternRecognizer(LocalRecognizer):
 
         if self.patterns:
             pattern_result = self.__analyze_patterns(text, regex_flags)
-
-            if pattern_result and self.context:
-                # try to improve the results score using the surrounding
-                # context words
-                enhanced_result = self.enhance_using_context(
-                    text, pattern_result, nlp_artifacts, self.context
-                )
-                results.extend(enhanced_result)
-            elif pattern_result:
-                results.extend(pattern_result)
+            results.extend(pattern_result)
 
         return results
 
-    @staticmethod
-    def __deny_list_to_regex(deny_list: List[str]) -> Pattern:
+    def _deny_list_to_regex(self, deny_list: List[str]) -> Pattern:
         """
-        Convert a list of word to a matching regex.
+        Convert a list of words to a matching regex.
 
-        To be analyzed by the regex engine as a part of the analyze logic.
+        To be analyzed by the analyze method as any other regex patterns.
 
         :param deny_list: the list of words to detect
         :return:the regex of the words for detection
         """
-        regex = r"(?:^|(?<= ))(" + "|".join(deny_list) + r")(?:(?= )|$)"
-        return Pattern(name="deny_list", regex=regex, score=1.0)
+
+        # Escape deny list elements as preparation for regex
+        escaped_deny_list = [re.escape(element) for element in deny_list]
+        regex = r"(?:^|(?<=\W))(" + "|".join(escaped_deny_list) + r")(?:(?=\W)|$)"
+        return Pattern(name="deny_list", regex=regex, score=self.deny_list_score)
 
     def validate_result(self, pattern_text: str) -> Optional[bool]:
         """
@@ -203,7 +200,14 @@ class PatternRecognizer(LocalRecognizer):
                     self.name, pattern.name, pattern.regex, score, validation_result
                 )
                 pattern_result = RecognizerResult(
-                    self.supported_entities[0], start, end, score, description
+                    entity_type=self.supported_entities[0],
+                    start=start,
+                    end=end,
+                    score=score,
+                    analysis_explanation=description,
+                    recognition_metadata={
+                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                    },
                 )
 
                 if validation_result is not None:
@@ -218,6 +222,9 @@ class PatternRecognizer(LocalRecognizer):
 
                 if pattern_result.score > EntityRecognizer.MIN_SCORE:
                     results.append(pattern_result)
+
+                # Update analysis explanation score following validation or invalidation
+                description.score = pattern_result.score
 
         results = EntityRecognizer.remove_duplicates(results)
         return results

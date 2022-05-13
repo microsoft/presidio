@@ -3,7 +3,8 @@ repos:
       rev: 20.8b1
       hooks:
         - id: black
-          language_version: python3.7
+          language_version: python3
+      exclude: ^tests/
   -   repo: https://gitlab.com/pycqa/flake8
       rev: 3.9.0
       hooks:
@@ -16,7 +17,7 @@ repos:
                  '--docstring-convention=numpy',
                   # 'PEP8 Rules' to ignore in tests. Ignore documentation rules for all tests
                   # and ignore long lines / whitespaces for e2e-tests where we define jsons in-code.
-                 '--per-file-ignores=**/tests/**.py:D docs/**.py:D e2e-tests/**.py:D,E501,W291,W293 docs/samples/deployments/spark/presidio_anonymize_blobs.py:E501,F821,D103',
+                 '--per-file-ignores=**/tests/**.py:D docs/**.py:D e2e-tests/**.py:D,E501,W291,W293 docs/samples/deployments/spark/notebooks/*.py:E501,F821,D103',
                  '--extend-ignore=
                  		E203,
                  		D100,

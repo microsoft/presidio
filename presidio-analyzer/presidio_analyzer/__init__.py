@@ -13,6 +13,8 @@ from presidio_analyzer.remote_recognizer import RemoteRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
+from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
+from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
 
 # Define default loggers behavior
 
@@ -42,4 +44,6 @@ __all__ = [
     "RecognizerRegistry",
     "AnalyzerEngine",
     "AnalyzerRequest",
+    "ContextAwareEnhancer",
+    "LemmaContextAwareEnhancer",
 ]

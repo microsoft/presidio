@@ -9,6 +9,7 @@ requirements = [
     "pytesseract==0.3.7",
     "presidio-analyzer>=1.9.0",
     "matplotlib==3.3.4",
+    "pydantic==1.7.4",
 ]
 
 test_requirements = ["pytest>=3", "flake8==3.7.9"]
@@ -41,10 +42,10 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
