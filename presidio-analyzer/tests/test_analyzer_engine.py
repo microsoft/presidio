@@ -11,6 +11,7 @@ from presidio_analyzer import (
     RecognizerRegistry,
     EntityRecognizer,
     RecognizerResult,
+    analyzer_engine,
 )
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
@@ -183,6 +184,70 @@ def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
 
     assert len(results) == 1
     assert_result(results[0], "ROCKET", 0, 7, 0.8)
+
+
+def test_when_allow_list_specified(unit_test_guid):
+    mock_recognizer_registry = RecognizerRegistryMock()
+    analyze_engine = AnalyzerEngine(
+        registry=mock_recognizer_registry,
+        nlp_engine=NlpEngineMock(),
+    )
+    text = "bing.com is his favorite website, microsoft.com is his second favorite"
+    results = analyze_engine.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        language="en",
+    )
+    assert len(results) == 2
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = analyze_engine.analyze(
+        correlation_id=unit_test_guid, text=text, language="en", allow_list=["bing.com"]
+    )
+    assert len(results) == 1
+    assert text[results[0].start : results[0].end] == "microsoft.com"
+
+
+def test_when_allow_list_specified_but_none_in_file(unit_test_guid):
+    mock_recognizer_registry = RecognizerRegistryMock()
+    analyze_engine = AnalyzerEngine(
+        registry=mock_recognizer_registry,
+        nlp_engine=NlpEngineMock(),
+    )
+    text = "bing.com is his favorite website"
+    results = analyze_engine.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        language="en",
+    )
+    assert len(results) == 1
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = analyze_engine.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        language="en",
+        allow_list=["microsoft.com"],
+    )
+    assert len(results) == 1
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+
+def test_when_allow_list_specified_multiple_items(unit_test_guid):
+    mock_recognizer_registry = RecognizerRegistryMock()
+    analyze_engine = AnalyzerEngine(
+        registry=mock_recognizer_registry,
+        nlp_engine=NlpEngineMock(),
+    )
+    text = "bing.com is his favorite website, microsoft.com is his second favorite"
+
+    results = analyze_engine.analyze(
+        correlation_id=unit_test_guid,
+        text=text,
+        language="en",
+        allow_list=["bing.com", "microsoft.com"],
+    )
+    assert len(results) == 0
 
 
 def test_when_removed_pattern_recognizer_then_doesnt_work(unit_test_guid):
@@ -667,13 +732,19 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
     assert results[0].start == 10
     assert results[0].end == 30
     assert results[0].score == 0.5
-    assert results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer1"
+    assert (
+        results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+        == "MockRecognizer1"
+    )
 
     assert results[1].entity_type == "TEST2"
     assert results[1].start == 50
     assert results[1].end == 60
     assert results[1].score == 0.4
-    assert results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer2"
+    assert (
+        results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+        == "MockRecognizer2"
+    )
 
 
 def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_engine):
@@ -682,20 +753,26 @@ def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_en
             return [
                 RecognizerResult("TEST", 10, 30, 0.5),
                 # pass lower score in mock due to sorting algorithm
-                RecognizerResult("TEST", 50, 60, 0.4)]
+                RecognizerResult("TEST", 50, 60, 0.4),
+            ]
 
-        def enhance_using_context(self,
-                                  text: str,
-                                  raw_recognizer_results: List[RecognizerResult],
-                                  other_raw_recognizer_results: List[RecognizerResult],
-                                  nlp_artifacts: NlpArtifacts,
-                                  context: Optional[List[str]] = None,
-                                  ) -> List[RecognizerResult]:
+        def enhance_using_context(
+            self,
+            text: str,
+            raw_recognizer_results: List[RecognizerResult],
+            other_raw_recognizer_results: List[RecognizerResult],
+            nlp_artifacts: NlpArtifacts,
+            context: Optional[List[str]] = None,
+        ) -> List[RecognizerResult]:
             results = copy.deepcopy(raw_recognizer_results)
             results[0].score += 0.4
             results[1].score += 0.4
-            results[0].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY] = True
-            results[1].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY] = True
+            results[0].recognition_metadata[
+                RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
+            ] = True
+            results[1].recognition_metadata[
+                RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
+            ] = True
             return results
 
     mock_recognizer = MockRecognizer(supported_entities=["TEST"])
@@ -712,12 +789,21 @@ def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_en
     assert recognizer_results[0].start == 10
     assert recognizer_results[0].end == 30
     assert recognizer_results[0].score == 0.9
-    assert recognizer_results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
-    assert recognizer_results[0].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
+    assert (
+        recognizer_results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+        == "MockRecognizer"
+    )
+    assert recognizer_results[0].recognition_metadata[
+        RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
+    ]
     assert recognizer_results[0].entity_type == "TEST"
     assert recognizer_results[1].start == 50
     assert recognizer_results[1].end == 60
     assert recognizer_results[1].score == 0.8
-    assert recognizer_results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY] == "MockRecognizer"
-    assert recognizer_results[1].recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]
-
+    assert (
+        recognizer_results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+        == "MockRecognizer"
+    )
+    assert recognizer_results[1].recognition_metadata[
+        RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
+    ]
