@@ -48,6 +48,7 @@ class AnalyzerEngine:
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
         context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
+        allow_list=None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -132,6 +133,7 @@ class AnalyzerEngine:
         return_decision_process: Optional[bool] = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
+        allow_list=None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -218,6 +220,9 @@ class AnalyzerEngine:
         results = EntityRecognizer.remove_duplicates(results)
         results = self.__remove_low_scores(results, score_threshold)
 
+        if allow_list:
+            results = self.__remove_allow_list(results, allow_list, text)
+
         if not return_decision_process:
             results = self.__remove_decision_process(results)
 
@@ -298,6 +303,18 @@ class AnalyzerEngine:
             score_threshold = self.default_score_threshold
 
         new_results = [result for result in results if result.score >= score_threshold]
+        return new_results
+
+    def __remove_allow_list(
+        self, results: List[RecognizerResult], allow_list: List[str], text: str
+    ) -> List[RecognizerResult]:
+        new_results = []
+        for result in results:
+            word = text[result.start : result.end]
+            # if the word is not specified to be allowed, keep in the PII entities
+            if word not in allow_list:
+                new_results.append(result)
+
         return new_results
 
     def __add_recognizer_name_if_not_exists(
