@@ -151,6 +151,8 @@ class AnalyzerEngine:
         for this specific request.
         :param context: List of context words to enhance confidence score if matched
         with the recognized entity's recognizer context
+        :param allow_list: List of words that the user defines as being allowed to keep
+        in the text
         :return: an array of the found entities in the text
 
         :example:
