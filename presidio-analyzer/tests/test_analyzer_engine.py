@@ -186,45 +186,33 @@ def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
     assert_result(results[0], "ROCKET", 0, 7, 0.8)
 
 
-def test_when_allow_list_specified(unit_test_guid):
-    mock_recognizer_registry = RecognizerRegistryMock()
-    analyze_engine = AnalyzerEngine(
-        registry=mock_recognizer_registry,
-        nlp_engine=NlpEngineMock(),
-    )
+def test_when_allow_list_specified(loaded_analyzer_engine):
     text = "bing.com is his favorite website, microsoft.com is his second favorite"
-    results = analyze_engine.analyze(
-        correlation_id=unit_test_guid,
+    results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
     )
     assert len(results) == 2
     assert_result(results[0], "URL", 0, 8, 0.5)
 
-    results = analyze_engine.analyze(
+    results = loaded_analyzer_engine.analyze(
         correlation_id=unit_test_guid, text=text, language="en", allow_list=["bing.com"]
     )
     assert len(results) == 1
     assert text[results[0].start : results[0].end] == "microsoft.com"
 
 
-def test_when_allow_list_specified_but_none_in_file(unit_test_guid):
-    mock_recognizer_registry = RecognizerRegistryMock()
-    analyze_engine = AnalyzerEngine(
-        registry=mock_recognizer_registry,
-        nlp_engine=NlpEngineMock(),
-    )
+def test_when_allow_list_specified_but_none_in_file(loaded_analyzer_engine):
+
     text = "bing.com is his favorite website"
-    results = analyze_engine.analyze(
-        correlation_id=unit_test_guid,
+    results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
     )
     assert len(results) == 1
     assert_result(results[0], "URL", 0, 8, 0.5)
 
-    results = analyze_engine.analyze(
-        correlation_id=unit_test_guid,
+    results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
         allow_list=["microsoft.com"],
@@ -233,16 +221,10 @@ def test_when_allow_list_specified_but_none_in_file(unit_test_guid):
     assert_result(results[0], "URL", 0, 8, 0.5)
 
 
-def test_when_allow_list_specified_multiple_items(unit_test_guid):
-    mock_recognizer_registry = RecognizerRegistryMock()
-    analyze_engine = AnalyzerEngine(
-        registry=mock_recognizer_registry,
-        nlp_engine=NlpEngineMock(),
-    )
+def test_when_allow_list_specified_multiple_items(loaded_analyzer_engine):
     text = "bing.com is his favorite website, microsoft.com is his second favorite"
 
-    results = analyze_engine.analyze(
-        correlation_id=unit_test_guid,
+    results = loaded_analyzer_engine.analyze(
         text=text,
         language="en",
         allow_list=["bing.com", "microsoft.com"],

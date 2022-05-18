@@ -223,7 +223,7 @@ class AnalyzerEngine:
         results = self.__remove_low_scores(results, score_threshold)
 
         if allow_list:
-            results = self.__remove_allow_list(results, allow_list, text)
+            results = self._remove_allow_list(results, allow_list, text)
 
         if not return_decision_process:
             results = self.__remove_decision_process(results)
@@ -307,9 +307,18 @@ class AnalyzerEngine:
         new_results = [result for result in results if result.score >= score_threshold]
         return new_results
 
-    def __remove_allow_list(
+    def _remove_allow_list(
         self, results: List[RecognizerResult], allow_list: List[str], text: str
     ) -> List[RecognizerResult]:
+        """
+        _summary_
+        :param results:
+        :param allow_list:
+        :param text:
+
+        Returns:
+            List[RecognizerResult]: _description_
+        """
         new_results = []
         for result in results:
             word = text[result.start : result.end]
