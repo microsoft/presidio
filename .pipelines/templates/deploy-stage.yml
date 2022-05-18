@@ -25,7 +25,7 @@ jobs:
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
-                    set -eux  # fail on error
+                    set -eu  # fail on error
 
                     az webapp deployment slot create --name ${{ parameters.ANALYZER_APP_NAME }} --resource-group ${{ parameters.RESOURCE_GROUP_NAME }} --configuration-source ${{ parameters.ANALYZER_APP_NAME }} --slot staging
                     URI=https://$(az webapp config hostname list --webapp-name ${{ parameters.ANALYZER_APP_NAME }} --resource-group ${{ parameters.RESOURCE_GROUP_NAME }} --slot staging --query '[0].name' -o tsv)
@@ -55,7 +55,7 @@ jobs:
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
-                    set -eux  # fail on error
+                    set -eu  # fail on error
 
                     az webapp deployment slot create --name ${{ parameters.ANONYMIZER_APP_NAME }} --resource-group ${{ parameters.RESOURCE_GROUP_NAME }} --configuration-source ${{ parameters.ANONYMIZER_APP_NAME }} --slot staging
                     URI=https://$(az webapp config hostname list --webapp-name ${{ parameters.ANONYMIZER_APP_NAME }} --resource-group ${{ parameters.RESOURCE_GROUP_NAME }} --slot staging --query '[0].name' -o tsv)
@@ -85,7 +85,7 @@ jobs:
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
-                    set -eux  # fail on error                   
+                    set -eu  # fail on error                   
                     az webapp deployment slot create --name ${{ parameters.IMAGE_REDACTOR_APP_NAME }} --resource-group ${{ parameters.RESOURCE_GROUP_NAME }} --configuration-source ${{ parameters.IMAGE_REDACTOR_APP_NAME }} --slot staging
                     URI=https://$(az webapp config hostname list --webapp-name ${{ parameters.IMAGE_REDACTOR_APP_NAME }} --resource-group ${{ parameters.RESOURCE_GROUP_NAME }} --slot staging --query '[0].name' -o tsv)
                     echo $URI
