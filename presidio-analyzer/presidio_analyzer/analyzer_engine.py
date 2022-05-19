@@ -310,8 +310,7 @@ class AnalyzerEngine:
     def _remove_allow_list(
         self, results: List[RecognizerResult], allow_list: List[str], text: str
     ) -> List[RecognizerResult]:
-        """
-        _summary_
+        """        
         :param results:
         :param allow_list:
         :param text:
