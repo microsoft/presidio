@@ -311,6 +311,8 @@ class AnalyzerEngine:
         self, results: List[RecognizerResult], allow_list: List[str], text: str
     ) -> List[RecognizerResult]:
         """        
+        Remove results which are part of the allow list.
+        
         :param results:
         :param allow_list:
         :param text:
