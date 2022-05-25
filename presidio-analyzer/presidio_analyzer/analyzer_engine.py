@@ -48,7 +48,6 @@ class AnalyzerEngine:
         default_score_threshold: float = 0,
         supported_languages: List[str] = None,
         context_aware_enhancer: Optional[ContextAwareEnhancer] = None,
-        allow_list=None,
     ):
         if not supported_languages:
             supported_languages = ["en"]
@@ -133,7 +132,7 @@ class AnalyzerEngine:
         return_decision_process: Optional[bool] = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
-        allow_list=None,
+        allow_list: Optional[List[str]] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -311,13 +310,13 @@ class AnalyzerEngine:
         self, results: List[RecognizerResult], allow_list: List[str], text: str
     ) -> List[RecognizerResult]:
         """
-        _summary_
-        :param results:
-        :param allow_list:
-        :param text:
+        Remove results which contain text allowed by the user.
+        :param results: the results that recognizers finds as PII excluding allow list words
+        :param allow_list: the words to allow to keep in the text and to not define as PII
+        :param text: the text to find PII in
 
         Returns:
-            List[RecognizerResult]: _description_
+            List[RecognizerResult]
         """
         new_results = []
         for result in results:

@@ -196,7 +196,7 @@ def test_when_allow_list_specified(loaded_analyzer_engine):
     assert_result(results[0], "URL", 0, 8, 0.5)
 
     results = loaded_analyzer_engine.analyze(
-        correlation_id=unit_test_guid, text=text, language="en", allow_list=["bing.com"]
+        text=text, language="en", allow_list=["bing.com"]
     )
     assert len(results) == 1
     assert text[results[0].start : results[0].end] == "microsoft.com"
