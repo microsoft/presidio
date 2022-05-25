@@ -310,15 +310,13 @@ class AnalyzerEngine:
     def _remove_allow_list(
         self, results: List[RecognizerResult], allow_list: List[str], text: str
     ) -> List[RecognizerResult]:
-        """        
+        """
         Remove results which are part of the allow list.
-        
-        :param results:
-        :param allow_list:
-        :param text:
 
-        Returns:
-            List[RecognizerResult]: _description_
+        :param results: List of RecognizerResult
+        :param allow_list: list of allowed terms
+        :param text: the text to analyze
+        :return: List[RecognizerResult]
         """
         new_results = []
         for result in results:
