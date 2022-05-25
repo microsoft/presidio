@@ -310,13 +310,12 @@ class AnalyzerEngine:
         self, results: List[RecognizerResult], allow_list: List[str], text: str
     ) -> List[RecognizerResult]:
         """
-        Remove results which contain text allowed by the user.
-        :param results: the results that recognizers finds as PII excluding allow list words
-        :param allow_list: the words to allow to keep in the text and to not define as PII
-        :param text: the text to find PII in
+        Remove results which are part of the allow list.
 
-        Returns:
-            List[RecognizerResult]
+        :param results: List of RecognizerResult
+        :param allow_list: list of allowed terms
+        :param text: the text to analyze
+        :return: List[RecognizerResult]
         """
         new_results = []
         for result in results:
