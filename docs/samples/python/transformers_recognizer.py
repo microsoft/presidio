@@ -30,7 +30,7 @@ class TransformersRecognizer(EntityRecognizer):
     :example:
     >from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
 
-    >transformers_recognizer = transformersRecognizer()
+    >transformers_recognizer = TransformersRecognizer()
 
     >registry = RecognizerRegistry()
     >registry.add_recognizer(transformers_recognizer)
