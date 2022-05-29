@@ -61,7 +61,7 @@ class TransformersRecognizer(EntityRecognizer):
     CHECK_LABEL_GROUPS = [
         ({"LOCATION"}, {"LOC"}),
         ({"PERSON"}, {"PER"}),
-        ({"ORGANIZATION"}, {"ORG", }),
+        ({"ORGANIZATION"}, {"ORG"}),
         # ({"MISCELLANEOUS"}, {"MISC"}), # Probably not PII
     ]
 
