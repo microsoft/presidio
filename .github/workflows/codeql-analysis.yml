@@ -19,6 +19,8 @@ on:
     branches: [ main ]
   schedule:
     - cron: '38 19 * * 1'
+    
+permissions: read-all
 
 jobs:
   analyze:
