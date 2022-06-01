@@ -65,8 +65,6 @@ class TransformersRecognizer(EntityRecognizer):
         # ({"MISCELLANEOUS"}, {"MISC"}), # Probably not PII
     ]
 
-    MODEL_LANGUAGES = "dslim/bert-base-NER"
-
     PRESIDIO_EQUIVALENCES = {
         "PER": "PERSON",
         "LOC": "LOCATION",
@@ -79,6 +77,7 @@ class TransformersRecognizer(EntityRecognizer):
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
         model: BertForTokenClassification = None,
+        model_path: str = "dslim/bert-base-NER",
     ):
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
@@ -90,12 +89,10 @@ class TransformersRecognizer(EntityRecognizer):
             if model
             else pipeline(
                 "ner",
-                model=AutoModelForTokenClassification.from_pretrained(
-                    self.MODEL_LANGUAGES
-                ),
-                tokenizer=AutoTokenizer.from_pretrained(self.MODEL_LANGUAGES),
+                model=AutoModelForTokenClassification.from_pretrained(model_path),
+                tokenizer=AutoTokenizer.from_pretrained(model_path),
                 # grouped_entities=True
-                aggregation_strategy="simple"
+                aggregation_strategy="simple",
             )
         )
 
@@ -125,14 +122,13 @@ class TransformersRecognizer(EntityRecognizer):
         :param text: The text for analysis.
         :param entities: Not working properly for this recognizer.
         :param nlp_artifacts: Not used by this recognizer.
-        :param language: Text language. Supported languages in MODEL_LANGUAGES
         :return: The list of Presidio RecognizerResult constructed from the recognized
             transformers detections.
         """
 
         results = []
         ner_results = self.model(text)
-        
+
         # If there are no specific list of entities, we will look for all of it.
         if not entities:
             entities = self.supported_entities
@@ -146,11 +142,15 @@ class TransformersRecognizer(EntityRecognizer):
                     entity, res["entity_group"], self.check_label_groups
                 ):
                     continue
-                textual_explanation = self.DEFAULT_EXPLANATION.format(res["entity_group"])
+                textual_explanation = self.DEFAULT_EXPLANATION.format(
+                    res["entity_group"]
+                )
                 explanation = self.build_transformers_explanation(
                     round(res["score"], 2), textual_explanation
                 )
-                transformers_result = self._convert_to_recognizer_result(res, explanation)
+                transformers_result = self._convert_to_recognizer_result(
+                    res, explanation
+                )
 
                 results.append(transformers_result)
 
@@ -158,7 +158,9 @@ class TransformersRecognizer(EntityRecognizer):
 
     def _convert_to_recognizer_result(self, res, explanation) -> RecognizerResult:
 
-        entity_type = self.PRESIDIO_EQUIVALENCES.get(res["entity_group"], res["entity_group"])
+        entity_type = self.PRESIDIO_EQUIVALENCES.get(
+            res["entity_group"], res["entity_group"]
+        )
         transformers_score = round(res["score"], 2)
 
         transformers_results = RecognizerResult(
