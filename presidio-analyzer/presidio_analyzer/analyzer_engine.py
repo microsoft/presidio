@@ -1,20 +1,19 @@
-import collections
 import json
-from typing import List, Optional, Dict, Union, Iterator, Iterable
 import logging
+from typing import Dict, Iterable, Iterator, List, Optional, Union, Any, Tuple
 
 from presidio_analyzer import (
+    DictAnalyzerResult,
     RecognizerRegistry,
     RecognizerResult,
     EntityRecognizer,
-    DictAnalyzerResult,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
 from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
     LemmaContextAwareEnhancer,
 )
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -134,6 +133,7 @@ class AnalyzerEngine:
         return_decision_process: Optional[bool] = False,
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
+        nlp_artifacts: Optional[NlpArtifacts] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -151,6 +151,7 @@ class AnalyzerEngine:
         for this specific request.
         :param context: List of context words to enhance confidence score if matched
         with the recognized entity's recognizer context
+        :param nlp_artifacts: precomputed NlpArtifacts
         :return: an array of the found entities in the text
 
         :example:
@@ -182,7 +183,8 @@ class AnalyzerEngine:
 
         # run the nlp pipeline over the given text, store the results in
         # a NlpArtifacts instance
-        nlp_artifacts = self.nlp_engine.process_text(text, language)
+        if not nlp_artifacts:
+            nlp_artifacts = self.nlp_engine.process_text(text, language)
 
         if self.log_decision_process:
             self.app_tracer.trace(
@@ -225,104 +227,115 @@ class AnalyzerEngine:
 
         return results
 
-    def analyze_list(
-        self, list_of_texts: Iterable[str], **kwargs
+    def analyze_iterator(
+        self,
+        list_of_texts: Iterable[Union[str, bool, float, int]],
+        language: str,
+        **kwargs,
     ) -> List[List[RecognizerResult]]:
         """
-        Run analysis on a list of strings.
+        Analyze an iterable of strings.
 
-        :param list_of_texts: Input data
-        :param kwargs: additional parameters to the analyze method
-        :return: List of List[RecognizerResult]
+        :param list_of_texts: An list containing strings to be analyzed.
+        :param language: Input language
+        :param kwargs: Additional parameters for the `AnalyzerEngine.analyze` method.
         """
+
+        # validate type
+        list_of_texts = (text for text in list_of_texts if self._validate_type(text))
+
+        # Process the texts as batch for improved performance
+        nlp_artifacts_batch: Iterator[
+            Tuple[str, NlpArtifacts]
+        ] = self.nlp_engine.process_batch(texts=list_of_texts, language=language)
+
         list_results = []
-        for text in list_of_texts:
-            results = self.analyze(text=text, **kwargs) if isinstance(text, str) else []
+        for text, nlp_artifacts in nlp_artifacts_batch:
+            results = self.analyze(
+                text=str(text), nlp_artifacts=nlp_artifacts, language=language, **kwargs
+            )
+
             list_results.append(results)
 
         return list_results
 
+    @staticmethod
+    def _validate_type(obj: Any) -> bool:
+        if not type(obj) in (int, float, bool, str):
+            raise ValueError(
+                "Analyzer.analyze_iterator only works on primitive types "
+                "(int, float, bool, str). "
+                "Lists of objects are not yet supported."
+            )
+        return True
+
     def analyze_dict(
-        self, input_dict: Dict[str, Union[str, Iterable[str]]], **kwargs
+        self,
+        input_dict: Dict[str, Union[Any, Iterable[Any]]],
+        language: str,
+        keys_to_skip: Optional[List[str]] = None,
+        **kwargs,
     ) -> Iterator[DictAnalyzerResult]:
         """
-        Run analysis on a full dictionary.
+        Analyze a dictionary of keys (strings) and values/iterable of values.
 
-        :param input_dict: Input data
-        :param kwargs: Additional parameters for the analyze method.
-        :return: Iterator with analyzer results per value
+        Non-string values are returned as is.
+
+        :param input_dict: The input dictionary for analysis
+        :param language: Input language
+        :param keys_to_skip: Keys to ignore during analysis
+        :param kwargs: Additional keyword arguments
+        for the `AnalyzerEngine.analyze` method
         """
+
+        if "context" in kwargs:
+            context = kwargs["context"]
+            del kwargs["context"]
+        else:
+            context = []
+
+        if not keys_to_skip:
+            keys_to_skip = []
 
         for key, value in input_dict.items():
+            if key in keys_to_skip:
+                yield DictAnalyzerResult(key=key, value=value, recognizer_results=[])
+                continue  # skip this key as requested
+
+            # Add the key as an additional context
+            specific_context = context[:]
+            specific_context.append(key)
+
             if not value:
                 results = []
-            else:
-                if isinstance(value, str):
-                    results: List[RecognizerResult] = self.analyze(text=value, **kwargs)
-                elif isinstance(value, collections.Iterable):
-                    results: List[List[RecognizerResult]] = self.analyze_list(
-                        list_of_texts=value, key=key, **kwargs
-                    )
-                else:
-                    results = []
-
-            yield DictAnalyzerResult(key=key, value=value, recognizer_results=results)
-
-    def analyze_batch(
-        self,
-        batch_dict: Dict[str, object],
-        keys_to_skip: Optional[List[str]] = None,
-        **kwargs,  # noqa ANN003
-    ) -> Union[List[RecognizerResult], DictAnalyzerResult]:
-        """
-        Run analysis on a dictionary containing a list of values.
-
-        Could be used for:
-        a. Identifying PII in a table represented as a
-        dictionary of keys ad list of values per key.
-        a. Identifying PII in specific keys on a json object.
-        b. Identifying PII on a list of values.
-        :param data: Either a string, a dictionary of type Dict[str,object],
-        or a list of strings.
-
-        For example, a table can be represented as a dictionary of columns,
-        where the key is the column name
-        and the value is the list of values for this column. If using Pandas,
-        transform the data frame to a dict using df.to_dict(orient="list")
-        :para batch_dict: Input data
-        :param keys_to_skip: List of keys to skip analysis for.
-        In such case a list of entities should be provided.
-        :param kwargs: additional parameters for the analyze function
-        :return: A dictionary containing the original keys, and a list of results
-        (list of list of RecognizerResult) from the various recognizers.
-        """
-
-        if not batch_dict:
-            raise ValueError(
-                "Input not provided. batch should be a dictionary "
-                "containing one or more keys with corresponding "
-                "lists of strings containing values to analyze"
-            )
-        if not isinstance(batch_dict, dict):
-            raise ValueError(
-                "Input parameter batch should be a dict containing "
-                "a list of strings per key. "
-                "For the analysis of one string, run the analyze function)"
-            )
-
-        response = {}
-        for key, list_of_texts in batch_dict.items():
-            if keys_to_skip and key in keys_to_skip:
-                continue
-            per_text_responses = []
-            for text in list_of_texts:
-                analyzer_response = self.analyze(
-                    text=text,
+            elif type(value) in (str, int, bool, float):
+                results: List[RecognizerResult] = self.analyze(
+                    text=str(value), language=language, context=[key], **kwargs
+                )
+            elif isinstance(value, dict):
+                new_keys_to_skip = [
+                    k.replace(f"{key}.", "") for k in keys_to_skip if k.startswith(key)
+                ]
+                results = self.analyze_dict(
+                    input_dict=value,
+                    language=language,
+                    context=specific_context,
+                    keys_to_skip=new_keys_to_skip,
                     **kwargs,
                 )
-                per_text_responses.append(analyzer_response)
-            response[key] = per_text_responses
-        return response
+            elif isinstance(value, Iterable):
+                # Recursively iterate nested dicts
+
+                results: List[List[RecognizerResult]] = self.analyze_iterator(
+                    list_of_texts=value,
+                    language=language,
+                    context=specific_context,
+                    **kwargs,
+                )
+            else:
+                raise ValueError(f"type {type(value)} is unsupported.")
+
+            yield DictAnalyzerResult(key=key, value=value, recognizer_results=results)
 
     def _enhance_using_context(
         self,
