@@ -76,7 +76,7 @@ class TransformersRecognizer(EntityRecognizer):
         self,
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
-        model: BertForTokenClassification = None,
+        model: Optional[BertForTokenClassification] = None,
         model_path: str = "dslim/bert-base-NER",
     ):
         self.check_label_groups = (
