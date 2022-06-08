@@ -53,7 +53,6 @@ class TransformersRecognizer(EntityRecognizer):
         "LOCATION",
         "PERSON",
         "ORGANIZATION",
-        # "MISCELLANEOUS"   # - There are no direct correlation with Presidio entities.
     ]
 
     DEFAULT_EXPLANATION = "Identified as {} by transformers's Named Entity Recognition"
@@ -62,23 +61,34 @@ class TransformersRecognizer(EntityRecognizer):
         ({"LOCATION"}, {"LOC"}),
         ({"PERSON"}, {"PER"}),
         ({"ORGANIZATION"}, {"ORG"}),
-        # ({"MISCELLANEOUS"}, {"MISC"}), # Probably not PII
     ]
 
     PRESIDIO_EQUIVALENCES = {
         "PER": "PERSON",
         "LOC": "LOCATION",
         "ORG": "ORGANIZATION",
-        # 'MISC': 'MISCELLANEOUS'   # - Probably not PII
     }
+
+    DEFAULT_MODEL_PATH = "dslim/bert-base-NER"
 
     def __init__(
         self,
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
         model: Optional[BertForTokenClassification] = None,
-        model_path: str = "dslim/bert-base-NER",
+        model_path: Optional[str] = None,
     ):
+        if not model and not model_path:
+            model_path = self.DEFAULT_MODEL_PATH
+            logger.warning(
+                f"Both 'model' and 'model_path' arguments are None. Using default model_path={model_path}"
+            )
+        
+        if model and model_path:
+            logger.warning(
+                f"Both 'model' and 'model_path' arguments were provided. Ignoring the model_path"
+            )
+
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
         )
@@ -91,7 +101,6 @@ class TransformersRecognizer(EntityRecognizer):
                 "ner",
                 model=AutoModelForTokenClassification.from_pretrained(model_path),
                 tokenizer=AutoTokenizer.from_pretrained(model_path),
-                # grouped_entities=True
                 aggregation_strategy="simple",
             )
         )
