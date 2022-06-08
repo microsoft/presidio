@@ -214,7 +214,7 @@ if __name__ == "__main__":
 
     transformers_recognizer = (
         TransformersRecognizer()
-    )  # This would download a very large (+2GB) model on the first run
+    )  # This would download a large (~500Mb) model on the first run
 
     registry = RecognizerRegistry()
     registry.add_recognizer(transformers_recognizer)
