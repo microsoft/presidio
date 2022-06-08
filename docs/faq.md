@@ -134,3 +134,6 @@ The main Presidio modules (analyzer, anonymizer, image-redactor) can be used bot
 ### How can I contribute to Presidio?
 
 First, review the [contribution guidelines](https://github.com/microsoft/presidio/blob/main/CONTRIBUTING.md), and feel free to reach out by opening and issue, posting a discussion or emailing us at presidio@microsoft.com
+
+### How can I report security vulnerabilities? 
+Please see the [security information](https://github.com/microsoft/presidio/blob/main/SECURITY.md).
