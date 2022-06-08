@@ -8,6 +8,8 @@ from presidio_analyzer import (
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
+logger = logging.getLogger("presidio-analyzer")
+
 try:
     from transformers import (
         AutoTokenizer,
@@ -17,10 +19,8 @@ try:
     )
     from transformers.models.bert.modeling_bert import BertForTokenClassification
 except ImportError:
-    print("transformers is not installed")
+    logger.error("transformers is not installed")
 
-
-logger = logging.getLogger("presidio-analyzer")
 
 
 class TransformersRecognizer(EntityRecognizer):
