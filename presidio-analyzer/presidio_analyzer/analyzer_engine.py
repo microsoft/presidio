@@ -1,9 +1,8 @@
 import json
 import logging
-from typing import Dict, Iterable, Iterator, List, Optional, Union, Any, Tuple
+from typing import List, Optional
 
 from presidio_analyzer import (
-    DictAnalyzerResult,
     RecognizerRegistry,
     RecognizerResult,
     EntityRecognizer,
@@ -226,116 +225,6 @@ class AnalyzerEngine:
             results = self.__remove_decision_process(results)
 
         return results
-
-    def analyze_iterator(
-        self,
-        list_of_texts: Iterable[Union[str, bool, float, int]],
-        language: str,
-        **kwargs,
-    ) -> List[List[RecognizerResult]]:
-        """
-        Analyze an iterable of strings.
-
-        :param list_of_texts: An list containing strings to be analyzed.
-        :param language: Input language
-        :param kwargs: Additional parameters for the `AnalyzerEngine.analyze` method.
-        """
-
-        # validate type
-        list_of_texts = (text for text in list_of_texts if self._validate_type(text))
-
-        # Process the texts as batch for improved performance
-        nlp_artifacts_batch: Iterator[
-            Tuple[str, NlpArtifacts]
-        ] = self.nlp_engine.process_batch(texts=list_of_texts, language=language)
-
-        list_results = []
-        for text, nlp_artifacts in nlp_artifacts_batch:
-            results = self.analyze(
-                text=str(text), nlp_artifacts=nlp_artifacts, language=language, **kwargs
-            )
-
-            list_results.append(results)
-
-        return list_results
-
-    @staticmethod
-    def _validate_type(obj: Any) -> bool:
-        if not type(obj) in (int, float, bool, str):
-            raise ValueError(
-                "Analyzer.analyze_iterator only works on primitive types "
-                "(int, float, bool, str). "
-                "Lists of objects are not yet supported."
-            )
-        return True
-
-    def analyze_dict(
-        self,
-        input_dict: Dict[str, Union[Any, Iterable[Any]]],
-        language: str,
-        keys_to_skip: Optional[List[str]] = None,
-        **kwargs,
-    ) -> Iterator[DictAnalyzerResult]:
-        """
-        Analyze a dictionary of keys (strings) and values/iterable of values.
-
-        Non-string values are returned as is.
-
-        :param input_dict: The input dictionary for analysis
-        :param language: Input language
-        :param keys_to_skip: Keys to ignore during analysis
-        :param kwargs: Additional keyword arguments
-        for the `AnalyzerEngine.analyze` method
-        """
-
-        if "context" in kwargs:
-            context = kwargs["context"]
-            del kwargs["context"]
-        else:
-            context = []
-
-        if not keys_to_skip:
-            keys_to_skip = []
-
-        for key, value in input_dict.items():
-            if key in keys_to_skip:
-                yield DictAnalyzerResult(key=key, value=value, recognizer_results=[])
-                continue  # skip this key as requested
-
-            # Add the key as an additional context
-            specific_context = context[:]
-            specific_context.append(key)
-
-            if not value:
-                results = []
-            elif type(value) in (str, int, bool, float):
-                results: List[RecognizerResult] = self.analyze(
-                    text=str(value), language=language, context=[key], **kwargs
-                )
-            elif isinstance(value, dict):
-                new_keys_to_skip = [
-                    k.replace(f"{key}.", "") for k in keys_to_skip if k.startswith(key)
-                ]
-                results = self.analyze_dict(
-                    input_dict=value,
-                    language=language,
-                    context=specific_context,
-                    keys_to_skip=new_keys_to_skip,
-                    **kwargs,
-                )
-            elif isinstance(value, Iterable):
-                # Recursively iterate nested dicts
-
-                results: List[List[RecognizerResult]] = self.analyze_iterator(
-                    list_of_texts=value,
-                    language=language,
-                    context=specific_context,
-                    **kwargs,
-                )
-            else:
-                raise ValueError(f"type {type(value)} is unsupported.")
-
-            yield DictAnalyzerResult(key=key, value=value, recognizer_results=results)
 
     def _enhance_using_context(
         self,
