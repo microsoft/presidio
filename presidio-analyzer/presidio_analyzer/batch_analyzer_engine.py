@@ -74,9 +74,9 @@ class BatchAnalyzerEngine:
         :param language: Input language
         :param keys_to_skip: Keys to ignore during analysis
         :param kwargs: Additional keyword arguments
-        for the `AnalyzerEngine.analyze` method. 
-        Use this to pass arguments to the analyze method, 
-        such as `ad_hoc_recognizers`, `context`, `return_decision_process`. 
+        for the `AnalyzerEngine.analyze` method.
+        Use this to pass arguments to the analyze method,
+        such as `ad_hoc_recognizers`, `context`, `return_decision_process`.
         See `AnalyzerEngine.analyze` for the full list.
         """
 
