@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Dict
+from typing import Optional, Dict, Iterator, Tuple, Union, List
 
 import spacy
 from spacy.language import Language
@@ -40,8 +40,21 @@ class SpacyNlpEngine(NlpEngine):
 
     def process_text(self, text: str, language: str) -> NlpArtifacts:
         """Execute the SpaCy NLP pipeline on the given text and language."""
+
         doc = self.nlp[language](text)
         return self._doc_to_nlp_artifact(doc, language)
+
+    def process_batch(
+        self,
+        texts: Union[List[str], List[Tuple[str, object]]],
+        language: str,
+        as_tuples: bool = False,
+    ) -> Iterator[Optional[NlpArtifacts]]:
+        """Execute the NLP pipeline on a batch of texts using spacy pipe."""
+        texts = (str(text) for text in texts)
+        docs = self.nlp[language].pipe(texts, as_tuples=as_tuples)
+        for doc in docs:
+            yield doc.text, self._doc_to_nlp_artifact(doc, language)
 
     def is_stopword(self, word: str, language: str) -> bool:
         """

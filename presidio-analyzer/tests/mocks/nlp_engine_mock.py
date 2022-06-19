@@ -1,3 +1,5 @@
+from typing import Iterable, Iterator, Tuple
+
 from presidio_analyzer.nlp_engine import NlpEngine, NlpArtifacts
 
 
@@ -18,3 +20,10 @@ class NlpEngineMock(NlpEngine):
 
     def process_text(self, text, language):
         return self.nlp_artifacts
+
+    def process_batch(
+        self, texts: Iterable[str], language: str, **kwargs
+    ) -> Iterator[Tuple[str, NlpArtifacts]]:
+        texts = list(texts)
+        for i in range(len(texts)):
+            yield texts[i], self.nlp_artifacts
