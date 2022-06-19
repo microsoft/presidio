@@ -8,11 +8,11 @@ from presidio_analyzer import (
     EntityRecognizer,
 )
 from presidio_analyzer.app_tracer import AppTracer
-from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
 from presidio_analyzer.context_aware_enhancers import (
     ContextAwareEnhancer,
     LemmaContextAwareEnhancer,
 )
+from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider, NlpArtifacts
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -133,6 +133,7 @@ class AnalyzerEngine:
         ad_hoc_recognizers: Optional[List[EntityRecognizer]] = None,
         context: Optional[List[str]] = None,
         allow_list: Optional[List[str]] = None,
+        nlp_artifacts: Optional[NlpArtifacts] = None,
     ) -> List[RecognizerResult]:
         """
         Find PII entities in text using different PII recognizers for a given language.
@@ -152,6 +153,7 @@ class AnalyzerEngine:
         with the recognized entity's recognizer context
         :param allow_list: List of words that the user defines as being allowed to keep
         in the text
+        :param nlp_artifacts: precomputed NlpArtifacts
         :return: an array of the found entities in the text
 
         :example:
@@ -183,7 +185,8 @@ class AnalyzerEngine:
 
         # run the nlp pipeline over the given text, store the results in
         # a NlpArtifacts instance
-        nlp_artifacts = self.nlp_engine.process_text(text, language)
+        if not nlp_artifacts:
+            nlp_artifacts = self.nlp_engine.process_text(text, language)
 
         if self.log_decision_process:
             self.app_tracer.trace(

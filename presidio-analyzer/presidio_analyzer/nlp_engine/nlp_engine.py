@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Iterable, Iterator, Tuple
 
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
@@ -14,6 +15,15 @@ class NlpEngine(ABC):
     @abstractmethod
     def process_text(self, text: str, language: str) -> NlpArtifacts:
         """Execute the NLP pipeline on the given text and language."""
+
+    @abstractmethod
+    def process_batch(
+        self, texts: Iterable[str], language: str, **kwargs
+    ) -> Iterator[Tuple[str, NlpArtifacts]]:
+        """Execute the NLP pipeline on a batch of texts.
+
+        Returns a tuple of (text, NlpArtifacts)
+        """
 
     @abstractmethod
     def is_stopword(self, word: str, language: str) -> bool:

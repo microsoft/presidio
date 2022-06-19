@@ -11,7 +11,7 @@ from presidio_analyzer import (
     RecognizerRegistry,
     EntityRecognizer,
     RecognizerResult,
-    analyzer_engine,
+    DictAnalyzerResult,
 )
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
@@ -460,10 +460,10 @@ def test_when_default_threshold_is_zero_then_all_results_pass(
 
 
 def test_when_get_supported_fields_then_return_all_languages(
-    mock_registry, unit_test_guid, nlp_engine
+    analyzer_engine_simple, unit_test_guid
 ):
-    analyzer = AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
-    entities = analyzer.get_supported_entities()
+
+    entities = analyzer_engine_simple.get_supported_entities()
 
     assert len(entities) == 3
     assert "CREDIT_CARD" in entities
