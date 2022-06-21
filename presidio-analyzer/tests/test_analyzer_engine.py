@@ -186,6 +186,52 @@ def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
     assert_result(results[0], "ROCKET", 0, 7, 0.8)
 
 
+def test_when_allow_list_specified(loaded_analyzer_engine):
+    text = "bing.com is his favorite website, microsoft.com is his second favorite"
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+    )
+    assert len(results) == 2
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = loaded_analyzer_engine.analyze(
+        text=text, language="en", allow_list=["bing.com"]
+    )
+    assert len(results) == 1
+    assert text[results[0].start : results[0].end] == "microsoft.com"
+
+
+def test_when_allow_list_specified_but_none_in_file(loaded_analyzer_engine):
+
+    text = "bing.com is his favorite website"
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+    )
+    assert len(results) == 1
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+        allow_list=["microsoft.com"],
+    )
+    assert len(results) == 1
+    assert_result(results[0], "URL", 0, 8, 0.5)
+
+
+def test_when_allow_list_specified_multiple_items(loaded_analyzer_engine):
+    text = "bing.com is his favorite website, microsoft.com is his second favorite"
+
+    results = loaded_analyzer_engine.analyze(
+        text=text,
+        language="en",
+        allow_list=["bing.com", "microsoft.com"],
+    )
+    assert len(results) == 0
+
+
 def test_when_removed_pattern_recognizer_then_doesnt_work(unit_test_guid):
     pattern = Pattern("spaceship pattern", r"\W*(spaceship)\W*", 0.8)
     pattern_recognizer = PatternRecognizer(
