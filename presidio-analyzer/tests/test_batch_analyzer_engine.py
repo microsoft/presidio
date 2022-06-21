@@ -257,3 +257,11 @@ def test_analyze_dict_with_unknown_object_raises_error(batch_analyzer_engine_sim
                 input_dict=input_dict, language="en"
             )
         )
+
+
+def test_analyze_dict_with_nones_returns_empty_result(batch_analyzer_engine_simple):
+    input_list = ["", "2", None, "c"]
+
+    res = batch_analyzer_engine_simple.analyze_iterator(texts=input_list, language="en")
+    for r in res:
+        assert not r
