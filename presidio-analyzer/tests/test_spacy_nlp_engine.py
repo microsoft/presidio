@@ -13,7 +13,7 @@ def test_simple_process_text(nlp_engine):
 def test_process_batch_strings(nlp_engine):
 
     nlp_artifacts_batch = nlp_engine.process_batch(
-        ["simple text", "simple text"], language="en"
+        ["simple text", "simple text"], language="en", batch_size=1
     )
     assert isinstance(nlp_artifacts_batch, Iterator)
     nlp_artifacts_batch = list(nlp_artifacts_batch)

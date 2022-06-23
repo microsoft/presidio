@@ -34,7 +34,7 @@ def test_analyze_iterator_returns_list_of_recognizer_results(
     texts, expected_output, batch_analyzer_engine_simple
 ):
 
-    results = batch_analyzer_engine_simple.analyze_iterator(texts=texts, language="en")
+    results = batch_analyzer_engine_simple.analyze_iterator(texts=texts, language="en", batch_size=2)
 
     assert len(results) == len(expected_output)
     for result, expected_result in zip(results, expected_output):
