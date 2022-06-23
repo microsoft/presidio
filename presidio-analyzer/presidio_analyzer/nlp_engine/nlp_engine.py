@@ -18,7 +18,7 @@ class NlpEngine(ABC):
 
     @abstractmethod
     def process_batch(
-        self, texts: Iterable[str], language: str, **kwargs
+        self, texts: Iterable[str], language: str, batch_size: int = None, **kwargs
     ) -> Iterator[Tuple[str, NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts.
 
