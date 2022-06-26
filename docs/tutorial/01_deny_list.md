@@ -4,6 +4,7 @@ In this example, we will pass a short list of tokens which should be marked as P
 First, let's define the tokens we want to treat as PII. In this case it would be a list of titles:
 
 <!--pytest-codeblocks:cont-->
+
 ```python
 titles_list = [
     "Sir",
@@ -21,6 +22,7 @@ titles_list = [
 Second, let's create a `PatternRecognizer` which would scan for those titles, by passing a `deny_list`:
 
 <!--pytest-codeblocks:cont-->
+
 ```python
 from presidio_analyzer import PatternRecognizer
 
@@ -30,6 +32,7 @@ titles_recognizer = PatternRecognizer(supported_entity="TITLE", deny_list=titles
 At this point we can call our recognizer directly:
 
 <!--pytest-codeblocks:cont-->
+
 ```python
 from presidio_analyzer import PatternRecognizer
 
@@ -41,6 +44,7 @@ print(f"Result:\n {result}")
 Finally, let's add this new recognizer to the list of recognizers used by the Presidio `AnalyzerEngine`:
 
 <!--pytest-codeblocks:cont-->
+
 ```python
 from presidio_analyzer import AnalyzerEngine
 
@@ -54,11 +58,13 @@ including the `NlpEngine` used to detect entities, and extract tokens, lemmas an
 Let's run the analyzer with the new recognizer in place:
 
 <!--pytest-codeblocks:cont-->
+
 ```python
 results = analyzer.analyze(text=text1, language="en")
 ```
 
 <!--pytest-codeblocks:cont-->
+
 ```python
 print("Results:")
 print(results)
@@ -67,6 +73,7 @@ print(results)
 As expected, both the name "Plum" and the title were identified as PII:
 
 <!--pytest-codeblocks:cont-->
+
 ```python
 print("Identified these PII entities:")
 for result in results:

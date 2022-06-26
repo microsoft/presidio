@@ -89,3 +89,5 @@ Example call to the `/analyze` service:
   ]
 }
 ```
+
+For more examples of deny-list recognizers, see [this sample](../samples/python/Anonymizing%20known%20values.ipynb).

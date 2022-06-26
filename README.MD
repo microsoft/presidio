@@ -9,6 +9,7 @@
 ![Release](https://img.shields.io/github/release/Microsoft/presidio.svg)
 [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
 [![PyPI package version](https://badge.fury.io/py/presidio-analyzer.svg)](https://badge.fury.io/py/presidio-analyzer.svg)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6076/badge)](https://bestpractices.coreinfrastructure.org/projects/6076)
 
 
 Analyzer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
