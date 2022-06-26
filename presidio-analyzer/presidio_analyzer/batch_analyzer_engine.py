@@ -129,6 +129,8 @@ class BatchAnalyzerEngine:
     @staticmethod
     def _validate_types(value_iterator: Iterable[Any]) -> Iterator[Any]:
         for val in value_iterator:
+            if not val:
+                continue
             if not type(val) in (int, float, bool, str):
                 err_msg = (
                     "Analyzer.analyze_iterator only works "
