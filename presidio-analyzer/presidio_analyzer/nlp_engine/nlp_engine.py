@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable, Iterator, Tuple
+from typing import Iterable, Iterator, Optional, Tuple
 
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
@@ -18,7 +18,7 @@ class NlpEngine(ABC):
 
     @abstractmethod
     def process_batch(
-        self, texts: Iterable[str], language: str, batch_size: int = None, **kwargs
+        self, texts: Iterable[str], language: str, batch_size: Optional[int] = None, **kwargs
     ) -> Iterator[Tuple[str, NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts.
 

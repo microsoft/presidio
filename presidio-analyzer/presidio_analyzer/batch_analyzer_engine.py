@@ -28,7 +28,7 @@ class BatchAnalyzerEngine:
         self,
         texts: Iterable[Union[str, bool, float, int]],
         language: str,
-        batch_size: int = None,
+        batch_size: Optional[int] = None,
         **kwargs,
     ) -> List[List[RecognizerResult]]:
         """
