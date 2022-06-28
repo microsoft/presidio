@@ -38,8 +38,8 @@ class TransformersRecognizer(SpacyRecognizer):
                     continue
                 if not ent.has_extension("confidence_score"):
                     raise ValueError(
-                        f"confidence score not available as a spaCy span extension "
-                        f"(ent._.confidence_score)"
+                        "confidence score not available as a spaCy span extension "
+                        "(ent._.confidence_score)"
                     )
                 confidence_score = ent._.confidence_score
                 textual_explanation = self.DEFAULT_EXPLANATION.format(ent.label_)
