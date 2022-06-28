@@ -1,16 +1,22 @@
 import logging
-from mimetypes import init
 from typing import Optional, Dict
 
 import spacy
 from spacy.language import Language
-from spacy.tokens import Doc
+from spacy.tokens import Doc, Span
 
 from presidio_analyzer.nlp_engine import SpacyNlpEngine
 
-import transformers
-from transformers import AutoTokenizer, AutoModelForTokenClassification
-from transformers import pipeline
+
+try:
+    import transformers
+    from transformers import (
+        AutoTokenizer,
+        AutoModelForTokenClassification,
+        pipeline,
+    )
+except ImportError:
+    transformers = None
 
 
 @Language.factory(
@@ -25,6 +31,7 @@ def create_transformer_component(nlp, name, pretrained_model_name_or_path: str):
 
 class TransformerComponent:
     def __init__(self, pretrained_model_name_or_path: str) -> None:
+        Span.set_extension("confidence_score", default=1.0, force=True)
         tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
         model = AutoModelForTokenClassification.from_pretrained(
             pretrained_model_name_or_path
@@ -38,6 +45,7 @@ class TransformerComponent:
         ents = []
         for d in res:
             span = doc.char_span(d["start"], d["end"], label=d["entity_group"])
+            span._.confidence_score = d["score"]
             ents.append(span)
         doc.ents = ents
         return doc
@@ -50,17 +58,32 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
     engine_name = "transformers"
     is_available = bool(spacy) and bool(transformers)
 
-    def __init__(self, models: Optional[Dict[str, str]] = None):
+    def __init__(self, models: Optional[Dict[str, Dict[str, str]]] = None):
         if not models:
-            models = {"en": "en_core_web_sm"}
+            models = {
+                "en": {"spacy": "en_core_web_sm", "transformers": "dslim/bert-base-NER"}
+            }
+        # chack that model dict includes the keys: "spacy" and "transformers"
+        elif any(
+            [
+                any([key not in model_dict for key in ("spacy", "transformers")])
+                for model_lang, model_dict in models.items()
+            ]
+        ):
+            print("Dict must contains 'spacy' and 'transformers' keys")
+            raise KeyError(
+                "Expected keys ('spacy' and 'transformers') was not found in model dict"
+            )
+
+        # TODO: add defaults and input validation
         logger.debug(f"Loading SpaCy models: {models.values()}")
 
         self.nlp = {}
         for lang_code, model_name in models.items():
-            nlp = spacy.load(model_name, disable=["parser", "ner"])
+            nlp = spacy.load(model_name["spacy"], disable=["parser", "ner"])
             component = nlp.add_pipe(
                 "transformers",
-                config={"pretrained_model_name_or_path": "dslim/bert-base-NER"},
+                config={"pretrained_model_name_or_path": model_name["transformers"]},
                 last=True,
             )
             self.nlp[lang_code] = nlp

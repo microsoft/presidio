@@ -2,6 +2,8 @@ import copy
 import logging
 from pathlib import Path
 from typing import Optional, List, Iterable, Union, Type, Dict
+from presidio_analyzer.nlp_engine.spacy_transformer_nlp_engine import SpacyTransformerNlpEngine
+from presidio_analyzer.predefined_recognizers.transformers_recognizer import TransformersRecognizer
 
 import yaml
 
@@ -111,6 +113,8 @@ class RecognizerRegistry:
             return SpacyRecognizer
         if isinstance(nlp_engine, StanzaNlpEngine):
             return StanzaRecognizer
+        if isinstance(nlp_engine, SpacyTransformerNlpEngine):
+            return TransformersRecognizer
         else:
             logger.warning(
                 "nlp engine should be either SpacyNlpEngine or StanzaNlpEngine"
