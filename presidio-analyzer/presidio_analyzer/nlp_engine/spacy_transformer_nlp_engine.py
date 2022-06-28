@@ -81,7 +81,7 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
         self.nlp = {}
         for lang_code, model_name in models.items():
             nlp = spacy.load(model_name["spacy"], disable=["parser", "ner"])
-            component = nlp.add_pipe(
+            nlp.add_pipe(
                 "transformers",
                 config={"pretrained_model_name_or_path": model_name["transformers"]},
                 last=True,
