@@ -18,6 +18,8 @@ try:
 except ImportError:
     transformers = None
 
+logger = logging.getLogger("presidio-analyzer")
+
 
 @Language.factory(
     "transformers",
@@ -49,9 +51,6 @@ class TransformerComponent:
             ents.append(span)
         doc.ents = ents
         return doc
-
-
-logger = logging.getLogger("presidio-analyzer")
 
 
 class SpacyTransformerNlpEngine(SpacyNlpEngine):
