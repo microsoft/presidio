@@ -9,11 +9,11 @@ logger = logging.getLogger("presidio-analyzer")
 
 class TransformersRecognizer(SpacyRecognizer):
     """
-    Recognize entities using the Stanza NLP package.
+    Recognize entities using the transformers package.
 
-    See https://stanfordnlp.github.io/stanza/.
-    Uses the spaCy-Stanza package (https://github.com/explosion/spacy-stanza) to align
-    Stanza's interface with spaCy's
+    See https://huggingface.co/docs/transformers/main/en/index
+    Uses the transformers package (https://huggingface.co/docs/transformers/main/en/installation) to align
+    transformers interface with spaCy
     """
 
     def __init__(self, **kwargs):  # noqa ANN003
