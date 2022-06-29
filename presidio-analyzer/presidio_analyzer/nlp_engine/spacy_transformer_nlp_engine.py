@@ -54,6 +54,29 @@ class TransformerComponent:
 
 
 class SpacyTransformerNlpEngine(SpacyNlpEngine):
+    """
+    SpacyTransformersNlpEngine is a transformers based NlpEngine.
+    It comprises a spacy pipeline used for tokenization,
+    lemmatization, pos, and a transformers component for NER.
+    Both the underlying spacy pipeline and the transformers engine could be
+    configured by the user.
+    :param models: a dictionary containing the model names per language.
+    Example:
+    {
+        "lang_code": "en",
+        "model_name": {
+             "spacy": "en_core_web_sm",
+             "transformers": "dslim/bert-base-NER"
+         }
+     }
+    Note that since the spaCy model is not used for NER,
+    we recommend using a simple model, such as en_core_web_sm for English.
+    For potential Transformers models, see a list of models here:
+    https://huggingface.co/models?pipeline_tag=token-classification
+    It is further recommended to fine-tune these models 
+    to the specific scenario in hand.
+    """
+
     engine_name = "transformers"
     is_available = bool(spacy) and bool(transformers)
 
