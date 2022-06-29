@@ -69,9 +69,9 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
                 for model_lang, model_dict in models.items()
             ]
         ):
-            print("Dict must contains 'spacy' and 'transformers' keys")
+            logger.error("'model_name' must contains 'spacy' and 'transformers' keys")
             raise KeyError(
-                "Expected keys ('spacy' and 'transformers') was not found in model dict"
+                "Expected keys ('spacy' and 'transformers') was not found in model_name dict"
             )
 
         # TODO: add defaults and input validation
