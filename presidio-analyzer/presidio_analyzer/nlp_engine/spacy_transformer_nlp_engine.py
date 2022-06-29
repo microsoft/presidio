@@ -81,20 +81,35 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
     is_available = bool(spacy) and bool(transformers)
 
     def __init__(self, models: Optional[Dict[str, Dict[str, str]]] = None):
+        # default models if not specified
         if not models:
             models = {
                 "en": {"spacy": "en_core_web_sm", "transformers": "dslim/bert-base-NER"}
             }
-        # chack that model dict includes the keys: "spacy" and "transformers"
+        # validate models type
+        elif type(models) is not dict:
+            logger.error(f"''models' argument must be dict, not {type(models)}")
+            raise KeyError(f"Expected 'models' argument to be dict, not {type(models)}")
+        # validate models.model_name type
+        elif type(models["model_name"]) is not dict:
+            logger.error(
+                f"''models.model_name' argument must be dict, not {type(models['model_name'])}"
+            )
+            raise KeyError(
+                f"Expected 'models.model_name' argument to be dict, not {type(models['model_name'])}"
+            )
+        # chack that model_name dict includes the keys: "spacy" and "transformers"
         elif any(
             [
                 any([key not in model_dict for key in ("spacy", "transformers")])
                 for model_lang, model_dict in models.items()
             ]
         ):
-            logger.error("'model_name' must contains 'spacy' and 'transformers' keys")
+            logger.error(
+                "'models.model_name' must contains 'spacy' and 'transformers' keys"
+            )
             raise KeyError(
-                "Expected keys ('spacy' and 'transformers') was not found in model_name dict"
+                "Expected keys ('spacy' and 'transformers') was not found in models.model_name dict"
             )
 
         # TODO: add defaults and input validation
