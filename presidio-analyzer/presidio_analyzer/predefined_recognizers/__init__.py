@@ -40,9 +40,6 @@ __all__ = [
     "MedicalLicenseRecognizer",
     "PhoneRecognizer",
     "SgFinRecognizer",
-    "SpacyRecognizer",
-    "StanzaRecognizer",
-    "PhoneRecognizer",
     "UrlRecognizer",
     "UsBankRecognizer",
     "UsItinRecognizer",
@@ -57,4 +54,5 @@ __all__ = [
     "AuAcnRecognizer",
     "AuTfnRecognizer",
     "AuMedicareRecognizer",
+    "TransformersRecognizer"
 ]
