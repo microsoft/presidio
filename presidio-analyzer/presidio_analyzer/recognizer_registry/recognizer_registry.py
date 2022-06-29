@@ -2,8 +2,12 @@ import copy
 import logging
 from pathlib import Path
 from typing import Optional, List, Iterable, Union, Type, Dict
-from presidio_analyzer.nlp_engine.spacy_transformer_nlp_engine import SpacyTransformerNlpEngine
-from presidio_analyzer.predefined_recognizers.transformers_recognizer import TransformersRecognizer
+from presidio_analyzer.nlp_engine.spacy_transformer_nlp_engine import (
+    SpacyTransformerNlpEngine,
+)
+from presidio_analyzer.predefined_recognizers.transformers_recognizer import (
+    TransformersRecognizer,
+)
 
 import yaml
 
@@ -117,7 +121,7 @@ class RecognizerRegistry:
             return TransformersRecognizer
         else:
             logger.warning(
-                "nlp engine should be either SpacyNlpEngine or StanzaNlpEngine"
+                "nlp engine should be either SpacyNlpEngine, StanzaNlpEngine or SpacyTransformerNlpEngine"
             )
             # Returning default
             return SpacyRecognizer
@@ -178,8 +182,7 @@ class RecognizerRegistry:
                     to_return.update(set(subset))
 
         logger.debug(
-            "Returning a total of %s recognizers",
-            str(len(to_return)),
+            "Returning a total of %s recognizers", str(len(to_return)),
         )
 
         if not to_return:
