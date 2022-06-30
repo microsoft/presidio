@@ -13,5 +13,5 @@ __all__ = [
     "SpacyNlpEngine",
     "StanzaNlpEngine",
     "NlpEngineProvider",
-    "SpacyTransformerNlpEngine"
+    "SpacyTransformerNlpEngine",
 ]

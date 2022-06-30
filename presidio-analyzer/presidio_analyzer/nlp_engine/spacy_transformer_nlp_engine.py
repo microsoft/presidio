@@ -73,7 +73,7 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
     we recommend using a simple model, such as en_core_web_sm for English.
     For potential Transformers models, see a list of models here:
     https://huggingface.co/models?pipeline_tag=token-classification
-    It is further recommended to fine-tune these models 
+    It is further recommended to fine-tune these models
     to the specific scenario in hand.
     """
 
@@ -93,10 +93,12 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
         # validate models.model_name type
         elif type(models["model_name"]) is not dict:
             logger.error(
-                f"''models.model_name' argument must be dict, not {type(models['model_name'])}"
+                "'models.model_name' argument must be dict,"
+                f"not {type(models['model_name'])}"
             )
             raise KeyError(
-                f"Expected 'models.model_name' argument to be dict, not {type(models['model_name'])}"
+                "Expected 'models.model_name' argument to be dict,"
+                f"not {type(models['model_name'])}"
             )
         # chack that model_name dict includes the keys: "spacy" and "transformers"
         elif any(
@@ -109,7 +111,8 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
                 "'models.model_name' must contains 'spacy' and 'transformers' keys"
             )
             raise KeyError(
-                "Expected keys ('spacy' and 'transformers') was not found in models.model_name dict"
+                "Expected keys ('spacy' and 'transformers') was not found in "
+                "models.model_name dict"
             )
 
         # TODO: add defaults and input validation

@@ -12,7 +12,8 @@ class TransformersRecognizer(SpacyRecognizer):
     Recognize entities using the transformers package.
 
     See https://huggingface.co/docs/transformers/main/en/index
-    Uses the transformers package (https://huggingface.co/docs/transformers/main/en/installation) to align
+    Uses the transformers package
+    (https://huggingface.co/docs/transformers/main/en/installation) to align
     transformers interface with spaCy
     """
 

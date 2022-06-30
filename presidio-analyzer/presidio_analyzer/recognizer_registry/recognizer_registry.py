@@ -121,7 +121,8 @@ class RecognizerRegistry:
             return TransformersRecognizer
         else:
             logger.warning(
-                "nlp engine should be either SpacyNlpEngine, StanzaNlpEngine or SpacyTransformerNlpEngine"
+                "nlp engine should be either SpacyNlpEngine,"
+                "StanzaNlpEngine or SpacyTransformerNlpEngine"
             )
             # Returning default
             return SpacyRecognizer

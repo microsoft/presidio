@@ -4,7 +4,12 @@ from typing import Optional, Dict, Union, Tuple
 
 import yaml
 
-from presidio_analyzer.nlp_engine import StanzaNlpEngine, SpacyNlpEngine, NlpEngine, SpacyTransformerNlpEngine
+from presidio_analyzer.nlp_engine import (
+    StanzaNlpEngine,
+    SpacyNlpEngine,
+    NlpEngine,
+    SpacyTransformerNlpEngine,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
