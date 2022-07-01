@@ -263,5 +263,6 @@ def test_analyze_dict_with_nones_returns_empty_result(batch_analyzer_engine_simp
     input_list = ["", "2", None, "c"]
 
     res = batch_analyzer_engine_simple.analyze_iterator(texts=input_list, language="en")
+    assert len(res) == len(input_list)
     for r in res:
         assert not r
