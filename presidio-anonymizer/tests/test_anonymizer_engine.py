@@ -45,6 +45,16 @@ def test_given_empty_anonymziers_list_then_we_fall_to_default():
     assert result == "please <SSN>."
 
 
+def test_given_custom_anonymizer_then_we_manage_to_anonymize_successfully():
+    engine = AnonymizerEngine()
+    text = "Fake card number 4151 3217 6243 3448.com that overlaps with nonexisting URL."
+    analyzer_result = RecognizerResult("CREDIT_CARD", 17, 36, 0.8)
+    analyzer_result2 = RecognizerResult("URL", 32, 40, 0.8)
+    anonymizer_config = OperatorConfig("custom", {"lambda": lambda x: f"<ENTITY: {x}>"})
+    result = engine.anonymize(text, [analyzer_result, analyzer_result2], {"DEFAULT": anonymizer_config}).text
+    assert result == "Fake card number <ENTITY: 4151 3217 6243 3448><ENTITY: 3448.com> that overlaps with nonexisting URL."
+
+
 def test_given_none_as_anonymziers_list_then_we_fall_to_default():
     engine = AnonymizerEngine()
     text = "please REPLACE ME."
