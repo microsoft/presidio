@@ -63,11 +63,10 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
     :param models: a dictionary containing the model names per language.
     Example:
     {
-        "lang_code": "en",
-        "model_name": {
-             "spacy": "en_core_web_sm",
-             "transformers": "dslim/bert-base-NER"
-         }
+        "en": {
+            "spacy": "en_core_web_sm",
+            "transformers": "dslim/bert-base-NER"
+        }
      }
     Note that since the spaCy model is not used for NER,
     we recommend using a simple model, such as en_core_web_sm for English.
@@ -90,8 +89,11 @@ class SpacyTransformerNlpEngine(SpacyNlpEngine):
         elif type(models) is not dict:
             logger.error(f"''models' argument must be dict, not {type(models)}")
             raise KeyError(f"Expected 'models' argument to be dict, not {type(models)}")
-        # validate models.model_name type
-        elif type(models["model_name"]) is not dict:
+        # validate models[model_lang] type is dict for all model_lang
+        elif any(
+            [type(model_dict) is not dict for model_lang, model_dict in models.items()]
+        ):
+            # elif type(models["model_name"]) is not dict:
             logger.error(
                 "'models.model_name' argument must be dict,"
                 f"not {type(models['model_name'])}"
