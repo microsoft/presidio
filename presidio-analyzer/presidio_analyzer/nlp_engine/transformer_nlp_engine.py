@@ -53,7 +53,7 @@ class TransformerComponent:
         return doc
 
 
-class SpacyTransformerNlpEngine(SpacyNlpEngine):
+class TransformerNlpEngine(SpacyNlpEngine):
     """
     SpacyTransformersNlpEngine is a transformers based NlpEngine.
     It comprises a spacy pipeline used for tokenization,
