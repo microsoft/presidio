@@ -11,6 +11,7 @@ class TextReplaceBuilder:
         self.logger = logging.getLogger("presidio-anonymizer")
         self.__validate_text_not_empty(original_text)
         self.output_text = original_text
+        self.original_text = original_text
         self.text_len = len(original_text)
         self.last_replacement_index = self.text_len
 
@@ -28,7 +29,7 @@ class TextReplaceBuilder:
         :return: str - part of the original text
         """
         self.__validate_position_in_text(start, end)
-        return self.output_text[start:end]
+        return self.original_text[start:end]
 
     def replace_text_get_insertion_index(
         self, replacement_text: str, start: int, end: int
