@@ -8,7 +8,7 @@ from presidio_analyzer.nlp_engine import (
     StanzaNlpEngine,
     SpacyNlpEngine,
     NlpEngine,
-    TransformerNlpEngine,
+    TransformersNlpEngine,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -39,7 +39,7 @@ class NlpEngineProvider:
     ):
 
         if not nlp_engines:
-            nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformerNlpEngine)
+            nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
 
         self.nlp_engines = {
             engine.engine_name: engine for engine in nlp_engines if engine.is_available

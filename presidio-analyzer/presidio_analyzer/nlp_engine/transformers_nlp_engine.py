@@ -26,12 +26,12 @@ logger = logging.getLogger("presidio-analyzer")
     default_config={"pretrained_model_name_or_path": "dslim/bert-base-NER"},
 )
 def create_transformer_component(nlp, name, pretrained_model_name_or_path: str):
-    return TransformerComponent(
+    return TransformersComponent(
         pretrained_model_name_or_path=pretrained_model_name_or_path
     )
 
 
-class TransformerComponent:
+class TransformersComponent:
     def __init__(self, pretrained_model_name_or_path: str) -> None:
         Span.set_extension("confidence_score", default=1.0, force=True)
         tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
@@ -53,7 +53,7 @@ class TransformerComponent:
         return doc
 
 
-class TransformerNlpEngine(SpacyNlpEngine):
+class TransformersNlpEngine(SpacyNlpEngine):
     """
     SpacyTransformersNlpEngine is a transformers based NlpEngine.
     It comprises a spacy pipeline used for tokenization,

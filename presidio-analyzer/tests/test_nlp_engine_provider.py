@@ -8,7 +8,7 @@ from presidio_analyzer.nlp_engine import (
     StanzaNlpEngine,
     NlpEngineProvider,
 )
-from presidio_analyzer.nlp_engine.transformer_nlp_engine import TransformerNlpEngine
+from presidio_analyzer.nlp_engine.transformers_nlp_engine import TransformersNlpEngine
 
 
 def test_when_create_nlp_engine__then_return_default_configuration():
@@ -102,7 +102,7 @@ def test_when_both_conf_and_config_then_fail():
         NlpEngineProvider(conf_file=conf_file, nlp_configuration=nlp_configuration)
 
 
-def test_when_create_transformer_nlp_engine_then_succeeds():
+def test_when_create_transformers_nlp_engine_then_succeeds():
     nlp_configuration={
         "nlp_engine_name": "transformers",
         "models": [
@@ -116,12 +116,12 @@ def test_when_create_transformer_nlp_engine_then_succeeds():
         ],
     }
     engine = NlpEngineProvider(nlp_configuration=nlp_configuration).create_engine()
-    assert isinstance(engine, TransformerNlpEngine)
+    assert isinstance(engine, TransformersNlpEngine)
     assert engine.nlp["en"] is not None
     assert isinstance(engine.nlp["en"], spacy.lang.en.English)
 
 
-def test_when_create_transformer_nlp_engine_from_wrong_conf_with_model_name_not_dict_then_fail():
+def test_when_create_transformers_nlp_engine_from_wrong_conf_with_model_name_not_dict_then_fail():
     nlp_configuration={
         "nlp_engine_name": "transformers",
         "models": [
@@ -135,7 +135,7 @@ def test_when_create_transformer_nlp_engine_from_wrong_conf_with_model_name_not_
         NlpEngineProvider(nlp_configuration=nlp_configuration).create_engine()
 
 
-def test_when_create_transformer_nlp_engine_from_wrong_conf_with_model_name_keys_not_include_spacy_then_fail():
+def test_when_create_transformers_nlp_engine_from_wrong_conf_with_model_name_keys_not_include_spacy_then_fail():
     nlp_configuration={
         "nlp_engine_name": "transformers",
         "models": [
@@ -152,7 +152,7 @@ def test_when_create_transformer_nlp_engine_from_wrong_conf_with_model_name_keys
         NlpEngineProvider(nlp_configuration=nlp_configuration).create_engine()
 
 
-def test_when_create_transformer_nlp_engine_from_wrong_conf_with_model_name_keys_not_include_transformers_then_fail():
+def test_when_create_transformers_nlp_engine_from_wrong_conf_with_model_name_keys_not_include_transformers_then_fail():
     nlp_configuration={
         "nlp_engine_name": "transformers",
         "models": [
