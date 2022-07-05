@@ -76,8 +76,10 @@ class NlpEngineProvider:
                 "Configuration should include nlp_engine_name and models "
                 "(list of model_name for each lang_code)."
             )
+        nlp_engine_name = self.nlp_configuration["nlp_engine_name"]
+        if nlp_engine_name not in self.nlp_engines:
+            raise ValueError(f"NLP engine '{nlp_engine_name}' is not available.")
         try:
-            nlp_engine_name = self.nlp_configuration["nlp_engine_name"]
             nlp_engine_class = self.nlp_engines[nlp_engine_name]
             nlp_engine_opts = {
                 m["lang_code"]: m["model_name"]
