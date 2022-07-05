@@ -63,13 +63,15 @@ def test_when_create_nlp_engine_from_wrong_conf_then_fail():
 
 def test_when_unsupported_nlp_engine_then_fail():
     with pytest.raises(ValueError) as e:
+        unsupported_engine_name = "not exists"
         nlp_configuration = {
-            "nlp_engine_name": "unsupported_engine",
+            "nlp_engine_name": unsupported_engine_name,
             "models": [{"lang_code": "de", "model_name": "de_test"}],
         }
         provider = NlpEngineProvider(nlp_configuration=nlp_configuration)
         provider.create_engine()
-    assert "Wrong NLP engine configuration" == e.value.args[0]
+    assert (f"NLP engine '{unsupported_engine_name}' is not available. "
+    "Make sure you have all required packages installed") == e.value.args[0]
 
 
 def test_when_read_test_nlp_conf_file_then_returns_spacy_nlp_engine():
