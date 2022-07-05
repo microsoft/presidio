@@ -26,12 +26,20 @@ logger = logging.getLogger("presidio-analyzer")
     default_config={"pretrained_model_name_or_path": "dslim/bert-base-NER"},
 )
 def create_transformer_component(nlp, name, pretrained_model_name_or_path: str):
+    """Spacy Language factory for creating custom component."""
     return TransformersComponent(
         pretrained_model_name_or_path=pretrained_model_name_or_path
     )
 
 
 class TransformersComponent:
+    """
+    Custom component to use in spacy pipeline.
+
+    Using HaggingFace transformers pretrained models for entity recognition.
+    :param pretrained_model_name_or_path: HaggingFace pretrained_model_name_or_path
+    """
+
     def __init__(self, pretrained_model_name_or_path: str) -> None:
         Span.set_extension("confidence_score", default=1.0, force=True)
         tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
@@ -43,6 +51,8 @@ class TransformersComponent:
         )
 
     def __call__(self, doc: Doc) -> Doc:
+        """Write transformers results to doc entities."""
+
         res = self.nlp(doc.text)
         ents = []
         for d in res:
@@ -55,19 +65,24 @@ class TransformersComponent:
 
 class TransformersNlpEngine(SpacyNlpEngine):
     """
+
     SpacyTransformersNlpEngine is a transformers based NlpEngine.
+
     It comprises a spacy pipeline used for tokenization,
     lemmatization, pos, and a transformers component for NER.
+
     Both the underlying spacy pipeline and the transformers engine could be
     configured by the user.
+
     :param models: a dictionary containing the model names per language.
-    Example:
+    :example:
     {
         "en": {
             "spacy": "en_core_web_sm",
             "transformers": "dslim/bert-base-NER"
         }
-     }
+    }
+
     Note that since the spaCy model is not used for NER,
     we recommend using a simple model, such as en_core_web_sm for English.
     For potential Transformers models, see a list of models here:
