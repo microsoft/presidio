@@ -1060,16 +1060,56 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#set-up-classes-for-batch-processing" class="md-nav__link">
-    Set up classes for batch processing
+  <a href="#handling-batch-data-on-presidio-anonymizer" class="md-nav__link">
+    Handling batch data on Presidio Anonymizer
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#example-using-sample-data" class="md-nav__link">
-    Example using sample data
+  <a href="#example-using-sample-tabular-data" class="md-nav__link">
+    Example using sample tabular data
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-using-json" class="md-nav__link">
+    Example using JSON
+  </a>
+  
+    <nav class="md-nav" aria-label="Example using JSON">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ignoring-specific-keys" class="md-nav__link">
+    Ignoring specific keys
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ignoring-nested-keys" class="md-nav__link">
+    Ignoring nested keys
+  </a>
+  
+    <nav class="md-nav" aria-label="Ignoring nested keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note" class="md-nav__link">
+    Note!
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2125,13 +2165,9 @@ Licensed under the Apache License, Version 2.0.
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="run-presidio-on-structured-semi-structured-data">Run Presidio on structured / semi-structured data<a class="anchor-link" href="#run-presidio-on-structured-semi-structured-data">&#182;</a></h1><p>This sample shows how Presidio could be potentially extended to handle the anonymization of a table or data frame.
 It introduces methods for the analysis and anonymization of both lists and dicts.</p>
-<p>In this example we create two classes which implement the base Presidio classes:</p>
-<ol>
-<li><code>BatchAnalyzerEngine(AnalyzerEngine)</code>: for the presidio-anlyzer side</li>
-<li><code>BatchAnonymizerEngine(AnonymizerEngine</code>): for the presidio-anonymizer side</li>
-</ol>
-<p>In addition, we create a <code>dataclass</code> (<code>DictAnalyzerResult</code>) to serve as the data transfer object between the two.</p>
-<p>Note: this sample input here is a Pandas DataFrame, but it can be used in other scenarios such as querying SQL data or using Spark DataFrames.</p>
+<p>In this example we leverage the batch mode in presidio-analyzer and implement a <code>BatchAnonymizerEngine(AnonymizerEngine)</code> class for the presidio-anonymizer side</p>
+<p>Note: this sample input here is a Pandas DataFrame and a JSON file, but it can be used in other scenarios such as querying SQL data or using Spark DataFrames.</p>
+<p>path to notebook: <a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/batch_processing.ipynb">https://github.com/microsoft/presidio/blob/main/docs/samples/python/batch_processing.ipynb</a></p>
 
 </div>
 </div>
@@ -2175,7 +2211,7 @@ It introduces methods for the analysis and anonymization of both lists and dicts
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">RecognizerResult</span>
+<span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">BatchAnalyzerEngine</span><span class="p">,</span> <span class="n">RecognizerResult</span><span class="p">,</span> <span class="n">DictAnalyzerResult</span>
 <span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">AnonymizerEngine</span>
 <span class="kn">from</span> <span class="nn">presidio_anonymizer.entities</span> <span class="kn">import</span> <span class="n">EngineResult</span>
 </pre></div>
@@ -2186,7 +2222,7 @@ import pprint
 
 import pandas as pd
 
-from presidio_analyzer import AnalyzerEngine, RecognizerResult
+from presidio_analyzer import AnalyzerEngine, BatchAnalyzerEngine, RecognizerResult, DictAnalyzerResult
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import EngineResult
 </div>
@@ -2205,21 +2241,7 @@ from presidio_anonymizer.entities import EngineResult
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="set-up-classes-for-batch-processing">Set up classes for batch processing<a class="anchor-link" href="#set-up-classes-for-batch-processing">&#182;</a></h3>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<ol>
-<li>Presidio Analyzer: Batch mode</li>
-</ol>
-
+<h3 id="handling-batch-data-on-presidio-anonymizer">Handling batch data on Presidio Anonymizer<a class="anchor-link" href="#handling-batch-data-on-presidio-anonymizer">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -2244,108 +2266,131 @@ from presidio_anonymizer.entities import EngineResult
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">DictAnalyzerResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Hold the analyzer results per value or list of values.&quot;&quot;&quot;</span>
-    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
-    <span class="n">recognizer_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]]]</span>
-
-
-<span class="k">class</span> <span class="nc">BatchAnalyzerEngine</span><span class="p">(</span><span class="n">AnalyzerEngine</span><span class="p">):</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">BatchAnonymizerEngine</span><span class="p">(</span><span class="n">AnonymizerEngine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class inheriting from AnalyzerEngine and adds the funtionality to analyze lists or dictionaries.</span>
+<span class="sd">    Class inheriting from the AnonymizerEngine and adding additional functionality </span>
+<span class="sd">    for anonymizing lists or dictionaries.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">analyze_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_texts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">anonymize_list</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">texts</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> 
+        <span class="n">recognizer_results_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]],</span> 
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">EngineResult</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Analyze an iterable of strings</span>
+<span class="sd">        Anonymize a list of strings.</span>
 <span class="sd">        </span>
-<span class="sd">        :param list_of_texts: An iterable containing strings to be analyzed.</span>
-<span class="sd">        :param kwargs: Additional parameters for the `AnalyzerEngine.analyze` method.</span>
+<span class="sd">        :param texts: List containing the texts to be anonymized (original texts)</span>
+<span class="sd">        :param recognizer_results_list: A list of lists of RecognizerResult, </span>
+<span class="sd">        the output of the AnalyzerEngine on each text in the list.</span>
+<span class="sd">        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="n">list_results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">list_of_texts</span><span class="p">:</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
-            <span class="n">list_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">list_results</span>
-
-    <span class="k">def</span> <span class="nf">analyze_dict</span><span class="p">(</span>
-     <span class="bp">self</span><span class="p">,</span> <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">object</span><span class="p">]]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DictAnalyzerResult</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Analyze a dictionary of keys (strings) and values (either object or Iterable[object]). </span>
-<span class="sd">        Non-string values are returned as is.</span>
-<span class="sd">        </span>
-<span class="sd">        :param input_dict: The input dictionary for analysis</span>
-<span class="sd">        :param kwargs: Additional keyword arguments for the `AnalyzerEngine.analyze` method</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">return_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">recognizer_results_list</span><span class="p">:</span>
+            <span class="n">recognizer_results_list</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="n">recognizer_results</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">recognizer_results_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">analyzer_results</span><span class="o">=</span><span class="n">recognizer_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">return_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
-                    <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyze_list</span><span class="p">(</span>
-                                <span class="n">list_of_texts</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> 
-                                <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">yield</span> <span class="n">DictAnalyzerResult</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">recognizer_results</span><span class="o">=</span><span class="n">results</span><span class="p">)</span>
+                <span class="n">return_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">return_list</span>
+
+
+    <span class="k">def</span> <span class="nf">anonymize_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DictAnalyzerResult</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Anonymize values in a dictionary.</span>
+<span class="sd">        </span>
+<span class="sd">        :param analyzer_results: Iterator of `DictAnalyzerResult` </span>
+<span class="sd">        containing the output of the AnalyzerEngine.analyze_dict on the input text.</span>
+<span class="sd">        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">return_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">analyzer_results</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymize_dict</span><span class="p">(</span><span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">recognizer_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">return_dict</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span>
+                
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">recognizer_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">return_dict</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span>
+                
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+                <span class="n">anonymize_respones</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymize_list</span><span class="p">(</span><span class="n">texts</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                                         <span class="n">recognizer_results_list</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">recognizer_results</span><span class="p">,</span> 
+                                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">return_dict</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">anonymize_respones</span> 
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">return_dict</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">return_dict</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt">@dataclass
-class DictAnalyzerResult:
-    """Hold the analyzer results per value or list of values."""
-    key: str
-    value: Union[str, List[str]]
-    recognizer_results: Union[List[RecognizerResult], List[List[RecognizerResult]]]
-
-
-class BatchAnalyzerEngine(AnalyzerEngine):
+<div id="cell-2" class="clipboard-copy-txt">class BatchAnonymizerEngine(AnonymizerEngine):
     """
-    Class inheriting from AnalyzerEngine and adds the funtionality to analyze lists or dictionaries.
+    Class inheriting from the AnonymizerEngine and adding additional functionality 
+    for anonymizing lists or dictionaries.
     """
     
-    def analyze_list(self, list_of_texts: Iterable[str], **kwargs) -> List[List[RecognizerResult]]:
+    def anonymize_list(
+        self, 
+        texts:List[Union[str, bool, int, float]], 
+        recognizer_results_list: List[List[RecognizerResult]], 
+        **kwargs
+    ) -> List[EngineResult]:
         """
-        Analyze an iterable of strings
+        Anonymize a list of strings.
         
-        :param list_of_texts: An iterable containing strings to be analyzed.
-        :param kwargs: Additional parameters for the `AnalyzerEngine.analyze` method.
+        :param texts: List containing the texts to be anonymized (original texts)
+        :param recognizer_results_list: A list of lists of RecognizerResult, 
+        the output of the AnalyzerEngine on each text in the list.
+        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method
         """
-        
-        list_results = []
-        for text in list_of_texts:
-            results = self.analyze(text=text, **kwargs) if isinstance(text, str) else []
-            list_results.append(results)
-        return list_results
-
-    def analyze_dict(
-     self, input_dict: Dict[str, Union[object, Iterable[object]]], **kwargs) -> Iterator[DictAnalyzerResult]:
-        """
-        Analyze a dictionary of keys (strings) and values (either object or Iterable[object]). 
-        Non-string values are returned as is.
-        
-        :param input_dict: The input dictionary for analysis
-        :param kwargs: Additional keyword arguments for the `AnalyzerEngine.analyze` method
-        """
-        
-        for key, value in input_dict.items():
-            if not value:
-                results = []
+        return_list = []
+        if not recognizer_results_list:
+            recognizer_results_list = [[] for _ in range(len(texts))]
+        for text, recognizer_results in zip(texts, recognizer_results_list):
+            if type(text) in (str, bool, int, float):
+                res = self.anonymize(text=str(text), analyzer_results=recognizer_results, **kwargs)
+                return_list.append(res.text)
             else:
-                if isinstance(value, str):
-                    results: List[RecognizerResult] = self.analyze(text=value, **kwargs)
-                elif isinstance(value, collections.abc.Iterable):
-                    results: List[List[RecognizerResult]] = self.analyze_list(
-                                list_of_texts=value, 
-                                **kwargs)
-                else:
-                    results = []
-            yield DictAnalyzerResult(key=key, value=value, recognizer_results=results)
-</div>
+                return_list.append(text)
+
+        return return_list
+
+
+    def anonymize_dict(self, analyzer_results: Iterable[DictAnalyzerResult], **kwargs) -> Dict[str, str]:
+
+        """
+        Anonymize values in a dictionary.
+        
+        :param analyzer_results: Iterator of `DictAnalyzerResult` 
+        containing the output of the AnalyzerEngine.analyze_dict on the input text.
+        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method
+        """
+        
+        return_dict = {}
+        for result in analyzer_results:
+            
+            if isinstance(result.value, dict):
+                resp = self.anonymize_dict(analyzer_results = result.recognizer_results, **kwargs)
+                return_dict[result.key] = resp
+                
+            elif isinstance(result.value, str):
+                resp = self.anonymize(text=result.value, analyzer_results=result.recognizer_results, **kwargs)
+                return_dict[result.key] = resp.text
+                
+            elif isinstance(result.value, collections.abc.Iterable):
+                anonymize_respones = self.anonymize_list(texts=result.value,
+                                                         recognizer_results_list=result.recognizer_results, 
+                                                         **kwargs)
+                return_dict[result.key] = anonymize_respones 
+            else:
+                return_dict[result.key] = result.value
+        return return_dict</div>
     
         </div>
     </div>
@@ -2361,10 +2406,7 @@ class BatchAnalyzerEngine(AnalyzerEngine):
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<ol>
-<li>Presidio Anonymizer</li>
-</ol>
-
+<h2 id="example-using-sample-tabular-data">Example using sample tabular data<a class="anchor-link" href="#example-using-sample-tabular-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -2389,117 +2431,19 @@ class BatchAnalyzerEngine(AnalyzerEngine):
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">BatchAnonymizerEngine</span><span class="p">(</span><span class="n">AnonymizerEngine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class inheriting from the AnonymizerEngine and adding additional functionality </span>
-<span class="sd">    for anonymizing lists or dictionaries.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">def</span> <span class="nf">anonymize_list</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> 
-        <span class="n">texts</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> 
-        <span class="n">recognizer_results_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]],</span> 
-        <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">EngineResult</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Anonymize a list of strings.</span>
-<span class="sd">        </span>
-<span class="sd">        :param texts: List containing the texts to be anonymized (original texts)</span>
-<span class="sd">        :param recognizer_results_list: A list of lists of RecognizerResult, </span>
-<span class="sd">        the output of the AnalyzerEngine on each text in the list.</span>
-<span class="sd">        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">return_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="n">recognizer_results</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">recognizer_results_list</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span><span class="n">analyzer_results</span><span class="o">=</span><span class="n">recognizer_results</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">return_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">return_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">return_list</span>
-
-
-    <span class="k">def</span> <span class="nf">anonymize_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DictAnalyzerResult</span><span class="p">],</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Anonymize values in a dictionary.</span>
-<span class="sd">        </span>
-<span class="sd">        :param analyzer_results: Iterator of `DictAnalyzerResult` </span>
-<span class="sd">        containing the output of the AnalyzerEngine.analyze_dict on the input text.</span>
-<span class="sd">        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="n">return_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">analyzer_results</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">recognizer_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">return_dict</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
-                <span class="n">anonymize_respones</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymize_list</span><span class="p">(</span><span class="n">texts</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                                                         <span class="n">recognizer_results_list</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">recognizer_results</span><span class="p">,</span> 
-                                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">return_dict</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">anonymize_respones</span> 
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">return_dict</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">value</span>
-
-        <span class="k">return</span> <span class="n">return_dict</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name phrase&quot;</span><span class="p">,</span> <span class="s2">&quot;phone number phrase&quot;</span><span class="p">,</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span> <span class="s2">&quot;boolean&quot;</span> <span class="p">]</span>
+<span class="n">sample_data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;Morris likes this&#39;</span><span class="p">,</span> <span class="s1">&#39;Please call 212-555-1234 after 2pm&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;You should talk to Mike&#39;</span><span class="p">,</span> <span class="s1">&#39;his number is 978-428-7111&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;Mary had a little startup&#39;</span><span class="p">,</span> <span class="s1">&#39;Phone number: 202-342-1234&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="p">]</span>
 </pre></div>
-<div id="cell-3" class="clipboard-copy-txt">class BatchAnonymizerEngine(AnonymizerEngine):
-    """
-    Class inheriting from the AnonymizerEngine and adding additional functionality 
-    for anonymizing lists or dictionaries.
-    """
-    
-    def anonymize_list(
-        self, 
-        texts:List[str], 
-        recognizer_results_list: List[List[RecognizerResult]], 
-        **kwargs
-    ) -> List[EngineResult]:
-        """
-        Anonymize a list of strings.
-        
-        :param texts: List containing the texts to be anonymized (original texts)
-        :param recognizer_results_list: A list of lists of RecognizerResult, 
-        the output of the AnalyzerEngine on each text in the list.
-        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method
-        """
-        return_list = []
-        for text, recognizer_results in zip(texts, recognizer_results_list):
-            if isinstance(text,str):
-                res = self.anonymize(text=text,analyzer_results=recognizer_results,**kwargs)
-                return_list.append(res.text)
-            else:
-                return_list.append(text)
-
-        return return_list
-
-
-    def anonymize_dict(self, analyzer_results: Iterator[DictAnalyzerResult],**kwargs) -> Dict[str, str]:
-
-        """
-        Anonymize values in a dictionary.
-        
-        :param analyzer_results: Iterator of `DictAnalyzerResult` 
-        containing the output of the AnalyzerEngine.analyze_dict on the input text.
-        :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method
-        """
-        
-        return_dict = {}
-        for result in analyzer_results:
-            if isinstance(result.value, str):
-                resp = self.anonymize(text=result.value, analyzer_results=result.recognizer_results, **kwargs)
-                return_dict[result.key] = resp.text
-            elif isinstance(result.value, collections.abc.Iterable):
-                anonymize_respones = self.anonymize_list(texts=result.value,
-                                                         recognizer_results_list=result.recognizer_results, 
-                                                         **kwargs)
-                return_dict[result.key] = anonymize_respones 
-            else:
-                return_dict[result.key] = result.value
-
-        return return_dict</div>
+<div id="cell-3" class="clipboard-copy-txt">columns = ["name phrase", "phone number phrase", "integer", "boolean" ]
+sample_data = [
+        ('Morris likes this', 'Please call 212-555-1234 after 2pm', 1, True),
+        ('You should talk to Mike', 'his number is 978-428-7111', 2, False),
+        ('Mary had a little startup', 'Phone number: 202-342-1234', 3, False)
+]</div>
     
         </div>
     </div>
@@ -2508,19 +2452,8 @@ class BatchAnalyzerEngine(AnalyzerEngine):
 </div>
 
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="example-using-sample-data">Example using sample data<a class="anchor-link" href="#example-using-sample-data">&#182;</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2540,54 +2473,12 @@ class BatchAnalyzerEngine(AnalyzerEngine):
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name phrase&quot;</span><span class="p">,</span><span class="s2">&quot;phone number phrase&quot;</span><span class="p">,</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span> <span class="s2">&quot;boolean&quot;</span> <span class="p">]</span>
-<span class="n">sample_data</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;Morris likes this&#39;</span><span class="p">,</span><span class="s1">&#39;Please call 212-555-1234 after 2pm&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;You should talk to Mike&#39;</span><span class="p">,</span><span class="s1">&#39;his number is 978-428-7111&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;Mary had a little startup&#39;</span><span class="p">,</span><span class="s1">&#39;Phone number: 202-342-1234&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-<span class="p">]</span>
-</pre></div>
-<div id="cell-4" class="clipboard-copy-txt">columns = ["name phrase","phone number phrase", "integer", "boolean" ]
-sample_data = [
-        ('Morris likes this','Please call 212-555-1234 after 2pm', 1, True),
-        ('You should talk to Mike','his number is 978-428-7111', 2, False),
-        ('Mary had a little startup','Phone number: 202-342-1234', 3, False)
-]</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-5">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Create Pandas DataFrame</span>
 <span class="n">df</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
 
 <span class="n">df</span>
 </pre></div>
-<div id="cell-5" class="clipboard-copy-txt"># Create Pandas DataFrame
+<div id="cell-4" class="clipboard-copy-txt"># Create Pandas DataFrame
 df  = pd.DataFrame(sample_data,columns=columns)
 
 df</div>
@@ -2608,7 +2499,7 @@ df</div>
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
 
 
 
@@ -2677,12 +2568,12 @@ df</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-6">
+            <clipboard-copy for="cell-5">
             <div>
                 <span class="notice" hidden>Copied!</span>
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
@@ -2695,7 +2586,7 @@ df</div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># DataFrame to dict</span>
 <span class="n">df_dict</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-6" class="clipboard-copy-txt"># DataFrame to dict
+<div id="cell-5" class="clipboard-copy-txt"># DataFrame to dict
 df_dict = df.to_dict(orient="list")</div>
     
         </div>
@@ -2711,12 +2602,12 @@ df_dict = df.to_dict(orient="list")</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-7">
+            <clipboard-copy for="cell-6">
             <div>
                 <span class="notice" hidden>Copied!</span>
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
@@ -2728,7 +2619,7 @@ df_dict = df.to_dict(orient="list")</div>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">df_dict</span><span class="p">)</span>
 </pre></div>
-<div id="cell-7" class="clipboard-copy-txt">pprint.pprint(df_dict)</div>
+<div id="cell-6" class="clipboard-copy-txt">pprint.pprint(df_dict)</div>
     
         </div>
     </div>
@@ -2773,6 +2664,42 @@ df_dict = df.to_dict(orient="list")</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-7">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
+<span class="n">batch_analyzer</span> <span class="o">=</span> <span class="n">BatchAnalyzerEngine</span><span class="p">(</span><span class="n">analyzer_engine</span><span class="o">=</span><span class="n">analyzer</span><span class="p">)</span>
+<span class="n">batch_anonymizer</span> <span class="o">=</span> <span class="n">BatchAnonymizerEngine</span><span class="p">()</span>
+</pre></div>
+<div id="cell-7" class="clipboard-copy-txt">analyzer = AnalyzerEngine()
+batch_analyzer = BatchAnalyzerEngine(analyzer_engine=analyzer)
+batch_anonymizer = BatchAnonymizerEngine()</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -2788,16 +2715,46 @@ df_dict = df.to_dict(orient="list")</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">batch_analyzer</span> <span class="o">=</span> <span class="n">BatchAnalyzerEngine</span><span class="p">()</span>
-<span class="n">batch_anonymizer</span> <span class="o">=</span> <span class="n">BatchAnonymizerEngine</span><span class="p">()</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">batch_analyzer</span><span class="o">.</span><span class="n">analyze_dict</span><span class="p">(</span><span class="n">df_dict</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+<span class="n">analyzer_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyzer_results</span><span class="p">)</span>
+<span class="n">analyzer_results</span>
 </pre></div>
-<div id="cell-8" class="clipboard-copy-txt">batch_analyzer = BatchAnalyzerEngine()
-batch_anonymizer = BatchAnonymizerEngine()</div>
+<div id="cell-8" class="clipboard-copy-txt">analyzer_results = batch_analyzer.analyze_dict(df_dict, language="en")
+analyzer_results = list(analyzer_results)
+analyzer_results</div>
     
         </div>
     </div>
 
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>[DictAnalyzerResult(key=&#39;name phrase&#39;, value=[&#39;Morris likes this&#39;, &#39;You should talk to Mike&#39;, &#39;Mary had a little startup&#39;], recognizer_results=[[type: PERSON, start: 0, end: 6, score: 0.85], [type: PERSON, start: 19, end: 23, score: 0.85], []]),
+ DictAnalyzerResult(key=&#39;phone number phrase&#39;, value=[&#39;Please call 212-555-1234 after 2pm&#39;, &#39;his number is 978-428-7111&#39;, &#39;Phone number: 202-342-1234&#39;], recognizer_results=[[type: DATE_TIME, start: 31, end: 34, score: 0.85, type: PHONE_NUMBER, start: 12, end: 24, score: 0.75], [type: PHONE_NUMBER, start: 14, end: 26, score: 0.75], [type: PHONE_NUMBER, start: 14, end: 26, score: 0.75]]),
+ DictAnalyzerResult(key=&#39;integer&#39;, value=[1, 2, 3], recognizer_results=[[], [], []]),
+ DictAnalyzerResult(key=&#39;boolean&#39;, value=[True, False, False], recognizer_results=[[], [], []])]</pre>
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -2822,9 +2779,9 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">batch_analyzer</span><span class="o">.</span><span class="n">analyze_dict</span><span class="p">(</span><span class="n">df_dict</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">anonymizer_results</span> <span class="o">=</span> <span class="n">batch_anonymizer</span><span class="o">.</span><span class="n">anonymize_dict</span><span class="p">(</span><span class="n">analyzer_results</span><span class="p">)</span>
 </pre></div>
-<div id="cell-9" class="clipboard-copy-txt">analyzer_results = batch_analyzer.analyze_dict(df_dict, language="en")</div>
+<div id="cell-9" class="clipboard-copy-txt">anonymizer_results = batch_anonymizer.anonymize_dict(analyzer_results)</div>
     
         </div>
     </div>
@@ -2854,9 +2811,9 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">anonymizer_results</span> <span class="o">=</span> <span class="n">batch_anonymizer</span><span class="o">.</span><span class="n">anonymize_dict</span><span class="p">(</span><span class="n">analyzer_results</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">scrubbed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">anonymizer_results</span><span class="p">)</span>
 </pre></div>
-<div id="cell-10" class="clipboard-copy-txt">anonymizer_results = batch_anonymizer.anonymize_dict(analyzer_results)</div>
+<div id="cell-10" class="clipboard-copy-txt">scrubbed_df = pd.DataFrame(anonymizer_results)</div>
     
         </div>
     </div>
@@ -2865,8 +2822,8 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
 </div>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2886,41 +2843,9 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">scrubbed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">anonymizer_results</span><span class="p">)</span>
-</pre></div>
-<div id="cell-11" class="clipboard-copy-txt">scrubbed_df = pd.DataFrame(anonymizer_results)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-12">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">scrubbed_df</span>
 </pre></div>
-<div id="cell-12" class="clipboard-copy-txt">scrubbed_df</div>
+<div id="cell-11" class="clipboard-copy-txt">scrubbed_df</div>
     
         </div>
     </div>
@@ -2938,7 +2863,7 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
 
 
 
@@ -2984,7 +2909,7 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
     </tr>
     <tr>
       <th>2</th>
-      <td>&lt;PERSON&gt; had a little startup</td>
+      <td>Mary had a little startup</td>
       <td>Phone number: &lt;PHONE_NUMBER&gt;</td>
       <td>3</td>
       <td>False</td>
@@ -3001,13 +2926,96 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
 </div>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="example-using-json">Example using JSON<a class="anchor-link" href="#example-using-json">&#182;</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-12">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">nested_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;key_a&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;key_a1&quot;</span><span class="p">:</span> <span class="s2">&quot;My phone number is 212-121-1424&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;key_b&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;www.abc.com&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;key_c&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;names&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;James Bond&quot;</span><span class="p">,</span> <span class="s2">&quot;Clark Kent&quot;</span><span class="p">,</span> <span class="s2">&quot;Hakeem Olajuwon&quot;</span><span class="p">,</span> <span class="s2">&quot;No name here!&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">nested_dict</span><span class="p">)</span>
+</pre></div>
+<div id="cell-12" class="clipboard-copy-txt">nested_dict = {
+    "key_a": {"key_a1": "My phone number is 212-121-1424"},
+    "key_b": {"www.abc.com"},
+    "key_c": 3,
+    "names": ["James Bond", "Clark Kent", "Hakeem Olajuwon", "No name here!"]
+}
+
+pprint.pprint(nested_dict)</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>{&#39;key_a&#39;: {&#39;key_a1&#39;: &#39;My phone number is 212-121-1424&#39;},
+ &#39;key_b&#39;: {&#39;www.abc.com&#39;},
+ &#39;key_c&#39;: 3,
+ &#39;names&#39;: [&#39;James Bond&#39;, &#39;Clark Kent&#39;, &#39;Hakeem Olajuwon&#39;, &#39;No name here!&#39;]}
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
@@ -3022,9 +3030,19 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Analyze dict</span>
+<span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">batch_analyzer</span><span class="o">.</span><span class="n">analyze_dict</span><span class="p">(</span><span class="n">input_dict</span> <span class="o">=</span> <span class="n">nested_dict</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+
+<span class="c1"># Anonymize dict</span>
+<span class="n">anonymizer_results</span> <span class="o">=</span> <span class="n">batch_anonymizer</span><span class="o">.</span><span class="n">anonymize_dict</span><span class="p">(</span><span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">analyzer_results</span><span class="p">)</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">anonymizer_results</span><span class="p">)</span>
 </pre></div>
-<div id="cell-13" class="clipboard-copy-txt"></div>
+<div id="cell-13" class="clipboard-copy-txt"># Analyze dict
+analyzer_results = batch_analyzer.analyze_dict(input_dict = nested_dict, language="en")
+
+# Anonymize dict
+anonymizer_results = batch_anonymizer.anonymize_dict(analyzer_results = analyzer_results)
+pprint.pprint(anonymizer_results)</div>
     
         </div>
     </div>
@@ -3032,6 +3050,216 @@ batch_anonymizer = BatchAnonymizerEngine()</div>
 </div>
 </div>
 
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>{&#39;key_a&#39;: {&#39;key_a1&#39;: &#39;My phone number is &lt;PHONE_NUMBER&gt;&#39;},
+ &#39;key_b&#39;: [&#39;&lt;URL&gt;&#39;],
+ &#39;key_c&#39;: 3,
+ &#39;names&#39;: [&#39;&lt;PERSON&gt;&#39;, &#39;&lt;PERSON&gt;&#39;, &#39;&lt;PERSON&gt;&#39;, &#39;No name here!&#39;]}
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="ignoring-specific-keys">Ignoring specific keys<a class="anchor-link" href="#ignoring-specific-keys">&#182;</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-14">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">keys_to_skip</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;key_a1&quot;</span><span class="p">,</span> <span class="s2">&quot;names&quot;</span><span class="p">]</span>
+<span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">batch_analyzer</span><span class="o">.</span><span class="n">analyze_dict</span><span class="p">(</span><span class="n">input_dict</span> <span class="o">=</span> <span class="n">nested_dict</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">keys_to_skip</span><span class="o">=</span><span class="n">keys_to_skip</span><span class="p">)</span>
+
+<span class="c1"># Anonymize dict</span>
+<span class="n">anonymizer_results</span> <span class="o">=</span> <span class="n">batch_anonymizer</span><span class="o">.</span><span class="n">anonymize_dict</span><span class="p">(</span><span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">analyzer_results</span><span class="p">)</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">anonymizer_results</span><span class="p">)</span>
+</pre></div>
+<div id="cell-14" class="clipboard-copy-txt">keys_to_skip=["key_a1", "names"]
+analyzer_results = batch_analyzer.analyze_dict(input_dict = nested_dict, language="en", keys_to_skip=keys_to_skip)
+
+# Anonymize dict
+anonymizer_results = batch_anonymizer.anonymize_dict(analyzer_results = analyzer_results)
+pprint.pprint(anonymizer_results)</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>{&#39;key_a&#39;: {&#39;key_a1&#39;: &#39;My phone number is 212-121-1424&#39;},
+ &#39;key_b&#39;: [&#39;&lt;URL&gt;&#39;],
+ &#39;key_c&#39;: 3,
+ &#39;names&#39;: [&#39;James Bond&#39;, &#39;Clark Kent&#39;, &#39;Hakeem Olajuwon&#39;, &#39;No name here!&#39;]}
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="ignoring-nested-keys">Ignoring nested keys<a class="anchor-link" href="#ignoring-nested-keys">&#182;</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-15">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">keys_to_skip</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;key_a.key_a1&quot;</span><span class="p">]</span>
+
+<span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">batch_analyzer</span><span class="o">.</span><span class="n">analyze_dict</span><span class="p">(</span><span class="n">input_dict</span> <span class="o">=</span> <span class="n">nested_dict</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">keys_to_skip</span><span class="o">=</span><span class="n">keys_to_skip</span><span class="p">)</span>
+
+<span class="c1"># Anonymize dict</span>
+<span class="n">anonymizer_results</span> <span class="o">=</span> <span class="n">batch_anonymizer</span><span class="o">.</span><span class="n">anonymize_dict</span><span class="p">(</span><span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">analyzer_results</span><span class="p">)</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">anonymizer_results</span><span class="p">)</span>
+</pre></div>
+<div id="cell-15" class="clipboard-copy-txt">keys_to_skip = ["key_a.key_a1"]
+
+analyzer_results = batch_analyzer.analyze_dict(input_dict = nested_dict, language="en", keys_to_skip=keys_to_skip)
+
+# Anonymize dict
+anonymizer_results = batch_anonymizer.anonymize_dict(analyzer_results = analyzer_results)
+pprint.pprint(anonymizer_results)</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>{&#39;key_a&#39;: {&#39;key_a1&#39;: &#39;My phone number is 212-121-1424&#39;},
+ &#39;key_b&#39;: [&#39;&lt;URL&gt;&#39;],
+ &#39;key_c&#39;: 3,
+ &#39;names&#39;: [&#39;&lt;PERSON&gt;&#39;, &#39;&lt;PERSON&gt;&#39;, &#39;&lt;PERSON&gt;&#39;, &#39;No name here!&#39;]}
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="note"><strong>Note!</strong><a class="anchor-link" href="#note">&#182;</a></h4><p>JSON files with objects within lists, e.g.:</p>
+
+<pre><code>{
+  "key": [
+    {
+      "key2": "Peter Parker"
+    },
+    {
+      "key3": "555-1234"
+    }
+  ]
+}</code></pre>
+<p>Are not yet supported. Consider breaking the JSON to parts if needed.</p>
+
+</div>
+</div>
 </div>
 </div>
 </div>

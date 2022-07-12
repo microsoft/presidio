@@ -12,14 +12,14 @@
         <meta name="author" content="Microsoft">
       
       
-        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/python/customizing_presidio_analyzer/">
+        <link rel="canonical" href="https://microsoft.github.io/presidio/samples/python/Anonymizing%20known%20values/">
       
       <link rel="icon" href="../../../assets/ms_icon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.11">
     
     
       
-        <title>Customizing the PII analysis process in Microsoft Presidio - Microsoft Presidio</title>
+        <title>Anonymizing known values - Microsoft Presidio</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#customizing-the-pii-analysis-process-in-microsoft-presidio" class="md-skip">
+        <a href="#anonymizing-known-values" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Customizing the PII analysis process in Microsoft Presidio
+              Anonymizing known values
             
           </span>
         </div>
@@ -1053,91 +1053,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#example-1-values-are-known-a-priori" class="md-nav__link">
+    Example 1: values are known a-priori
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    Getting started
+  <a href="#example-2-values-are-only-known-in-the-context-of-the-request" class="md-nav__link">
+    Example 2: values are only known in the context of the request
   </a>
-  
-    <nav class="md-nav" aria-label="Getting started">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-1-deny-list-based-pii-recognition" class="md-nav__link">
-    Example 1: Deny-list based PII recognition
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-2-regex-based-pii-recognition" class="md-nav__link">
-    Example 2: Regex based PII recognition
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-3-rule-based-logic-recognizer" class="md-nav__link">
-    Example 3: Rule based logic recognizer
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-4-calling-an-external-service-for-pii-detection" class="md-nav__link">
-    Example 4: Calling an external service for PII detection
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-5-supporting-new-languages" class="md-nav__link">
-    Example 5: Supporting new languages
-  </a>
-  
-    <nav class="md-nav" aria-label="Example 5: Supporting new languages">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adapting-the-nlp-engine" class="md-nav__link">
-    Adapting the NLP engine
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-6-using-context-words" class="md-nav__link">
-    Example 6: Using context words
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-7-tracing-the-decision-process" class="md-nav__link">
-    Example 7: Tracing the decision process
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-8-passing-a-list-of-words-to-keep" class="md-nav__link">
-    Example 8: passing a list of words to keep
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2191,11 +2116,10 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="customizing-the-pii-analysis-process-in-microsoft-presidio">Customizing the PII analysis process in Microsoft Presidio<a class="anchor-link" href="#customizing-the-pii-analysis-process-in-microsoft-presidio">&#182;</a></h1><p>This notebooks covers different customization use cases to:</p>
+<h1 id="anonymizing-known-values">Anonymizing known values<a class="anchor-link" href="#anonymizing-known-values">&#182;</a></h1><p>In addition to statistical and pattern based approaches, Presidio also supports the identification and anonymization of known values, using the deny-list mechanism. In this example we'll cover two cases:</p>
 <ol>
-<li>Adapt Presidio to detect new types of PII entities</li>
-<li>Adapt Presidio to detect PII entities in a new language</li>
-<li>Embed new types of detection modules into Presidio, to improve the coverage of the service.</li>
+<li>The known values are known a-priori (e.g., we have a list of names)</li>
+<li>The known values are only known in the context of a request (e.g., we have the name of a person as the filename)</li>
 </ol>
 
 </div>
@@ -2208,25 +2132,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="installation">Installation<a class="anchor-link" href="#installation">&#182;</a></h2><p>First, let's install presidio using <code>pip</code>. For detailed documentation, see the <a href="https://microsoft.github.io/presidio/installation">installation docs</a>.</p>
-<p>Install from PyPI:</p>
-<div class="codehilite"><pre><code>pip install presidio_analyzer
-pip install presidio_anonymizer
-python -m spacy download en_core_web_lg
-</code></pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="getting-started">Getting started<a class="anchor-link" href="#getting-started">&#182;</a></h2><p>The high level process in Presidio-Analyzer is the following:
-<img src="https://github.com/microsoft/presidio/raw/main/docs/assets/analyzer-design.png" alt="image.png"></p>
-<p>Load the <code>presidio-analyzer</code> modules. For more information, see the <a href="https://microsoft.github.io/presidio/analyzer/">analyzer docs</a>.</p>
+<h2 id="example-1-values-are-known-a-priori">Example 1: values are known a-priori<a class="anchor-link" href="#example-1-values-are-known-a-priori">&#182;</a></h2><p>Assume you have a list of potential PII values, you can create a recognizer which would detect them every time they appear in the text. For this case, we can create a deny-list based recognizer, and add it to presidio's <code>RecognizerRegistry</code>:</p>
 
 </div>
 </div>
@@ -2252,21 +2158,11 @@ python -m spacy download en_core_web_lg
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">import</span> <span class="nn">pprint</span>
-
-<span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">PatternRecognizer</span><span class="p">,</span> <span class="n">EntityRecognizer</span><span class="p">,</span> <span class="n">Pattern</span><span class="p">,</span> <span class="n">RecognizerResult</span>
-<span class="kn">from</span> <span class="nn">presidio_analyzer.recognizer_registry</span> <span class="kn">import</span> <span class="n">RecognizerRegistry</span>
-<span class="kn">from</span> <span class="nn">presidio_analyzer.nlp_engine</span> <span class="kn">import</span> <span class="n">NlpEngine</span><span class="p">,</span> <span class="n">SpacyNlpEngine</span><span class="p">,</span> <span class="n">NlpArtifacts</span>
-<span class="kn">from</span> <span class="nn">presidio_analyzer.context_aware_enhancers</span> <span class="kn">import</span> <span class="n">LemmaContextAwareEnhancer</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span><span class="p">,</span> <span class="n">RecognizerRegistry</span><span class="p">,</span> <span class="n">PatternRecognizer</span>
+<span class="kn">from</span> <span class="nn">presidio_anonymizer</span> <span class="kn">import</span> <span class="n">AnonymizerEngine</span>
 </pre></div>
-<div id="cell-1" class="clipboard-copy-txt">from typing import List
-import pprint
-
-from presidio_analyzer import AnalyzerEngine, PatternRecognizer, EntityRecognizer, Pattern, RecognizerResult
-from presidio_analyzer.recognizer_registry import RecognizerRegistry
-from presidio_analyzer.nlp_engine import NlpEngine, SpacyNlpEngine, NlpArtifacts
-from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer</div>
+<div id="cell-1" class="clipboard-copy-txt">from presidio_analyzer import AnalyzerEngine, RecognizerRegistry, PatternRecognizer
+from presidio_anonymizer import AnonymizerEngine</div>
     
         </div>
     </div>
@@ -2274,19 +2170,6 @@ from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer<
 </div>
 </div>
 
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-1-deny-list-based-pii-recognition">Example 1: Deny-list based PII recognition<a class="anchor-link" href="#example-1-deny-list-based-pii-recognition">&#182;</a></h3><p>In this example, we will pass a short list of tokens which should be marked as PII if detected.
-First, let's define the tokens we want to treat as PII. In this case it would be a list of titles:</p>
-
-</div>
-</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -2309,9 +2192,12 @@ First, let's define the tokens we want to treat as PII. In this case it would be
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">titles_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Sir&quot;</span><span class="p">,</span> <span class="s2">&quot;Ma&#39;am&quot;</span><span class="p">,</span> <span class="s2">&quot;Madam&quot;</span><span class="p">,</span> <span class="s2">&quot;Mr.&quot;</span><span class="p">,</span> <span class="s2">&quot;Mrs.&quot;</span><span class="p">,</span> <span class="s2">&quot;Ms.&quot;</span><span class="p">,</span> <span class="s2">&quot;Miss&quot;</span><span class="p">,</span> <span class="s2">&quot;Dr.&quot;</span><span class="p">,</span> <span class="s2">&quot;Professor&quot;</span><span class="p">]</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Get known values as a deny-list</span>
+<span class="n">known_names_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;George&quot;</span><span class="p">,</span> <span class="s2">&quot;Abraham&quot;</span><span class="p">,</span> <span class="s2">&quot;Theodore&quot;</span><span class="p">,</span> <span class="s2">&quot;Bill&quot;</span><span class="p">,</span> <span class="s2">&quot;Barack&quot;</span><span class="p">,</span> <span class="s2">&quot;Donald&quot;</span><span class="p">,</span> <span class="s2">&quot;Joe&quot;</span><span class="p">]</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt">titles_list = ["Sir", "Ma'am", "Madam", "Mr.", "Mrs.", "Ms.", "Miss", "Dr.", "Professor"]</div>
+<div id="cell-2" class="clipboard-copy-txt"># Get known values as a deny-list
+known_names_list = ["George", "Abraham", "Theodore", "Bill", "Barack", "Donald", "Joe"]
+</div>
     
         </div>
     </div>
@@ -2319,18 +2205,6 @@ First, let's define the tokens we want to treat as PII. In this case it would be
 </div>
 </div>
 
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Second, let's create a <code>PatternRecognizer</code> which would scan for those titles, by passing a <code>deny_list</code>:</p>
-
-</div>
-</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -2353,9 +2227,11 @@ First, let's define the tokens we want to treat as PII. In this case it would be
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">titles_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;TITLE&quot;</span><span class="p">,</span> <span class="n">deny_list</span><span class="o">=</span><span class="n">titles_list</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Create a PatternRecognizer for the deny list</span>
+<span class="n">deny_list_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;PRESIDENT_FIRST_NAME&quot;</span><span class="p">,</span> <span class="n">deny_list</span><span class="o">=</span><span class="n">known_names_list</span><span class="p">)</span>
 </pre></div>
-<div id="cell-3" class="clipboard-copy-txt">titles_recognizer = PatternRecognizer(supported_entity="TITLE", deny_list=titles_list)</div>
+<div id="cell-3" class="clipboard-copy-txt"># Create a PatternRecognizer for the deny list
+deny_list_recognizer = PatternRecognizer(supported_entity="PRESIDENT_FIRST_NAME", deny_list=known_names_list)</div>
     
         </div>
     </div>
@@ -2364,20 +2240,8 @@ First, let's define the tokens we want to treat as PII. In this case it would be
 </div>
 
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>At this point we can call our recognizer directly:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2397,13 +2261,67 @@ First, let's define the tokens we want to treat as PII. In this case it would be
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">text1</span> <span class="o">=</span> <span class="s2">&quot;I suspect Professor Plum, in the Dining Room, with the candlestick&quot;</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">titles_recognizer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text1</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TITLE&quot;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">deny_list_recognizer</span><span class="p">)</span>
+
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
+
+<span class="n">anonymizer</span> <span class="o">=</span> <span class="n">AnonymizerEngine</span><span class="p">()</span>
 </pre></div>
-<div id="cell-4" class="clipboard-copy-txt">text1 = "I suspect Professor Plum, in the Dining Room, with the candlestick"
-result = titles_recognizer.analyze(text1, entities=["TITLE"])
-print(f"Result:\n {result}")</div>
+<div id="cell-4" class="clipboard-copy-txt">registry = RecognizerRegistry()
+registry.add_recognizer(deny_list_recognizer)
+
+analyzer = AnalyzerEngine(registry=registry)
+
+anonymizer = AnonymizerEngine()</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-5">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;George Washington was the first US president&quot;</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Identified entities:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">anonymized</span> <span class="o">=</span> <span class="n">anonymizer</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="o">=</span><span class="n">results</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Anonymized text:</span><span class="se">\n</span><span class="si">{</span><span class="n">anonymized</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+<div id="cell-5" class="clipboard-copy-txt">text="George Washington was the first US president"
+
+results = analyzer.analyze(text=text, language="en")
+
+print("Identified entities:")
+print(results)
+print("")
+anonymized = anonymizer.anonymize(text=text, analyzer_results=results)
+print(f"Anonymized text:\n{anonymized.text}")</div>
     
         </div>
     </div>
@@ -2425,8 +2343,11 @@ print(f"Result:\n {result}")</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result:
- [type: TITLE, start: 10, end: 19, score: 1.0]
+<pre>Identified entities:
+[type: PRESIDENT_FIRST_NAME, start: 0, end: 6, score: 1.0]
+
+Anonymized text:
+&lt;PRESIDENT_FIRST_NAME&gt; Washington was the first US president
 </pre>
 </div>
 </div>
@@ -2443,61 +2364,20 @@ print(f"Result:\n {result}")</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Finally, let's add this new recognizer to the list of recognizers used by the Presidio <code>AnalyzerEngine</code>:</p>
+<h2 id="example-2-values-are-only-known-in-the-context-of-the-request">Example 2: values are only known in the context of the request<a class="anchor-link" href="#example-2-values-are-only-known-in-the-context-of-the-request">&#182;</a></h2><p>In some cases, we know the potential PII values only in the context of a specific text. Examples could be:</p>
+<ol>
+<li>Detect PII entities in free text columns in tabular databases, where other columns have entity values we can leverage</li>
+<li>Detect PII in a file having the filename or other metadata holding potential PII values (e.g. Smith.csv)</li>
+<li>Anonymize medical images which contain metadata</li>
+<li>Anonymize financial forms when the actual PII data is known</li>
+</ol>
+<p>In this case we can use a functionality called ad-hoc recognizers. Here's a simple example:</p>
 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-5">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
-<span class="n">analyzer</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">titles_recognizer</span><span class="p">)</span>
-</pre></div>
-<div id="cell-5" class="clipboard-copy-txt">
-analyzer = AnalyzerEngine()
-analyzer.registry.add_recognizer(titles_recognizer)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>When initializing the <code>AnalyzerEngine</code>, Presidio loads all available recognizers, including the <code>NlpEngine</code> used to detect entities, and extract tokens, lemmas and other linguistic features.</p>
-<p>Let's run the analyzer with the new recognizer in place:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2517,9 +2397,31 @@ analyzer.registry.add_recognizer(titles_recognizer)</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text1</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">person1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Martin Smith&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;special_value&quot;</span><span class="p">:</span><span class="s2">&quot;145A&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;free_text&quot;</span><span class="p">:</span> <span class="s2">&quot;Martin Smith, id 145A, likes playing basketball&quot;</span><span class="p">}</span>
+<span class="n">person2</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Deb Schmidt&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;special_value&quot;</span><span class="p">:</span><span class="s2">&quot;256B&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;free_text&quot;</span><span class="p">:</span> <span class="s2">&quot;Deb Schmidt, id 256B likes playing soccer&quot;</span><span class="p">}</span>
+<span class="n">person3</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;R2D2&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;special_value&quot;</span><span class="p">:</span><span class="s2">&quot;X1T2&quot;</span><span class="p">,</span> 
+           <span class="s2">&quot;free_text&quot;</span><span class="p">:</span> <span class="s2">&quot;X1T2 is R2D2&#39;s special value&quot;</span><span class="p">}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="n">person1</span><span class="p">,</span> <span class="n">person2</span><span class="p">,</span> <span class="n">person3</span><span class="p">]</span>
+<span class="n">dataset</span>
 </pre></div>
-<div id="cell-6" class="clipboard-copy-txt">results = analyzer.analyze(text=text1, language="en")</div>
+<div id="cell-6" class="clipboard-copy-txt">person1 = {"name": "Martin Smith", 
+           "special_value":"145A", 
+           "free_text": "Martin Smith, id 145A, likes playing basketball"}
+person2 = {"name":"Deb Schmidt", 
+           "special_value":"256B", 
+           "free_text": "Deb Schmidt, id 256B likes playing soccer"}
+person3 = {"name":"R2D2", 
+           "special_value":"X1T2", 
+           "free_text": "X1T2 is R2D2's special value"}
+
+dataset = [person1, person2, person3]
+dataset</div>
     
         </div>
     </div>
@@ -2527,6 +2429,51 @@ analyzer.registry.add_recognizer(titles_recognizer)</div>
 </div>
 </div>
 
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>[{&#39;name&#39;: &#39;Martin Smith&#39;,
+  &#39;special_value&#39;: &#39;145A&#39;,
+  &#39;free_text&#39;: &#39;Martin Smith, id 145A, likes playing basketball&#39;},
+ {&#39;name&#39;: &#39;Deb Schmidt&#39;,
+  &#39;special_value&#39;: &#39;256B&#39;,
+  &#39;free_text&#39;: &#39;Deb Schmidt, id 256B likes playing soccer&#39;},
+ {&#39;name&#39;: &#39;R2D2&#39;,
+  &#39;special_value&#39;: &#39;X1T2&#39;,
+  &#39;free_text&#39;: &#34;X1T2 is R2D2&#39;s special value&#34;}]</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We're interested in anonymizing the free text using the values contained in <code>name</code> and <code>special_value</code>. Since these values are only available in the context of one record, we use the ad-hoc recognizer capability in Presidio, instead of a generic deny-list <code>PatternRecognizer</code> added to Presidio's <code>RecognizerRegistry</code>.</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -2549,11 +2496,58 @@ analyzer.registry.add_recognizer(titles_recognizer)</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Results:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Go over dataset</span>
+<span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+    
+    <span class="c1"># Get the different known values</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">special_val</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="s1">&#39;special_value&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># Get the free text to anonymize</span>
+    <span class="n">free_text</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="s1">&#39;free_text&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># Create ad-hoc recognizers</span>
+    <span class="n">ad_hoc_name_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">deny_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">ad_hoc_id_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;special_value&quot;</span><span class="p">,</span> <span class="n">deny_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">special_val</span><span class="p">])</span>
+    
+    <span class="c1"># Run the analyze method with ad_hoc_recognizers:</span>
+    <span class="n">analyzer_results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">free_text</span><span class="p">,</span> 
+                                        <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> 
+                                        <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="p">[</span><span class="n">ad_hoc_name_recognizer</span><span class="p">,</span> <span class="n">ad_hoc_id_recognizer</span><span class="p">])</span>
+    
+    <span class="c1"># Anonymize results</span>
+    <span class="n">anonymized</span> <span class="o">=</span> <span class="n">anonymizer</span><span class="o">.</span><span class="n">anonymize</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">free_text</span><span class="p">,</span> <span class="n">analyzer_results</span><span class="o">=</span><span class="n">analyzer_results</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">anonymized</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    
+    <span class="c1"># Store output in original dataset</span>
+    <span class="n">person</span><span class="p">[</span><span class="s2">&quot;anonymized_free_text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">anonymized</span><span class="o">.</span><span class="n">text</span>
 </pre></div>
-<div id="cell-7" class="clipboard-copy-txt">print("Results:")
-print(results)</div>
+<div id="cell-7" class="clipboard-copy-txt"># Go over dataset
+for person in dataset:
+    
+    # Get the different known values
+    name = person['name']
+    special_val = person['special_value']
+    
+    # Get the free text to anonymize
+    free_text = person['free_text']
+    
+    # Create ad-hoc recognizers
+    ad_hoc_name_recognizer = PatternRecognizer(supported_entity="name", deny_list = [name])
+    ad_hoc_id_recognizer = PatternRecognizer(supported_entity="special_value", deny_list = [special_val])
+    
+    # Run the analyze method with ad_hoc_recognizers:
+    analyzer_results = analyzer.analyze(text=free_text, 
+                                        language="en", 
+                                        ad_hoc_recognizers=[ad_hoc_name_recognizer, ad_hoc_id_recognizer])
+    
+    # Anonymize results
+    anonymized = anonymizer.anonymize(text=free_text, analyzer_results=analyzer_results)
+    print(anonymized.text)
+    
+    # Store output in original dataset
+    person["anonymized_free_text"] = anonymized.text
+    </div>
     
         </div>
     </div>
@@ -2575,8 +2569,9 @@ print(results)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Results:
-[type: TITLE, start: 10, end: 19, score: 1.0, type: PERSON, start: 20, end: 24, score: 0.85]
+<pre>&lt;name&gt;, id &lt;special_value&gt;, likes playing basketball
+&lt;name&gt;, id &lt;special_value&gt; likes playing soccer
+&lt;special_value&gt; is &lt;name&gt;&#39;s special value
 </pre>
 </div>
 </div>
@@ -2585,18 +2580,6 @@ print(results)</div>
 
 </div>
 
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>As expected, both the name "Plum" and the title were identified as PII:</p>
-
-</div>
-</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -2619,13 +2602,11 @@ print(results)</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Identified these PII entities:&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">text1</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="n">result</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Dataset now contains the anonymiezd version as well</span>
+<span class="n">dataset</span>
 </pre></div>
-<div id="cell-8" class="clipboard-copy-txt">print("Identified these PII entities:")
-for result in results:
-    print(f"- {text1[result.start:result.end]} as {result.entity_type}")</div>
+<div id="cell-8" class="clipboard-copy-txt"># Dataset now contains the anonymiezd version as well
+dataset</div>
     
         </div>
     </div>
@@ -2643,15 +2624,26 @@ for result in results:
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
 
 
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Identified these PII entities:
-- Professor as TITLE
-- Plum as PERSON
-</pre>
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>[{&#39;name&#39;: &#39;Martin Smith&#39;,
+  &#39;special_value&#39;: &#39;145A&#39;,
+  &#39;free_text&#39;: &#39;Martin Smith, id 145A, likes playing basketball&#39;,
+  &#39;anonymized_free_text&#39;: &#39;&lt;name&gt;, id &lt;special_value&gt;, likes playing basketball&#39;},
+ {&#39;name&#39;: &#39;Deb Schmidt&#39;,
+  &#39;special_value&#39;: &#39;256B&#39;,
+  &#39;free_text&#39;: &#39;Deb Schmidt, id 256B likes playing soccer&#39;,
+  &#39;anonymized_free_text&#39;: &#39;&lt;name&gt;, id &lt;special_value&gt; likes playing soccer&#39;},
+ {&#39;name&#39;: &#39;R2D2&#39;,
+  &#39;special_value&#39;: &#39;X1T2&#39;,
+  &#39;free_text&#39;: &#34;X1T2 is R2D2&#39;s special value&#34;,
+  &#39;anonymized_free_text&#39;: &#34;&lt;special_value&gt; is &lt;name&gt;&#39;s special value&#34;}]</pre>
 </div>
+
 </div>
 
 </div>
@@ -2666,8 +2658,7 @@ for result in results:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-2-regex-based-pii-recognition">Example 2: Regex based PII recognition<a class="anchor-link" href="#example-2-regex-based-pii-recognition">&#182;</a></h3><p>Another simple recognizer we can add is based on regular expressions. 
-Let's assume we want to be extremely conservative and treat any token which contains a number as PII.</p>
+<p>Note that in these examples we're only using the custom recognizers we created. We can also add our custom recognizers to the existing recognizers in presidio, by calling <code>registry.load_predefined_recognizers()</code>:</p>
 
 </div>
 </div>
@@ -2693,17 +2684,27 @@ Let's assume we want to be extremely conservative and treat any token which cont
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Define the regex pattern in a Presidio `Pattern` object:</span>
-<span class="n">numbers_pattern</span> <span class="o">=</span> <span class="n">Pattern</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;numbers_pattern&quot;</span><span class="p">,</span><span class="n">regex</span><span class="o">=</span><span class="s2">&quot;\d+&quot;</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
 
-<span class="c1"># Define the recognizer with one or more patterns</span>
-<span class="n">number_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;NUMBER&quot;</span><span class="p">,</span> <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">numbers_pattern</span><span class="p">])</span>
+<span class="c1"># Load existing recognizer</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">load_predefined_recognizers</span><span class="p">()</span>
+
+<span class="c1"># Add our custom one</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">deny_list_recognizer</span><span class="p">)</span>
+
+<span class="c1"># Initialize AnalyzerEngine</span>
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
 </pre></div>
-<div id="cell-9" class="clipboard-copy-txt"># Define the regex pattern in a Presidio `Pattern` object:
-numbers_pattern = Pattern(name="numbers_pattern",regex="\d+", score = 0.5)
+<div id="cell-9" class="clipboard-copy-txt">registry = RecognizerRegistry()
 
-# Define the recognizer with one or more patterns
-number_recognizer = PatternRecognizer(supported_entity="NUMBER", patterns = [numbers_pattern])</div>
+# Load existing recognizer
+registry.load_predefined_recognizers()
+
+# Add our custom one
+registry.add_recognizer(deny_list_recognizer)
+
+# Initialize AnalyzerEngine
+analyzer = AnalyzerEngine(registry=registry)</div>
     
         </div>
     </div>
@@ -2711,18 +2712,6 @@ number_recognizer = PatternRecognizer(supported_entity="NUMBER", patterns = [num
 </div>
 </div>
 
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Testing the recognizer itself:</p>
-
-</div>
-</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -2745,17 +2734,9 @@ number_recognizer = PatternRecognizer(supported_entity="NUMBER", patterns = [num
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">text2</span> <span class="o">=</span> <span class="s2">&quot;I live in 510 Broad st.&quot;</span>
-
-<span class="n">numbers_result</span> <span class="o">=</span> <span class="n">number_recognizer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text2</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NUMBER&quot;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">numbers_result</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="s2">&quot;George Washington was the first president of the United States&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-10" class="clipboard-copy-txt">text2 = "I live in 510 Broad st."
-
-numbers_result = number_recognizer.analyze(text=text2, entities=["NUMBER"])
-print("Result:")
-print(numbers_result)</div>
+<div id="cell-10" class="clipboard-copy-txt">analyzer.analyze("George Washington was the first president of the United States", language="en")</div>
     
         </div>
     </div>
@@ -2773,14 +2754,17 @@ print(numbers_result)</div>
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
 
 
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result:
-[type: NUMBER, start: 10, end: 13, score: 0.5]
-</pre>
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>[type: PRESIDENT_FIRST_NAME, start: 0, end: 6, score: 1.0,
+ type: PERSON, start: 0, end: 17, score: 0.85,
+ type: LOCATION, start: 45, end: 62, score: 0.85]</pre>
 </div>
+
 </div>
 
 </div>
@@ -2795,7 +2779,7 @@ print(numbers_result)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>It's important to mention that recognizers is likely to have errors, both false-positive and false-negative, which would impact the entire performance of Presidio. Consider testing each recognizer on a representative dataset prior to integrating it into Presidio. For more info, see the <a href="https://microsoft.github.io/presidio/analyzer/developing_recognizers/">best practices for developing recognizers documentation</a>.</p>
+<p>Since George is also a name, it was detected twice, once as a PERSON entity, and once as a custom entity.</p>
 
 </div>
 </div>
@@ -2807,1214 +2791,15 @@ print(numbers_result)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-3-rule-based-logic-recognizer">Example 3: Rule based logic recognizer<a class="anchor-link" href="#example-3-rule-based-logic-recognizer">&#182;</a></h3><p>Taking the numbers recognizer one step further, let's say we also would like to detect numbers within words, e.g. "Number One". We can leverage the underlying spaCy token attributes, or write our own logic to detect such entities.</p>
-<p>Notes:</p>
+<p>Read more:</p>
 <ul>
-<li><p>In this example we would create a new class, which implements <a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/entity_recognizer.py"><code>EntityRecognizer</code></a>, the basic recognizer in Presidio. This abstract class requires us to implement the <code>load</code> method and <code>analyze</code> method.</p>
-</li>
-<li><p>Each recognizer accepts an object of type <code>NlpArtifacts</code>, which holds pre-computed attributes on the input text.</p>
-</li>
+<li>For more info on Presidio Analyzer, see <a href="https://microsoft.github.io/presidio/analyzer/">this documentation</a></li>
+<li>For more info on Presidio Anonymize, see <a href="https://microsoft.github.io/presidio/anonymizer/">this documentation</a></li>
+<li>To further customize the anonymization type, see <a href="https://microsoft.github.io/presidio/tutorial/11_custom_anonymization/">this tutorial</a></li>
 </ul>
-<p>A new recognizer should have this structure:</p>
 
 </div>
 </div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-11">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">MyRecognizer</span><span class="p">(</span><span class="n">EntityRecognizer</span><span class="p">):</span>
-    
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;No loading is required.&quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Logic for detecting a specific PII</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-</pre></div>
-<div id="cell-11" class="clipboard-copy-txt">class MyRecognizer(EntityRecognizer):
-    
-    def load(self) -> None:
-        """No loading is required."""
-        pass
-
-    def analyze(self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts) -> List[RecognizerResult]:
-        """
-        Logic for detecting a specific PII
-        """
-        pass
-</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>For example, detecting numbers in either numerical or alphabetic (e.g. Forty five) form:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-12">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">NumbersRecognizer</span><span class="p">(</span><span class="n">EntityRecognizer</span><span class="p">):</span>
-    
-    <span class="n">expected_confidence_level</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1"># expected confidence level for this recognizer</span>
-    
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;No loading is required.&quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">NlpArtifacts</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Analyzes test to find tokens which represent numbers (either 123 or One Two Three).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        
-        <span class="c1"># iterate over the spaCy tokens, and call `token.like_num`</span>
-        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">nlp_artifacts</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">like_num</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">RecognizerResult</span><span class="p">(</span>
-                    <span class="n">entity_type</span><span class="o">=</span><span class="s2">&quot;NUMBER&quot;</span><span class="p">,</span>
-                    <span class="n">start</span><span class="o">=</span><span class="n">token</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span>
-                    <span class="n">end</span><span class="o">=</span><span class="n">token</span><span class="o">.</span><span class="n">idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">),</span>
-                    <span class="n">score</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_confidence_level</span>
-                <span class="p">)</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">results</span>
-</pre></div>
-<div id="cell-12" class="clipboard-copy-txt">class NumbersRecognizer(EntityRecognizer):
-    
-    expected_confidence_level = 0.7 # expected confidence level for this recognizer
-    
-    def load(self) -> None:
-        """No loading is required."""
-        pass
-
-    def analyze(
-        self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts
-    ) -> List[RecognizerResult]:
-        """
-        Analyzes test to find tokens which represent numbers (either 123 or One Two Three).
-        """
-        results = []
-        
-        # iterate over the spaCy tokens, and call `token.like_num`
-        for token in nlp_artifacts.tokens:
-            if token.like_num:
-                result = RecognizerResult(
-                    entity_type="NUMBER",
-                    start=token.idx,
-                    end=token.idx + len(token),
-                    score=self.expected_confidence_level
-                )
-                results.append(result)
-        return results
-</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-13">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">new_numbers_recognizer</span> <span class="o">=</span> <span class="n">NumbersRecognizer</span><span class="p">(</span><span class="n">supported_entities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NUMBER&quot;</span><span class="p">])</span>
-</pre></div>
-<div id="cell-13" class="clipboard-copy-txt">new_numbers_recognizer = NumbersRecognizer(supported_entities=["NUMBER"])</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Since this recognizer requires the <code>NlpArtifacts</code>, we would have to call it as part of the <code>AnalyzerEngine</code> flow:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-14">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">text3</span> <span class="o">=</span> <span class="s2">&quot;Roberto lives in Five 10 Broad st.&quot;</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
-<span class="n">analyzer</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">new_numbers_recognizer</span><span class="p">)</span>
-
-<span class="n">numbers_results2</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text3</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Results:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">numbers_results2</span><span class="p">]))</span>
-</pre></div>
-<div id="cell-14" class="clipboard-copy-txt">text3 = "Roberto lives in Five 10 Broad st."
-analyzer = AnalyzerEngine()
-analyzer.registry.add_recognizer(new_numbers_recognizer)
-
-numbers_results2 = analyzer.analyze(text=text3, language="en")
-print("Results:")
-print("\n".join([str(res) for res in numbers_results2]))</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Results:
-type: PERSON, start: 0, end: 7, score: 0.85
-type: NUMBER, start: 17, end: 21, score: 0.7
-type: NUMBER, start: 22, end: 24, score: 0.7
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The analyzer was able to pick up both numeric and alphabetical numbers, including other types of PII entities from other recognizers (PERSON in this case).</p>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-4-calling-an-external-service-for-pii-detection">Example 4: Calling an external service for PII detection<a class="anchor-link" href="#example-4-calling-an-external-service-for-pii-detection">&#182;</a></h3><p>In a similar way to example 3, we can write logic to call external services for PII detection. 
-For a detailed example, see <a href="https://microsoft.github.io/presidio/analyzer/adding_recognizers/#creating-a-remote-recognizer">this part of the documentation</a>.</p>
-<p><a href="https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py">This is a sample implementation of such remote recognizer</a>.</p>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-5-supporting-new-languages">Example 5: Supporting new languages<a class="anchor-link" href="#example-5-supporting-new-languages">&#182;</a></h3><p>Two main parts in Presidio handle the text, and should be adapted if a new language is required:</p>
-<ol>
-<li>The <code>NlpEngine</code> containing the NLP model which performs tokenization, lemmatization, Named Entity Recognition and other NLP tasks.</li>
-<li>The different PII recognizers (<code>EntityRecognizer</code> objects) should be adapted or created.</li>
-</ol>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="adapting-the-nlp-engine">Adapting the NLP engine<a class="anchor-link" href="#adapting-the-nlp-engine">&#182;</a></h4><p>As its internal NLP engine, Presidio supports both spaCy and Stanza. Make sure you download the required models from spacy/stanza prior to using them. More details <a href="https://microsoft.github.io/presidio/analyzer/languages/#configuring-the-nlp-engine">here</a>. For example, to download the Spanish medium spaCy model: <code>python -m spacy download es_core_news_md</code></p>
-<p>In this example we will configure Presidio to use spaCy as its underlying NLP framework, with NLP models in English and Spanish:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-15">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">presidio_analyzer.nlp_engine</span> <span class="kn">import</span> <span class="n">NlpEngineProvider</span>
-
-<span class="c1">#import spacy</span>
-<span class="c1">#spacy.cli.download(&quot;es_core_news_md&quot;)</span>
-
-<span class="c1"># Create configuration containing engine name and models</span>
-<span class="n">configuration</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">:</span> <span class="s2">&quot;spacy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;lang_code&quot;</span><span class="p">:</span> <span class="s2">&quot;es&quot;</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;es_core_news_md&quot;</span><span class="p">},</span>
-               <span class="p">{</span><span class="s2">&quot;lang_code&quot;</span><span class="p">:</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;en_core_web_lg&quot;</span><span class="p">}],</span>
-<span class="p">}</span>
-
-<span class="c1"># Create NLP engine based on configuration</span>
-<span class="n">provider</span> <span class="o">=</span> <span class="n">NlpEngineProvider</span><span class="p">(</span><span class="n">nlp_configuration</span><span class="o">=</span><span class="n">configuration</span><span class="p">)</span>
-<span class="n">nlp_engine_with_spanish</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
-
-<span class="c1"># Pass the created NLP engine and supported_languages to the AnalyzerEngine</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span>
-    <span class="n">nlp_engine</span><span class="o">=</span><span class="n">nlp_engine_with_spanish</span><span class="p">,</span> 
-    <span class="n">supported_languages</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;es&quot;</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="c1"># Analyze in different languages</span>
-<span class="n">results_spanish</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mi nombre es Morris&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;es&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Results from Spanish request:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results_spanish</span><span class="p">)</span>
-
-<span class="n">results_english</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My name is Morris&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Results from English request:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results_english</span><span class="p">)</span>
-</pre></div>
-<div id="cell-15" class="clipboard-copy-txt">from presidio_analyzer.nlp_engine import NlpEngineProvider
-
-#import spacy
-#spacy.cli.download("es_core_news_md")
-
-# Create configuration containing engine name and models
-configuration = {
-    "nlp_engine_name": "spacy",
-    "models": [{"lang_code": "es", "model_name": "es_core_news_md"},
-               {"lang_code": "en", "model_name": "en_core_web_lg"}],
-}
-
-# Create NLP engine based on configuration
-provider = NlpEngineProvider(nlp_configuration=configuration)
-nlp_engine_with_spanish = provider.create_engine()
-
-# Pass the created NLP engine and supported_languages to the AnalyzerEngine
-analyzer = AnalyzerEngine(
-    nlp_engine=nlp_engine_with_spanish, 
-    supported_languages=["en", "es"]
-)
-
-# Analyze in different languages
-results_spanish = analyzer.analyze(text="Mi nombre es Morris", language="es")
-print("Results from Spanish request:")
-print(results_spanish)
-
-results_english = analyzer.analyze(text="My name is Morris", language="en")
-print("Results from English request:")
-print(results_english)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Results from Spanish request:
-[]
-Results from English request:
-[type: PERSON, start: 11, end: 17, score: 0.85]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><a href="https://microsoft.github.io/presidio/analyzer/languages/">See this documentation</a> for more details on how to configure Presidio support additional NLP models and languages.</p>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-6-using-context-words">Example 6: Using context words<a class="anchor-link" href="#example-6-using-context-words">&#182;</a></h3><p>Presidio has a internal mechanism for leveraging context words. This mechanism would increse the detection confidence of a PII entity in case a specific word appears before or after it.</p>
-<p>In this example we would first implement a zip code recognizer without context, and then add context to see how the confidence changes. Zip regex patterns (essentially 5 digits) are very week, so we would want the initial confidence to be low, and increased with the existence of context words.</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-16">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Define the regex pattern</span>
-<span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(\b\d</span><span class="si">{5}</span><span class="s2">(?:\-\d</span><span class="si">{4}</span><span class="s2">)?\b)&quot;</span> <span class="c1"># very weak regex pattern</span>
-<span class="n">zipcode_pattern</span> <span class="o">=</span> <span class="n">Pattern</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;zip code (weak)&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-
-<span class="c1"># Define the recognizer with the defined pattern</span>
-<span class="n">zipcode_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;US_ZIP_CODE&quot;</span><span class="p">,</span> <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">zipcode_pattern</span><span class="p">])</span>
-
-<span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">zipcode_recognizer</span><span class="p">)</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
-
-<span class="c1"># Test</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My zip code is 90210&quot;</span><span class="p">,</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">results</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-<div id="cell-16" class="clipboard-copy-txt"># Define the regex pattern
-regex = r"(\b\d{5}(?:\-\d{4})?\b)" # very weak regex pattern
-zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
-
-# Define the recognizer with the defined pattern
-zipcode_recognizer = PatternRecognizer(supported_entity="US_ZIP_CODE", patterns = [zipcode_pattern])
-
-registry = RecognizerRegistry()
-registry.add_recognizer(zipcode_recognizer)
-analyzer = AnalyzerEngine(registry=registry)
-
-# Test
-results = analyzer.analyze(text="My zip code is 90210",language="en")
-print(f"Result:\n {results}")</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result:
- [type: US_ZIP_CODE, start: 15, end: 20, score: 0.01]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>So this is working, but would catch any 5 digit string. This is why we set the score to 0.01. Let's use context words to increase score:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-17">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Define the recognizer with the defined pattern and context words</span>
-<span class="n">zipcode_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;US_ZIP_CODE&quot;</span><span class="p">,</span> 
-                                       <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">zipcode_pattern</span><span class="p">],</span>
-                                       <span class="n">context</span><span class="o">=</span> <span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">,</span><span class="s2">&quot;zipcode&quot;</span><span class="p">])</span>
-</pre></div>
-<div id="cell-17" class="clipboard-copy-txt"># Define the recognizer with the defined pattern and context words
-zipcode_recognizer = PatternRecognizer(supported_entity="US_ZIP_CODE", 
-                                       patterns = [zipcode_pattern],
-                                       context= ["zip","zipcode"])</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>When creating an <code>AnalyzerEngine</code> we can provide our own context enhancement logic by passing it to <code>context_aware_enhancer</code> parameter.
-<code>AnalyzerEngine</code> will create <code>LemmaContextAwareEnhancer</code> by default if not passed, which will enhance score of each matched result if it's recognizer holds context words and those words are found in context of the matched entity.</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-18">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">zipcode_recognizer</span><span class="p">)</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
-</pre></div>
-<div id="cell-18" class="clipboard-copy-txt">registry = RecognizerRegistry()
-registry.add_recognizer(zipcode_recognizer)
-analyzer = AnalyzerEngine(registry=registry)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-19">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Test</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My zip code is 90210&quot;</span><span class="p">,</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-</pre></div>
-<div id="cell-19" class="clipboard-copy-txt"># Test
-results = analyzer.analyze(text="My zip code is 90210",language="en")
-print("Result:")
-print(results)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result:
-[type: US_ZIP_CODE, start: 15, end: 20, score: 0.4]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The confidence score is now 0.4, instead of 0.01. because <code>LemmaContextAwareEnhancer</code> default context similarity factor is 0.35 and default minimum score with context similarity is 0.4, we can change that by passing <code>context_similarity_factor</code> and <code>min_score_with_context_similarity</code> parameters of <code>LemmaContextAwareEnhancer</code> to other than values, for example:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-20">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">zipcode_recognizer</span><span class="p">)</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span>
-    <span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">,</span>
-    <span class="n">context_aware_enhancer</span><span class="o">=</span>
-        <span class="n">LemmaContextAwareEnhancer</span><span class="p">(</span><span class="n">context_similarity_factor</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span> <span class="n">min_score_with_context_similarity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">))</span>
-</pre></div>
-<div id="cell-20" class="clipboard-copy-txt">registry = RecognizerRegistry()
-registry.add_recognizer(zipcode_recognizer)
-analyzer = AnalyzerEngine(
-    registry=registry,
-    context_aware_enhancer=
-        LemmaContextAwareEnhancer(context_similarity_factor=0.45, min_score_with_context_similarity=0.4))</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-21">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Test</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My zip code is 90210&quot;</span><span class="p">,</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-</pre></div>
-<div id="cell-21" class="clipboard-copy-txt"># Test
-results = analyzer.analyze(text="My zip code is 90210",language="en")
-print("Result:")
-print(results)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result:
-[type: US_ZIP_CODE, start: 15, end: 20, score: 0.46]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The confidence score is now 0.46 because it got enhanced from 0.01 with 0.45 and is more the minimum of 0.4</p>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Presidio supports passing a list of outer context in analyzer level, this is useful if the text is coming from a specific column or a specific user input etc. notice how the "zip" context word doesn't appear in the text but still enhance the confidence score from 0.01 to 0.4:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-22">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Define the recognizer with the defined pattern and context words</span>
-<span class="n">zipcode_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;US_ZIP_CODE&quot;</span><span class="p">,</span>
-                                       <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">zipcode_pattern</span><span class="p">],</span>
-                                       <span class="n">context</span><span class="o">=</span> <span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">,</span><span class="s2">&quot;zipcode&quot;</span><span class="p">])</span>
-
-<span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">zipcode_recognizer</span><span class="p">)</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
-
-<span class="c1"># Test</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My code is 90210&quot;</span><span class="p">,</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-</pre></div>
-<div id="cell-22" class="clipboard-copy-txt"># Define the recognizer with the defined pattern and context words
-zipcode_recognizer = PatternRecognizer(supported_entity="US_ZIP_CODE",
-                                       patterns = [zipcode_pattern],
-                                       context= ["zip","zipcode"])
-
-registry = RecognizerRegistry()
-registry.add_recognizer(zipcode_recognizer)
-analyzer = AnalyzerEngine(registry=registry)
-
-# Test
-result = analyzer.analyze(text="My code is 90210",language="en", context=["zip"])
-print("Result:")
-print(result)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result:
-[type: US_ZIP_CODE, start: 11, end: 16, score: 0.4]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-7-tracing-the-decision-process">Example 7: Tracing the decision process<a class="anchor-link" href="#example-7-tracing-the-decision-process">&#182;</a></h3><p>Presidio-analyzer's decision process exposes information on why a specific PII was detected. Such information could contain:</p>
-<ul>
-<li>Which recognizer detected the entity</li>
-<li>Which regex pattern was used</li>
-<li>Interpretability mechanisms in ML models</li>
-<li>Which context words improved the score</li>
-<li>Confidence scores before and after each step
-And more.</li>
-</ul>
-<p>For more information, refer to the <a href="https://microsoft.github.io/presidio/analyzer/decision_process/">decision process documentation</a>.</p>
-<p>Let's use the decision process output to understand how the zip code value was detected:</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-23">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;My zip code is 90210&quot;</span><span class="p">,</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">return_decision_process</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-<span class="n">decision_process</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">analysis_explanation</span>
-
-<span class="n">pp</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">PrettyPrinter</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Decision process output:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">decision_process</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
-</pre></div>
-<div id="cell-23" class="clipboard-copy-txt">results = analyzer.analyze(text="My zip code is 90210",language="en", return_decision_process = True)
-decision_process = results[0].analysis_explanation
-
-pp = pprint.PrettyPrinter()
-print("Decision process output:\n")
-pp.pprint(decision_process.__dict__)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Decision process output:
-
-{&#39;original_score&#39;: 0.01,
- &#39;pattern&#39;: &#39;(\\b\\d{5}(?:\\-\\d{4})?\\b)&#39;,
- &#39;pattern_name&#39;: &#39;zip code (weak)&#39;,
- &#39;recognizer&#39;: &#39;PatternRecognizer&#39;,
- &#39;score&#39;: 0.4,
- &#39;score_context_improvement&#39;: 0.39,
- &#39;supportive_context_word&#39;: &#39;zip&#39;,
- &#39;textual_explanation&#39;: None,
- &#39;validation_result&#39;: None}
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>When developing new recognizers, one can add information to this explanation and extend it with additional findings.</p>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="example-8-passing-a-list-of-words-to-keep">Example 8: passing a list of words to keep<a class="anchor-link" href="#example-8-passing-a-list-of-words-to-keep">&#182;</a></h3>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We will use the built in recognizers that include the <code>URLRecognizer</code> and the NLP model <code>EntityRecognizer</code> and see the default functionality if we don't specify any list of words for the detector to allow to keep in the text.</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-24">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">websites_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;bing.com&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;microsoft.com&quot;</span>
-<span class="p">]</span>
-<span class="n">text1</span> <span class="o">=</span> <span class="s2">&quot;Bill&#39;s favorite website is bing.com, David&#39;s is microsoft.com&quot;</span>
-<span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="n">text1</span><span class="p">,</span> <span class="n">language</span> <span class="o">=</span> <span class="s1">&#39;en&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-<div id="cell-24" class="clipboard-copy-txt">websites_list = [
-    "bing.com",
-    "microsoft.com"
-]
-text1 = "Bill's favorite website is bing.com, David's is microsoft.com"
-analyzer = AnalyzerEngine()
-result = analyzer.analyze(text = text1, language = 'en')
-print(f"Result: \n {result}")
-</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result: 
- [type: PERSON, start: 0, end: 4, score: 0.85, type: URL, start: 27, end: 35, score: 0.85, type: PERSON, start: 37, end: 42, score: 0.85, type: URL, start: 48, end: 61, score: 0.85]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>To specify an allow list we just pass a list of values we want to keep as a parameter to call to <code>analyze</code>. Now we can see that in the results, <code>bing.com</code> is no longer being recognized as a PII item, only <code>microsoft.com</code> as well as the named entities are still recognized since we did include it in the allow list.</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-25">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="n">text1</span><span class="p">,</span> <span class="n">language</span> <span class="o">=</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">allow_list</span><span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bing.com&quot;</span><span class="p">,</span> <span class="s2">&quot;google.com&quot;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-<div id="cell-25" class="clipboard-copy-txt">result = analyzer.analyze(text = text1, language = 'en', allow_list= ["bing.com", "google.com"])
-print(f"Result: \n {result}")</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Result: 
- [type: PERSON, start: 0, end: 4, score: 0.85, type: PERSON, start: 37, end: 42, score: 0.85, type: URL, start: 48, end: 61, score: 0.85]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
 </div>
 </div>
 </div>

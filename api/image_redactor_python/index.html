@@ -1214,26 +1214,8 @@
     <div class="doc doc-contents first">
 
       <p>ImageRedactorEngine performs OCR + PII detection + bounding box redaction.</p>
+<p>:param image_analyzer_engine: Engine which performs OCR + PII detection.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>image_analyzer_engine</code></td>
-        <td></td>
-        <td><p>Engine which performs OCR + PII detection.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_image_redactor/image_redactor_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ImageRedactorEngine</span><span class="p">:</span>
@@ -1308,54 +1290,13 @@
 
       <p>Redact method to redact the given image.</p>
 <p>Please notice, this method duplicates the image, creates a new instance and
-manipulate it.</p>
+manipulate it.
+:param image: PIL Image to be processed
+:param fill: colour to fill the shape - int (0-255) for
+grayscale or Tuple(R, G, B) for RGB
+:param kwargs: Additional values for the analyze method in AnalyzerEngine</p>
+<p>:return: the redacted image</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>image</code></td>
-        <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.10.4/x64/lib/python3.10/site-packages/PIL/Image.py&#39;&gt;</code></td>
-        <td><p>PIL Image to be processed</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>fill</code></td>
-        <td><code>Union[int, Tuple[int, int, int]]</code></td>
-        <td><p>colour to fill the shape - int (0-255) for grayscale or Tuple(R, G, B) for RGB</p></td>
-        <td><code>(0, 0, 0)</code></td>
-      </tr>
-      <tr>
-        <td><code>kwargs</code></td>
-        <td></td>
-        <td><p>Additional values for the analyze method in AnalyzerEngine</p></td>
-        <td><code>{}</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>&lt;module &#39;PIL.Image&#39; from &#39;/opt/hostedtoolcache/Python/3.10.4/x64/lib/python3.10/site-packages/PIL/Image.py&#39;&gt;</code></td>
-      <td><p>the redacted image</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_image_redactor/image_redactor_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">redact</span><span class="p">(</span>
@@ -1413,32 +1354,10 @@ manipulate it.</p>
     <div class="doc doc-contents first">
 
       <p>ImageAnalyzerEngine class.</p>
+<p>:param analyzer_engine: The Presidio AnalyzerEngine instance
+    to be used to detect PII in text
+:param ocr: the OCR object to be used to detect text in images.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>analyzer_engine</code></td>
-        <td></td>
-        <td><p>The Presidio AnalyzerEngine instance to be used to detect PII in text</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>ocr</code></td>
-        <td></td>
-        <td><p>the OCR object to be used to detect text in images.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_image_redactor/image_analyzer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ImageAnalyzerEngine</span><span class="p">:</span>
@@ -1580,47 +1499,10 @@ manipulate it.</p>
     <div class="doc doc-contents ">
 
       <p>Analyse method to analyse the given image.</p>
+<p>:param image: PIL Image/numpy array or file path(str) to be processed
+:param kwargs: Additional values for the analyze method in AnalyzerEngine</p>
+<p>:return: list of the extract entities with image bounding boxes</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>image</code></td>
-        <td><code>object</code></td>
-        <td><p>PIL Image/numpy array or file path(str) to be processed</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>kwargs</code></td>
-        <td></td>
-        <td><p>Additional values for the analyze method in AnalyzerEngine</p></td>
-        <td><code>{}</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[presidio_image_redactor.entities.image_recognizer_result.ImageRecognizerResult]</code></td>
-      <td><p>list of the extract entities with image bounding boxes</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_image_redactor/image_analyzer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ImageRecognizerResult</span><span class="p">]:</span>
@@ -1667,38 +1549,11 @@ manipulate it.</p>
       <p>Map extracted PII entities to image bounding boxes.</p>
 <p>Matching is based on the position of the recognized entity from analyzer
 and word (in ocr dict) in the text.</p>
+<p>:param text_analyzer_results: PII entities recognized by presidio analyzer
+:param ocr_result: dict results with words and bboxes from OCR
+:param text: text the results are based on</p>
+<p>return: list of extracted entities with image bounding boxes</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text_analyzer_results</code></td>
-        <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-        <td><p>PII entities recognized by presidio analyzer</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>ocr_result</code></td>
-        <td><code>dict</code></td>
-        <td><p>dict results with words and bboxes from OCR</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>text the results are based on  return: list of extracted entities with image bounding boxes</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_image_redactor/image_analyzer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>

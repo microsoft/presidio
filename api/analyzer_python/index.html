@@ -1307,6 +1307,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_batch" class="md-nav__link">
+    process_batch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_text" class="md-nav__link">
     process_text()
   </a>
@@ -1344,6 +1351,13 @@
         <li class="md-nav__item">
   <a href="#presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.is_stopword" class="md-nav__link">
     is_stopword()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.process_batch" class="md-nav__link">
+    process_batch()
   </a>
   
 </li>
@@ -2022,6 +2036,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_batch" class="md-nav__link">
+    process_batch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_text" class="md-nav__link">
     process_text()
   </a>
@@ -2059,6 +2080,13 @@
         <li class="md-nav__item">
   <a href="#presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.is_stopword" class="md-nav__link">
     is_stopword()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.process_batch" class="md-nav__link">
+    process_batch()
   </a>
   
 </li>
@@ -2263,62 +2291,21 @@
 
       <p>Entry point for Presidio Analyzer.</p>
 <p>Orchestrating the detection of PII entities and all related logic.</p>
+<p>:param registry: instance of type RecognizerRegistry
+:param nlp_engine: instance of type NlpEngine
+(for example SpacyNlpEngine)
+:param app_tracer: instance of type AppTracer, used to trace the logic
+used during each request for interpretability reasons.
+:param log_decision_process: bool,
+defines whether the decision process within the analyzer should be logged or not.
+:param default_score_threshold: Minimum confidence value
+for detected entities to be returned
+:param supported_languages: List of possible languages this engine could be run on.
+Used for loading the right NLP models and recognizers for these languages.
+:param context_aware_enhancer: instance of type ContextAwareEnhancer for enhancing
+confidence score based on context words, (LemmaContextAwareEnhancer will be created
+by default if None passed)</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>registry</code></td>
-        <td></td>
-        <td><p>instance of type RecognizerRegistry</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>nlp_engine</code></td>
-        <td></td>
-        <td><p>instance of type NlpEngine (for example SpacyNlpEngine)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>app_tracer</code></td>
-        <td></td>
-        <td><p>instance of type AppTracer, used to trace the logic used during each request for interpretability reasons.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>log_decision_process</code></td>
-        <td></td>
-        <td><p>bool, defines whether the decision process within the analyzer should be logged or not.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>default_score_threshold</code></td>
-        <td></td>
-        <td><p>Minimum confidence value for detected entities to be returned</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>supported_languages</code></td>
-        <td></td>
-        <td><p>List of possible languages this engine could be run on. Used for loading the right NLP models and recognizers for these languages.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>context_aware_enhancer</code></td>
-        <td></td>
-        <td><p>instance of type ContextAwareEnhancer for enhancing confidence score based on context words, (LemmaContextAwareEnhancer will be created by default if None passed)</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/analyzer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnalyzerEngine</span><span class="p">:</span>
@@ -2436,6 +2423,8 @@
         <span class="n">return_decision_process</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">ad_hoc_recognizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NlpArtifacts</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find PII entities in text using different PII recognizers for a given language.</span>
@@ -2453,6 +2442,9 @@
 <span class="sd">        for this specific request.</span>
 <span class="sd">        :param context: List of context words to enhance confidence score if matched</span>
 <span class="sd">        with the recognized entity&#39;s recognizer context</span>
+<span class="sd">        :param allow_list: List of words that the user defines as being allowed to keep</span>
+<span class="sd">        in the text</span>
+<span class="sd">        :param nlp_artifacts: precomputed NlpArtifacts</span>
 <span class="sd">        :return: an array of the found entities in the text</span>
 
 <span class="sd">        :example:</span>
@@ -2484,7 +2476,8 @@
 
         <span class="c1"># run the nlp pipeline over the given text, store the results in</span>
         <span class="c1"># a NlpArtifacts instance</span>
-        <span class="n">nlp_artifacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engine</span><span class="o">.</span><span class="n">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_artifacts</span><span class="p">:</span>
+            <span class="n">nlp_artifacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engine</span><span class="o">.</span><span class="n">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_decision_process</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">app_tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
@@ -2521,6 +2514,9 @@
         <span class="c1"># Remove duplicates or low score results</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_low_scores</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">score_threshold</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">allow_list</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_allow_list</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">allow_list</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">return_decision_process</span><span class="p">:</span>
             <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_decision_process</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
@@ -2604,6 +2600,26 @@
         <span class="n">new_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;=</span> <span class="n">score_threshold</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">new_results</span>
 
+    <span class="k">def</span> <span class="nf">_remove_allow_list</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">allow_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove results which are part of the allow list.</span>
+
+<span class="sd">        :param results: List of RecognizerResult</span>
+<span class="sd">        :param allow_list: list of allowed terms</span>
+<span class="sd">        :param text: the text to analyze</span>
+<span class="sd">        :return: List[RecognizerResult]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">start</span> <span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">end</span><span class="p">]</span>
+            <span class="c1"># if the word is not specified to be allowed, keep in the PII entities</span>
+            <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allow_list</span><span class="p">:</span>
+                <span class="n">new_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_results</span>
+
     <span class="k">def</span> <span class="nf">__add_recognizer_name_if_not_exists</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">recognizer</span><span class="p">:</span> <span class="n">EntityRecognizer</span>
     <span class="p">):</span>
@@ -2655,7 +2671,7 @@
 
 
 <h2 id="presidio_analyzer.analyzer_engine.AnalyzerEngine.analyze" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">correlation_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_decision_process</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">correlation_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_decision_process</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ad_hoc_recognizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nlp_artifacts</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h2>
@@ -2663,6 +2679,23 @@
     <div class="doc doc-contents ">
 
       <p>Find PII entities in text using different PII recognizers for a given language.</p>
+<p>:param text: the text to analyze
+:param language: the language of the text
+:param entities: List of PII entities that should be looked for in the text.
+If entities=None then all entities are looked for.
+:param correlation_id: cross call ID for this request
+:param score_threshold: A minimum value for which
+to return an identified entity
+:param return_decision_process: Whether the analysis decision process steps
+returned in the response.
+:param ad_hoc_recognizers: List of recognizers which will be used only
+for this specific request.
+:param context: List of context words to enhance confidence score if matched
+with the recognized entity's recognizer context
+:param allow_list: List of words that the user defines as being allowed to keep
+in the text
+:param nlp_artifacts: precomputed NlpArtifacts
+:return: an array of the found entities in the text</p>
 <p>:example:</p>
 <blockquote>
 <blockquote>
@@ -2679,82 +2712,6 @@ print(results)
 </blockquote>
 </blockquote>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>the text to analyze</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>language</code></td>
-        <td><code>str</code></td>
-        <td><p>the language of the text</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>entities</code></td>
-        <td><code>Optional[List[str]]</code></td>
-        <td><p>List of PII entities that should be looked for in the text. If entities=None then all entities are looked for.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>correlation_id</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>cross call ID for this request</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>score_threshold</code></td>
-        <td><code>Optional[float]</code></td>
-        <td><p>A minimum value for which to return an identified entity</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>return_decision_process</code></td>
-        <td><code>Optional[bool]</code></td>
-        <td><p>Whether the analysis decision process steps returned in the response.</p></td>
-        <td><code>False</code></td>
-      </tr>
-      <tr>
-        <td><code>ad_hoc_recognizers</code></td>
-        <td><code>Optional[List[presidio_analyzer.entity_recognizer.EntityRecognizer]]</code></td>
-        <td><p>List of recognizers which will be used only for this specific request.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>context</code></td>
-        <td><code>Optional[List[str]]</code></td>
-        <td><p>List of context words to enhance confidence score if matched with the recognized entity's recognizer context</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-      <td><p>an array of the found entities in the text</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/analyzer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
@@ -2767,6 +2724,8 @@ print(results)
     <span class="n">return_decision_process</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">ad_hoc_recognizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">allow_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">nlp_artifacts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NlpArtifacts</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find PII entities in text using different PII recognizers for a given language.</span>
@@ -2784,6 +2743,9 @@ print(results)
 <span class="sd">    for this specific request.</span>
 <span class="sd">    :param context: List of context words to enhance confidence score if matched</span>
 <span class="sd">    with the recognized entity&#39;s recognizer context</span>
+<span class="sd">    :param allow_list: List of words that the user defines as being allowed to keep</span>
+<span class="sd">    in the text</span>
+<span class="sd">    :param nlp_artifacts: precomputed NlpArtifacts</span>
 <span class="sd">    :return: an array of the found entities in the text</span>
 
 <span class="sd">    :example:</span>
@@ -2815,7 +2777,8 @@ print(results)
 
     <span class="c1"># run the nlp pipeline over the given text, store the results in</span>
     <span class="c1"># a NlpArtifacts instance</span>
-    <span class="n">nlp_artifacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engine</span><span class="o">.</span><span class="n">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_artifacts</span><span class="p">:</span>
+        <span class="n">nlp_artifacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engine</span><span class="o">.</span><span class="n">process_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_decision_process</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app_tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
@@ -2853,6 +2816,9 @@ print(results)
     <span class="n">results</span> <span class="o">=</span> <span class="n">EntityRecognizer</span><span class="o">.</span><span class="n">remove_duplicates</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
     <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_low_scores</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">score_threshold</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">allow_list</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_allow_list</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">allow_list</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">return_decision_process</span><span class="p">:</span>
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_decision_process</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
@@ -2878,41 +2844,9 @@ print(results)
     <div class="doc doc-contents ">
 
       <p>Return a list of PII recognizers currently loaded.</p>
+<p>:param language: Return the recognizers supporting a given language.
+:return: List of [Recognizer] as a RecognizersAllResponse</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>language</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Return the recognizers supporting a given language.</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[presidio_analyzer.entity_recognizer.EntityRecognizer]</code></td>
-      <td><p>List of [Recognizer] as a RecognizersAllResponse</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/analyzer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_recognizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">EntityRecognizer</span><span class="p">]:</span>
@@ -2956,41 +2890,9 @@ print(results)
     <div class="doc doc-contents ">
 
       <p>Return a list of the entities that can be detected.</p>
+<p>:param language: Return only entities supported in a specific language.
+:return: List of entity names</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>language</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Return only entities supported in a specific language.</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[str]</code></td>
-      <td><p>List of entity names</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/analyzer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -3031,26 +2933,9 @@ print(results)
     <div class="doc doc-contents first">
 
       <p>Detect, register and hold all recognizers to be used by the analyzer.</p>
+<p>:param recognizers: An optional list of recognizers,
+that will be available instead of the predefined recognizers</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>recognizers</code></td>
-        <td></td>
-        <td><p>An optional list of recognizers, that will be available instead of the predefined recognizers</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_registry/recognizer_registry.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RecognizerRegistry</span><span class="p">:</span>
@@ -3300,6 +3185,7 @@ print(results)
     <div class="doc doc-contents ">
 
       <p>Load a pattern recognizer from a Dict into the recognizer registry.</p>
+<p>:param recognizer_dict: Dict holding a serialization of an PatternRecognizer</p>
 <p>:example:</p>
 <blockquote>
 <blockquote>
@@ -3311,25 +3197,6 @@ registry.add_pattern_recognizer_from_dict(recognizer)</p>
 </blockquote>
 </blockquote>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>recognizer_dict</code></td>
-        <td><code>Dict</code></td>
-        <td><p>Dict holding a serialization of an PatternRecognizer</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_registry/recognizer_registry.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_pattern_recognizer_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizer_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
@@ -3367,26 +3234,8 @@ registry.add_pattern_recognizer_from_dict(recognizer)</p>
     <div class="doc doc-contents ">
 
       <p>Add a new recognizer to the list of recognizers.</p>
+<p>:param recognizer: Recognizer to add</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>recognizer</code></td>
-        <td><code>EntityRecognizer</code></td>
-        <td><p>Recognizer to add</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_registry/recognizer_registry.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_recognizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">:</span> <span class="n">EntityRecognizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -3485,59 +3334,14 @@ registry.add_recognizers_from_yaml(yaml_file)</p>
     <div class="doc doc-contents ">
 
       <p>Return a list of recognizers which supports the specified name and language.</p>
+<p>:param entities: the requested entities
+:param language: the requested language
+:param all_fields: a flag to return all fields of a requested language.
+:param ad_hoc_recognizers: Additional recognizers provided by the user
+as part of the request
+:return: A list of the recognizers which supports the supplied entities
+and language</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>entities</code></td>
-        <td><code>Optional[List[str]]</code></td>
-        <td><p>the requested entities</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>language</code></td>
-        <td><code>str</code></td>
-        <td><p>the requested language</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>all_fields</code></td>
-        <td><code>bool</code></td>
-        <td><p>a flag to return all fields of a requested language.</p></td>
-        <td><code>False</code></td>
-      </tr>
-      <tr>
-        <td><code>ad_hoc_recognizers</code></td>
-        <td><code>Optional[List[presidio_analyzer.entity_recognizer.EntityRecognizer]]</code></td>
-        <td><p>Additional recognizers provided by the user as part of the request</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[presidio_analyzer.entity_recognizer.EntityRecognizer]</code></td>
-      <td><p>A list of the recognizers which supports the supplied entities and language</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_registry/recognizer_registry.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_recognizers</span><span class="p">(</span>
@@ -3625,47 +3429,10 @@ registry.add_recognizers_from_yaml(yaml_file)</p>
     <div class="doc doc-contents ">
 
       <p>Load the existing recognizers into memory.</p>
+<p>:param languages: List of languages for which to load recognizers
+:param nlp_engine: The NLP engine to use.
+:return: None</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>languages</code></td>
-        <td><code>Optional[List[str]]</code></td>
-        <td><p>List of languages for which to load recognizers</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>nlp_engine</code></td>
-        <td><code>NlpEngine</code></td>
-        <td><p>The NLP engine to use.</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>None</code></td>
-      <td><p>None</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_registry/recognizer_registry.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_predefined_recognizers</span><span class="p">(</span>
@@ -3738,26 +3505,8 @@ registry.add_recognizers_from_yaml(yaml_file)</p>
     <div class="doc doc-contents ">
 
       <p>Remove a recognizer based on its name.</p>
+<p>:param recognizer_name: Name of recognizer to remove</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>recognizer_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of recognizer to remove</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_registry/recognizer_registry.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">remove_recognizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recognizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -3805,50 +3554,15 @@ Recognizers which hold the logic for recognizing specific PII entities.</p>
 <p>EntityRecognizer exposes a method called enhance_using_context which
 can be overridden in case a custom context aware enhancement is needed
 in derived class of a recognizer.</p>
+<p>:param supported_entities: the entities supported by this recognizer
+(for example, phone number, address, etc.)
+:param supported_language: the language supported by this recognizer.
+The supported langauge code is iso6391Name
+:param name: the name of this recognizer (optional)
+:param version: the recognizer current version
+:param context: a list of words which can help boost confidence score
+when they appear in context of the matched entity</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>supported_entities</code></td>
-        <td></td>
-        <td><p>the entities supported by this recognizer (for example, phone number, address, etc.)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>supported_language</code></td>
-        <td></td>
-        <td><p>the language supported by this recognizer. The supported langauge code is iso6391Name</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>name</code></td>
-        <td></td>
-        <td><p>the name of this recognizer (optional)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>version</code></td>
-        <td></td>
-        <td><p>the recognizer current version</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>context</code></td>
-        <td></td>
-        <td><p>a list of words which can help boost confidence score when they appear in context of the matched entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">EntityRecognizer</span><span class="p">:</span>
@@ -4063,53 +3777,12 @@ in derived class of a recognizer.</p>
     <div class="doc doc-contents ">
 
       <p>Analyze text to identify entities.</p>
+<p>:param text: The text to be analyzed
+:param entities: The list of entities this recognizer is able to detect
+:param nlp_artifacts: A group of attributes which are the result of
+an NLP process over the input text.
+:return: List of results detected by this recognizer.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>The text to be analyzed</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>entities</code></td>
-        <td><code>List[str]</code></td>
-        <td><p>The list of entities this recognizer is able to detect</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>nlp_artifacts</code></td>
-        <td><code>NlpArtifacts</code></td>
-        <td><p>A group of attributes which are the result of an NLP process over the input text.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-      <td><p>List of results detected by this recognizer.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
@@ -4152,50 +3825,16 @@ is needed, otherwise return value will be equal to
 raw_results.</p>
 <p>in case a result score is boosted, derived class need to update
 result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</p>
+<p>:param text: The actual text that was analyzed
+:param raw_recognizer_results: This recognizer's results, to be updated
+based on recognizer specific context.
+:param other_raw_recognizer_results: Other recognizer results matched in
+the given text to allow related entity context enhancement
+:param nlp_artifacts: The nlp artifacts contains elements
+                      such as lemmatized tokens for better
+                      accuracy of the context enhancement process
+:param context: list of context words</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>The actual text that was analyzed</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>raw_recognizer_results</code></td>
-        <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-        <td><p>This recognizer's results, to be updated based on recognizer specific context.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>other_raw_recognizer_results</code></td>
-        <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-        <td><p>Other recognizer results matched in the given text to allow related entity context enhancement</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>nlp_artifacts</code></td>
-        <td><code>NlpArtifacts</code></td>
-        <td><p>The nlp artifacts contains elements such as lemmatized tokens for better accuracy of the context enhancement process</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>context</code></td>
-        <td><code>Optional[List[str]]</code></td>
-        <td><p>list of context words</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">enhance_using_context</span><span class="p">(</span>
@@ -4250,26 +3889,8 @@ result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</
     <div class="doc doc-contents ">
 
       <p>Create EntityRecognizer from a dict input.</p>
+<p>:param entity_recognizer_dict: Dict containing keys and values for instantiation</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>entity_recognizer_dict</code></td>
-        <td><code>Dict</code></td>
-        <td><p>Dict containing keys and values for instantiation</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
@@ -4301,22 +3922,8 @@ result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</
     <div class="doc doc-contents ">
 
       <p>Return the list of entities this recognizer can identify.</p>
+<p>:return: A list of the supported entities by this recognizer</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[str]</code></td>
-      <td><p>A list of the supported entities by this recognizer</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_supported_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -4347,22 +3954,8 @@ result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</
     <div class="doc doc-contents ">
 
       <p>Return the language this recognizer can support.</p>
+<p>:return: A list of the supported language by this recognizer</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>A list of the supported language by this recognizer</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_supported_language</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -4393,22 +3986,8 @@ result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</
     <div class="doc doc-contents ">
 
       <p>Return the version of this recognizer.</p>
+<p>:return: The current version of this recognizer</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>The current version of this recognizer</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -4475,42 +4054,10 @@ result.recognition_metadata[RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY]</
 
       <p>Remove duplicate results.</p>
 <p>Remove duplicates in case the two results
-have identical start and ends and types.</p>
+have identical start and ends and types.
+:param results: List[RecognizerResult]
+:return: List[RecognizerResult]</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>results</code></td>
-        <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-        <td><p>List[RecognizerResult]</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-      <td><p>List[RecognizerResult]</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
@@ -4567,22 +4114,8 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents ">
 
       <p>Serialize self to dictionary.</p>
+<p>:return: a dictionary</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Dict</code></td>
-      <td><p>a dictionary</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/entity_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
@@ -4623,44 +4156,11 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents first">
 
       <p>A configuration for a recognizer that runs on a different process / remote machine.</p>
+<p>:param supported_entities: A list of entities this recognizer can identify
+:param name: name of recognizer
+:param supported_language: The language this recognizer can detect entities in
+:param version: Version of this recognizer</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>supported_entities</code></td>
-        <td></td>
-        <td><p>A list of entities this recognizer can identify</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>name</code></td>
-        <td></td>
-        <td><p>name of recognizer</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>supported_language</code></td>
-        <td></td>
-        <td><p>The language this recognizer can detect entities in</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>version</code></td>
-        <td></td>
-        <td><p>Version of this recognizer</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/remote_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RemoteRecognizer</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">EntityRecognizer</span><span class="p">):</span>
@@ -4742,53 +4242,11 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents ">
 
       <p>Call an external service for PII detection.</p>
+<p>:param text: text to be analyzed
+:param entities: Entities that should be looked for
+:param nlp_artifacts: Additional metadata from the NLP engine
+:return: List of identified PII entities</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>text to be analyzed</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>entities</code></td>
-        <td><code>List[str]</code></td>
-        <td><p>Entities that should be looked for</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>nlp_artifacts</code></td>
-        <td><code>NlpArtifacts</code></td>
-        <td><p>Additional metadata from the NLP engine</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>List of identified PII entities</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/remote_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
@@ -4828,22 +4286,8 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents ">
 
       <p>Return the list of entities this recognizer can identify.</p>
+<p>:return: A list of the supported entities by this recognizer</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[str]</code></td>
-      <td><p>A list of the supported entities by this recognizer</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/remote_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
@@ -4924,44 +4368,13 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents first">
 
       <p>PII entity recognizer using regular expressions or deny-lists.</p>
+<p>:param patterns: A list of patterns to detect
+:param deny_list: A list of words to detect,
+in case our recognizer uses a predefined list of words (deny list)
+:param context: list of context words
+:param deny_list_score: confidence score for a term
+identified using a deny-list</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>patterns</code></td>
-        <td></td>
-        <td><p>A list of patterns to detect</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>deny_list</code></td>
-        <td></td>
-        <td><p>A list of words to detect, in case our recognizer uses a predefined list of words (deny list)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>context</code></td>
-        <td></td>
-        <td><p>list of context words</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>deny_list_score</code></td>
-        <td></td>
-        <td><p>confidence score for a term identified using a deny-list</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PatternRecognizer</span><span class="p">(</span><span class="n">LocalRecognizer</span><span class="p">):</span>
@@ -5227,59 +4640,12 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents ">
 
       <p>Analyzes text to detect PII using regular expressions or deny-lists.</p>
+<p>:param text: Text to be analyzed
+:param entities: Entities this recognizer can detect
+:param nlp_artifacts: Output values from the NLP engine
+:param regex_flags:
+:return:</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>Text to be analyzed</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>entities</code></td>
-        <td><code>List[str]</code></td>
-        <td><p>Entities this recognizer can detect</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>nlp_artifacts</code></td>
-        <td><code>NlpArtifacts</code></td>
-        <td><p>Output values from the NLP engine</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>regex_flags</code></td>
-        <td><code>int</code></td>
-        <td></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[presidio_analyzer.recognizer_result.RecognizerResult]</code></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
@@ -5329,65 +4695,13 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents ">
 
       <p>Construct an explanation for why this entity was detected.</p>
+<p>:param recognizer_name: Name of recognizer detecting the entity
+:param pattern_name: Regex pattern name which detected the entity
+:param pattern: Regex pattern logic
+:param original_score: Score given by the recognizer
+:param validation_result: Whether validation was used and its result
+:return: Analysis explanation</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>recognizer_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of recognizer detecting the entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>pattern_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Regex pattern name which detected the entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>pattern</code></td>
-        <td><code>str</code></td>
-        <td><p>Regex pattern logic</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>original_score</code></td>
-        <td><code>float</code></td>
-        <td><p>Score given by the recognizer</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>validation_result</code></td>
-        <td><code>bool</code></td>
-        <td><p>Whether validation was used and its result</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>AnalysisExplanation</code></td>
-      <td><p>Analysis explanation</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
@@ -5474,41 +4788,10 @@ have identical start and ends and types.</p>
 
       <p>Logic to check for result invalidation by running pruning logic.</p>
 <p>For example, each SSN number group should not consist of all the same digits.</p>
+<p>:param pattern_text: the text to validated.
+Only the part in text that was detected by the regex engine
+:return: A bool indicating whether the result is invalidated</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>pattern_text</code></td>
-        <td><code>str</code></td>
-        <td><p>the text to validated. Only the part in text that was detected by the regex engine</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Optional[bool]</code></td>
-      <td><p>A bool indicating whether the result is invalidated</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">invalidate_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
@@ -5605,41 +4888,10 @@ have identical start and ends and types.</p>
     <div class="doc doc-contents ">
 
       <p>Validate the pattern logic e.g., by running checksum on a detected pattern.</p>
+<p>:param pattern_text: the text to validated.
+Only the part in text that was detected by the regex engine
+:return: A bool indicating whether the validation was successful.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>pattern_text</code></td>
-        <td><code>str</code></td>
-        <td><p>the text to validated. Only the part in text that was detected by the regex engine</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Optional[bool]</code></td>
-      <td><p>A bool indicating whether the validation was successful.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern_recognizer.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
@@ -5894,6 +5146,15 @@ on tokens.</p>
         <span class="sd">&quot;&quot;&quot;Execute the NLP pipeline on the given text and language.&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process_batch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NlpArtifacts</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Execute the NLP pipeline on a batch of texts.</span>
+
+<span class="sd">        Returns a tuple of (text, NlpArtifacts)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">is_stopword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return true if the given word is a stop word.</span>
@@ -5991,6 +5252,39 @@ on tokens.</p>
 
 
 
+<h2 id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_batch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Execute the NLP pipeline on a batch of texts.</p>
+<p>Returns a tuple of (text, NlpArtifacts)</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/nlp_engine/nlp_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span> <span class="nf">process_batch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NlpArtifacts</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Execute the NLP pipeline on a batch of texts.</span>
+
+<span class="sd">    Returns a tuple of (text, NlpArtifacts)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h2 id="presidio_analyzer.nlp_engine.nlp_engine.NlpEngine.process_text" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
@@ -6066,8 +5360,21 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
     <span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NlpArtifacts</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Execute the SpaCy NLP pipeline on the given text and language.&quot;&quot;&quot;</span>
+
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">](</span><span class="n">text</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_to_nlp_artifact</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_batch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">texts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]],</span>
+        <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">as_tuples</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">NlpArtifacts</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Execute the NLP pipeline on a batch of texts using spacy pipe.&quot;&quot;&quot;</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">)</span>
+        <span class="n">docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">as_tuples</span><span class="o">=</span><span class="n">as_tuples</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_to_nlp_artifact</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">is_stopword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -6139,26 +5446,9 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <div class="doc doc-contents ">
 
       <p>Initialize a wrapper on spaCy functionality.</p>
+<p>:param models: Dictionary with the name of the spaCy model per language.
+For example: models = {"en": "en_core_web_lg"}</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>models</code></td>
-        <td><code>Optional[Dict[str, str]]</code></td>
-        <td><p>Dictionary with the name of the spaCy model per language. For example: models = {"en": "en_core_web_lg"}</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/nlp_engine/spacy_nlp_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">models</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -6197,41 +5487,9 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <div class="doc doc-contents ">
 
       <p>Return the language model loaded for a language.</p>
+<p>:param language: Name of language
+:return: Language model from spaCy</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>language</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of language</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Language</code></td>
-      <td><p>Language model from spaCy</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/nlp_engine/spacy_nlp_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_nlp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Language</span><span class="p">:</span>
@@ -6318,6 +5576,41 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
 
 
+<h2 id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.process_batch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">as_tuples</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Execute the NLP pipeline on a batch of texts using spacy pipe.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_analyzer/nlp_engine/spacy_nlp_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_batch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">texts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]],</span>
+    <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">as_tuples</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">NlpArtifacts</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Execute the NLP pipeline on a batch of texts using spacy pipe.&quot;&quot;&quot;</span>
+    <span class="n">texts</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">)</span>
+    <span class="n">docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">as_tuples</span><span class="o">=</span><span class="n">as_tuples</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_to_nlp_artifact</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h2 id="presidio_analyzer.nlp_engine.spacy_nlp_engine.SpacyNlpEngine.process_text" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></code>
 
@@ -6332,6 +5625,7 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
           <summary>Source code in <code>presidio_analyzer/nlp_engine/spacy_nlp_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NlpArtifacts</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Execute the SpaCy NLP pipeline on the given text and language.&quot;&quot;&quot;</span>
+
     <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp</span><span class="p">[</span><span class="n">language</span><span class="p">](</span><span class="n">text</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc_to_nlp_artifact</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
 </code></pre></div>
@@ -6358,38 +5652,19 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
     <div class="doc doc-contents first">
 
       <p>Create different NLP engines from configuration.</p>
+<p>:param nlp_engines: List of available NLP engines.
+Default: (SpacyNlpEngine, StanzaNlpEngine)
+:param nlp_configuration: Dict containing nlp configuration
+Example configuration:
+        {
+            "nlp_engine_name": "spacy",
+            "models": [{"lang_code": "en",
+                        "model_name": "en_core_web_lg"
+                      }]
+        }
+Nlp engine names available by default: spacy, stanza.
+:param conf_file: Path to yaml file containing nlp engine configuration.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>nlp_engines</code></td>
-        <td></td>
-        <td><p>List of available NLP engines. Default: (SpacyNlpEngine, StanzaNlpEngine)</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>nlp_configuration</code></td>
-        <td></td>
-        <td><p>Dict containing nlp configuration Example configuration: { "nlp_engine_name": "spacy", "models": [{"lang_code": "en", "model_name": "en_core_web_lg" }] } Nlp engine names available by default: spacy, stanza.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>conf_file</code></td>
-        <td></td>
-        <td><p>Path to yaml file containing nlp engine configuration.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/nlp_engine/nlp_engine_provider.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NlpEngineProvider</span><span class="p">:</span>
@@ -6580,56 +5855,16 @@ The SpacyNlpEngine uses SpaCy as its NLP module</p>
 
       <p>Recognizer Result represents the findings of the detected entity.</p>
 <p>Result of a recognizer analyzing the text.</p>
+<p>:param entity_type: the type of the entity
+:param start: the start location of the detected entity
+:param end: the end location of the detected entity
+:param score: the score of the detection
+:param analysis_explanation: contains the explanation of why this
+                             entity was identified
+:param recognition_metadata: a dictionary of metadata to be used in
+recognizer specific cases, for example specific recognized context words
+and recognizer name</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>entity_type</code></td>
-        <td></td>
-        <td><p>the type of the entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>start</code></td>
-        <td></td>
-        <td><p>the start location of the detected entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>end</code></td>
-        <td></td>
-        <td><p>the end location of the detected entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>score</code></td>
-        <td></td>
-        <td><p>the score of the detection</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>analysis_explanation</code></td>
-        <td></td>
-        <td><p>contains the explanation of why this entity was identified</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>recognition_metadata</code></td>
-        <td></td>
-        <td><p>a dictionary of metadata to be used in recognizer specific cases, for example specific recognized context words and recognizer name</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RecognizerResult</span><span class="p">:</span>
@@ -6867,41 +6102,9 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Check two results are equal by using all class fields.</p>
+<p>:param other: another RecognizerResult
+:return: bool</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td><code>RecognizerResult</code></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td><p>bool</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -6938,41 +6141,9 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Check if one result is greater by using the results indices in the text.</p>
+<p>:param other: another RecognizerResult
+:return: bool</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td><code>RecognizerResult</code></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td><p>bool</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -7009,22 +6180,8 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Hash the result data by using all class fields.</p>
+<p>:return: int</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>int</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -7151,22 +6308,8 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Check if self is contained in a different RecognizerResult.</p>
+<p>:return: true if contained</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td><p>true if contained</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">contained_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -7197,41 +6340,9 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Check if one result is contained or equal to another result.</p>
+<p>:param other: another RecognizerResult
+:return: bool</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td><code>RecognizerResult</code></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td><p>bool</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -7263,41 +6374,9 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Check if the indices are equal between two results.</p>
+<p>:param other: another RecognizerResult
+:return:</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td><code>RecognizerResult</code></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">equal_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -7332,41 +6411,14 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Create RecognizerResult from json.</p>
+<p>:param data: e.g. {
+    "start": 24,
+    "end": 32,
+    "score": 0.8,
+    "entity_type": "NAME"
+}
+:return: RecognizerResult</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>data</code></td>
-        <td><code>Dict</code></td>
-        <td><p>e.g. { "start": 24, "end": 32, "score": 0.8, "entity_type": "NAME" }</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>RecognizerResult</code></td>
-      <td><p>RecognizerResult</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
@@ -7411,41 +6463,9 @@ which is set to true if the result enhanced by context</p>
 <p>I have a conflict if:
 1. My indices are the same as the other and my score is lower.
 2. If my indices are contained in another.</p>
+<p>:param other: RecognizerResult
+:return:</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td><code>RecognizerResult</code></td>
-        <td><p>RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">has_conflict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -7483,22 +6503,10 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Check if self intersects with a different RecognizerResult.</p>
+<p>:return: If intersecting, returns the number of
+intersecting characters.
+If not, returns 0</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>int</code></td>
-      <td><p>If intersecting, returns the number of intersecting characters. If not, returns 0</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">intersects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;RecognizerResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -7536,22 +6544,8 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Serialize self to dictionary.</p>
+<p>:return: a dictionary</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Dict</code></td>
-      <td><p>a dictionary</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
@@ -7586,38 +6580,10 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents first">
 
       <p>A class that represents a regex pattern.</p>
+<p>:param name: the name of the pattern
+:param regex: the regex pattern to detect
+:param score: the pattern's strength (values varies 0-1)</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>name</code></td>
-        <td></td>
-        <td><p>the name of the pattern</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>regex</code></td>
-        <td></td>
-        <td><p>the regex pattern to detect</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>score</code></td>
-        <td></td>
-        <td><p>the pattern's strength (values varies 0-1)</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Pattern</span><span class="p">:</span>
@@ -7753,41 +6719,9 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Load an instance from a dictionary.</p>
+<p>:param pattern_dict: a dictionary holding the pattern's parameters
+:return: a Pattern instance</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>pattern_dict</code></td>
-        <td><code>Dict</code></td>
-        <td><p>a dictionary holding the pattern's parameters</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Pattern</code></td>
-      <td><p>a Pattern instance</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
@@ -7820,22 +6754,8 @@ which is set to true if the result enhanced by context</p>
     <div class="doc doc-contents ">
 
       <p>Turn this instance into a dictionary.</p>
+<p>:return: a dictionary</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Dict</code></td>
-      <td><p>a dictionary</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_analyzer/pattern.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>

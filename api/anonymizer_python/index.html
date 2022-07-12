@@ -3591,6 +3591,14 @@ and replaces the PII entities with the desired anonymizers.</p>
     <div class="doc doc-contents ">
 
       <p>Anonymize method to anonymize the given text.</p>
+<p>:param text: the text we are anonymizing
+:param analyzer_results: A list of RecognizerResult class -&gt; The results we
+received from the analyzer
+:param operators: The configuration of the anonymizers we would like
+to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})}
+received from the analyzer
+:return: the anonymized text and a list of information about the
+anonymized entities.</p>
 <p>:example:</p>
 <blockquote>
 <blockquote>
@@ -3626,52 +3634,6 @@ items:
 </blockquote>
 </blockquote>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>the text we are anonymizing</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>analyzer_results</code></td>
-        <td><code>List[presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult]</code></td>
-        <td><p>A list of RecognizerResult class -&gt; The results we received from the analyzer</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>operators</code></td>
-        <td><code>Optional[Dict[str, presidio_anonymizer.entities.engine.operator_config.OperatorConfig]]</code></td>
-        <td><p>The configuration of the anonymizers we would like to use for each entity e.g.: {"PHONE_NUMBER":OperatorConfig("redact", {})} received from the analyzer</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>EngineResult</code></td>
-      <td><p>the anonymized text and a list of information about the anonymized entities.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/anonymizer_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">anonymize</span><span class="p">(</span>
@@ -4047,6 +4009,7 @@ TextReplaceBuilder        </code>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-anonymizer&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__validate_text_not_empty</span><span class="p">(</span><span class="n">original_text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span> <span class="o">=</span> <span class="n">original_text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span> <span class="o">=</span> <span class="n">original_text</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">text_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_replacement_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_len</span>
 
@@ -4064,7 +4027,7 @@ TextReplaceBuilder        </code>
 <span class="sd">        :return: str - part of the original text</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__validate_position_in_text</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">replace_text_get_insertion_index</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">replacement_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span>
@@ -4125,47 +4088,10 @@ TextReplaceBuilder        </code>
     <div class="doc doc-contents ">
 
       <p>Get part of the text inside the original text.</p>
+<p>:param start: start position of inner text
+:param end: end position of inner text
+:return: str - part of the original text</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>start</code></td>
-        <td><code>int</code></td>
-        <td><p>start position of inner text</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>end</code></td>
-        <td><code>int</code></td>
-        <td><p>end position of inner text</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>str - part of the original text</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/core/text_replace_builder.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_text_in_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -4177,7 +4103,7 @@ TextReplaceBuilder        </code>
 <span class="sd">    :return: str - part of the original text</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__validate_position_in_text</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
 </code></pre></div>
         </details>
     </div>
@@ -4199,53 +4125,11 @@ TextReplaceBuilder        </code>
     <div class="doc doc-contents ">
 
       <p>Replace text in a specific position with the text.</p>
+<p>:param replacement_text: new text to replace the old text according to indices
+:param start: the startpoint to replace the text
+:param end: the endpoint to replace the text
+:return: The index of inserted text</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>replacement_text</code></td>
-        <td><code>str</code></td>
-        <td><p>new text to replace the old text according to indices</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>start</code></td>
-        <td><code>int</code></td>
-        <td><p>the startpoint to replace the text</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>end</code></td>
-        <td><code>int</code></td>
-        <td><p>the endpoint to replace the text</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>int</code></td>
-      <td><p>The index of inserted text</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/core/text_replace_builder.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">replace_text_get_insertion_index</span><span class="p">(</span>
@@ -4408,53 +4292,11 @@ DeanonymizeEngine            (<a class="autorefs autorefs-internal" title="presi
     <div class="doc doc-contents ">
 
       <p>Receive the text, entities and operators to perform deanonymization over.</p>
+<p>:param operators: the operators to apply on the anonymizer result entities
+:param text: the full text with the encrypted entities
+:param entities: list of encrypted entities
+:return: EngineResult - the new text and data about the deanonymized entities.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>operators</code></td>
-        <td><code>Dict[str, presidio_anonymizer.entities.engine.operator_config.OperatorConfig]</code></td>
-        <td><p>the operators to apply on the anonymizer result entities</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>the full text with the encrypted entities</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>entities</code></td>
-        <td><code>List[presidio_anonymizer.entities.engine.result.operator_result.OperatorResult]</code></td>
-        <td><p>list of encrypted entities</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>EngineResult</code></td>
-      <td><p>EngineResult - the new text and data about the deanonymized entities.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/deanonymize_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">deanonymize</span><span class="p">(</span>
@@ -4746,32 +4588,9 @@ OperatorConfig        </code>
     <div class="doc doc-contents ">
 
       <p>Create an operator config instance.</p>
+<p>:param operator_name: the name of the operator we want to work with
+:param params: the parameters the operator needs in order to work</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>operator_name</code></td>
-        <td><code>str</code></td>
-        <td><p>the name of the operator we want to work with</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td><p>the parameters the operator needs in order to work</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/operator_config.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operator_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -4841,41 +4660,14 @@ OperatorConfig        </code>
     <div class="doc doc-contents ">
 
       <p>Create OperatorConfig from json.</p>
+<p>:param params: json e.g.: {
+    "type": "mask",
+    "masking_char": "*",
+    "chars_to_mask": 4,
+    "from_end": true
+}
+:return: OperatorConfig</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td><p>json e.g.: { "type": "mask", "masking_char": "*", "chars_to_mask": 4, "from_end": true }</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>OperatorConfig</code></td>
-      <td><p>OperatorConfig</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/operator_config.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
@@ -5194,44 +4986,11 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
 
       <p>Recognizer Result represents the findings of the detected entity.</p>
 <p>Result of a recognizer analyzing the text.</p>
+<p>:param entity_type: the type of the entity
+:param start: the start location of the detected entity
+:param end: the end location of the detected entity
+:param score: the score of the detection</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>entity_type</code></td>
-        <td></td>
-        <td><p>the type of the entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>start</code></td>
-        <td></td>
-        <td><p>the start location of the detected entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>end</code></td>
-        <td></td>
-        <td><p>the end location of the detected entity</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>score</code></td>
-        <td></td>
-        <td><p>the score of the detection</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RecognizerResult</span><span class="p">(</span><span class="n">PIIEntity</span><span class="p">):</span>
@@ -5377,41 +5136,9 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
     <div class="doc doc-contents ">
 
       <p>Check two results are equal by using all class fields.</p>
+<p>:param other: another RecognizerResult
+:return: bool</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>bool</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -5448,41 +5175,9 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
     <div class="doc doc-contents ">
 
       <p>Check if one result is greater by using the results indices in the text.</p>
+<p>:param other: another RecognizerResult
+:return: bool</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>bool</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -5519,22 +5214,8 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
     <div class="doc doc-contents ">
 
       <p>Hash the result data by using all class fields.</p>
+<p>:return: int</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>int</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -5603,41 +5284,9 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
     <div class="doc doc-contents ">
 
       <p>Check if one result is contained or equal to another result.</p>
+<p>:param other: another RecognizerResult
+:return: bool</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>bool</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -5669,41 +5318,9 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
     <div class="doc doc-contents ">
 
       <p>Check if the indices are equal between two results.</p>
+<p>:param other: another RecognizerResult
+:return:</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td></td>
-        <td><p>another RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">equal_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -5738,41 +5355,14 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
     <div class="doc doc-contents ">
 
       <p>Create RecognizerResult from json.</p>
+<p>:param data: e.g. {
+    "start": 24,
+    "end": 32,
+    "score": 0.8,
+    "entity_type": "NAME"
+}
+:return: RecognizerResult</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>data</code></td>
-        <td><code>Dict</code></td>
-        <td><p>e.g. { "start": 24, "end": 32, "score": 0.8, "entity_type": "NAME" }</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td><p>RecognizerResult</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
@@ -5817,41 +5407,9 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
 <p>I have a conflict if:
 1. My indices are the same as the other and my score is lower.
 2. If my indices are contained in another.</p>
+<p>:param other: RecognizerResult
+:return:</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td></td>
-        <td><p>RecognizerResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">has_conflict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -6093,32 +5651,10 @@ EngineResult        </code>
     <div class="doc doc-contents ">
 
       <p>Create EngineResult entity.</p>
+<p>:param text: The anonymized text.
+:param items: List of PII entities and the indices
+ of their replacements in the anonymized text.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>The anonymized text.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>items</code></td>
-        <td><code>List[presidio_anonymizer.entities.engine.result.operator_result.OperatorResult]</code></td>
-        <td><p>List of PII entities and the indices of their replacements in the anonymized text.</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/result/engine_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OperatorResult</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -6187,26 +5723,8 @@ EngineResult        </code>
     <div class="doc doc-contents ">
 
       <p>Add an item.</p>
+<p>:param item: an item to add to the list.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>item</code></td>
-        <td><code>OperatorResult</code></td>
-        <td><p>an item to add to the list.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/result/engine_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">OperatorResult</span><span class="p">):</span>
@@ -6472,41 +5990,9 @@ OperatorResult            (<a class="autorefs autorefs-internal" title="presidio
     <div class="doc doc-contents ">
 
       <p>Verify two OperatorResults are equal.</p>
+<p>:param other: OperatorResult
+:return: bool</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>other</code></td>
-        <td><code>OperatorResult</code></td>
-        <td><p>OperatorResult</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td><p>bool</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/result/operator_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;OperatorResult&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -6579,26 +6065,16 @@ OperatorResult            (<a class="autorefs autorefs-internal" title="presidio
     <div class="doc doc-contents ">
 
       <p>Create OperatorResult from user json.</p>
+<p>:param json: json representation for this operator result. For example:
+{
+    "start": 0,
+    "end": 10,
+    "key": "1111111111111111",
+    "entity_type":"PERSON",
+    "text":"resulted_text",
+    "operator":"encrypt",
+}</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>json</code></td>
-        <td><code>Dict</code></td>
-        <td><p>json representation for this operator result. For example: { "start": 0, "end": 10, "key": "1111111111111111", "entity_type":"PERSON", "text":"resulted_text", "operator":"encrypt", }</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/entities/engine/result/operator_result.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
@@ -6955,47 +6431,10 @@ AESCipher        </code>
     <div class="doc doc-contents ">
 
       <p>Decrypts a previously AES-CBC encrypted text.</p>
+<p>:param key: AES encryption key in bytes.
+:param text: The text for decryption.
+:returns: The decrypted text.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>key</code></td>
-        <td><code>bytes</code></td>
-        <td><p>AES encryption key in bytes.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>The text for decryption.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>The decrypted text.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/aes_cipher.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
@@ -7038,48 +6477,11 @@ AESCipher        </code>
     <div class="doc doc-contents ">
 
       <p>Encrypts a text using AES cypher in CBC mode.</p>
-<p>Uses padding and random IV.</p>
+<p>Uses padding and random IV.
+:param key: AES encryption key in bytes.
+:param text: The text for encryption.
+:returns: The encrypted text.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>key</code></td>
-        <td><code>bytes</code></td>
-        <td><p>AES encryption key in bytes.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>The text for encryption.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>The encrypted text.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/aes_cipher.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
@@ -7122,41 +6524,9 @@ AESCipher        </code>
     <div class="doc doc-contents ">
 
       <p>Validate key size for AES.</p>
+<p>:param key: AES encryption key in bytes.
+:returns: True if the key is of valid size, False otherwise.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>key</code></td>
-        <td><code>bytes</code></td>
-        <td><p>AES encryption key in bytes.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>bool</code></td>
-      <td><p>True if the key is of valid size, False otherwise.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/aes_cipher.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
@@ -7302,23 +6672,8 @@ Custom            (<a class="autorefs autorefs-internal" title="presidio_anonymi
 
     <div class="doc doc-contents ">
 
-      
+      <p>:return: result of function executed on the text.</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>result of function executed on the text.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/custom.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -7557,47 +6912,11 @@ Decrypt            (<a class="autorefs autorefs-internal" title="presidio_anonym
     <div class="doc doc-contents ">
 
       <p>Decrypt the text.</p>
+<p>:param text: The text for decryption.
+:param params:
+    *<em>key</em> The key supplied by the user for the encryption.
+:return: The encrypted text</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>The text for decryption.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td><p>*<em>key</em> The key supplied by the user for the encryption.</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>The encrypted text</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/decrypt.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -7687,28 +7006,11 @@ Decrypt            (<a class="autorefs autorefs-internal" title="presidio_anonym
     <div class="doc doc-contents ">
 
       <p>Validate Decrypt parameters.</p>
+<p>:param params:
+    * <em>key</em> The key supplied by the user for the encryption.
+            Should be a string of 128, 192 or 256 bits length.
+:raises InvalidParamException in case on an invalid parameter.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td><ul>
-<li><em>key</em> The key supplied by the user for the encryption. Should be a string of 128, 192 or 256 bits length.</li>
-</ul></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/decrypt.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -7869,49 +7171,11 @@ Encrypt            (<a class="autorefs autorefs-internal" title="presidio_anonym
     <div class="doc doc-contents ">
 
       <p>Anonymize the text with an encrypted text.</p>
+<p>:param text: The text for encryption.
+:param params:
+    * <em>key</em> The key supplied by the user for the encryption.
+:return: The encrypted text</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>The text for encryption.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td><ul>
-<li><em>key</em> The key supplied by the user for the encryption.</li>
-</ul></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>The encrypted text</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/encrypt.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -8001,28 +7265,11 @@ Encrypt            (<a class="autorefs autorefs-internal" title="presidio_anonym
     <div class="doc doc-contents ">
 
       <p>Validate Encrypt parameters.</p>
+<p>:param params:
+    * <em>key</em> The key supplied by the user for the encryption.
+            Should be a string of 128, 192 or 256 bits length.
+:raises InvalidParamException in case on an invalid parameter.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td><ul>
-<li><em>key</em> The key supplied by the user for the encryption. Should be a string of 128, 192 or 256 bits length.</li>
-</ul></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/encrypt.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -8188,22 +7435,8 @@ Hash            (<a class="autorefs autorefs-internal" title="presidio_anonymize
     <div class="doc doc-contents ">
 
       <p>Hash given value using sha256.</p>
+<p>:return: hashed original text</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>hashed original text</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/hash.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -8476,47 +7709,13 @@ Mask            (<a class="autorefs autorefs-internal" title="presidio_anonymize
     <div class="doc doc-contents ">
 
       <p>Mask a given amount of text with a given character.</p>
+<p>:param text: the text to be masked
+:param params:
+    masking_char: The character to be masked with
+    chars_to_mask: The amount of characters to mask
+    from_end: Whether to mask the text from it's end
+:return: the masked text</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>text</code></td>
-        <td><code>str</code></td>
-        <td><p>the text to be masked</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>the masked text</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/mask.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -8613,26 +7812,11 @@ Mask            (<a class="autorefs autorefs-internal" title="presidio_anonymize
     <div class="doc doc-contents ">
 
       <p>Validate the parameters for mask.</p>
+<p>:param params:
+    masking_char: The character to be masked with
+    chars_to_mask: The amount of characters to mask
+    from_end: Whether to mask the text from it's end</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>params</code></td>
-        <td><code>Dict</code></td>
-        <td></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/mask.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -9087,41 +8271,10 @@ OperatorsFactory        </code>
     <div class="doc doc-contents ">
 
       <p>Extract the operator class from the operators list.</p>
+<p>:param operator_type: Either Anonymize or Decrypt to defer between operators.
+:type operator_name: operator name.
+:return: operator class entity.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>operator_type</code></td>
-        <td><code>OperatorType</code></td>
-        <td><p>Either Anonymize or Decrypt to defer between operators.</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Operator</code></td>
-      <td><p>operator class entity.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/operators_factory.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_operator_class</span><span class="p">(</span>
@@ -9333,23 +8486,8 @@ Redact            (<a class="autorefs autorefs-internal" title="presidio_anonymi
 
     <div class="doc doc-contents ">
 
-      
+      <p>:return: an empty value.</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>an empty value.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/redact.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -9562,23 +8700,8 @@ Replace            (<a class="autorefs autorefs-internal" title="presidio_anonym
 
     <div class="doc doc-contents ">
 
-      
+      <p>:return: new_value.</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>str</code></td>
-      <td><p>new_value.</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/operators/replace.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -9871,26 +8994,8 @@ AppEntitiesConvertor        </code>
     <div class="doc doc-contents ">
 
       <p>Go over analyzer results, validate them and convert to List[RecognizerResult].</p>
+<p>:param data: contains the anonymizers and analyzer_results_json</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>data</code></td>
-        <td><code>List[Dict]</code></td>
-        <td><p>contains the anonymizers and analyzer_results_json</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/services/app_entities_convertor.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
@@ -9960,41 +9065,18 @@ AppEntitiesConvertor        </code>
     <div class="doc doc-contents ">
 
       <p>Create DecryptEntity list.</p>
+<p>:param json:
+{
+    "text": text,
+    "encrypt_results": [{
+        "start": 0,
+        "end": 10,
+        "key": "1111111111111111",
+        "entity_type":"PHONE_NUMBER"
+    }],
+}
+:return: List[OperatorResult]</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>json</code></td>
-        <td><code>Dict</code></td>
-        <td><p>{ "text": text, "encrypt_results": [{ "start": 0, "end": 10, "key": "1111111111111111", "entity_type":"PHONE_NUMBER" }], }</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>List[OperatorResult]</code></td>
-      <td><p>List[OperatorResult]</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/services/app_entities_convertor.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
@@ -10044,26 +9126,9 @@ AppEntitiesConvertor        </code>
     <div class="doc doc-contents ">
 
       <p>Go over the operators list and get the relevant create operator config entity.</p>
+<p>:param data: contains the list of configuration
+value - OperatorConfig</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>data</code></td>
-        <td><code>Dict</code></td>
-        <td><p>contains the list of configuration value - OperatorConfig</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>presidio_anonymizer/services/app_entities_convertor.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>

@@ -1074,6 +1074,7 @@
 <p>In this example, we will pass a short list of tokens which should be marked as PII if detected.
 First, let's define the tokens we want to treat as PII. In this case it would be a list of titles:</p>
 <!--pytest-codeblocks:cont-->
+
 <div class="highlight"><pre><span></span><code><span class="n">titles_list</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;Sir&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Ma&#39;am&quot;</span><span class="p">,</span>
@@ -1088,12 +1089,14 @@ First, let's define the tokens we want to treat as PII. In this case it would be
 </code></pre></div>
 <p>Second, let's create a <code>PatternRecognizer</code> which would scan for those titles, by passing a <code>deny_list</code>:</p>
 <!--pytest-codeblocks:cont-->
+
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">PatternRecognizer</span>
 
 <span class="n">titles_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;TITLE&quot;</span><span class="p">,</span> <span class="n">deny_list</span><span class="o">=</span><span class="n">titles_list</span><span class="p">)</span>
 </code></pre></div>
 <p>At this point we can call our recognizer directly:</p>
 <!--pytest-codeblocks:cont-->
+
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">PatternRecognizer</span>
 
 <span class="n">text1</span> <span class="o">=</span> <span class="s2">&quot;I suspect Professor Plum, in the Dining Room, with the candlestick&quot;</span>
@@ -1102,6 +1105,7 @@ First, let's define the tokens we want to treat as PII. In this case it would be
 </code></pre></div>
 <p>Finally, let's add this new recognizer to the list of recognizers used by the Presidio <code>AnalyzerEngine</code>:</p>
 <!--pytest-codeblocks:cont-->
+
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">presidio_analyzer</span> <span class="kn">import</span> <span class="n">AnalyzerEngine</span>
 
 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
@@ -1111,14 +1115,17 @@ First, let's define the tokens we want to treat as PII. In this case it would be
 including the <code>NlpEngine</code> used to detect entities, and extract tokens, lemmas and other linguistic features.</p>
 <p>Let's run the analyzer with the new recognizer in place:</p>
 <!--pytest-codeblocks:cont-->
+
 <div class="highlight"><pre><span></span><code><span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text1</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
 </code></pre></div>
 <!--pytest-codeblocks:cont-->
+
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Results:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 </code></pre></div>
 <p>As expected, both the name "Plum" and the title were identified as PII:</p>
 <!--pytest-codeblocks:cont-->
+
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Identified these PII entities:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">text1</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="n">result</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
