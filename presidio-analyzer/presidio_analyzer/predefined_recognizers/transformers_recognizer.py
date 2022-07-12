@@ -1,5 +1,4 @@
-from typing import Tuple
-from collections import Set
+from typing import Tuple, Set
 import logging
 from presidio_analyzer.predefined_recognizers.spacy_recognizer import SpacyRecognizer
 from presidio_analyzer import RecognizerResult
