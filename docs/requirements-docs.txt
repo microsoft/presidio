@@ -3,7 +3,7 @@ mkdocs-material
 mkdocs-jupyter
 pymdown-extensions<9.4
 markdown
-mkdocstrings
+mkdocstrings[python]
 presidio_analyzer
 presidio_anonymizer
 presidio_image_redactor
