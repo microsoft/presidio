@@ -463,6 +463,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/13_allow_list/" class="md-nav__link">
+        Allow-lists
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1257,6 +1271,9 @@
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
+
+
+
                 
 
 
@@ -1353,7 +1370,7 @@ Refer to the <a href="https://github.com/microsoft/presidio/blob/main/presidio-a
 <p>For more examples, see the <a href="../../samples/python/customizing_presidio_analyzer/">Customizing Presidio Analyzer</a> jupyter notebook.</p>
 <h3 id="creating-a-remote-recognizer">Creating a remote recognizer</h3>
 <p>A remote recognizer is an <code>EntityRecognizer</code> object interacting with an external service. The external service could be a 3rd party PII detection service or a custom service deployed in parallel to Presidio.</p>
-<p><a href="../../samples/python/example_remote_recognizer/">Sample implementation of a <code>RemoteRecognizer</code></a>.
+<p><a href="../../samples/python/example_remote_recognizer.py">Sample implementation of a <code>RemoteRecognizer</code></a>.
 In this example, an external PII detection service exposes two APIs: <code>detect</code> and <code>supported_entities</code>. The class implemented here, <code>ExampleRemoteRecognizer</code>, uses the <code>requests</code> package to call the external service via HTTP.</p>
 <p>In this code snippet, we simulate the external PII detector by using the Presidio analyzer. In reality, we would adapt this code to fit the external PII detector we have in hand.</p>
 <p>For an example of integrating a <code>RemoteRecognizer</code> with Presidio-Analyzer, see <a href="../../samples/python/integrating_with_external_services/">this example</a>.</p>
@@ -1459,6 +1476,7 @@ An example YAML file can be found <a href="https://github.com/microsoft/presidio
 </ol>
 
               
+
             </article>
           </div>
         </div>

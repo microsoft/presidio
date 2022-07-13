@@ -463,6 +463,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/13_allow_list/" class="md-nav__link">
+        Allow-lists
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1172,6 +1186,9 @@
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
+
+
+
                 
 
 
@@ -1180,7 +1197,7 @@
 <p>The following sample uses <a href="https://docs.microsoft.com/en-us/azure/databricks/">Azure Databricks</a> and simple text files hosted on <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/">Azure Blob Storage</a>. However, it can easily change to fit any other scenario which requires PII analysis or anonymization as part of spark jobs.</p>
 <p><strong>Note</strong> that this code works for Databricks runtime 8.1 (spark 3.1.1) and the libraries described <a href="https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/8.1">here</a>.</p>
 <h2 id="the-basics-of-working-with-presidio-in-spark">The basics of working with Presidio in Spark</h2>
-<p>A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of <a href="notebooks/01_transform_presidio/">transform presidio notebook</a>, is the basis of the e2e sample which uses Azure Databricks as the Spark environment.</p>
+<p>A typical use case of Presidio in Spark is transforming a text column in a data frame, by anonymizing its content. The following code sample, a part of <a href="notebooks/01_transform_presidio.py">transform presidio notebook</a>, is the basis of the e2e sample which uses Azure Databricks as the Spark environment.</p>
 <div class="highlight"><pre><span></span><code><span class="n">anonymized_column</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span> <span class="c1"># name of column to anonymize</span>
 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
 <span class="n">anonymizer</span> <span class="o">=</span> <span class="n">AnonymizerEngine</span><span class="p">()</span>
@@ -1285,6 +1302,7 @@ Run the first code-cell and note the following parameters on the top end of the 
 <p>Run the notebook cells, the output should be csv files which contain two columns, the original file name, and the anonymized content of that file.</p>
 
               
+
             </article>
           </div>
         </div>
