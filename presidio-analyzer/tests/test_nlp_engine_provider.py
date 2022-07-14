@@ -104,6 +104,7 @@ def test_when_both_conf_and_config_then_fail():
         NlpEngineProvider(conf_file=conf_file, nlp_configuration=nlp_configuration)
 
 
+@pytest.mark.skip_engine("transformers_en")
 def test_when_create_transformers_nlp_engine_then_succeeds():
     nlp_configuration={
         "nlp_engine_name": "transformers",
