@@ -5,9 +5,6 @@ from typing import Optional, List, Iterable, Union, Type, Dict
 from presidio_analyzer.nlp_engine.transformers_nlp_engine import (
     TransformersNlpEngine,
 )
-from presidio_analyzer.predefined_recognizers.transformers_recognizer import (
-    TransformersRecognizer,
-)
 
 import yaml
 
@@ -37,6 +34,7 @@ from presidio_analyzer.predefined_recognizers import (
     AuAcnRecognizer,
     AuTfnRecognizer,
     AuMedicareRecognizer,
+    TransformersRecognizer
 )
 
 logger = logging.getLogger("presidio-analyzer")
