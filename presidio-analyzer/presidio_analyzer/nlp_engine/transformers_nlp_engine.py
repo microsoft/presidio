@@ -132,7 +132,6 @@ class TransformersNlpEngine(SpacyNlpEngine):
                 "models.model_name dict"
             )
 
-        # TODO: add defaults and input validation
         logger.debug(f"Loading SpaCy models: {models.values()}")
 
         self.nlp = {}
