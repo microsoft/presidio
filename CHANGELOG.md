@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.29] - 12.07.2022
+### Added
+
+#### General
+- Added Presidio to OSSF (Open Source Security Foundation)
+- Added CodeQL scanning
+
+#### Analyzer
+- Introduced [BatchAnalyzerEngine](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/batch_analyzer_engine.py)
+- Added [allow-list functionality](https://github.com/microsoft/presidio/blob/4cbfc1a80dc15da7d5a9cf5a1c680e8df4f2b349/presidio-analyzer/presidio_analyzer/analyzer_engine.py#L135) to ignore specific strings
+- Added notebook on [anonymizing known values](https://github.com/microsoft/presidio/blob/main/docs/samples/python/Anonymizing%20known%20values.ipynb)
+- Added [sample for using `transformers` models in Presidio](https://github.com/microsoft/presidio/blob/main/docs/samples/python/transformers_recognizer.py)
+
+### Changed
+
+#### Anonymizer
+- Bug fix for getting the text before anonymizing (https://github.com/microsoft/presidio/pull/890)
+
+#### Image redactor
+- Deps update
+
 ## [2.2.28] - 04.05.2022
 ### Changed
 #### Analyzer
@@ -132,7 +153,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.28...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.29...HEAD
+[2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
 [2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28
 [2.2.27]: https://github.com/microsoft/presidio/compare/2.2.26...2.2.27
 [2.2.26]: https://github.com/microsoft/presidio/compare/2.2.25...2.2.26
