@@ -9,7 +9,7 @@ logger = logging.getLogger("presidio-analyzer")
 class TransformersRecognizer(SpacyRecognizer):
     """
     Recognize entities using the transformers package.
-
+    The recognizer doesn't run transformers models, but loads the output from the NlpArtifacts
     See https://huggingface.co/docs/transformers/main/en/index
     Uses the transformers package
     (https://huggingface.co/docs/transformers/main/en/installation) to align
