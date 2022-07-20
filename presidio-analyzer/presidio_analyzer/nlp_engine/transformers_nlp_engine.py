@@ -132,7 +132,7 @@ class TransformersNlpEngine(SpacyNlpEngine):
                 "models.model_name dict"
             )
 
-        logger.debug(f"Loading SpaCy models: {models.values()}")
+        logger.debug(f"Loading SpaCy and transformers models: {models.values()}")
 
         self.nlp = {}
         for lang_code, model_name in models.items():
