@@ -16,3 +16,4 @@ Presidio service can be used as python packages inside python scripts
 8. [Getting the detected text value using a custom operator](getting_entity_values.ipynb)
 9. [Creating a simple demo website](streamlit/index.md)
 10. [Using Flair as an external PII model](flair_recognizer.py)
+11. [Using Transformers as an external PII model](transformers_recognizer.py)
