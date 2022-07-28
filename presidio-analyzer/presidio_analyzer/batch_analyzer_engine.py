@@ -37,6 +37,7 @@ class BatchAnalyzerEngine:
         :param texts: An list containing strings to be analyzed.
         :param language: Input language
         :param batch_size: Batch size to process in a single iteration
+        (default value depends on the nlp engine implementation)
         :param kwargs: Additional parameters for the `AnalyzerEngine.analyze` method.
         """
 
