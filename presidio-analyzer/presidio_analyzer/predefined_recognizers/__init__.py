@@ -1,5 +1,8 @@
 """Predefined recognizers package. Holds all the default recognizers."""
 
+from presidio_analyzer.predefined_recognizers.transformers_recognizer import (
+    TransformersRecognizer,
+)
 from .aba_routing_recognizer import AbaRoutingRecognizer
 from .credit_card_recognizer import CreditCardRecognizer
 from .crypto_recognizer import CryptoRecognizer
@@ -25,7 +28,11 @@ from .au_acn_recognizer import AuAcnRecognizer
 from .au_tfn_recognizer import AuTfnRecognizer
 from .au_medicare_recognizer import AuMedicareRecognizer
 
-NLP_RECOGNIZERS = {"spacy": SpacyRecognizer, "stanza": StanzaRecognizer}
+NLP_RECOGNIZERS = {
+    "spacy": SpacyRecognizer,
+    "stanza": StanzaRecognizer,
+    "transformers": TransformersRecognizer,
+}
 
 __all__ = [
     "AbaRoutingRecognizer",
@@ -39,9 +46,6 @@ __all__ = [
     "MedicalLicenseRecognizer",
     "PhoneRecognizer",
     "SgFinRecognizer",
-    "SpacyRecognizer",
-    "StanzaRecognizer",
-    "PhoneRecognizer",
     "UrlRecognizer",
     "UsBankRecognizer",
     "UsItinRecognizer",
@@ -56,4 +60,5 @@ __all__ = [
     "AuAcnRecognizer",
     "AuTfnRecognizer",
     "AuMedicareRecognizer",
+    "TransformersRecognizer",
 ]
