@@ -52,9 +52,6 @@ def install_models(conf_file: str) -> None:
 
 
 def _download_model(engine_name: str, model_name: Union[str, Dict[str, str]]) -> None:
-    if engine_name not in ("spacy", "stanza", "transformers"):
-        raise ValueError(f"Unsupported nlp engine: {engine_name}")
-
     if engine_name == "spacy":
         spacy.cli.download(model_name)
     elif engine_name == "stanza":
@@ -67,6 +64,8 @@ def _download_model(engine_name: str, model_name: Union[str, Dict[str, str]]) ->
             _install_transformers_spacy_models(model_name)
         else:
             raise ImportError("transformers is not installed")
+    else:
+        raise ValueError(f"Unsupported nlp engine: {engine_name}")
 
 
 def _install_transformers_spacy_models(model_name: Dict[str, str]) -> None:
