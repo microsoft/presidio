@@ -28,7 +28,7 @@ def anonymize_and_assert(anonymizer_request, expected_response):
 @pytest.mark.integration
 def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
     analyzer_request = {
-        "text": "John Smith drivers license is AC432223",
+        "text": "John Smith drivers license is AC532223",
         "language": "en",
     }
 
@@ -70,7 +70,7 @@ def test_given_a_correct_analyze_input_high_threashold_then_anonymize_partially(
     analyzer_request = json.loads(
         """
     {
-        "text": "John Smith drivers license is AC432223",
+        "text": "John Smith drivers license is AC532223",
         "language": "en",
         "score_threshold": 0.7
     }
@@ -100,7 +100,7 @@ def test_given_a_correct_analyze_input_high_threashold_then_anonymize_partially(
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC532223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -117,7 +117,7 @@ def test_given_a_correct_analyze_input_with_high_threshold_and_unmatched_entitie
     suppotred_entities = json.loads(response_content)
 
     analyzer_request = {
-        "text": "John Smith drivers license is AC432223",
+        "text": "John Smith drivers license is AC532223",
         "language": "en",
         "score_threshold": 0.7,
         "entities": suppotred_entities,
@@ -146,7 +146,7 @@ def test_given_a_correct_analyze_input_with_high_threshold_and_unmatched_entitie
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC432223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC532223", "items": [{"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -156,7 +156,7 @@ def test_given_an_unknown_entity_then_anonymize_uses_defaults():
     analyzer_request = json.loads(
         """
     {
-        "text": "John Smith drivers license is AC432223",
+        "text": "John Smith drivers license is AC532223",
         "language": "en"
     }
     """
@@ -244,7 +244,7 @@ def test_demo_website_text_returns_correct_anonymized_version():
 
 @pytest.mark.package
 def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_successfully():
-    text_to_test = "John Smith drivers license is AC432223"
+    text_to_test = "John Smith drivers license is AC532223"
 
     expected_response = [
         RecognizerResult("PERSON", 0, 10, 0.85),
