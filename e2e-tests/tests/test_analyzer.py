@@ -462,7 +462,7 @@ def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
 
     expected_response = """
      [
-         {"entity_type": "PERSON", "start": 4, "end": 14, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, "analysis_explanation":null},
+         {"entity_type": "PERSON", "start": 4, "end": 16, "recognition_metadata": {"recognizer_name": "SpacyRecognizer"}, "score": 0.85, "analysis_explanation":null},
          {"entity_type": "US_DRIVER_LICENSE", "start": 36, "end": 44, "recognition_metadata": {"recognizer_name": "UsLicenseRecognizer"}, "score": 0.6499999999999999, "analysis_explanation":null},
          {"entity_type": "MR_TITLE", "start": 0, "end": 3, "recognition_metadata": {"recognizer_name": "Mr. Recognizer"}, "score": 1.0, "analysis_explanation":null}
      ]

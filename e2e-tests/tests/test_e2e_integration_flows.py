@@ -60,7 +60,7 @@ def test_given_text_with_pii_then_analyze_and_anonymize_successfully():
         "analyzer_results": analyzer_data,
     }
 
-    expected_response = """{"text": "<PERSON> drivers license is AC43****", "items": [{"operator": "mask", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 36, "text": "AC43****"}, {"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
+    expected_response = """{"text": "<PERSON> drivers license is AC53****", "items": [{"operator": "mask", "entity_type": "US_DRIVER_LICENSE", "start": 28, "end": 36, "text": "AC53****"}, {"operator": "replace", "entity_type": "PERSON", "start": 0, "end": 8, "text": "<PERSON>"}]}"""
 
     anonymize_and_assert(anonymizer_request, expected_response)
 
@@ -253,7 +253,7 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     # Create configuration containing engine name and models
     configuration = {
         "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
     }
 
     # Create NLP engine based on configuration
