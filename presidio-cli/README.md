@@ -1,7 +1,5 @@
 # Presidio CLI
 
-[![Test 🧪](https://github.com/insightsengineering/presidio-cli/actions/workflows/test-python.yaml/badge.svg)](https://github.com/insightsengineering/presidio-cli/actions/workflows/test-python.yaml)
-[![SuperLinter 🦸‍♀️](https://github.com/insightsengineering/presidio-cli/actions/workflows/lint.yaml/badge.svg)](https://github.com/insightsengineering/presidio-cli/actions/workflows/lint.yaml)
 [![PyPI license](https://img.shields.io/pypi/l/presidio-cli.svg)](https://pypi.python.org/pypi/presidio-cli/)
 [![PyPI version](https://badge.fury.io/py/presidio-cli.svg)](https://badge.fury.io/py/presidio-cli)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
@@ -44,8 +42,8 @@ pipenv install presidio-cli
 
 ```shell
 # clone from git
-git clone https://github.com/insightsengineering/presidio-cli
-cd presidio-cli
+git clone https://github.com/microsoft/presidio
+cd presidio/presidio-cli
 # install required apps and presidio-cli
 pipenv install --deploy --dev
 ```
@@ -102,7 +100,7 @@ An example of running script with configuration from a file.
 There are two example `.yaml` configuration files in the [`conf`](presidio_cli/conf) directory:
 
 - [default.yaml](presidio_cli/conf/default.yaml) - ignore the `.git` directory
-- [limited.yaml](presidio_cli/conf/limited.yaml) - limit list of entities used to only 3 of them, ignore `.git` directory and `.cfg` files.  
+- [limited.yaml](presidio_cli/conf/limited.yaml) - limit list of entities used to only 3 of them, ignore `.git` directory and `.cfg` files.
 
 ```shell
 # run with default configuration (file `.presidiocli`) in the current directory
@@ -129,7 +127,7 @@ presidio -d "ignore: |
 presidio-d "entities:
   - CREDIT_CARD" tests/
 
-# equivalent to use -c parameter 
+# equivalent to use -c parameter
 presidio -d "$(cat presidio_cli/conf/limited.yaml)" tests/
 ```
 
@@ -157,8 +155,8 @@ presidio -d "entities:
   - PERSON" -f github tests/conftest.py
 # result
 ::group::tests/conftest.py
-::0.85 file=tests/conftest.py,line=34,col=58::34:58 [PERSON] 
-::0.85 file=tests/conftest.py,line=37,col=33::37:33 [PERSON] 
+::0.85 file=tests/conftest.py,line=34,col=58::34:58 [PERSON]
+::0.85 file=tests/conftest.py,line=37,col=33::37:33 [PERSON]
 ::endgroup::
 ```
 
@@ -185,4 +183,3 @@ Simply run the following to get a list of all available options for the CLI:
 ```shell
 presidio --help
 ```
-
