@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+#### Analyzer
+* Added Italian fiscal code recognizer
+* Added Italian driver license recognizer
+
 ## [2.2.29] - 12.07.2022
 ### Added
 
