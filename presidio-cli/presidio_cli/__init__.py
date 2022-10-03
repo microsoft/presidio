@@ -1,4 +1,4 @@
-"""An python CLI for analyze PII Entities with Microsoft Presidio framework."""
+"""A python CLI for analyze PII Entities with Microsoft Presidio framework."""
 
 
 APP_NAME = "presidio_cli"
