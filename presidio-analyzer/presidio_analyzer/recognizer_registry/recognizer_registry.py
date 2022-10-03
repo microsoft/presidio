@@ -36,6 +36,7 @@ from presidio_analyzer.predefined_recognizers import (
     AuMedicareRecognizer,
     ItDriverLicenseRecognizer,
     ItFiscalCodeRecognizer,
+    ItVatCodeRecognizer,
     TransformersRecognizer,
 )
 
@@ -86,7 +87,11 @@ class RecognizerRegistry:
                 AuMedicareRecognizer,
             ],
             "es": [EsNifRecognizer],
-            "it": [ItDriverLicenseRecognizer, ItFiscalCodeRecognizer],
+            "it": [
+                ItDriverLicenseRecognizer,
+                ItFiscalCodeRecognizer,
+                ItVatCodeRecognizer,
+            ],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,

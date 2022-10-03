@@ -29,6 +29,7 @@ from .au_tfn_recognizer import AuTfnRecognizer
 from .au_medicare_recognizer import AuMedicareRecognizer
 from .it_driver_license_recognizer import ItDriverLicenseRecognizer
 from .it_fiscal_code_recognizer import ItFiscalCodeRecognizer
+from .it_vat_code import ItVatCodeRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -65,4 +66,5 @@ __all__ = [
     "TransformersRecognizer",
     "ItDriverLicenseRecognizer",
     "ItFiscalCodeRecognizer",
+    "ItVatCodeRecognizer",
 ]
