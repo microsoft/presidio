@@ -2,6 +2,7 @@ from presidio_analyzer import RecognizerResult
 
 
 class Line(object):
+    """ Represents a line of text source."""
     def __init__(self, line_no, buffer, start, end):
         self.line_no = line_no
         self.start = start
@@ -14,6 +15,10 @@ class Line(object):
 
 
 def line_generator(buffer):
+    """Generate Line objects from text source.
+    Returns a generator of Line objects.
+    :param buffer: str, string to read from
+    """
     line_no = 1
     cur = 0
     next = buffer.find("\n")

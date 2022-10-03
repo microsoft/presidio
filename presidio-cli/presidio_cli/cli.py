@@ -91,7 +91,6 @@ def show_problems(problems, file, args_format, no_warn):
                 print(file)
                 first = False
             print(Format.standard(problem))
-        # max_level+=1
 
     if not first and args_format == "github":
         print("::endgroup::")
