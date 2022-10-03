@@ -1,3 +1,4 @@
+language: en
 entities:
   - CREDIT_CARD
   - CRYPTO
