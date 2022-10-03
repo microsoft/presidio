@@ -13,7 +13,7 @@ entities:
   - PERSON
   - CREDIT_CARD
   - EMAIL_ADDRESS
-## optional `threshold` paramter
+## optional `threshold` parameter
 ## only show problems/findings whose scores are above this threshold
 threshold: 0.8
 ## optional `locale` parameter
