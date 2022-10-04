@@ -44,7 +44,9 @@ class Format(object):
 
     @staticmethod
     def github(problem, filename):
-        line = f"::{str(problem.score)} file={filename},line={format(problem.line)},col={format(problem.column)}::{format(problem.line)}:{format(problem.column)} [{problem.type}]"
+        line = f"::{str(problem.score)} file={filename},line={format(problem.line)}," \
+               + f"col={format(problem.column)}::{format(problem.line)}" \
+               + f":{format(problem.column)} [{problem.type}]"
         if problem.explanation:
             line += problem.explanation
         return line
