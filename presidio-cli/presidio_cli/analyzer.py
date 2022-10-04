@@ -1,9 +1,17 @@
 from presidio_analyzer import RecognizerResult
+from typing import Optional, Generator, Union
+from presidio_cli.config import PresidioCLIConfig
 
 
 class Line(object):
     """ Represents a line of text source."""
-    def __init__(self, line_no, buffer, start, end):
+    def __init__(
+        self,
+        line_no: int,
+        buffer: str,
+        start: int,
+        end: int
+    ) -> None:
         self.line_no = line_no
         self.start = start
         self.end = end
@@ -14,7 +22,9 @@ class Line(object):
         return self.buffer[self.start : self.end]  # noqa
 
 
-def line_generator(buffer):
+def line_generator(
+    buffer: str
+) -> Generator[Line, None, None]:
     """Generate Line objects from text source.
     Returns a generator of Line objects.
     :param buffer: str, string to read from
@@ -37,7 +47,11 @@ def line_generator(buffer):
 class PIIProblem(object):
     """Represents a PII problem found by presidio-cli."""
 
-    def __init__(self, line, recognizer_result):
+    def __init__(
+        self,
+        line: int,
+        recognizer_result: RecognizerResult
+    ) -> None:
         assert isinstance(recognizer_result, RecognizerResult)
         self.recognizer_result = recognizer_result.to_dict()
         #: Line on which the problem was found (starting at 1)
@@ -52,7 +66,10 @@ class PIIProblem(object):
         self.score = self.recognizer_result["score"]
 
 
-def _analyze(buffer, conf):
+def _analyze(
+    buffer: str,
+    conf: 'PresidioCLIConfig'
+) -> Generator['PIIProblem', None, None]:
     """Analyze a text source.
     Returns a generator of PIIProblem objects.
     :param buffer: str, string to read from
@@ -71,7 +88,11 @@ def _analyze(buffer, conf):
                 yield p
 
 
-def analyze(input, conf, filepath=None):
+def analyze(
+    input: str,
+    conf: 'PresidioCLIConfig',
+    filepath: Optional[str] = None
+) -> Union[tuple, Generator['PIIProblem', None, None], None]:
     """Analyze a text source.
     Returns a generator of PIIProblem objects.
     :param input: buffer, string or stream to read from

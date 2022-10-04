@@ -2,6 +2,7 @@ import yaml
 import pathspec
 import os
 from presidio_analyzer import AnalyzerEngine
+from typing import Optional
 
 
 class PresidioCLIConfigError(Exception):
@@ -9,7 +10,15 @@ class PresidioCLIConfigError(Exception):
 
 
 class PresidioCLIConfig(object):
-    def __init__(self, content=None, file=None):
+    """
+    Represents Presidio CLI configuration file. Reads the file and transforms
+    the contents to class fields.
+    """
+    def __init__(
+        self,
+        content: Optional[str] = None,
+        file: Optional[str] = None
+    ) -> None:
         assert (content is None) ^ (file is None)
         self.ignore = None
         self.locale = None
@@ -22,13 +31,26 @@ class PresidioCLIConfig(object):
         self.parse(content)
         self.validate()
 
-    def is_file_ignored(self, filepath):
+    def is_file_ignored(
+        self,
+        filepath: str
+    ) -> bool:
+        """
+        Check if file should be processed by the Analyzer or ignored.
+
+        :param filepath: Path of file to be processed.
+        """
         return self.ignore and self.ignore.match_file(filepath)
 
-    def is_text_file(self, filepath):
+    def is_text_file(
+        self,
+        filepath: str
+    ) -> bool:
         """
         Detect if file is a not a binary file.
         Based on https://stackoverflow.com/a/7392391
+
+        :param filepath: Path of the configuration file.
         """
 
         # Try to read the file as UTF-8.
@@ -48,7 +70,17 @@ class PresidioCLIConfig(object):
             # return true if it's not a binary
             return not bool(f.read(1024).translate(None, textchars))
 
-    def extend(self, base_config):
+    def extend(
+        self,
+        base_config: 'PresidioCLIConfig'
+    ) -> None:
+        """
+        In case the configuration file is based on another file,
+        append detected entities from base config to current config and overwrite
+        language and ignored files with contents of base config.
+
+        :param base_config: PresidioCLIConfig object
+        """
         assert isinstance(base_config, PresidioCLIConfig)
 
         # Create list with unique entries
@@ -61,7 +93,15 @@ class PresidioCLIConfig(object):
         if base_config.language is not None:
             self.language = base_config.language
 
-    def parse(self, raw_content):
+    def parse(
+        self,
+        raw_content: str
+    ) -> None:
+        """
+        Read the content of YAML file and save the properties in class fields.
+
+        :param raw_content: String with the contents of configuration file.
+        """
         try:
             conf = yaml.safe_load(raw_content)
         except Exception as e:
@@ -107,7 +147,11 @@ class PresidioCLIConfig(object):
                 )
             self.locale = conf["locale"]
 
-    def validate(self):
+    def validate(self) -> None:
+        """
+        Check if entities requested to be detected in input file
+        are supported by Presidio.
+        """
         for id in self.entities:
             try:
                 assert id in self.analyzer.get_supported_entities()
@@ -115,7 +159,16 @@ class PresidioCLIConfig(object):
                 raise PresidioCLIConfigError("invalid config: no such entity %s" % id)
 
 
-def get_extended_config_file(name):
+def get_extended_config_file(
+    name: str
+) -> str:
+    """
+    Check if the configuration file is one of sample configs or
+    if it is a file supplied by the user.
+
+    :param name: file name
+    :return: Full path of configuration file
+    """
     # Is it a standard conf shipped with yamllint...
     if "/" not in name:
         std_conf = os.path.join(

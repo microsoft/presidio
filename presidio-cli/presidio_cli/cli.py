@@ -5,10 +5,10 @@ import io
 import locale
 import platform
 import json
-
+from typing import Generator, List
 
 from presidio_cli import SHELL_NAME, APP_DESCRIPTION, APP_VERSION
-from presidio_cli.analyzer import analyze
+from presidio_cli.analyzer import analyze, PIIProblem
 from presidio_cli.config import PresidioCLIConfig, PresidioCLIConfigError
 
 
@@ -52,7 +52,10 @@ class Format(object):
         return line
 
 
-def supports_color():
+def supports_color() -> bool:
+    """
+    Check whether the platform supports colored output.
+    """
     supported_platform = not (
         platform.system() == "Windows"
         and not (
@@ -63,7 +66,20 @@ def supports_color():
     return supported_platform and hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
 
 
-def show_problems(problems, file, args_format, no_warn):
+def show_problems(
+    problems: Generator['PIIProblem', None, None],
+    file: str,
+    args_format: str,
+    no_warn: bool
+):
+    """
+    Show formatted output of discovered problems.
+
+    :param problems: generator of PIIProblem objects
+    :param file: processed filename for 'stdin'
+    :param args_format: format in which to output discovered problems
+    :param no_warn: whether to output only error level problems
+    """
     max_level = 0
     first = True
 
@@ -103,7 +119,16 @@ def show_problems(problems, file, args_format, no_warn):
     return max_level
 
 
-def find_files_recursively(items, conf):
+def find_files_recursively(
+    items: List[str],
+    conf: PresidioCLIConfig
+) -> Generator[str, None, None]:
+    """
+    Generate all file names inside the directories.
+
+    :param items: List of directories containing files to be analyzed.
+    :param conf: PresidioCLIConfig object
+    """
     for item in items:
         if os.path.isdir(item):
             for root, dirnames, filenames in os.walk(item):
@@ -116,7 +141,10 @@ def find_files_recursively(items, conf):
                 yield item
 
 
-def run():
+def run() -> None:
+    """
+    Entrypoint of Presidio CLI.
+    """
     parser = argparse.ArgumentParser(prog=SHELL_NAME, description=APP_DESCRIPTION)
 
     parser.add_argument("-v", "--version", action="version", version=f"v{APP_VERSION}")

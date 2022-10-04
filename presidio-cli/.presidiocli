@@ -3,7 +3,6 @@ entities:
   - CREDIT_CARD
   - CRYPTO
   - DATE_TIME
-  - DOMAIN_NAME
   - EMAIL_ADDRESS
   - IBAN_CODE
   - IP_ADDRESS
