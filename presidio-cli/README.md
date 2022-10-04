@@ -69,6 +69,8 @@ Configuration file supports the following parameters in a yaml file:
 
 - ignore - list of ignored files/folders/directories based on pattern. It is recommended to ignore `Version Control` files, for example `.git`
 
+- allow - list of tokens that should not be marked as PII.
+
 Note: a file requires at least one parameter to be set.
 
 An example of yaml configuration file content:
@@ -83,6 +85,9 @@ entities:
   - PERSON
   - CREDIT_CARD
   - EMAIL_ADDRESS
+allow:
+  - "allowed token 1"
+  - "allowed token 2"
 
 ```
 

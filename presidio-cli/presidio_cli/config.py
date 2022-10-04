@@ -25,6 +25,7 @@ class PresidioCLIConfig(object):
         self.analyzer = AnalyzerEngine()
         self.threshold = 0
         self.language = "en"
+        self.allow_list = []
         if file is not None:
             with open(file) as f:
                 content = f.read()
@@ -121,6 +122,8 @@ class PresidioCLIConfig(object):
                     f"Invalid threshold value: {self.threshold}. Threshold must be between 0 and 1"
                 )
             self.threshold = float(conf["threshold"])
+        if "allow" in conf:
+            self.allow_list = conf["allow"]
         if "language" in conf:
             self.language = conf["language"]
         if "extends" in conf:

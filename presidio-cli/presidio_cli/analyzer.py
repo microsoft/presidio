@@ -81,7 +81,8 @@ def _analyze(
 
     for line in line_generator(buffer):
         for result in conf.analyzer.analyze(
-            text=line.content, entities=conf.entities, language=conf.language
+            text=line.content, entities=conf.entities, language=conf.language,
+            allow_list=conf.allow_list
         ):
             p = PIIProblem(line.line_no, result)
             if p.score >= conf.threshold:

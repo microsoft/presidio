@@ -62,6 +62,12 @@ def config():
     config = PresidioCLIConfig(content="extends: default")
     return config
 
+@pytest.fixture()
+def config_with_allow_list():
+    config = PresidioCLIConfig(
+        content='extends: default\nallow:\n  - "John Sample"\n  - "example@example.com"\n  - "example.com"'
+    )
+    return config
 
 @pytest.fixture(scope="session")
 def en_core_web_lg():

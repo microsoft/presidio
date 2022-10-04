@@ -49,6 +49,26 @@ def test_analyze(en_core_web_lg, config):
 
     assert len(result) == 5
 
+def test_analyze_with_allow_list(en_core_web_lg, config, config_with_allow_list):
+
+    result_without_allow_list = list(
+        analyze(
+            "John Sample\n"
+            "example@example.com",
+            config
+        )
+    )
+
+    result_with_allow_list = list(
+        analyze(
+            "John Sample\n"
+            "example@example.com",
+            config_with_allow_list
+        )
+    )
+
+    assert len(result_without_allow_list) - len(result_with_allow_list) == 3
+
 
 def test_analyze_type_error(en_core_web_lg, config):
     with pytest.raises(TypeError):
