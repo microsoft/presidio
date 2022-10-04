@@ -64,10 +64,8 @@ The default configuration is taken from the `.presidiocli` file in a current dir
 Configuration file supports the following parameters in a yaml file:
 
 - language - the expected language for PII detection. Default is `en`. For supporting additional languages, see [this documentation](https://microsoft.github.io/presidio/analyzer/languages/)
- The list of [languages](https://microsoft.github.io/presidio/analyzer/languages/) can be extended.
 
 - entities - list of entities to recognize. Maps to the `entities` field in presidio-analyzer. If empty, returns all [supported entities](https://microsoft.github.io/presidio/supported_entities/) for this input language.
-  List of [supported entities](https://microsoft.github.io/presidio/supported_entities/)
 
 - ignore - list of ignored files/folders/directories based on pattern. It is recommended to ignore `Version Control` files, for example `.git`
 
