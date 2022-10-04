@@ -13,12 +13,32 @@ from presidio_cli.config import PresidioCLIConfig, PresidioCLIConfigError
 
 
 class Format(object):
+    """
+    Class providing methods for formatting output with information about
+    discovered PII problems.
+    """
     @staticmethod
-    def parsable(problem):
+    def parsable(
+        problem: PIIProblem
+    ) -> str:
+        """
+        Format the problem as JSON.
+
+        :param problem: PIIProblem to be formatted.
+        :return: JSON representation of the problem.
+        """
         return json.dumps(problem.recognizer_result)
 
     @staticmethod
-    def standard(problem):
+    def standard(
+        problem: PIIProblem
+    ) -> str:
+        """
+        Output the problem in standard format.
+
+        :param problem: PIIProblem to be formatted.
+        :return: Standard text representation of the problem.
+        """
         line = "  %d:%d" % (problem.line, problem.column)
         line += max(12 - len(line), 0) * " "
         line += str(problem.score)
@@ -29,7 +49,15 @@ class Format(object):
         return line
 
     @staticmethod
-    def standard_color(problem):
+    def standard_color(
+        problem: PIIProblem
+    ) -> str:
+        """
+        Output the problem in standard, colored format.
+
+        :param problem: PIIProblem to be formatted.
+        :return: Standard, colored text representation of the problem.
+        """
         line = "  \033[2m%d:%d\033[0m" % (problem.line, problem.column)
         line += max(20 - len(line), 0) * " "
         if problem.score < 1:  # warning
@@ -43,7 +71,16 @@ class Format(object):
         return line
 
     @staticmethod
-    def github(problem, filename):
+    def github(
+        problem: PIIProblem,
+        filename: str
+    ) -> str:
+        """
+        Output the problem in git-diff-like format.
+
+        :param problem: PIIProblem to be formatted.
+        :param filename: Filename where the problem occurs.
+        """
         line = f"::{str(problem.score)} file={filename},line={format(problem.line)}," \
                + f"col={format(problem.column)}::{format(problem.line)}" \
                + f":{format(problem.column)} [{problem.type}]"
