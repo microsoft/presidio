@@ -54,7 +54,6 @@ Load models for the English (en) language using the command presented below. For
 
 ```shell
 python -m spacy download en_core_web_sm
-python -m spacy download en_core_web_lg
 ```
 
 ## Configuration file syntax

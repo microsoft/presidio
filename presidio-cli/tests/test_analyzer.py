@@ -49,6 +49,7 @@ def test_analyze(en_core_web_lg, config):
 
     assert len(result) == 5
 
+
 def test_analyze_with_allow_list(en_core_web_lg, config, config_with_allow_list):
 
     result_without_allow_list = list(
