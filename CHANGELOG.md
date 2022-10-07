@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 * Added Italian fiscal code recognizer
 * Added Italian driver license recognizer
 
+### Changed
+#### Analyzer
+* Improved MEDICAL_LICENSE pattern and fixed checksum verification
+
 ## [2.2.29] - 12.07.2022
 ### Added
 
