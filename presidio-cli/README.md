@@ -6,7 +6,7 @@
 [![PyPI download month](https://img.shields.io/pypi/dm/presidio-cli.svg)](https://pypi.python.org/pypi/presidio-cli/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-cli.svg)](https://pypi.python.org/pypi/presidio-cli/)
 
-CLI tool that analyzes text for PII Entities using Presidio Analyzer.```
+CLI tool that analyzes text for PII Entities using Presidio Analyzer.
 
 ## Prerequisities
 

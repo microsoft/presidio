@@ -76,5 +76,5 @@ def en_core_web_lg():
     try:
         spacy.load("en_core_web_lg")
     except OSError:
-        # downloads model if is not instlled yet
+        # downloads model if is not installed yet
         print(download("en_core_web_lg"))
