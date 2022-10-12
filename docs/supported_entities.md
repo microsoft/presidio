@@ -47,6 +47,13 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |--- |--- |--- |
 |NIF| A spanish NIF number (Personal tax ID) .|Pattern match, context and checksum|
 
+### Italy
+
+|FieldType|Description|Detection Method|
+|--- |--- |--- |
+|IT_FISCAL_CODE| An Italian personal identification code. <https://en.wikipedia.org/wiki/Italian_fiscal_code>|Pattern match, context and checksum|
+|IT_DRIVER_LICENSE| An Italian driver license number.|Pattern match and context|
+
 ### Singapore
 
 |FieldType|Description|Detection Method|
