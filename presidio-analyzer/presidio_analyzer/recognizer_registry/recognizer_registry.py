@@ -34,7 +34,9 @@ from presidio_analyzer.predefined_recognizers import (
     AuAcnRecognizer,
     AuTfnRecognizer,
     AuMedicareRecognizer,
-    TransformersRecognizer
+    ItDriverLicenseRecognizer,
+    ItFiscalCodeRecognizer,
+    TransformersRecognizer,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -84,6 +86,7 @@ class RecognizerRegistry:
                 AuMedicareRecognizer,
             ],
             "es": [EsNifRecognizer],
+            "it": [ItDriverLicenseRecognizer, ItFiscalCodeRecognizer],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
@@ -181,7 +184,8 @@ class RecognizerRegistry:
                     to_return.update(set(subset))
 
         logger.debug(
-            "Returning a total of %s recognizers", str(len(to_return)),
+            "Returning a total of %s recognizers",
+            str(len(to_return)),
         )
 
         if not to_return:
