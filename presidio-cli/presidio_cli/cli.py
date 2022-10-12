@@ -5,6 +5,7 @@ import io
 import locale
 import platform
 import json
+import traceback
 from typing import Generator, List
 
 from presidio_cli import SHELL_NAME, APP_DESCRIPTION, APP_VERSION
@@ -255,9 +256,13 @@ def run() -> None:
         try:
             with io.open(file, newline="") as f:
                 problems = analyze(f, conf, filepath)
-        except EnvironmentError as e:
-            print(e, file=sys.stderr)
-            sys.exit(1)
+        except Exception as e:
+            if e.__class__.__name__ == "OSError":
+                traceback.print_exc()
+                continue
+            else:
+                traceback.print_exc()
+                sys.exit(1)
         prob_num = show_problems(
             problems, file, args_format=args.format, no_warn=args.no_warnings
         )
