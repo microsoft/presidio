@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 * Added Italian identity card recognizer
 * Added Italian passport recognizer
 
+### Changed
+#### Analyzer
+* Added pattern for next gen US passport in `presidio-analyzer/presidio_analyzer/predefined_recognizers/us_passport_recognizer.py`
+
 ## [2.2.29] - 12.07.2022
 ### Added
 
