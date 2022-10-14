@@ -21,7 +21,7 @@ def entities():
         ("GL0285191 EU4488929", 2, (), ((0, 9),(10,19),),),
         ("K92993548", 1, (), ((0, 9),),),
         ("my certificate number is: BB1388568", 1, (), ((26,35),),),
-        ("The DEA number is  BG8207032", 0, (), (),),
+        ("The DEA number is  BG8207031", 0, (), (),),
         # fmt: on
     ],
 )
