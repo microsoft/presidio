@@ -6,6 +6,9 @@ class ItVatCodeRecognizer(PatternRecognizer):
     """
     Recognizes Italian VAT code using regex and checksum.
 
+    For more information about italian VAT code:
+        https://en.wikipedia.org/wiki/VAT_identification_number#:~:text=%5B2%5D)-,Italy,-Partita%20IVA
+
     :param patterns: List of patterns to be used by this recognizer
     :param context: List of context words to increase confidence in detection
     :param supported_language: Language this recognizer supports
