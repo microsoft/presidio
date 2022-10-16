@@ -93,12 +93,38 @@ class AnonymizerEngine(EngineBase):
         2. Have the same indices as other results but with larger score.
         :return: List
         """
-        unique_text_metadata_elements = []
+        tmp_analyzer_results = []
         # This list contains all elements which we need to check a single result
         # against. If a result is dropped, it can also be dropped from this list
         # since it is intersecting with another result and we selected the other one.
         other_elements = analyzer_results.copy()
         for result in analyzer_results:
+            other_elements.remove(result)
+
+            is_merge_same_entity_type = False
+            for other_element in other_elements:
+                if other_element.entity_type != result.entity_type:
+                    continue
+                if result.intersects(other_element) == 0:
+                    continue
+
+                other_element.start = min(result.start, other_element.start)
+                other_element.end = max(result.end, other_element.end)
+                other_element.score = max(result.score, other_element.score)
+                is_merge_same_entity_type = True
+                break
+            if not is_merge_same_entity_type:
+                other_elements.append(result)
+                tmp_analyzer_results.append(result)
+            else:
+                self.logger.debug(f"removing element {result} from results list due to merge")
+
+        unique_text_metadata_elements = []
+        # This list contains all elements which we need to check a single result
+        # against. If a result is dropped, it can also be dropped from this list
+        # since it is intersecting with another result and we selected the other one.
+        other_elements = tmp_analyzer_results.copy()
+        for result in tmp_analyzer_results:
             other_elements.remove(result)
             result_conflicted = self.__is_result_conflicted_with_other_elements(
                 other_elements, result

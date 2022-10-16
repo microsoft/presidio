@@ -107,7 +107,7 @@ def test_given_redact_and_replace_then_we_anonymize_successfully():
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
-def test_given_intersacting_entities_then_we_anonymize_correctly():
+def test_given_intersecting_entities_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {}
     analyzer_results = [
@@ -129,6 +129,19 @@ def test_given_intersacting_entities_then_we_anonymize_correctly():
         '"operator": "replace"}, {"start": 24, "end": 35, '
         '"entity_type": "FULL_NAME", "text": "<FULL_NAME>", '
         '"operator": "replace"}]}'
+    )
+    run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
+
+def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
+    text = "hello world, my name is Jane Doe. My number is: 03-4453334"
+    anonymizer_config = {}
+    analyzer_results = [
+        RecognizerResult(start=24, end=32, score=0.6, entity_type="FULL_NAME"),
+        RecognizerResult(start=29, end=33, score=0.6, entity_type="FULL_NAME"),
+    ]
+    expected_result = (
+        '{"text": "hello world, my name is <FULL_NAME> My number is: 03-4453334", '
+        '"items": [{"start": 24, "end": 35, "entity_type": "FULL_NAME", "text": "<FULL_NAME>", "operator": "replace"}]}'
     )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
