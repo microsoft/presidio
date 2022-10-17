@@ -2,8 +2,9 @@ name: github-repo-stats
 
 on:
   schedule:
-    # Run this once per day, towards the end of the day for keeping the most
+    # Runs once per day, towards the end of the day for keeping the most
     # recent data point most meaningful (hours are interpreted in UTC).
+    # More info here: https://github.com/jgehrcke/github-repo-stats
     - cron: "0 23 * * *"
   workflow_dispatch: # Allow for running this manually.
 
