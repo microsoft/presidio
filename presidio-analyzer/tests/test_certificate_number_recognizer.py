@@ -18,10 +18,10 @@ def entities():
     "text, expected_len, expected_scores, expected_res",
     [
         # fmt: off
-        ("AS1111111 D91111111", 2, (), ((0, 9),(10,19),),),
-        ("AD2222222", 1, (), ((0, 9),),),
-        ("my certificate number is: AD2222222", 1, (), ((26,35),),),
-        ("The DEA number is  A61111111", 0, (), (),),
+        ("GL0285191 EU4488929", 2, (), ((0, 9),(10,19),),),
+        ("K92993548", 1, (), ((0, 9),),),
+        ("my certificate number is: BB1388568", 1, (), ((26,35),),),
+        ("The DEA number is  BG8207031", 0, (), (),),
         # fmt: on
     ],
 )
