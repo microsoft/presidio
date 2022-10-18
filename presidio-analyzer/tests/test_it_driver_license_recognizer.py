@@ -1,34 +1,38 @@
 import pytest
 
+from presidio_analyzer.predefined_recognizers import ItDriverLicenseRecognizer
 from tests import assert_result_within_score_range
-from presidio_analyzer.predefined_recognizers import UsPassportRecognizer
 
 
 @pytest.fixture(scope="module")
 def recognizer():
-    return UsPassportRecognizer()
+    return ItDriverLicenseRecognizer()
 
 
 @pytest.fixture(scope="module")
 def entities():
-    return ["US_PASSPORT"]
+    return ["IT_DRIVER_LICENSE"]
 
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        ("912803456", 1, ((0, 9),), ((0.0, 0.1),),),
-        ("Z12803456", 1, ((0, 9),), ((0.0, 0.15),),),
-        ("A12803456", 1, ((0, 9),), ((0.0, 0.15),),),
-        ("my travel document is A12803456", 1, ((22, 31),), ((0.0, 0.15),),),
-        ("my travel passport is A12803456", 1, ((22, 31),), ((0.0, 0.15),),),
-        # requires multiword context
-        # ("my travel document is 912803456", 1, ((22, 31),), ((.5, 0.6),),),
+        # Test with one Driver License
+        ("AA0123456B", 1, ((0, 10),), ((0.1, 0.4),),),
+        # Test with two Driver License
+        ("AA0123456B and AA0123456B", 
+        2,
+        ((0, 10), (15, 25),),
+        ((0.1, 0.4), (0.1, 0.4),),),
+        # Test with old Driver License
+        ("U1H00A000B", 1, ((0, 10),), ((0.1, 0.4),),),
+        # Test with invalid Driver License
+        ("990123456B", 0, (), (),),
         # fmt: on
     ],
 )
-def test_when_passport_in_text_then_all_us_passports_found(
+def test_when_driver_licenses_in_text_then_all_it_driver_licenses_found(
     text,
     expected_len,
     expected_positions,

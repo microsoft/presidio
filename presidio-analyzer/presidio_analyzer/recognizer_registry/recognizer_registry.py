@@ -2,6 +2,9 @@ import copy
 import logging
 from pathlib import Path
 from typing import Optional, List, Iterable, Union, Type, Dict
+from presidio_analyzer.nlp_engine.transformers_nlp_engine import (
+    TransformersNlpEngine,
+)
 
 import yaml
 
@@ -31,6 +34,11 @@ from presidio_analyzer.predefined_recognizers import (
     AuAcnRecognizer,
     AuTfnRecognizer,
     AuMedicareRecognizer,
+    ItDriverLicenseRecognizer,
+    ItFiscalCodeRecognizer,
+    TransformersRecognizer,
+    ItPassportRecognizer,
+    ItIdentityCardRecognizer
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -80,6 +88,12 @@ class RecognizerRegistry:
                 AuMedicareRecognizer,
             ],
             "es": [EsNifRecognizer],
+            "it": [
+                ItDriverLicenseRecognizer,
+                ItFiscalCodeRecognizer,
+                ItIdentityCardRecognizer,
+                ItPassportRecognizer
+            ],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
@@ -111,9 +125,12 @@ class RecognizerRegistry:
             return SpacyRecognizer
         if isinstance(nlp_engine, StanzaNlpEngine):
             return StanzaRecognizer
+        if isinstance(nlp_engine, TransformersNlpEngine):
+            return TransformersRecognizer
         else:
             logger.warning(
-                "nlp engine should be either SpacyNlpEngine or StanzaNlpEngine"
+                "nlp engine should be either SpacyNlpEngine,"
+                "StanzaNlpEngine or TransformersNlpEngine"
             )
             # Returning default
             return SpacyRecognizer

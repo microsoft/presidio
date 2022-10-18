@@ -1,34 +1,29 @@
 import pytest
 
 from tests import assert_result_within_score_range
-from presidio_analyzer.predefined_recognizers import UsPassportRecognizer
+from presidio_analyzer.predefined_recognizers import ItPassportRecognizer
 
 
 @pytest.fixture(scope="module")
 def recognizer():
-    return UsPassportRecognizer()
+    return ItPassportRecognizer()
 
 
 @pytest.fixture(scope="module")
 def entities():
-    return ["US_PASSPORT"]
+    return ["IT_PASSPORT"]
 
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        ("912803456", 1, ((0, 9),), ((0.0, 0.1),),),
-        ("Z12803456", 1, ((0, 9),), ((0.0, 0.15),),),
-        ("A12803456", 1, ((0, 9),), ((0.0, 0.15),),),
-        ("my travel document is A12803456", 1, ((22, 31),), ((0.0, 0.15),),),
-        ("my travel passport is A12803456", 1, ((22, 31),), ((0.0, 0.15),),),
-        # requires multiword context
-        # ("my travel document is 912803456", 1, ((22, 31),), ((.5, 0.6),),),
+        ("AA1234567", 1, ((0, 9),), ((0.0, 0.05),),),
+        ("aa7654321", 1, ((0, 9),), ((0.0, 0.05),),)
         # fmt: on
     ],
 )
-def test_when_passport_in_text_then_all_us_passports_found(
+def test_when_passport_in_text_then_all_it_passports_found(
     text,
     expected_len,
     expected_positions,

@@ -4,7 +4,12 @@ from typing import Optional, Dict, Union, Tuple
 
 import yaml
 
-from presidio_analyzer.nlp_engine import StanzaNlpEngine, SpacyNlpEngine, NlpEngine
+from presidio_analyzer.nlp_engine import (
+    StanzaNlpEngine,
+    SpacyNlpEngine,
+    NlpEngine,
+    TransformersNlpEngine,
+)
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -15,7 +20,7 @@ class NlpEngineProvider:
     :param nlp_engines: List of available NLP engines.
     Default: (SpacyNlpEngine, StanzaNlpEngine)
     :param nlp_configuration: Dict containing nlp configuration
-    Example configuration:
+    :example: configuration:
             {
                 "nlp_engine_name": "spacy",
                 "models": [{"lang_code": "en",
@@ -34,7 +39,7 @@ class NlpEngineProvider:
     ):
 
         if not nlp_engines:
-            nlp_engines = (SpacyNlpEngine, StanzaNlpEngine)
+            nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
 
         self.nlp_engines = {
             engine.engine_name: engine for engine in nlp_engines if engine.is_available
@@ -71,8 +76,12 @@ class NlpEngineProvider:
                 "Configuration should include nlp_engine_name and models "
                 "(list of model_name for each lang_code)."
             )
+        nlp_engine_name = self.nlp_configuration["nlp_engine_name"]
+        if nlp_engine_name not in self.nlp_engines:
+            raise ValueError(
+                f"NLP engine '{nlp_engine_name}' is not available. "
+                "Make sure you have all required packages installed")
         try:
-            nlp_engine_name = self.nlp_configuration["nlp_engine_name"]
             nlp_engine_class = self.nlp_engines[nlp_engine_name]
             nlp_engine_opts = {
                 m["lang_code"]: m["model_name"]

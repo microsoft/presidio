@@ -25,7 +25,7 @@ steps:
           workingDirectory: 'presidio-image-redactor'
           script: |
               set -eux  # fail on error
-              pipenv sync --dev --sequential
+              pipenv sync --dev
               pipenv run pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.0.0/en_core_web_lg-3.0.0.tar.gz
     - template: ./build-python.yml
       parameters:

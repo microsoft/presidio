@@ -38,6 +38,9 @@ setuptools.setup(
         "pyyaml",
         "phonenumbers>=8.12",
     ],
+    extras_require={
+        'transformers': ['torch', 'transformers'],
+    },
     include_package_data=True,
     license="MIT",
     classifiers=[
