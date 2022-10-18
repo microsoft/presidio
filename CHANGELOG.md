@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 #### Analyzer
 * Added Italian fiscal code recognizer
 * Added Italian driver license recognizer
+* Added Italian identity card recognizer
+* Added Italian passport recognizer
 
 ### Changed
 #### Analyzer

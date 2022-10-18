@@ -37,6 +37,8 @@ from presidio_analyzer.predefined_recognizers import (
     ItDriverLicenseRecognizer,
     ItFiscalCodeRecognizer,
     TransformersRecognizer,
+    ItPassportRecognizer,
+    ItIdentityCardRecognizer
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -86,7 +88,12 @@ class RecognizerRegistry:
                 AuMedicareRecognizer,
             ],
             "es": [EsNifRecognizer],
-            "it": [ItDriverLicenseRecognizer, ItFiscalCodeRecognizer],
+            "it": [
+                ItDriverLicenseRecognizer,
+                ItFiscalCodeRecognizer,
+                ItIdentityCardRecognizer,
+                ItPassportRecognizer
+            ],
             "ALL": [
                 CreditCardRecognizer,
                 CryptoRecognizer,
