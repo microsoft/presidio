@@ -1,110 +1,21 @@
 # Customizing the NLP models in Presidio Analyzer
 
-Presidio uses NLP engines for two main tasks: NER based PII identification, and feature extraction for custom rule based logic (such as leveraging context words for improved detection).
-While Presidio comes with an open-source model (the `en_core_web_lg` model from spaCy), it can be customized by leveraging other NLP models, either public or proprietary.
-These models can be trained or downloaded from existing NLP frameworks like [spaCy](https://spacy.io/usage/models), [Stanza](https://github.com/stanfordnlp/stanza) and [transformers](https://github.com/huggingface/transformers).
+Presidio uses NLP engines for two main tasks: NER based PII identification, 
+and feature extraction for custom rule based logic (such as leveraging context words for improved detection).
+While Presidio comes with an open-source model (the `en_core_web_lg` model from spaCy), 
+it can be customized by leveraging other NLP models, either public or proprietary.
+These models can be trained or downloaded from existing NLP frameworks like [spaCy](https://spacy.io/usage/models), 
+[Stanza](https://github.com/stanfordnlp/stanza) and 
+[transformers](https://github.com/huggingface/transformers).
 
 In addition, other types of NLP frameworks [can be integrated into Presidio](developing_recognizers.md#machine-learning-ml-based-or-rule-based).
 
 ## Setting up a new NLP model
 
-As mentioned before, Presidio supports both [spaCy](https://spacy.io/usage/models),
-[Stanza](https://github.com/stanfordnlp/stanza) and [transformers](https://github.com/huggingface/transformers) as its internal NLP engine.
-This section describes how new models from either packages could be obtained,
-and how to configure Presidio to use them.
+- [spaCy or stanza](nlp_engines/spacy_stanza.md)
+- [transformers](nlp_engines/transformers.md)
 
-### spaCy/ Stanza
-
-#### Using a public pre-trained spaCy/Stanza model
-
-To replace the default model with a different public model, first download the desired spaCy/Stanza NER models.
-
-- To download a new model with spaCy:
-
-    ```sh
-    python -m spacy download es_core_news_md
-    ```
-
-    In this example we download the medium size model for Spanish.
-
-- To download a new model with Stanza:
-
-    <!--pytest-codeblocks:skip-->
-    ```python
-    import stanza
-    stanza.download("en") # where en is the language code of the model.
-    ```
-
-For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
-
-!!! tip "Tip"
-    For Person, Location and Organization detection, it could be useful to try out the `en_core_web_trf` model which uses a more modern deep-learning architecture, but is slower than the default `en_core_web_lg` model.
-
-#### Training your own model
-
-!!! note "Note"
-    A labeled dataset containing text and labeled PII entities is required for training a new model.
-
-To train your own model, see these links on spaCy and Stanza:
-
-- [Train your own spaCy model](https://spacy.io/usage/training).
-- [Train your own Stanza model](https://stanfordnlp.github.io/stanza/training.html).
-
-Once models are trained, they should be installed locally in the same environment as Presidio Analyzer.
-
-### Huggingface transformers
-
-#### Using a public pre-trained transformers model
-
-To replace the default model with a different public model, first download the desired spaCy/Stanza NER models.
-
-- Transformer models are downloaded once they are called for the first time. If pre-loading is needed, 
-see the [install_nlp_models.py](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/install_nlp_models.py) 
-script with the following configuration:
-
-    ```yaml
-    nlp_engine_name: transformers
-    models:
-    -
-    lang_code: en
-    model_name:
-      spacy: <SPACY_MODEL>
-      transformers: <HUGGINGFACE_MODEL>
-    ```
-    
-    Where `<SPACY_MODEL>` is a name of a spaCy model/pipeline, which would wrap the transformers NER model. For example, `en_core_web_sm`.
-    The `<HUGGINGFACE_MODEL> is the full path for a huggingface model. Models can be found on [HuggingFace Models Hub](https://huggingface.co/models?pipeline_tag=token-classification). For example, `dslim/best-base-NER`
-
-    In this example we download the medium size model for Spanish.
-
-- To download a new model with Stanza:
-
-    <!--pytest-codeblocks:skip-->
-    ```python
-    import stanza
-    stanza.download("en") # where en is the language code of the model.
-    ```
-
-For the available models, follow these links: [spaCy](https://spacy.io/usage/models), [stanza](https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models).
-
-!!! tip "Tip"
-    For Person, Location and Organization detection, it could be useful to try out the `en_core_web_trf` model which uses a more modern deep-learning architecture, but is slower than the default `en_core_web_lg` model.
-
-#### Training your own model
-
-!!! note "Note"
-    A labeled dataset containing text and labeled PII entities is required for training a new model.
-
-To train your own model, see these links on spaCy and Stanza:
-
-- [Train your own spaCy model](https://spacy.io/usage/training).
-- [Train your own Stanza model](https://stanfordnlp.github.io/stanza/training.html).
-- [Train your own transformers model](https://huggingface.co/transformers/v2.4.0/examples.html#named-entity-recognition).
-
-Once models are trained, they should be installed locally in the same environment as Presidio Analyzer.
-
-
-#### Configure Presidio to use the new model
+## Configure Presidio to use the new model
 
 Configuration can be done in two ways:
 
@@ -188,9 +99,9 @@ Configuration can be done in two ways:
     !!! note "Note"
         Presidio can currently use one NLP model per language.
 
-##### Using a previously loaded NLP model
+## Using a previously loaded spaCy pipeline
 
-If the app is already loading an NLP model, it can be re-used to prevent presidio from loading it again by extending the relevant engine.
+If the app is already loading an existing spaCy NLP pipeline, it can be re-used to prevent presidio from loading it again by extending the relevant engine.
 
     ```python
     from presidio_analyzer import AnalyzerEngine
@@ -215,9 +126,11 @@ If the app is already loading an NLP model, it can be re-used to prevent presidi
     analyzer.analyze(text="My name is Bob", language="en")
     ```
 
-## Leverage frameworks other than spaCy or Stanza for ML based PII detection
+## Leverage frameworks other than spaCy, Stanza and transformers for ML based PII detection
 
-In addition to the built-in spaCy/Stanza capabitilies, it is possible to create new recognizers which serve as interfaces to other models.
-See the [Remote recognizer documentation](adding_recognizers.md#creating-a-remote-recognizer) and [samples](../samples/python/integrating_with_external_services.ipynb) for more information.
+In addition to the built-in spaCy/Stanza/transformers capabitilies, it is possible to create new recognizers which serve as interfaces to other models.
+For more information:
+- [Remote recognizer documentation](adding_recognizers.md#creating-a-remote-recognizer) and [samples](../samples/python/integrating_with_external_services.ipynb).
+- [Flair recognizer example](../samples/python/flair_recognizer.py)
 
 For considerations for creating such recognizers, see the [best practices for adding ML recognizers documentation](developing_recognizers.md#machine-learning--ml--based-or-rule-based).
