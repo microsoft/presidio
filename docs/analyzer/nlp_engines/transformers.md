@@ -2,7 +2,7 @@
 
 Presidio's `TransformersNlpEngine` consists of a spaCy pipeline which encapsulates a Huggingface Transformers model instead of the spaCy NER component:
 
-![image](../assets/spacy-transformers-ner.png)
+![image](../../assets/spacy-transformers-ner.png)
 
 Presidio leverages other types of information from spaCy such as tokens, lemmas and part-of-speech. 
 Therefore the pipeline returns both the NER model results as well as results from other pipeline components.
