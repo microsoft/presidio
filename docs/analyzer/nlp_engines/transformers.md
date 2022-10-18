@@ -7,6 +7,9 @@ Presidio's `TransformersNlpEngine` consists of a spaCy pipeline which encapsulat
 Presidio leverages other types of information from spaCy such as tokens, lemmas and part-of-speech. 
 Therefore the pipeline returns both the NER model results as well as results from other pipeline components.
 
+!!! note "Note"
+    spaCy and transformers use a different tokenization approach. Therefore, it could be that there is no alignment between the spans identified by a transformers model and the spans created by spaCy. In this cases, there could be cases where the output of the transformers model is different from the output of Presidio's `TransformersNlpEngine`
+
 ## Adding a new model
 
 As the underlying transformers model, you can choose from either a public pretrained model or a custom model.
