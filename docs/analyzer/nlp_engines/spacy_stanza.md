@@ -1,6 +1,8 @@
 
 # spaCy/Stanza NLP engine
 
+Presidio can be loaded with pre-trained or custom models coming from spaCy or Stanza.
+
 ## Using a public pre-trained spaCy/Stanza model
 
 To replace the default model with a different public model, first download the desired spaCy/Stanza NER models.
