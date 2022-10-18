@@ -3,7 +3,13 @@
 
 Presidio can be loaded with pre-trained or custom models coming from spaCy or Stanza.
 
+## Adding a new model
+
+As the underlying transformers model, you can choose from either a public pretrained model or a custom model.
+
 ## Using a public pre-trained spaCy/Stanza model
+
+### Download the pre-trained model
 
 To replace the default model with a different public model, first download the desired spaCy/Stanza NER models.
 
@@ -28,6 +34,11 @@ For the available models, follow these links: [spaCy](https://spacy.io/usage/mod
 !!! tip "Tip"
     For Person, Location and Organization detection, it could be useful to try out the transformers based models (e.g. `en_core_web_trf`) which uses a more modern deep-learning architecture, but is generally slower than the default `en_core_web_lg` model.
 
+
+### Configure Presidio to use the pre-trained model
+
+Once created, see [the NLP configuration documentation](../customizing_nlp_models.md#Configure-Presidio-to-use-the-new-model) for more information.
+
 ## Training your own model
 
 !!! note "Note"
@@ -42,3 +53,29 @@ To train your own model, see these links on spaCy and Stanza:
 
 Once models are trained, they should be installed locally in the same environment as Presidio Analyzer.
 
+## Using a previously loaded spaCy pipeline
+
+If the app is already loading an existing spaCy NLP pipeline, it can be re-used to prevent presidio from loading it again by extending the relevant engine.
+
+    ```python
+    from presidio_analyzer import AnalyzerEngine
+    from presidio_analyzer.nlp_engine import SpacyNlpEngine
+    import spacy
+
+    # Create a class inheriting from SpacyNlpEngine
+    class LoadedSpacyNlpEngine(SpacyNlpEngine):
+        def __init__(self, loaded_spacy_model):
+            self.nlp = {"en": loaded_spacy_model}
+
+    # Load a model a-priori
+    nlp = spacy.load("en_core_web_sm")
+
+    # Pass the loaded model to the new LoadedSpacyNlpEngine
+    loaded_nlp_engine = LoadedSpacyNlpEngine(loaded_spacy_model = nlp)
+
+    # Pass the engine to the analyzer
+    analyzer = AnalyzerEngine(nlp_engine = loaded_nlp_engine)
+
+    # Analyze text
+    analyzer.analyze(text="My name is Bob", language="en")
+    ```
