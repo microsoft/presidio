@@ -54,6 +54,8 @@ For more information, refer to the [adding new recognizers documentation](analyz
 |IT_FISCAL_CODE| An Italian personal identification code. <https://en.wikipedia.org/wiki/Italian_fiscal_code>|Pattern match, context and checksum|
 |IT_DRIVER_LICENSE| An Italian driver license number.|Pattern match and context|
 |IT_VAT_CODE| An Italian VAT code number |Pattern match, context and checksum|
+|IT_PASSPORT|An Italian passport number.|Pattern match and context|
+|IT_IDENTITY_CARD|An Italian identity card number. <https://en.wikipedia.org/wiki/Italian_electronic_identity_card>|Pattern match and context|
 
 ### Singapore
 
