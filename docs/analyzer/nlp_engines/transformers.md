@@ -9,12 +9,12 @@ Therefore the pipeline returns both the NER model results as well as results fro
 
 ## Adding a new model
 
-As the underlying transformers model, you can choose either a public pretrained model or a custom model.
+As the underlying transformers model, you can choose from either a public pretrained model or a custom model.
 
 ### Using a public pre-trained transformers model
 
 #### Downloading a pre-trained model
-To download the desired NER model from Huggingface:
+To download the desired NER model from HuggingFace:
 
 ```python
 import transformers
@@ -35,9 +35,7 @@ Then, download the spaCy pipeline/model:
 python -m spacy download en_core_web_sm
 ```
 
-#### Configuring Presidio to use a specific model
-
-##### Configuration file
+#### Creating a configuration file
 Once the models are downloaded, the easiest option would be to create a YAML configuration file.
 Note that this file needs to contain both a `spaCy` pipeline name and a transformers model name:
 
@@ -64,6 +62,4 @@ Once created, see [the NLP configuration documentation](../customizing_nlp_model
 
 For more information on model training and evaluation for Presidio, see the [Presidio-Research Github repository](https://github.com/microsoft/presidio-research).
 
-To train your own model, see this tutorial: [Train your own transformers model](https://huggingface.co/transformers/v2.4.0/examples.html#named-entity-recognition).
-
-Once models are trained, they should be installed locally in the same environment as Presidio Analyzer.
+To train your own model, see this tutorial: [Train your own transformers model](https://huggingface.co/docs/transformers/training).
