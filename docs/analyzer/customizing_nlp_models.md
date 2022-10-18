@@ -10,7 +10,7 @@ These models can be trained or downloaded from existing NLP frameworks like [spa
 
 In addition, other types of NLP frameworks [can be integrated into Presidio](developing_recognizers.md#machine-learning-ml-based-or-rule-based).
 
-## Setting up a new NLP model
+## Setting up a custom NLP model
 
 - [spaCy or stanza](nlp_engines/spacy_stanza.md)
 - [transformers](nlp_engines/transformers.md)
@@ -98,33 +98,6 @@ Configuration can be done in two ways:
 
     !!! note "Note"
         Presidio can currently use one NLP model per language.
-
-## Using a previously loaded spaCy pipeline
-
-If the app is already loading an existing spaCy NLP pipeline, it can be re-used to prevent presidio from loading it again by extending the relevant engine.
-
-    ```python
-    from presidio_analyzer import AnalyzerEngine
-    from presidio_analyzer.nlp_engine import SpacyNlpEngine
-    import spacy
-
-    # Create a class inheriting from SpacyNlpEngine
-    class LoadedSpacyNlpEngine(SpacyNlpEngine):
-        def __init__(self, loaded_spacy_model):
-            self.nlp = {"en": loaded_spacy_model}
-
-    # Load a model a-priori
-    nlp = spacy.load("en_core_web_sm")
-
-    # Pass the loaded model to the new LoadedSpacyNlpEngine
-    loaded_nlp_engine = LoadedSpacyNlpEngine(loaded_spacy_model = nlp)
-
-    # Pass the engine to the analyzer
-    analyzer = AnalyzerEngine(nlp_engine = loaded_nlp_engine)
-
-    # Analyze text
-    analyzer.analyze(text="My name is Bob", language="en")
-    ```
 
 ## Leverage frameworks other than spaCy, Stanza and transformers for ML based PII detection
 
