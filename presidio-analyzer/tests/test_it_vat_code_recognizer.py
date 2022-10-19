@@ -24,8 +24,10 @@ def entities():
         ("00000000001", 0, (), ()),
         # Test with a valid VAT Code
         ("01333550323", 1, ((0, 11),), ((0.9, 1.0),),),
-        # Test with two italian VAT Code
+        # Test with two codes but only the second is a valid VAT code
         ("00000000000 and 01333550323", 1, ((16, 27),), ((0.9, 1.0),)),
+        # Test with a valid VAT Code and a character that needs to be replaced
+        ("01333550_323", 1, ((0, 12),), ((0.9, 1.0),),),
         # fmt: on
     ],
 )
