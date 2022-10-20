@@ -20,8 +20,10 @@ lemmatization, Named Entity Recognition and other NLP tasks.
 
 ### Configuring the NLP Engine
 
-Configuring the NLP engine for a new language is done by downloading or using a model trained on a different language.
+Presidio's NLP engine can be adapted to support multiple languages and frameworks (such as *spaCy, Stanza* and *transformers*).
+Configuring the NLP engine for a new language or NLP framework is done by downloading or using a model trained on a different language, and providing a configuration.
 See the [NLP model customization documentation](customizing_nlp_models.md) for details on how to configure models for new languages.
+
 
 ### Set up language specific recognizers
 
