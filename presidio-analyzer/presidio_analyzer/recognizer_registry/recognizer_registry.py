@@ -211,12 +211,6 @@ class RecognizerRegistry:
         if not isinstance(recognizer, EntityRecognizer):
             raise ValueError("Input is not of type EntityRecognizer")
 
-        if recognizer.name in [r.name for r in self.recognizers]:
-            raise ValueError(
-                f"Recognizer with name {recognizer.name} already exists. "
-                f"Names must be unique."
-            )
-
         self.recognizers.append(recognizer)
 
     def remove_recognizer(self, recognizer_name: str) -> None:

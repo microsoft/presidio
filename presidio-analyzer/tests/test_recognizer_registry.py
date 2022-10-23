@@ -204,20 +204,3 @@ def test_recognizer_registry_exception_erroneous_yaml():
     with pytest.raises(TypeError):
         registry = RecognizerRegistry()
         registry.add_recognizers_from_yaml(test_yaml)
-
-
-def test_adding_recognizer_with_existing_name_throws_exception():
-
-    reco1 = PatternRecognizer(
-        supported_entity="ENT", name="MyRecognizer", deny_list=["A", "B", "C"]
-    )
-    reco2 = PatternRecognizer(
-        supported_entity="ENT",
-        name="MyRecognizer",
-        patterns=[Pattern(name="pattern", regex="", score=0.9)],
-    )
-    registry = RecognizerRegistry()
-    registry.add_recognizer(reco1)
-
-    with pytest.raises(ValueError):
-        registry.add_recognizer(reco2)

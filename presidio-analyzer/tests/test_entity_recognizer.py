@@ -119,11 +119,3 @@ def test_when_remove_duplicates_contained_shorter_length_results_removed():
     ]
     results = EntityRecognizer.remove_duplicates(arr)
     assert len(results) == 1
-
-
-def test_entity_recognizer_name_contains_id():
-    recognizer = EntityRecognizer(["ENTITY"])
-    initial_name = "EntityRecognizer"
-
-    assert initial_name in recognizer.name
-    assert len(recognizer.name) > len(initial_name)
