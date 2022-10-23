@@ -70,5 +70,5 @@ __all__ = [
     "ItFiscalCodeRecognizer",
     "ItVatCodeRecognizer",
     "ItIdentityCardRecognizer",
-    "ItPassportRecognizer"
+    "ItPassportRecognizer",
 ]
