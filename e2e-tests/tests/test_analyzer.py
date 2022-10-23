@@ -188,7 +188,7 @@ def test_given_decision_process_enabled_for_analyze_input_then_return_response_w
 
     expected_response = """
     [
-        {"entity_type": "PERSON", "start": 0, "end": 10, 
+        {"entity_type": "PERSON", "start": 0, "end": 10, "score": 0.85,
         "analysis_explanation": {
             "recognizer": "SpacyRecognizer", "pattern_name": null, "pattern": null, "original_score": 0.85, "score": 0.85, 
             "textual_explanation": "Identified as PERSON by Spacy's Named Entity Recognition", 
