@@ -53,25 +53,25 @@ Once models are trained, they should be installed locally in the same environmen
 
 If the app is already loading an existing spaCy NLP pipeline, it can be re-used to prevent presidio from loading it again by extending the relevant engine.
 
-    ```python
-    from presidio_analyzer import AnalyzerEngine
-    from presidio_analyzer.nlp_engine import SpacyNlpEngine
-    import spacy
+```python
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.nlp_engine import SpacyNlpEngine
+import spacy
 
-    # Create a class inheriting from SpacyNlpEngine
-    class LoadedSpacyNlpEngine(SpacyNlpEngine):
-        def __init__(self, loaded_spacy_model):
-            self.nlp = {"en": loaded_spacy_model}
+# Create a class inheriting from SpacyNlpEngine
+class LoadedSpacyNlpEngine(SpacyNlpEngine):
+    def __init__(self, loaded_spacy_model):
+        self.nlp = {"en": loaded_spacy_model}
 
-    # Load a model a-priori
-    nlp = spacy.load("en_core_web_sm")
+# Load a model a-priori
+nlp = spacy.load("en_core_web_sm")
 
-    # Pass the loaded model to the new LoadedSpacyNlpEngine
-    loaded_nlp_engine = LoadedSpacyNlpEngine(loaded_spacy_model = nlp)
+# Pass the loaded model to the new LoadedSpacyNlpEngine
+loaded_nlp_engine = LoadedSpacyNlpEngine(loaded_spacy_model = nlp)
 
-    # Pass the engine to the analyzer
-    analyzer = AnalyzerEngine(nlp_engine = loaded_nlp_engine)
+# Pass the engine to the analyzer
+analyzer = AnalyzerEngine(nlp_engine = loaded_nlp_engine)
 
-    # Analyze text
-    analyzer.analyze(text="My name is Bob", language="en")
-    ```
+# Analyze text
+analyzer.analyze(text="My name is Bob", language="en")
+```
