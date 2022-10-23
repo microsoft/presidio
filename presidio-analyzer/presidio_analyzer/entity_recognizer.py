@@ -44,7 +44,9 @@ class EntityRecognizer:
         self.supported_entities = supported_entities
 
         if name is None:
-            self.name = self.__class__.__name__  # assign class name as name
+            self.name = (
+                f"{self.__class__.__name__}_{id(self)}"  # assign class name as name
+            )
         else:
             self.name = name
 
