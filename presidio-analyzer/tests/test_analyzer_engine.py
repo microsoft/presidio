@@ -11,7 +11,6 @@ from presidio_analyzer import (
     RecognizerRegistry,
     EntityRecognizer,
     RecognizerResult,
-    DictAnalyzerResult,
 )
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
@@ -718,6 +717,10 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
         results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer1"
     )
+    assert (
+        "MockRecognizer1"
+        in results[0].recognition_metadata[RecognizerResult.RECOGNIZER_IDENTIFIER_KEY]
+    )
 
     assert results[1].entity_type == "TEST2"
     assert results[1].start == 50
@@ -726,6 +729,10 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
     assert (
         results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer2"
+    )
+    assert (
+        "MockRecognizer2"
+        in results[1].recognition_metadata[RecognizerResult.RECOGNIZER_IDENTIFIER_KEY]
     )
 
 
@@ -775,6 +782,12 @@ def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_en
         recognizer_results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer"
     )
+    assert (
+        "MockRecognizer"
+        in recognizer_results[0].recognition_metadata[
+            RecognizerResult.RECOGNIZER_IDENTIFIER_KEY
+        ]
+    )
     assert recognizer_results[0].recognition_metadata[
         RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
     ]
@@ -785,6 +798,12 @@ def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_en
     assert (
         recognizer_results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer"
+    )
+    assert (
+        "MockRecognizer"
+        in recognizer_results[1].recognition_metadata[
+            RecognizerResult.RECOGNIZER_IDENTIFIER_KEY
+        ]
     )
     assert recognizer_results[1].recognition_metadata[
         RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY

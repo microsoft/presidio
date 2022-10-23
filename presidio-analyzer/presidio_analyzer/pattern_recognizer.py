@@ -206,7 +206,8 @@ class PatternRecognizer(LocalRecognizer):
                     score=score,
                     analysis_explanation=description,
                     recognition_metadata={
-                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
+                        RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
                     },
                 )
 
