@@ -3,10 +3,6 @@
 
 Presidio can be loaded with pre-trained or custom models coming from spaCy or Stanza.
 
-## Adding a new model
-
-As the underlying transformers model, you can choose from either a public pretrained model or a custom model.
-
 ## Using a public pre-trained spaCy/Stanza model
 
 ### Download the pre-trained model
