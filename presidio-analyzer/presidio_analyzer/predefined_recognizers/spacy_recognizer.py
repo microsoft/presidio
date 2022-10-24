@@ -111,7 +111,8 @@ class SpacyRecognizer(LocalRecognizer):
                     score=self.ner_strength,
                     analysis_explanation=explanation,
                     recognition_metadata={
-                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name
+                        RecognizerResult.RECOGNIZER_NAME_KEY: self.name,
+                        RecognizerResult.RECOGNIZER_IDENTIFIER_KEY: self.id,
                     },
                 )
                 results.append(spacy_result)
