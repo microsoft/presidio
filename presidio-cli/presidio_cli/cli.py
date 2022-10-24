@@ -252,17 +252,13 @@ def run() -> None:
 
     prob_num = 0
     for file in find_files_recursively(args.files, conf):
-        filepath = file[2:] if file.startswith("./") else file
+        filepath = file[2:] if file.startswith("./") or file.startswith(".\\") else file
         try:
             with io.open(file, newline="", encoding="utf-8") as f:
                 problems = analyze(f, conf, filepath)
         except Exception as e:
-            if e.__class__.__name__ == "OSError":
-                traceback.print_exc()
-                continue
-            else:
-                traceback.print_exc()
-                sys.exit(1)
+            traceback.print_exc()
+            continue
         prob_num = show_problems(
             problems, file, args_format=args.format, no_warn=args.no_warnings
         )
