@@ -59,7 +59,7 @@ class PresidioCLIConfig(object):
         # an exception is caught and the file is not going
         # to be processed.
         try:
-            with open(filepath, newline="") as f:
+            with open(filepath, newline="", encoding="utf-8") as f:
                 _ = f.read()
         except UnicodeDecodeError:
             return False

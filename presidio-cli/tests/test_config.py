@@ -43,10 +43,10 @@ def test_unknown_entity():
 def test_is_file(temp_workspace, config):
     for f in [
         os.path.join(temp_workspace, "empty.txt"),
-        os.path.join(temp_workspace, "sub/directory.txt/empty.txt"),
-        os.path.join(temp_workspace, "non-ascii/éçäγλνπ¥/utf-8"),
+        os.path.join(temp_workspace, "sub", "directory.txt", "empty.txt"),
+        os.path.join(temp_workspace, "non-ascii", "éçäγλνπ¥", "utf-8"),
         os.path.join(temp_workspace, "dos.yml"),
-        os.path.join(temp_workspace, "s/s/s/s/s/s/s/s/s/s/s/s/s/s/s/file"),
+        os.path.join(temp_workspace, *["s"]*15, "file"),
     ]:
         assert config.is_text_file(f)
 
