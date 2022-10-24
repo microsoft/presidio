@@ -1,34 +1,37 @@
 import pytest
 
+from presidio_analyzer.predefined_recognizers import ItVatCodeRecognizer
 from tests import assert_result_within_score_range
-from presidio_analyzer.predefined_recognizers import UsPassportRecognizer
 
 
 @pytest.fixture(scope="module")
 def recognizer():
-    return UsPassportRecognizer()
+    return ItVatCodeRecognizer()
 
 
 @pytest.fixture(scope="module")
 def entities():
-    return ["US_PASSPORT"]
+    return ["IT_VAT_CODE"]
 
 
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, expected_score_ranges",
     [
         # fmt: off
-        ("912803456", 1, ((0, 9),), ((0.0, 0.1),),),
-        ("Z12803456", 1, ((0, 9),), ((0.0, 0.15),),),
-        ("A12803456", 1, ((0, 9),), ((0.0, 0.15),),),
-        ("my travel document is A12803456", 1, ((22, 31),), ((0.0, 0.15),),),
-        ("my travel passport is A12803456", 1, ((22, 31),), ((0.0, 0.15),),),
-        # requires multiword context
-        # ("my travel document is 912803456", 1, ((22, 31),), ((.5, 0.6),),),
+        # Test with an invalid VAT Code
+        ("00000000000", 0, (), ()),
+        # Test with an invalid VAT Code
+        ("00000000001", 0, (), ()),
+        # Test with a valid VAT Code
+        ("01333550323", 1, ((0, 11),), ((0.9, 1.0),),),
+        # Test with two codes but only the second is a valid VAT code
+        ("00000000000 and 01333550323", 1, ((16, 27),), ((0.9, 1.0),)),
+        # Test with a valid VAT Code and a character that needs to be replaced
+        ("01333550_323", 1, ((0, 12),), ((0.9, 1.0),),),
         # fmt: on
     ],
 )
-def test_when_passport_in_text_then_all_us_passports_found(
+def test_when_fiscalcode_in_text_then_all_it_fiscalcode_found(
     text,
     expected_len,
     expected_positions,
