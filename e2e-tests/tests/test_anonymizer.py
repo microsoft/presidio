@@ -49,9 +49,7 @@ def test_given_anonymize_called_with_empty_text_then_invalid_input_message_retur
         "anonymizers": {
             "DEFAULT": { "type": "replace", "new_value": "ANONYMIZED" }
         },
-        "analyzer_results": [
-            { "start": 24, "end": 32, "score": 0.8, "entity_type": "NAME" }
-        ]
+        "analyzer_results": []
     }
     """
 
@@ -191,7 +189,7 @@ def test_given_decrypt_called_with_missing_key_then_invalid_input_response_retur
 
 
 @pytest.mark.api
-def test_given_decrypt_called_with_missing_text_then_invalid_input_response_returned():
+def test_given_decrypt_called_with_missing_text_then_empty_text_is_returned():
     request_body = """
     {
         "key": "1111111111111111"
@@ -200,13 +198,9 @@ def test_given_decrypt_called_with_missing_text_then_invalid_input_response_retu
 
     response_status, response_content = deanonymize(request_body)
 
-    expected_response = """
-    {
-        "error": "Invalid input, text can not be empty"
-    }
-    """
+    expected_response = """{"text": "", "items": []}"""
 
-    assert response_status == 422
+    assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
 
 
