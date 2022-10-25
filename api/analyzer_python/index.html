@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/api/analyzer_python/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
     
     
       
@@ -1097,6 +1097,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.analyze" class="md-nav__link">
     analyze()
   </a>
@@ -1407,13 +1414,6 @@
         <li class="md-nav__item">
   <a href="#presidio_analyzer.recognizer_result.RecognizerResult" class="md-nav__link">
     presidio_analyzer.recognizer_result.RecognizerResult
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#presidio_analyzer.recognizer_result.RecognizerResult.RECOGNIZER_NAME_KEY" class="md-nav__link">
-    RECOGNIZER_NAME_KEY
   </a>
   
 </li>
@@ -1826,6 +1826,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.id" class="md-nav__link">
+    id
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#presidio_analyzer.entity_recognizer.EntityRecognizer.analyze" class="md-nav__link">
     analyze()
   </a>
@@ -2136,13 +2143,6 @@
         <li class="md-nav__item">
   <a href="#presidio_analyzer.recognizer_result.RecognizerResult" class="md-nav__link">
     presidio_analyzer.recognizer_result.RecognizerResult
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#presidio_analyzer.recognizer_result.RecognizerResult.RECOGNIZER_NAME_KEY" class="md-nav__link">
-    RECOGNIZER_NAME_KEY
   </a>
   
 </li>
@@ -2515,7 +2515,7 @@ by default if None passed)</p>
             <span class="k">if</span> <span class="n">current_results</span><span class="p">:</span>
                 <span class="c1"># add recognizer name to recognition metadata inside results</span>
                 <span class="c1"># if not exists</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__add_recognizer_name_if_not_exists</span><span class="p">(</span><span class="n">current_results</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__add_recognizer_id_if_not_exists</span><span class="p">(</span><span class="n">current_results</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">)</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_results</span><span class="p">)</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enhance_using_context</span><span class="p">(</span>
@@ -2566,14 +2566,14 @@ by default if None passed)</p>
             <span class="n">recognizer_results</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">r</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">raw_results</span>
-                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span><span class="p">]</span>
-                <span class="o">==</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_IDENTIFIER_KEY</span><span class="p">]</span>
+                <span class="o">==</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">id</span>
             <span class="p">]</span>
             <span class="n">other_recognizer_results</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">r</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">raw_results</span>
-                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span><span class="p">]</span>
-                <span class="o">!=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_IDENTIFIER_KEY</span><span class="p">]</span>
+                <span class="o">!=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">id</span>
             <span class="p">]</span>
 
             <span class="c1"># enhance score using context in recognizer level if implemented</span>
@@ -2617,8 +2617,9 @@ by default if None passed)</p>
         <span class="n">new_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;=</span> <span class="n">score_threshold</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">new_results</span>
 
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_remove_allow_list</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">allow_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">allow_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove results which are part of the allow list.</span>
@@ -2637,14 +2638,15 @@ by default if None passed)</p>
 
         <span class="k">return</span> <span class="n">new_results</span>
 
-    <span class="k">def</span> <span class="nf">__add_recognizer_name_if_not_exists</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">recognizer</span><span class="p">:</span> <span class="n">EntityRecognizer</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__add_recognizer_id_if_not_exists</span><span class="p">(</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RecognizerResult</span><span class="p">],</span> <span class="n">recognizer</span><span class="p">:</span> <span class="n">EntityRecognizer</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Ensure recognition metadata with recognizer name existence.</span>
+        <span class="sd">&quot;&quot;&quot;Ensure recognition metadata with recognizer id existence.</span>
 
-<span class="sd">        Ensure recognizer result list contains recognizer name inside recognition</span>
-<span class="sd">        metadata dictionary, and if not create it. recognizer_name is needed</span>
-<span class="sd">        for context aware enhancement</span>
+<span class="sd">        Ensure recognizer result list contains recognizer id inside recognition</span>
+<span class="sd">        metadata dictionary, and if not create it. recognizer_id is needed</span>
+<span class="sd">        for context aware enhancement.</span>
 
 <span class="sd">        :param results: List of RecognizerResult</span>
 <span class="sd">        :param recognizer: Entity recognizer</span>
@@ -2652,6 +2654,13 @@ by default if None passed)</p>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">:</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_IDENTIFIER_KEY</span>
+                <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span>
+            <span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span>
+                    <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_IDENTIFIER_KEY</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">id</span>
             <span class="k">if</span> <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">:</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">recognition_metadata</span><span class="p">[</span>
                     <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span>
@@ -2816,7 +2825,7 @@ print(results)
         <span class="k">if</span> <span class="n">current_results</span><span class="p">:</span>
             <span class="c1"># add recognizer name to recognition metadata inside results</span>
             <span class="c1"># if not exists</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__add_recognizer_name_if_not_exists</span><span class="p">(</span><span class="n">current_results</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__add_recognizer_id_if_not_exists</span><span class="p">(</span><span class="n">current_results</span><span class="p">,</span> <span class="n">recognizer</span><span class="p">)</span>
             <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_results</span><span class="p">)</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enhance_using_context</span><span class="p">(</span>
@@ -2999,6 +3008,13 @@ that will be available instead of the predefined recognizers</p>
                 <span class="n">AuMedicareRecognizer</span><span class="p">,</span>
             <span class="p">],</span>
             <span class="s2">&quot;es&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">EsNifRecognizer</span><span class="p">],</span>
+            <span class="s2">&quot;it&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">ItDriverLicenseRecognizer</span><span class="p">,</span>
+                <span class="n">ItFiscalCodeRecognizer</span><span class="p">,</span>
+                <span class="n">ItVatCodeRecognizer</span><span class="p">,</span>
+                <span class="n">ItIdentityCardRecognizer</span><span class="p">,</span>
+                <span class="n">ItPassportRecognizer</span><span class="p">,</span>
+            <span class="p">],</span>
             <span class="s2">&quot;ALL&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="n">CreditCardRecognizer</span><span class="p">,</span>
                 <span class="n">CryptoRecognizer</span><span class="p">,</span>
@@ -3030,9 +3046,12 @@ that will be available instead of the predefined recognizers</p>
             <span class="k">return</span> <span class="n">SpacyRecognizer</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nlp_engine</span><span class="p">,</span> <span class="n">StanzaNlpEngine</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">StanzaRecognizer</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nlp_engine</span><span class="p">,</span> <span class="n">TransformersNlpEngine</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">TransformersRecognizer</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;nlp engine should be either SpacyNlpEngine or StanzaNlpEngine&quot;</span>
+                <span class="s2">&quot;nlp engine should be either SpacyNlpEngine,&quot;</span>
+                <span class="s2">&quot;StanzaNlpEngine or TransformersNlpEngine&quot;</span>
             <span class="p">)</span>
             <span class="c1"># Returning default</span>
             <span class="k">return</span> <span class="n">SpacyRecognizer</span>
@@ -3481,6 +3500,13 @@ and language</p>
             <span class="n">AuMedicareRecognizer</span><span class="p">,</span>
         <span class="p">],</span>
         <span class="s2">&quot;es&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">EsNifRecognizer</span><span class="p">],</span>
+        <span class="s2">&quot;it&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">ItDriverLicenseRecognizer</span><span class="p">,</span>
+            <span class="n">ItFiscalCodeRecognizer</span><span class="p">,</span>
+            <span class="n">ItVatCodeRecognizer</span><span class="p">,</span>
+            <span class="n">ItIdentityCardRecognizer</span><span class="p">,</span>
+            <span class="n">ItPassportRecognizer</span><span class="p">,</span>
+        <span class="p">],</span>
         <span class="s2">&quot;ALL&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="n">CreditCardRecognizer</span><span class="p">,</span>
             <span class="n">CryptoRecognizer</span><span class="p">,</span>
@@ -3622,6 +3648,8 @@ when they appear in context of the matched entity</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">supported_language</span> <span class="o">=</span> <span class="n">supported_language</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_loaded</span> <span class="o">=</span> <span class="kc">False</span>
@@ -3630,6 +3658,12 @@ when they appear in context of the matched entity</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loaded recognizer: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_loaded</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a unique identifier of this recognizer.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -3774,6 +3808,29 @@ when they appear in context of the matched entity</p>
 
 
 
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="presidio_analyzer.entity_recognizer.EntityRecognizer.id" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">id</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Return a unique identifier of this recognizer.</p>
+    </div>
+
+  </div>
 
 
 
@@ -4584,7 +4641,8 @@ identified using a deny-list</p>
                     <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span>
                     <span class="n">analysis_explanation</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
                     <span class="n">recognition_metadata</span><span class="o">=</span><span class="p">{</span>
-                        <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+                        <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_NAME_KEY</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="n">RecognizerResult</span><span class="o">.</span><span class="n">RECOGNIZER_IDENTIFIER_KEY</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">)</span>
 
@@ -5672,7 +5730,7 @@ For example: models = {"en": "en_core_web_lg"}</p>
 <p>:param nlp_engines: List of available NLP engines.
 Default: (SpacyNlpEngine, StanzaNlpEngine)
 :param nlp_configuration: Dict containing nlp configuration
-Example configuration:
+:example: configuration:
         {
             "nlp_engine_name": "spacy",
             "models": [{"lang_code": "en",
@@ -5690,7 +5748,7 @@ Nlp engine names available by default: spacy, stanza.
 <span class="sd">    :param nlp_engines: List of available NLP engines.</span>
 <span class="sd">    Default: (SpacyNlpEngine, StanzaNlpEngine)</span>
 <span class="sd">    :param nlp_configuration: Dict containing nlp configuration</span>
-<span class="sd">    Example configuration:</span>
+<span class="sd">    :example: configuration:</span>
 <span class="sd">            {</span>
 <span class="sd">                &quot;nlp_engine_name&quot;: &quot;spacy&quot;,</span>
 <span class="sd">                &quot;models&quot;: [{&quot;lang_code&quot;: &quot;en&quot;,</span>
@@ -5709,7 +5767,7 @@ Nlp engine names available by default: spacy, stanza.
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">nlp_engines</span><span class="p">:</span>
-            <span class="n">nlp_engines</span> <span class="o">=</span> <span class="p">(</span><span class="n">SpacyNlpEngine</span><span class="p">,</span> <span class="n">StanzaNlpEngine</span><span class="p">)</span>
+            <span class="n">nlp_engines</span> <span class="o">=</span> <span class="p">(</span><span class="n">SpacyNlpEngine</span><span class="p">,</span> <span class="n">StanzaNlpEngine</span><span class="p">,</span> <span class="n">TransformersNlpEngine</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">engine</span><span class="o">.</span><span class="n">engine_name</span><span class="p">:</span> <span class="n">engine</span> <span class="k">for</span> <span class="n">engine</span> <span class="ow">in</span> <span class="n">nlp_engines</span> <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">is_available</span>
@@ -5746,8 +5804,13 @@ Nlp engine names available by default: spacy, stanza.
                 <span class="s2">&quot;Configuration should include nlp_engine_name and models &quot;</span>
                 <span class="s2">&quot;(list of model_name for each lang_code).&quot;</span>
             <span class="p">)</span>
+        <span class="n">nlp_engine_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="p">[</span><span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">nlp_engine_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;NLP engine &#39;</span><span class="si">{</span><span class="n">nlp_engine_name</span><span class="si">}</span><span class="s2">&#39; is not available. &quot;</span>
+                <span class="s2">&quot;Make sure you have all required packages installed&quot;</span>
+            <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">nlp_engine_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="p">[</span><span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">]</span>
             <span class="n">nlp_engine_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span><span class="p">[</span><span class="n">nlp_engine_name</span><span class="p">]</span>
             <span class="n">nlp_engine_opts</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">m</span><span class="p">[</span><span class="s2">&quot;lang_code&quot;</span><span class="p">]:</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;model_name&quot;</span><span class="p">]</span>
@@ -5831,8 +5894,13 @@ Nlp engine names available by default: spacy, stanza.
             <span class="s2">&quot;Configuration should include nlp_engine_name and models &quot;</span>
             <span class="s2">&quot;(list of model_name for each lang_code).&quot;</span>
         <span class="p">)</span>
+    <span class="n">nlp_engine_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="p">[</span><span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">nlp_engine_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;NLP engine &#39;</span><span class="si">{</span><span class="n">nlp_engine_name</span><span class="si">}</span><span class="s2">&#39; is not available. &quot;</span>
+            <span class="s2">&quot;Make sure you have all required packages installed&quot;</span>
+        <span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">nlp_engine_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_configuration</span><span class="p">[</span><span class="s2">&quot;nlp_engine_name&quot;</span><span class="p">]</span>
         <span class="n">nlp_engine_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlp_engines</span><span class="p">[</span><span class="n">nlp_engine_name</span><span class="p">]</span>
         <span class="n">nlp_engine_opts</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">m</span><span class="p">[</span><span class="s2">&quot;lang_code&quot;</span><span class="p">]:</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;model_name&quot;</span><span class="p">]</span>
@@ -5901,11 +5969,12 @@ and recognizer name</p>
 <span class="sd">    and recognizer name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="sd">&quot;&quot;&quot;this holds the key of recognizer name inside recognition_metadata dictionary&quot;&quot;&quot;</span>
+    <span class="c1"># Keys for recognizer metadata</span>
     <span class="n">RECOGNIZER_NAME_KEY</span> <span class="o">=</span> <span class="s2">&quot;recognizer_name&quot;</span>
+    <span class="n">RECOGNIZER_IDENTIFIER_KEY</span> <span class="o">=</span> <span class="s2">&quot;recognizer_identifier&quot;</span>
 
-    <span class="sd">&quot;&quot;&quot;this holds a key of a flag inside recognition_metadata dictionary</span>
-<span class="sd">    which is set to true if the result enhanced by context&quot;&quot;&quot;</span>
+    <span class="c1"># Key of a flag inside recognition_metadata dictionary</span>
+    <span class="c1"># which is set to true if the result enhanced by context</span>
     <span class="n">IS_SCORE_ENHANCED_BY_CONTEXT_KEY</span> <span class="o">=</span> <span class="s2">&quot;is_score_enhanced_by_context&quot;</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;presidio-analyzer&quot;</span><span class="p">)</span>
@@ -6078,24 +6147,6 @@ and recognizer name</p>
 
 
 
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h2 id="presidio_analyzer.recognizer_result.RecognizerResult.RECOGNIZER_NAME_KEY" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">RECOGNIZER_NAME_KEY</span></code>
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-      <p>this holds a key of a flag inside recognition_metadata dictionary
-which is set to true if the result enhanced by context</p>
-    </div>
-
-  </div>
 
 
 

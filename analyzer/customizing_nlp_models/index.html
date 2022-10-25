@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/analyzer/customizing_nlp_models/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
     
     
       
@@ -726,75 +726,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#replacing-the-default-nlp-model-with-a-different-model" class="md-nav__link">
-    Replacing the default NLP model with a different model
-  </a>
-  
-    <nav class="md-nav" aria-label="Replacing the default NLP model with a different model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setting-up-a-new-nlp-model" class="md-nav__link">
-    Setting up a new NLP model
-  </a>
-  
-    <nav class="md-nav" aria-label="Setting up a new NLP model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#download-create-the-new-model" class="md-nav__link">
-    Download / create the new model
-  </a>
-  
-    <nav class="md-nav" aria-label="Download / create the new model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-a-public-spacystanza-model" class="md-nav__link">
-    Using a public spaCy/Stanza model
+  <a href="#setting-up-a-custom-nlp-model" class="md-nav__link">
+    Setting up a custom NLP model
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#training-your-own-model" class="md-nav__link">
-    Training your own model
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#configure-presidio-to-use-the-new-model" class="md-nav__link">
     Configure Presidio to use the new model
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#using-a-previously-loaded-nlp-model" class="md-nav__link">
-    Using a previously loaded NLP model
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#leverage-frameworks-other-than-spacy-or-stanza-for-ml-based-pii-detection" class="md-nav__link">
-    Leverage frameworks other than spaCy or Stanza for ML based PII detection
+  <a href="#leverage-frameworks-other-than-spacy-stanza-and-transformers-for-ml-based-pii-detection" class="md-nav__link">
+    Leverage frameworks other than spaCy, Stanza and transformers for ML based PII detection
   </a>
   
 </li>
@@ -1181,75 +1128,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#replacing-the-default-nlp-model-with-a-different-model" class="md-nav__link">
-    Replacing the default NLP model with a different model
-  </a>
-  
-    <nav class="md-nav" aria-label="Replacing the default NLP model with a different model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setting-up-a-new-nlp-model" class="md-nav__link">
-    Setting up a new NLP model
-  </a>
-  
-    <nav class="md-nav" aria-label="Setting up a new NLP model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#download-create-the-new-model" class="md-nav__link">
-    Download / create the new model
-  </a>
-  
-    <nav class="md-nav" aria-label="Download / create the new model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-a-public-spacystanza-model" class="md-nav__link">
-    Using a public spaCy/Stanza model
+  <a href="#setting-up-a-custom-nlp-model" class="md-nav__link">
+    Setting up a custom NLP model
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#training-your-own-model" class="md-nav__link">
-    Training your own model
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#configure-presidio-to-use-the-new-model" class="md-nav__link">
     Configure Presidio to use the new model
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#using-a-previously-loaded-nlp-model" class="md-nav__link">
-    Using a previously loaded NLP model
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#leverage-frameworks-other-than-spacy-or-stanza-for-ml-based-pii-detection" class="md-nav__link">
-    Leverage frameworks other than spaCy or Stanza for ML based PII detection
+  <a href="#leverage-frameworks-other-than-spacy-stanza-and-transformers-for-ml-based-pii-detection" class="md-nav__link">
+    Leverage frameworks other than spaCy, Stanza and transformers for ML based PII detection
   </a>
   
 </li>
@@ -1272,51 +1166,20 @@
 
 
 <h1 id="customizing-the-nlp-models-in-presidio-analyzer">Customizing the NLP models in Presidio Analyzer</h1>
-<p>Presidio uses NLP engines for two main tasks: NER based PII identification, and feature extraction for custom rule based logic (such as leveraging context words for improved detection).
-While Presidio comes with an open-source model (the <code>en_core_web_lg</code> model from spaCy), it can be customized by leveraging other NLP models, either public or proprietary.
-These models can be trained or downloaded from existing NLP frameworks like <a href="https://spacy.io/usage/models">spaCy</a> and <a href="https://github.com/stanfordnlp/stanza">Stanza</a>.
-In addition, other types of NLP frameworks can be integrated into Presidio.</p>
-<h2 id="replacing-the-default-nlp-model-with-a-different-model">Replacing the default NLP model with a different model</h2>
-<h3 id="setting-up-a-new-nlp-model">Setting up a new NLP model</h3>
-<p>As mentioned before, Presidio supports both <a href="https://spacy.io/usage/models">spaCy</a>
-and <a href="https://github.com/stanfordnlp/stanza">Stanza</a> as its internal NLP engine.
-This section describes how new models from either spaCy or Stanza could be obtained,
-and how to configure Presidio to use them.</p>
-<h4 id="download-create-the-new-model">Download / create the new model</h4>
-<h5 id="using-a-public-spacystanza-model">Using a public spaCy/Stanza model</h5>
-<p>To replace the default model with a different public model, first download the desired spaCy/Stanza NER models.</p>
+<p>Presidio uses NLP engines for two main tasks: NER based PII identification, 
+and feature extraction for custom rule based logic (such as leveraging context words for improved detection).
+While Presidio comes with an open-source model (the <code>en_core_web_lg</code> model from spaCy), 
+it can be customized by leveraging other NLP models, either public or proprietary.
+These models can be trained or downloaded from existing NLP frameworks like <a href="https://spacy.io/usage/models">spaCy</a>, 
+<a href="https://github.com/stanfordnlp/stanza">Stanza</a> and 
+<a href="https://github.com/huggingface/transformers">transformers</a>.</p>
+<p>In addition, other types of NLP frameworks <a href="../developing_recognizers/#machine-learning-ml-based-or-rule-based">can be integrated into Presidio</a>.</p>
+<h2 id="setting-up-a-custom-nlp-model">Setting up a custom NLP model</h2>
 <ul>
-<li>
-<p>To download a new model with spaCy:</p>
-<div class="highlight"><pre><span></span><code>python -m spacy download es_core_news_md
-</code></pre></div>
-<p>In this example we download the medium size model for Spanish.</p>
-</li>
-<li>
-<p>To download a new model with Stanza:</p>
-<p><!--pytest-codeblocks:skip-->
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">stanza</span>
-<span class="n">stanza</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">)</span> <span class="c1"># where en is the language code of the model.</span>
-</code></pre></div></p>
-</li>
+<li><a href="../nlp_engines/spacy_stanza/">spaCy or stanza</a></li>
+<li><a href="../nlp_engines/transformers/">transformers</a></li>
 </ul>
-<p>For the available models, follow these links: <a href="https://spacy.io/usage/models">spaCy</a>, <a href="https://stanfordnlp.github.io/stanza/available_models.html#available-ner-models">stanza</a>.</p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>For Person, Location and Organization detection, it could be useful to try out the <code>en_core_web_trf</code> model which uses a more modern deep-learning architecture, but is slower than the default <code>en_core_web_lg</code> model.</p>
-</div>
-<h5 id="training-your-own-model">Training your own model</h5>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>A labeled dataset containing text and labeled PII entities is required for training a new model.</p>
-</div>
-<p>To train your own model, see these links on spaCy and Stanza:</p>
-<ul>
-<li><a href="https://spacy.io/usage/training">Train your own spaCy model</a>.</li>
-<li><a href="https://stanfordnlp.github.io/stanza/training.html">Train your own Stanza model</a>.</li>
-</ul>
-<p>Once models are trained, they should be installed locally in the same environment as Presidio Analyzer.</p>
-<h4 id="configure-presidio-to-use-the-new-model">Configure Presidio to use the new model</h4>
+<h2 id="configure-presidio-to-use-the-new-model">Configure Presidio to use the new model</h2>
 <p>Configuration can be done in two ways:</p>
 <ul>
 <li>
@@ -1394,34 +1257,11 @@ and how to configure Presidio to use them.</p>
 </div>
 </li>
 </ul>
-<h2 id="using-a-previously-loaded-nlp-model">Using a previously loaded NLP model</h2>
-<p>If the app is already loading an NLP model, it can be re-used to prevent presidio from loading it again by extending the relevant engine.</p>
-<div class="highlight"><pre><span></span><code>```python
-from presidio_analyzer import AnalyzerEngine
-from presidio_analyzer.nlp_engine import SpacyNlpEngine
-import spacy
-
-# Create a class inheriting from SpacyNlpEngine
-class LoadedSpacyNlpEngine(SpacyNlpEngine):
-    def __init__(self, loaded_spacy_model):
-        self.nlp = {&quot;en&quot;: loaded_spacy_model}
-
-# Load a model a-priori
-nlp = spacy.load(&quot;en_core_web_sm&quot;)
-
-# Pass the loaded model to the new LoadedSpacyNlpEngine
-loaded_nlp_engine = LoadedSpacyNlpEngine(loaded_spacy_model = nlp)
-
-# Pass the engine to the analyzer
-analyzer = AnalyzerEngine(nlp_engine = loaded_nlp_engine)
-
-# Analyze text
-analyzer.analyze(text=&quot;My name is Bob&quot;, language=&quot;en&quot;)
-```
-</code></pre></div>
-<h2 id="leverage-frameworks-other-than-spacy-or-stanza-for-ml-based-pii-detection">Leverage frameworks other than spaCy or Stanza for ML based PII detection</h2>
-<p>In addition to the built-in spaCy/Stanza capabitilies, it is possible to create new recognizers which serve as interfaces to other models.
-See the <a href="../adding_recognizers/#creating-a-remote-recognizer">Remote recognizer documentation</a> and <a href="../../samples/python/integrating_with_external_services/">samples</a> for more information.</p>
+<h2 id="leverage-frameworks-other-than-spacy-stanza-and-transformers-for-ml-based-pii-detection">Leverage frameworks other than spaCy, Stanza and transformers for ML based PII detection</h2>
+<p>In addition to the built-in spaCy/Stanza/transformers capabitilies, it is possible to create new recognizers which serve as interfaces to other models.
+For more information:
+- <a href="../adding_recognizers/#creating-a-remote-recognizer">Remote recognizer documentation</a> and <a href="../../samples/python/integrating_with_external_services/">samples</a>.
+- <a href="../../samples/python/flair_recognizer.py">Flair recognizer example</a></p>
 <p>For considerations for creating such recognizers, see the <a href="../developing_recognizers/#machine-learning--ml--based-or-rule-based">best practices for adding ML recognizers documentation</a>.</p>
 
               

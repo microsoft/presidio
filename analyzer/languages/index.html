@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/analyzer/languages/">
       
       <link rel="icon" href="../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
     
     
       
@@ -1211,7 +1211,8 @@ lemmatization, Named Entity Recognition and other NLP tasks.</li>
 <li><a href="#automatically-install-nlp-models-into-the-docker-container">Automatically install NLP models into the Docker container</a></li>
 </ul>
 <h3 id="configuring-the-nlp-engine">Configuring the NLP Engine</h3>
-<p>Configuring the NLP engine for a new language is done by downloading or using a model trained on a different language.
+<p>Presidio's NLP engine can be adapted to support multiple languages and frameworks (such as <em>spaCy, Stanza</em> and <em>transformers</em>).
+Configuring the NLP engine for a new language or NLP framework is done by downloading or using a model trained on a different language, and providing a configuration.
 See the <a href="../customizing_nlp_models/">NLP model customization documentation</a> for details on how to configure models for new languages.</p>
 <h3 id="set-up-language-specific-recognizers">Set up language specific recognizers</h3>
 <p>Recognizers are language dependent either by their logic or by the context words used while scanning the surrounding of a detected entity.
@@ -1229,10 +1230,10 @@ Each recognizer can support one language. For example:</p>
 <span class="n">nlp_engine_with_spanish</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
 
 <span class="c1"># Setting up an English Email recognizer:</span>
-<span class="n">email_recognizer_en</span> <span class="o">=</span> <span class="n">EmailRecognizer</span><span class="p">(</span><span class="n">supported_language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span><span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">,</span><span class="s2">&quot;mail&quot;</span><span class="p">])</span>
+<span class="n">email_recognizer_en</span> <span class="o">=</span> <span class="n">EmailRecognizer</span><span class="p">(</span><span class="n">supported_language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;mail&quot;</span><span class="p">])</span>
 
 <span class="c1"># Setting up a Spanish Email recognizer</span>
-<span class="n">email_recognizer_es</span> <span class="o">=</span> <span class="n">EmailRecognizer</span><span class="p">(</span><span class="n">supported_language</span><span class="o">=</span><span class="s2">&quot;es&quot;</span><span class="p">,</span><span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;correo&quot;</span><span class="p">,</span><span class="s2">&quot;electrónico&quot;</span><span class="p">])</span>
+<span class="n">email_recognizer_es</span> <span class="o">=</span> <span class="n">EmailRecognizer</span><span class="p">(</span><span class="n">supported_language</span><span class="o">=</span><span class="s2">&quot;es&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;correo&quot;</span><span class="p">,</span> <span class="s2">&quot;electrónico&quot;</span><span class="p">])</span>
 
 <span class="n">registry</span> <span class="o">=</span> <span class="n">RecognizerRegistry</span><span class="p">()</span>
 
@@ -1253,6 +1254,8 @@ Each recognizer can support one language. For example:</p>
 To define which models should be installed,
 update the <a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/default.yaml">conf/default.yaml</a> file. This file is read during
 the <code>docker build</code> phase and the models defined in it are installed automatically.</p>
+<p>For <code>transformers</code> based models, the configuration <a href="https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/transformers.yaml">can be found here</a>. 
+In addition, make sure the Docker file contains the relevant packages for <code>transformers</code>, which are not loaded automatically with Presidio.</p>
 
               
 

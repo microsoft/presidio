@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/supported_entities/">
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
     
     
       
@@ -875,6 +875,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#italy" class="md-nav__link">
+    Italy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#singapore" class="md-nav__link">
     Singapore
   </a>
@@ -1214,6 +1221,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#italy" class="md-nav__link">
+    Italy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#singapore" class="md-nav__link">
     Singapore
   </a>
@@ -1415,6 +1429,43 @@ For more information, refer to the <a href="../analyzer/adding_recognizers/">add
 <td>NIF</td>
 <td>A spanish NIF number (Personal tax ID) .</td>
 <td>Pattern match, context and checksum</td>
+</tr>
+</tbody>
+</table>
+<h3 id="italy">Italy</h3>
+<table>
+<thead>
+<tr>
+<th>FieldType</th>
+<th>Description</th>
+<th>Detection Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IT_FISCAL_CODE</td>
+<td>An Italian personal identification code. <a href="https://en.wikipedia.org/wiki/Italian_fiscal_code">https://en.wikipedia.org/wiki/Italian_fiscal_code</a></td>
+<td>Pattern match, context and checksum</td>
+</tr>
+<tr>
+<td>IT_DRIVER_LICENSE</td>
+<td>An Italian driver license number.</td>
+<td>Pattern match and context</td>
+</tr>
+<tr>
+<td>IT_VAT_CODE</td>
+<td>An Italian VAT code number</td>
+<td>Pattern match, context and checksum</td>
+</tr>
+<tr>
+<td>IT_PASSPORT</td>
+<td>An Italian passport number.</td>
+<td>Pattern match and context</td>
+</tr>
+<tr>
+<td>IT_IDENTITY_CARD</td>
+<td>An Italian identity card number. <a href="https://en.wikipedia.org/wiki/Italian_electronic_identity_card">https://en.wikipedia.org/wiki/Italian_electronic_identity_card</a></td>
+<td>Pattern match and context</td>
 </tr>
 </tbody>
 </table>

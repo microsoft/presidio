@@ -20,8 +20,10 @@ lemmatization, Named Entity Recognition and other NLP tasks.
 
 ### Configuring the NLP Engine
 
-Configuring the NLP engine for a new language is done by downloading or using a model trained on a different language.
+Presidio's NLP engine can be adapted to support multiple languages and frameworks (such as *spaCy, Stanza* and *transformers*).
+Configuring the NLP engine for a new language or NLP framework is done by downloading or using a model trained on a different language, and providing a configuration.
 See the [NLP model customization documentation](customizing_nlp_models.md) for details on how to configure models for new languages.
+
 
 ### Set up language specific recognizers
 
@@ -43,10 +45,10 @@ provider = NlpEngineProvider(conf_file=LANGUAGES_CONFIG_FILE)
 nlp_engine_with_spanish = provider.create_engine()
 
 # Setting up an English Email recognizer:
-email_recognizer_en = EmailRecognizer(supported_language="en",context=["email","mail"])
+email_recognizer_en = EmailRecognizer(supported_language="en", context=["email", "mail"])
 
 # Setting up a Spanish Email recognizer
-email_recognizer_es = EmailRecognizer(supported_language="es",context=["correo","electrónico"])
+email_recognizer_es = EmailRecognizer(supported_language="es", context=["correo", "electrónico"])
 
 registry = RecognizerRegistry()
 
@@ -69,3 +71,6 @@ When packaging the code into a Docker container, NLP models are automatically in
 To define which models should be installed,
 update the [conf/default.yaml](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/default.yaml) file. This file is read during
 the `docker build` phase and the models defined in it are installed automatically.
+
+For `transformers` based models, the configuration [can be found here](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/transformers.yaml). 
+In addition, make sure the Docker file contains the relevant packages for `transformers`, which are not loaded automatically with Presidio.
