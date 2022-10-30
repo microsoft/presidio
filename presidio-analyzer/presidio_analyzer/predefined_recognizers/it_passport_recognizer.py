@@ -22,14 +22,14 @@ class ItPassportRecognizer(PatternRecognizer):
     ]
 
     CONTEXT = [
-        'passaporto',
-        'elettronico',
-        'italiano',
-        'viaggio',
-        'viaggiare',
-        'estero',
-        'documento',
-        'dogana'
+        "passaporto",
+        "elettronico",
+        "italiano",
+        "viaggio",
+        "viaggiare",
+        "estero",
+        "documento",
+        "dogana",
     ]
 
     def __init__(

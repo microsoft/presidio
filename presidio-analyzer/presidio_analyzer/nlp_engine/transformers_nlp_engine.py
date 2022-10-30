@@ -58,9 +58,16 @@ class TransformersComponent:
         res = self.nlp(doc.text)
         ents = []
         for d in res:
-            span = doc.char_span(d["start"], d["end"], label=d["entity_group"])
-            span._.confidence_score = d["score"]
-            ents.append(span)
+            span = doc.char_span(
+                d["start"], d["end"], label=d["entity_group"], alignment_mode="expand"
+            )
+            if span is not None:
+                span._.confidence_score = d["score"]
+                ents.append(span)
+            else:
+                logger.warning(
+                    f"Transformers model returned {d} but no valid span was found."
+                )
         doc.ents = ents
         return doc
 

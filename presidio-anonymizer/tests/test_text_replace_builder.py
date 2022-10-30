@@ -25,13 +25,6 @@ def test_given_text_then_we_replace_the_original_with_anonymized_correctly(
     assert expected_end_text == end_text_num
 
 
-def test_given_empty_text_then_we_fail():
-    with pytest.raises(
-        InvalidParamException, match="Invalid input, text can not be empty"
-    ):
-        TextReplaceBuilder("")
-
-
 @pytest.mark.parametrize(
     # fmt: off
     "original_text,start,end,expected",

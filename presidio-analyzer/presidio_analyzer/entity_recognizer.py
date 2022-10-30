@@ -48,6 +48,8 @@ class EntityRecognizer:
         else:
             self.name = name
 
+        self._id = f"{self.name}_{id(self)}"
+
         self.supported_language = supported_language
         self.version = version
         self.is_loaded = False
@@ -56,6 +58,12 @@ class EntityRecognizer:
         self.load()
         logger.info("Loaded recognizer: %s", self.name)
         self.is_loaded = True
+
+    @property
+    def id(self):
+        """Return a unique identifier of this recognizer."""
+
+        return self._id
 
     @abstractmethod
     def load(self) -> None:
