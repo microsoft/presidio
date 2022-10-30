@@ -8,7 +8,7 @@ from common.methods import analyze, analyzer_supported_entities
 def test_given_a_correct_analyze_input_then_return_full_response():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223",
+        "text": "John Smith drivers license is AC432223",
         "language": "en"
     }
     """
@@ -31,7 +31,7 @@ def test_given_a_correct_analyze_input_then_return_full_response():
 def test_given_analyze_threshold_input_then_return_result_above_threshold():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223", 
+        "text": "John Smith drivers license is AC432223", 
         "language": "en", "score_threshold": 0.7
     }
     """
@@ -83,7 +83,7 @@ def test_given_no_analyze_language_input_then_return_error():
 def test_given_analyze_text_no_language_input_then_return_error():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223"
+        "text": "John Smith drivers license is AC432223"
     }
     """
 
@@ -100,7 +100,7 @@ def test_given_analyze_text_no_language_input_then_return_error():
 def test_given_a_incorrect_analyze_language_input_then_return_error():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223", "language": "zz"
+        "text": "John Smith drivers license is AC432223", "language": "zz"
     }
     """
 
@@ -117,7 +117,7 @@ def test_given_a_incorrect_analyze_language_input_then_return_error():
 def test_given_a_correlationid_analyze_input_then_return_normal_response():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223", 
+        "text": "John Smith drivers license is AC432223", 
         "language": "en", "correlation_id": "123"
     }
     """
@@ -131,7 +131,7 @@ def test_given_a_correlationid_analyze_input_then_return_normal_response():
 def test_given_a_trace_true_analyze_input_then_return_normal_response():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223", 
+        "text": "John Smith drivers license is AC432223", 
         "language": "en", "trace": "1"
     }
     """
@@ -145,7 +145,7 @@ def test_given_a_trace_true_analyze_input_then_return_normal_response():
 def test_given_a_trace_invalid_value_analyze_input_then_return_normal_response():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223", 
+        "text": "John Smith drivers license is AC432223", 
         "language": "en", "trace": "somedata"
     }
     """
@@ -159,7 +159,7 @@ def test_given_a_trace_invalid_value_analyze_input_then_return_normal_response()
 def test_given_return_decision_process_false_for_analyze_input_then_return_response_without_analysis():
     request_body = """  
     {
-        "text": "John Smith drivers license is AC532223", 
+        "text": "John Smith drivers license is AC432223", 
         "language": "en", "return_decision_process": 0
     }
     """
@@ -181,7 +181,7 @@ def test_given_return_decision_process_false_for_analyze_input_then_return_respo
 def test_given_decision_process_enabled_for_analyze_input_then_return_response_with_decision_process():
     request_body = """
     {
-        "text": "John Smith license is AC532223", "language": "en", "return_decision_process": true
+        "text": "John Smith license is AC432223", "language": "en", "return_decision_process": true
     }
     """
     response_status, response_content = analyze(request_body)
@@ -215,7 +215,7 @@ def test_given_decision_process_enabled_for_analyze_input_then_return_response_w
 def test_given_decision_process_enabled_for_analyze_input_with_aditional_context_then_return_response_with_decision_process_and_correct_supportive_context_word():
     request_body = """
     {
-        "text": "John Smith D.L. is AC532223", "language": "en", "return_decision_process": true, "context": ["Driver license"]
+        "text": "John Smith D.L. is AC432223", "language": "en", "return_decision_process": true, "context": ["Driver license"]
     }
     """
     response_status, response_content = analyze(request_body)
@@ -267,7 +267,7 @@ def test_given_decision_process_enabled_for_analyze_input_with_aditional_context
 def test_given_analyze_entities_input_then_return_results_only_with_those_entities():
     request_body = """
     {
-        "text": "John Smith drivers license is AC532223", "language": "en", "entities": ["PERSON"]
+        "text": "John Smith drivers license is AC432223", "language": "en", "entities": ["PERSON"]
     }
     """
 
@@ -340,7 +340,7 @@ def test_given_an_illegal_input_for_supported_entities_then_igonre_and_proceed()
 def test_given_ad_hoc_pattern_recognizer_the_right_entities_are_returned():
     request_body = r"""
      {
-         "text": "John Smith drivers license is AC532223. Zip code: 10023",
+         "text": "John Smith drivers license is AC432223. Zip code: 10023",
          "language": "en",
          "ad_hoc_recognizers":[
              {
@@ -377,7 +377,7 @@ def test_given_ad_hoc_pattern_recognizer_the_right_entities_are_returned():
 def test_given_wrong_ad_hoc_json_exception_is_given():
     malformed_request_body = r"""
       {
-          "text": "John Smith drivers license is AC532223. Zip code: 10023",
+          "text": "John Smith drivers license is AC432223. Zip code: 10023",
           "language": "en",
           "ad_hoc_recognizers":[
               {
@@ -410,7 +410,7 @@ def test_given_wrong_ad_hoc_json_exception_is_given():
 def test_given_ad_hoc_pattern_recognizer_context_raises_confidence():
     request_body = r"""
      {
-         "text": "John Smith drivers license is AC532223. Zip code: 10023",
+         "text": "John Smith drivers license is AC432223. Zip code: 10023",
          "language": "en",
          "ad_hoc_recognizers":[
              {
@@ -449,7 +449,7 @@ def test_given_ad_hoc_pattern_recognizer_context_raises_confidence():
 def test_given_ad_hoc_deny_list_recognizer_the_right_entities_are_returned():
     request_body = r"""
     {
-        "text": "Mr. John Smith's drivers license is AC532223",
+        "text": "Mr. John Smith's drivers license is AC432223",
         "language": "en",
         "ad_hoc_recognizers":[
             {
