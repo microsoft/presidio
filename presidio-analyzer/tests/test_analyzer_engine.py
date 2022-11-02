@@ -11,7 +11,6 @@ from presidio_analyzer import (
     RecognizerRegistry,
     EntityRecognizer,
     RecognizerResult,
-    DictAnalyzerResult,
 )
 from presidio_analyzer.nlp_engine import (
     NlpArtifacts,
@@ -718,6 +717,10 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
         results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer1"
     )
+    assert (
+        "MockRecognizer1"
+        in results[0].recognition_metadata[RecognizerResult.RECOGNIZER_IDENTIFIER_KEY]
+    )
 
     assert results[1].entity_type == "TEST2"
     assert results[1].start == 50
@@ -726,6 +729,10 @@ def test_when_recognizer_doesnt_return_recognizer_name_no_exception(nlp_engine):
     assert (
         results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer2"
+    )
+    assert (
+        "MockRecognizer2"
+        in results[1].recognition_metadata[RecognizerResult.RECOGNIZER_IDENTIFIER_KEY]
     )
 
 
@@ -775,6 +782,12 @@ def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_en
         recognizer_results[0].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer"
     )
+    assert (
+        "MockRecognizer"
+        in recognizer_results[0].recognition_metadata[
+            RecognizerResult.RECOGNIZER_IDENTIFIER_KEY
+        ]
+    )
     assert recognizer_results[0].recognition_metadata[
         RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
     ]
@@ -786,6 +799,37 @@ def test_when_recognizer_overrides_enhance_score_then_it_get_boosted_once(nlp_en
         recognizer_results[1].recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
         == "MockRecognizer"
     )
+    assert (
+        "MockRecognizer"
+        in recognizer_results[1].recognition_metadata[
+            RecognizerResult.RECOGNIZER_IDENTIFIER_KEY
+        ]
+    )
     assert recognizer_results[1].recognition_metadata[
         RecognizerResult.IS_SCORE_ENHANCED_BY_CONTEXT_KEY
     ]
+
+
+def test_when_multiple_nameless_recognizers_context_is_correct(nlp_engine):
+    rocket_recognizer = PatternRecognizer(
+        supported_entity="ROCKET",
+        context=["cool"],
+        patterns=[Pattern("rocketpattern", r"(\W)(rocket)(\W)", 0.3)],
+    )
+
+    rocket_recognizer2 = PatternRecognizer(
+        supported_entity="missile",
+        context=["fast"],
+        patterns=[Pattern("missilepattern", r"(\W)(missile)(\W)", 0.3)],
+    )
+    registry = RecognizerRegistry()
+    registry.add_recognizer(rocket_recognizer)
+    registry.add_recognizer(rocket_recognizer2)
+
+    analyzer_engine = AnalyzerEngine(nlp_engine=nlp_engine, registry=registry)
+    recognizer_results = analyzer_engine.analyze(
+        "I have a cool rocket and a fast missile.", language="en"
+    )
+
+    for recognizer_result in recognizer_results:
+        assert recognizer_result.score > 0.3

@@ -12,9 +12,7 @@ from presidio_anonymizer.operators import AESCipher
 def test_given_url_at_the_end_then_we_redact_is_successfully():
     text = "The url is http://microsoft.com"
     anonymizer_config = {
-        "URL": OperatorConfig(
-            "redact"
-        ),
+        "URL": OperatorConfig("redact"),
     }
 
     analyzer_results = [
@@ -246,3 +244,12 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     assert actual_encrypted_text != expected_encrypted_text
     actual_decrypted_text = AESCipher.decrypt(key.encode(), actual_encrypted_text)
     assert actual_decrypted_text == expected_encrypted_text
+
+
+def test_empty_text_returns_correct_results():
+    text = ""
+    analyzer_results = []
+
+    actual_anonymize_result = AnonymizerEngine().anonymize(text, analyzer_results)
+
+    assert actual_anonymize_result.text == text
