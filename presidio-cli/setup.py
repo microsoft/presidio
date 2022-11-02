@@ -3,9 +3,6 @@
 from setuptools import setup
 import os.path
 from presidio_cli import (
-    __author__,
-    __author_email__,
-    __license__,
     APP_NAME,
     APP_VERSION,
     APP_DESCRIPTION,
@@ -21,10 +18,7 @@ if os.path.exists(readme_path):
 setup(
     name=APP_NAME,
     version=APP_VERSION,
-    author=__author__,
-    author_email=__author_email__,
     url="https://github.com/microsoft/presidio/presidio-cli",
-    license=__license__,
     description=APP_DESCRIPTION.split("\n")[0],
     long_description=readme,
     long_description_content_type="text/markdown",
