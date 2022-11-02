@@ -46,7 +46,7 @@ def test_is_file(temp_workspace, config):
         os.path.join(temp_workspace, "sub", "directory.txt", "empty.txt"),
         os.path.join(temp_workspace, "non-ascii", "éçäγλνπ¥", "utf-8"),
         os.path.join(temp_workspace, "dos.yml"),
-        os.path.join(temp_workspace, *["s"]*15, "file"),
+        os.path.join(temp_workspace, *["s"] * 15, "file"),
     ]:
         assert config.is_text_file(f)
 

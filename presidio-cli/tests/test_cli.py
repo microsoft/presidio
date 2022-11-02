@@ -31,7 +31,7 @@ def test_find_files_recursively(temp_workspace, config):
         os.path.join(temp_workspace, "empty.txt"),
         os.path.join(temp_workspace, "errorfile"),
         os.path.join(temp_workspace, "non-ascii", "éçäγλνπ¥", "utf-8"),
-        os.path.join(temp_workspace, *["s"]*15, "file"),
+        os.path.join(temp_workspace, *["s"] * 15, "file"),
         os.path.join(temp_workspace, "sub", "directory.txt", "empty.txt"),
     ]
 

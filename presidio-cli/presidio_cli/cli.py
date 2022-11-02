@@ -256,7 +256,7 @@ def run() -> None:
         try:
             with io.open(file, newline="", encoding="utf-8") as f:
                 problems = analyze(f, conf, filepath)
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
             continue
         prob_num = show_problems(
