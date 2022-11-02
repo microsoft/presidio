@@ -23,7 +23,7 @@ setup(
     version=APP_VERSION,
     author=__author__,
     author_email=__author_email__,
-    url="https://github.com/insightsengineering/presidio-cli",
+    url="https://github.com/microsoft/presidio/presidio-cli",
     license=__license__,
     description=APP_DESCRIPTION.split("\n")[0],
     long_description=readme,
