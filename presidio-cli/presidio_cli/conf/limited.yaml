@@ -1,0 +1,24 @@
+---
+## optional `language` parameter
+## default `en``
+language: en
+## optional `ignore` parameter
+## list of ignored files/folders by pattern
+ignore: |
+  .git
+  *.cfg
+## optional `entities` parameter
+## limit list of recognized entites to listed below
+entities:
+  - PERSON
+  - CREDIT_CARD
+  - EMAIL_ADDRESS
+## optional `threshold` parameter
+## only show problems/findings whose scores are above this threshold
+threshold: 0.8
+## optional `locale` parameter
+## set a locale
+locale: en_US.UTF-8
+## optional `extends` parameter
+## extends configurations based on another configuration file
+# extends: custom.yaml
