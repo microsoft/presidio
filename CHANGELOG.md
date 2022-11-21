@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2.31] - 21.11.2022
+### Changed
+#### Image-Redactor
+* Updated the `ImagePiiVerifyEngine` class to allow use of custom analyzer engines
+
 ## [2.2.30] - 25.10.2022
 ### Added
 #### Analyzer
@@ -184,6 +189,7 @@ Upgrade Analyzer spacy version to 3.0.5
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
 [unreleased]: https://github.com/microsoft/presidio/compare/2.2.30...HEAD
+[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.31
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
 [2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
 [2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28

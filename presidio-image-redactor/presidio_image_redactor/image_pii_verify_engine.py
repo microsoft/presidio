@@ -3,6 +3,7 @@ from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
 import matplotlib
 import io
 from matplotlib import pyplot as plt
+from typing import Optional
 
 
 def fig2img(fig):
@@ -18,22 +19,24 @@ def fig2img(fig):
 class ImagePiiVerifyEngine:
     """ImagePiiVerifyEngine class only supporting Pii verification currently."""
 
-    def __init__(self):
-        self.analyzer_engine = ImageAnalyzerEngine()
+    def __init__(self, analyzer_engine: Optional[ImageAnalyzerEngine] = None):
+        if not analyzer_engine:
+            analyzer_engine = ImageAnalyzerEngine()
+        self.analyzer_engine = analyzer_engine
 
     def verify(self, image: Image) -> Image:
         """Annotate image with the detect PII entity.
 
         Please notice, this method duplicates the image, creates a new instance and
         manipulate it.
+
         :param image: PIL Image to be processed
         :return: the annotated image
         """
 
         image = ImageChops.duplicate(image)
         image_x, image_y = image.size
-        analyzer_engine = ImageAnalyzerEngine()
-        bboxes = analyzer_engine.analyze(image)
+        bboxes = self.analyzer_engine.analyze(image)
         fig, ax = plt.subplots()
         image_r = 70
         fig.set_size_inches(image_x / image_r, image_y / image_r)
@@ -47,7 +50,11 @@ class ImagePiiVerifyEngine:
                 x1 = x0 + box.width
                 y1 = y0 + box.height
                 rect = matplotlib.patches.Rectangle(
-                    (x0, y0), x1 - x0, y1 - y0, edgecolor="b", facecolor="none"
+                    (x0, y0),
+                    x1 - x0,
+                    y1 - y0,
+                    edgecolor="b",
+                    facecolor="none"
                 )
                 ax.add_patch(rect)
                 ax.annotate(
