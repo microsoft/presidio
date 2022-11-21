@@ -25,8 +25,10 @@ class ImagePiiVerifyEngine:
 
     def verify(self, image: Image) -> Image:
         """Annotate image with the detect PII entity.
+
         Please notice, this method duplicates the image, creates a new instance and
         manipulate it.
+
         :param image: PIL Image to be processed
         :return: the annotated image
         """
@@ -46,7 +48,13 @@ class ImagePiiVerifyEngine:
                 y0 = box.top
                 x1 = x0 + box.width
                 y1 = y0 + box.height
-                rect = matplotlib.patches.Rectangle((x0, y0), x1 - x0, y1 - y0, edgecolor="b", facecolor="none")
+                rect = matplotlib.patches.Rectangle(
+                    (x0, y0),
+                    x1 - x0,
+                    y1 - y0,
+                    edgecolor="b",
+                    facecolor="none"
+                )
                 ax.add_patch(rect)
                 ax.annotate(
                     entity_type,
