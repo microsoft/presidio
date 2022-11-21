@@ -3,6 +3,7 @@ from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
 import matplotlib
 import io
 from matplotlib import pyplot as plt
+from typing import Optional
 
 
 def fig2img(fig):
