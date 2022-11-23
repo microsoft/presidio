@@ -1,4 +1,4 @@
-# **Presidio**: Data Protection and Anonymization SDK
+# **Presidio**: Data Protection and De-identification SDK
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_
 helps to ensure sensitive data is properly managed and governed.
@@ -26,7 +26,7 @@ bitcoin wallets, US phone numbers, financial data and more.
 5. Module for **redacting PII text in images**.
 
 !!! warning "Warning"
-    Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
+    Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
 
 ## [Demo](https://aka.ms/presidio-demo) | [Frequently Asked Questions](faq.md)
@@ -34,7 +34,7 @@ bitcoin wallets, US phone numbers, financial data and more.
 ## Presidio's modules
 
 1. [Presidio analyzer](analyzer/index.md): PII identification in text
-2. [Presidio anonymizer](anonymizer/index.md): Anonymize detected PII entities using different operators
+2. [Presidio anonymizer](anonymizer/index.md): De-identify detected PII entities using different operators
 3. [Presidio image redactor](image-redactor/index.md): Redact PII entities from images using OCR and PII identification
 
 ## Installing Presidio
