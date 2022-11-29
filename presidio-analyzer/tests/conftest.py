@@ -1,12 +1,18 @@
 import shutil
 from pathlib import Path
+from typing import Dict
 
 import pytest
 import spacy
 
-from presidio_analyzer import EntityRecognizer, Pattern, PatternRecognizer
+from presidio_analyzer import (
+    EntityRecognizer,
+    Pattern,
+    PatternRecognizer,
+    AnalyzerEngine,
+)
 from presidio_analyzer import RecognizerRegistry
-from presidio_analyzer.nlp_engine import NlpEngineProvider
+from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
 from tests.mocks import RecognizerRegistryMock
 
@@ -34,12 +40,12 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture(scope="session")
-def nlp_engine_provider():
+def nlp_engine_provider() -> NlpEngineProvider:
     return NlpEngineProvider()
 
 
 @pytest.fixture(scope="session")
-def nlp_engines(request, nlp_engine_provider):
+def nlp_engines(request, nlp_engine_provider) -> Dict[str, NlpEngine]:
     available_engines = {}
 
     nlp_engines = nlp_engine_provider.nlp_engines
@@ -62,33 +68,38 @@ def skip_by_engine(request, nlp_engines):
 
 
 @pytest.fixture(scope="session")
-def nlp_recognizers():
+def nlp_recognizers() -> Dict[str, EntityRecognizer]:
     return {name: rec_cls() for name, rec_cls in NLP_RECOGNIZERS.items()}
 
 
 @pytest.fixture(scope="session")
-def ner_strength():
+def ner_strength() -> float:
     return 0.85
 
 
 @pytest.fixture(scope="session")
-def max_score():
+def max_score() -> float:
     return EntityRecognizer.MAX_SCORE
 
 
 @pytest.fixture(scope="module")
-def loaded_registry():
+def loaded_registry() -> RecognizerRegistry:
     return RecognizerRegistry()
 
 
 @pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
+def nlp_engine(nlp_engines) -> NlpEngine:
     return nlp_engines["spacy_en"]
 
 
 @pytest.fixture(scope="module")
-def mock_registry():
+def mock_registry() -> RecognizerRegistryMock:
     return RecognizerRegistryMock()
+
+
+@pytest.fixture(scope="module")
+def analyzer_engine_simple(mock_registry, nlp_engine) -> AnalyzerEngine:
+    return AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
 
 
 @pytest.fixture(scope="session")

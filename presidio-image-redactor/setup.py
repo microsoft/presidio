@@ -5,7 +5,7 @@ from os import path
 from setuptools import setup, find_packages
 
 requirements = [
-    "pillow",
+    "pillow>=9.0",
     "pytesseract==0.3.7",
     "presidio-analyzer>=1.9.0",
     "matplotlib==3.3.4",

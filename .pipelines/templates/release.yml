@@ -13,7 +13,7 @@ stages:
       displayName: 'Get the version number'
       steps:
         - bash: |
-            set -eux  # exit on error
+            set -eu  # exit on error
             ver=$(cat VERSION)
             echo $ver
             echo "##vso[task.setvariable variable=version;isOutput=true]$ver"
@@ -24,7 +24,7 @@ stages:
       displayName: 'Get image-redactor version number'
       steps:
         - bash: |
-            set -eux  # exit on error
+            set -eu  # exit on error
             imageVer=$(cat VERSION-IMAGE-REDACTOR)
             echo $imageVer
             echo "##vso[task.setvariable variable=imageVersion;isOutput=true]$imageVer"
@@ -37,7 +37,7 @@ stages:
       continueOnError: true
       dependsOn: version
       variables:
-        version: $[ dependencies.Version.outputs['setVer.version'] ]
+        version: $[ dependencies.version.outputs['setVer.version'] ]
       steps:
         - task: GitHubRelease@0
           inputs:
@@ -56,6 +56,8 @@ stages:
             WORKING_FOLDER: 'presidio-anonymizer'
           Image-Redactor:
             WORKING_FOLDER: 'presidio-image-redactor'
+          Cli:
+            WORKING_FOLDER: 'presidio-cli'
       steps:
         - template: ./publish-to-pypi.yml
           parameters:
@@ -108,7 +110,7 @@ stages:
                 REGISTRY_NAME: $(REGISTRY_NAME)
                 IMAGE_PREFIX: $(IMAGE_PREFIX)
                 TAG: ":latest"
-                AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)  
+                AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
                 DOCKER_COMPOSE_FILE: 'docker-compose-image.yml'
 
   - stage: DeployProd

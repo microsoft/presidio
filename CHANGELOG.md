@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+## [2.2.31] - 21.11.2022
+### Changed
+#### Image-Redactor
+* Updated the `ImagePiiVerifyEngine` class to allow use of custom analyzer engines
+
+## [2.2.30] - 25.10.2022
+### Added
+#### Analyzer
+* Added Italian fiscal code recognizer
+* Added Italian driver license recognizer
+* Added Italian identity card recognizer
+* Added Italian passport recognizer
+* Added `TransformersNlpEngine` to support transformer based NER models within spaCy pipelines
+* Added pattern for next gen US passport in `presidio-analyzer/presidio_analyzer/predefined_recognizers/us_passport_recognizer.py`
+
+
+### Changed
+#### Analyzer
+* Improved MEDICAL_LICENSE pattern and fixed checksum verification
+* Bugfix for context handling by aligning results to recognizers using a unique identifier and not recognizer name
+* Updated Pipfile.lock
+
+#### Anonymizer
+* Removed constraint on empty texts
+
+#### Image-Redactor
+* Updated Pipfile.lock
+
+#### General
+* Updated `pipenv` version
+* Updated `black` and `flake8` in pre-commit scripts
+* Updated docs for NLP engine
+
+## [2.2.29] - 12.07.2022
+### Added
+
+#### General
+- Added Presidio to OSSF (Open Source Security Foundation)
+- Added CodeQL scanning
+
+#### Analyzer
+- Introduced [BatchAnalyzerEngine](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/batch_analyzer_engine.py)
+- Added [allow-list functionality](https://github.com/microsoft/presidio/blob/4cbfc1a80dc15da7d5a9cf5a1c680e8df4f2b349/presidio-analyzer/presidio_analyzer/analyzer_engine.py#L135) to ignore specific strings
+- Added notebook on [anonymizing known values](https://github.com/microsoft/presidio/blob/main/docs/samples/python/Anonymizing%20known%20values.ipynb)
+- Added [sample for using `transformers` models in Presidio](https://github.com/microsoft/presidio/blob/main/docs/samples/python/transformers_recognizer.py)
+
+### Changed
+
+#### Anonymizer
+- Bug fix for getting the text before anonymizing (https://github.com/microsoft/presidio/pull/890)
+
+#### Image redactor
+- Deps update
+
 ## [2.2.28] - 04.05.2022
 ### Changed
 #### Analyzer
@@ -132,7 +188,10 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.28...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.30...HEAD
+[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.31
+[2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
+[2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
 [2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28
 [2.2.27]: https://github.com/microsoft/presidio/compare/2.2.26...2.2.27
 [2.2.26]: https://github.com/microsoft/presidio/compare/2.2.25...2.2.26

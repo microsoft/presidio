@@ -12,7 +12,9 @@
 | Usage       | Python Notebook                       | [Analyzing structured / semi-structured data in batch](python/batch_processing.ipynb)                                                           |
 | Usage       | Python Notebook                       | [Getting the identified entity value using a custom Operator](python/getting_entity_values.ipynb)                                               |
 | Usage       | Python                                | [Using Flair as an external PII model](python/flair_recognizer.py)                                               |
-| Usage       | REST API (postman)                    | [Presidio as a REST endpoint](docker/index.md)                                                                                                  |
+| Usage       | Python                                | [Using Transformers as an external PII model](python/transformers_recognizer.py)                                               |
+| Usage       | Python Notebook                       | [Anonymizing known values](python/Anonymizing%20known%20values.ipynb)
+| Usage       | REST API (postman)                    | [Presidio as a REST endpoint](docker/index.md)                                              |
 | Deployment  | App Service                           | [Presidio with App Service](deployments/app-service/index.md)                                                                                   |
 | Deployment  | Kubernetes                            | [Presidio with Kubernetes](deployments/k8s/index.md)                                                                                            |
 | Deployment  | Spark/Azure Databricks                | [Presidio with Spark](deployments/spark/index.md)                                                                                               |

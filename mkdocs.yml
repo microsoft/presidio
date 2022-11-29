@@ -24,6 +24,7 @@ nav:
     - Simple anonymization: tutorial/10_simple_anonymization.md
     - Custom anonymization: tutorial/11_custom_anonymization.md
     - Encryption/Decryption: tutorial/12_encryption.md
+    - Allow-lists: tutorial/13_allow_list.md
   - Docs:
     - Installation: installation.md
     - Handling text:
@@ -75,8 +76,9 @@ theme:
 plugins:
 - search
 - mkdocstrings
-- mkdocs-jupyter
-
+- mkdocs-jupyter:
+    include_source: True
+    include: ["*.ipynb"]
 
 extra:
   social:

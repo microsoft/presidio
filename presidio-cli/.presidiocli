@@ -1,0 +1,17 @@
+language: en
+entities:
+  - CREDIT_CARD
+  - CRYPTO
+  - DATE_TIME
+  - EMAIL_ADDRESS
+  - IBAN_CODE
+  - IP_ADDRESS
+  - NRP
+  - LOCATION
+  - PERSON
+  - PHONE_NUMBER
+  - MEDICAL_LICENSE
+ignore: |
+  .git
+  .pytest_cache
+  .vscode
