@@ -33,6 +33,7 @@ class Pattern:
         """
         Get a new Pattern based on get_improved_pattern_fn function param
         if get_improved_pattern_fn is not defined, return self
+        :param match: the regex match
         """
         if self.get_improved_pattern_fn:
             return self.get_improved_pattern_fn(self, match)
