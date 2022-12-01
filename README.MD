@@ -1,6 +1,6 @@
-# Presidio - Data Protection and Anonymization API
+# Presidio - Data Protection and De-identification API
 
-**Context aware, pluggable and customizable PII anonymization service for text and images.**
+**Context aware, pluggable and customizable PII de-identification service for text and images.**
 
 ---
 
@@ -42,10 +42,10 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
 3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
-4. **Customizability** in PII identification and anonymization.
+4. **Customizability** in PII identification and de-identification.
 5. Module for **redacting PII text in images**.
 
-:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
+:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
 
 ## Installing Presidio
@@ -58,8 +58,8 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 ## Running Presidio
 1. [Getting started](https://microsoft.github.io/presidio/getting_started)
 2. [Setting up a development environment](https://microsoft.github.io/presidio/development)
-3. [PII anonymization in text](https://microsoft.github.io/presidio/text_anonymization)
-4. [PII anonymization in images](https://microsoft.github.io/presidio/image-redactor)
+3. [PII de-identification in text](https://microsoft.github.io/presidio/text_anonymization)
+4. [PII de-identification in images](https://microsoft.github.io/presidio/image-redactor)
 5. [Usage samples and example deployments](https://microsoft.github.io/presidio/samples)
 
 ---
