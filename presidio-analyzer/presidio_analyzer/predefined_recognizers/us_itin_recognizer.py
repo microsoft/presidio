@@ -3,6 +3,31 @@ from typing import Optional, List
 from presidio_analyzer import Pattern, PatternRecognizer
 from regex import Match
 
+
+ITIN_REGEX = r"\b9\d{2}(?P<firstSeparator>[- ]?)(5\d|6[0-5]|7\d|8[0-8]|9([0-2]|[4-9]))(?P<secondSeparator>[- ]?)\d{4}\b"  # noqa: E501
+
+
+def improve_itin_pattern(pattern: Pattern, match: Match) -> Pattern:
+    first_separator = match.group('firstSeparator')
+    second_separator = match.group('secondSeparator')
+
+    if first_separator and second_separator:
+        return pattern
+
+    if not first_separator and not second_separator:
+        return Pattern(
+            "Itin (weak)",
+            pattern.regex,
+            0.3
+        )
+
+    return Pattern(
+        "Itin (very weak)",
+        pattern.regex,
+        0.05
+    )
+
+
 class UsItinRecognizer(PatternRecognizer):
     """
     Recognizes US ITIN (Individual Taxpayer Identification Number) using regex.
@@ -16,8 +41,9 @@ class UsItinRecognizer(PatternRecognizer):
     PATTERNS = [
         Pattern(
             "Itin (medium)",
-            r"\b9\d{2}(?P<firstSeparator>[- ]?)(5\d|6[0-5]|7\d|8[0-8]|9([0-2]|[4-9]))(?P<secondSeparator>[- ]?)\d{4}\b",  # noqa: E501
+            ITIN_REGEX,
             0.5,
+            improve_itin_pattern,
         ),
     ]
 
@@ -39,24 +65,3 @@ class UsItinRecognizer(PatternRecognizer):
             supported_language=supported_language,
         )
 
-    def get_pattern_from_match(
-        self, pattern: Pattern, match: Match
-    ) -> Pattern:
-        first_separator = match.group('firstSeparator')
-        second_separator = match.group('secondSeparator')
-
-        if first_separator and second_separator:
-            return pattern
-
-        if not first_separator and not second_separator:
-            return Pattern(
-                "Itin (weak)",
-                pattern.regex,
-                0.3
-            )
-
-        return Pattern(
-            "Itin (very weak)",
-            pattern.regex,
-            0.05
-        )

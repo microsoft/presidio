@@ -187,8 +187,8 @@ class PatternRecognizer(LocalRecognizer):
 
             for match in matches:
                 start, end = match.span()
-
-                pattern_from_match = self.get_pattern_from_match(pattern, match)
+                
+                pattern_from_match = pattern.get_improved_pattern(match)
 
                 current_match = text[start:end]
 
@@ -232,18 +232,6 @@ class PatternRecognizer(LocalRecognizer):
 
         results = EntityRecognizer.remove_duplicates(results)
         return results
-
-    def get_pattern_from_match(
-        self, pattern: Pattern, match: re.Match
-    ) -> Pattern:
-        """
-        Return a new Pattern based on the matched regex info e.g., the named groups in the regex.
-
-        :param pattern: the pattern initially found.
-        :param math: regex match
-        :return: A new pattern based on the regex match info.
-        """
-        return pattern
 
     def to_dict(self) -> Dict:
         """Serialize instance into a dictionary."""
