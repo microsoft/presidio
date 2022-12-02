@@ -1,12 +1,12 @@
-# Presidio Image Redactor
+# Presidio DICOM Image Redactor
 
 ***Please notice, this package is still in beta and not production ready.***
 
 ## Description
 
-The Presidio Image Redactor is a Python based module for detecting and redacting PII
+The Presidio DICOM Image Redactor is a Python based module for detecting and redacting PII
 text entities in images.
-![img.png](../assets/image-redactor-design.png)
+![img.png](../assets/dicom-image-redactor-design.png)
 
 ## Installation
 
@@ -16,7 +16,7 @@ Pre-requisites:
   instructions on how to install it for your operating system.
 
 !!! attention "Attention"
-    For now, image redactor only supports tesseract version 4.0.0
+    This module was developed using Tesseract v5.2.0.20220712
 
 === "Using pip"
 
@@ -27,7 +27,7 @@ Pre-requisites:
     download the package and the `en_core_web_lg` spaCy model:
     
     ```sh
-    pip install presidio-image-redactor
+    pip install presidio-dicom-image-redactor
     python -m spacy download en_core_web_lg
     ```
 
@@ -38,21 +38,21 @@ Pre-requisites:
     
     ```sh
     # Download image from Dockerhub
-    docker pull mcr.microsoft.com/presidio-image-redactor
+    docker pull mcr.microsoft.com/presidio-dicom-image-redactor
     
     # Run the container with the default port
-    docker run -d -p 5003:3000 mcr.microsoft.com/presidio-image-redactor:latest
+    docker run -d -p 5004:3000 mcr.microsoft.com/presidio-dicom-image-redactor:latest
     ```
 
 === "From source"
 
     First, clone the Presidio repo. [See here for instructions](../installation.md#install-from-source).
     
-    Then, build the presidio-image-redactor container:
+    Then, build the presidio-dicom-image-redactor container:
     
     ```sh
     cd presidio-image-redactor
-    docker build . -t presidio/presidio-image-redactor
+    docker build . -t presidio/presidio-dicom-image-redactor
     ```
 
 ## Getting started
@@ -63,52 +63,27 @@ Pre-requisites:
     
     ```python
     from PIL import Image
-    from presidio_image_redactor import ImageRedactorEngine
-    
-    # Get the image to redact using PIL lib (pillow)
-    image = Image.open("./docs/image-redactor/ocr_text.png")
-    
+    from presidio_image_redactor import DicomImageRedactorEngine
+
+    # Set input and output paths
+    input_path = "path/to/your/DICOM_file"
+    output_dir = "./output"
+
     # Initialize the engine
-    engine = ImageRedactorEngine()
-    
-    # Redact the image with pink color
-    redacted_image = engine.redact(image, (255, 192, 203))
-    
-    # save the redacted image 
-    redacted_image.save("new_image.png")
-    # uncomment to open the image for viewing
-    # redacted_image.show()
-    
+    engine = DicomImageRedactorEngine()
+
+    # Redact the DICOM image(s)
+    engine.redact(input_path, output_dir, padding_width=25, box_color_setting="contrast")
+
+    # Output is saved to output_dir
     ```
 
 === "As an HTTP server"
 
-    You can run presidio image redactor as an http server using either python runtime or using a docker container.
-    
-    #### Using docker container
-    
-    ```sh
-    cd presidio-image-redactor
-    docker run -p 5003:3000 presidio-image-redactor 
-    ```
-    
-    #### Using python runtime
-    
-    !!! note "Note"
-        This requires the Presidio Github repository to be cloned.
-    
-    ```sh
-    cd presidio-image-redactor
-    python app.py
-    # use ocr_test.png as the image to redact, and 255 as the color fill. 
-    # out.png is the new redacted image received from the server.
-    curl -XPOST "http://localhost:3000/redact" -H "content-type: multipart/form-data" -F "image=@ocr_test.png" -F "data=\"{'color_fill':'255'}\"" > out.png
-    ```
-Python script example can be found under:
-/presidio/e2e-tests/tests/test_image_redactor.py
+    COMING SOON
 
 ## API reference
 
-the [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Image-redactor)
-for the Image Redactor REST API reference details
-and [Image Redactor Python API](../api/image_redactor_python.md) for Python API reference
+The [API Spec](https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Dicom-image-redactor)
+for the DICOM Image Redactor REST API reference details
+and [DICOM Image Redactor Python API](../api/dicom_image_redactor_python.md) for Python API reference
