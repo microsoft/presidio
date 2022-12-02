@@ -19,7 +19,7 @@ bitcoin wallets, US phone numbers, financial data and more.
 
 ## Main features
 
-1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
+1. **Predefined** or **custom PII recognizers** leveraging _Named Entity Recognition_, _regular expressions_, _rule based logic_ and _checksum_ with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
 3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
 4. **Customizability** in PII identification and anonymization.
@@ -28,7 +28,6 @@ bitcoin wallets, US phone numbers, financial data and more.
 !!! warning "Warning"
     Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
-
 ## [Demo](https://aka.ms/presidio-demo) | [Frequently Asked Questions](faq.md)
 
 ## Presidio's modules
@@ -36,6 +35,7 @@ bitcoin wallets, US phone numbers, financial data and more.
 1. [Presidio analyzer](analyzer/index.md): PII identification in text
 2. [Presidio anonymizer](anonymizer/index.md): De-identify detected PII entities using different operators
 3. [Presidio image redactor](image-redactor/index.md): Redact PII entities from images using OCR and PII identification
+4. [Presidio DICOM image redactor](dicom-image-redactor/index.md): Redact text PII from DICOM images.
 
 ## Installing Presidio
 
@@ -53,7 +53,8 @@ bitcoin wallets, US phone numbers, financial data and more.
 4. [Perform PII identification using presidio-analyzer](analyzer/index.md)
 5. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
 6. [Perform PII identification and anonymization in images using presidio-image-redactor](image-redactor/index.md)
-7. [Example deployments](samples/deployments/index.md)
+7. [Perform PII redaction in DICOM images using presidio-dicom-image-redactor](dicom-image-redactor/index.md)
+8. [Example deployments](samples/deployments/index.md)
 
 ---
 

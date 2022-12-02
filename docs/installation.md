@@ -54,6 +54,20 @@ python -m spacy download en_core_web_lg
 
 [Click here](image-redactor/index.md) for more information on the presidio-image-redactor package.
 
+### PII redaction in DICOM images
+
+For PII redaction in DICOM images, install the `presidio-dicom-image-redactor` package:
+
+```sh
+pip install presidio_dicom_image_redactor
+
+# Presidio DICOM image redactor uses the presidio-analyzer
+# which requires a spaCy language model:
+python -m spacy download en_core_web_lg
+```
+
+[Click here](dicom-image-redactor/index.md) for more information on the presidio-dicom-image-redactor package.
+
 ## Using Docker
 
 Presidio can expose REST endpoints for each service using Flask and Docker.
@@ -68,7 +82,7 @@ For PII detection and anonymization in text, the `presidio-analyzer`
 and `presidio-anonymizer` modules are required.
 
 ```sh
-# Download images
+# Download Docker images
 docker pull mcr.microsoft.com/presidio-analyzer
 docker pull mcr.microsoft.com/presidio-anonymizer
 
@@ -83,11 +97,23 @@ docker run -d -p 5002:3000 mcr.microsoft.com/presidio-anonymizer:latest
 For PII detection in images, the `presidio-image-redactor` is required.
 
 ```sh
-# Download image
+# Download Docker image
 docker pull mcr.microsoft.com/presidio-image-redactor
 
 # Run container with the default port
 docker run -d -p 5003:3000 mcr.microsoft.com/presidio-image-redactor:latest
+```
+
+### For PII redaction in DICOM images
+
+For PII detection in DICOM images, the `presidio-dicom-image-redactor` is required.
+
+```sh
+# Download Docker image
+docker pull mcr.microsoft.com/presidio-dicom-image-redactor
+
+# Run container with the default port
+docker run -d -p 5004:3000 mcr.microsoft.com/presidio-dicom-image-redactor:latest
 ```
 
 Once the services are running, their APIs are available.
