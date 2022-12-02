@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.3.0] - 2.12.2022
+### Added
+#### Dicom-Image-Redactor
+* Add the `presidio-dicom-image-redactor` module
+
 ## [2.2.31] - 21.11.2022
 ### Changed
 #### Image-Redactor
@@ -188,8 +193,9 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.30...HEAD
-[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.31
+[unreleased]: https://github.com/microsoft/presidio/compare/2.3.0...HEAD
+[2.3.0]: https://github.com/microsoft/presidio/compare/2.2.31...2.3.0
+[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
 [2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
 [2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28
