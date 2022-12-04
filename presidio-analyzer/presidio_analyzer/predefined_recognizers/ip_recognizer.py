@@ -53,6 +53,7 @@ class IpRecognizer(PatternRecognizer):
     def invalidate_result(self, pattern_text: str) -> bool:
         """
         Check if the pattern text cannot be validated as an IP address.
+
         :param pattern_text: Text detected as pattern by regex
         :return: True if invalidated
         """
