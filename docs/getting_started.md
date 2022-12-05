@@ -78,7 +78,7 @@ Using Presidio's modules as Python packages to get started
         output_parent_dir = "output"
         
         redactor = DicomImageRedactorEngine(input_data_path, output_parent_dir)
-        redactor.redact(image=image)
+        redactor.redact(input_path, output_dir)
         ```
 ---
 

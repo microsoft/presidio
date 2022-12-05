@@ -130,14 +130,10 @@ Python script example can be found under:
     engine = DicomImageRedactorEngine()
 
     # Redact the DICOM image(s)
-    engine.redact(input_path, output_dir, padding_width=25, box_color_setting="contrast")
+    engine.redact(input_path, output_dir, box_color_setting="contrast")
 
     # Output is saved to output_dir
     ```
-
-=== "As an HTTP server"
-
-    COMING SOON
 
 ## API reference
 
