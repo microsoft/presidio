@@ -7,7 +7,9 @@ All notable changes to this project will be documented in this file.
 ## [2.2.32] - 5.12.2022
 ### Changed
 #### Image-Redactor
-* Added DICOM image redaction capabilities
+* Added DICOM image redaction capabilities (`DicomImageRedactorEngine` class and all supporting utils and tests)
+* Updated Pipfile and Pipfile.lock
+* Updated `presidio-image-redactor` version from 0.0.44 to 0.0.45
 
 ## [2.2.31] - 21.11.2022
 ### Changed
