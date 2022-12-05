@@ -151,14 +151,36 @@ def test_check_if_greyscale_happy_path(dcm_file: Path, is_greyscale: bool):
 @pytest.mark.parametrize(
     "dcm_file, is_greyscale, rescaled_image_numpy_path",
     [
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), True, Path(TEST_NUMPY_DIR, "0_ORIGINAL.npy")),
-        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"), False, Path(TEST_NUMPY_DIR, "RGB_ORIGINAL.npy")),
-        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), True, Path(TEST_NUMPY_DIR, "1_ORIGINAL.npy")),
-        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), True, Path(TEST_NUMPY_DIR, "2_ORIGINAL.npy")),
-        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), True, Path(TEST_NUMPY_DIR, "3_ORIGINAL.npy")),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            True,
+            Path(TEST_NUMPY_DIR, "0_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
+            False,
+            Path(TEST_NUMPY_DIR, "RGB_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
+            True,
+            Path(TEST_NUMPY_DIR, "1_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
+            True,
+            Path(TEST_NUMPY_DIR, "2_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"),
+            True,
+            Path(TEST_NUMPY_DIR, "3_ORIGINAL.npy"),
+        ),
     ],
 )
-def test_convert_dcm_to_png_happy_path(mocker, dcm_file: Path, is_greyscale: bool, rescaled_image_numpy_path: Path):
+def test_convert_dcm_to_png_happy_path(
+    mocker, dcm_file: Path, is_greyscale: bool, rescaled_image_numpy_path: Path
+):
     """Test happy path for convert_dcm_to_png
 
     Args:
@@ -172,7 +194,8 @@ def test_convert_dcm_to_png_happy_path(mocker, dcm_file: Path, is_greyscale: boo
         loaded_numpy_array = np.load(f)
 
     mock_check_if_gresycale = mocker.patch(
-        "presidio_image_redactor.utils.dicom_image_utils.check_if_greyscale", return_value=is_greyscale
+        "presidio_image_redactor.utils.dicom_image_utils.check_if_greyscale",
+        return_value=is_greyscale,
     )
     mock_rescale_dcm_pixel_array = mocker.patch(
         "presidio_image_redactor.utils.dicom_image_utils.rescale_dcm_pixel_array",
@@ -209,7 +232,10 @@ def test_convert_dcm_to_png_happy_path(mocker, dcm_file: Path, is_greyscale: boo
     ],
 )
 def test_get_bg_color_happy_path(
-    png_file: Path, is_greyscale: bool, invert_flag: bool, expected_bg_color: Union[int, Tuple[int, int, int]]
+    png_file: Path,
+    is_greyscale: bool,
+    invert_flag: bool,
+    expected_bg_color: Union[int, Tuple[int, int, int]],
 ):
     """Test happy path for get_bg_color
 
@@ -246,7 +272,9 @@ def test_get_bg_color_happy_path(
     ],
 )
 def test_get_most_common_pixel_value_happy_path(
-    dcm_file: Path, box_color_setting: str, expected_color: Union[int, Tuple[int, int, int]]
+    dcm_file: Path,
+    box_color_setting: str,
+    expected_color: Union[int, Tuple[int, int, int]],
 ):
     """Test happy path for get_most_common_pixel_value
 
@@ -271,7 +299,9 @@ def test_get_most_common_pixel_value_happy_path(
         (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"), "TypeError"),
     ],
 )
-def test_get_most_common_pixel_value_exceptions(dcm_file: Path, expected_error_type: str):
+def test_get_most_common_pixel_value_exceptions(
+    dcm_file: Path, expected_error_type: str
+):
     """Test error handling of get_most_common_pixel_value
 
     Args:
@@ -331,7 +361,9 @@ def test_add_padding_happy_path(png_file: Path, is_greyscale: bool, padding_widt
         (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, 200, "ValueError"),
     ],
 )
-def test_add_padding_exceptions(png_file: Path, is_greyscale: bool, padding_width: int, expected_error_type: str):
+def test_add_padding_exceptions(
+    png_file: Path, is_greyscale: bool, padding_width: int, expected_error_type: str
+):
     """Test error handling of add_padding
 
     Args:
@@ -366,7 +398,9 @@ def test_add_padding_exceptions(png_file: Path, is_greyscale: bool, padding_widt
         (Path(TEST_NUMPY_DIR), 5),
     ],
 )
-def test_copy_files_for_processing_happy_path(src_path: Path, expected_num_of_files: int):
+def test_copy_files_for_processing_happy_path(
+    src_path: Path, expected_num_of_files: int
+):
     """Test happy path for copy_files_for_processing
 
     Args:

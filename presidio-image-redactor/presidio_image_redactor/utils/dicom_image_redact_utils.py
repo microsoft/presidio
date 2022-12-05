@@ -25,9 +25,11 @@ def get_text_metadata(instance: pydicom.dataset.FileDataset) -> Tuple[list, list
         instance (pydicom.dataset.FileDataset): Loaded DICOM instance.
 
     Return:
-        metadata_text (list): List of all the instance's element values (excluding pixel data).
+        metadata_text (list): List of all the instance's element values
+            (excluding pixel data).
         is_name (list): True if the element is specified as being a name.
-        is_patient (list): True if the element is specified as being related to the patient.
+        is_patient (list): True if the element is specified as being
+            related to the patient.
     """
     metadata_text = list()
     is_name = list()
@@ -62,7 +64,8 @@ def process_names(text_metadata: list, is_name: list) -> list:
     """Process names to have multiple iterations in our PHI list.
 
     Args:
-        metadata_text (list): List of all the instance's element values (excluding pixel data).
+        metadata_text (list): List of all the instance's element values
+            (excluding pixel data).
         is_name (list): True if the element is specified as being a name.
 
     Return:
@@ -71,7 +74,7 @@ def process_names(text_metadata: list, is_name: list) -> list:
     PHI_list = text_metadata.copy()
 
     for i in range(0, len(text_metadata)):
-        if is_name[i] == True:
+        if is_name[i] is True:
             original_text = str(text_metadata[i])
 
             # Replacing separator character with space
@@ -126,9 +129,11 @@ def make_PHI_list(original_metadata: list, is_name: list, is_patient: list) -> l
     """Make the list of PHI to use in Presidio ad-hoc recognizer.
 
     Args:
-        original_metadata (list): List of all the instance's element values (excluding pixel data).
+        original_metadata (list): List of all the instance's element values
+            (excluding pixel data).
         is_name (list): True if the element is specified as being a name.
-        is_patient (list): True if the element is specified as being related to the patient.
+        is_patient (list): True if the element is specified as being
+            related to the patient.
 
     Return:
         PHI_str_list (list): List of PHI (str) to use with Presidio ad-hoc recognizer.
@@ -155,18 +160,24 @@ def make_PHI_list(original_metadata: list, is_name: list, is_patient: list) -> l
     return PHI_str_list
 
 
-def create_custom_recognizer(PHI_list: list) -> presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine:
+def create_custom_recognizer(
+    PHI_list: list,
+) -> presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine:
     """Create custom recognizer using DICOM metadata.
 
     Args:
         PHI_list (list): List of PHI text pulled from the DICOM metadata.
 
     Return:
-        custom_analyzer_engine (presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine): Custom image analyzer engine.
+        custom_analyzer_engine (presidio_image_redactor.
+            image_analyzer_engine.ImageAnalyzerEngine):
+            Custom image analyzer engine.
 
     """
     # Create recognizer
-    deny_list_recognizer = PatternRecognizer(supported_entity="PERSON", deny_list=PHI_list)
+    deny_list_recognizer = PatternRecognizer(
+        supported_entity="PERSON", deny_list=PHI_list
+    )
 
     # Add recognizer to registry
     registry = RecognizerRegistry()
@@ -181,7 +192,7 @@ def create_custom_recognizer(PHI_list: list) -> presidio_image_redactor.image_an
 
 
 def get_bboxes_from_analyzer_results(analyzer_results: list) -> dict:
-    """Organize bounding box info from analyzer results
+    """Organize bounding box info from analyzer results.
 
     Args:
         analyzer_results (list): Results from using ImageAnalyzerEngine.
@@ -272,7 +283,9 @@ def set_bbox_color(instance: pydicom.dataset.FileDataset, box_color_setting: str
 
 
 def add_redact_box(
-    instance: pydicom.dataset.FileDataset, bounding_boxes_coordinates: list, box_color_setting: str = "contrast"
+    instance: pydicom.dataset.FileDataset,
+    bounding_boxes_coordinates: list,
+    box_color_setting: str = "contrast",
 ) -> pydicom.dataset.FileDataset:
     """Add redaction bounding boxes on a DICOM instance.
 
@@ -304,7 +317,9 @@ def add_redact_box(
         left = bbox["left"]
         width = bbox["width"]
         height = bbox["height"]
-        redacted_instance.pixel_array[top : top + height, left : left + width] = box_color
+        redacted_instance.pixel_array[
+            top : top + height, left : left + width
+        ] = box_color
 
     redacted_instance.PixelData = redacted_instance.pixel_array.tobytes()
 

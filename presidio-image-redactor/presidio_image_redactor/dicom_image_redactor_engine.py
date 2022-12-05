@@ -19,7 +19,7 @@ from presidio_image_redactor.utils.dicom_image_redact_utils import (
 
 
 class DicomImageRedactorEngine:
-    """DicomImageRedactorEngine performs OCR + PII detection + bounding box redaction.
+    """Performs OCR + PII detection + bounding box redaction.
 
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
@@ -34,11 +34,13 @@ class DicomImageRedactorEngine:
         # Check input is an actual file or dir
         if Path(input_path).is_dir() is False:
             if Path(input_path).is_file() is False:
-                raise TypeError("Your input_path must be a valid file or directory")
+                raise TypeError("input_path must be valid file or dir")
 
         # Check output is a directory
         if Path(output_dir).is_file() is True:
-            raise TypeError("Your output_dir must be a directory (does not need to exist yet)")
+            raise TypeError(
+                "output_dir must be a directory (does not need to exist yet)"
+            )
 
     def _redact_single_DICOM_image(
         self,
@@ -52,10 +54,13 @@ class DicomImageRedactorEngine:
 
         Args:
             dcm_path (pathlib.Path): Path to the DICOM file.
-            box_color_setting (str): Color setting to use for bounding boxes ("contrast" or "background")
+            box_color_setting (str): Color setting to use for bounding boxes
+                ("contrast" or "background").
             padding_width (int): Pixel width of padding (uniform).
-            overwrite (bool): Only set to True if you are providing the duplicated DICOM path in dcm_path.
-            dst_parent_dir (str): Parent directory of where you want to store the copies.
+            overwrite (bool): Only set to True if you are providing the
+                duplicated DICOM path in dcm_path.
+            dst_parent_dir (str): Parent directory of where you want to
+                store the copies.
 
         Return:
             dst_path (str): Path to the output DICOM file.
@@ -108,10 +113,13 @@ class DicomImageRedactorEngine:
 
         Args:
             dcm_dir (str): Directory containing DICOM files (can be nested).
-            box_color_setting (str): Color setting to use for bounding boxes ("contrast" or "background")
+            box_color_setting (str): Color setting to use for bounding boxes
+                ("contrast" or "background").
             padding_width (int): Pixel width of padding (uniform).
-            overwrite (bool): Only set to True if you are providing the duplicated DICOM dir in dcm_dir.
-            dst_parent_dir (str): Parent directory of where you want to store the copies.
+            overwrite (bool): Only set to True if you are providing
+                the duplicated DICOM dir in dcm_dir.
+            dst_parent_dir (str): Parent directory of where you want to
+                store the copies.
 
         Return:
             dst_dir (str): Path to the output DICOM directory.
@@ -131,7 +139,9 @@ class DicomImageRedactorEngine:
         # Process each DICOM file directly
         all_dcm_files = get_all_dcm_files(Path(dst_dir))
         for dst_path in all_dcm_files:
-            self._redact_single_DICOM_image(dst_path, box_color_setting, padding_width, overwrite, dst_parent_dir)
+            self._redact_single_DICOM_image(
+                dst_path, box_color_setting, padding_width, overwrite, dst_parent_dir
+            )
 
         return dst_dir
 
@@ -144,14 +154,15 @@ class DicomImageRedactorEngine:
     ) -> None:
         """Redact method to redact the given image.
 
-        Please notice, this method duplicates the image, creates a new instance and
-        manipulate it.
+        Please notice, this method duplicates the image, creates a
+        new instance and manipulate it.
 
         Args:
             input_dicom_path (str): Path to DICOM image(s).
             output_dir (str): Parent output directory.
             padding_width (int): Padding width to use when running OCR.
-            box_color_setting (str): Color setting to use for redaction box ("contrast" or "background")
+            box_color_setting (str): Color setting to use for redaction box
+                ("contrast" or "background").
         """
         # Verify the given paths
         self._validate_paths(input_dicom_path, output_dir)

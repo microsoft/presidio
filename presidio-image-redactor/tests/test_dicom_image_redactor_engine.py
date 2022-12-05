@@ -63,7 +63,10 @@ def test_DicomImageRedactorEngine_validate_paths_happy_path(
     ],
 )
 def test_DicomImageRedactorEngine_validate_paths_exceptions(
-    mock_engine: DicomImageRedactorEngine, input_path: str, output_dir: str, expected_error_type: str
+    mock_engine: DicomImageRedactorEngine,
+    input_path: str,
+    output_dir: str,
+    expected_error_type: str,
 ):
     """Test error handling of DicomImageRedactorEngine _validate_paths()
 
@@ -96,7 +99,11 @@ def test_DicomImageRedactorEngine_validate_paths_exceptions(
     ],
 )
 def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
-    mocker, mock_engine: DicomImageRedactorEngine, dcm_path: str, output_dir: str, overwrite: bool
+    mocker,
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: str,
+    output_dir: str,
+    overwrite: bool,
 ):
     """Test happy path for DicomImageRedactorEngine _redact_single_DICOM_image()
 
@@ -155,7 +162,9 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
     )
 
     # Act
-    mock_engine._redact_single_DICOM_image(dcm_path, "contrast", 25, overwrite, output_dir)
+    mock_engine._redact_single_DICOM_image(
+        dcm_path, "contrast", 25, overwrite, output_dir
+    )
 
     # Assert
     if overwrite is True:
@@ -213,7 +222,11 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_exceptions(
     ],
 )
 def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_happy_path(
-    mocker, mock_engine: DicomImageRedactorEngine, dcm_path: str, output_dir: str, overwrite: bool
+    mocker,
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: str,
+    output_dir: str,
+    overwrite: bool,
 ):
     """Test happy path for DicomImageRedactorEngine _redact_multiple_DICOM_images()
 
@@ -228,7 +241,11 @@ def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_happy_path(
         "presidio_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
         return_value=dcm_path,
     )
-    mock_dcm_files = [Path("dir1/dir2/file1.dcm"), Path("dir1/dir2/file2.dcm"), Path("dir1/dir2/dir3/file3.dcm")]
+    mock_dcm_files = [
+        Path("dir1/dir2/file1.dcm"),
+        Path("dir1/dir2/file2.dcm"),
+        Path("dir1/dir2/dir3/file3.dcm"),
+    ]
     mock_get_all_dcm_files = mocker.patch(
         "presidio_image_redactor.dicom_image_redactor_engine.get_all_dcm_files",
         return_value=mock_dcm_files,
@@ -239,7 +256,9 @@ def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_happy_path(
     )
 
     # Act
-    mock_engine._redact_multiple_DICOM_images(dcm_path, "contrast", 25, overwrite, output_dir)
+    mock_engine._redact_multiple_DICOM_images(
+        dcm_path, "contrast", 25, overwrite, output_dir
+    )
 
     # Assert
     if overwrite is True:
@@ -284,11 +303,19 @@ def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_exceptions(
     "dcm_path, mock_dst_path, is_dir",
     [
         (TEST_DICOM_PARENT_DIR, Path(TEST_DICOM_PARENT_DIR), True),
-        (f"{TEST_DICOM_PARENT_DIR}/0_ORIGINAL.dcm", Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), False),
+        (
+            f"{TEST_DICOM_PARENT_DIR}/0_ORIGINAL.dcm",
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False,
+        ),
         (TEST_DICOM_DIR_2, Path(TEST_DICOM_DIR_1), True),
         (TEST_DICOM_DIR_2, Path(TEST_DICOM_DIR_2), True),
         (TEST_DICOM_DIR_3, Path(TEST_DICOM_DIR_3), True),
-        (f"{TEST_DICOM_DIR_3}/3_ORIGINAL.DICOM", Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), False),
+        (
+            f"{TEST_DICOM_DIR_3}/3_ORIGINAL.DICOM",
+            Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"),
+            False,
+        ),
     ],
 )
 def test_DicomImageRedactorEngine_redact_happy_path(

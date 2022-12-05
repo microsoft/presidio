@@ -9,7 +9,7 @@ import numpy as np
 import PIL
 from PIL import Image
 import png
-from matplotlib import pyplot as plt  # necessary import for PIL typing
+from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
 from typing import List, Union, Tuple
 
 
@@ -51,8 +51,10 @@ def check_if_greyscale(instance: pydicom.dataset.FileDataset) -> bool:
     return is_greyscale
 
 
-def rescale_dcm_pixel_array(instance: pydicom.dataset.FileDataset, is_greyscale: bool) -> np.ndarray:
-    """rescale DICOM pixel_array.
+def rescale_dcm_pixel_array(
+    instance: pydicom.dataset.FileDataset, is_greyscale: bool
+) -> np.ndarray:
+    """Rescale DICOM pixel_array.
 
     Args:
         instance (pydicom.dataset.FileDataset): a singe DICOM instance.
@@ -127,7 +129,7 @@ def get_bg_color(
         colorscale (str): Colorscale of image (e.g., 'grayscale', 'RGB')
         invert (bool): TRUE if you want to get the inverse of the bg color.
 
-    return:
+    Return:
         bg_color (tuple): Background color.
     """
     # Invert colors if invert flag is True
@@ -167,8 +169,10 @@ def get_most_common_pixel_value(
         box_color_setting (str): Determines how box color is selected.
             'contrast' - Masks stand out relative to background.
             'background' - Masks are same color as background.
+
     Return:
-        pixel_value (int or tuple of int): Most or least common pixel value (depending on box_color_setting).
+        pixel_value (int or tuple of int): Most or least common pixel value
+            (depending on box_color_setting).
     """
     # Get flattened pixel array
     flat_pixel_array = np.array(instance.pixel_array).flatten()
@@ -180,7 +184,9 @@ def get_most_common_pixel_value(
         flat_pixel_array = np.array(flat_pixel_array)
         common_value = values[np.argmax(counts)]
     else:
-        raise TypeError("Most common pixel value retrieval is only supported for greyscale images at this point.")
+        raise TypeError(
+            "Most common pixel value retrieval is only supported for greyscale images at this point."  # noqa: E501
+        )
 
     # Invert color as necessary
     if box_color_setting.lower() in ["contrast", "invert", "inverted", "inverse"]:
@@ -208,7 +214,9 @@ def add_padding(
     if padding_width <= 0:
         raise ValueError("Enter a positive value for padding")
     elif padding_width >= 100:
-        raise ValueError("Excessive padding width entered. Please use a width under 100 pixels.")
+        raise ValueError(
+            "Excessive padding width entered. Please use a width under 100 pixels."
+        )
 
     # Select most common color as border color
     border_color = get_bg_color(image, is_greyscale)
@@ -250,7 +258,7 @@ def copy_files_for_processing(src_path: str, dst_parent_dir: str) -> Path:
             shutil.copytree(src_path, dst_path)
         except FileExistsError:
             raise FileExistsError(
-                f"Destination files already exist. Please clear the destination files or specify a different dst_parent_dir."
+                "Destination files already exist. Please clear the destination files or specify a different dst_parent_dir."  # noqa: E501
             )
     elif Path(src_path).is_file() is True:
         # Create the output dir manually if working with a single file

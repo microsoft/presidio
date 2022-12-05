@@ -18,7 +18,11 @@ def test_redact_from_single_file_correctly():
         # Set file paths and redact PII
         input_path = Path(RESOURCES_PARENT_DIR, "0_ORIGINAL.dcm")
         engine = DicomImageRedactorEngine()
-        engine.redact(input_dicom_path=str(input_path), output_dir=tmpdirname, box_color_setting="contrast")
+        engine.redact(
+            input_dicom_path=str(input_path),
+            output_dir=tmpdirname,
+            box_color_setting="contrast",
+        )
         output_path = Path(tmpdirname, f"{input_path.stem}.dcm")
 
         # Load original and redacted files
@@ -41,7 +45,9 @@ def test_redact_from_single_file_correctly():
             if element_original == element_redacted:
                 same_elements.append(tag)
 
-        assert len(instance_original) - 1 == len(same_elements)  # only PixelData should be different
+        assert len(instance_original) - 1 == len(
+            same_elements
+        )  # only PixelData should be different
         assert original_pixels != redacted_pixels
 
 
@@ -50,7 +56,11 @@ def test_redact_from_directory_correctly():
         # Set file paths and redact PII
         input_path = Path(RESOURCES_DIR1)
         engine = DicomImageRedactorEngine()
-        engine.redact(input_dicom_path=str(input_path), output_dir=tmpdirname, box_color_setting="contrast")
+        engine.redact(
+            input_dicom_path=str(input_path),
+            output_dir=tmpdirname,
+            box_color_setting="contrast",
+        )
         output_files = get_all_dcm_files(Path(tmpdirname))
 
         assert len(output_files) == len(get_all_dcm_files(input_path))
