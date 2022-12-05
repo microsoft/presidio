@@ -1,4 +1,4 @@
-"""Utils file for de-identifying phi from DICOM images."""
+"""Utils file for de-identifying PHI from DICOM images."""
 import copy
 import pydicom
 from PIL import Image
