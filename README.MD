@@ -17,8 +17,6 @@ Anonymizer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-a
 
 Image-Redactor [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-image-redactor.svg)](https://pypi.python.org/pypi/presidio-image-redactor/)
 
-Dicom-Image-Redactor [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-image-redactor.svg)](https://pypi.python.org/pypi/presidio-dicom-image-redactor/)
-
 ## What is Presidio
 
 Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to ensure sensitive data is properly managed and governed. It provides fast **_identification_** and **_anonymization_** modules for private entities in text such as credit card numbers, names, locations, social security numbers, bitcoin wallets, US phone numbers, financial data and more.
@@ -49,8 +47,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 2. Options for connecting to external PII detection models.
 3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
 4. **Customizability** in PII identification and de-identification.
-5. Module for **redacting PII text in images**.
-6. Module for redacting PII text in **DICOM medical images**.
+5. Module for **redacting PII text in images** (standard image types and DICOM medical images).
 
 :warning: Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
@@ -67,8 +64,7 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 2. [Setting up a development environment](https://microsoft.github.io/presidio/development)
 3. [PII de-identification in text](https://microsoft.github.io/presidio/text_anonymization)
 4. [PII de-identification in images](https://microsoft.github.io/presidio/image-redactor)
-5. [PII de-identification in DICOM images](https://microsoft.github.io/presidio/dicom-image-redactor)
-6. [Usage samples and example deployments](https://microsoft.github.io/presidio/samples)
+5. [Usage samples and example deployments](https://microsoft.github.io/presidio/samples)
 
 ---
 
