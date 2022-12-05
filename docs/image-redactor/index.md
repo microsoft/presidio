@@ -8,6 +8,11 @@ The Presidio Image Redactor is a Python based module for detecting and redacting
 text entities in images.
 ![img.png](../assets/image-redactor-design.png)
 
+This module may also be used on medical DICOM images. The `DicomImageRedactorEngine` class may be used to redact text PII present as pixels in DICOM images.
+![img.png](../assets/dicom-image-redactor-design.png)
+
+> *Note this class only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata. We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI.*
+
 ## Installation
 
 Pre-requisites:
@@ -16,7 +21,7 @@ Pre-requisites:
   instructions on how to install it for your operating system.
 
 !!! attention "Attention"
-    For now, image redactor only supports tesseract version 4.0.0
+    For best performance, please use the most up-to-date version of Tesseract OCR. We used **v5.2.0.20220712** while developing the `DicomImageRedactorEngine`.
 
 === "Using pip"
 
@@ -55,7 +60,7 @@ Pre-requisites:
     docker build . -t presidio/presidio-image-redactor
     ```
 
-## Getting started
+## Getting started (standard image types)
 
 === "Python"
 
@@ -106,6 +111,33 @@ Pre-requisites:
     ```
 Python script example can be found under:
 /presidio/e2e-tests/tests/test_image_redactor.py
+
+## Getting started (DICOM images)
+
+=== "Python"
+
+    Once the Presidio-image-redactor package is installed, run this simple script:
+    
+    ```python
+    from PIL import Image
+    from presidio_image_redactor import DicomImageRedactorEngine
+
+    # Set input and output paths
+    input_path = "path/to/your/DICOM_file"
+    output_dir = "./output"
+
+    # Initialize the engine
+    engine = DicomImageRedactorEngine()
+
+    # Redact the DICOM image(s)
+    engine.redact(input_path, output_dir, padding_width=25, box_color_setting="contrast")
+
+    # Output is saved to output_dir
+    ```
+
+=== "As an HTTP server"
+
+    COMING SOON
 
 ## API reference
 

@@ -11,7 +11,3 @@
 ## Image Redactor
 
 [![Image Redactor Design](assets/image-redactor-design.png)](image-redactor/index.md)
-
-## DICOM Image Redactor
-
-[![DICOM Image Redactor Design](assets/dicom-image-redactor-design.png)](dicom-image-redactor/index.md)
