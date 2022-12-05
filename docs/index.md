@@ -35,7 +35,6 @@ bitcoin wallets, US phone numbers, financial data and more.
 1. [Presidio analyzer](analyzer/index.md): PII identification in text
 2. [Presidio anonymizer](anonymizer/index.md): De-identify detected PII entities using different operators
 3. [Presidio image redactor](image-redactor/index.md): Redact PII entities from images using OCR and PII identification
-4. [Presidio DICOM image redactor](dicom-image-redactor/index.md): Redact text PII from DICOM images.
 
 ## Installing Presidio
 
@@ -53,8 +52,7 @@ bitcoin wallets, US phone numbers, financial data and more.
 4. [Perform PII identification using presidio-analyzer](analyzer/index.md)
 5. [Perform PII anonymization using presidio-anonymizer](anonymizer/index.md)
 6. [Perform PII identification and anonymization in images using presidio-image-redactor](image-redactor/index.md)
-7. [Perform PII redaction in DICOM images using presidio-dicom-image-redactor](dicom-image-redactor/index.md)
-8. [Example deployments](samples/deployments/index.md)
+7. [Example deployments](samples/deployments/index.md)
 
 ---
 

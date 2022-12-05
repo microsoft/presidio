@@ -63,16 +63,16 @@ Using Presidio's modules as Python packages to get started
 
 === "Redact text PII in DICOM images"
 
-    1. Install presidio-dicom-image-redactor
+    1. Install presidio-image-redactor
     
         ```sh
-        pip install presidio-dicom-image-redactor
+        pip install presidio-image-redactor
         ```
        
     2. Redact text PII from DICOM image
     
         ```py
-        from presidio_dicom_image_redactor import DicomImageRedactorEngine
+        from presidio_image_redactor import DicomImageRedactorEngine
         
         input_data_path = "path/to/dicom/files"
         output_parent_dir = "output"
@@ -88,5 +88,4 @@ Using Presidio's modules as Python packages to get started
 - [PII detection in text](analyzer/index.md)
 - [PII anonymization in text](anonymizer/index.md)
 - [PII redaction in images](image-redactor/index.md)
-- [PII redaction in DICOM images](dicom-image-redactor/index.md)
 - [Discussion board](https://github.com/microsoft/presidio/discussions)
