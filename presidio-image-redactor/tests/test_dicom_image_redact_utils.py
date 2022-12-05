@@ -3,15 +3,17 @@ from pathlib import Path
 import numpy as np
 import pydicom
 import presidio_image_redactor
-from presidio_image_redactor.entities.image_recognizer_result import ImageRecognizerResult
+from presidio_image_redactor.entities.image_recognizer_result import (
+    ImageRecognizerResult,
+)
 import presidio_analyzer
 import pytest
 from typing import Union, Tuple
 from presidio_image_redactor.utils.dicom_image_redact_utils import (
     get_text_metadata,
     process_names,
-    add_known_generic_PHI,
-    make_PHI_list,
+    add_known_generic_phi,
+    make_phi_list,
     create_custom_recognizer,
     get_bboxes_from_analyzer_results,
     format_bboxes,
@@ -40,7 +42,10 @@ TEST_PNG_DIR = "presidio-image-redactor/tests/test_data/png_images"
     ],
 )
 def test_get_text_metadata_happy_path(
-    dcm_path: Path, metadata_text_len: int, is_name_true_len: int, is_patient_true_len: int
+    dcm_path: Path,
+    metadata_text_len: int,
+    is_name_true_len: int,
+    is_patient_true_len: int,
 ):
     """Test happy path for get_text_metadata
 
@@ -70,7 +75,7 @@ def test_get_text_metadata_happy_path(
 # process_names()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "text_metadata, is_name, expected_PHI_list",
+    "text_metadata, is_name, expected_phi_list",
     [
         ([], [], []),
         (
@@ -93,54 +98,68 @@ def test_get_text_metadata_happy_path(
         ),
     ],
 )
-def test_process_names_happy_path(text_metadata: list, is_name: list, expected_PHI_list: list):
+def test_process_names_happy_path(
+    text_metadata: list, is_name: list, expected_phi_list: list
+):
     """Test happy path for process_names
 
     Args:
         text_metadata (list): List of text metadata.
         is_name (list): Whether each element is a name or not.
-        expected_PHI_list (list): List of expected output.
+        expected_phi_list (list): List of expected output.
     """
     # Arrange
 
     # Act
-    test_PHI_list = process_names(text_metadata, is_name)
+    test_phi_list = process_names(text_metadata, is_name)
 
     # Assert
-    assert set(test_PHI_list) == set(expected_PHI_list)
+    assert set(test_phi_list) == set(expected_phi_list)
 
 
 # ------------------------------------------------------
-# add_known_generic_PHI()
+# add_known_generic_phi()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "PHI_list, expected_return_list",
+    "phi_list, expected_return_list",
     [
         ([], ["M", "[M]", "F", "[F]", "X", "[X]", "U", "[U]"]),
         (
             ["JOHN^DOE", "City Hospital", "12345"],
-            ["JOHN^DOE", "City Hospital", "12345", "M", "[M]", "F", "[F]", "X", "[X]", "U", "[U]"],
+            [
+                "JOHN^DOE",
+                "City Hospital",
+                "12345",
+                "M",
+                "[M]",
+                "F",
+                "[F]",
+                "X",
+                "[X]",
+                "U",
+                "[U]",
+            ],
         ),
     ],
 )
-def test_add_known_generic_PHI_happy_path(PHI_list: list, expected_return_list: list):
-    """Test happy path for add_known_generic_PHI
+def test_add_known_generic_phi_happy_path(phi_list: list, expected_return_list: list):
+    """Test happy path for add_known_generic_phi
 
     Args:
-        PHI_list (list): List of PHI.
+        phi_list (list): List of PHI.
         expected_return_list (list): List of expected output.
     """
     # Arrange
 
     # Act
-    test_PHI_list = add_known_generic_PHI(PHI_list)
+    test_phi_list = add_known_generic_phi(phi_list)
 
     # Assert
-    assert set(test_PHI_list) == set(expected_return_list)
+    assert set(test_phi_list) == set(expected_return_list)
 
 
 # ------------------------------------------------------
-# make_PHI_list()
+# make_phi_list()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "original_metadata, mock_process_names_val, mock_add_known_val, expected_return_list",
@@ -224,15 +243,19 @@ def test_add_known_generic_PHI_happy_path(PHI_list: list, expected_return_list: 
         ),
     ],
 )
-def test_make_PHI_list_happy_path(
-    mocker, original_metadata: list, mock_process_names_val: list, mock_add_known_val: list, expected_return_list: list
+def test_make_phi_list_happy_path(
+    mocker,
+    original_metadata: list,
+    mock_process_names_val: list,
+    mock_add_known_val: list,
+    expected_return_list: list,
 ):
-    """Test happy path for make_PHI_list
+    """Test happy path for make_phi_list
 
     Args:
         original_metadata (list): List extracted metadata (excluding pixel array).
         mock_process_names_val (list): Value to provide to mock process_names.
-        mock_add_known_val (list): Value to provide to mock add_known_generic_PHI.
+        mock_add_known_val (list): Value to provide to mock add_known_generic_phi.
         expected_return_list (list): List of expected output.
     """
     # Arrange
@@ -240,25 +263,25 @@ def test_make_PHI_list_happy_path(
         "presidio_image_redactor.utils.dicom_image_redact_utils.process_names",
         return_value=mock_process_names_val,
     )
-    mock_add_known_generic_PHI = mocker.patch(
-        "presidio_image_redactor.utils.dicom_image_redact_utils.add_known_generic_PHI",
+    mock_add_known_generic_phi = mocker.patch(
+        "presidio_image_redactor.utils.dicom_image_redact_utils.add_known_generic_phi",
         return_value=mock_add_known_val,
     )
 
     # Act
-    test_PHI_str_list = make_PHI_list(original_metadata, [], [])
+    test_phi_str_list = make_phi_list(original_metadata, [], [])
 
     # Assert
     assert mock_process_names.call_count == 1
-    assert mock_add_known_generic_PHI.call_count == 1
-    assert set(test_PHI_str_list) == set(expected_return_list)
+    assert mock_add_known_generic_phi.call_count == 1
+    assert set(test_phi_str_list) == set(expected_return_list)
 
 
 # ------------------------------------------------------
 # create_custom_recognizer()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "PHI_list",
+    "phi_list",
     [
         (
             [
@@ -285,20 +308,23 @@ def test_make_PHI_list_happy_path(
         ),
     ],
 )
-def test_create_custom_recognizer_happy_path(PHI_list: list):
+def test_create_custom_recognizer_happy_path(phi_list: list):
     """Test happy path for create_custom_recognizer
 
     Args:
-        PHI_list (list): List of PHI.
+        phi_list (list): List of phi.
         expected_return_list (list): List of expected output.
     """
     # Arrange
 
     # Act
-    test_custom_analyzer_engine = create_custom_recognizer(PHI_list)
+    test_custom_analyzer_engine = create_custom_recognizer(phi_list)
 
     # Assert
-    assert type(test_custom_analyzer_engine) == presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine
+    assert (
+        type(test_custom_analyzer_engine)
+        == presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine
+    )
     assert (
         type(test_custom_analyzer_engine.analyzer_engine.registry.recognizers[-1])
         == presidio_analyzer.pattern_recognizer.PatternRecognizer
@@ -314,24 +340,68 @@ def test_create_custom_recognizer_happy_path(PHI_list: list):
         (
             [
                 ImageRecognizerResult(
-                    entity_type="TYPE_1", start=0, end=0, left=25, top=25, width=100, height=100, score=0.99
+                    entity_type="TYPE_1",
+                    start=0,
+                    end=0,
+                    left=25,
+                    top=25,
+                    width=100,
+                    height=100,
+                    score=0.99,
                 ),
                 ImageRecognizerResult(
-                    entity_type="TYPE_2", start=10, end=10, left=25, top=49, width=75, height=51, score=0.7
+                    entity_type="TYPE_2",
+                    start=10,
+                    end=10,
+                    left=25,
+                    top=49,
+                    width=75,
+                    height=51,
+                    score=0.7,
                 ),
                 ImageRecognizerResult(
-                    entity_type="TYPE_3", start=25, end=35, left=613, top=26, width=226, height=35, score=0.6
+                    entity_type="TYPE_3",
+                    start=25,
+                    end=35,
+                    left=613,
+                    top=26,
+                    width=226,
+                    height=35,
+                    score=0.6,
                 ),
             ],
             {
-                "0": {"entity_type": "TYPE_1", "score": 0.99, "left": 25, "top": 25, "width": 100, "height": 100},
-                "1": {"entity_type": "TYPE_2", "score": 0.7, "left": 25, "top": 49, "width": 75, "height": 51},
-                "2": {"entity_type": "TYPE_3", "score": 0.6, "left": 613, "top": 26, "width": 226, "height": 35},
+                "0": {
+                    "entity_type": "TYPE_1",
+                    "score": 0.99,
+                    "left": 25,
+                    "top": 25,
+                    "width": 100,
+                    "height": 100,
+                },
+                "1": {
+                    "entity_type": "TYPE_2",
+                    "score": 0.7,
+                    "left": 25,
+                    "top": 49,
+                    "width": 75,
+                    "height": 51,
+                },
+                "2": {
+                    "entity_type": "TYPE_3",
+                    "score": 0.6,
+                    "left": 613,
+                    "top": 26,
+                    "width": 226,
+                    "height": 35,
+                },
             },
         ),
     ],
 )
-def test_get_bboxes_from_analyzer_results_happy_path(analyzer_results: list, expected_bboxes_dict: dict):
+def test_get_bboxes_from_analyzer_results_happy_path(
+    analyzer_results: list, expected_bboxes_dict: dict
+):
     """Test happy path for get_bboxes_from_analyzer_results
 
     Args:
@@ -355,9 +425,30 @@ def test_get_bboxes_from_analyzer_results_happy_path(analyzer_results: list, exp
     [
         (
             {
-                "0": {"entity_type": "TYPE_1", "score": 0.99, "left": 10, "top": 15, "width": 100, "height": 100},
-                "1": {"entity_type": "TYPE_2", "score": 0.7, "left": 25, "top": 49, "width": 75, "height": 51},
-                "2": {"entity_type": "TYPE_3", "score": 0.6, "left": 613, "top": 26, "width": 226, "height": 35},
+                "0": {
+                    "entity_type": "TYPE_1",
+                    "score": 0.99,
+                    "left": 10,
+                    "top": 15,
+                    "width": 100,
+                    "height": 100,
+                },
+                "1": {
+                    "entity_type": "TYPE_2",
+                    "score": 0.7,
+                    "left": 25,
+                    "top": 49,
+                    "width": 75,
+                    "height": 51,
+                },
+                "2": {
+                    "entity_type": "TYPE_3",
+                    "score": 0.6,
+                    "left": 613,
+                    "top": 26,
+                    "width": 226,
+                    "height": 35,
+                },
             },
             25,
             [
@@ -368,7 +459,9 @@ def test_get_bboxes_from_analyzer_results_happy_path(analyzer_results: list, exp
         ),
     ],
 )
-def test_format_bboxes_happy_path(mocker, mock_intermediate_bbox: dict, padding_width: int, expected_bboxes_dict: dict):
+def test_format_bboxes_happy_path(
+    mocker, mock_intermediate_bbox: dict, padding_width: int, expected_bboxes_dict: dict
+):
     """Test happy path for format_bboxes
 
     Args:
@@ -414,9 +507,16 @@ def test_format_bboxes_exceptions(padding_width: int, expected_error_type: str):
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "box_color_setting, mock_box_color",
-    [("contrast", 0), ("contrast", (0, 0, 0)), ("background", 255), ("background", (255, 255, 255))],
+    [
+        ("contrast", 0),
+        ("contrast", (0, 0, 0)),
+        ("background", 255),
+        ("background", (255, 255, 255)),
+    ],
 )
-def test_set_bbox_color_happy_path(mocker, box_color_setting: str, mock_box_color: Union[int, Tuple[int, int, int]]):
+def test_set_bbox_color_happy_path(
+    mocker, box_color_setting: str, mock_box_color: Union[int, Tuple[int, int, int]]
+):
     """Test happy path for set_bbox_color
 
     Args:
@@ -430,10 +530,12 @@ def test_set_bbox_color_happy_path(mocker, box_color_setting: str, mock_box_colo
         return_value=[None, True],
     )
     mock_Image_open = mocker.patch(
-        "presidio_image_redactor.utils.dicom_image_redact_utils.Image.open", return_value=None
+        "presidio_image_redactor.utils.dicom_image_redact_utils.Image.open",
+        return_value=None,
     )
     mock_get_bg_color = mocker.patch(
-        "presidio_image_redactor.utils.dicom_image_redact_utils.get_bg_color", return_value=mock_box_color
+        "presidio_image_redactor.utils.dicom_image_redact_utils.get_bg_color",
+        return_value=mock_box_color,
     )
 
     # Act
@@ -448,7 +550,12 @@ def test_set_bbox_color_happy_path(mocker, box_color_setting: str, mock_box_colo
 
 @pytest.mark.parametrize(
     "box_color_setting, expected_error_type",
-    [("typo", "ValueError"), ("somecolor", "ValueError"), ("0", "ValueError"), ("255", "ValueError")],
+    [
+        ("typo", "ValueError"),
+        ("somecolor", "ValueError"),
+        ("0", "ValueError"),
+        ("255", "ValueError"),
+    ],
 )
 def test_set_bbox_color_exceptions(box_color_setting: str, expected_error_type: str):
     """Test error handling of set_bbox_color
@@ -522,7 +629,8 @@ def test_add_redact_box_happy_path(
         return_value=mock_box_color,
     )
     mock_set_bbox_color = mocker.patch(
-        "presidio_image_redactor.utils.dicom_image_redact_utils.set_bbox_color", return_value=mock_box_color
+        "presidio_image_redactor.utils.dicom_image_redact_utils.set_bbox_color",
+        return_value=mock_box_color,
     )
 
     # Act
@@ -533,14 +641,28 @@ def test_add_redact_box_happy_path(
     if mock_is_greyscale is True:
         original_pixel_values = np.array(test_instance.pixel_array).flatten()
         redacted_pixel_values = np.array(test_redacted_instance.pixel_array).flatten()
-        box_color_pixels_original = len(np.where(original_pixel_values == mock_box_color)[0])
-        box_color_pixels_redacted = len(np.where(redacted_pixel_values == mock_box_color)[0])
+        box_color_pixels_original = len(
+            np.where(original_pixel_values == mock_box_color)[0]
+        )
+        box_color_pixels_redacted = len(
+            np.where(redacted_pixel_values == mock_box_color)[0]
+        )
         mock_get_common_pixel.call_count == 1
     else:
         list_of_RGB_pixels_original = np.vstack(test_instance.pixel_array).tolist()
-        list_of_RGB_pixels_redacted = np.vstack(test_redacted_instance.pixel_array).tolist()
-        box_color_pixels_original = len(np.unique(np.where(np.array(list_of_RGB_pixels_original) == mock_box_color)[0]))
-        box_color_pixels_redacted = len(np.unique(np.where(np.array(list_of_RGB_pixels_redacted) == mock_box_color)[0]))
+        list_of_RGB_pixels_redacted = np.vstack(
+            test_redacted_instance.pixel_array
+        ).tolist()
+        box_color_pixels_original = len(
+            np.unique(
+                np.where(np.array(list_of_RGB_pixels_original) == mock_box_color)[0]
+            )
+        )
+        box_color_pixels_redacted = len(
+            np.unique(
+                np.where(np.array(list_of_RGB_pixels_redacted) == mock_box_color)[0]
+            )
+        )
         mock_set_bbox_color.call_count == 1
 
     assert box_color_pixels_redacted > box_color_pixels_original

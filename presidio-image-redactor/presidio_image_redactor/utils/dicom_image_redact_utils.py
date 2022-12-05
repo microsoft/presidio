@@ -1,4 +1,4 @@
-"""Utils file for de-identifying PHI from DICOM images."""
+"""Utils file for de-identifying phi from DICOM images."""
 import copy
 import pydicom
 from PIL import Image
@@ -69,9 +69,9 @@ def process_names(text_metadata: list, is_name: list) -> list:
         is_name (list): True if the element is specified as being a name.
 
     Return:
-        PHI_list (list): Metadata text with additional name iterations appended.
+        phi_list (list): Metadata text with additional name iterations appended.
     """
-    PHI_list = text_metadata.copy()
+    phi_list = text_metadata.copy()
 
     for i in range(0, len(text_metadata)):
         if is_name[i] is True:
@@ -90,42 +90,42 @@ def process_names(text_metadata: list, is_name: list) -> list:
             text_4 = text_1.title()
 
             # Append iterations
-            PHI_list.append(text_1)
-            PHI_list.append(text_2)
-            PHI_list.append(text_3)
-            PHI_list.append(text_4)
+            phi_list.append(text_1)
+            phi_list.append(text_2)
+            phi_list.append(text_3)
+            phi_list.append(text_4)
 
             # Adding each name as a separate item in the list
-            PHI_list = PHI_list + text_1.split(" ")
-            PHI_list = PHI_list + text_2.split(" ")
-            PHI_list = PHI_list + text_3.split(" ")
-            PHI_list = PHI_list + text_4.split(" ")
+            phi_list = phi_list + text_1.split(" ")
+            phi_list = phi_list + text_2.split(" ")
+            phi_list = phi_list + text_3.split(" ")
+            phi_list = phi_list + text_4.split(" ")
 
-    return PHI_list
+    return phi_list
 
 
-def add_known_generic_PHI(PHI_list: list) -> list:
+def add_known_generic_phi(phi_list: list) -> list:
     """Add known potential generic PHI values.
 
     Args:
-        PHI_list (list): List of PHI to use with Presidio ad-hoc recognizer.
+        phi_list (list): List of PHI to use with Presidio ad-hoc recognizer.
 
     Return:
-        PHI_list (list): Same list with added known values.
+        phi_list (list): Same list with added known values.
     """
-    PHI_list.append("M")
-    PHI_list.append("[M]")
-    PHI_list.append("F")
-    PHI_list.append("[F]")
-    PHI_list.append("X")
-    PHI_list.append("[X]")
-    PHI_list.append("U")
-    PHI_list.append("[U]")
+    phi_list.append("M")
+    phi_list.append("[M]")
+    phi_list.append("F")
+    phi_list.append("[F]")
+    phi_list.append("X")
+    phi_list.append("[X]")
+    phi_list.append("U")
+    phi_list.append("[U]")
 
-    return PHI_list
+    return phi_list
 
 
-def make_PHI_list(original_metadata: list, is_name: list, is_patient: list) -> list:
+def make_phi_list(original_metadata: list, is_name: list, is_patient: list) -> list:
     """Make the list of PHI to use in Presidio ad-hoc recognizer.
 
     Args:
@@ -136,37 +136,37 @@ def make_PHI_list(original_metadata: list, is_name: list, is_patient: list) -> l
             related to the patient.
 
     Return:
-        PHI_str_list (list): List of PHI (str) to use with Presidio ad-hoc recognizer.
+        phi_str_list (list): List of PHI (str) to use with Presidio ad-hoc recognizer.
     """
     # Process names
-    PHI_list = process_names(original_metadata, is_name)
+    phi_list = process_names(original_metadata, is_name)
 
-    # Add known potential PHI values
-    PHI_list = add_known_generic_PHI(PHI_list)
+    # Add known potential phi values
+    phi_list = add_known_generic_phi(phi_list)
 
     # Flatten any nested lists
-    for PHI in PHI_list:
-        if type(PHI) in [pydicom.multival.MultiValue, list, tuple]:
-            for item in PHI:
-                PHI_list.append(item)
-            PHI_list.remove(PHI)
+    for phi in phi_list:
+        if type(phi) in [pydicom.multival.MultiValue, list, tuple]:
+            for item in phi:
+                phi_list.append(item)
+            phi_list.remove(phi)
 
     # Convert all items to strings
-    PHI_str_list = [str(PHI) for PHI in PHI_list]
+    phi_str_list = [str(phi) for phi in phi_list]
 
     # Remove duplicates
-    PHI_str_list = list(set(PHI_str_list))
+    phi_str_list = list(set(phi_str_list))
 
-    return PHI_str_list
+    return phi_str_list
 
 
 def create_custom_recognizer(
-    PHI_list: list,
+    phi_list: list,
 ) -> presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine:
     """Create custom recognizer using DICOM metadata.
 
     Args:
-        PHI_list (list): List of PHI text pulled from the DICOM metadata.
+        phi_list (list): List of PHI text pulled from the DICOM metadata.
 
     Return:
         custom_analyzer_engine (presidio_image_redactor.
@@ -176,7 +176,7 @@ def create_custom_recognizer(
     """
     # Create recognizer
     deny_list_recognizer = PatternRecognizer(
-        supported_entity="PERSON", deny_list=PHI_list
+        supported_entity="PERSON", deny_list=phi_list
     )
 
     # Add recognizer to registry
@@ -230,10 +230,10 @@ def format_bboxes(analyzer_results: list, padding_width: int) -> list:
         raise ValueError("Padding width must be a positive number.")
 
     # Write bounding box info to json files for now
-    PHI_bboxes_dict = get_bboxes_from_analyzer_results(analyzer_results)
+    phi_bboxes_dict = get_bboxes_from_analyzer_results(analyzer_results)
 
     # convert detected bounding boxes to list
-    bboxes = [PHI_bboxes_dict[i] for i in PHI_bboxes_dict.keys()]
+    bboxes = [phi_bboxes_dict[i] for i in phi_bboxes_dict.keys()]
 
     # remove padding from all bounding boxes
     bboxes = [

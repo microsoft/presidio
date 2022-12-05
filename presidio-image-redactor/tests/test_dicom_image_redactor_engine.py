@@ -85,7 +85,7 @@ def test_DicomImageRedactorEngine_validate_paths_exceptions(
 
 
 # ------------------------------------------------------
-# DicomImageRedactorEngine _redact_single_DICOM_image()
+# DicomImageRedactorEngine _redact_single_dicom_image()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "dcm_path, output_dir, overwrite",
@@ -98,14 +98,14 @@ def test_DicomImageRedactorEngine_validate_paths_exceptions(
         (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), "output", False),
     ],
 )
-def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
+def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     mocker,
     mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
     output_dir: str,
     overwrite: bool,
 ):
-    """Test happy path for DicomImageRedactorEngine _redact_single_DICOM_image()
+    """Test happy path for DicomImageRedactorEngine _redact_single_dicom_image()
 
     Args:
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
@@ -134,8 +134,8 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
         "presidio_image_redactor.dicom_image_redactor_engine.get_text_metadata",
         return_value=[None, None, None],
     )
-    mock_make_PHI_list = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.make_PHI_list",
+    mock_make_phi_list = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.make_phi_list",
         return_value=None,
     )
 
@@ -162,7 +162,7 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
     )
 
     # Act
-    mock_engine._redact_single_DICOM_image(
+    mock_engine._redact_single_dicom_image(
         dcm_path, "contrast", 25, overwrite, output_dir
     )
 
@@ -175,7 +175,7 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
     assert mock_image_open.call_count == 1
     assert mock_add_padding.call_count == 1
     assert mock_get_text_metadata.call_count == 1
-    assert mock_make_PHI_list.call_count == 1
+    assert mock_make_phi_list.call_count == 1
     assert mock_create_custom_recognizer.call_count == 1
     assert mock_format_bboxes.call_count == 1
     assert mock_add_redact_box.call_count == 1
@@ -188,12 +188,12 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
         (Path("nonexistentfile.extension"), "FileNotFoundError"),
     ],
 )
-def test_DicomImageRedactorEngine_redact_single_DICOM_image_exceptions(
+def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
     mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
     expected_error_type: str,
 ):
-    """Test error handling of DicomImageRedactorEngine _redact_single_DICOM_image()
+    """Test error handling of DicomImageRedactorEngine _redact_single_dicom_image()
 
     Args:
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
@@ -202,14 +202,14 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine._redact_single_DICOM_image(dcm_path, "contrast", 25, False, ".")
+        mock_engine._redact_single_dicom_image(dcm_path, "contrast", 25, False, ".")
 
     # Assert
     assert expected_error_type == exc_info.typename
 
 
 # ------------------------------------------------------
-# DicomImageRedactorEngine _redact_multiple_DICOM_images()
+# DicomImageRedactorEngine _redact_multiple_dicom_images()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "dcm_path, output_dir, overwrite",
@@ -221,14 +221,14 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_exceptions(
         (Path(TEST_DICOM_DIR_3), "output", False),
     ],
 )
-def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_happy_path(
+def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
     mocker,
     mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
     output_dir: str,
     overwrite: bool,
 ):
-    """Test happy path for DicomImageRedactorEngine _redact_multiple_DICOM_images()
+    """Test happy path for DicomImageRedactorEngine _redact_multiple_dicom_images()
 
     Args:
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
@@ -251,12 +251,12 @@ def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_happy_path(
         return_value=mock_dcm_files,
     )
     mock_redact_single = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_DICOM_image",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_dicom_image",
         return_value=None,
     )
 
     # Act
-    mock_engine._redact_multiple_DICOM_images(
+    mock_engine._redact_multiple_dicom_images(
         dcm_path, "contrast", 25, overwrite, output_dir
     )
 
@@ -276,12 +276,12 @@ def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_happy_path(
         (Path("nonexistentdir"), "FileNotFoundError"),
     ],
 )
-def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_exceptions(
+def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
     mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
     expected_error_type: str,
 ):
-    """Test error handling of DicomImageRedactorEngine _redact_multiple_DICOM_images()
+    """Test error handling of DicomImageRedactorEngine _redact_multiple_dicom_images()
 
     Args:
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
@@ -290,7 +290,7 @@ def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine._redact_multiple_DICOM_images(dcm_path, "contrast", 25, False, ".")
+        mock_engine._redact_multiple_dicom_images(dcm_path, "contrast", 25, False, ".")
 
     # Assert
     assert expected_error_type == exc_info.typename
@@ -343,11 +343,11 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         return_value=mock_dst_path,
     )
     mock_redact_single = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_DICOM_image",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_dicom_image",
         return_value=None,
     )
     mock_redact_multiple = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_multiple_DICOM_images",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_multiple_dicom_images",
         return_value=None,
     )
 

@@ -11,7 +11,7 @@ from presidio_image_redactor.utils.dicom_image_utils import (
 )
 from presidio_image_redactor.utils.dicom_image_redact_utils import (
     get_text_metadata,
-    make_PHI_list,
+    make_phi_list,
     create_custom_recognizer,
     format_bboxes,
     add_redact_box,
@@ -42,7 +42,7 @@ class DicomImageRedactorEngine:
                 "output_dir must be a directory (does not need to exist yet)"
             )
 
-    def _redact_single_DICOM_image(
+    def _redact_single_dicom_image(
         self,
         dcm_path: str,
         box_color_setting: str,
@@ -90,8 +90,8 @@ class DicomImageRedactorEngine:
 
         # Create custom recognizer using DICOM metadata
         original_metadata, is_name, is_patient = get_text_metadata(instance)
-        PHI_list = make_PHI_list(original_metadata, is_name, is_patient)
-        custom_analyzer_engine = create_custom_recognizer(PHI_list)
+        phi_list = make_phi_list(original_metadata, is_name, is_patient)
+        custom_analyzer_engine = create_custom_recognizer(phi_list)
         analyzer_results = custom_analyzer_engine.analyze(image)
 
         # Redact all bounding boxes from DICOM file
@@ -101,7 +101,7 @@ class DicomImageRedactorEngine:
 
         return dst_path
 
-    def _redact_multiple_DICOM_images(
+    def _redact_multiple_dicom_images(
         self,
         dcm_dir: str,
         box_color_setting: str,
@@ -139,7 +139,7 @@ class DicomImageRedactorEngine:
         # Process each DICOM file directly
         all_dcm_files = get_all_dcm_files(Path(dst_dir))
         for dst_path in all_dcm_files:
-            self._redact_single_DICOM_image(
+            self._redact_single_dicom_image(
                 dst_path, box_color_setting, padding_width, overwrite, dst_parent_dir
             )
 
@@ -172,7 +172,7 @@ class DicomImageRedactorEngine:
 
         # Process DICOM file(s)
         if Path(dst_path).is_dir() is False:
-            output_location = self._redact_single_DICOM_image(
+            output_location = self._redact_single_dicom_image(
                 dcm_path=dst_path,
                 box_color_setting=box_color_setting,
                 padding_width=padding_width,
@@ -180,7 +180,7 @@ class DicomImageRedactorEngine:
                 dst_parent_dir=".",
             )
         else:
-            output_location = self._redact_multiple_DICOM_images(
+            output_location = self._redact_multiple_dicom_images(
                 dcm_dir=dst_path,
                 box_color_setting=box_color_setting,
                 padding_width=padding_width,
