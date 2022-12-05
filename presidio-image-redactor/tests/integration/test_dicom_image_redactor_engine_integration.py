@@ -6,11 +6,11 @@ to account for differences in performance with different versions of Tesseract O
 import tempfile
 import pydicom
 from pathlib import Path
-from presidio_dicom_image_redactor.utils.dicom_image_utils import get_all_dcm_files
-from presidio_dicom_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
+from presidio_image_redactor.utils.dicom_image_utils import get_all_dcm_files
+from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
 
-RESOURCES_PARENT_DIR = "presidio-dicom-image-redactor/tests/integration/resources"
-RESOURCES_DIR1 = "presidio-dicom-image-redactor/tests/integration/resources/dir1"
+RESOURCES_PARENT_DIR = "presidio-image-redactor/tests/integration/resources"
+RESOURCES_DIR1 = "presidio-image-redactor/tests/integration/resources/dir1"
 
 
 def test_redact_from_single_file_correctly():

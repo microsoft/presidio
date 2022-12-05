@@ -7,7 +7,7 @@ from presidio_image_redactor.entities.image_recognizer_result import ImageRecogn
 import presidio_analyzer
 import pytest
 from typing import Union, Tuple
-from presidio_dicom_image_redactor.utils.dicom_image_redact_utils import (
+from presidio_image_redactor.utils.dicom_image_redact_utils import (
     get_text_metadata,
     process_names,
     add_known_generic_PHI,
@@ -19,12 +19,12 @@ from presidio_dicom_image_redactor.utils.dicom_image_redact_utils import (
     add_redact_box,
 )
 
-TEST_DICOM_PARENT_DIR = "presidio-dicom-image-redactor/tests/test_data"
-TEST_DICOM_DIR_1 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1"
-TEST_DICOM_DIR_2 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
-TEST_DICOM_DIR_3 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
-TEST_NUMPY_DIR = "presidio-dicom-image-redactor/tests/test_data/numpy_arrays"
-TEST_PNG_DIR = "presidio-dicom-image-redactor/tests/test_data/png_images"
+TEST_DICOM_PARENT_DIR = "presidio-image-redactor/tests/test_data"
+TEST_DICOM_DIR_1 = "presidio-image-redactor/tests/test_data/dicom_dir_1"
+TEST_DICOM_DIR_2 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
+TEST_DICOM_DIR_3 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
+TEST_NUMPY_DIR = "presidio-image-redactor/tests/test_data/numpy_arrays"
+TEST_PNG_DIR = "presidio-image-redactor/tests/test_data/png_images"
 
 # ------------------------------------------------------
 # get_text_metadata()
@@ -237,11 +237,11 @@ def test_make_PHI_list_happy_path(
     """
     # Arrange
     mock_process_names = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.process_names",
+        "presidio_image_redactor.utils.dicom_image_redact_utils.process_names",
         return_value=mock_process_names_val,
     )
     mock_add_known_generic_PHI = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.add_known_generic_PHI",
+        "presidio_image_redactor.utils.dicom_image_redact_utils.add_known_generic_PHI",
         return_value=mock_add_known_val,
     )
 
@@ -378,7 +378,7 @@ def test_format_bboxes_happy_path(mocker, mock_intermediate_bbox: dict, padding_
     """
     # Arrange
     mock_get_bboxes = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.get_bboxes_from_analyzer_results",
+        "presidio_image_redactor.utils.dicom_image_redact_utils.get_bboxes_from_analyzer_results",
         return_value=mock_intermediate_bbox,
     )
 
@@ -426,14 +426,14 @@ def test_set_bbox_color_happy_path(mocker, box_color_setting: str, mock_box_colo
     # Arrange
     test_instance = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
     mock_convert_dcm_to_png = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.convert_dcm_to_png",
+        "presidio_image_redactor.utils.dicom_image_redact_utils.convert_dcm_to_png",
         return_value=[None, True],
     )
     mock_Image_open = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.Image.open", return_value=None
+        "presidio_image_redactor.utils.dicom_image_redact_utils.Image.open", return_value=None
     )
     mock_get_bg_color = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.get_bg_color", return_value=mock_box_color
+        "presidio_image_redactor.utils.dicom_image_redact_utils.get_bg_color", return_value=mock_box_color
     )
 
     # Act
@@ -514,15 +514,15 @@ def test_add_redact_box_happy_path(
     # Arrange
     test_instance = pydicom.dcmread(dcm_path)
     mock_check_if_greyscale = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.check_if_greyscale",
+        "presidio_image_redactor.utils.dicom_image_redact_utils.check_if_greyscale",
         return_value=mock_is_greyscale,
     )
     mock_get_common_pixel = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.get_most_common_pixel_value",
+        "presidio_image_redactor.utils.dicom_image_redact_utils.get_most_common_pixel_value",
         return_value=mock_box_color,
     )
     mock_set_bbox_color = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_redact_utils.set_bbox_color", return_value=mock_box_color
+        "presidio_image_redactor.utils.dicom_image_redact_utils.set_bbox_color", return_value=mock_box_color
     )
 
     # Act

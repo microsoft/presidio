@@ -3,13 +3,13 @@ from pathlib import Path
 import tempfile
 import pydicom
 
-from presidio_dicom_image_redactor.utils.dicom_image_utils import (
+from presidio_image_redactor.utils.dicom_image_utils import (
     copy_files_for_processing,
     get_all_dcm_files,
     convert_dcm_to_png,
     add_padding,
 )
-from presidio_dicom_image_redactor.utils.dicom_image_redact_utils import (
+from presidio_image_redactor.utils.dicom_image_redact_utils import (
     get_text_metadata,
     make_PHI_list,
     create_custom_recognizer,

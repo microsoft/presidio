@@ -10,7 +10,7 @@ import presidio_image_redactor
 from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_analyzer import AnalyzerEngine, RecognizerRegistry, PatternRecognizer
 
-from presidio_dicom_image_redactor.utils.dicom_image_utils import (
+from presidio_image_redactor.utils.dicom_image_utils import (
     check_if_greyscale,
     get_bg_color,
     get_most_common_pixel_value,

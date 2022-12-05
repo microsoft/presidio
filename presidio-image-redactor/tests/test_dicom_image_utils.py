@@ -7,7 +7,7 @@ import pydicom
 from PIL import Image
 from typing import Union, Tuple
 import pytest
-from presidio_dicom_image_redactor.utils.dicom_image_utils import (
+from presidio_image_redactor.utils.dicom_image_utils import (
     get_all_dcm_files,
     check_if_greyscale,
     rescale_dcm_pixel_array,
@@ -18,12 +18,12 @@ from presidio_dicom_image_redactor.utils.dicom_image_utils import (
     copy_files_for_processing,
 )
 
-TEST_DICOM_PARENT_DIR = "presidio-dicom-image-redactor/tests/test_data"
-TEST_DICOM_DIR_1 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1"
-TEST_DICOM_DIR_2 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
-TEST_DICOM_DIR_3 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
-TEST_NUMPY_DIR = "presidio-dicom-image-redactor/tests/test_data/numpy_arrays"
-TEST_PNG_DIR = "presidio-dicom-image-redactor/tests/test_data/png_images"
+TEST_DICOM_PARENT_DIR = "presidio-image-redactor/tests/test_data"
+TEST_DICOM_DIR_1 = "presidio-image-redactor/tests/test_data/dicom_dir_1"
+TEST_DICOM_DIR_2 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
+TEST_DICOM_DIR_3 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
+TEST_NUMPY_DIR = "presidio-image-redactor/tests/test_data/numpy_arrays"
+TEST_PNG_DIR = "presidio-image-redactor/tests/test_data/png_images"
 
 # ------------------------------------------------------
 # get_all_dcm_files()
@@ -172,10 +172,10 @@ def test_convert_dcm_to_png_happy_path(mocker, dcm_file: Path, is_greyscale: boo
         loaded_numpy_array = np.load(f)
 
     mock_check_if_gresycale = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_utils.check_if_greyscale", return_value=is_greyscale
+        "presidio_image_redactor.utils.dicom_image_utils.check_if_greyscale", return_value=is_greyscale
     )
     mock_rescale_dcm_pixel_array = mocker.patch(
-        "presidio_dicom_image_redactor.utils.dicom_image_utils.rescale_dcm_pixel_array",
+        "presidio_image_redactor.utils.dicom_image_utils.rescale_dcm_pixel_array",
         return_value=loaded_numpy_array,
     )
 

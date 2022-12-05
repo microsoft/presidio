@@ -1,13 +1,13 @@
 """Test suite for dicom_image_redactor_engine.py"""
 from pathlib import Path
-from presidio_dicom_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
+from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
 import pytest
 
 
-TEST_DICOM_PARENT_DIR = "presidio-dicom-image-redactor/tests/test_data"
-TEST_DICOM_DIR_1 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1"
-TEST_DICOM_DIR_2 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
-TEST_DICOM_DIR_3 = "presidio-dicom-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
+TEST_DICOM_PARENT_DIR = "presidio-image-redactor/tests/test_data"
+TEST_DICOM_DIR_1 = "presidio-image-redactor/tests/test_data/dicom_dir_1"
+TEST_DICOM_DIR_2 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
+TEST_DICOM_DIR_3 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
 
 
 @pytest.fixture(scope="module")
@@ -108,27 +108,27 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
     """
     # Arrange
     mock_copy_files = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
+        "presidio_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
         return_value=dcm_path,
     )
     mock_convert_dcm_to_png = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.convert_dcm_to_png",
+        "presidio_image_redactor.dicom_image_redactor_engine.convert_dcm_to_png",
         return_value=[None, None],
     )
     mock_image_open = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.Image.open",
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
         return_value=None,
     )
     mock_add_padding = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.add_padding",
+        "presidio_image_redactor.dicom_image_redactor_engine.add_padding",
         return_value=None,
     )
     mock_get_text_metadata = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.get_text_metadata",
+        "presidio_image_redactor.dicom_image_redactor_engine.get_text_metadata",
         return_value=[None, None, None],
     )
     mock_make_PHI_list = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.make_PHI_list",
+        "presidio_image_redactor.dicom_image_redactor_engine.make_PHI_list",
         return_value=None,
     )
 
@@ -137,11 +137,11 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
             return None
 
     mock_create_custom_recognizer = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.create_custom_recognizer",
+        "presidio_image_redactor.dicom_image_redactor_engine.create_custom_recognizer",
         return_value=MockAnalyzer(),
     )
     mock_format_bboxes = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.format_bboxes",
+        "presidio_image_redactor.dicom_image_redactor_engine.format_bboxes",
         return_value=None,
     )
 
@@ -150,7 +150,7 @@ def test_DicomImageRedactorEngine_redact_single_DICOM_image_happy_path(
             return None
 
     mock_add_redact_box = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.add_redact_box",
+        "presidio_image_redactor.dicom_image_redactor_engine.add_redact_box",
         return_value=MockInstance(),
     )
 
@@ -225,16 +225,16 @@ def test_DicomImageRedactorEngine_redact_multiple_DICOM_images_happy_path(
     """
     # Arrange
     mock_copy_files = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
+        "presidio_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
         return_value=dcm_path,
     )
     mock_dcm_files = [Path("dir1/dir2/file1.dcm"), Path("dir1/dir2/file2.dcm"), Path("dir1/dir2/dir3/file3.dcm")]
     mock_get_all_dcm_files = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.get_all_dcm_files",
+        "presidio_image_redactor.dicom_image_redactor_engine.get_all_dcm_files",
         return_value=mock_dcm_files,
     )
     mock_redact_single = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_DICOM_image",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_DICOM_image",
         return_value=None,
     )
 
@@ -308,19 +308,19 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     """
     # Arrange
     mock_validate_paths = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._validate_paths",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._validate_paths",
         return_value=None,
     )
     mock_copy_files = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
+        "presidio_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
         return_value=mock_dst_path,
     )
     mock_redact_single = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_DICOM_image",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_single_DICOM_image",
         return_value=None,
     )
     mock_redact_multiple = mocker.patch(
-        "presidio_dicom_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_multiple_DICOM_images",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._redact_multiple_DICOM_images",
         return_value=None,
     )
 
