@@ -6,7 +6,6 @@ to account for differences in performance with different versions of Tesseract O
 import tempfile
 import pydicom
 from pathlib import Path
-from presidio_image_redactor.utils.dicom_image_utils import get_all_dcm_files
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
 
 RESOURCES_PARENT_DIR = "presidio-image-redactor/tests/integration/resources"
@@ -61,6 +60,19 @@ def test_redact_from_directory_correctly():
             output_dir=tmpdirname,
             box_color_setting="contrast",
         )
-        output_files = get_all_dcm_files(Path(tmpdirname))
 
-        assert len(output_files) == len(get_all_dcm_files(input_path))
+        # Get list of all DICOM files
+        extensions = ["dcm", "dicom"]
+        input_files = []
+        for extension in extensions:
+            p = input_path.glob(f"**/*.{extension}")
+            files = [x for x in p if x.is_file()]
+            input_files += files
+
+        output_files = []
+        for extension in extensions:
+            p = Path(tmpdirname).glob(f"**/*.{extension}")
+            files = [x for x in p if x.is_file()]
+            output_files += files
+
+        assert len(output_files) == len(input_files)
