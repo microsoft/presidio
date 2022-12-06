@@ -125,7 +125,7 @@ def add_known_generic_phi(phi_list: list) -> list:
     return phi_list
 
 
-def make_phi_list(original_metadata: list, is_name: list, is_patient: list) -> list:
+def make_phi_list(original_metadata: List[Union[ppydicom.multival.MultiValue, List, Typle]], is_name: List[bool], is_patient: List[bool]) -> list:
     """Make the list of PHI to use in Presidio ad-hoc recognizer.
 
     Args:
