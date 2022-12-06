@@ -6,18 +6,58 @@ to account for differences in performance with different versions of Tesseract O
 import tempfile
 import pydicom
 from pathlib import Path
+import numpy as np
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
+import pytest
 
 RESOURCES_PARENT_DIR = "presidio-image-redactor/tests/integration/resources"
 RESOURCES_DIR1 = "presidio-image-redactor/tests/integration/resources/dir1"
+RESOURCES_DIR2 = "presidio-image-redactor/tests/integration/resources/dir1/dir2"
 
 
-def test_redact_from_single_file_correctly():
+@pytest.fixture(scope="module")
+def mock_engine():
+    """Instance of the DicomImageRedactorEngine"""
+    dicom_image_redactor_engine = DicomImageRedactorEngine()
+
+    return dicom_image_redactor_engine
+
+
+@pytest.mark.parametrize(
+    "dcm_filepath",
+    [
+        (Path(RESOURCES_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(RESOURCES_DIR2, "1_ORIGINAL.dcm")),
+        (Path(RESOURCES_DIR2, "2_ORIGINAL.dcm")),
+    ],
+)
+def test_redact_image_correctly(
+    mock_engine: DicomImageRedactorEngine, dcm_filepath: Path
+):
+    """Test the redact function
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): Mock instance.
+        dcm_filepath (Path): Path to DICOM file to load.
+    """
+    test_image = pydicom.dcmread(dcm_filepath)
+    test_redacted_image = mock_engine.redact(test_image)
+
+    assert (
+        np.array_equal(test_image.pixel_array, test_redacted_image.pixel_array) is False
+    )
+
+
+def test_redact_from_single_file_correctly(mock_engine: DicomImageRedactorEngine):
+    """Test the redact_from_file function with single file case
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): Mock instance.
+    """
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Set file paths and redact PII
         input_path = Path(RESOURCES_PARENT_DIR, "0_ORIGINAL.dcm")
-        engine = DicomImageRedactorEngine()
-        engine.redact(
+        mock_engine.redact_from_file(
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             box_color_setting="contrast",
@@ -50,12 +90,16 @@ def test_redact_from_single_file_correctly():
         assert original_pixels != redacted_pixels
 
 
-def test_redact_from_directory_correctly():
+def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
+    """Test the redact_from_file function with multiple files case
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): Mock instance.
+    """
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Set file paths and redact PII
         input_path = Path(RESOURCES_DIR1)
-        engine = DicomImageRedactorEngine()
-        engine.redact(
+        mock_engine.redact_from_file(
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             box_color_setting="contrast",

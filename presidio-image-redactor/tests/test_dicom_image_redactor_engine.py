@@ -161,7 +161,7 @@ def test_check_if_greyscale_happy_path(
 
 
 # ------------------------------------------------------
-# DicomImageRedactorEngine._convert_dcm_to_png()
+# DicomImageRedactorEngine._save_pixel_array_as_png()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "dcm_file, is_greyscale, rescaled_image_numpy_path",
@@ -193,10 +193,13 @@ def test_check_if_greyscale_happy_path(
         ),
     ],
 )
-def test_convert_dcm_to_png_happy_path(
-    mocker, dcm_file: Path, is_greyscale: bool, rescaled_image_numpy_path: Path
+def test_save_pixel_array_as_png_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_file: Path,
+    is_greyscale: bool,
+    rescaled_image_numpy_path: Path,
 ):
-    """Test happy path for DicomImageRedactorEngine._convert_dcm_to_png
+    """Test happy path for DicomImageRedactorEngine._save_pixel_array_as_png
 
     Args:
         dcm_file (pathlib.Path): Path to a DICOM file.
@@ -205,30 +208,56 @@ def test_convert_dcm_to_png_happy_path(
     """
     # Arrange
     test_instance = pydicom.dcmread(dcm_file)
+    test_image = mock_engine._rescale_dcm_pixel_array(test_instance, is_greyscale)
+    filename = "test"
     with open(rescaled_image_numpy_path, "rb") as f:
         loaded_numpy_array = np.load(f)
 
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Act
+        _ = mock_engine._save_pixel_array_as_png(
+            test_image, is_greyscale, filename, tmpdirname
+        )
+
+        # Assert
+        assert np.shape(test_image) == np.shape(loaded_numpy_array)
+        assert f"{filename}.png" in os.listdir(tmpdirname)
+
+
+# ------------------------------------------------------
+# DicomImageRedactorEngine._convert_dcm_to_png()
+# ------------------------------------------------------
+def test_convert_dcm_to_png_happy_path(mocker):
+    """Test happy path for DicomImageRedactorEngine._convert_dcm_to_png"""
+    # Arrange
+    mock_dcm_read = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.pydicom.dcmread",
+        return_value=None,
+    )
     mock_check_if_gresycale = mocker.patch.object(
         DicomImageRedactorEngine,
         "_check_if_greyscale",
-        return_value=is_greyscale,
+        return_value=True,
     )
     mock_rescale_dcm_pixel_array = mocker.patch.object(
         DicomImageRedactorEngine,
         "_rescale_dcm_pixel_array",
-        return_value=loaded_numpy_array,
+        return_value=np.array([1, 2, 3]),
+    )
+    mock_save_array_as_png = mocker.patch.object(
+        DicomImageRedactorEngine, "_save_pixel_array_as_png", return_value=None
     )
     mock_engine = DicomImageRedactorEngine()
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Act
-        test_shape, _ = mock_engine._convert_dcm_to_png(dcm_file, tmpdirname)
+        _, _ = mock_engine._convert_dcm_to_png(Path("filename.dcm"), tmpdirname)
 
         # Assert
-        mock_check_if_gresycale.call_count == 1
-        mock_rescale_dcm_pixel_array.call_count == 1
-        assert np.shape(test_instance.pixel_array) == test_shape
-        assert f"{dcm_file.stem}.png" in os.listdir(tmpdirname)
+        assert mock_dcm_read.call_count == 1
+        assert mock_check_if_gresycale.call_count == 1
+        assert mock_rescale_dcm_pixel_array.call_count == 1
+        assert mock_save_array_as_png.call_count == 1
 
 
 # ------------------------------------------------------
@@ -1136,6 +1165,113 @@ def test_DicomImageRedactorEngine_validate_paths_exceptions(
 
 
 # ------------------------------------------------------
+# DicomImageRedactorEngine redact()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_path",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM")),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom")),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM")),
+    ],
+)
+def test_DicomImageRedactorEngine_redact_happy_path(
+    mocker,
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: str,
+):
+    """Test happy path for DicomImageRedactorEngine redact()
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (str): Path to input DICOM file or dir.
+        output_dir (str): Path to parent directory to write output to.
+        overwrite (bool): True if overwriting original files.
+    """
+    # Arrange
+    test_image = pydicom.dcmread(dcm_path)
+
+    mock_check_greyscale = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_check_if_greyscale",
+        return_value = None
+    )
+    mock_rescale_dcm = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_rescale_dcm_pixel_array",
+        return_value = None
+    )
+    mock_save_pixel_array = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_save_pixel_array_as_png",
+        return_value = None
+    )
+    mock_image_open = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
+        return_value=None,
+    )
+    mock_add_padding = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_add_padding",
+        return_value=None,
+    )
+    
+    mock_get_text_metadata = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_get_text_metadata",
+        return_value=[None, None, None],
+    )
+    mock_make_phi_list = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_make_phi_list",
+        return_value=None,
+    )
+
+    mock_pattern_recognizer = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
+        return_value=None,
+    )
+
+    mock_analyze = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+        return_value=None,
+    )
+
+    mock_format_bboxes = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_format_bboxes",
+        return_value=None,
+    )
+
+    mock_add_redact_box = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_add_redact_box",
+        return_value=None,
+    )
+
+    mock_engine = DicomImageRedactorEngine()
+
+    # Act
+    mock_engine.redact(test_image)
+
+    # Assert
+    assert mock_check_greyscale.call_count == 1
+    assert mock_rescale_dcm.call_count == 1
+    assert mock_save_pixel_array.call_count == 1
+    assert mock_image_open.call_count == 1
+    assert mock_add_padding.call_count == 1
+    assert mock_get_text_metadata.call_count == 1
+    assert mock_make_phi_list.call_count == 1
+    assert mock_pattern_recognizer.call_count == 1
+    assert mock_analyze.call_count == 1
+    assert mock_format_bboxes.call_count == 1
+    assert mock_add_redact_box.call_count == 1
+
+
+# ------------------------------------------------------
 # DicomImageRedactorEngine _redact_single_dicom_image()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
@@ -1351,7 +1487,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
 
 
 # ------------------------------------------------------
-# DicomImageRedactorEngine redact()
+# DicomImageRedactorEngine redact_from_file()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "dcm_path, mock_dst_path, is_dir",
@@ -1372,14 +1508,14 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
         ),
     ],
 )
-def test_DicomImageRedactorEngine_redact_happy_path(
+def test_DicomImageRedactorEngine_redact_from_file_happy_path(
     mocker,
     mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
     mock_dst_path: Path,
     is_dir: bool,
 ):
-    """Test happy path for DicomImageRedactorEngine redact()
+    """Test happy path for DicomImageRedactorEngine redact_from_file()
 
     Args:
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
@@ -1406,7 +1542,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     )
 
     # Act
-    mock_engine.redact(dcm_path, "output", 25, "contrast")
+    mock_engine.redact_from_file(dcm_path, "output", 25, "contrast")
 
     # Assert
     assert mock_validate_paths.call_count == 1

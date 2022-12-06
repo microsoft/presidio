@@ -1,6 +1,6 @@
 import os
 import shutil
-import copy
+from copy import deepcopy
 import tempfile
 from pathlib import Path
 from PIL import Image
@@ -10,12 +10,12 @@ import PIL
 import png
 import numpy as np
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Optional
 
 from presidio_image_redactor import (
     ImageAnalyzerEngine,
     ImageRedactorEngine,
-)  # necessary import for unit testing # noqa: F401
+)  # ImageAnalyzerEngine import needed for unit testing # noqa: F401
 from presidio_analyzer import PatternRecognizer
 
 
@@ -98,6 +98,38 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return image_2d_scaled
 
+    @staticmethod
+    def _save_pixel_array_as_png(
+        pixel_array: np.array,
+        is_greyscale: bool,
+        output_file_name: str = "example",
+        output_dir: str = "temp_dir",
+    ):
+        """Save the pixel data from a loaded DICOM instance as PNG.
+
+        Args:
+            pixel_array (np.ndarray): Pixel data from the instance.
+            is_greyscale (bool): True if image is greyscale.
+            output_file_name (Path): Name of output file (no file extension).
+            output_dir (str): Path to output directory.
+        """
+        shape = pixel_array.shape
+
+        # Write the PNG file
+        os.makedirs(output_dir, exist_ok=True)
+        if is_greyscale:
+            with open(f"{output_dir}/{output_file_name}.png", "wb") as png_file:
+                w = png.Writer(shape[1], shape[0], greyscale=True)
+                w.write(png_file, pixel_array)
+        else:
+            with open(f"{output_dir}/{output_file_name}.png", "wb") as png_file:
+                w = png.Writer(shape[1], shape[0], greyscale=False)
+                # Semi-flatten the pixel array to get RGB representation in two dimensions
+                pixel_array = np.reshape(pixel_array, (shape[0], shape[1] * 3))
+                w.write(png_file, pixel_array)
+
+        return None
+
     @classmethod
     def _convert_dcm_to_png(
         self, filepath: Path, output_dir: str = "temp_dir"
@@ -117,21 +149,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Check if image is grayscale or not using the Photometric Interpolation element
         is_greyscale = self._check_if_greyscale(ds)
 
+        # Rescale pixel array
         image = self._rescale_dcm_pixel_array(ds, is_greyscale)
         shape = image.shape
 
-        # Write the PNG file
-        os.makedirs(output_dir, exist_ok=True)
-        if is_greyscale:
-            with open(f"{output_dir}/{filepath.stem}.png", "wb") as png_file:
-                w = png.Writer(shape[1], shape[0], greyscale=True)
-                w.write(png_file, image)
-        else:
-            with open(f"{output_dir}/{filepath.stem}.png", "wb") as png_file:
-                w = png.Writer(shape[1], shape[0], greyscale=False)
-                # Semi-flatten the pixel array to get RGB representation in two dimensions
-                pixel_array = np.reshape(ds.pixel_array, (shape[0], shape[1] * 3))
-                w.write(png_file, pixel_array)
+        # Write to PNG file
+        self._save_pixel_array_as_png(image, is_greyscale, filepath.stem, output_dir)
 
         return shape, is_greyscale
 
@@ -554,7 +577,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
 
         # Copy instance
-        redacted_instance = copy.deepcopy(instance)
+        redacted_instance = deepcopy(instance)
 
         # Select masking box color
         is_greyscale = self._check_if_greyscale(instance)
@@ -707,6 +730,57 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return dst_dir
 
     def redact(
+        self,
+        image: pydicom.dataset.FileDataset,
+        fill: str = "contrast",
+        padding_width: int = 25,
+    ):
+        """Redact method to redact the given DICOM image.
+
+        Please note, this method duplicates the image, creates a
+        new instance and manipulates it.
+
+        Args:
+            image (pydicom.dataset.FileDataset): Loaded DICOM instance
+                including pixel data and metadata.
+            fill (str): Fill setting to use for redaction box
+                ("contrast" or "background").
+            padding_width (int): Padding width to use when running OCR.
+
+        Return:
+            redacted_image (pydicom.dataset.FileDataset): DICOM instance
+                with redacted pixel data.
+        """
+        instance = deepcopy(image)
+
+        # Load image for processing
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            # Convert DICOM to PNG and add padding for OCR (during analysis)
+            is_greyscale = self._check_if_greyscale(instance)
+            image = self._rescale_dcm_pixel_array(instance, is_greyscale)
+            self._save_pixel_array_as_png(image, is_greyscale, "tmp_dcm", tmpdirname)
+
+            png_filepath = f"{tmpdirname}/tmp_dcm.png"
+            loaded_image = Image.open(png_filepath)
+            image = self._add_padding(loaded_image, is_greyscale, padding_width)
+
+        # Create custom recognizer using DICOM metadata
+        original_metadata, is_name, is_patient = self._get_text_metadata(instance)
+        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
+        deny_list_recognizer = PatternRecognizer(
+            supported_entity="PERSON", deny_list=phi_list
+        )
+        analyzer_results = self.image_analyzer_engine.analyze(
+            image, ad_hoc_recognizers=[deny_list_recognizer]
+        )
+
+        # Redact all bounding boxes from DICOM file
+        bboxes = self._format_bboxes(analyzer_results, padding_width)
+        redacted_image = self._add_redact_box(instance, bboxes, fill)
+
+        return redacted_image
+
+    def redact_from_file(
         self,
         input_dicom_path: str,
         output_dir: str,
