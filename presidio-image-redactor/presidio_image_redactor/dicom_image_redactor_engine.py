@@ -12,12 +12,14 @@ import numpy as np
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
 from typing import Tuple, List, Union
 
-import presidio_image_redactor
-from presidio_image_redactor import ImageAnalyzerEngine
-from presidio_analyzer import AnalyzerEngine, RecognizerRegistry, PatternRecognizer
+from presidio_image_redactor import (
+    ImageAnalyzerEngine,
+    ImageRedactorEngine,
+)  # necessary import for unit testing # noqa: F401
+from presidio_analyzer import PatternRecognizer
 
 
-class DicomImageRedactorEngine:
+class DicomImageRedactorEngine(ImageRedactorEngine):
     """Performs OCR + PII detection + bounding box redaction.
 
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
@@ -439,37 +441,6 @@ class DicomImageRedactorEngine:
         return phi_str_list
 
     @staticmethod
-    def _create_custom_recognizer(
-        phi_list: List[str],
-    ) -> presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine:
-        """Create custom recognizer using DICOM metadata.
-
-        Args:
-            phi_list (list): List of PHI text pulled from the DICOM metadata.
-
-        Return:
-            custom_analyzer_engine (presidio_image_redactor.
-                image_analyzer_engine.ImageAnalyzerEngine):
-                Custom image analyzer engine.
-
-        """
-        # Create recognizer
-        deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
-        )
-
-        # Add recognizer to registry
-        registry = RecognizerRegistry()
-        registry.load_predefined_recognizers()
-        registry.add_recognizer(deny_list_recognizer)
-
-        # Create analyzer
-        analyzer = AnalyzerEngine(registry=registry)
-        custom_analyzer_engine = ImageAnalyzerEngine(analyzer_engine=analyzer)
-
-        return custom_analyzer_engine
-
-    @staticmethod
     def _get_bboxes_from_analyzer_results(analyzer_results: list) -> dict:
         """Organize bounding box info from analyzer results.
 
@@ -675,8 +646,12 @@ class DicomImageRedactorEngine:
         # Create custom recognizer using DICOM metadata
         original_metadata, is_name, is_patient = self._get_text_metadata(instance)
         phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
-        custom_analyzer_engine = self._create_custom_recognizer(phi_list)
-        analyzer_results = custom_analyzer_engine.analyze(image)
+        deny_list_recognizer = PatternRecognizer(
+            supported_entity="PERSON", deny_list=phi_list
+        )
+        analyzer_results = self.image_analyzer_engine.analyze(
+            image, ad_hoc_recognizers=[deny_list_recognizer]
+        )
 
         # Redact all bounding boxes from DICOM file
         bboxes = self._format_bboxes(analyzer_results, padding_width)
