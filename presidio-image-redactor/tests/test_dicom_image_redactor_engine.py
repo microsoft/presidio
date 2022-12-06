@@ -1,6 +1,17 @@
 """Test suite for dicom_image_redactor_engine.py"""
 from pathlib import Path
+import tempfile
+import os
+import numpy as np
+from PIL import Image
+import pydicom
+import presidio_image_redactor
+import presidio_analyzer
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
+from presidio_image_redactor.entities.image_recognizer_result import (
+    ImageRecognizerResult,
+)
+from typing import Union, Tuple
 import pytest
 
 
@@ -8,6 +19,8 @@ TEST_DICOM_PARENT_DIR = "presidio-image-redactor/tests/test_data"
 TEST_DICOM_DIR_1 = "presidio-image-redactor/tests/test_data/dicom_dir_1"
 TEST_DICOM_DIR_2 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
 TEST_DICOM_DIR_3 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
+TEST_NUMPY_DIR = "presidio-image-redactor/tests/test_data/numpy_arrays"
+TEST_PNG_DIR = "presidio-image-redactor/tests/test_data/png_images"
 
 
 @pytest.fixture(scope="module")
@@ -19,6 +32,1102 @@ def mock_engine():
     dicom_image_redactor_engine = DicomImageRedactorEngine()
 
     return dicom_image_redactor_engine
+
+
+# ------------------------------------------------------
+# _get_all_dcm_files()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_dir, expected_list",
+    [
+        (
+            Path(TEST_DICOM_PARENT_DIR),
+            [
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
+                Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
+                Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
+                Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"),
+            ],
+        ),
+        (
+            Path(TEST_DICOM_DIR_1),
+            [
+                Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
+                Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
+                Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"),
+            ],
+        ),
+        (
+            Path(TEST_DICOM_DIR_2),
+            [
+                Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
+                Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
+            ],
+        ),
+        (
+            Path(TEST_DICOM_DIR_3),
+            [
+                Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"),
+            ],
+        ),
+    ],
+)
+def test_get_all_dcm_files_happy_path(
+    mock_engine: DicomImageRedactorEngine, dcm_dir: Path, expected_list: list
+):
+    """Test happy path for _get_all_dcm_files
+
+    Args:
+        dcm_dir (pathlib.Path): Path to a directory containing at least one .dcm file.
+        expected_list (list): List of pathlib Path objects.
+    """
+    # Arrange
+
+    # Act
+    test_files = mock_engine._get_all_dcm_files(dcm_dir)
+
+    # Assert
+    assert test_files == expected_list
+
+
+# ------------------------------------------------------
+# _check_if_greyscale()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_file, expected_result",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), True),
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"), False),
+    ],
+)
+def test_check_if_greyscale_happy_path(
+    mock_engine: DicomImageRedactorEngine, dcm_file: Path, expected_result: bool
+):
+    """Test happy path for _check_if_greyscale
+
+    Args:
+        dcm_file (pathlib.Path): Path to a DICOM file.
+        expected_result (bool): Expected output of _check_if_greyscale.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_file)
+
+    # Act
+    test_is_greyscale = mock_engine._check_if_greyscale(test_instance)
+
+    # Assert
+    assert test_is_greyscale == expected_result
+
+
+# ------------------------------------------------------
+# _rescale_dcm_pixel_array()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_file, is_greyscale",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), True),
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"), False),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), True),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), True),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), True),
+    ],
+)
+def test_check_if_greyscale_happy_path(
+    mock_engine: DicomImageRedactorEngine, dcm_file: Path, is_greyscale: bool
+):
+    """Test happy path for _rescale_dcm_pixel_array
+
+    Args:
+        dcm_file (pathlib.Path): Path to a DICOM file.
+        is_greyscale (bool): If loaded DICOM image is greyscale or not.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_file)
+    test_original_image = test_instance.pixel_array
+
+    # Act
+    test_scaled_image = mock_engine._rescale_dcm_pixel_array(
+        test_instance, is_greyscale
+    )
+
+    # Assert
+    assert np.shape(test_original_image) == np.shape(test_scaled_image)
+    assert np.min(test_scaled_image) >= 0
+    assert np.max(test_scaled_image) <= 255
+    if is_greyscale is True:
+        assert np.max(test_original_image) != np.max(test_scaled_image)
+        assert len(np.shape(test_scaled_image)) == 2
+    else:
+        assert len(np.shape(test_scaled_image)) == 3
+
+
+# ------------------------------------------------------
+# _convert_dcm_to_png()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_file, is_greyscale, rescaled_image_numpy_path",
+    [
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            True,
+            Path(TEST_NUMPY_DIR, "0_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
+            False,
+            Path(TEST_NUMPY_DIR, "RGB_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
+            True,
+            Path(TEST_NUMPY_DIR, "1_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
+            True,
+            Path(TEST_NUMPY_DIR, "2_ORIGINAL.npy"),
+        ),
+        (
+            Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"),
+            True,
+            Path(TEST_NUMPY_DIR, "3_ORIGINAL.npy"),
+        ),
+    ],
+)
+def test_convert_dcm_to_png_happy_path(
+    mocker, dcm_file: Path, is_greyscale: bool, rescaled_image_numpy_path: Path
+):
+    """Test happy path for _convert_dcm_to_png
+
+    Args:
+        dcm_file (pathlib.Path): Path to a DICOM file.
+        is_greyscale (bool): If loaded DICOM image is greyscale or not.
+        rescaled_image_numpy_path (pathlib.Path): Path to file containing numpy array of rescaled image.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_file)
+    with open(rescaled_image_numpy_path, "rb") as f:
+        loaded_numpy_array = np.load(f)
+
+    mock_check_if_gresycale = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_check_if_greyscale",
+        return_value=is_greyscale,
+    )
+    mock_rescale_dcm_pixel_array = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_rescale_dcm_pixel_array",
+        return_value=loaded_numpy_array,
+    )
+    mock_engine = DicomImageRedactorEngine()
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Act
+        test_shape, _ = mock_engine._convert_dcm_to_png(dcm_file, tmpdirname)
+
+        # Assert
+        mock_check_if_gresycale.call_count == 1
+        mock_rescale_dcm_pixel_array.call_count == 1
+        assert np.shape(test_instance.pixel_array) == test_shape
+        assert f"{dcm_file.stem}.png" in os.listdir(tmpdirname)
+
+
+# ------------------------------------------------------
+# _get_bg_color()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "png_file, is_greyscale, invert_flag, expected_bg_color",
+    [
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, False, 243),
+        (Path(TEST_PNG_DIR, "RGB_ORIGINAL.png"), False, False, (0, 0, 0)),
+        (Path(TEST_PNG_DIR, "1_ORIGINAL.png"), True, False, 0),
+        (Path(TEST_PNG_DIR, "2_ORIGINAL.png"), True, False, 0),
+        (Path(TEST_PNG_DIR, "3_ORIGINAL.png"), True, False, 0),
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, True, 12),
+        (Path(TEST_PNG_DIR, "RGB_ORIGINAL.png"), False, True, (255, 255, 255)),
+        (Path(TEST_PNG_DIR, "1_ORIGINAL.png"), True, True, 255),
+        (Path(TEST_PNG_DIR, "2_ORIGINAL.png"), True, True, 255),
+        (Path(TEST_PNG_DIR, "3_ORIGINAL.png"), True, True, 255),
+    ],
+)
+def test_get_bg_color_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    png_file: Path,
+    is_greyscale: bool,
+    invert_flag: bool,
+    expected_bg_color: Union[int, Tuple[int, int, int]],
+):
+    """Test happy path for _get_bg_color
+
+    Args:
+        png_file (pathlib.Path): Path to a PNG file.
+        is_greyscale (bool): If loaded DICOM image is greyscale or not.
+        invert_flag (bool): True if we want to invert image colors to get foreground.
+        expected_bg_color (int or Tuple of int): The expected background color of the image.
+    """
+    # Arrange
+    test_image = Image.open(png_file)
+
+    # Act
+    test_bg_color = mock_engine._get_bg_color(test_image, is_greyscale, invert_flag)
+
+    # Assert
+    assert test_bg_color == expected_bg_color
+
+
+# ------------------------------------------------------
+# _get_most_common_pixel_value()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_file, box_color_setting, expected_color",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), "contrast", 50),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), "contrast", 16383),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), "contrast", 32767),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), "contrast", 4095),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), "background", 973),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), "background", 0),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), "background", 0),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), "background", 0),
+    ],
+)
+def test_get_most_common_pixel_value_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_file: Path,
+    box_color_setting: str,
+    expected_color: Union[int, Tuple[int, int, int]],
+):
+    """Test happy path for _get_most_common_pixel_value
+
+    Args:
+        dcm_file (pathlib.Path): Path to a DICOM file.
+        box_color_setting (str): Color setting to use ("contrast" or "background").
+        expected_color (int or Tuple of int): The expected color returned for the image.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_file)
+
+    # Act
+    test_color = mock_engine._get_most_common_pixel_value(
+        test_instance, box_color_setting
+    )
+
+    # Assert
+    assert test_color == expected_color
+
+
+@pytest.mark.parametrize(
+    "dcm_file, expected_error_type",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"), "TypeError"),
+    ],
+)
+def test_get_most_common_pixel_value_exceptions(
+    mock_engine: DicomImageRedactorEngine, dcm_file: Path, expected_error_type: str
+):
+    """Test error handling of _get_most_common_pixel_value
+
+    Args:
+        dcm_file (pathlib.Path): Path to a DICOM file.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        test_instance = pydicom.dcmread(dcm_file)
+
+        # Act
+        _ = mock_engine._get_most_common_pixel_value(test_instance, "contrast")
+
+        # Assert
+        assert expected_error_type == exc_info.typename
+
+
+# ------------------------------------------------------
+# _add_padding()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "png_file, is_greyscale, padding_width",
+    [
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, 15),
+        (Path(TEST_PNG_DIR, "RGB_ORIGINAL.png"), False, 15),
+        (Path(TEST_PNG_DIR, "1_ORIGINAL.png"), True, 15),
+        (Path(TEST_PNG_DIR, "2_ORIGINAL.png"), True, 15),
+        (Path(TEST_PNG_DIR, "3_ORIGINAL.png"), True, 15),
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, 30),
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, 99),
+    ],
+)
+def test_add_padding_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    png_file: Path,
+    is_greyscale: bool,
+    padding_width: int,
+):
+    """Test happy path for _add_padding
+
+    Args:
+        png_file (pathlib.Path): Path to a PNG file.
+        is_greyscale (bool): If loaded DICOM image is greyscale or not.
+        padding_width (int): Pixel width of padding (uniform).
+    """
+    # Arrange
+    test_image = Image.open(png_file)
+
+    # Act
+    test_image_with_padding = mock_engine._add_padding(
+        test_image, is_greyscale, padding_width
+    )
+
+    # Assert
+    assert test_image_with_padding.height - test_image.height == 2 * padding_width
+    assert test_image_with_padding.width - test_image.width == 2 * padding_width
+
+
+@pytest.mark.parametrize(
+    "png_file, is_greyscale, padding_width, expected_error_type",
+    [
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, -1, "ValueError"),
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, 0, "ValueError"),
+        (Path(TEST_PNG_DIR, "0_ORIGINAL.png"), True, 200, "ValueError"),
+    ],
+)
+def test_add_padding_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    png_file: Path,
+    is_greyscale: bool,
+    padding_width: int,
+    expected_error_type: str,
+):
+    """Test error handling of _add_padding
+
+    Args:
+        png_file (pathlib.Path): Path to a PNG file.
+        is_greyscale (bool): If loaded DICOM image is greyscale or not.
+        padding_width (int): Pixel width of padding (uniform).
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        test_image = Image.open(png_file)
+
+        # Act
+        _, _ = mock_engine._add_padding(test_image, is_greyscale, padding_width)
+
+    # Assert
+    assert expected_error_type == exc_info.typename
+
+
+# ------------------------------------------------------
+# _copy_files_for_processing()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "src_path, expected_num_of_files",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 1),
+        (Path(TEST_DICOM_PARENT_DIR), 15),
+        (Path(TEST_DICOM_DIR_1), 3),
+        (Path(TEST_DICOM_DIR_2), 2),
+        (Path(TEST_DICOM_DIR_3), 1),
+        (Path(TEST_PNG_DIR), 5),
+        (Path(TEST_NUMPY_DIR), 5),
+    ],
+)
+def test_copy_files_for_processing_happy_path(
+    mock_engine: DicomImageRedactorEngine, src_path: Path, expected_num_of_files: int
+):
+    """Test happy path for _copy_files_for_processing
+
+    Args:
+        src_path (pathlib.Path): Path to a file or directory to copy.
+        expected_num_of_files (int): Expected number of files to be copied.
+    """
+    # Arrange
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Act
+        test_dst_path = mock_engine._copy_files_for_processing(src_path, tmpdirname)
+
+        # Arrange
+        p = Path(tmpdirname).glob(f"**/*")
+        files = [x for x in p if x.is_file()]
+
+        # Assert
+        assert Path(tmpdirname) < test_dst_path
+        assert expected_num_of_files == len(files)
+
+
+# ------------------------------------------------------
+# _get_text_metadata()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_path, metadata_text_len, is_name_true_len, is_patient_true_len",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 82, 4, 6),
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"), 93, 9, 10),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), 83, 9, 8),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), 118, 6, 10),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), 135, 8, 10),
+    ],
+)
+def test_get_text_metadata_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: Path,
+    metadata_text_len: int,
+    is_name_true_len: int,
+    is_patient_true_len: int,
+):
+    """Test happy path for _get_text_metadata
+
+    Args:
+        dcm_path (pathlib.Path): Path to DICOM file.
+        metadata_text_len (int): Length of the expected returned metadata_text list.
+        is_name_true_len (int): Number of true values in the returned is_name list.
+        is_patient_true_len (int): Number of true values in the returned is_name list.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    test_metadata_text, test_is_name, test_is_patient = mock_engine._get_text_metadata(
+        test_instance
+    )
+
+    # Assert
+    idx_is_name = list(np.where(np.array(test_is_name) == True)[0])
+    idx_is_patient = list(np.where(np.array(test_is_patient) == True)[0])
+
+    assert len(test_metadata_text) == len(test_is_name) == len(test_is_patient)
+    assert len(idx_is_name) == is_name_true_len
+    assert len(idx_is_patient) == is_patient_true_len
+    assert type(test_metadata_text[idx_is_name[0]]) == str
+
+
+# ------------------------------------------------------
+# _process_names()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "text_metadata, is_name, expected_phi_list",
+    [
+        ([], [], []),
+        (
+            ["JOHN^DOE", "City Hospital", "12345"],
+            [True, False, False],
+            [
+                "JOHN^DOE",
+                "City Hospital",
+                "12345",
+                "JOHN",
+                "DOE",
+                "John",
+                "Doe",
+                "john",
+                "doe",
+                "JOHN DOE",
+                "John Doe",
+                "john doe",
+            ],
+        ),
+    ],
+)
+def test_process_names_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    text_metadata: list,
+    is_name: list,
+    expected_phi_list: list,
+):
+    """Test happy path for _process_names
+
+    Args:
+        text_metadata (list): List of text metadata.
+        is_name (list): Whether each element is a name or not.
+        expected_phi_list (list): List of expected output.
+    """
+    # Arrange
+
+    # Act
+    test_phi_list = mock_engine._process_names(text_metadata, is_name)
+
+    # Assert
+    assert set(test_phi_list) == set(expected_phi_list)
+
+
+# ------------------------------------------------------
+# _add_known_generic_phi()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "phi_list, expected_return_list",
+    [
+        ([], ["M", "[M]", "F", "[F]", "X", "[X]", "U", "[U]"]),
+        (
+            ["JOHN^DOE", "City Hospital", "12345"],
+            [
+                "JOHN^DOE",
+                "City Hospital",
+                "12345",
+                "M",
+                "[M]",
+                "F",
+                "[F]",
+                "X",
+                "[X]",
+                "U",
+                "[U]",
+            ],
+        ),
+    ],
+)
+def test_add_known_generic_phi_happy_path(
+    mock_engine: DicomImageRedactorEngine, phi_list: list, expected_return_list: list
+):
+    """Test happy path for _add_known_generic_phi
+
+    Args:
+        phi_list (list): List of PHI.
+        expected_return_list (list): List of expected output.
+    """
+    # Arrange
+
+    # Act
+    test_phi_list = mock_engine._add_known_generic_phi(phi_list)
+
+    # Assert
+    assert set(test_phi_list) == set(expected_return_list)
+
+
+# ------------------------------------------------------
+# _make_phi_list()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "original_metadata, mock_process_names_val, mock_add_known_val, expected_return_list",
+    [
+        (
+            [
+                ["A", "B"],
+                "A",
+                123,
+                "JOHN^DOE",
+                "City Hospital",
+                "12345",
+            ],
+            [
+                ["A", "B"],
+                "A",
+                123,
+                "JOHN^DOE",
+                "City Hospital",
+                "12345",
+                "JOHN",
+                "DOE",
+                "John",
+                "Doe",
+                "john",
+                "doe",
+                "JOHN DOE",
+                "John Doe",
+                "john doe",
+            ],
+            [
+                ["A", "B"],
+                "A",
+                123,
+                "JOHN^DOE",
+                "City Hospital",
+                "12345",
+                "JOHN",
+                "DOE",
+                "John",
+                "Doe",
+                "john",
+                "doe",
+                "JOHN DOE",
+                "John Doe",
+                "john doe",
+                "M",
+                "[M]",
+                "F",
+                "[F]",
+                "X",
+                "[X]",
+                "U",
+                "[U]",
+            ],
+            [
+                "A",
+                "B",
+                "123",
+                "JOHN^DOE",
+                "City Hospital",
+                "12345",
+                "JOHN",
+                "DOE",
+                "John",
+                "Doe",
+                "john",
+                "doe",
+                "JOHN DOE",
+                "John Doe",
+                "john doe",
+                "M",
+                "[M]",
+                "F",
+                "[F]",
+                "X",
+                "[X]",
+                "U",
+                "[U]",
+            ],
+        ),
+    ],
+)
+def test_make_phi_list_happy_path(
+    mocker,
+    mock_engine: DicomImageRedactorEngine,
+    original_metadata: list,
+    mock_process_names_val: list,
+    mock_add_known_val: list,
+    expected_return_list: list,
+):
+    """Test happy path for _make_phi_list
+
+    Args:
+        original_metadata (list): List extracted metadata (excluding pixel array).
+        mock_process_names_val (list): Value to provide to mock process_names.
+        mock_add_known_val (list): Value to provide to mock _add_known_generic_phi.
+        expected_return_list (list): List of expected output.
+    """
+    # Arrange
+    mock_process_names = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._process_names",
+        return_value=mock_process_names_val,
+    )
+    mock_add_known_generic_phi = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._add_known_generic_phi",
+        return_value=mock_add_known_val,
+    )
+
+    # Act
+    test_phi_str_list = mock_engine._make_phi_list(original_metadata, [], [])
+
+    # Assert
+    assert mock_process_names.call_count == 1
+    assert mock_add_known_generic_phi.call_count == 1
+    assert set(test_phi_str_list) == set(expected_return_list)
+
+
+# ------------------------------------------------------
+# _create_custom_recognizer()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "phi_list",
+    [
+        (
+            [
+                "JOHN^DOE",
+                "City Hospital",
+                "JOHN",
+                "DOE",
+                "John",
+                "Doe",
+                "john",
+                "doe",
+                "JOHN DOE",
+                "John Doe",
+                "john doe",
+                "M",
+                "[M]",
+                "F",
+                "[F]",
+                "X",
+                "[X]",
+                "U",
+                "[U]",
+            ]
+        ),
+    ],
+)
+def test_create_custom_recognizer_happy_path(
+    mock_engine: DicomImageRedactorEngine, phi_list: list
+):
+    """Test happy path for _create_custom_recognizer
+
+    Args:
+        phi_list (list): List of phi.
+        expected_return_list (list): List of expected output.
+    """
+    # Arrange
+
+    # Act
+    test_custom_analyzer_engine = mock_engine._create_custom_recognizer(phi_list)
+
+    # Assert
+    assert (
+        type(test_custom_analyzer_engine)
+        == presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine
+    )
+    assert (
+        type(test_custom_analyzer_engine.analyzer_engine.registry.recognizers[-1])
+        == presidio_analyzer.pattern_recognizer.PatternRecognizer
+    )
+
+
+# ------------------------------------------------------
+# _get_bboxes_from_analyzer_results()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "analyzer_results, expected_bboxes_dict",
+    [
+        (
+            [
+                ImageRecognizerResult(
+                    entity_type="TYPE_1",
+                    start=0,
+                    end=0,
+                    left=25,
+                    top=25,
+                    width=100,
+                    height=100,
+                    score=0.99,
+                ),
+                ImageRecognizerResult(
+                    entity_type="TYPE_2",
+                    start=10,
+                    end=10,
+                    left=25,
+                    top=49,
+                    width=75,
+                    height=51,
+                    score=0.7,
+                ),
+                ImageRecognizerResult(
+                    entity_type="TYPE_3",
+                    start=25,
+                    end=35,
+                    left=613,
+                    top=26,
+                    width=226,
+                    height=35,
+                    score=0.6,
+                ),
+            ],
+            {
+                "0": {
+                    "entity_type": "TYPE_1",
+                    "score": 0.99,
+                    "left": 25,
+                    "top": 25,
+                    "width": 100,
+                    "height": 100,
+                },
+                "1": {
+                    "entity_type": "TYPE_2",
+                    "score": 0.7,
+                    "left": 25,
+                    "top": 49,
+                    "width": 75,
+                    "height": 51,
+                },
+                "2": {
+                    "entity_type": "TYPE_3",
+                    "score": 0.6,
+                    "left": 613,
+                    "top": 26,
+                    "width": 226,
+                    "height": 35,
+                },
+            },
+        ),
+    ],
+)
+def test_get_bboxes_from_analyzer_results_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    analyzer_results: list,
+    expected_bboxes_dict: dict,
+):
+    """Test happy path for _get_bboxes_from_analyzer_results
+
+    Args:
+        analyzer_results (list): Results from using ImageAnalyzerEngine.
+        expected_bboxes_dict (dict): Expected output bounding box dictionary.
+    """
+    # Arrange
+
+    # Act
+    test_bboxes_dict = mock_engine._get_bboxes_from_analyzer_results(analyzer_results)
+
+    # Assert
+    assert test_bboxes_dict == expected_bboxes_dict
+
+
+# ------------------------------------------------------
+# _format_bboxes()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "mock_intermediate_bbox, padding_width, expected_bboxes_dict",
+    [
+        (
+            {
+                "0": {
+                    "entity_type": "TYPE_1",
+                    "score": 0.99,
+                    "left": 10,
+                    "top": 15,
+                    "width": 100,
+                    "height": 100,
+                },
+                "1": {
+                    "entity_type": "TYPE_2",
+                    "score": 0.7,
+                    "left": 25,
+                    "top": 49,
+                    "width": 75,
+                    "height": 51,
+                },
+                "2": {
+                    "entity_type": "TYPE_3",
+                    "score": 0.6,
+                    "left": 613,
+                    "top": 26,
+                    "width": 226,
+                    "height": 35,
+                },
+            },
+            25,
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100},
+                {"top": 24, "left": 0, "width": 75, "height": 51},
+                {"top": 1, "left": 588, "width": 226, "height": 35},
+            ],
+        ),
+    ],
+)
+def test_format_bboxes_happy_path(
+    mocker,
+    mock_engine: DicomImageRedactorEngine,
+    mock_intermediate_bbox: dict,
+    padding_width: int,
+    expected_bboxes_dict: dict,
+):
+    """Test happy path for _format_bboxes
+
+    Args:
+        mock_intermediate_bbox (dict): Value for mock of _get_bboxes_from_analyzer_results.
+        padding_width (int): Pixel width used for padding.
+        expected_bboxes_dict (dict): Expected output bounding box dictionary.
+    """
+    # Arrange
+    mock_get_bboxes = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_bboxes_from_analyzer_results",
+        return_value=mock_intermediate_bbox,
+    )
+
+    # Act
+    test_bboxes_dict = mock_engine._format_bboxes([], padding_width)
+
+    # Assert
+    assert mock_get_bboxes.call_count == 1
+    assert test_bboxes_dict == expected_bboxes_dict
+
+
+@pytest.mark.parametrize(
+    "padding_width, expected_error_type",
+    [(-1, "ValueError"), (-200, "ValueError")],
+)
+def test_format_bboxes_exceptions(
+    mock_engine: DicomImageRedactorEngine, padding_width: int, expected_error_type: str
+):
+    """Test error handling of _format_bboxes
+
+    Args:
+        padding_width (int): Pixel width used for padding.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Act
+        _ = mock_engine._format_bboxes([], padding_width)
+
+    # Assert
+    assert expected_error_type == exc_info.typename
+
+
+# ------------------------------------------------------
+# _set_bbox_color()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "box_color_setting, mock_box_color",
+    [
+        ("contrast", 0),
+        ("contrast", (0, 0, 0)),
+        ("background", 255),
+        ("background", (255, 255, 255)),
+    ],
+)
+def test_set_bbox_color_happy_path(
+    mocker,
+    box_color_setting: str,
+    mock_box_color: Union[int, Tuple[int, int, int]],
+):
+    """Test happy path for _set_bbox_color
+
+    Args:
+        box_color_setting (str): Determines how box color is selected.
+        mock_box_color (int or Tuple of int): Color value to assign to mocker.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
+
+    mock_convert_dcm_to_png = mocker.patch.object(
+        DicomImageRedactorEngine, "_convert_dcm_to_png", return_value=[None, True]
+    )
+    mock_Image_open = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
+        return_value=None,
+    )
+    mock_get_bg_color = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_get_bg_color",
+        return_value=mock_box_color,
+    )
+    mock_engine = DicomImageRedactorEngine()
+
+    # Act
+    test_box_color = mock_engine._set_bbox_color(test_instance, box_color_setting)
+
+    # Assert
+    assert mock_convert_dcm_to_png.call_count == 1
+    assert mock_Image_open.call_count == 1
+    assert mock_get_bg_color.call_count == 1
+    assert test_box_color == mock_box_color
+
+
+@pytest.mark.parametrize(
+    "box_color_setting, expected_error_type",
+    [
+        ("typo", "ValueError"),
+        ("somecolor", "ValueError"),
+        ("0", "ValueError"),
+        ("255", "ValueError"),
+    ],
+)
+def test_set_bbox_color_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    box_color_setting: str,
+    expected_error_type: str,
+):
+    """Test error handling of _set_bbox_color
+
+    Args:
+        box_color_setting (str): Determines how box color is selected.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        test_instance = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
+
+        # Act
+        _ = mock_engine._set_bbox_color(test_instance, box_color_setting)
+
+    # Assert
+    assert expected_error_type == exc_info.typename
+
+
+# ------------------------------------------------------
+# _add_redact_box()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_path, mock_is_greyscale, mock_box_color, bounding_boxes_coordinates",
+    [
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            True,
+            0,
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100},
+                {"top": 24, "left": 0, "width": 75, "height": 51},
+                {"top": 1, "left": 588, "width": 226, "height": 35},
+            ],
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
+            False,
+            (0, 0, 0),
+            [
+                {"top": 0, "left": 0, "width": 500, "height": 500},
+                {"top": 24, "left": 0, "width": 75, "height": 51},
+                {"top": 1, "left": 588, "width": 100, "height": 100},
+            ],
+        ),
+    ],
+)
+def test_add_redact_box_happy_path(
+    mocker,
+    dcm_path: Path,
+    mock_is_greyscale: bool,
+    mock_box_color: Union[int, Tuple[int, int, int]],
+    bounding_boxes_coordinates: dict,
+):
+    """Test happy path for _add_redact_box
+
+    Args:
+        dcm_path (pathlib.Path): Path to DICOM file.
+        mock_is_greyscale (bool): Value to use when mocking _check_if_greyscale.
+        mock_box_color (int or Tuple of int): Color value to assign to mocker.
+        bouding_boxes_coordinates (dict): Formatted bbox coordinates.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+    mock_check_if_greyscale = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_check_if_greyscale",
+        return_value=mock_is_greyscale,
+    )
+    mock_get_common_pixel = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_get_most_common_pixel_value",
+        return_value=mock_box_color,
+    )
+    mock_set_bbox_color = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_set_bbox_color",
+        return_value=mock_box_color,
+    )
+    mock_engine = DicomImageRedactorEngine()
+
+    # Act
+    test_redacted_instance = mock_engine._add_redact_box(
+        test_instance, bounding_boxes_coordinates
+    )
+
+    # Assert
+    mock_check_if_greyscale.call_count == 1
+    if mock_is_greyscale is True:
+        original_pixel_values = np.array(test_instance.pixel_array).flatten()
+        redacted_pixel_values = np.array(test_redacted_instance.pixel_array).flatten()
+        box_color_pixels_original = len(
+            np.where(original_pixel_values == mock_box_color)[0]
+        )
+        box_color_pixels_redacted = len(
+            np.where(redacted_pixel_values == mock_box_color)[0]
+        )
+        mock_get_common_pixel.call_count == 1
+    else:
+        list_of_RGB_pixels_original = np.vstack(test_instance.pixel_array).tolist()
+        list_of_RGB_pixels_redacted = np.vstack(
+            test_redacted_instance.pixel_array
+        ).tolist()
+        box_color_pixels_original = len(
+            np.unique(
+                np.where(np.array(list_of_RGB_pixels_original) == mock_box_color)[0]
+            )
+        )
+        box_color_pixels_redacted = len(
+            np.unique(
+                np.where(np.array(list_of_RGB_pixels_redacted) == mock_box_color)[0]
+            )
+        )
+        mock_set_bbox_color.call_count == 1
+
+    assert box_color_pixels_redacted > box_color_pixels_original
 
 
 # ------------------------------------------------------
@@ -115,11 +1224,11 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     """
     # Arrange
     mock_copy_files = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=dcm_path,
     )
     mock_convert_dcm_to_png = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.convert_dcm_to_png",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._convert_dcm_to_png",
         return_value=[None, None],
     )
     mock_image_open = mocker.patch(
@@ -127,15 +1236,15 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         return_value=None,
     )
     mock_add_padding = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.add_padding",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._add_padding",
         return_value=None,
     )
     mock_get_text_metadata = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.get_text_metadata",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_text_metadata",
         return_value=[None, None, None],
     )
     mock_make_phi_list = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.make_phi_list",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._make_phi_list",
         return_value=None,
     )
 
@@ -144,11 +1253,11 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
             return None
 
     mock_create_custom_recognizer = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.create_custom_recognizer",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._create_custom_recognizer",
         return_value=MockAnalyzer(),
     )
     mock_format_bboxes = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.format_bboxes",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._format_bboxes",
         return_value=None,
     )
 
@@ -157,7 +1266,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
             return None
 
     mock_add_redact_box = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.add_redact_box",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._add_redact_box",
         return_value=MockInstance(),
     )
 
@@ -238,7 +1347,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
     """
     # Arrange
     mock_copy_files = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=dcm_path,
     )
     mock_dcm_files = [
@@ -247,7 +1356,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
         Path("dir1/dir2/dir3/file3.dcm"),
     ]
     mock_get_all_dcm_files = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.get_all_dcm_files",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_all_dcm_files",
         return_value=mock_dcm_files,
     )
     mock_redact_single = mocker.patch(
@@ -339,7 +1448,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         return_value=None,
     )
     mock_copy_files = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.copy_files_for_processing",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=mock_dst_path,
     )
     mock_redact_single = mocker.patch(
