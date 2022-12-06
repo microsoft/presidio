@@ -161,7 +161,7 @@ def make_phi_list(original_metadata: list, is_name: list, is_patient: list) -> l
 
 
 def create_custom_recognizer(
-    phi_list: list,
+    phi_list: List[str],
 ) -> presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine:
     """Create custom recognizer using DICOM metadata.
 
