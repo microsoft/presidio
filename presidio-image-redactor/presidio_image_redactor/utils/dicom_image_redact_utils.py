@@ -2,7 +2,7 @@
 import copy
 import pydicom
 from PIL import Image
-from typing import Tuple
+from typing import Tuple, List, Union
 from pathlib import Path
 import tempfile
 
@@ -125,7 +125,11 @@ def add_known_generic_phi(phi_list: list) -> list:
     return phi_list
 
 
-def make_phi_list(original_metadata: List[Union[ppydicom.multival.MultiValue, List, Typle]], is_name: List[bool], is_patient: List[bool]) -> list:
+def make_phi_list(
+    original_metadata: List[Union[pydicom.multival.MultiValue, list, tuple]],
+    is_name: List[bool],
+    is_patient: List[bool],
+) -> list:
     """Make the list of PHI to use in Presidio ad-hoc recognizer.
 
     Args:
