@@ -15,6 +15,7 @@ typing-extensions = "*"
 
 [dev-packages]
 pytest = "*"
+pytest-mock = "*"
 flake8 = { version = ">=3.9.2" }
 pep8-naming = "*"
 flake8-docstrings = "*"

@@ -14,7 +14,7 @@ requirements = [
     "pypng>=0.20220715.0",
 ]
 
-test_requirements = ["pytest>=3", "flake8==3.7.9"]
+test_requirements = ["pytest>=3", "pytest-mock>=3.10.0", "flake8==3.7.9"]
 
 __version__ = ""
 this_directory = path.abspath(path.dirname(__file__))
