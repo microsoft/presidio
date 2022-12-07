@@ -21,7 +21,7 @@ Pre-requisites:
   instructions on how to install it for your operating system.
 
 !!! attention "Attention"
-    For best performance, please use the most up-to-date version of Tesseract OCR. We used **v5.2.0.20220712** while developing the `DicomImageRedactorEngine`.
+    For best performance, please use the most up-to-date version of Tesseract OCR. Presidio was tested with **v5.2.0**.
 
 === "Using pip"
 
