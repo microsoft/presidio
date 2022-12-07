@@ -27,12 +27,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _get_all_dcm_files(dcm_dir: Path) -> List[Path]:
         """Return paths to all DICOM files in a directory and its sub-directories.
 
-        Args:
-            dcm_dir (pathlib.Path): Path to a directory containing
-                at least one .dcm file.
+        :param dcm_dir: pathlib Path to a directory containing at least one .dcm file.
 
-        Return:
-            files (list): List of pathlib Path objects.
+        :return: List of pathlib Path objects.
         """
         # Define applicable extensions
         extensions = ["[dD][cC][mM]", "[dD][iI][cC][oO][mM]"]
@@ -50,11 +47,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _check_if_greyscale(instance: pydicom.dataset.FileDataset) -> bool:
         """Check if a DICOM image is in greyscale.
 
-        Args:
-            instance (pydicom.dataset.FileDataset): A single DICOM instance.
+        :param instance: A single DICOM instance.
 
-        Return:
-            is_greyscale (bool): FALSE if the Photometric Interpolation is RGB.
+        :return: FALSE if the Photometric Interpolation is RGB.
         """
         # Check if image is grayscale or not using the Photometric Interpolation element
         color_scale = instance[0x0028, 0x0004].value
@@ -68,12 +63,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> np.ndarray:
         """Rescale DICOM pixel_array.
 
-        Args:
-            instance (pydicom.dataset.FileDataset): a singe DICOM instance.
-            is_greyscale (bool): FALSE if the Photometric Interpolation is RGB.
+        :param instance: A singe DICOM instance.
+        :param is_greyscale: FALSE if the Photometric Interpolation is RGB.
 
-        Return:
-            image_2d_scaled (numpy.ndarray): rescaled DICOM pixel_array.
+        :return: Rescaled DICOM pixel_array.
         """
         # Normalize contrast
         if "WindowWidth" in instance:
@@ -103,14 +96,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         is_greyscale: bool,
         output_file_name: str = "example",
         output_dir: str = "temp_dir",
-    ):
+    ) -> None:
         """Save the pixel data from a loaded DICOM instance as PNG.
 
-        Args:
-            pixel_array (np.ndarray): Pixel data from the instance.
-            is_greyscale (bool): True if image is greyscale.
-            output_file_name (Path): Name of output file (no file extension).
-            output_dir (str): Path to output directory.
+        :param pixel_array: Pixel data from the instance.
+        :param is_greyscale: True if image is greyscale.
+        :param output_file_name: Name of output file (no file extension).
+        :param output_dir: String path to output directory.
         """
         shape = pixel_array.shape
 
@@ -133,13 +125,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _convert_dcm_to_png(cls, filepath: Path, output_dir: str = "temp_dir") -> tuple:
         """Convert DICOM image to PNG file.
 
-        Args:
-            filepath (pathlib.Path): Path to a single dcm file.
-            output_dir (str): Path to output directory.
+        :param filepath: pathlib Path to a single dcm file.
+        :param output_dir: String path to output directory.
 
-        Return:
-            shape (tuple): Returns shape of pixel array.
-            is_greyscale (bool): FALSE if the Photometric Interpolation is RGB.
+        :return: Shape of pixel array and if image mode is greyscale.
         """
         ds = pydicom.dcmread(filepath)
 
@@ -161,13 +150,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> Union[int, Tuple[int, int, int]]:
         """Select most common color as background color.
 
-        Args:
-            image (PIL.PngImagePlugin.PngImageFile): Loaded PNG image.
-            colorscale (str): Colorscale of image (e.g., 'grayscale', 'RGB')
-            invert (bool): TRUE if you want to get the inverse of the bg color.
+        :param image: Loaded PNG image.
+        :param colorscale: Colorscale of image (e.g., 'grayscale', 'RGB')
+        :param invert: TRUE if you want to get the inverse of the bg color.
 
-        Return:
-            bg_color (tuple): Background color.
+        :return: Background color.
         """
         # Invert colors if invert flag is True
         if invert:
@@ -201,15 +188,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> Union[int, Tuple[int, int, int]]:
         """Find the most common pixel value.
 
-        Args:
-            instance (pydicom.dataset.FileDataset): a singe DICOM instance.
-            box_color_setting (str): Determines how box color is selected.
-                'contrast' - Masks stand out relative to background.
-                'background' - Masks are same color as background.
+        :param instance: A singe DICOM instance.
+        :param box_color_setting: Determines how box color is selected.
+        'contrast' - Masks stand out relative to background.
+        'background' - Masks are same color as background.
 
-        Return:
-            pixel_value (int or tuple of int): Most or least common pixel value
-                (depending on box_color_setting).
+        :return: Most or least common pixel value (depending on box_color_setting).
         """
         # Get flattened pixel array
         flat_pixel_array = np.array(instance.pixel_array).flatten()
@@ -242,14 +226,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> PIL.PngImagePlugin.PngImageFile:
         """Add border to image using most common color.
 
-        Args:
-            image (PIL.PngImagePlugin.PngImageFile): Loaded PNG image.
-            is_greyscale (bool): Whether image is in grayscale or not.
-            padding_width (int): Pixel width of padding (uniform).
+        :param image: Loaded PNG image.
+        :param is_greyscale: Whether image is in grayscale or not.
+        :param padding_width: Pixel width of padding (uniform).
 
-        Return:
-            image_with_padding (PIL.PngImagePlugin.PngImageFile): PNG image
-                with padding.
+        :return: PNG image with padding.
         """
         # Check padding width value
         if padding_width <= 0:
@@ -284,13 +265,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _copy_files_for_processing(src_path: str, dst_parent_dir: str) -> Path:
         """Copy DICOM files. All processing should be done on the copies.
 
-        Args:
-            src_path (str): Source DICOM file or directory containing DICOM files.
-            dst_parent_dir (str): Parent directory of where you want to
-                store the copies.
+        :param src_path: String path to DICOM file or directory containing DICOM files.
+        :param dst_parent_dir: String path to parent directory of output location.
 
-        Return:
-            dst_path (pathlib.Path): Output location of the file(s).
+        :return: Output location of the file(s).
         """
         # Identify output path
         tail = list(Path(src_path).parts)[-1]
@@ -319,15 +297,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> Tuple[list, list, list]:
         """Retrieve all text metadata from the DICOM image.
 
-        Args:
-            instance (pydicom.dataset.FileDataset): Loaded DICOM instance.
+        :param instance: Loaded DICOM instance.
 
-        Return:
-            metadata_text (list): List of all the instance's element values
-                (excluding pixel data).
-            is_name (list): True if the element is specified as being a name.
-            is_patient (list): True if the element is specified as being
-                related to the patient.
+        :return: List of all the instance's element values (excluding pixel data),
+        bool for if the element is specified as being a name,
+        bool for if the element is specified as being related to the patient.
         """
         metadata_text = list()
         is_name = list()
@@ -361,13 +335,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _process_names(text_metadata: list, is_name: list) -> list:
         """Process names to have multiple iterations in our PHI list.
 
-        Args:
-            metadata_text (list): List of all the instance's element values
-                (excluding pixel data).
-            is_name (list): True if the element is specified as being a name.
+        :param metadata_text: List of all the instance's element values
+        (excluding pixel data).
+        :param is_name: True if the element is specified as being a name.
 
-        Return:
-            phi_list (list): Metadata text with additional name iterations appended.
+        :return: Metadata text with additional name iterations appended.
         """
         phi_list = text_metadata.copy()
 
@@ -405,11 +377,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _add_known_generic_phi(phi_list: list) -> list:
         """Add known potential generic PHI values.
 
-        Args:
-            phi_list (list): List of PHI to use with Presidio ad-hoc recognizer.
+        :param phi_list: List of PHI to use with Presidio ad-hoc recognizer.
 
-        Return:
-            phi_list (list): Same list with added known values.
+        :return: Same list with added known values.
         """
         known_generic_phi = ["[M]", "[F]", "[X]", "[U]", "M", "F", "X", "U"]
         phi_list.extend(known_generic_phi)
@@ -425,16 +395,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> list:
         """Make the list of PHI to use in Presidio ad-hoc recognizer.
 
-        Args:
-            original_metadata (list): List of all the instance's element values
-                (excluding pixel data).
-            is_name (list): True if the element is specified as being a name.
-            is_patient (list): True if the element is specified as being
-                related to the patient.
+        :param original_metadata: List of all the instance's element values
+        (excluding pixel data).
+        :param is_name: True if the element is specified as being a name.
+        :param is_patient: True if the element is specified as being
+        related to the patient.
 
-        Return:
-            phi_str_list (list): List of PHI (str) to use with
-                Presidio ad-hoc recognizer.
+        :return: List of PHI (str) to use with Presidio ad-hoc recognizer.
         """
         # Process names
         phi_list = cls._process_names(original_metadata, is_name)
@@ -461,11 +428,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _get_bboxes_from_analyzer_results(analyzer_results: list) -> dict:
         """Organize bounding box info from analyzer results.
 
-        Args:
-            analyzer_results (list): Results from using ImageAnalyzerEngine.
+        :param analyzer_results: Results from using ImageAnalyzerEngine.
 
-        Return:
-            bboxes_dict (dict): Bounding box info organized.
+        :return: Bounding box info organized.
         """
         bboxes_dict = {}
         for i in range(0, len(analyzer_results)):
@@ -483,15 +448,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return bboxes_dict
 
     @classmethod
-    def _format_bboxes(cls, analyzer_results: list, padding_width: int) -> list:
+    def _format_bboxes(cls, analyzer_results: list, padding_width: int) -> List[dict]:
         """Format the bounding boxes to write directly back to DICOM pixel data.
 
-        Args:
-            analyzer_results (list): The analyzer results.
-            padding_width (int): Pixel width used for padding (0 if no padding).
+        :param analyzer_results: The analyzer results.
+        :param padding_width: Pixel width used for padding (0 if no padding).
 
-        Return:
-            bboxes (list): Bounding box information per word.
+        :return: Bounding box information per word.
         """
         if padding_width < 0:
             raise ValueError("Padding width must be a positive number.")
@@ -518,17 +481,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     @classmethod
     def _set_bbox_color(
         cls, instance: pydicom.dataset.FileDataset, box_color_setting: str
-    ):
+    ) -> Union[int, Tuple[int, int, int]]:
         """Set the bounding box color.
 
-        Args:
-            instance (pydicom.dataset.FileDataset): A single DICOM instance.
-            box_color_setting (str): Determines how box color is selected.
-                'contrast' - Masks stand out relative to background.
-                'background' - Masks are same color as background.
+        :param instance: A single DICOM instance.
+        :param box_color_setting: Determines how box color is selected.
+        'contrast' - Masks stand out relative to background.
+        'background' - Masks are same color as background.
 
-        Return:
-            box_color (any): int or tuple of int values determining masking box color.
+        :return: int or tuple of int values determining masking box color.
         """
         # Check if we want the box color to contrast with the background
         if box_color_setting.lower() in ["contrast", "invert", "inverted", "inverse"]:
@@ -559,17 +520,14 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> pydicom.dataset.FileDataset:
         """Add redaction bounding boxes on a DICOM instance.
 
-        Args:
-            instance (pydicom.dataset.FileDataset): A single DICOM instance.
-            bounding_boxes_coordinates (dict): Bounding box coordinates.
-            box_color_setting (str): Determines how box color is selected.
-                'contrast' - Masks stand out relative to background.
-                'background' - Masks are same color as background.
+        :param instance: A single DICOM instance.
+        :param bounding_boxes_coordinates: Bounding box coordinates.
+        :param box_color_setting: Determines how box color is selected.
+        'contrast' - Masks stand out relative to background.
+        'background' - Masks are same color as background.
 
-        Return:
-            A new dicom instance with redaction bounding boxes.
+        :return: A new dicom instance with redaction bounding boxes.
         """
-
         # Copy instance
         redacted_instance = deepcopy(instance)
 
@@ -599,9 +557,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _validate_paths(input_path: str, output_dir: str) -> None:
         """Validate the DICOM path.
 
-        Args:
-            input_path (str): Path to input DICOM file or dir.
-            output_dir (str): Path to parent directory to write output to.
+        :param input_path: Path to input DICOM file or dir.
+        :param output_dir: Path to parent directory to write output to.
         """
         # Check input is an actual file or dir
         if Path(input_path).is_dir() is False:
@@ -624,18 +581,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> str:
         """Redact text PHI present on a DICOM image.
 
-        Args:
-            dcm_path (pathlib.Path): Path to the DICOM file.
-            box_color_setting (str): Color setting to use for bounding boxes
-                ("contrast" or "background").
-            padding_width (int): Pixel width of padding (uniform).
-            overwrite (bool): Only set to True if you are providing the
-                duplicated DICOM path in dcm_path.
-            dst_parent_dir (str): Parent directory of where you want to
-                store the copies.
+        :param dcm_path: String path to the DICOM file.
+        :param box_color_setting: Color setting to use for bounding boxes
+        ("contrast" or "background").
+        :param padding_width: Pixel width of padding (uniform).
+        :param overwrite: Only set to True if you are providing the
+        duplicated DICOM path in dcm_path.
+        :param dst_parent_dir: String path to parent directory of where to store copies.
 
-        Return:
-            dst_path (str): Path to the output DICOM file.
+        :return: Path to the output DICOM file.
         """
         # Ensure we are working on a single file
         if Path(dcm_path).is_dir():
@@ -689,15 +643,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     ) -> str:
         """Redact text PHI present on all DICOM images in a directory.
 
-        Args:
-            dcm_dir (str): Directory containing DICOM files (can be nested).
-            box_color_setting (str): Color setting to use for bounding boxes
-                ("contrast" or "background").
-            padding_width (int): Pixel width of padding (uniform).
-            overwrite (bool): Only set to True if you are providing
-                the duplicated DICOM dir in dcm_dir.
-            dst_parent_dir (str): Parent directory of where you want to
-                store the copies.
+        :param dcm_dir: String path to directory containing DICOM files (can be nested).
+        :param box_color_setting: Color setting to use for bounding boxes
+        ("contrast" or "background").
+        :param padding_width: Pixel width of padding (uniform).
+        :param overwrite: Only set to True if you are providing
+        the duplicated DICOM dir in dcm_dir.
+        :param dst_parent_dir: String path to parent directory of where to store copies.
 
         Return:
             dst_dir (str): Path to the output DICOM directory.
@@ -734,16 +686,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         Please note, this method duplicates the image, creates a
         new instance and manipulates it.
 
-        Args:
-            image (pydicom.dataset.FileDataset): Loaded DICOM instance
-                including pixel data and metadata.
-            fill (str): Fill setting to use for redaction box
-                ("contrast" or "background").
-            padding_width (int): Padding width to use when running OCR.
+        :param image: Loaded DICOM instance including pixel data and metadata.
+        :param fill: Fill setting to use for redaction box ("contrast" or "background").
+        :param padding_width: Padding width to use when running OCR.
 
-        Return:
-            redacted_image (pydicom.dataset.FileDataset): DICOM instance
-                with redacted pixel data.
+        :return: DICOM instance with redacted pixel data.
         """
         instance = deepcopy(image)
 
@@ -786,12 +733,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         Please notice, this method duplicates the image, creates a
         new instance and manipulate it.
 
-        Args:
-            input_dicom_path (str): Path to DICOM image(s).
-            output_dir (str): Parent output directory.
-            padding_width (int): Padding width to use when running OCR.
-            box_color_setting (str): Color setting to use for redaction box
-                ("contrast" or "background").
+        :param input_dicom_path: String path to DICOM image(s).
+        :param output_dir: String path to parent output directory.
+        :param padding_width : Padding width to use when running OCR.
+        :param box_color_setting: Color setting to use for redaction box
+        ("contrast" or "background").
         """
         # Verify the given paths
         self._validate_paths(input_dicom_path, output_dir)
