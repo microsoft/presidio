@@ -27,7 +27,7 @@ Pre-requisites:
 - Install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) by following the
   instructions on how to install it for your operating system.
 
-  For best performance, please use the most up-to-date version of Tesseract OCR. We used **v5.2.0.20220712** while developing the `DicomImageRedactorEngine`.
+  For best performance, please use the most up-to-date version of Tesseract OCR. Presidio was tested with **v5.2.0**.
 
 ### As package
 
@@ -119,7 +119,7 @@ Python script example can be found under:
 
 ## Getting started (DICOM images)
 
-> *Note this module only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata. We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI.*
+> *This module only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata. We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI. To redact sensitive information from metadata, consider using another package such as the [Tools for Health Data Anonymization](https://github.com/microsoft/Tools-for-Health-Data-Anonymization).*
 
 The engine will receive 4 parameters (the last 2 being optional):
 
