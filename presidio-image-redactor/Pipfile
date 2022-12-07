@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 flask = ">=1.1.2"
-pandas = ">=1.1.5"
 pytesseract = ">=0.3.7"
 presidio-analyzer = ">=2.2.0"
 pillow = ">=9.0"

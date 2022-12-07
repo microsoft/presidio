@@ -10,6 +10,8 @@ requirements = [
     "presidio-analyzer>=1.9.0",
     "matplotlib==3.3.4",
     "pydantic==1.7.4",
+    "pydicom>=2.3.0",
+    "pypng>=0.20220715.0",
 ]
 
 test_requirements = ["pytest>=3", "flake8==3.7.9"]
