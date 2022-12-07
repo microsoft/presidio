@@ -411,14 +411,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         Return:
             phi_list (list): Same list with added known values.
         """
-        phi_list.append("M")
-        phi_list.append("[M]")
-        phi_list.append("F")
-        phi_list.append("[F]")
-        phi_list.append("X")
-        phi_list.append("[X]")
-        phi_list.append("U")
-        phi_list.append("[U]")
+        known_generic_phi = ["[M]", "[F]", "[X]", "[U]", "M", "F", "X", "U"]
+        phi_list.extend(known_generic_phi)
 
         return phi_list
 
