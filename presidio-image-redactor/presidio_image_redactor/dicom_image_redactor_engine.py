@@ -10,12 +10,10 @@ import PIL
 import png
 import numpy as np
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
-from typing import Tuple, List, Union, Optional
+from typing import Tuple, List, Union
 
-from presidio_image_redactor import (
-    ImageAnalyzerEngine,
-    ImageRedactorEngine,
-)  # ImageAnalyzerEngine import needed for unit testing # noqa: F401
+from presidio_image_redactor import ImageRedactorEngine
+from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
 from presidio_analyzer import PatternRecognizer
 
 
@@ -30,7 +28,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Return paths to all DICOM files in a directory and its sub-directories.
 
         Args:
-            dcm_dir (pathlib.Path): Path to a directory containing at least one .dcm file.
+            dcm_dir (pathlib.Path): Path to a directory containing
+                at least one .dcm file.
 
         Return:
             files (list): List of pathlib Path objects.
@@ -124,16 +123,14 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         else:
             with open(f"{output_dir}/{output_file_name}.png", "wb") as png_file:
                 w = png.Writer(shape[1], shape[0], greyscale=False)
-                # Semi-flatten the pixel array to get RGB representation in two dimensions
+                # Semi-flatten the pixel array to RGB representation in 2D
                 pixel_array = np.reshape(pixel_array, (shape[0], shape[1] * 3))
                 w.write(png_file, pixel_array)
 
         return None
 
     @classmethod
-    def _convert_dcm_to_png(
-        self, filepath: Path, output_dir: str = "temp_dir"
-    ) -> tuple:
+    def _convert_dcm_to_png(cls, filepath: Path, output_dir: str = "temp_dir") -> tuple:
         """Convert DICOM image to PNG file.
 
         Args:
@@ -146,15 +143,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         ds = pydicom.dcmread(filepath)
 
-        # Check if image is grayscale or not using the Photometric Interpolation element
-        is_greyscale = self._check_if_greyscale(ds)
+        # Check if image is grayscale using the Photometric Interpolation element
+        is_greyscale = cls._check_if_greyscale(ds)
 
         # Rescale pixel array
-        image = self._rescale_dcm_pixel_array(ds, is_greyscale)
+        image = cls._rescale_dcm_pixel_array(ds, is_greyscale)
         shape = image.shape
 
         # Write to PNG file
-        self._save_pixel_array_as_png(image, is_greyscale, filepath.stem, output_dir)
+        cls._save_pixel_array_as_png(image, is_greyscale, filepath.stem, output_dir)
 
         return shape, is_greyscale
 
@@ -200,7 +197,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @classmethod
     def _get_most_common_pixel_value(
-        self, instance: pydicom.dataset.FileDataset, box_color_setting: str = "contrast"
+        cls, instance: pydicom.dataset.FileDataset, box_color_setting: str = "contrast"
     ) -> Union[int, Tuple[int, int, int]]:
         """Find the most common pixel value.
 
@@ -217,7 +214,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Get flattened pixel array
         flat_pixel_array = np.array(instance.pixel_array).flatten()
 
-        is_greyscale = self._check_if_greyscale(instance)
+        is_greyscale = cls._check_if_greyscale(instance)
         if is_greyscale:
             # Get most common value
             values, counts = np.unique(flat_pixel_array, return_counts=True)
@@ -238,7 +235,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @classmethod
     def _add_padding(
-        self,
+        cls,
         image: PIL.PngImagePlugin.PngImageFile,
         is_greyscale: bool,
         padding_width: int,
@@ -251,18 +248,19 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width (int): Pixel width of padding (uniform).
 
         Return:
-            image_with_padding (PIL.PngImagePlugin.PngImageFile): PNG image with padding.
+            image_with_padding (PIL.PngImagePlugin.PngImageFile): PNG image
+                with padding.
         """
         # Check padding width value
         if padding_width <= 0:
             raise ValueError("Enter a positive value for padding")
         elif padding_width >= 100:
             raise ValueError(
-                "Excessive padding width entered. Please use a width under 100 pixels."
+                "Excessive padding width entered. Please use a width under 100 pixels."  # noqa: E501
             )
 
         # Select most common color as border color
-        border_color = self._get_bg_color(image, is_greyscale)
+        border_color = cls._get_bg_color(image, is_greyscale)
 
         # Add padding
         right = padding_width
@@ -288,7 +286,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         Args:
             src_path (str): Source DICOM file or directory containing DICOM files.
-            dst_parent_dir (str): Parent directory of where you want to store the copies.
+            dst_parent_dir (str): Parent directory of where you want to
+                store the copies.
 
         Return:
             dst_path (pathlib.Path): Output location of the file(s).
@@ -425,7 +424,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @classmethod
     def _make_phi_list(
-        self,
+        cls,
         original_metadata: List[Union[pydicom.multival.MultiValue, list, tuple]],
         is_name: List[bool],
         is_patient: List[bool],
@@ -440,13 +439,14 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 related to the patient.
 
         Return:
-            phi_str_list (list): List of PHI (str) to use with Presidio ad-hoc recognizer.
+            phi_str_list (list): List of PHI (str) to use with
+                Presidio ad-hoc recognizer.
         """
         # Process names
-        phi_list = self._process_names(original_metadata, is_name)
+        phi_list = cls._process_names(original_metadata, is_name)
 
         # Add known potential phi values
-        phi_list = self._add_known_generic_phi(phi_list)
+        phi_list = cls._add_known_generic_phi(phi_list)
 
         # Flatten any nested lists
         for phi in phi_list:
@@ -489,7 +489,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return bboxes_dict
 
     @classmethod
-    def _format_bboxes(self, analyzer_results: list, padding_width: int) -> list:
+    def _format_bboxes(cls, analyzer_results: list, padding_width: int) -> list:
         """Format the bounding boxes to write directly back to DICOM pixel data.
 
         Args:
@@ -503,7 +503,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             raise ValueError("Padding width must be a positive number.")
 
         # Write bounding box info to json files for now
-        phi_bboxes_dict = self._get_bboxes_from_analyzer_results(analyzer_results)
+        phi_bboxes_dict = cls._get_bboxes_from_analyzer_results(analyzer_results)
 
         # convert detected bounding boxes to list
         bboxes = [phi_bboxes_dict[i] for i in phi_bboxes_dict.keys()]
@@ -523,7 +523,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @classmethod
     def _set_bbox_color(
-        self, instance: pydicom.dataset.FileDataset, box_color_setting: str
+        cls, instance: pydicom.dataset.FileDataset, box_color_setting: str
     ):
         """Set the bounding box color.
 
@@ -548,17 +548,17 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         with tempfile.TemporaryDirectory() as tmpdirname:
             dst_path = Path(f"{tmpdirname}/temp.dcm")
             instance.save_as(dst_path)
-            _, is_greyscale = self._convert_dcm_to_png(dst_path, output_dir=tmpdirname)
+            _, is_greyscale = cls._convert_dcm_to_png(dst_path, output_dir=tmpdirname)
 
             png_filepath = f"{tmpdirname}/{dst_path.stem}.png"
             loaded_image = Image.open(png_filepath)
-            box_color = self._get_bg_color(loaded_image, is_greyscale, invert_flag)
+            box_color = cls._get_bg_color(loaded_image, is_greyscale, invert_flag)
 
         return box_color
 
     @classmethod
     def _add_redact_box(
-        self,
+        cls,
         instance: pydicom.dataset.FileDataset,
         bounding_boxes_coordinates: list,
         box_color_setting: str = "contrast",
@@ -580,11 +580,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         redacted_instance = deepcopy(instance)
 
         # Select masking box color
-        is_greyscale = self._check_if_greyscale(instance)
+        is_greyscale = cls._check_if_greyscale(instance)
         if is_greyscale:
-            box_color = self._get_most_common_pixel_value(instance, box_color_setting)
+            box_color = cls._get_most_common_pixel_value(instance, box_color_setting)
         else:
-            box_color = self._set_bbox_color(redacted_instance, box_color_setting)
+            box_color = cls._set_bbox_color(redacted_instance, box_color_setting)
 
         # Apply mask
         for i in range(0, len(bounding_boxes_coordinates)):
