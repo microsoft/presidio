@@ -12,13 +12,13 @@ from presidio_image_redactor.entities.image_recognizer_result import (
 from typing import Union, Tuple
 import pytest
 
-
-TEST_DICOM_PARENT_DIR = "presidio-image-redactor/tests/test_data"
-TEST_DICOM_DIR_1 = "presidio-image-redactor/tests/test_data/dicom_dir_1"
-TEST_DICOM_DIR_2 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_2"
-TEST_DICOM_DIR_3 = "presidio-image-redactor/tests/test_data/dicom_dir_1/dicom_dir_3"
-TEST_NUMPY_DIR = "presidio-image-redactor/tests/test_data/numpy_arrays"
-TEST_PNG_DIR = "presidio-image-redactor/tests/test_data/png_images"
+SCRIPT_DIR = os.path.dirname(__file__)
+TEST_DICOM_PARENT_DIR = f"{SCRIPT_DIR}/test_data"
+TEST_DICOM_DIR_1 = f"{SCRIPT_DIR}/test_data/dicom_dir_1"
+TEST_DICOM_DIR_2 = f"{SCRIPT_DIR}/test_data/dicom_dir_1/dicom_dir_2"
+TEST_DICOM_DIR_3 = f"{SCRIPT_DIR}/test_data/dicom_dir_1/dicom_dir_3"
+TEST_NUMPY_DIR = f"{SCRIPT_DIR}/test_data/numpy_arrays"
+TEST_PNG_DIR = f"{SCRIPT_DIR}/test_data/png_images"
 
 
 @pytest.fixture(scope="module")

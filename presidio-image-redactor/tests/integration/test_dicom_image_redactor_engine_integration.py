@@ -6,13 +6,15 @@ to account for differences in performance with different versions of Tesseract O
 import tempfile
 import pydicom
 from pathlib import Path
+import os
 import numpy as np
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
 import pytest
 
-RESOURCES_PARENT_DIR = "presidio-image-redactor/tests/integration/resources"
-RESOURCES_DIR1 = "presidio-image-redactor/tests/integration/resources/dir1"
-RESOURCES_DIR2 = "presidio-image-redactor/tests/integration/resources/dir1/dir2"
+SCRIPT_DIR = os.path.dirname(__file__)
+RESOURCES_PARENT_DIR = f"{SCRIPT_DIR}/resources"
+RESOURCES_DIR1 = f"{SCRIPT_DIR}/resources/dir1"
+RESOURCES_DIR2 = f"{SCRIPT_DIR}/resources/dir1/dir2"
 
 
 @pytest.fixture(scope="module")
