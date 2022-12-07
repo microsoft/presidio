@@ -10,4 +10,10 @@
 
 ## Image Redactor
 
+### Standard Image Types
+
 [![Image Redactor Design](assets/image-redactor-design.png)](image-redactor/index.md)
+
+### DICOM Images
+
+[![DICOM Image Redactor Design](assets/dicom-image-redactor-design.png)](image-redactor/index.md)

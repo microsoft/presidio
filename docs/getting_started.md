@@ -72,13 +72,22 @@ Using Presidio's modules as Python packages to get started
     2. Redact text PII from DICOM image
     
         ```py
+        import pydicom
         from presidio_image_redactor import DicomImageRedactorEngine
-        
-        input_data_path = "path/to/dicom/files"
-        output_parent_dir = "output"
-        
-        redactor = DicomImageRedactorEngine(input_data_path, output_parent_dir)
-        redactor.redact(input_path, output_dir)
+
+        # Set input and output paths
+        input_path = "path/to/your/dicom/file.dcm"
+        output_dir = "./output"
+
+        # Initialize the engine
+        engine = DicomImageRedactorEngine()
+
+        # Option 1: Redact from a loaded DICOM image
+        dicom_image = pydicom.dcmread(input_path)
+        redacted_dicom_image = engine.redact(dicom_image, fill="contrast")
+
+        # Option 2: Redact from DICOM file(s)
+        engine.redact_from_file(input_path, output_dir, padding_width=25, box_color_setting="contrast")
         ```
 ---
 

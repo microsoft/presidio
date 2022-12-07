@@ -16,7 +16,7 @@ Process for standard images:
 
 ![Image Redactor Design](../docs/assets/image-redactor-design.png)
 
-Process for DICOM images:
+Process for DICOM files:
 
 ![DICOM image Redactor Design](../docs/assets/dicom-image-redactor-design.png)
 
@@ -129,20 +129,22 @@ The engine will receive 4 parameters (the last 2 being optional):
 4. Redact/masking box color setting.
 
 ```python
-from PIL import Image
+import pydicom
 from presidio_image_redactor import DicomImageRedactorEngine
 
 # Set input and output paths
-input_path = "presidio-image-redactor/tests/integration/resources/sample.dcm"
+input_path = "path/to/your/dicom/file.dcm"
 output_dir = "./output"
 
 # Initialize the engine
 engine = DicomImageRedactorEngine()
 
-# Redact the DICOM image(s)
-engine.redact(input_path, output_dir, padding_width=25, box_color_setting="contrast")
+# Option 1: Redact from a loaded DICOM image
+dicom_image = pydicom.dcmread(input_path)
+redacted_dicom_image = engine.redact(dicom_image, fill="contrast")
 
-# Output is saved to output_dir
+# Option 2: Redact from DICOM file(s)
+engine.redact_from_file(input_path, output_dir, padding_width=25, box_color_setting="contrast")
 ```
 
 For an example notebook implementing this code with visual confirmation of the output, see [docs/samples/python/example_dicom_image_redactor.ipynb](../docs/samples/python/example_dicom_image_redactor.ipynb).

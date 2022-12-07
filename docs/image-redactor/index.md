@@ -119,20 +119,22 @@ Python script example can be found under:
     Once the Presidio-image-redactor package is installed, run this simple script:
     
     ```python
-    from PIL import Image
+    import pydicom
     from presidio_image_redactor import DicomImageRedactorEngine
 
     # Set input and output paths
-    input_path = "path/to/your/DICOM_file"
+    input_path = "path/to/your/dicom/file.dcm"
     output_dir = "./output"
 
     # Initialize the engine
     engine = DicomImageRedactorEngine()
 
-    # Redact the DICOM image(s)
-    engine.redact(input_path, output_dir, box_color_setting="contrast")
+    # Option 1: Redact from a loaded DICOM image
+    dicom_image = pydicom.dcmread(input_path)
+    redacted_dicom_image = engine.redact(dicom_image, fill="contrast")
 
-    # Output is saved to output_dir
+    # Option 2: Redact from DICOM file(s)
+    engine.redact_from_file(input_path, output_dir, padding_width=25, box_color_setting="contrast")
     ```
 
 ## API reference
