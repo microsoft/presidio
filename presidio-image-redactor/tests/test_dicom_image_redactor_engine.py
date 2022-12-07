@@ -84,6 +84,10 @@ def test_get_all_dcm_files_happy_path(
 
     # Act
     test_files = mock_engine._get_all_dcm_files(dcm_dir)
+    print("test_files")
+    print(test_files)
+    print("expected file")
+    print(expected_list)
 
     # Assert
     assert test_files == expected_list
@@ -1195,19 +1199,13 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     test_image = pydicom.dcmread(dcm_path)
 
     mock_check_greyscale = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_check_if_greyscale",
-        return_value = None
+        DicomImageRedactorEngine, "_check_if_greyscale", return_value=None
     )
     mock_rescale_dcm = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_rescale_dcm_pixel_array",
-        return_value = None
+        DicomImageRedactorEngine, "_rescale_dcm_pixel_array", return_value=None
     )
     mock_save_pixel_array = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_save_pixel_array_as_png",
-        return_value = None
+        DicomImageRedactorEngine, "_save_pixel_array_as_png", return_value=None
     )
     mock_image_open = mocker.patch(
         "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
@@ -1218,7 +1216,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         "_add_padding",
         return_value=None,
     )
-    
+
     mock_get_text_metadata = mocker.patch.object(
         DicomImageRedactorEngine,
         "_get_text_metadata",

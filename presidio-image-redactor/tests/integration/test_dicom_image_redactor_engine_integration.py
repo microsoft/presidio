@@ -108,7 +108,7 @@ def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
         )
 
         # Get list of all DICOM files
-        extensions = ["dcm", "dicom"]
+        extensions = ["[dD][cC][mM]", "[dD][iI][cC][oO][mM]"]
         input_files = []
         for extension in extensions:
             p = input_path.glob(f"**/*.{extension}")

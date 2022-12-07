@@ -34,8 +34,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         Return:
             files (list): List of pathlib Path objects.
         """
-        # Define applicable extensions (case-insensitive)
-        extensions = ["dcm", "dicom"]
+        # Define applicable extensions
+        extensions = ["[dD][cC][mM]", "[dD][iI][cC][oO][mM]"]
 
         # Get all files with any applicable extension
         all_files = []
