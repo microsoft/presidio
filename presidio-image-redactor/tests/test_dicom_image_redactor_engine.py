@@ -311,7 +311,7 @@ def test_get_bg_color_happy_path(
 # DicomImageRedactorEngine._get_most_common_pixel_value()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "dcm_file, box_color_setting, expected_color",
+    "dcm_file, fill, expected_color",
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), "contrast", 50),
         (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), "contrast", 16383),
@@ -326,14 +326,14 @@ def test_get_bg_color_happy_path(
 def test_get_most_common_pixel_value_happy_path(
     mock_engine: DicomImageRedactorEngine,
     dcm_file: Path,
-    box_color_setting: str,
+    fill: str,
     expected_color: Union[int, Tuple[int, int, int]],
 ):
     """Test happy path for DicomImageRedactorEngine._get_most_common_pixel_value
 
     Args:
         dcm_file (pathlib.Path): Path to a DICOM file.
-        box_color_setting (str): Color setting to use ("contrast" or "background").
+        fill (str): Color setting to use ("contrast" or "background").
         expected_color (int or Tuple of int): The expected color returned for the image.
     """
     # Arrange
@@ -341,7 +341,7 @@ def test_get_most_common_pixel_value_happy_path(
 
     # Act
     test_color = mock_engine._get_most_common_pixel_value(
-        test_instance, box_color_setting
+        test_instance, fill
     )
 
     # Assert
@@ -929,7 +929,7 @@ def test_format_bboxes_exceptions(
 # DicomImageRedactorEngine._set_bbox_color()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "box_color_setting, mock_box_color",
+    "fill, mock_box_color",
     [
         ("contrast", 0),
         ("contrast", (0, 0, 0)),
@@ -939,13 +939,13 @@ def test_format_bboxes_exceptions(
 )
 def test_set_bbox_color_happy_path(
     mocker,
-    box_color_setting: str,
+    fill: str,
     mock_box_color: Union[int, Tuple[int, int, int]],
 ):
     """Test happy path for DicomImageRedactorEngine._set_bbox_color
 
     Args:
-        box_color_setting (str): Determines how box color is selected.
+        fill (str): Determines how box color is selected.
         mock_box_color (int or Tuple of int): Color value to assign to mocker.
     """
     # Arrange
@@ -966,7 +966,7 @@ def test_set_bbox_color_happy_path(
     mock_engine = DicomImageRedactorEngine()
 
     # Act
-    test_box_color = mock_engine._set_bbox_color(test_instance, box_color_setting)
+    test_box_color = mock_engine._set_bbox_color(test_instance, fill)
 
     # Assert
     assert mock_convert_dcm_to_png.call_count == 1
@@ -976,7 +976,7 @@ def test_set_bbox_color_happy_path(
 
 
 @pytest.mark.parametrize(
-    "box_color_setting, expected_error_type",
+    "fill, expected_error_type",
     [
         ("typo", "ValueError"),
         ("somecolor", "ValueError"),
@@ -986,13 +986,13 @@ def test_set_bbox_color_happy_path(
 )
 def test_set_bbox_color_exceptions(
     mock_engine: DicomImageRedactorEngine,
-    box_color_setting: str,
+    fill: str,
     expected_error_type: str,
 ):
     """Test error handling of _set_bbox_color
 
     Args:
-        box_color_setting (str): Determines how box color is selected.
+        fill (str): Determines how box color is selected.
         expected_error_type (str): Type of error we expect to be raised.
     """
     with pytest.raises(Exception) as exc_info:
@@ -1000,7 +1000,7 @@ def test_set_bbox_color_exceptions(
         test_instance = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
 
         # Act
-        _ = mock_engine._set_bbox_color(test_instance, box_color_setting)
+        _ = mock_engine._set_bbox_color(test_instance, fill)
 
     # Assert
     assert expected_error_type == exc_info.typename

@@ -184,16 +184,16 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @classmethod
     def _get_most_common_pixel_value(
-        cls, instance: pydicom.dataset.FileDataset, box_color_setting: str = "contrast"
+        cls, instance: pydicom.dataset.FileDataset, fill: str = "contrast"
     ) -> Union[int, Tuple[int, int, int]]:
         """Find the most common pixel value.
 
         :param instance: A singe DICOM instance.
-        :param box_color_setting: Determines how box color is selected.
+        :param fill: Determines how box color is selected.
         'contrast' - Masks stand out relative to background.
         'background' - Masks are same color as background.
 
-        :return: Most or least common pixel value (depending on box_color_setting).
+        :return: Most or least common pixel value (depending on fill).
         """
         # Get flattened pixel array
         flat_pixel_array = np.array(instance.pixel_array).flatten()
@@ -210,9 +210,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             )
 
         # Invert color as necessary
-        if box_color_setting.lower() in ["contrast", "invert", "inverted", "inverse"]:
+        if fill.lower() in ["contrast", "invert", "inverted", "inverse"]:
             pixel_value = np.max(flat_pixel_array) - common_value
-        elif box_color_setting.lower() in ["background", "bg"]:
+        elif fill.lower() in ["background", "bg"]:
             pixel_value = common_value
 
         return pixel_value
@@ -480,24 +480,24 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @classmethod
     def _set_bbox_color(
-        cls, instance: pydicom.dataset.FileDataset, box_color_setting: str
+        cls, instance: pydicom.dataset.FileDataset, fill: str
     ) -> Union[int, Tuple[int, int, int]]:
         """Set the bounding box color.
 
         :param instance: A single DICOM instance.
-        :param box_color_setting: Determines how box color is selected.
+        :param fill: Determines how box color is selected.
         'contrast' - Masks stand out relative to background.
         'background' - Masks are same color as background.
 
         :return: int or tuple of int values determining masking box color.
         """
         # Check if we want the box color to contrast with the background
-        if box_color_setting.lower() in ["contrast", "invert", "inverted", "inverse"]:
+        if fill.lower() in ["contrast", "invert", "inverted", "inverse"]:
             invert_flag = True
-        elif box_color_setting.lower() in ["background", "bg"]:
+        elif fill.lower() in ["background", "bg"]:
             invert_flag = False
         else:
-            raise ValueError("box_color_setting must be 'contrast' or 'background'")
+            raise ValueError("fill must be 'contrast' or 'background'")
 
         # Temporarily save as PNG to get color
         with tempfile.TemporaryDirectory() as tmpdirname:
@@ -516,13 +516,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         cls,
         instance: pydicom.dataset.FileDataset,
         bounding_boxes_coordinates: list,
-        box_color_setting: str = "contrast",
+        fill: str = "contrast",
     ) -> pydicom.dataset.FileDataset:
         """Add redaction bounding boxes on a DICOM instance.
 
         :param instance: A single DICOM instance.
         :param bounding_boxes_coordinates: Bounding box coordinates.
-        :param box_color_setting: Determines how box color is selected.
+        :param fill: Determines how box color is selected.
         'contrast' - Masks stand out relative to background.
         'background' - Masks are same color as background.
 
@@ -534,9 +534,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Select masking box color
         is_greyscale = cls._check_if_greyscale(instance)
         if is_greyscale:
-            box_color = cls._get_most_common_pixel_value(instance, box_color_setting)
+            box_color = cls._get_most_common_pixel_value(instance, fill)
         else:
-            box_color = cls._set_bbox_color(redacted_instance, box_color_setting)
+            box_color = cls._set_bbox_color(redacted_instance, fill)
 
         # Apply mask
         for i in range(0, len(bounding_boxes_coordinates)):
@@ -574,7 +574,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _redact_single_dicom_image(
         self,
         dcm_path: str,
-        box_color_setting: str,
+        fill: str,
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
@@ -582,7 +582,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Redact text PHI present on a DICOM image.
 
         :param dcm_path: String path to the DICOM file.
-        :param box_color_setting: Color setting to use for bounding boxes
+        :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
         :param overwrite: Only set to True if you are providing the
@@ -627,7 +627,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Redact all bounding boxes from DICOM file
         bboxes = self._format_bboxes(analyzer_results, padding_width)
         redacted_dicom_instance = self._add_redact_box(
-            instance, bboxes, box_color_setting
+            instance, bboxes, fill
         )
         redacted_dicom_instance.save_as(dst_path)
 
@@ -636,7 +636,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _redact_multiple_dicom_images(
         self,
         dcm_dir: str,
-        box_color_setting: str,
+        fill: str,
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
@@ -644,7 +644,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Redact text PHI present on all DICOM images in a directory.
 
         :param dcm_dir: String path to directory containing DICOM files (can be nested).
-        :param box_color_setting: Color setting to use for bounding boxes
+        :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
         :param overwrite: Only set to True if you are providing
@@ -670,7 +670,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         all_dcm_files = self._get_all_dcm_files(Path(dst_dir))
         for dst_path in all_dcm_files:
             self._redact_single_dicom_image(
-                dst_path, box_color_setting, padding_width, overwrite, dst_parent_dir
+                dst_path, fill, padding_width, overwrite, dst_parent_dir
             )
 
         return dst_dir
@@ -726,7 +726,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         input_dicom_path: str,
         output_dir: str,
         padding_width: int = 25,
-        box_color_setting: str = "contrast",
+        fill: str = "contrast",
     ) -> None:
         """Redact method to redact the given image.
 
@@ -736,7 +736,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param input_dicom_path: String path to DICOM image(s).
         :param output_dir: String path to parent output directory.
         :param padding_width : Padding width to use when running OCR.
-        :param box_color_setting: Color setting to use for redaction box
+        :param fill: Color setting to use for redaction box
         ("contrast" or "background").
         """
         # Verify the given paths
@@ -749,7 +749,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         if Path(dst_path).is_dir() is False:
             output_location = self._redact_single_dicom_image(
                 dcm_path=dst_path,
-                box_color_setting=box_color_setting,
+                fill=fill,
                 padding_width=padding_width,
                 overwrite=True,
                 dst_parent_dir=".",
@@ -757,7 +757,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         else:
             output_location = self._redact_multiple_dicom_images(
                 dcm_dir=dst_path,
-                box_color_setting=box_color_setting,
+                fill=fill,
                 padding_width=padding_width,
                 overwrite=True,
                 dst_parent_dir=".",

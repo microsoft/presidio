@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [2.2.30] - 7.12.2022
+## [2.2.30] - 8.12.2022
 ### Changed
 #### Image-Redactor
 * Added DICOM image redaction capabilities (`DicomImageRedactorEngine` class and tests)

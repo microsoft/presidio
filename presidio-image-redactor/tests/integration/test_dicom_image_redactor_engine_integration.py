@@ -62,7 +62,7 @@ def test_redact_from_single_file_correctly(mock_engine: DicomImageRedactorEngine
         mock_engine.redact_from_file(
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
-            box_color_setting="contrast",
+            fill="contrast",
         )
         output_path = Path(tmpdirname, f"{input_path.stem}.dcm")
 
@@ -104,7 +104,7 @@ def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
         mock_engine.redact_from_file(
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
-            box_color_setting="contrast",
+            fill="contrast",
         )
 
         # Get list of all DICOM files

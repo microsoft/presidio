@@ -134,7 +134,7 @@ Python script example can be found under:
     redacted_dicom_image = engine.redact(dicom_image, fill="contrast")
 
     # Option 2: Redact from DICOM file(s)
-    engine.redact_from_file(input_path, output_dir, padding_width=25, box_color_setting="contrast")
+    engine.redact_from_file(input_path, output_dir, padding_width=25, fill="contrast")
     ```
 
 ## API reference
