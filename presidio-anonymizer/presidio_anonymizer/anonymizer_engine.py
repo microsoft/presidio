@@ -117,7 +117,8 @@ class AnonymizerEngine(EngineBase):
                 other_elements.append(result)
                 tmp_analyzer_results.append(result)
             else:
-                self.logger.debug(f"removing element {result} from results list due to merge")
+                self.logger.debug(f"removing element {result} from "
+                                  f"results list due to merge")
 
         unique_text_metadata_elements = []
         # This list contains all elements which we need to check a single result

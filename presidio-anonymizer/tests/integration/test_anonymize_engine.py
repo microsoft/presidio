@@ -34,8 +34,8 @@ def test_given_operator_decrypt_then_we_fail():
     ]
     engine = AnonymizerEngine()
     with pytest.raises(
-        InvalidParamException,
-        match="Invalid operator class 'decrypt'.",
+            InvalidParamException,
+            match="Invalid operator class 'decrypt'.",
     ):
         engine.anonymize(text, analyzer_results, anonymizers_config)
 
@@ -132,6 +132,7 @@ def test_given_intersecting_entities_then_we_anonymize_correctly():
     )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
+
 def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {}
@@ -141,7 +142,8 @@ def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
     ]
     expected_result = (
         '{"text": "hello world, my name is <FULL_NAME> My number is: 03-4453334", '
-        '"items": [{"start": 24, "end": 35, "entity_type": "FULL_NAME", "text": "<FULL_NAME>", "operator": "replace"}]}'
+        '"items": [{"start": 24, "end": 35, "entity_type": "FULL_NAME",'
+        ' "text": "<FULL_NAME>", "operator": "replace"}]}'
     )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
