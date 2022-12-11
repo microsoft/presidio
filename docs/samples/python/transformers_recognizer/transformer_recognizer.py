@@ -146,7 +146,7 @@ class TransformersRecognizer(EntityRecognizer):
 
         return results
 
-    @ staticmethod
+    @staticmethod
     def split_text_to_word_chunks(input_length: int, chunk_length: int, overlap_length: int) -> List[List]:
         """The function calculates chunks of text with size chunk_length. Each chunk has overlap_length number of
         words to create context and continuity for the model
