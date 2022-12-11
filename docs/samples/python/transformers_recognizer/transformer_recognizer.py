@@ -68,7 +68,16 @@ class TransformersRecognizer(EntityRecognizer):
         self.is_loaded = False
 
     def load_transformer(self, **kwargs) -> None:
-        """Load the model, and additional key arguments"""
+        r"""Load external configuration parameters and set default values.
+        :param key word arguments - define default values for class attributes and modify pipeline behavior
+        **DATASET_TO_PRESIDIO_MAPPING (dict) - defines mapping entity strings from dataset format to Presidio format
+        **MODEL_TO_PRESIDIO_MAPPING (dict) -  defines mapping entity strings from chosen model format to Presidio format
+        **SUB_WORD_AGGREGATION(str) - define how to aggregate sub-word tokens into full words and spans as defined in huggingface https://huggingface.co/transformers/v4.8.0/main_classes/pipelines.html#transformers.TokenClassificationPipeline
+        **CHUNK_OVERLAP_SIZE (int) - number of overlapping characters in each text chunk when splitting a single text into multiple inferences
+        **CHUNK_SIZE (int) - number of characters in each chunk of text
+        **LABELS_TO_IGNORE (List(str)) - List of entities to skip evaluation. Defaults to ["O"]
+        **DEFAULT_EXPLANATION (str) - string format to use for prediction explanations
+        """
 
         self.entity_mapping = kwargs.get('DATASET_TO_PRESIDIO_MAPPING', {})
         self.model_to_presidio_mapping = kwargs.get(
@@ -77,7 +86,8 @@ class TransformersRecognizer(EntityRecognizer):
         self.aggregation_mechanism = kwargs.get(
             'SUB_WORD_AGGREGATION', 'simple')
         self.default_explanation = kwargs.get('DEFAULT_EXPLANATION', None)
-
+        self.text_overlap_length = kwargs.get('CHUNK_OVERLAP_SIZE', 40)
+        self.chunk_length = kwargs.get('CHUNK_SIZE', 600)
         if not self.pipeline:
             if not self.model_path:
                 self.model_path = 'obi/deid_roberta_i2b2'
@@ -162,13 +172,18 @@ class TransformersRecognizer(EntityRecognizer):
         :return: List of start and end positions for individual text chunks
         :rtype: List[List]
         """
-
-        return [[i, min([i + chunk_length, input_length])] for i in range(0, input_length, chunk_length - overlap_length)]
+        if input_length < chunk_length:
+            return [[0, input_length]]
+        if chunk_length <= overlap_length:
+            logger.warning(
+                "overlap_length should be shorter than chunk_length, setting overlap_length to by half of chunk_length")
+            overlap_length = chunk_length // 2
+        return [[i, min([i + chunk_length, input_length])] for i in range(0, input_length - overlap_length, chunk_length - overlap_length)]
 
     def _get_ner_results_for_text(self, text: str) -> List[dict]:
         """The function runs model inference on the provided text.
-        If length of text > max_length tokens, the text is split into chunks with n = 40 overlapping characters
-        The results are aggregated and duplicates are removed.
+        The text is split into chunks with n overlapping characters.
+        The results are then aggregated and duplications are removed.
 
         :param text: The text to run inference on
         :type text: str
@@ -178,15 +193,12 @@ class TransformersRecognizer(EntityRecognizer):
         model_max_length = self.pipeline.tokenizer.model_max_length
         # calculate inputs based on the text
         text_length = len(text)
-        if text_length <= model_max_length * 2:
-            return self.pipeline(text)
-
         # split text into chunks
         logger.info(
             f'splitting the text into chunks, length {text_length} > {model_max_length*2}')
         predictions = list()
         chunk_indexes = TransformersRecognizer.split_text_to_word_chunks(
-            text_length, model_max_length * 2, 40)
+            text_length, self.chunk_length, self.text_overlap_length)
 
         # iterate over text chunks and run inference
         for chunk_start, chunk_end in chunk_indexes:
