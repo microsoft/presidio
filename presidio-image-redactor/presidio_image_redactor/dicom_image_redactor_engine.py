@@ -23,6 +23,104 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
 
+    def redact(
+        self,
+        image: pydicom.dataset.FileDataset,
+        fill: str = "contrast",
+        padding_width: int = 25,
+        **kwargs,
+    ):
+        """Redact method to redact the given DICOM image.
+
+        Please note, this method duplicates the image, creates a
+        new instance and manipulates it.
+
+        :param image: Loaded DICOM instance including pixel data and metadata.
+        :param fill: Fill setting to use for redaction box ("contrast" or "background").
+        :param padding_width: Padding width to use when running OCR.
+        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+
+        :return: DICOM instance with redacted pixel data.
+        """
+        instance = deepcopy(image)
+
+        # Load image for processing
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            # Convert DICOM to PNG and add padding for OCR (during analysis)
+            is_greyscale = self._check_if_greyscale(instance)
+            image = self._rescale_dcm_pixel_array(instance, is_greyscale)
+            self._save_pixel_array_as_png(image, is_greyscale, "tmp_dcm", tmpdirname)
+
+            png_filepath = f"{tmpdirname}/tmp_dcm.png"
+            loaded_image = Image.open(png_filepath)
+            image = self._add_padding(loaded_image, is_greyscale, padding_width)
+
+        # Create custom recognizer using DICOM metadata
+        original_metadata, is_name, is_patient = self._get_text_metadata(instance)
+        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
+        deny_list_recognizer = PatternRecognizer(
+            supported_entity="PERSON", deny_list=phi_list
+        )
+        analyzer_results = self.image_analyzer_engine.analyze(
+            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+        )
+
+        # Redact all bounding boxes from DICOM file
+        bboxes = self._format_bboxes(analyzer_results, padding_width)
+        redacted_image = self._add_redact_box(instance, bboxes, fill)
+
+        return redacted_image
+
+    def redact_from_file(
+        self,
+        input_dicom_path: str,
+        output_dir: str,
+        padding_width: int = 25,
+        fill: str = "contrast",
+        **kwargs,
+    ) -> None:
+        """Redact method to redact the given image.
+
+        Please notice, this method duplicates the image, creates a
+        new instance and manipulate it.
+
+        :param input_dicom_path: String path to DICOM image(s).
+        :param output_dir: String path to parent output directory.
+        :param padding_width : Padding width to use when running OCR.
+        :param fill: Color setting to use for redaction box
+        ("contrast" or "background").
+        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        """
+        # Verify the given paths
+        self._validate_paths(input_dicom_path, output_dir)
+
+        # Create duplicate(s)
+        dst_path = self._copy_files_for_processing(input_dicom_path, output_dir)
+
+        # Process DICOM file(s)
+        if not Path(dst_path).is_dir():
+            output_location = self._redact_single_dicom_image(
+                dcm_path=dst_path,
+                fill=fill,
+                padding_width=padding_width,
+                overwrite=True,
+                dst_parent_dir=".",
+                **kwargs,
+            )
+        else:
+            output_location = self._redact_multiple_dicom_images(
+                dcm_dir=dst_path,
+                fill=fill,
+                padding_width=padding_width,
+                overwrite=True,
+                dst_parent_dir=".",
+                **kwargs,
+            )
+
+        print(f"Output written to {output_location}")
+
+        return None
+
     @staticmethod
     def _get_all_dcm_files(dcm_dir: Path) -> List[Path]:
         """Return paths to all DICOM files in a directory and its sub-directories.
@@ -53,7 +151,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         # Check if image is grayscale or not using the Photometric Interpolation element
         color_scale = instance[0x0028, 0x0004].value
-        is_greyscale = color_scale != "RGB"  # TODO: Make this more robust
+        is_greyscale = color_scale != "RGB"
 
         return is_greyscale
 
@@ -578,6 +676,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
+        **kwargs,
     ) -> str:
         """Redact text PHI present on a DICOM image.
 
@@ -588,6 +687,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
+        :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         :return: Path to the output DICOM file.
         """
@@ -621,14 +721,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             supported_entity="PERSON", deny_list=phi_list
         )
         analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer]
+            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
         )
 
         # Redact all bounding boxes from DICOM file
         bboxes = self._format_bboxes(analyzer_results, padding_width)
-        redacted_dicom_instance = self._add_redact_box(
-            instance, bboxes, fill
-        )
+        redacted_dicom_instance = self._add_redact_box(instance, bboxes, fill)
         redacted_dicom_instance.save_as(dst_path)
 
         return dst_path
@@ -640,6 +738,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
+        **kwargs,
     ) -> str:
         """Redact text PHI present on all DICOM images in a directory.
 
@@ -650,6 +749,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
+        :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         Return:
             dst_dir (str): Path to the output DICOM directory.
@@ -670,99 +770,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         all_dcm_files = self._get_all_dcm_files(Path(dst_dir))
         for dst_path in all_dcm_files:
             self._redact_single_dicom_image(
-                dst_path, fill, padding_width, overwrite, dst_parent_dir
+                dst_path, fill, padding_width, overwrite, dst_parent_dir, **kwargs
             )
 
         return dst_dir
-
-    def redact(
-        self,
-        image: pydicom.dataset.FileDataset,
-        fill: str = "contrast",
-        padding_width: int = 25,
-    ):
-        """Redact method to redact the given DICOM image.
-
-        Please note, this method duplicates the image, creates a
-        new instance and manipulates it.
-
-        :param image: Loaded DICOM instance including pixel data and metadata.
-        :param fill: Fill setting to use for redaction box ("contrast" or "background").
-        :param padding_width: Padding width to use when running OCR.
-
-        :return: DICOM instance with redacted pixel data.
-        """
-        instance = deepcopy(image)
-
-        # Load image for processing
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            # Convert DICOM to PNG and add padding for OCR (during analysis)
-            is_greyscale = self._check_if_greyscale(instance)
-            image = self._rescale_dcm_pixel_array(instance, is_greyscale)
-            self._save_pixel_array_as_png(image, is_greyscale, "tmp_dcm", tmpdirname)
-
-            png_filepath = f"{tmpdirname}/tmp_dcm.png"
-            loaded_image = Image.open(png_filepath)
-            image = self._add_padding(loaded_image, is_greyscale, padding_width)
-
-        # Create custom recognizer using DICOM metadata
-        original_metadata, is_name, is_patient = self._get_text_metadata(instance)
-        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
-        deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
-        )
-        analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer]
-        )
-
-        # Redact all bounding boxes from DICOM file
-        bboxes = self._format_bboxes(analyzer_results, padding_width)
-        redacted_image = self._add_redact_box(instance, bboxes, fill)
-
-        return redacted_image
-
-    def redact_from_file(
-        self,
-        input_dicom_path: str,
-        output_dir: str,
-        padding_width: int = 25,
-        fill: str = "contrast",
-    ) -> None:
-        """Redact method to redact the given image.
-
-        Please notice, this method duplicates the image, creates a
-        new instance and manipulate it.
-
-        :param input_dicom_path: String path to DICOM image(s).
-        :param output_dir: String path to parent output directory.
-        :param padding_width : Padding width to use when running OCR.
-        :param fill: Color setting to use for redaction box
-        ("contrast" or "background").
-        """
-        # Verify the given paths
-        self._validate_paths(input_dicom_path, output_dir)
-
-        # Create duplicate(s)
-        dst_path = self._copy_files_for_processing(input_dicom_path, output_dir)
-
-        # Process DICOM file(s)
-        if Path(dst_path).is_dir() is False:
-            output_location = self._redact_single_dicom_image(
-                dcm_path=dst_path,
-                fill=fill,
-                padding_width=padding_width,
-                overwrite=True,
-                dst_parent_dir=".",
-            )
-        else:
-            output_location = self._redact_multiple_dicom_images(
-                dcm_dir=dst_path,
-                fill=fill,
-                padding_width=padding_width,
-                overwrite=True,
-                dst_parent_dir=".",
-            )
-
-        print(f"Output location: {output_location}")
-
-        return None
