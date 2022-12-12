@@ -12,9 +12,8 @@ This module may also be used on medical DICOM images. The `DicomImageRedactorEng
 ![img.png](../assets/dicom-image-redactor-design.png)
 
 !!! note "Note"
-     This class only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata. 
+     This class only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata.
      We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI.*
-
 
 ## Installation
 
@@ -139,6 +138,18 @@ Python script example can be found under:
     # Option 2: Redact from DICOM file(s)
     engine.redact_from_file(input_path, output_dir, padding_width=25, fill="contrast")
     ```
+
+### Side note for Windows
+
+If you are using a Windows machine, you may run into issues if file paths are too long. Unfortunatley, this is not rare when working with DICOM images that are often nested in directories with descriptive names.
+
+To avoid errors where the code may not recognize a path as existing due to the length of the characters in the file path, please [enable long paths on your system](https://learn.microsoft.com/en-us/answers/questions/293227/longpathsenabled.html).
+
+### DICOM Data Citation
+
+The DICOM data used for unit and integration testing for `DicomImageRedactorEngine` are stored in this repository with permission from the original dataset owners. Please see the dataset information as follows:
+
+> Rutherford, M., Mun, S.K., Levine, B., Bennett, W.C., Smith, K., Farmer, P., Jarosz, J., Wagner, U., Farahani, K., Prior, F. (2021). A DICOM dataset for evaluation of medical image de-identification (Pseudo-PHI-DICOM-Data) [Data set]. The Cancer Imaging Archive. DOI: <https://doi.org/10.7937/s17z-r072>
 
 ## API reference
 

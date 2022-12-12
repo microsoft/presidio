@@ -157,11 +157,3 @@ To avoid errors where the code may not recognize a path as existing due to the l
 The DICOM data used for unit and integration testing for `DicomImageRedactorEngine` are stored in this repository with permission from the original dataset owners. Please see the dataset information as follows:
 
 > Rutherford, M., Mun, S.K., Levine, B., Bennett, W.C., Smith, K., Farmer, P., Jarosz, J., Wagner, U., Farahani, K., Prior, F. (2021). A DICOM dataset for evaluation of medical image de-identification (Pseudo-PHI-DICOM-Data) [Data set]. The Cancer Imaging Archive. DOI: <https://doi.org/10.7937/s17z-r072>
-
-### Future Work
-
-- Add compatability with more [photometric interpolations](https://www.dicomobjects.com/kb/Photometric-Interpretations/#:~:text=Photometric%20Interpretations%20DICOM%20allows%20various%20relationships%20between%20the,0028%2C0004%20and%20every%20image%20should%20have%20that%20value.) (currently only supports greyscale and RGB)
-
-- Improve performance for scenarios where no text PHI is available in the DICOM metadata
-
-- Add ability to filter files in a directory based on whether they have text present in the image data or not to enable dynamic selection of which files to process
