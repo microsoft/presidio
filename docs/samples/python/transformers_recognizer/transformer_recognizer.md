@@ -6,7 +6,7 @@ When initializing the `TransformersRecognizer`, choose from the following option
 
 2. Initialize your own TokenClassificationPipeline instance using your custom transformers model and use it for inference.
 
->**Note**<br>
+!!! note "Note"
 >For each combination of model & dataset, it is recommend to create a configuration object which >includes setting necessary parameters for getting the correct results. Please reference this [configuraion.py](configuration.py) file for examples.
 
 
