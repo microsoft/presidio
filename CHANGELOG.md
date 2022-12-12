@@ -4,19 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [2.2.30] - 8.12.2022
 ### Changed
 #### Image-Redactor
 * Added DICOM image redaction capabilities (`DicomImageRedactorEngine` class and tests)
+* Updated `setup.py` to include new required packages for DICOM capabilities
 * Updated Pipfile and Pipfile.lock
 * Updated `presidio-image-redactor` version from 0.0.44 to 0.0.45
 
 #### General
-* Updated `setup.py` to include new required packages for DICOM capabilities
 * Updated `NOTICE` to include licenses of added packages
 * Updated docs with getting started code for new `DicomImageRedactorEngine`
 
-## [2.2.30] - 21.11.2022
+## [2.2.31] - 21.11.2022
 ### Changed
 #### Image-Redactor
 * Updated the `ImagePiiVerifyEngine` class to allow use of custom analyzer engines
@@ -200,7 +199,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.30...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.31...HEAD
+[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
 [2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
 [2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28
