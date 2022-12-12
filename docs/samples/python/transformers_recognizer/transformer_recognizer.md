@@ -1,6 +1,6 @@
 # Run Presidio With Transformers Models
 
-In the following example you will see how extract PII entities using transformers models.
+This example demonstrates how to extract PII entities using transformers models.
 When initializing the `TransformersRecognizer`, choose from the following options:
 1. A string referencing an uploaded model to HuggingFace. Use this url to access all TokenClassification models - https://huggingface.co/models?pipeline_tag=token-classification&sort=downloads
 
