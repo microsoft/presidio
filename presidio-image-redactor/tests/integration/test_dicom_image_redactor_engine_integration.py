@@ -70,26 +70,26 @@ def test_redact_from_single_file_correctly(mock_engine: DicomImageRedactorEngine
         instance_original = pydicom.dcmread(str(input_path))
         instance_redacted = pydicom.dcmread(str(output_path))
 
-        # Compare original to redacted file
-        original_pixels = instance_original[0x7FE0, 0x0010]
-        redacted_pixels = instance_redacted[0x7FE0, 0x0010]
-        same_elements = []
+    # Compare original to redacted file
+    original_pixels = instance_original[0x7FE0, 0x0010]
+    redacted_pixels = instance_redacted[0x7FE0, 0x0010]
+    same_elements = []
 
-        for element in instance_original:
-            # Get the element tag
-            tag = element.tag
+    for element in instance_original:
+        # Get the element tag
+        tag = element.tag
 
-            # Check the same element for both instances
-            element_original = instance_original[tag]
-            element_redacted = instance_redacted[tag]
+        # Check the same element for both instances
+        element_original = instance_original[tag]
+        element_redacted = instance_redacted[tag]
 
-            if element_original == element_redacted:
-                same_elements.append(tag)
+        if element_original == element_redacted:
+            same_elements.append(tag)
 
-        assert len(instance_original) - 1 == len(
-            same_elements
-        )  # only PixelData should be different
-        assert original_pixels != redacted_pixels
+    assert len(instance_original) - 1 == len(
+        same_elements
+    )  # only PixelData should be different
+    assert original_pixels != redacted_pixels
 
 
 def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
@@ -121,4 +121,4 @@ def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
             files = [x for x in p if x.is_file()]
             output_files += files
 
-        assert len(output_files) == len(input_files)
+    assert len(output_files) == len(input_files)
