@@ -79,10 +79,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         fill: str = "contrast",
         **kwargs,
     ) -> None:
-        """Redact method to redact the given image.
+        """Redact method to redact from a given file or directory of files.
 
-        Please notice, this method duplicates the image, creates a
-        new instance and manipulate it.
+        Please notice, this method duplicates the file(s), creates
+        new instance(s) and manipulate them.
 
         :param input_dicom_path: String path to DICOM image(s).
         :param output_dir: String path to parent output directory.
