@@ -11,7 +11,10 @@ text entities in images.
 This module may also be used on medical DICOM images. The `DicomImageRedactorEngine` class may be used to redact text PII present as pixels in DICOM images.
 ![img.png](../assets/dicom-image-redactor-design.png)
 
-> *Note this class only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata. We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI.*
+!!! note "Note"
+     This class only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata. 
+     We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI.*
+
 
 ## Installation
 
