@@ -79,12 +79,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         fill: str = "contrast",
         **kwargs,
     ) -> None:
-        """Redact method to redact from a given file or directory of files.
+        """Redact method to redact from a given file.
 
-        Please notice, this method duplicates the file(s), creates
-        new instance(s) and manipulate them.
+        Please notice, this method duplicates the file, creates
+        new instance and manipulate them.
 
-        :param input_dicom_path: String path to DICOM image(s).
+        :param input_dicom_path: String path to DICOM image.
         :param output_dir: String path to parent output directory.
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
@@ -92,30 +92,74 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
         """
         # Verify the given paths
-        self._validate_paths(input_dicom_path, output_dir)
+        if Path(input_dicom_path).is_dir() is True:
+            raise TypeError("input_dicom_path must be file (not dir)")
+        if Path(input_dicom_path).is_file() is False:
+            raise TypeError("input_dicom_path must be a valid file")
+        if Path(output_dir).is_file() is True:
+            raise TypeError(
+                "output_dir must be a directory (does not need to exist yet)"
+            )
 
-        # Create duplicate(s)
+        # Create duplicate
         dst_path = self._copy_files_for_processing(input_dicom_path, output_dir)
 
-        # Process DICOM file(s)
-        if not Path(dst_path).is_dir():
-            output_location = self._redact_single_dicom_image(
-                dcm_path=dst_path,
-                fill=fill,
-                padding_width=padding_width,
-                overwrite=True,
-                dst_parent_dir=".",
-                **kwargs,
+        # Process DICOM file
+        output_location = self._redact_single_dicom_image(
+            dcm_path=dst_path,
+            fill=fill,
+            padding_width=padding_width,
+            overwrite=True,
+            dst_parent_dir=".",
+            **kwargs,
+        )
+
+        print(f"Output written to {output_location}")
+
+        return None
+
+    def redact_from_directory(
+        self,
+        input_dicom_path: str,
+        output_dir: str,
+        padding_width: int = 25,
+        fill: str = "contrast",
+        **kwargs,
+    ) -> None:
+        """Redact method to redact from a directory of files.
+
+        Please notice, this method duplicates the files, creates
+        new instances and manipulate them.
+
+        :param input_dicom_path: String path to directory of DICOM images.
+        :param output_dir: String path to parent output directory.
+        :param padding_width : Padding width to use when running OCR.
+        :param fill: Color setting to use for redaction box
+        ("contrast" or "background").
+        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        """
+        # Verify the given paths
+        if Path(input_dicom_path).is_dir() is False:
+            raise TypeError("input_dicom_path must be a valid directory")
+        if Path(input_dicom_path).is_file() is True:
+            raise TypeError("input_dicom_path must be a directory (not file)")
+        if Path(output_dir).is_file() is True:
+            raise TypeError(
+                "output_dir must be a directory (does not need to exist yet)"
             )
-        else:
-            output_location = self._redact_multiple_dicom_images(
-                dcm_dir=dst_path,
-                fill=fill,
-                padding_width=padding_width,
-                overwrite=True,
-                dst_parent_dir=".",
-                **kwargs,
-            )
+
+        # Create duplicates
+        dst_path = self._copy_files_for_processing(input_dicom_path, output_dir)
+
+        # Process DICOM files
+        output_location = self._redact_multiple_dicom_images(
+            dcm_dir=dst_path,
+            fill=fill,
+            padding_width=padding_width,
+            overwrite=True,
+            dst_parent_dir=".",
+            **kwargs,
+        )
 
         print(f"Output written to {output_location}")
 
@@ -650,24 +694,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         redacted_instance.PixelData = redacted_instance.pixel_array.tobytes()
 
         return redacted_instance
-
-    @staticmethod
-    def _validate_paths(input_path: str, output_dir: str) -> None:
-        """Validate the DICOM path.
-
-        :param input_path: Path to input DICOM file or dir.
-        :param output_dir: Path to parent directory to write output to.
-        """
-        # Check input is an actual file or dir
-        if Path(input_path).is_dir() is False:
-            if Path(input_path).is_file() is False:
-                raise TypeError("input_path must be valid file or dir")
-
-        # Check output is a directory
-        if Path(output_dir).is_file() is True:
-            raise TypeError(
-                "output_dir must be a directory (does not need to exist yet)"
-            )
 
     def _redact_single_dicom_image(
         self,

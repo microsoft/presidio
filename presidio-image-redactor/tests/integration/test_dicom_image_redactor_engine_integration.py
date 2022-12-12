@@ -101,7 +101,7 @@ def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
     with tempfile.TemporaryDirectory() as tmpdirname:
         # Set file paths and redact PII
         input_path = Path(RESOURCES_DIR1)
-        mock_engine.redact_from_file(
+        mock_engine.redact_from_directory(
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             fill="contrast",

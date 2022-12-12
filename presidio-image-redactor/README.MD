@@ -140,8 +140,11 @@ engine = DicomImageRedactorEngine()
 dicom_image = pydicom.dcmread(input_path)
 redacted_dicom_image = engine.redact(dicom_image, fill="contrast")
 
-# Option 2: Redact from DICOM file(s)
+# Option 2: Redact from DICOM file
 engine.redact_from_file(input_path, output_dir, padding_width=25, fill="contrast")
+
+# Option 3: Redact from directory
+engine.redact_from_directory("path/to/your/dicom", output_dir, padding_width=25, fill="contrast")
 ```
 
 See the example notebook for more details and visual confirmation of the output: [docs/samples/python/example_dicom_image_redactor.ipynb](../docs/samples/python/example_dicom_image_redactor.ipynb).
