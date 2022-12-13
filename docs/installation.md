@@ -68,7 +68,7 @@ For PII detection and anonymization in text, the `presidio-analyzer`
 and `presidio-anonymizer` modules are required.
 
 ```sh
-# Download images
+# Download Docker images
 docker pull mcr.microsoft.com/presidio-analyzer
 docker pull mcr.microsoft.com/presidio-anonymizer
 
@@ -83,7 +83,7 @@ docker run -d -p 5002:3000 mcr.microsoft.com/presidio-anonymizer:latest
 For PII detection in images, the `presidio-image-redactor` is required.
 
 ```sh
-# Download image
+# Download Docker image
 docker pull mcr.microsoft.com/presidio-image-redactor
 
 # Run container with the default port
