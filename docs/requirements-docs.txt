@@ -1,9 +1,9 @@
-mkdocs==1.4.1
+mkdocs
 mkdocs-material
 mkdocs-jupyter
 pymdown-extensions<9.4
 markdown
-mkdocstrings[python-legacy]==0.19.0
+mkdocstrings[python-legacy]
 presidio_analyzer
 presidio_anonymizer
 presidio_image_redactor
