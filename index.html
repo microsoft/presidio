@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/">
       
       <link rel="icon" href="assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.11">
     
     
       
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#presidio-data-protection-and-anonymization-sdk" class="md-skip">
+        <a href="#presidio-data-protection-and-de-identification-sdk" class="md-skip">
           Skip to content
         </a>
       
@@ -1229,7 +1229,7 @@
                 
 
 
-<h1 id="presidio-data-protection-and-anonymization-sdk"><strong>Presidio</strong>: Data Protection and Anonymization SDK</h1>
+<h1 id="presidio-data-protection-and-de-identification-sdk"><strong>Presidio</strong>: Data Protection and De-identification SDK</h1>
 <p>Presidio <em>(Origin from Latin praesidium ‘protection, garrison’)</em>
 helps to ensure sensitive data is properly managed and governed.
 It provides fast <strong><em>identification</em></strong> and <strong><em>anonymization</em></strong>
@@ -1254,13 +1254,13 @@ bitcoin wallets, US phone numbers, financial data and more.</p>
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.</p>
+<p>Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.</p>
 </div>
 <h2 id="demo-frequently-asked-questions"><a href="https://aka.ms/presidio-demo">Demo</a> | <a href="faq/">Frequently Asked Questions</a></h2>
 <h2 id="presidios-modules">Presidio's modules</h2>
 <ol>
 <li><a href="analyzer/">Presidio analyzer</a>: PII identification in text</li>
-<li><a href="anonymizer/">Presidio anonymizer</a>: Anonymize detected PII entities using different operators</li>
+<li><a href="anonymizer/">Presidio anonymizer</a>: De-identify detected PII entities using different operators</li>
 <li><a href="image-redactor/">Presidio image redactor</a>: Redact PII entities from images using OCR and PII identification</li>
 </ol>
 <h2 id="installing-presidio">Installing Presidio</h2>

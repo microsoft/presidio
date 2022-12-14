@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/installation/">
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.11">
     
     
       
@@ -1322,7 +1322,7 @@ To download the Presidio Docker containers, run the following command:</p>
 <h3 id="for-pii-anonymization-in-text">For PII anonymization in text</h3>
 <p>For PII detection and anonymization in text, the <code>presidio-analyzer</code>
 and <code>presidio-anonymizer</code> modules are required.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Download images</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Download Docker images</span>
 docker pull mcr.microsoft.com/presidio-analyzer
 docker pull mcr.microsoft.com/presidio-anonymizer
 
@@ -1333,7 +1333,7 @@ docker run -d -p <span class="m">5002</span>:3000 mcr.microsoft.com/presidio-ano
 </code></pre></div>
 <h3 id="for-pii-redaction-in-images">For PII redaction in images</h3>
 <p>For PII detection in images, the <code>presidio-image-redactor</code> is required.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Download image</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Download Docker image</span>
 docker pull mcr.microsoft.com/presidio-image-redactor
 
 <span class="c1"># Run container with the default port</span>

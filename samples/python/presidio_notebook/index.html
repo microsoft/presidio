@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/samples/python/presidio_notebook/">
       
       <link rel="icon" href="../../../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.11">
     
     
       
@@ -2297,7 +2297,7 @@ A <code>PatternRecognizer</code> is a PII entity recognizer which uses regular e
                                       <span class="n">deny_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Mr.&quot;</span><span class="p">,</span><span class="s2">&quot;Mrs.&quot;</span><span class="p">,</span><span class="s2">&quot;Miss&quot;</span><span class="p">])</span>
 
 <span class="n">pronoun_recognizer</span> <span class="o">=</span> <span class="n">PatternRecognizer</span><span class="p">(</span><span class="n">supported_entity</span><span class="o">=</span><span class="s2">&quot;PRONOUN&quot;</span><span class="p">,</span>
-                                       <span class="n">deny_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;he&quot;</span><span class="p">,</span> <span class="s2">&quot;He&quot;</span><span class="p">,</span> <span class="s2">&quot;his&quot;</span><span class="p">,</span> <span class="s2">&quot;His&quot;</span><span class="p">,</span> <span class="s2">&quot;she&quot;</span><span class="p">,</span> <span class="s2">&quot;She&quot;</span><span class="p">,</span> <span class="s2">&quot;hers&quot;</span> <span class="s2">&quot;Hers&quot;</span><span class="p">])</span>
+                                       <span class="n">deny_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;he&quot;</span><span class="p">,</span> <span class="s2">&quot;He&quot;</span><span class="p">,</span> <span class="s2">&quot;his&quot;</span><span class="p">,</span> <span class="s2">&quot;His&quot;</span><span class="p">,</span> <span class="s2">&quot;she&quot;</span><span class="p">,</span> <span class="s2">&quot;She&quot;</span><span class="p">,</span> <span class="s2">&quot;hers&quot;</span><span class="p">,</span> <span class="s2">&quot;Hers&quot;</span><span class="p">])</span>
 
 <span class="n">analyzer</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">titles_recognizer</span><span class="p">)</span>
 <span class="n">analyzer</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">add_recognizer</span><span class="p">(</span><span class="n">pronoun_recognizer</span><span class="p">)</span>
@@ -2311,7 +2311,7 @@ A <code>PatternRecognizer</code> is a PII entity recognizer which uses regular e
                                       deny_list=["Mr.","Mrs.","Miss"])
 
 pronoun_recognizer = PatternRecognizer(supported_entity="PRONOUN",
-                                       deny_list=["he", "He", "his", "His", "she", "She", "hers" "Hers"])
+                                       deny_list=["he", "He", "his", "His", "she", "She", "hers", "Hers"])
 
 analyzer.registry.add_recognizer(titles_recognizer)
 analyzer.registry.add_recognizer(pronoun_recognizer)

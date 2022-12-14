@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://microsoft.github.io/presidio/image-redactor/">
       
       <link rel="icon" href="../assets/ms_icon.png">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.2.11">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.2.11">
     
     
       
@@ -839,11 +839,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    Getting started
+  <a href="#getting-started-standard-image-types" class="md-nav__link">
+    Getting started (standard image types)
   </a>
   
-    <nav class="md-nav" aria-label="Getting started">
+    <nav class="md-nav" aria-label="Getting started (standard image types)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -856,6 +856,33 @@
           <li class="md-nav__item">
   <a href="#using-python-runtime" class="md-nav__link">
     Using python runtime
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started-dicom-images" class="md-nav__link">
+    Getting started (DICOM images)
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting started (DICOM images)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#side-note-for-windows" class="md-nav__link">
+    Side note for Windows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dicom-data-citation" class="md-nav__link">
+    DICOM Data Citation
   </a>
   
 </li>
@@ -1165,11 +1192,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    Getting started
+  <a href="#getting-started-standard-image-types" class="md-nav__link">
+    Getting started (standard image types)
   </a>
   
-    <nav class="md-nav" aria-label="Getting started">
+    <nav class="md-nav" aria-label="Getting started (standard image types)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1182,6 +1209,33 @@
           <li class="md-nav__item">
   <a href="#using-python-runtime" class="md-nav__link">
     Using python runtime
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started-dicom-images" class="md-nav__link">
+    Getting started (DICOM images)
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting started (DICOM images)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#side-note-for-windows" class="md-nav__link">
+    Side note for Windows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dicom-data-citation" class="md-nav__link">
+    DICOM Data Citation
   </a>
   
 </li>
@@ -1221,6 +1275,13 @@
 <p>The Presidio Image Redactor is a Python based module for detecting and redacting PII
 text entities in images.
 <img alt="img.png" src="../assets/image-redactor-design.png" /></p>
+<p>This module may also be used on medical DICOM images. The <code>DicomImageRedactorEngine</code> class may be used to redact text PII present as pixels in DICOM images.
+<img alt="img.png" src="../assets/dicom-image-redactor-design.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class only redacts pixel data and does not scrub text PHI which may exist in the DICOM metadata.
+ We highly recommend using the DICOM image redactor engine to redact text from images BEFORE scrubbing metadata PHI.*</p>
+</div>
 <h2 id="installation">Installation</h2>
 <p>Pre-requisites:</p>
 <ul>
@@ -1229,7 +1290,7 @@ text entities in images.
 </ul>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>For now, image redactor only supports tesseract version 4.0.0</p>
+<p>For best performance, please use the most up-to-date version of Tesseract OCR. Presidio was tested with <strong>v5.2.0</strong>.</p>
 </div>
 <div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Using pip</label><div class="tabbed-content">
 <div class="admonition note">
@@ -1262,7 +1323,7 @@ docker build . -t presidio/presidio-image-redactor
 </code></pre></div>
 </div>
 </div>
-<h2 id="getting-started">Getting started</h2>
+<h2 id="getting-started-standard-image-types">Getting started (standard image types)</h2>
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Python</label><div class="tabbed-content">
 <p>Once the Presidio-image-redactor package is installed, run this simple script:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
@@ -1304,6 +1365,39 @@ curl -XPOST <span class="s2">&quot;http://localhost:3000/redact&quot;</span> -H 
 </div>
 <p>Python script example can be found under:
 /presidio/e2e-tests/tests/test_image_redactor.py</p>
+<h2 id="getting-started-dicom-images">Getting started (DICOM images)</h2>
+<div class="tabbed-set" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Python</label><div class="tabbed-content">
+<p>Once the Presidio-image-redactor package is installed, run this simple script:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pydicom</span>
+<span class="kn">from</span> <span class="nn">presidio_image_redactor</span> <span class="kn">import</span> <span class="n">DicomImageRedactorEngine</span>
+
+<span class="c1"># Set input and output paths</span>
+<span class="n">input_path</span> <span class="o">=</span> <span class="s2">&quot;path/to/your/dicom/file.dcm&quot;</span>
+<span class="n">output_dir</span> <span class="o">=</span> <span class="s2">&quot;./output&quot;</span>
+
+<span class="c1"># Initialize the engine</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">DicomImageRedactorEngine</span><span class="p">()</span>
+
+<span class="c1"># Option 1: Redact from a loaded DICOM image</span>
+<span class="n">dicom_image</span> <span class="o">=</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">dcmread</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+<span class="n">redacted_dicom_image</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">redact</span><span class="p">(</span><span class="n">dicom_image</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;contrast&quot;</span><span class="p">)</span>
+
+<span class="c1"># Option 2: Redact from DICOM file</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">redact_from_file</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">padding_width</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;contrast&quot;</span><span class="p">)</span>
+
+<span class="c1"># Option 3: Redact from directory</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">redact_from_directory</span><span class="p">(</span><span class="s2">&quot;path/to/your/dicom&quot;</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">padding_width</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;contrast&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<h3 id="side-note-for-windows">Side note for Windows</h3>
+<p>If you are using a Windows machine, you may run into issues if file paths are too long. Unfortunatley, this is not rare when working with DICOM images that are often nested in directories with descriptive names.</p>
+<p>To avoid errors where the code may not recognize a path as existing due to the length of the characters in the file path, please <a href="https://learn.microsoft.com/en-us/answers/questions/293227/longpathsenabled.html">enable long paths on your system</a>.</p>
+<h3 id="dicom-data-citation">DICOM Data Citation</h3>
+<p>The DICOM data used for unit and integration testing for <code>DicomImageRedactorEngine</code> are stored in this repository with permission from the original dataset owners. Please see the dataset information as follows:</p>
+<blockquote>
+<p>Rutherford, M., Mun, S.K., Levine, B., Bennett, W.C., Smith, K., Farmer, P., Jarosz, J., Wagner, U., Farahani, K., Prior, F. (2021). A DICOM dataset for evaluation of medical image de-identification (Pseudo-PHI-DICOM-Data) [Data set]. The Cancer Imaging Archive. DOI: <a href="https://doi.org/10.7937/s17z-r072">https://doi.org/10.7937/s17z-r072</a></p>
+</blockquote>
 <h2 id="api-reference">API reference</h2>
 <p>the <a href="https://microsoft.github.io/presidio/api-docs/api-docs.html#tag/Image-redactor">API Spec</a>
 for the Image Redactor REST API reference details
