@@ -1,4 +1,4 @@
-mkdocs
+mkdocs==1.4.1
 mkdocs-material
 mkdocs-jupyter
 pymdown-extensions<9.4
