@@ -19,7 +19,7 @@ bitcoin wallets, US phone numbers, financial data and more.
 
 ## Main features
 
-1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
+1. **Predefined** or **custom PII recognizers** leveraging _Named Entity Recognition_, _regular expressions_, _rule based logic_ and _checksum_ with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
 3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
 4. **Customizability** in PII identification and anonymization.
@@ -27,7 +27,6 @@ bitcoin wallets, US phone numbers, financial data and more.
 
 !!! warning "Warning"
     Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
-
 
 ## [Demo](https://aka.ms/presidio-demo) | [Frequently Asked Questions](faq.md)
 
