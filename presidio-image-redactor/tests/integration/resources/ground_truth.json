@@ -1,0 +1,143 @@
+{
+    "sample_dicom/0_ORIGINAL.dcm": {
+        "0": {
+            "label": "DAVIDSON",
+            "left": 25,
+            "top": 25,
+            "width": 241,
+            "height": 37
+        },
+        "1": {
+            "label": "DOUGLAS",
+            "left": 287,
+            "top": 25,
+            "width": 230,
+            "height": 36
+        },
+        "2": {
+            "label": "[M]",
+            "left": 535,
+            "top": 25,
+            "width": 60,
+            "height": 45
+        },
+        "3": {
+            "label": "01.09.2012",
+            "left": 613,
+            "top": 26,
+            "width": 226,
+            "height": 35
+        },
+        "4": {
+            "label": "06.16.1976",
+            "left": 170,
+            "top": 72,
+            "width": 218,
+            "height": 35
+        }
+    },
+    "sample_dicom/1_ORIGINAL.dcm": {
+        "0": {
+            "label": "MARTIN",
+            "left": 1577,
+            "top": 1875,
+            "width": 87,
+            "height": 18
+        },
+        "1": {
+            "label": "CHAD",
+            "left": 1674,
+            "top": 1875,
+            "width": 65,
+            "height": 18
+        },
+        "2": {
+            "label": "[U]",
+            "left": 1749,
+            "top": 1875,
+            "width": 27,
+            "height": 23
+        },
+        "3": {
+            "label": "01.01.2000",
+            "left": 1786,
+            "top": 1876,
+            "width": 110,
+            "height": 17
+        }
+    },
+    "sample_dicom/2_ORIGINAL.dcm": {
+        "0": {
+            "label": "KAUFMAN",
+            "left": 26,
+            "top": 25,
+            "width": 72,
+            "height": 11
+        },
+        "1": {
+            "label": "SCOTT",
+            "left": 104,
+            "top": 25,
+            "width": 50,
+            "height": 11
+        },
+        "2": {
+            "label": "[M]",
+            "left": 159,
+            "top": 25,
+            "width": 19,
+            "height": 14
+        },
+        "3": {
+            "label": "03.09.2012",
+            "left": 184,
+            "top": 25,
+            "width": 70,
+            "height": 11
+        },
+        "4": {
+            "label": "07.22.1943",
+            "left": 71,
+            "top": 40,
+            "width": 68,
+            "height": 11
+        }
+    },
+    "sample_dicom/3_ORIGINAL.dcm": {
+        "0": {
+            "label": "MEYER",
+            "left": 29,
+            "top": 25,
+            "width": 165,
+            "height": 35
+        },
+        "1": {
+            "label": "STEPHANIE",
+            "left": 211,
+            "top": 25,
+            "width": 266,
+            "height": 36
+        },
+        "2": {
+            "label": "[F]",
+            "left": 496,
+            "top": 25,
+            "width": 49,
+            "height": 45
+        },
+        "3": {
+            "label": "02.25.2012",
+            "left": 563,
+            "top": 26,
+            "width": 232,
+            "height": 35
+        },
+        "4": {
+            "label": "07.16.1953",
+            "left": 170,
+            "top": 72,
+            "width": 213,
+            "height": 35
+        }
+    }
+}
