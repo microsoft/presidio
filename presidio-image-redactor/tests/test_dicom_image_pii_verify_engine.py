@@ -1,14 +1,18 @@
 """Unit tests for dicom_image_pii_verify_engine
 """
-# TODO: Change imports and paths once in Presidio
-from pathlib import Path
+import os
 import pydicom
 import json
 
-from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine, DicomImageRedactorEngine
-from src.eval.dicom_image_pii_verify_engine import DicomImagePiiVerifyEngine
+from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine
+from presidio_image_redactor.dicom_image_pii_verify_engine import (
+    DicomImagePiiVerifyEngine,
+)
 
 import pytest
+
+SCRIPT_DIR = os.path.dirname(__file__)
+
 
 @pytest.fixture(scope="module")
 def mock_engine():
@@ -17,30 +21,36 @@ def mock_engine():
 
     return dicom_image_pii_verify_engine
 
+
 @pytest.fixture(scope="module")
 def mock_instance():
     """DICOM instance to use in testing"""
     # Assign
-    filepath = "src/presidio_dev/tests/test_data/0_ORIGINAL.dcm"
+    filepath = f"{SCRIPT_DIR}/test_data/0_ORIGINAL.dcm"
 
     # Act
     instance = pydicom.dcmread(filepath)
 
     return instance
 
+
 @pytest.fixture(scope="module")
 def mock_results():
     """Loaded json results file"""
-    with open("src/eval/tests/dicom_pii_verify_integration.json") as json_file:
+    with open(
+        f"{SCRIPT_DIR}/integration/resources/dicom_pii_verify_integration.json"
+    ) as json_file:
         results_json = json.load(json_file)
 
     return results_json
+
 
 @pytest.fixture(scope="module")
 def mock_gt_single(mock_results: dict):
     """Ground truth for a single instance"""
     gt = mock_results["ground_truth"]
     return gt
+
 
 # ------------------------------------------------------
 # DicomImagePiiVerifyEngine.__init__()
@@ -51,7 +61,7 @@ def mock_gt_single(mock_results: dict):
         (TesseractOCR(), None),
         (None, ImageAnalyzerEngine()),
         (TesseractOCR(), ImageAnalyzerEngine()),
-        (None, None)
+        (None, None),
     ],
 )
 def test_init_happy_path(
@@ -67,13 +77,14 @@ def test_init_happy_path(
     except:
         raise TypeError("Invalid input into initializing")
 
+
 # ------------------------------------------------------
 # DicomImagePiiVerifyEngine.verify_dicom_instance()
 # ------------------------------------------------------
 def test_verify_dicom_instance_happy_path(
     mocker,
     mock_engine: DicomImagePiiVerifyEngine,
-    mock_instance: pydicom.dataset.FileDataset
+    mock_instance: pydicom.dataset.FileDataset,
 ):
     """Test happy path for DicomImagePiiVerifyEngine.verify_dicom_instance
     Args:
@@ -84,63 +95,43 @@ def test_verify_dicom_instance_happy_path(
     padding_width = 25
 
     mock_greyscale = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_check_if_greyscale",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_check_if_greyscale", return_value=None
     )
     mock_rescale_array = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_rescale_dcm_pixel_array",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_rescale_dcm_pixel_array", return_value=None
     )
     mock_save_pixel_array = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_save_pixel_array_as_png",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_save_pixel_array_as_png", return_value=None
     )
     mock_image_open = mocker.patch(
-        "src.eval.dicom_image_pii_verify_engine.Image.open",
-        return_value=None
+        "presidio_image_redactor.dicom_image_pii_verify_engine.Image.open",
+        return_value=None,
     )
     mock_add_padding = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_add_padding",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_add_padding", return_value=None
     )
     mock_get_metadata = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_get_text_metadata",
-        return_value=[None, None, None]
+        DicomImagePiiVerifyEngine, "_get_text_metadata", return_value=[None, None, None]
     )
     mock_make_phi_list = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_make_phi_list",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_make_phi_list", return_value=None
     )
     mock_patternrecognizer = mocker.patch(
-        "src.eval.dicom_image_pii_verify_engine.PatternRecognizer",
-        return_value=None
+        "presidio_image_redactor.dicom_image_pii_verify_engine.PatternRecognizer",
+        return_value=None,
     )
     mock_perform_ocr = mocker.patch.object(
-        TesseractOCR,
-        "perform_ocr",
-        return_value=None
+        TesseractOCR, "perform_ocr", return_value=None
     )
     mock_analyze = mocker.patch.object(
-        ImageAnalyzerEngine,
-        "analyze",
-        return_value=None
+        ImageAnalyzerEngine, "analyze", return_value=None
     )
     mock_verify = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "verify",
-        return_value=None
+        DicomImagePiiVerifyEngine, "verify", return_value=None
     )
 
     # Act
-    _, _, _ = mock_engine.verify_dicom_instance(
-        mock_instance, padding_width
-    )
+    _, _, _ = mock_engine.verify_dicom_instance(mock_instance, padding_width)
 
     # Assert
     assert mock_greyscale.call_count == 1
@@ -163,7 +154,7 @@ def test_eval_dicom_instance_happy_path(
     mocker,
     mock_engine: DicomImagePiiVerifyEngine,
     mock_instance: pydicom.dataset.FileDataset,
-    mock_gt_single: dict
+    mock_gt_single: dict,
 ):
     """Test happy path for DicomImagePiiVerifyEngine.eval_dicom_instance
     Args:
@@ -178,37 +169,27 @@ def test_eval_dicom_instance_happy_path(
     mock_verify_instance = mocker.patch.object(
         DicomImagePiiVerifyEngine,
         "verify_dicom_instance",
-        return_value=[None, None, None]
+        return_value=[None, None, None],
     )
     mock_get_ocr_bboxes = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_get_bboxes_from_ocr_results",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_get_bboxes_from_ocr_results", return_value=None
     )
     mock_get_analyzer_bboxes = mocker.patch.object(
         DicomImagePiiVerifyEngine,
         "_get_bboxes_from_analyzer_results",
-        return_value=None
+        return_value=None,
     )
     mock_remove_dups = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_remove_duplicate_entities",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_remove_duplicate_entities", return_value=None
     )
     mock_label_positives = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_label_all_positives",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_label_all_positives", return_value=None
     )
     mock_precision = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_calculate_precision",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_calculate_precision", return_value=None
     )
     mock_recall = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_calculate_recall",
-        return_value=None
+        DicomImagePiiVerifyEngine, "_calculate_recall", return_value=None
     )
 
     # Act
@@ -226,6 +207,7 @@ def test_eval_dicom_instance_happy_path(
     assert mock_precision.call_count == 1
     assert mock_recall.call_count == 1
 
+
 # ------------------------------------------------------
 # DicomImagePiiVerifyEngine._get_bboxes_from_ocr_results()
 # ------------------------------------------------------
@@ -239,7 +221,7 @@ def test_eval_dicom_instance_happy_path(
                 "width": [100],
                 "height": [25],
                 "conf": ["1"],
-                "text": ["JOHN"]
+                "text": ["JOHN"],
             },
             {
                 "0": {
@@ -248,9 +230,9 @@ def test_eval_dicom_instance_happy_path(
                     "width": 100,
                     "height": 25,
                     "conf": 1,
-                    "label": "JOHN"
+                    "label": "JOHN",
                 }
-            }
+            },
         ),
         (
             {
@@ -259,7 +241,7 @@ def test_eval_dicom_instance_happy_path(
                 "width": [100, 75],
                 "height": [25, 30],
                 "conf": ["1", "0.87"],
-                "text": ["JOHN", "DOE"]
+                "text": ["JOHN", "DOE"],
             },
             {
                 "0": {
@@ -268,7 +250,7 @@ def test_eval_dicom_instance_happy_path(
                     "width": 100,
                     "height": 25,
                     "conf": 1,
-                    "label": "JOHN"
+                    "label": "JOHN",
                 },
                 "1": {
                     "left": 345,
@@ -276,16 +258,16 @@ def test_eval_dicom_instance_happy_path(
                     "width": 75,
                     "height": 30,
                     "conf": 0.87,
-                    "label": "DOE"
-                }
-            }
-        )
-    ]
+                    "label": "DOE",
+                },
+            },
+        ),
+    ],
 )
 def test_get_bboxes_from_ocr_results_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
     ocr_results_raw: dict,
-    expected_results: dict
+    expected_results: dict,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._get_bboxes_from_ocr_results
     Args:
@@ -298,7 +280,6 @@ def test_get_bboxes_from_ocr_results_happy_path(
 
     # Assert
     assert test_bboxes == expected_results
-
 
 
 # ------------------------------------------------------
@@ -315,7 +296,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 613,
                     "top": 26,
                     "width": 226,
-                    "height": 35
+                    "height": 35,
                 },
                 "4": {
                     "entity_type": "PERSON",
@@ -323,7 +304,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 170,
                     "top": 72,
                     "width": 218,
-                    "height": 35
+                    "height": 35,
                 },
                 "5": {
                     "entity_type": "PHONE_NUMBER",
@@ -331,8 +312,8 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 170,
                     "top": 72,
                     "width": 218,
-                    "height": 35
-                }
+                    "height": 35,
+                },
             },
             5,
             {
@@ -342,7 +323,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 613,
                     "top": 26,
                     "width": 226,
-                    "height": 35
+                    "height": 35,
                 },
                 "4": {
                     "entity_type": "PERSON",
@@ -350,9 +331,9 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 170,
                     "top": 72,
                     "width": 218,
-                    "height": 35
-                }
-            }    
+                    "height": 35,
+                },
+            },
         ),
         (
             {
@@ -362,7 +343,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 613,
                     "top": 26,
                     "width": 226,
-                    "height": 35
+                    "height": 35,
                 },
                 "4": {
                     "entity_type": "PERSON",
@@ -370,7 +351,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 170,
                     "top": 72,
                     "width": 218,
-                    "height": 35
+                    "height": 35,
                 },
                 "5": {
                     "entity_type": "PHONE_NUMBER",
@@ -378,8 +359,8 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 170,
                     "top": 72,
                     "width": 218,
-                    "height": 35
-                }
+                    "height": 35,
+                },
             },
             999,
             {
@@ -389,9 +370,9 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 613,
                     "top": 26,
                     "width": 226,
-                    "height": 35
+                    "height": 35,
                 }
-            }    
+            },
         ),
         (
             {
@@ -401,7 +382,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 123,
                     "top": 17,
                     "width": 100,
-                    "height": 50
+                    "height": 50,
                 },
                 "1": {
                     "entity_type": "PERSON",
@@ -409,7 +390,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 127,
                     "top": 14,
                     "width": 98,
-                    "height": 55
+                    "height": 55,
                 },
                 "2": {
                     "entity_type": "PHONE_NUMBER",
@@ -417,8 +398,8 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 999,
                     "top": 99,
                     "width": 199,
-                    "height": 39
-                }
+                    "height": 39,
+                },
             },
             5,
             {
@@ -428,7 +409,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 123,
                     "top": 17,
                     "width": 100,
-                    "height": 50
+                    "height": 50,
                 },
                 "2": {
                     "entity_type": "PHONE_NUMBER",
@@ -436,8 +417,8 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 999,
                     "top": 99,
                     "width": 199,
-                    "height": 39
-                }
+                    "height": 39,
+                },
             },
         ),
         (
@@ -448,7 +429,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 123,
                     "top": 17,
                     "width": 100,
-                    "height": 50
+                    "height": 50,
                 },
                 "1": {
                     "entity_type": "PERSON",
@@ -456,7 +437,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 127,
                     "top": 14,
                     "width": 98,
-                    "height": 55
+                    "height": 55,
                 },
                 "2": {
                     "entity_type": "PHONE_NUMBER",
@@ -464,8 +445,8 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 999,
                     "top": 99,
                     "width": 199,
-                    "height": 39
-                }
+                    "height": 39,
+                },
             },
             0,
             {
@@ -475,7 +456,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 123,
                     "top": 17,
                     "width": 100,
-                    "height": 50
+                    "height": 50,
                 },
                 "1": {
                     "entity_type": "PERSON",
@@ -483,7 +464,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 127,
                     "top": 14,
                     "width": 98,
-                    "height": 55
+                    "height": 55,
                 },
                 "2": {
                     "entity_type": "PHONE_NUMBER",
@@ -491,14 +472,17 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "left": 999,
                     "top": 99,
                     "width": 199,
-                    "height": 39
-                }
+                    "height": 39,
+                },
             },
         ),
     ],
 )
 def test_remove_duplicate_entities_happy_path(
-    mock_engine: DicomImagePiiVerifyEngine, results: dict, tolerance: int, expected_results: dict
+    mock_engine: DicomImagePiiVerifyEngine,
+    results: dict,
+    tolerance: int,
+    expected_results: dict,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._remove_duplicate_entities
     Args:
@@ -514,7 +498,6 @@ def test_remove_duplicate_entities_happy_path(
     assert test_results_no_dups == expected_results
 
 
-
 # ------------------------------------------------------
 # DicomImagePiiVerifyEngine._match_with_source()
 # ------------------------------------------------------
@@ -528,21 +511,21 @@ def test_remove_duplicate_entities_happy_path(
                     "left": 25,
                     "top": 25,
                     "width": 241,
-                    "height": 37
+                    "height": 37,
                 },
                 "1": {
                     "label": "DOUGLAS",
                     "left": 287,
                     "top": 25,
                     "width": 230,
-                    "height": 36
+                    "height": 36,
                 },
                 "2": {
                     "label": "[M]",
                     "left": 535,
                     "top": 25,
                     "width": 60,
-                    "height": 45
+                    "height": 45,
                 },
             },
             {
@@ -551,7 +534,7 @@ def test_remove_duplicate_entities_happy_path(
                 "left": 287,
                 "top": 25,
                 "width": 230,
-                "height": 36
+                "height": 36,
             },
             50,
             {
@@ -561,52 +544,7 @@ def test_remove_duplicate_entities_happy_path(
                     "left": 287,
                     "top": 25,
                     "width": 230,
-                    "height": 36
-                }
-            },
-            True
-        ),
-        (
-            {
-                "0": {
-                    "label": "DAVIDSON",
-                    "left": 25,
-                    "top": 25,
-                    "width": 241,
-                    "height": 37
-                },
-                "1": {
-                    "label": "DOUGLAS",
-                    "left": 287,
-                    "top": 25,
-                    "width": 230,
-                    "height": 36
-                },
-                "2": {
-                    "label": "[M]",
-                    "left": 535,
-                    "top": 25,
-                    "width": 60,
-                    "height": 45
-                },
-            },
-            {
-                "entity_type": "PERSON",
-                "score": 1.0,
-                "left": 300,
-                "top": 15,
-                "width": 250,
-                "height": 40
-            },
-            50,
-            {
-                "1": {
-                    "label": "DOUGLAS",
-                    "score": 1.0,
-                    "left": 287,
-                    "top": 25,
-                    "width": 230,
-                    "height": 36
+                    "height": 36,
                 }
             },
             True,
@@ -618,21 +556,66 @@ def test_remove_duplicate_entities_happy_path(
                     "left": 25,
                     "top": 25,
                     "width": 241,
-                    "height": 37
+                    "height": 37,
                 },
                 "1": {
                     "label": "DOUGLAS",
                     "left": 287,
                     "top": 25,
                     "width": 230,
-                    "height": 36
+                    "height": 36,
                 },
                 "2": {
                     "label": "[M]",
                     "left": 535,
                     "top": 25,
                     "width": 60,
-                    "height": 45
+                    "height": 45,
+                },
+            },
+            {
+                "entity_type": "PERSON",
+                "score": 1.0,
+                "left": 300,
+                "top": 15,
+                "width": 250,
+                "height": 40,
+            },
+            50,
+            {
+                "1": {
+                    "label": "DOUGLAS",
+                    "score": 1.0,
+                    "left": 287,
+                    "top": 25,
+                    "width": 230,
+                    "height": 36,
+                }
+            },
+            True,
+        ),
+        (
+            {
+                "0": {
+                    "label": "DAVIDSON",
+                    "left": 25,
+                    "top": 25,
+                    "width": 241,
+                    "height": 37,
+                },
+                "1": {
+                    "label": "DOUGLAS",
+                    "left": 287,
+                    "top": 25,
+                    "width": 230,
+                    "height": 36,
+                },
+                "2": {
+                    "label": "[M]",
+                    "left": 535,
+                    "top": 25,
+                    "width": 60,
+                    "height": 45,
                 },
             },
             {
@@ -641,16 +624,21 @@ def test_remove_duplicate_entities_happy_path(
                 "left": 99,
                 "top": 99,
                 "width": 99,
-                "height": 99
+                "height": 99,
             },
             10,
             {},
-            False
-        )
-    ]
+            False,
+        ),
+    ],
 )
 def test_match_with_source_happy_path(
-    mock_engine: DicomImagePiiVerifyEngine, source_labels: dict, results: dict, tolerance: int, expected_results: dict, expected_match_found: bool
+    mock_engine: DicomImagePiiVerifyEngine,
+    source_labels: dict,
+    results: dict,
+    tolerance: int,
+    expected_results: dict,
+    expected_match_found: bool,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._match_with_source
 
@@ -666,11 +654,14 @@ def test_match_with_source_happy_path(
     all_pos = {}
 
     # Act
-    test_all_pos, test_match_found = mock_engine._match_with_source(all_pos, source_labels, results, tolerance)
+    test_all_pos, test_match_found = mock_engine._match_with_source(
+        all_pos, source_labels, results, tolerance
+    )
 
     # Assert
     assert test_all_pos == expected_results
     assert test_match_found == expected_match_found
+
 
 # ------------------------------------------------------
 # DicomImagePiiVerifyEngine._label_all_positives()
@@ -689,7 +680,7 @@ def test_match_with_source_happy_path(
                     "left": 25,
                     "top": 25,
                     "width": 241,
-                    "height": 37
+                    "height": 37,
                 },
                 "1": {
                     "label": "DOUGLAS",
@@ -697,7 +688,7 @@ def test_match_with_source_happy_path(
                     "left": 287,
                     "top": 25,
                     "width": 230,
-                    "height": 36
+                    "height": 36,
                 },
                 "2": {
                     "label": "[M]",
@@ -705,7 +696,7 @@ def test_match_with_source_happy_path(
                     "left": 535,
                     "top": 25,
                     "width": 60,
-                    "height": 45
+                    "height": 45,
                 },
                 "3": {
                     "label": "01.09.2012",
@@ -713,7 +704,7 @@ def test_match_with_source_happy_path(
                     "left": 613,
                     "top": 26,
                     "width": 226,
-                    "height": 35
+                    "height": 35,
                 },
                 "4": {
                     "label": "06.16.1976",
@@ -721,9 +712,9 @@ def test_match_with_source_happy_path(
                     "left": 170,
                     "top": 72,
                     "width": 218,
-                    "height": 35
-                }
-            }
+                    "height": 35,
+                },
+            },
         ),
         (
             None,
@@ -734,7 +725,7 @@ def test_match_with_source_happy_path(
                     "left": 35,
                     "top": 30,
                     "width": 245,
-                    "height": 39
+                    "height": 39,
                 },
                 "1": {
                     "entity_type": "PERSON",
@@ -742,7 +733,7 @@ def test_match_with_source_happy_path(
                     "left": 300,
                     "top": 15,
                     "width": 250,
-                    "height": 40
+                    "height": 40,
                 },
                 "2": {
                     "entity_type": "PERSON",
@@ -750,7 +741,7 @@ def test_match_with_source_happy_path(
                     "left": 585,
                     "top": 25,
                     "width": 80,
-                    "height": 45
+                    "height": 45,
                 },
             },
             50,
@@ -761,7 +752,7 @@ def test_match_with_source_happy_path(
                     "left": 25,
                     "top": 25,
                     "width": 241,
-                    "height": 37
+                    "height": 37,
                 },
                 "1": {
                     "label": "DOUGLAS",
@@ -769,7 +760,7 @@ def test_match_with_source_happy_path(
                     "left": 287,
                     "top": 25,
                     "width": 230,
-                    "height": 36
+                    "height": 36,
                 },
                 "2": {
                     "label": "[M]",
@@ -777,9 +768,9 @@ def test_match_with_source_happy_path(
                     "left": 535,
                     "top": 25,
                     "width": 60,
-                    "height": 45
+                    "height": 45,
                 },
-            },   
+            },
         ),
         (
             None,
@@ -790,7 +781,7 @@ def test_match_with_source_happy_path(
                     "left": 99,
                     "top": 99,
                     "width": 99,
-                    "height": 99
+                    "height": 99,
                 },
                 "1": {
                     "entity_type": "PERSON",
@@ -798,7 +789,7 @@ def test_match_with_source_happy_path(
                     "left": 199,
                     "top": 199,
                     "width": 199,
-                    "height": 199
+                    "height": 199,
                 },
                 "2": {
                     "entity_type": "PERSON",
@@ -806,8 +797,8 @@ def test_match_with_source_happy_path(
                     "left": 535,
                     "top": 25,
                     "width": 60,
-                    "height": 45
-                }
+                    "height": 45,
+                },
             },
             10,
             {
@@ -817,11 +808,11 @@ def test_match_with_source_happy_path(
                     "left": 535,
                     "top": 25,
                     "width": 60,
-                    "height": 45
+                    "height": 45,
                 }
-            }
-        )
-    ]
+            },
+        ),
+    ],
 )
 def test_label_all_positives_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
@@ -830,7 +821,7 @@ def test_label_all_positives_happy_path(
     ocr_results: dict,
     analyzer_results: dict,
     tolerance: int,
-    expected_results: dict
+    expected_results: dict,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._label_all_positives
 
@@ -846,15 +837,18 @@ def test_label_all_positives_happy_path(
     # Assign
     if not ocr_results:
         ocr_results = mock_results["ocr_results_formatted"]
-    
+
     if not analyzer_results:
         analyzer_results = mock_results["analyzer_results"]
-    
+
     # Act
-    test_all_pos = mock_engine._label_all_positives(mock_gt_single, ocr_results, analyzer_results, tolerance)
+    test_all_pos = mock_engine._label_all_positives(
+        mock_gt_single, ocr_results, analyzer_results, tolerance
+    )
 
     # Assert
     assert test_all_pos == expected_results
+
 
 # ------------------------------------------------------
 # DicomImagePiiVerifyEngine._calculate_precision()
@@ -862,7 +856,11 @@ def test_label_all_positives_happy_path(
 @pytest.mark.parametrize(
     "gt_labels, all_pos, expected_result",
     [
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}, "2": {}, "3": {}}, 1.0),
+        (
+            {"0": {}, "1": {}, "2": {}, "3": {}},
+            {"0": {}, "1": {}, "2": {}, "3": {}},
+            1.0,
+        ),
         ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}, "2": {}}, 1.0),
         ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}}, 1.0),
         ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}}, 1.0),
@@ -873,7 +871,10 @@ def test_label_all_positives_happy_path(
     ],
 )
 def test_calculate_precision_happy_path(
-    mock_engine: DicomImagePiiVerifyEngine, gt_labels: dict, all_pos: dict, expected_result: float
+    mock_engine: DicomImagePiiVerifyEngine,
+    gt_labels: dict,
+    all_pos: dict,
+    expected_result: float,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._calculate_precision
 
@@ -889,13 +890,18 @@ def test_calculate_precision_happy_path(
     # Assert
     assert test_precision == expected_result
 
+
 # ------------------------------------------------------
 # DicomImagePiiVerifyEngine._calculate_recall()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "gt_labels, all_pos, expected_result",
     [
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}, "2": {}, "3": {}}, 1.0),
+        (
+            {"0": {}, "1": {}, "2": {}, "3": {}},
+            {"0": {}, "1": {}, "2": {}, "3": {}},
+            1.0,
+        ),
         ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}, "2": {}}, 0.75),
         ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}}, 0.5),
         ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}}, 0.25),
@@ -903,7 +909,10 @@ def test_calculate_precision_happy_path(
     ],
 )
 def test_calculate_recall_happy_path(
-    mock_engine: DicomImagePiiVerifyEngine, gt_labels: dict, all_pos: dict, expected_result: float
+    mock_engine: DicomImagePiiVerifyEngine,
+    gt_labels: dict,
+    all_pos: dict,
+    expected_result: float,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._calculate_recall
 

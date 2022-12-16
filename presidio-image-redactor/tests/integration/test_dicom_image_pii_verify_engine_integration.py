@@ -7,12 +7,14 @@ the original parent ImagePiiVerifyEngine class.
 import PIL
 import pydicom
 import json
+import os
 
-from src.eval.dicom_image_pii_verify_engine import DicomImagePiiVerifyEngine
+from presidio_image_redactor.dicom_image_pii_verify_engine import (
+    DicomImagePiiVerifyEngine,
+)
 import pytest
 
-# TODO: Change imports and paths once in Presidio
-
+SCRIPT_DIR = os.path.dirname(__file__)
 PADDING_WIDTH = 25
 
 
@@ -26,30 +28,33 @@ def mock_engine():
 
     return dicom_image_pii_verify_engine
 
+
 @pytest.fixture(scope="module")
 def mock_instance():
     """DICOM instance to use in testing"""
     # Assign
-    filepath = "src/presidio_dev/tests/test_data/0_ORIGINAL.dcm"
+    filepath = f"{SCRIPT_DIR}/resources/0_ORIGINAL.dcm"
 
     # Act
     instance = pydicom.dcmread(filepath)
 
     return instance
 
+
 @pytest.fixture(scope="module")
 def mock_results():
     """Loaded json results file"""
-    with open("src/eval/tests/dicom_pii_verify_integration.json") as json_file:
+    with open(f"{SCRIPT_DIR}/resources/dicom_pii_verify_integration.json") as json_file:
         results_json = json.load(json_file)
 
     return results_json
 
+
 def test_verify_correctly(
     mock_engine: DicomImagePiiVerifyEngine,
     mock_instance: pydicom.dataset.FileDataset,
-    mock_results: dict
-    ):
+    mock_results: dict,
+):
     """Test the verify_dicom_instance function.
 
     Args:
@@ -62,20 +67,29 @@ def test_verify_correctly(
     expected_analyzer_results = mock_results["analyzer_results"]
 
     # Act
-    test_image, test_ocr_results, test_analyzer_results = mock_engine.verify_dicom_instance(mock_instance, PADDING_WIDTH)
-    test_ocr_results_formatted = mock_engine._get_bboxes_from_ocr_results(test_ocr_results)
-    test_analyzer_results_formatted = mock_engine._get_bboxes_from_analyzer_results(test_analyzer_results)
+    (
+        test_image,
+        test_ocr_results,
+        test_analyzer_results,
+    ) = mock_engine.verify_dicom_instance(mock_instance, PADDING_WIDTH)
+    test_ocr_results_formatted = mock_engine._get_bboxes_from_ocr_results(
+        test_ocr_results
+    )
+    test_analyzer_results_formatted = mock_engine._get_bboxes_from_analyzer_results(
+        test_analyzer_results
+    )
 
     # Assert
     assert type(test_image) == PIL.Image.Image
     assert test_ocr_results_formatted == expected_ocr_results
     assert test_analyzer_results_formatted == expected_analyzer_results
 
+
 def test_eval_dicom_correctly(
     mock_engine: DicomImagePiiVerifyEngine,
     mock_instance: pydicom.dataset.FileDataset,
-    mock_results: dict
-    ):
+    mock_results: dict,
+):
     """Test the eval_dicom_instance function
 
     Args:
@@ -90,11 +104,13 @@ def test_eval_dicom_correctly(
         "all_positives": mock_results["all_pos"],
         "ground_truth": ground_truth,
         "precision": 1.0,
-        "recall": 1.0
+        "recall": 1.0,
     }
 
     # Act
-    test_image, test_eval_results = mock_engine.eval_dicom_instance(mock_instance, ground_truth, PADDING_WIDTH, tolerance)
+    test_image, test_eval_results = mock_engine.eval_dicom_instance(
+        mock_instance, ground_truth, PADDING_WIDTH, tolerance
+    )
 
     # Assert
     assert type(test_image) == PIL.Image.Image

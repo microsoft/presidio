@@ -107,24 +107,26 @@ Pixel position and size data can be obtained using any labeling software or imag
 
 ### Example
 
-Let's say we ran the above code block and see the following for `ocr_results` and `analyzer_results`.
+Let's say we ran the above code block and see the following for `ocr_results_formatted` and `analyzer_results`.
 
 ```json
 // OCR Results
 {
-    "DAVIDSON": {
+    "0": {
             "left": 25,
             "top": 25,
             "width": 241,
             "height": 37,
-            "conf": 95.833916
+            "conf": 95.833916,
+            "label": "DAVIDSON"
         },
-    "DOUGLAS": {
+    "1": {
         "left": 287,
         "top": 25,
         "width": 230,
         "height": 36,
-        "conf": 93.292221
+        "conf": 93.292221,
+        "label": "DOUGLAS"
     }
 }
 
@@ -159,7 +161,6 @@ With this, we set our ground truth json to the following:
     "path/to/your/file.dcm": {
         "0": {
             "label": "DAVIDSON",
-            "score": 1.0,
             "left": 25,
             "top": 25,
             "width": 241,
@@ -167,7 +168,6 @@ With this, we set our ground truth json to the following:
         },
         "1": {
             "label": "DOUGLAS",
-            "score": 1.0,
             "left": 287,
             "top": 25,
             "width": 230,
@@ -196,6 +196,6 @@ instance = pydicom.dcmread(file_of_interest)
 _, eval_results = dicom_engine.eval_dicom_instance(instance, ground_truth)
 ```
 
-For a full demonstration, please see the [evaluation notebook](LINK_TO_NOTEBOOK_HERE).
+For a full demonstration, please see the [evaluation notebook](../docs/samples/python/example_dicom_redactor_evaluation.ipynb).
 
 *Return to the [Table of Contents](#table-of-contents)*

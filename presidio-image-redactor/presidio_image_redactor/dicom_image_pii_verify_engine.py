@@ -3,7 +3,9 @@ import tempfile
 import PIL
 from PIL import Image
 import pydicom
-from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine, DicomImageRedactorEngine, ImagePiiVerifyEngine
+
+from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine, DicomImageRedactorEngine
+from presidio_image_redactor.image_pii_verify_engine import ImagePiiVerifyEngine
 from presidio_analyzer import PatternRecognizer
 
 from typing import Tuple, Optional
