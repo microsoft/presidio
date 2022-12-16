@@ -3,7 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+#### Image redactor
+* Added evaluation code for the DICOM image redaction capabilities
+* Modified `ImagePiiVerifyEngine` to allow passing of kwargs
 
+#### General
+* Updated documentation to include instructions on using DICOM evaluation code
+
+## [2.2.31] - 14.12.2022
 ### Changed
 #### Image-Redactor
 * Added DICOM image redaction capabilities (`DicomImageRedactorEngine` class and tests)
@@ -194,7 +202,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.30...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.31...HEAD
+[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
 [2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
 [2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28

@@ -15,8 +15,6 @@ We can evaluate the performance of the `DicomImageRedactorEngine` DICOM de-ident
 * Precision
 * Recall
 
-*Return to the [Table of Contents](#table-of-contents)*
-
 ## Ground truth format
 
 Ground truth labels are stored as `.json` files containing filename as the highest level keys. Each filename item consists of numbered items, each associated with an individual entity.
@@ -86,13 +84,14 @@ padding_width = 25
 # Get OCR and NER results
 verification_image, ocr_results, analyzer_results = dicom_engine.verify_dicom_instance(instance, padding_width)
 
-# Format OCR results for more direct comparison with analyzer results
+# Format results for more direct comparison
 ocr_results_formatted = dicom_engine._get_bboxes_from_ocr_results(ocr_results)
+analyzer_results_formatted = dicom_engine._get_bboxes_from_analyzer_results(analyzer_results)
 ```
 
 By looking at the output of `verify_dicom_instance`, we can create a ground truth labels json.
 
-Save `analyzer_results` as a json file and then perform the following
+Save `analyzer_results_formatted` as a json file and then perform the following
 
 1. Group the results into a new item with the file name set as the key.
 2. For each item in this group (e.g., "0", "1")
@@ -107,10 +106,10 @@ Pixel position and size data can be obtained using any labeling software or imag
 
 ### Example
 
-Let's say we ran the above code block and see the following for `ocr_results_formatted` and `analyzer_results`.
+Let's say we ran the above code block and see the following for `ocr_results_formatted` and `analyzer_results_formatted`.
 
 ```json
-// OCR Results
+// OCR Results (formatted)
 {
     "0": {
             "left": 25,
@@ -130,7 +129,7 @@ Let's say we ran the above code block and see the following for `ocr_results_for
     }
 }
 
-// Analyzer Results
+// Analyzer Results (formatted)
 {
     "0": {
         "entity_type": "PERSON",
