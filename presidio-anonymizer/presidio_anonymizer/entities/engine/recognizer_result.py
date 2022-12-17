@@ -121,3 +121,18 @@ class RecognizerResult(PIIEntity):
         :return:
         """
         return self.start == other.start and self.end == other.end
+
+    def intersects(self, other) -> int:
+        """
+        Check if self intersects with a different RecognizerResult.
+
+        :return: If intersecting, returns the number of
+        intersecting characters.
+        If not, returns 0
+        """
+        # if they do not overlap the intersection is 0
+        if self.end < other.start or other.end < self.start:
+            return 0
+
+        # otherwise the intersection is min(end) - max(start)
+        return min(self.end, other.end) - max(self.start, other.start)
