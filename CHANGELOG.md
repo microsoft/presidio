@@ -10,15 +10,11 @@ All notable changes to this project will be documented in this file.
 * Updated `setup.py` to include new required packages for DICOM capabilities
 * Updated Pipfile and Pipfile.lock
 * Updated `presidio-image-redactor` version from 0.0.44 to 0.0.45
+* Updated the `ImagePiiVerifyEngine` class to allow use of custom analyzer engines
 
 #### General
 * Updated `NOTICE` to include licenses of added packages
 * Updated docs with getting started code for new `DicomImageRedactorEngine`
-
-## [2.2.31] - 21.11.2022
-### Changed
-#### Image-Redactor
-* Updated the `ImagePiiVerifyEngine` class to allow use of custom analyzer engines
 
 ## [2.2.30] - 25.10.2022
 ### Added
@@ -29,7 +25,6 @@ All notable changes to this project will be documented in this file.
 * Added Italian passport recognizer
 * Added `TransformersNlpEngine` to support transformer based NER models within spaCy pipelines
 * Added pattern for next gen US passport in `presidio-analyzer/presidio_analyzer/predefined_recognizers/us_passport_recognizer.py`
-
 
 ### Changed
 #### Analyzer
@@ -199,8 +194,7 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.31...HEAD
-[2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.30...HEAD
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
 [2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
 [2.2.28]: https://github.com/microsoft/presidio/compare/2.2.27...2.2.28
