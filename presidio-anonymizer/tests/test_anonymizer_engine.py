@@ -164,12 +164,10 @@ def _operate(
     operator: OperatorType,
 ) -> EngineResult:
     assert text == "hello world, my name is Jane Doe. My number is: 034453334"
-    assert len(text_metadata) == 4
+    assert len(text_metadata) == 2
     expected = [
         RecognizerResult(start=48, end=57, entity_type="PHONE_NUMBER", score=0.95),
-        RecognizerResult(start=18, end=32, entity_type="BLA", score=0.8),
-        RecognizerResult(start=23, end=35, entity_type="BLA", score=0.8),
-        RecognizerResult(start=28, end=36, entity_type="BLA", score=0.8),
+        RecognizerResult(start=18, end=36, entity_type="BLA", score=0.8),
     ]
     assert all(elem in text_metadata for elem in expected)
     assert len(operators) == 1
