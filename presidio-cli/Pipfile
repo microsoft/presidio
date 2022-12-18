@@ -9,7 +9,3 @@ flake8= {version = ">=3.7"}
 pre_commit = ">=2"
 pytest-cov = "*"
 pytest-mock = "*"
-presidio-cli = {editable = true, path = "."}
-
-[scripts]
-presidio = "python -m presidio_cli"
