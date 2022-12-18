@@ -1,5 +1,5 @@
 [packages]
-presidio-analyzer = ">=2.2.29"
+presidio-analyzer = ">=2.2.31"
 pyyaml = ">=6"
 pathspec = "*"
 
