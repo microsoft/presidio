@@ -32,7 +32,7 @@ setuptools.setup(
     trusted_host=["pypi.org"],
     tests_require=["pytest", "flake8>=3.7.9"],
     install_requires=[
-        "spacy>=3.2.0",
+        "spacy>=3.4.4",
         "regex",
         "tldextract",
         "pyyaml",
