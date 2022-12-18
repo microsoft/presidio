@@ -15,34 +15,35 @@ steps:
   inputs:
     versionSpec: '>= 10.x'
     checkLatest: true
-    
+
 - task: DockerCompose@0
   displayName: 'Run service with docker compose'
   inputs:
     containerregistrytype: 'Azure Container Registry'
     dockerComposeFile: '**/docker-compose.yml'
     action: 'Run services'
-    
+
 - script: |
-    set -eux  # fail on error    
+    set -eux  # fail on error
     pip install pytest-codeblocks==0.10.4
     pip install pytest
     pip install presidio-analyzer
     pip install presidio-anonymizer
     pip install presidio-image-redactor
+    pip install presidio-cli
     python -m spacy download en_core_web_lg
     python -m spacy download es_core_news_md
     pip install jupyter
-    pip install nbconvert    
-    npm install -g newman    
+    pip install nbconvert
+    npm install -g newman
     sudo apt-get install tesseract-ocr -y
     sudo apt show tesseract-ocr
     sudo tesseract -v
   displayName: install tools and packages
-  
+
 - script: |
     for f in docs/samples/python/*.ipynb;
-    do  
+    do
       echo testing $f
       jupyter nbconvert --to script $f --output converted_notebook
       python docs/samples/python/converted_notebook.py
@@ -53,23 +54,23 @@ steps:
 
 - script: |
     for f in docs/samples/python/*.py;
-    do    
+    do
       echo testing $f
       python $f
     done
   displayName: Execute python scripts
   continueOnError: true
 
-- script: |    
+- script: |
     for f in docs/samples/docker/*.postman_collection.json;
     do
       echo testing $f
       newman run $f
     done
   displayName: Execute postman collection
-  continueOnError: true  
+  continueOnError: true
 
-- script: |    
+- script: |
     python -m pytest ./docs --codeblocks
   displayName: Test python code in markdown files
   continueOnError: false

@@ -29,6 +29,7 @@ from .au_tfn_recognizer import AuTfnRecognizer
 from .au_medicare_recognizer import AuMedicareRecognizer
 from .it_driver_license_recognizer import ItDriverLicenseRecognizer
 from .it_fiscal_code_recognizer import ItFiscalCodeRecognizer
+from .it_vat_code import ItVatCodeRecognizer
 from .it_identity_card_recognizer import ItIdentityCardRecognizer
 from .it_passport_recognizer import ItPassportRecognizer
 
@@ -67,6 +68,7 @@ __all__ = [
     "TransformersRecognizer",
     "ItDriverLicenseRecognizer",
     "ItFiscalCodeRecognizer",
+    "ItVatCodeRecognizer",
     "ItIdentityCardRecognizer",
-    "ItPassportRecognizer"
+    "ItPassportRecognizer",
 ]

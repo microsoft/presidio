@@ -71,7 +71,7 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
         results = copy.deepcopy(raw_results)
 
         # create recognizer context dictionary
-        recognizers_dict = {recognizer.name: recognizer for recognizer in recognizers}
+        recognizers_dict = {recognizer.id: recognizer for recognizer in recognizers}
 
         # Create empty list in None or lowercase all context words in the list
         if not context:
@@ -89,11 +89,13 @@ class LemmaContextAwareEnhancer(ContextAwareEnhancer):
             # get recognizer matching the result, if found.
             if (
                 result.recognition_metadata
-                and RecognizerResult.RECOGNIZER_NAME_KEY
+                and RecognizerResult.RECOGNIZER_IDENTIFIER_KEY
                 in result.recognition_metadata.keys()
             ):
                 recognizer = recognizers_dict.get(
-                    result.recognition_metadata[RecognizerResult.RECOGNIZER_NAME_KEY]
+                    result.recognition_metadata[
+                        RecognizerResult.RECOGNIZER_IDENTIFIER_KEY
+                    ]
                 )
 
             if not recognizer:

@@ -30,6 +30,19 @@ def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully
     assert decryption.items[0].entity_type == "PERSON"
 
 
+def test_empty_text_returns_empty_text():
+    text = ""
+    encryption_results = []
+    engine = DeanonymizeEngine()
+    decryption = engine.deanonymize(
+        text,
+        encryption_results,
+        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": "WmZq4t7w!z%C&F)J"})},
+    )
+
+    assert text == decryption.text
+
+
 def test_given_short_key_then_we_fail():
     text = "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
     encryption_results = [
