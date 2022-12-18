@@ -61,7 +61,7 @@ class Server:
                 content.get("analyzer_results")
             )
             anoymizer_result = self.anonymizer.anonymize(
-                text=content.get("text"),
+                text=content.get("text", ""),
                 analyzer_results=analyzer_results,
                 operators=anonymizers_config,
             )
@@ -72,7 +72,7 @@ class Server:
             content = request.get_json()
             if not content:
                 raise BadRequest("Invalid request json")
-            text = content.get("text")
+            text = content.get("text", "")
             deanonymize_entities = AppEntitiesConvertor.deanonymize_entities_from_json(
                 content
             )

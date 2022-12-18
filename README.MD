@@ -1,6 +1,6 @@
-# Presidio - Data Protection and Anonymization API
+# Presidio - Data Protection and De-identification API
 
-**Context aware, pluggable and customizable PII anonymization service for text and images.**
+**Context aware, pluggable and customizable PII de-identification service for text and images.**
 
 ---
 
@@ -10,7 +10,6 @@
 [![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)
 [![PyPI package version](https://badge.fury.io/py/presidio-analyzer.svg)](https://badge.fury.io/py/presidio-analyzer.svg)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6076/badge)](https://bestpractices.coreinfrastructure.org/projects/6076)
-
 
 Analyzer [![PyPI pyversions](https://img.shields.io/pypi/pyversions/presidio-analyzer.svg)](https://pypi.python.org/pypi/presidio-analyzer/)
 
@@ -25,10 +24,15 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 ![Presidio demo gif](docs/assets/changing_text.gif)
 
 ---
-### :blue_book: [Full documentation](https://microsoft.github.io/presidio) 
+
+### :blue_book: [Full documentation](https://microsoft.github.io/presidio)
+
 ### :question: [Frequently Asked Questions](docs/faq.md)
-### :thought_balloon: [Demo](https://aka.ms/presidio-demo) 
-### :flight_departure: [Examples](https://microsoft.github.io/presidio/samples/) 
+
+### :thought_balloon: [Demo](https://aka.ms/presidio-demo)
+
+### :flight_departure: [Examples](https://microsoft.github.io/presidio/samples/)
+
 ---
 
 ### Goals
@@ -39,14 +43,13 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ### Main features
 
-1. **Predefined** or **custom PII recognizers** leveraging *Named Entity Recognition*, *regular expressions*, *rule based logic* and *checksum* with relevant context in multiple languages.
+1. **Predefined** or **custom PII recognizers** leveraging _Named Entity Recognition_, _regular expressions_, _rule based logic_ and _checksum_ with relevant context in multiple languages.
 2. Options for connecting to external PII detection models.
 3. Multiple usage options, **from Python or PySpark workloads through Docker to Kubernetes**.
-4. **Customizability** in PII identification and anonymization.
-5. Module for **redacting PII text in images**.
+4. **Customizability** in PII identification and de-identification.
+5. Module for **redacting PII text in images** (standard image types and DICOM medical images).
 
-:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because Presidio is using trained ML models, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
-
+:warning: Presidio can help identify sensitive/PII data in un/structured text. However, because it is using automated detection mechanisms, there is no guarantee that Presidio will find all sensitive information. Consequently, additional systems and protections should be employed.
 
 ## Installing Presidio
 
@@ -56,17 +59,18 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 4. [Migrating from V1 to V2](./docs/presidio_V2.md)
 
 ## Running Presidio
+
 1. [Getting started](https://microsoft.github.io/presidio/getting_started)
 2. [Setting up a development environment](https://microsoft.github.io/presidio/development)
-3. [PII anonymization in text](https://microsoft.github.io/presidio/text_anonymization)
-4. [PII anonymization in images](https://microsoft.github.io/presidio/image-redactor)
+3. [PII de-identification in text](https://microsoft.github.io/presidio/text_anonymization)
+4. [PII de-identification in images](https://microsoft.github.io/presidio/image-redactor)
 5. [Usage samples and example deployments](https://microsoft.github.io/presidio/samples)
 
 ---
 
 ## Support
 
-- Before you submit an issue, please go over the [documentation](https://microsoft.github.io/presidio/). 
+- Before you submit an issue, please go over the [documentation](https://microsoft.github.io/presidio/).
 - For general discussions, please use the [Github repo's discussion board](https://github.com/microsoft/presidio/discussions).
 - If you have a usage question, found a bug or have a suggestion for improvement, please file a [Github issue](https://github.com/microsoft/presidio/issues).
 - For other matters, please email [presidio@microsoft.com](mailto:presidio@microsoft.com).

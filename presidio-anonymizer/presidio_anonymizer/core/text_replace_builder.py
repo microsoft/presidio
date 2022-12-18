@@ -9,16 +9,10 @@ class TextReplaceBuilder:
 
     def __init__(self, original_text: str):
         self.logger = logging.getLogger("presidio-anonymizer")
-        self.__validate_text_not_empty(original_text)
         self.output_text = original_text
         self.original_text = original_text
         self.text_len = len(original_text)
         self.last_replacement_index = self.text_len
-
-    def __validate_text_not_empty(self, text: str):
-        if not text:
-            self.logger.debug("invalid input, json is missing text field")
-            raise InvalidParamException("Invalid input, text can not be empty")
 
     def get_text_in_position(self, start: int, end: int) -> str:
         """

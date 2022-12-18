@@ -12,9 +12,7 @@ from presidio_anonymizer.operators import AESCipher
 def test_given_url_at_the_end_then_we_redact_is_successfully():
     text = "The url is http://microsoft.com"
     anonymizer_config = {
-        "URL": OperatorConfig(
-            "redact"
-        ),
+        "URL": OperatorConfig("redact"),
     }
 
     analyzer_results = [
@@ -36,8 +34,8 @@ def test_given_operator_decrypt_then_we_fail():
     ]
     engine = AnonymizerEngine()
     with pytest.raises(
-        InvalidParamException,
-        match="Invalid operator class 'decrypt'.",
+            InvalidParamException,
+            match="Invalid operator class 'decrypt'.",
     ):
         engine.anonymize(text, analyzer_results, anonymizers_config)
 
@@ -109,7 +107,7 @@ def test_given_redact_and_replace_then_we_anonymize_successfully():
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
 
-def test_given_intersacting_entities_then_we_anonymize_correctly():
+def test_given_intersecting_entities_then_we_anonymize_correctly():
     text = "hello world, my name is Jane Doe. My number is: 03-4453334"
     anonymizer_config = {}
     analyzer_results = [
@@ -131,6 +129,21 @@ def test_given_intersacting_entities_then_we_anonymize_correctly():
         '"operator": "replace"}, {"start": 24, "end": 35, '
         '"entity_type": "FULL_NAME", "text": "<FULL_NAME>", '
         '"operator": "replace"}]}'
+    )
+    run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
+
+
+def test_given_intersecting_the_same_entities_then_we_anonymize_correctly():
+    text = "hello world, my name is Jane Doe. My number is: 03-4453334"
+    anonymizer_config = {}
+    analyzer_results = [
+        RecognizerResult(start=24, end=32, score=0.6, entity_type="FULL_NAME"),
+        RecognizerResult(start=29, end=33, score=0.6, entity_type="FULL_NAME"),
+    ]
+    expected_result = (
+        '{"text": "hello world, my name is <FULL_NAME> My number is: 03-4453334", '
+        '"items": [{"start": 24, "end": 35, "entity_type": "FULL_NAME",'
+        ' "text": "<FULL_NAME>", "operator": "replace"}]}'
     )
     run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)
 
@@ -246,3 +259,12 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     assert actual_encrypted_text != expected_encrypted_text
     actual_decrypted_text = AESCipher.decrypt(key.encode(), actual_encrypted_text)
     assert actual_decrypted_text == expected_encrypted_text
+
+
+def test_empty_text_returns_correct_results():
+    text = ""
+    analyzer_results = []
+
+    actual_anonymize_result = AnonymizerEngine().anonymize(text, analyzer_results)
+
+    assert actual_anonymize_result.text == text
