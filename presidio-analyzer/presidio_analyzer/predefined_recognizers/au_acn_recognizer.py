@@ -70,7 +70,7 @@ class AuAcnRecognizer(PatternRecognizer):
         """
         # Pre-processing before validation checks
         text = self.__sanitize_value(pattern_text, self.replacement_pairs)
-        acn_list = [int(digit) for digit in text]
+        acn_list = [int(digit) for digit in text if not digit.isspace()]
 
         # Set weights based on digit position
         weight = [8, 7, 6, 5, 4, 3, 2, 1]
@@ -81,11 +81,7 @@ class AuAcnRecognizer(PatternRecognizer):
             sum_product += acn_list[i] * weight[i]
         remainder = sum_product % 10
         complement = 10 - remainder
-        if complement == acn_list[-1]:
-            result = True
-        else:
-            result = None
-        return result
+        return complement == acn_list[-1]
 
     @staticmethod
     def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
