@@ -80,8 +80,10 @@ def test_verify_correctly(
     test_analyzer_results_formatted = mock_engine._get_bboxes_from_analyzer_results(
         test_analyzer_results
     )
-    for i in test_ocr_results:
-        test_ocr_results[i]["conf"] = round(test_ocr_results[i]["conf"])
+    for i in test_ocr_results_formatted:
+        test_ocr_results_formatted[i]["conf"] = round(
+            test_ocr_results_formatted[i]["conf"]
+        )
 
     # Assert
     assert type(test_image) == PIL.Image.Image
