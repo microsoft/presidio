@@ -1,4 +1,3 @@
-import string
 from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
