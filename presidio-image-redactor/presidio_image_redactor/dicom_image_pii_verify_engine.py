@@ -46,7 +46,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
-        :return: DICOM instance with boxes identifying PHI, OCR results, and analyzer results.
+        :return: DICOM instance with boxes identifying PHI, OCR results,
+        and analyzer results.
         """
         instance_copy = deepcopy(instance)
 
@@ -87,7 +88,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         tolerance: int = 50,
         **kwargs,
     ) -> Tuple[PIL.Image.Image, dict]:
-        """Evaluate performance for a single DICOM instance
+        """Evaluate performance for a single DICOM instance.
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param ground_truth: Dictionary containing ground truth labels for the instance.
@@ -101,14 +102,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             instance, padding_width, **kwargs
         )
         formatted_ocr_results = self._get_bboxes_from_ocr_results(ocr_results)
-        detected_PHI = self._get_bboxes_from_analyzer_results(analyzer_results)
+        detected_phi = self._get_bboxes_from_analyzer_results(analyzer_results)
 
         # Remove duplicate entities in results
-        detected_PHI = self._remove_duplicate_entities(detected_PHI)
+        detected_phi = self._remove_duplicate_entities(detected_phi)
 
         # Get correct PHI text (all TP and FP)
         all_pos = self._label_all_positives(
-            ground_truth, formatted_ocr_results, detected_PHI, tolerance
+            ground_truth, formatted_ocr_results, detected_phi, tolerance
         )
 
         # Calculate evaluation metrics
@@ -153,11 +154,12 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
     @staticmethod
     def _remove_duplicate_entities(results: dict, dup_pix_tolerance: int = 5) -> dict:
-        """Remove duplication where the same word is detected multiple times as different types of entities.
+        """Handle when a word is detected multiple times as different types of entities.
 
         Args:
             results (dict): Detected PHI.
-            dup_pix_tolerance (int): Pixel difference tolerance for identifying duplicates.
+            dup_pix_tolerance (int): Pixel difference tolerance for
+            identifying duplicates.
 
         Return:
             results_no_dups (dict): Detected PHI with no duplicate entities.
@@ -198,34 +200,37 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
     @staticmethod
     def _match_with_source(
-        all_pos: dict, PHI_source_dict: dict, detected_PHI: dict, tolerance: int = 50
+        all_pos: dict, phi_source_dict: dict, detected_phi: dict, tolerance: int = 50
     ) -> dict:
         """Match returned redacted PHI bbox data with some source of truth for PHI.
 
         Args:
             all_pos (dict): Dictionary storing all positives.
-            PHI_source_dict (dict): Dictionary with PHI labels for this instance.
-            detected_PHI (dict): Detected PHI (single entity from analyzer_results).
+            phi_source_dict (dict): Dictionary with PHI labels for
+            this instance.
+            detected_phi (dict): Detected PHI (single entity from
+            analyzer_results).
             tolerance (int): Tolerance for exact coordinates and size data.
 
         Return:
-            all_pos (dict): Results dict with all positives, PHI mapped back as possible.
+            all_pos (dict): Results dict with all positives, PHI mapped back
+            as possible.
             match_found (bool): Whether a match was found.
         """
         # Get info from detected PHI (positive)
-        results_left = detected_PHI["left"]
-        results_top = detected_PHI["top"]
-        results_width = detected_PHI["width"]
-        results_height = detected_PHI["height"]
-        results_score = detected_PHI["score"]
+        results_left = detected_phi["left"]
+        results_top = detected_phi["top"]
+        results_width = detected_phi["width"]
+        results_height = detected_phi["height"]
+        results_score = detected_phi["score"]
         match_found = False
 
         # See what in the ground truth this positive matches
-        for label in PHI_source_dict:
-            source_left = PHI_source_dict[label]["left"]
-            source_top = PHI_source_dict[label]["top"]
-            source_width = PHI_source_dict[label]["width"]
-            source_height = PHI_source_dict[label]["height"]
+        for label in phi_source_dict:
+            source_left = phi_source_dict[label]["left"]
+            source_top = phi_source_dict[label]["top"]
+            source_width = phi_source_dict[label]["width"]
+            source_height = phi_source_dict[label]["height"]
 
             match_left = abs(source_left - results_left) <= tolerance
             match_top = abs(source_top - results_top) <= tolerance
@@ -235,7 +240,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
             if False not in matching:
                 # If match is found, carry over ground truth info
-                all_pos[label] = PHI_source_dict[label]
+                all_pos[label] = phi_source_dict[label]
                 all_pos[label]["score"] = results_score
                 match_found = True
 
@@ -256,7 +261,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         actual PHI to each detected sensitive entity.
 
         Args:
-            gt_labels_dict (dict): Dictionary with ground truth labels for a single DICOM instance.
+            gt_labels_dict (dict): Dictionary with ground truth labels for a
+            single DICOM instance.
             ocr_results (dict): All detected text.
             analyzer_results (dict): Detected PHI.
             tolerance (int): Tolerance for exact coordinates and size data.
