@@ -3,9 +3,19 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-### Added
+
+## [2.2.32] - 19.12.2022
+### Changed
+#### General
+* Updated dependencies
+
 #### Image redactor
 * Modified `ImagePiiVerifyEngine` to allow passing of kwargs
+* Updated template for building image redactor yaml
+* Updated `presidio-image-redactor` version from 0.0.45 to 0.0.46
+
+#### Analyzer
+* Fixed exception on whitespace in AU recognizers
 
 ## [2.2.31] - 14.12.2022
 ### Changed
@@ -198,7 +208,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.31...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.32...HEAD
+[2.2.32]: https://github.com/microsoft/presidio/compare/2.2.31...2.2.32
 [2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
 [2.2.29]: https://github.com/microsoft/presidio/compare/2.2.28...2.2.29
