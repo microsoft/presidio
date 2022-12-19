@@ -1,3 +1,4 @@
+import string
 from typing import Optional, List, Tuple
 
 from presidio_analyzer import Pattern, PatternRecognizer
@@ -76,7 +77,7 @@ class AuTfnRecognizer(PatternRecognizer):
         """
         # Pre-processing before validation checks
         text = self.__sanitize_value(pattern_text, self.replacement_pairs)
-        tfn_list = [int(digit) for digit in text]
+        tfn_list = [int(digit) for digit in text if not digit.isspace()]
 
         # Set weights based on digit position
         weight = [1, 4, 3, 7, 5, 8, 6, 9, 10]
@@ -86,11 +87,7 @@ class AuTfnRecognizer(PatternRecognizer):
         for i in range(9):
             sum_product += tfn_list[i] * weight[i]
         remainder = sum_product % 11
-        if remainder == 0:
-            result = True
-        else:
-            result = None
-        return result
+        return remainder == 0
 
     @staticmethod
     def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
