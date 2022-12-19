@@ -77,7 +77,7 @@ class TextAnalyticsClient:
         }
         data = {"documents": [{"id": 1, "language": language, "text": text}]}
         pii_recognition_path = (
-            "/text/analytics/v3.1-preview.4/entities/recognition/pii?domain=phi"
+            "/text/analytics/v3.1/entities/recognition/pii?domain=phi"
         )
         response = requests.post(
             self.endpoint + pii_recognition_path, json=data, headers=headers
