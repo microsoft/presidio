@@ -4,7 +4,11 @@ import PIL
 from PIL import Image
 import pydicom
 
-from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine, DicomImageRedactorEngine
+from presidio_image_redactor import (
+    TesseractOCR,
+    ImageAnalyzerEngine,
+    DicomImageRedactorEngine,
+)
 from presidio_image_redactor.image_pii_verify_engine import ImagePiiVerifyEngine
 from presidio_analyzer import PatternRecognizer
 
@@ -14,7 +18,11 @@ from typing import Tuple, Optional
 class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     """Class to handle verification and evaluation for DICOM de-identification."""
 
-    def __init__(self, ocr_engine: Optional[TesseractOCR] = None, image_analyzer_engine: Optional[ImageAnalyzerEngine] = None):
+    def __init__(
+        self,
+        ocr_engine: Optional[TesseractOCR] = None,
+        image_analyzer_engine: Optional[ImageAnalyzerEngine] = None,
+    ):
         # Initialize OCR engine
         if not ocr_engine:
             self.ocr_engine = TesseractOCR()
@@ -65,17 +73,20 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         )
 
         # Get image with verification boxes
-        verify_image = self.verify(image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs)
+        verify_image = self.verify(
+            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+        )
 
         return verify_image, ocr_results, analyzer_results
-    
+
     def eval_dicom_instance(
         self,
         instance: pydicom.dataset.FileDataset,
         ground_truth: dict,
         padding_width: int = 25,
         tolerance: int = 50,
-        **kwargs) -> Tuple[PIL.Image.Image, dict]:
+        **kwargs,
+    ) -> Tuple[PIL.Image.Image, dict]:
         """Evaluate performance for a single DICOM instance
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
@@ -86,7 +97,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :return: Evaluation comparing redactor engine results vs ground truth.
         """
         # Verify detected PHI
-        verify_image, ocr_results, analyzer_results = self.verify_dicom_instance(instance, padding_width, **kwargs)
+        verify_image, ocr_results, analyzer_results = self.verify_dicom_instance(
+            instance, padding_width, **kwargs
+        )
         formatted_ocr_results = self._get_bboxes_from_ocr_results(ocr_results)
         detected_PHI = self._get_bboxes_from_analyzer_results(analyzer_results)
 
@@ -94,7 +107,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         detected_PHI = self._remove_duplicate_entities(detected_PHI)
 
         # Get correct PHI text (all TP and FP)
-        all_pos = self._label_all_positives(ground_truth, formatted_ocr_results, detected_PHI, tolerance)
+        all_pos = self._label_all_positives(
+            ground_truth, formatted_ocr_results, detected_PHI, tolerance
+        )
 
         # Calculate evaluation metrics
         precision = self._calculate_precision(ground_truth, all_pos)
@@ -104,11 +119,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             "all_positives": all_pos,
             "ground_truth": ground_truth,
             "precision": precision,
-            "recall": recall
+            "recall": recall,
         }
 
         return verify_image, eval_results
-    
+
     @staticmethod
     def _get_bboxes_from_ocr_results(ocr_results: dict) -> dict:
         """Get bounding boxes on padded image for all detected words from ocr_results.
@@ -130,12 +145,12 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     "width": ocr_results["width"][i],
                     "height": ocr_results["height"][i],
                     "conf": float(ocr_results["conf"][i]),
-                    "label": detected_text
+                    "label": detected_text,
                 }
                 item_count += 1
 
         return bboxes
-    
+
     @staticmethod
     def _remove_duplicate_entities(results: dict, dup_pix_tolerance: int = 5) -> dict:
         """Remove duplication where the same word is detected multiple times as different types of entities.
@@ -181,9 +196,10 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         return results_no_dups
 
-
     @staticmethod
-    def _match_with_source(all_pos: dict, PHI_source_dict: dict, detected_PHI: dict, tolerance: int=50) -> dict:
+    def _match_with_source(
+        all_pos: dict, PHI_source_dict: dict, detected_PHI: dict, tolerance: int = 50
+    ) -> dict:
         """Match returned redacted PHI bbox data with some source of truth for PHI.
 
         Args:
@@ -224,9 +240,15 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                 match_found = True
 
         return all_pos, match_found
-    
+
     @classmethod
-    def _label_all_positives(cls, gt_labels_dict: dict, ocr_results: dict, analyzer_results: dict, tolerance: int=50) -> dict:
+    def _label_all_positives(
+        cls,
+        gt_labels_dict: dict,
+        ocr_results: dict,
+        analyzer_results: dict,
+        tolerance: int = 50,
+    ) -> dict:
         """Label all entities detected as PHI by using ground truth and OCR results.
 
         All positives (analyzer_results) do not contain PHI labels and are thus
@@ -249,12 +271,16 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             analyzer_result = analyzer_results[i]
 
             # See if there are any ground truth matches
-            all_pos, gt_match_found = cls._match_with_source(all_pos, gt_labels_dict, analyzer_result, tolerance)
+            all_pos, gt_match_found = cls._match_with_source(
+                all_pos, gt_labels_dict, analyzer_result, tolerance
+            )
 
             # If not, check back with OCR
             if not gt_match_found:
-                all_pos, _ = cls._match_with_source(all_pos, ocr_results, analyzer_result, tolerance)
-        
+                all_pos, _ = cls._match_with_source(
+                    all_pos, ocr_results, analyzer_result, tolerance
+                )
+
         return all_pos
 
     @staticmethod
@@ -280,7 +306,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         return precision
 
-
     @staticmethod
     def _calculate_recall(gt_labels_dict: dict, all_pos: dict) -> float:
         """Calculate recall.
@@ -303,5 +328,3 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         recall = len(tp) / len(gt)
 
         return recall
-
-    
