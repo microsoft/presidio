@@ -3,6 +3,9 @@
 Note we are not checking exact pixel data for the returned image
 because that is covered by testing of the "verify" function in
 the original parent ImagePiiVerifyEngine class.
+
+We remove checking that "conf" is equal in test_verify_correctly
+to avoid failing the test with different versions of Tesseract.
 """
 import PIL
 import pydicom
@@ -66,7 +69,7 @@ def test_verify_correctly(
     expected_ocr_results = mock_results["ocr_results_formatted"]
     expected_analyzer_results = mock_results["analyzer_results"]
     for i in expected_ocr_results:
-        expected_ocr_results[i]["conf"] = round(expected_ocr_results[i]["conf"])
+        expected_ocr_results[i].pop("conf")
 
     # Act
     (
@@ -81,9 +84,7 @@ def test_verify_correctly(
         test_analyzer_results
     )
     for i in test_ocr_results_formatted:
-        test_ocr_results_formatted[i]["conf"] = round(
-            test_ocr_results_formatted[i]["conf"]
-        )
+        test_ocr_results_formatted[i].pop("conf")
 
     # Assert
     assert type(test_image) == PIL.Image.Image
