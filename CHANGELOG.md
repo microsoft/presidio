@@ -9,13 +9,21 @@ All notable changes to this project will be documented in this file.
 #### General
 * Updated dependencies
 
+#### Analyzer
+* Fixed exception on whitespace in AU recognizers
+* Updated API vesrion for Text Analytics in sample
+
+#### Anonymizer
+* Fixed merge entity from the same type
+
 #### Image redactor
 * Modified `ImagePiiVerifyEngine` to allow passing of kwargs
 * Updated template for building image redactor yaml
 * Updated `presidio-image-redactor` version from 0.0.45 to 0.0.46
 
+### Added
 #### Analyzer
-* Fixed exception on whitespace in AU recognizers
+* Added revised example for transformer recognizer
 
 ## [2.2.31] - 14.12.2022
 ### Changed
