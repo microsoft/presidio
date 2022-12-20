@@ -326,7 +326,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
     @staticmethod
     def _get_array_corners(
-        pixel_array: np.ndarray, crop_ratio: float = 0.5
+        pixel_array: np.ndarray, crop_ratio: float = 0.75
     ) -> np.ndarray:
         """Crop a pixel array to just return the corners in a single array.
 
@@ -366,7 +366,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             cropped_pixel_arrays.append(pixel_array[x_start:x_end, y_start:y_end])
 
         # Combine the cropped pixel arrays
-        cropped_array = np.concatenate(cropped_pixel_arrays)
+        cropped_array = np.vstack(cropped_pixel_arrays)
 
         return cropped_array
 
@@ -383,8 +383,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: Most or least common pixel value (depending on fill).
         """
+        # Crop down to just only look at image corners
+        cropped_array = cls._get_array_corners(instance.pixel_array)
+
         # Get flattened pixel array
-        flat_pixel_array = np.array(instance.pixel_array).flatten()
+        flat_pixel_array = np.array(cropped_array).flatten()
 
         is_greyscale = cls._check_if_greyscale(instance)
         if is_greyscale:

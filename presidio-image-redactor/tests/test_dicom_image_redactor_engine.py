@@ -308,6 +308,84 @@ def test_get_bg_color_happy_path(
 
 
 # ------------------------------------------------------
+# DicomImageRedactorEngine._get_array_corners()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_file, crop_ratio",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 0.5),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), 0.5),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), 0.5),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), 0.5),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 0.75),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), 0.25),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), 0.31),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), 0.83),
+    ],
+)
+def test_get_array_corners_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_file: Path,
+    crop_ratio: float,
+):
+    """Test happy path for DicomImageRedactorEngine._get_array_corners
+
+    Args:
+        dcm_file (pathlib.Path): Path to a DICOM file.
+        crop_ratio (float): Ratio to crop to.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_file)
+    test_pixel_array = test_instance.pixel_array
+    full_width = test_pixel_array.shape[0]
+    full_height = test_pixel_array.shape[1]
+    full_min_pixel_val = np.min(test_pixel_array)
+    full_max_pixel_val = np.max(test_pixel_array)
+
+    # Act
+    test_cropped_array = mock_engine._get_array_corners(test_pixel_array, crop_ratio)
+    cropped_width = test_cropped_array.shape[0]
+    cropped_height = test_cropped_array.shape[1]
+    cropped_min_pixel_val = np.min(test_cropped_array)
+    cropped_max_pixel_val = np.max(test_cropped_array)
+
+    # Assert
+    assert cropped_width * cropped_height < full_width * full_height
+    assert cropped_min_pixel_val >= full_min_pixel_val
+    assert cropped_max_pixel_val <= full_max_pixel_val
+
+
+@pytest.mark.parametrize(
+    "crop_ratio, expected_error_type",
+    [
+        (0, "ValueError"),
+        (-0.4, "ValueError"),
+        (1.3, "ValueError"),
+    ],
+)
+def test_get_array_corners_exceptions(
+    mock_engine: DicomImageRedactorEngine, crop_ratio: float, expected_error_type: str
+):
+    """Test error handling of _get_array_corners
+
+    Args:
+        crop_ratio (float): Ratio to crop to.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        dcm_file = Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")
+        test_instance = pydicom.dcmread(dcm_file)
+        test_pixel_array = test_instance.pixel_array
+
+        # Act
+        _ = mock_engine._get_array_corners(test_pixel_array, crop_ratio)
+
+        # Assert
+        assert expected_error_type == exc_info.typename
+
+
+# ------------------------------------------------------
 # DicomImageRedactorEngine._get_most_common_pixel_value()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
@@ -324,6 +402,7 @@ def test_get_bg_color_happy_path(
     ],
 )
 def test_get_most_common_pixel_value_happy_path(
+    mocker,
     mock_engine: DicomImageRedactorEngine,
     dcm_file: Path,
     fill: str,
