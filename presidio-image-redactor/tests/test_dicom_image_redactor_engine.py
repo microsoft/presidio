@@ -402,7 +402,6 @@ def test_get_array_corners_exceptions(
     ],
 )
 def test_get_most_common_pixel_value_happy_path(
-    mocker,
     mock_engine: DicomImageRedactorEngine,
     dcm_file: Path,
     fill: str,
