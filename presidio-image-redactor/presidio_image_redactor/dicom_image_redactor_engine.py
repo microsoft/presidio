@@ -324,6 +324,52 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return bg_color
 
+    @staticmethod
+    def _get_array_corners(
+        pixel_array: np.ndarray, crop_ratio: float = 0.5
+    ) -> np.ndarray:
+        """Crop a pixel array to just return the corners in a single array.
+
+        Args:
+            pixel_array (np.ndarray): Numpy array containing the pixel data.
+            crop_ratio (float): Ratio to crop to.
+
+        Return:
+            cropped_array (np.ndarray): Cropped input array.
+        """
+        if crop_ratio >= 1.0 or crop_ratio <= 0:
+            raise ValueError("crop_ratio must be between 0 and 1")
+
+        # Set dimensions
+        width = pixel_array.shape[0]
+        height = pixel_array.shape[1]
+        effective_crop = crop_ratio / 2
+        crop_width = int(np.floor(width * effective_crop))
+        crop_height = int(np.floor(height * effective_crop))
+
+        # Get coordinates for corners
+        # (left, top, right, bottom)
+        box_top_left = (0, 0, crop_width, crop_height)
+        box_top_right = (width - crop_width, 0, width, crop_height)
+        box_bottom_left = (0, height - crop_height, crop_width, height)
+        box_bottom_right = (width - crop_width, height - crop_height, width, height)
+        boxes = [box_top_left, box_top_right, box_bottom_left, box_bottom_right]
+
+        # Only keep box pixels
+        cropped_pixel_arrays = list()
+        for box in boxes:
+            x_start = box[0]  # left
+            x_end = box[2]  # right
+            y_start = box[1]  # up
+            y_end = box[3]  # down
+
+            cropped_pixel_arrays.append(pixel_array[x_start:x_end, y_start:y_end])
+
+        # Combine the cropped pixel arrays
+        cropped_array = np.concatenate(cropped_pixel_arrays)
+
+        return cropped_array
+
     @classmethod
     def _get_most_common_pixel_value(
         cls, instance: pydicom.dataset.FileDataset, fill: str = "contrast"
