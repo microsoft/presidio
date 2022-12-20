@@ -12,57 +12,56 @@
 We can evaluate the performance of the `DicomImageRedactorEngine` DICOM de-identification by using the `DicomImagePiiVerifyEngine`. The evaluation results consist of:
 
 * Image with bounding boxes identifying detected Personal Health Information (PHI)
+* All positives (True Positives and False Positives)
 * Precision
 * Recall
 
 ## Ground truth format
 
-Ground truth labels are stored as `.json` files containing filename as the highest level keys. Each filename item consists of numbered items, each associated with an individual entity.
-
-We use this numbered item approach instead of assigning the label to the key name to avoid issues where entities are repeated (e.g., names where the first and last name are the same).
+Ground truth labels are stored as `.json` files containing filename as the highest level keys. Each filename object consists of an item for each individual entity.
 
 ```json
 {
-    "your/dicom/dir/file_0.dcm": {
-        "0": {
+    "your/dicom/dir/file_0.dcm": [
+        {
             "label": "DAVIDSON",
             "left": 25,
             "top": 25,
             "width": 241,
             "height": 37
         },
-        "1": {
+        {
             "label": "DOUGLAS",
             "left": 287,
             "top": 25,
             "width": 230,
             "height": 36
         },
-        "2": {
+        {
             "label": "[M]",
             "left": 535,
             "top": 25,
             "width": 60,
             "height": 45
         },
-        "3": {
+        {
             "label": "01.09.2012",
             "left": 613,
             "top": 26,
             "width": 226,
             "height": 35
         },
-        "4": {
+        {
             "label": "06.16.1976",
             "left": 170,
             "top": 72,
             "width": 218,
             "height": 35
         }
-    },
-    "your/dicom/dir/file_1.dcm": {
+    ],
+    "your/dicom/dir/file_1.dcm": [
         ...
-    }
+    ]
 }
 ```
 
@@ -94,7 +93,7 @@ By looking at the output of `verify_dicom_instance`, we can create a ground trut
 Save `analyzer_results_formatted` as a json file and then perform the following
 
 1. Group the results into a new item with the file name set as the key.
-2. For each item in this group (e.g., "0", "1")
+2. For each item in this group:
     a. Remove the "entity_type" field and value.
     b. Add a new "label" field with the value set to the ground truth text PHI with matching coordinate as you can see in the formatted OCR results and verification image.
 
@@ -110,8 +109,8 @@ Let's say we ran the above code block and see the following for `ocr_results_for
 
 ```json
 // OCR Results (formatted)
-{
-    "0": {
+[
+    {
             "left": 25,
             "top": 25,
             "width": 241,
@@ -119,7 +118,7 @@ Let's say we ran the above code block and see the following for `ocr_results_for
             "conf": 95.833916,
             "label": "DAVIDSON"
         },
-    "1": {
+    {
         "left": 287,
         "top": 25,
         "width": 230,
@@ -127,11 +126,11 @@ Let's say we ran the above code block and see the following for `ocr_results_for
         "conf": 93.292221,
         "label": "DOUGLAS"
     }
-}
+]
 
 // Analyzer Results (formatted)
-{
-    "0": {
+[
+    {
         "entity_type": "PERSON",
         "score": 1.0,
         "left": 25,
@@ -139,7 +138,7 @@ Let's say we ran the above code block and see the following for `ocr_results_for
         "width": 241,
         "height": 37
     },
-    "1": {
+    {
         "entity_type": "PERSON",
         "score": 1.0,
         "left": 287,
@@ -147,32 +146,32 @@ Let's say we ran the above code block and see the following for `ocr_results_for
         "width": 230,
         "height": 36
     }
-}
+]
 ```
 
-Looking at the position and size values of the ground truth and detected text from the analyzer results, we can see that "0" in the analyzer results is likely "DAVIDSON" and the "1" is likely "DOUGLAS".
+Looking at the position and size values of the ground truth and detected text from the analyzer results, we can see that the first item in the analyzer results is likely "DAVIDSON" and the second is likely "DOUGLAS".
 
 With this, we set our ground truth json to the following:
 
 ```json
 // Ground truth json
 {
-    "path/to/your/file.dcm": {
-        "0": {
+    "path/to/your/file.dcm": [
+        {
             "label": "DAVIDSON",
             "left": 25,
             "top": 25,
             "width": 241,
             "height": 37
         },
-        "1": {
+        {
             "label": "DOUGLAS",
             "left": 287,
             "top": 25,
             "width": 230,
             "height": 36
         }
-    }
+    ]
 }
 ```
 

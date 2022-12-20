@@ -313,8 +313,8 @@
             ""
         ]
     },
-    "ocr_results_formatted": {
-        "0": {
+    "ocr_results_formatted": [
+        {
             "left": 25,
             "top": 25,
             "width": 241,
@@ -322,7 +322,7 @@
             "conf": 95.833916,
             "label": "DAVIDSON"
         },
-        "1": {
+        {
             "left": 287,
             "top": 25,
             "width": 230,
@@ -330,7 +330,7 @@
             "conf": 93.292221,
             "label": "DOUGLAS"
         },
-        "2": {
+        {
             "left": 535,
             "top": 25,
             "width": 60,
@@ -338,7 +338,7 @@
             "conf": 92.131226,
             "label": "[M]"
         },
-        "3": {
+        {
             "left": 613,
             "top": 26,
             "width": 226,
@@ -346,7 +346,7 @@
             "conf": 96.588577,
             "label": "01.09.2012"
         },
-        "4": {
+        {
             "left": 42,
             "top": 70,
             "width": 110,
@@ -354,7 +354,7 @@
             "conf": 95.489471,
             "label": "DOB:"
         },
-        "5": {
+        {
             "left": 170,
             "top": 72,
             "width": 218,
@@ -362,7 +362,7 @@
             "conf": 95.489471,
             "label": "06.16.1976"
         },
-        "6": {
+        {
             "left": 1774,
             "top": 40,
             "width": 343,
@@ -370,7 +370,7 @@
             "conf": 91.71447,
             "label": "Semi-Upright"
         },
-        "7": {
+        {
             "left": 2151,
             "top": 25,
             "width": 14,
@@ -378,7 +378,7 @@
             "conf": 11.772476,
             "label": ":"
         },
-        "8": {
+        {
             "left": 1920,
             "top": 128,
             "width": 221,
@@ -386,9 +386,9 @@
             "conf": 96.337395,
             "label": "Portable"
         }
-    },
-    "analyzer_results": {
-        "0": {
+    ],
+    "analyzer_results": [
+        {
             "entity_type": "PERSON",
             "score": 1.0,
             "left": 25,
@@ -396,7 +396,7 @@
             "width": 241,
             "height": 37
         },
-        "1": {
+        {
             "entity_type": "PERSON",
             "score": 1.0,
             "left": 287,
@@ -404,7 +404,7 @@
             "width": 230,
             "height": 36
         },
-        "2": {
+        {
             "entity_type": "PERSON",
             "score": 1.0,
             "left": 535,
@@ -412,7 +412,7 @@
             "width": 60,
             "height": 45
         },
-        "3": {
+        {
             "entity_type": "DATE_TIME",
             "score": 0.6,
             "left": 613,
@@ -420,7 +420,7 @@
             "width": 226,
             "height": 35
         },
-        "4": {
+        {
             "entity_type": "PERSON",
             "score": 1.0,
             "left": 170,
@@ -428,7 +428,7 @@
             "width": 218,
             "height": 35
         },
-        "5": {
+        {
             "entity_type": "PHONE_NUMBER",
             "score": 0.4,
             "left": 170,
@@ -436,46 +436,46 @@
             "width": 218,
             "height": 35
         }
-    },
-    "ground_truth": {
-        "0": {
+    ],
+    "ground_truth": [
+        {
             "label": "DAVIDSON",
             "left": 25,
             "top": 25,
             "width": 241,
             "height": 37
         },
-        "1": {
+        {
             "label": "DOUGLAS",
             "left": 287,
             "top": 25,
             "width": 230,
             "height": 36
         },
-        "2": {
+        {
             "label": "[M]",
             "left": 535,
             "top": 25,
             "width": 60,
             "height": 45
         },
-        "3": {
+        {
             "label": "01.09.2012",
             "left": 613,
             "top": 26,
             "width": 226,
             "height": 35
         },
-        "4": {
+        {
             "label": "06.16.1976",
             "left": 170,
             "top": 72,
             "width": 218,
             "height": 35
         }
-    },
-    "all_pos": {
-        "0": {
+    ],
+    "all_pos": [
+        {
             "score": 1.0,
             "left": 25,
             "top": 25,
@@ -483,7 +483,7 @@
             "height": 37,
             "label": "DAVIDSON"
         },
-        "1": {
+        {
             "score": 1.0,
             "left": 287,
             "top": 25,
@@ -491,7 +491,7 @@
             "height": 36,
             "label": "DOUGLAS"
         },
-        "2": {
+        {
             "score": 1.0,
             "left": 535,
             "top": 25,
@@ -499,7 +499,7 @@
             "height": 45,
             "label": "[M]"
         },
-        "3": {
+        {
             "score": 0.6,
             "left": 613,
             "top": 26,
@@ -507,7 +507,7 @@
             "height": 35,
             "label": "01.09.2012"
         },
-        "4": {
+        {
             "score": 1.0,
             "left": 170,
             "top": 72,
@@ -515,5 +515,5 @@
             "height": 35,
             "label": "06.16.1976"
         }
-    }
+    ]
 }

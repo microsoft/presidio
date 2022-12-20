@@ -12,7 +12,7 @@ from presidio_image_redactor import (
 from presidio_image_redactor.image_pii_verify_engine import ImagePiiVerifyEngine
 from presidio_analyzer import PatternRecognizer
 
-from typing import Tuple, Optional
+from typing import Tuple, List, Optional
 
 
 class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
@@ -126,21 +126,21 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         return verify_image, eval_results
 
     @staticmethod
-    def _get_bboxes_from_ocr_results(ocr_results: dict) -> dict:
+    def _get_bboxes_from_ocr_results(ocr_results: dict) -> List[dict]:
         """Get bounding boxes on padded image for all detected words from ocr_results.
 
         Args:
             ocr_results (dict): Results from OCR.
 
         Return:
-            bboxes (dict): Bounding box information per word.
+            bboxes (list): Bounding box information per word.
         """
-        bboxes = {}
+        bboxes = []
         item_count = 0
         for i in range(len(ocr_results["text"])):
             detected_text = ocr_results["text"][i]
             if detected_text:
-                bboxes[str(item_count)] = {
+                bbox = {
                     "left": ocr_results["left"][i],
                     "top": ocr_results["top"][i],
                     "width": ocr_results["width"][i],
@@ -148,35 +148,38 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     "conf": float(ocr_results["conf"][i]),
                     "label": detected_text,
                 }
+                bboxes.append(bbox)
                 item_count += 1
 
         return bboxes
 
     @staticmethod
-    def _remove_duplicate_entities(results: dict, dup_pix_tolerance: int = 5) -> dict:
+    def _remove_duplicate_entities(
+        results: List[dict], dup_pix_tolerance: int = 5
+    ) -> List[dict]:
         """Handle when a word is detected multiple times as different types of entities.
 
         Args:
-            results (dict): Detected PHI.
+            results (list): Detected PHI.
             dup_pix_tolerance (int): Pixel difference tolerance for
             identifying duplicates.
 
         Return:
-            results_no_dups (dict): Detected PHI with no duplicate entities.
+            results_no_dups (list): Detected PHI with no duplicate entities.
         """
         dups = []
         results_no_dups = results.copy()
 
         # Check for duplicates
-        for i in results:
+        for i in range(len(results)):
             i_left = results[i]["left"]
             i_top = results[i]["top"]
             i_width = results[i]["width"]
             i_height = results[i]["height"]
 
             # Ignore if we've already detected this dup combination
-            for other in results:
-                if i not in dups and i != other:
+            for other in range(len(results)):
+                if i != other and i not in dups:
                     other_left = results[other]["left"]
                     other_top = results[other]["top"]
                     other_width = results[other]["width"]
@@ -192,27 +195,30 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                         dups.append(other)
 
         # Remove duplicates
-        for dup in dups:
-            results_no_dups.pop(dup)
+        for dup_index in sorted(dups, reverse=True):
+            del results_no_dups[dup_index]
 
         return results_no_dups
 
     @staticmethod
     def _match_with_source(
-        all_pos: dict, phi_source_dict: dict, detected_phi: dict, tolerance: int = 50
+        all_pos: List[dict],
+        phi_source_dict: List[dict],
+        detected_phi: dict,
+        tolerance: int = 50,
     ) -> Tuple[dict, bool]:
         """Match returned redacted PHI bbox data with some source of truth for PHI.
 
         Args:
-            all_pos (dict): Dictionary storing all positives.
-            phi_source_dict (dict): Dictionary with PHI labels for
+            all_pos (list): Dictionary storing all positives.
+            phi_source_dict (dict): List of PHI labels for
             this instance.
             detected_phi (dict): Detected PHI (single entity from
             analyzer_results).
             tolerance (int): Tolerance for exact coordinates and size data.
 
         Return:
-            all_pos (dict): Results dict with all positives, PHI mapped back
+            all_pos (list): List of all positives, PHI mapped back
             as possible.
             match_found (bool): Whether a match was found.
         """
@@ -226,10 +232,10 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         # See what in the ground truth this positive matches
         for label in phi_source_dict:
-            source_left = phi_source_dict[label]["left"]
-            source_top = phi_source_dict[label]["top"]
-            source_width = phi_source_dict[label]["width"]
-            source_height = phi_source_dict[label]["height"]
+            source_left = label["left"]
+            source_top = label["top"]
+            source_width = label["width"]
+            source_height = label["height"]
 
             match_left = abs(source_left - results_left) <= tolerance
             match_top = abs(source_top - results_top) <= tolerance
@@ -239,8 +245,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
             if False not in matching:
                 # If match is found, carry over ground truth info
-                all_pos[label] = phi_source_dict[label]
-                all_pos[label]["score"] = results_score
+                positive = label
+                positive["score"] = results_score
+                all_pos.append(positive)
                 match_found = True
 
         return all_pos, match_found
@@ -249,10 +256,10 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     def _label_all_positives(
         cls,
         gt_labels_dict: dict,
-        ocr_results: dict,
-        detected_phi: dict,
+        ocr_results: List[dict],
+        detected_phi: List[dict],
         tolerance: int = 50,
-    ) -> dict:
+    ) -> List[dict]:
         """Label all entities detected as PHI by using ground truth and OCR results.
 
         All positives (detected_phi) do not contain PHI labels and are thus
@@ -262,18 +269,17 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         Args:
             gt_labels_dict (dict): Dictionary with ground truth labels for a
             single DICOM instance.
-            ocr_results (dict): All detected text.
-            detected_phi (dict): Formatted analyzer_results.
+            ocr_results (list): All detected text.
+            detected_phi (list): Formatted analyzer_results.
             tolerance (int): Tolerance for exact coordinates and size data.
 
         Return:
-            all_pos (dict): Results dict with all positives, labeled.
+            all_pos (list): Results dict with all positives, labeled.
         """
-        all_pos = {}
+        all_pos = []
 
         # Cycle through each positive (TP or FP)
-        for i in detected_phi:
-            analyzer_result = detected_phi[i]
+        for analyzer_result in detected_phi:
 
             # See if there are any ground truth matches
             all_pos, gt_match_found = cls._match_with_source(
@@ -286,50 +292,41 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     all_pos, ocr_results, analyzer_result, tolerance
                 )
 
+        # Remove any duplicates
+        all_pos = cls._remove_duplicate_entities(all_pos, 0)
+
         return all_pos
 
     @staticmethod
-    def _calculate_precision(gt_labels_dict: dict, all_pos: dict) -> float:
+    def _calculate_precision(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate precision.
 
         Args:
-            gt_labels_dict (dict): Dictionary with ground truth labels.
-            all_pos (dict): All Detected PHI (mapped back to have actual PHI text).
+            gt (list): List of ground truth labels.
+            all_pos (list): All Detected PHI (mapped back to have actual PHI text).
 
         Return:
             precision (float): Precision value.
         """
-        # Get ground truth values
-        gt = list(gt_labels_dict.keys())
-
-        # Get all positives (all detected PHI, whether TP or FP)
-        all_p = list(all_pos.keys())
-
         # Find True Positive (TP) and precision
-        tp = [i for i in all_p if i in gt]
-        precision = len(tp) / len(all_p)
+        tp = [i for i in all_pos if i in gt]
+        precision = len(tp) / len(all_pos)
 
         return precision
 
     @staticmethod
-    def _calculate_recall(gt_labels_dict: dict, all_pos: dict) -> float:
+    def _calculate_recall(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate recall.
 
         Args:
-            gt_labels_dict (dict): Dictionary with ground truth labels.
-            all_pos (dict): All Detected PHI (mapped back to have actual PHI text).
+            gt (list): List of ground truth labels.
+            all_pos (list): All Detected PHI (mapped back to have actual PHI text).
 
         Return:
             recall (float): Recall value.
         """
-        # Get ground truth values
-        gt = list(gt_labels_dict.keys())
-
-        # Get all positives (all detected PHI, whether TP or FP)
-        all_p = list(all_pos.keys())
-
         # Find True Positive (TP) and precision
-        tp = [i for i in all_p if i in gt]
+        tp = [i for i in all_pos if i in gt]
         recall = len(tp) / len(gt)
 
         return recall

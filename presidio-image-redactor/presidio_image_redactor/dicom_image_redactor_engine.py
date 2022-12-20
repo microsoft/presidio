@@ -567,18 +567,18 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return phi_str_list
 
     @staticmethod
-    def _get_bboxes_from_analyzer_results(analyzer_results: list) -> dict:
+    def _get_bboxes_from_analyzer_results(analyzer_results: list) -> List[dict]:
         """Organize bounding box info from analyzer results.
 
         :param analyzer_results: Results from using ImageAnalyzerEngine.
 
         :return: Bounding box info organized.
         """
-        bboxes_dict = {}
-        for i in range(0, len(analyzer_results)):
+        bboxes = []
+        for i in range(len(analyzer_results)):
             result = analyzer_results[i].to_dict()
 
-            bboxes_dict[str(i)] = {
+            bbox_item = {
                 "entity_type": result["entity_type"],
                 "score": result["score"],
                 "left": result["left"],
@@ -586,8 +586,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 "width": result["width"],
                 "height": result["height"],
             }
+            bboxes.append(bbox_item)
 
-        return bboxes_dict
+        return bboxes
 
     @classmethod
     def _format_bboxes(cls, analyzer_results: list, padding_width: int) -> List[dict]:
@@ -602,10 +603,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             raise ValueError("Padding width must be a positive number.")
 
         # Write bounding box info to json files for now
-        phi_bboxes_dict = cls._get_bboxes_from_analyzer_results(analyzer_results)
-
-        # convert detected bounding boxes to list
-        bboxes = [phi_bboxes_dict[i] for i in phi_bboxes_dict.keys()]
+        bboxes = cls._get_bboxes_from_analyzer_results(analyzer_results)
 
         # remove padding from all bounding boxes
         bboxes = [

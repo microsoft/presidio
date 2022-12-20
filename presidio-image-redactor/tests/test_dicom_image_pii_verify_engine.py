@@ -8,7 +8,7 @@ from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine
 from presidio_image_redactor.dicom_image_pii_verify_engine import (
     DicomImagePiiVerifyEngine,
 )
-
+from typing import List
 import pytest
 
 SCRIPT_DIR = os.path.dirname(__file__)
@@ -223,8 +223,8 @@ def test_eval_dicom_instance_happy_path(
                 "conf": ["1"],
                 "text": ["JOHN"],
             },
-            {
-                "0": {
+            [
+                {
                     "left": 123,
                     "top": 0,
                     "width": 100,
@@ -232,7 +232,7 @@ def test_eval_dicom_instance_happy_path(
                     "conf": 1,
                     "label": "JOHN",
                 }
-            },
+            ],
         ),
         (
             {
@@ -243,8 +243,8 @@ def test_eval_dicom_instance_happy_path(
                 "conf": ["1", "0.87"],
                 "text": ["JOHN", "DOE"],
             },
-            {
-                "0": {
+            [
+                {
                     "left": 123,
                     "top": 0,
                     "width": 100,
@@ -252,7 +252,7 @@ def test_eval_dicom_instance_happy_path(
                     "conf": 1,
                     "label": "JOHN",
                 },
-                "1": {
+                {
                     "left": 345,
                     "top": 15,
                     "width": 75,
@@ -260,20 +260,20 @@ def test_eval_dicom_instance_happy_path(
                     "conf": 0.87,
                     "label": "DOE",
                 },
-            },
+            ],
         ),
     ],
 )
 def test_get_bboxes_from_ocr_results_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
     ocr_results_raw: dict,
-    expected_results: dict,
+    expected_results: list,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._get_bboxes_from_ocr_results
     Args:
         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
         ocr_results_raw (dict): Raw OCR results.
-        expected_results (dict): Formatted OCR results.
+        expected_results (list): Formatted OCR results.
     """
     # Act
     test_bboxes = mock_engine._get_bboxes_from_ocr_results(ocr_results_raw)
@@ -289,8 +289,8 @@ def test_get_bboxes_from_ocr_results_happy_path(
     "results, tolerance, expected_results",
     [
         (
-            {
-                "3": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 613,
@@ -298,7 +298,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 226,
                     "height": 35,
                 },
-                "4": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 170,
@@ -306,7 +306,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 218,
                     "height": 35,
                 },
-                "5": {
+                {
                     "entity_type": "PHONE_NUMBER",
                     "score": 0.4,
                     "left": 170,
@@ -314,10 +314,10 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 218,
                     "height": 35,
                 },
-            },
+            ],
             5,
-            {
-                "3": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 613,
@@ -325,7 +325,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 226,
                     "height": 35,
                 },
-                "4": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 170,
@@ -333,11 +333,11 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 218,
                     "height": 35,
                 },
-            },
+            ],
         ),
         (
-            {
-                "3": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 613,
@@ -345,7 +345,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 226,
                     "height": 35,
                 },
-                "4": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 170,
@@ -353,7 +353,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 218,
                     "height": 35,
                 },
-                "5": {
+                {
                     "entity_type": "PHONE_NUMBER",
                     "score": 0.4,
                     "left": 170,
@@ -361,10 +361,10 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 218,
                     "height": 35,
                 },
-            },
+            ],
             999,
-            {
-                "3": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 613,
@@ -372,11 +372,11 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 226,
                     "height": 35,
                 }
-            },
+            ],
         ),
         (
-            {
-                "0": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 123,
@@ -384,7 +384,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 100,
                     "height": 50,
                 },
-                "1": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 127,
@@ -392,7 +392,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 98,
                     "height": 55,
                 },
-                "2": {
+                {
                     "entity_type": "PHONE_NUMBER",
                     "score": 0.4,
                     "left": 999,
@@ -400,10 +400,10 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 199,
                     "height": 39,
                 },
-            },
+            ],
             5,
-            {
-                "0": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 123,
@@ -411,7 +411,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 100,
                     "height": 50,
                 },
-                "2": {
+                {
                     "entity_type": "PHONE_NUMBER",
                     "score": 0.4,
                     "left": 999,
@@ -419,11 +419,11 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 199,
                     "height": 39,
                 },
-            },
+            ],
         ),
         (
-            {
-                "0": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 123,
@@ -431,7 +431,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 100,
                     "height": 50,
                 },
-                "1": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 127,
@@ -439,7 +439,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 98,
                     "height": 55,
                 },
-                "2": {
+                {
                     "entity_type": "PHONE_NUMBER",
                     "score": 0.4,
                     "left": 999,
@@ -447,10 +447,10 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 199,
                     "height": 39,
                 },
-            },
+            ],
             0,
-            {
-                "0": {
+            [
+                {
                     "entity_type": "DATE_TIME",
                     "score": 0.6,
                     "left": 123,
@@ -458,7 +458,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 100,
                     "height": 50,
                 },
-                "1": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 127,
@@ -466,7 +466,7 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 98,
                     "height": 55,
                 },
-                "2": {
+                {
                     "entity_type": "PHONE_NUMBER",
                     "score": 0.4,
                     "left": 999,
@@ -474,22 +474,22 @@ def test_get_bboxes_from_ocr_results_happy_path(
                     "width": 199,
                     "height": 39,
                 },
-            },
+            ],
         ),
     ],
 )
 def test_remove_duplicate_entities_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
-    results: dict,
+    results: list,
     tolerance: int,
-    expected_results: dict,
+    expected_results: list,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._remove_duplicate_entities
     Args:
         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
-        results (dict): Detected PHI dictionary.
+        results (list): Detected PHI dictionary.
         tolerance (int): Pixel difference tolerance for identifying dups.
-        expected_results (dict): Expected dictionary after removing dups.
+        expected_results (list): Expected dictionary after removing dups.
     """
     # Act
     test_results_no_dups = mock_engine._remove_duplicate_entities(results, tolerance)
@@ -505,29 +505,29 @@ def test_remove_duplicate_entities_happy_path(
     "source_labels, results, tolerance, expected_results, expected_match_found",
     [
         (
-            {
-                "0": {
+            [
+                {
                     "label": "DAVIDSON",
                     "left": 25,
                     "top": 25,
                     "width": 241,
                     "height": 37,
                 },
-                "1": {
+                {
                     "label": "DOUGLAS",
                     "left": 287,
                     "top": 25,
                     "width": 230,
                     "height": 36,
                 },
-                "2": {
+                {
                     "label": "[M]",
                     "left": 535,
                     "top": 25,
                     "width": 60,
                     "height": 45,
                 },
-            },
+            ],
             {
                 "entity_type": "PERSON",
                 "score": 1.0,
@@ -537,8 +537,8 @@ def test_remove_duplicate_entities_happy_path(
                 "height": 36,
             },
             50,
-            {
-                "1": {
+            [
+                {
                     "label": "DOUGLAS",
                     "score": 1.0,
                     "left": 287,
@@ -546,33 +546,33 @@ def test_remove_duplicate_entities_happy_path(
                     "width": 230,
                     "height": 36,
                 }
-            },
+            ],
             True,
         ),
         (
-            {
-                "0": {
+            [
+                {
                     "label": "DAVIDSON",
                     "left": 25,
                     "top": 25,
                     "width": 241,
                     "height": 37,
                 },
-                "1": {
+                {
                     "label": "DOUGLAS",
                     "left": 287,
                     "top": 25,
                     "width": 230,
                     "height": 36,
                 },
-                "2": {
+                {
                     "label": "[M]",
                     "left": 535,
                     "top": 25,
                     "width": 60,
                     "height": 45,
                 },
-            },
+            ],
             {
                 "entity_type": "PERSON",
                 "score": 1.0,
@@ -582,8 +582,8 @@ def test_remove_duplicate_entities_happy_path(
                 "height": 40,
             },
             50,
-            {
-                "1": {
+            [
+                {
                     "label": "DOUGLAS",
                     "score": 1.0,
                     "left": 287,
@@ -591,33 +591,33 @@ def test_remove_duplicate_entities_happy_path(
                     "width": 230,
                     "height": 36,
                 }
-            },
+            ],
             True,
         ),
         (
-            {
-                "0": {
+            [
+                {
                     "label": "DAVIDSON",
                     "left": 25,
                     "top": 25,
                     "width": 241,
                     "height": 37,
                 },
-                "1": {
+                {
                     "label": "DOUGLAS",
                     "left": 287,
                     "top": 25,
                     "width": 230,
                     "height": 36,
                 },
-                "2": {
+                {
                     "label": "[M]",
                     "left": 535,
                     "top": 25,
                     "width": 60,
                     "height": 45,
                 },
-            },
+            ],
             {
                 "entity_type": "PERSON",
                 "score": 1.0,
@@ -627,17 +627,17 @@ def test_remove_duplicate_entities_happy_path(
                 "height": 99,
             },
             10,
-            {},
+            [],
             False,
         ),
     ],
 )
 def test_match_with_source_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
-    source_labels: dict,
+    source_labels: List[dict],
     results: dict,
     tolerance: int,
-    expected_results: dict,
+    expected_results: List[dict],
     expected_match_found: bool,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._match_with_source
@@ -651,7 +651,7 @@ def test_match_with_source_happy_path(
         expected_match_found (bool): Expected match_found.
     """
     # Assign
-    all_pos = {}
+    all_pos = []
 
     # Act
     test_all_pos, test_match_found = mock_engine._match_with_source(
@@ -673,8 +673,8 @@ def test_match_with_source_happy_path(
             None,
             None,
             50,
-            {
-                "0": {
+            [
+                {
                     "label": "DAVIDSON",
                     "score": 1.0,
                     "left": 25,
@@ -682,7 +682,7 @@ def test_match_with_source_happy_path(
                     "width": 241,
                     "height": 37,
                 },
-                "1": {
+                {
                     "label": "DOUGLAS",
                     "score": 1.0,
                     "left": 287,
@@ -690,7 +690,7 @@ def test_match_with_source_happy_path(
                     "width": 230,
                     "height": 36,
                 },
-                "2": {
+                {
                     "label": "[M]",
                     "score": 1.0,
                     "left": 535,
@@ -698,7 +698,7 @@ def test_match_with_source_happy_path(
                     "width": 60,
                     "height": 45,
                 },
-                "3": {
+                {
                     "label": "01.09.2012",
                     "score": 0.6,
                     "left": 613,
@@ -706,7 +706,7 @@ def test_match_with_source_happy_path(
                     "width": 226,
                     "height": 35,
                 },
-                "4": {
+                {
                     "label": "06.16.1976",
                     "score": 0.4,
                     "left": 170,
@@ -714,12 +714,12 @@ def test_match_with_source_happy_path(
                     "width": 218,
                     "height": 35,
                 },
-            },
+            ],
         ),
         (
             None,
-            {
-                "0": {
+            [
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 35,
@@ -727,7 +727,7 @@ def test_match_with_source_happy_path(
                     "width": 245,
                     "height": 39,
                 },
-                "1": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 300,
@@ -735,7 +735,7 @@ def test_match_with_source_happy_path(
                     "width": 250,
                     "height": 40,
                 },
-                "2": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 585,
@@ -743,10 +743,10 @@ def test_match_with_source_happy_path(
                     "width": 80,
                     "height": 45,
                 },
-            },
+            ],
             50,
-            {
-                "0": {
+            [
+                {
                     "label": "DAVIDSON",
                     "score": 1.0,
                     "left": 25,
@@ -754,7 +754,7 @@ def test_match_with_source_happy_path(
                     "width": 241,
                     "height": 37,
                 },
-                "1": {
+                {
                     "label": "DOUGLAS",
                     "score": 1.0,
                     "left": 287,
@@ -762,7 +762,7 @@ def test_match_with_source_happy_path(
                     "width": 230,
                     "height": 36,
                 },
-                "2": {
+                {
                     "label": "[M]",
                     "score": 1.0,
                     "left": 535,
@@ -770,12 +770,12 @@ def test_match_with_source_happy_path(
                     "width": 60,
                     "height": 45,
                 },
-            },
+            ],
         ),
         (
             None,
-            {
-                "0": {
+            [
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 99,
@@ -783,7 +783,7 @@ def test_match_with_source_happy_path(
                     "width": 99,
                     "height": 99,
                 },
-                "1": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 199,
@@ -791,7 +791,7 @@ def test_match_with_source_happy_path(
                     "width": 199,
                     "height": 199,
                 },
-                "2": {
+                {
                     "entity_type": "PERSON",
                     "score": 1.0,
                     "left": 535,
@@ -799,10 +799,10 @@ def test_match_with_source_happy_path(
                     "width": 60,
                     "height": 45,
                 },
-            },
+            ],
             10,
-            {
-                "2": {
+            [
+                {
                     "label": "[M]",
                     "score": 1.0,
                     "left": 535,
@@ -810,7 +810,7 @@ def test_match_with_source_happy_path(
                     "width": 60,
                     "height": 45,
                 }
-            },
+            ],
         ),
     ],
 )
@@ -818,10 +818,10 @@ def test_label_all_positives_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
     mock_gt_single: dict,
     mock_results: dict,
-    ocr_results: dict,
-    analyzer_results: dict,
+    ocr_results: List[dict],
+    analyzer_results: List[dict],
     tolerance: int,
-    expected_results: dict,
+    expected_results: List[dict],
 ):
     """Test happy path for DicomImagePiiVerifyEngine._label_all_positives
 
@@ -857,23 +857,51 @@ def test_label_all_positives_happy_path(
     "gt_labels, all_pos, expected_result",
     [
         (
-            {"0": {}, "1": {}, "2": {}, "3": {}},
-            {"0": {}, "1": {}, "2": {}, "3": {}},
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
             1.0,
         ),
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}, "2": {}}, 1.0),
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}}, 1.0),
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}}, 1.0),
-        ({"99": {}}, {"0": {}, "1": {}, "2": {}, "3": {}}, 0.0),
-        ({"0": {}}, {"0": {}, "1": {}, "2": {}, "3": {}}, 0.25),
-        ({"0": {}, "1": {}}, {"0": {}, "1": {}, "2": {}, "3": {}}, 0.5),
-        ({"0": {}, "1": {}, "2": {}}, {"0": {}, "1": {}, "2": {}, "3": {}}, 0.75),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}],
+            1.0,
+        ),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}],
+            1.0,
+        ),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}],
+            1.0,
+        ),
+        (
+            [],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            0.0,
+        ),
+        (
+            [{"a": [1, 2, 3]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            0.25,
+        ),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            0.5,
+        ),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            0.75,
+        ),
     ],
 )
 def test_calculate_precision_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
-    gt_labels: dict,
-    all_pos: dict,
+    gt_labels: List[dict],
+    all_pos: List[dict],
     expected_result: float,
 ):
     """Test happy path for DicomImagePiiVerifyEngine._calculate_precision
@@ -898,14 +926,30 @@ def test_calculate_precision_happy_path(
     "gt_labels, all_pos, expected_result",
     [
         (
-            {"0": {}, "1": {}, "2": {}, "3": {}},
-            {"0": {}, "1": {}, "2": {}, "3": {}},
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
             1.0,
         ),
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}, "2": {}}, 0.75),
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "1": {}}, 0.5),
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}}, 0.25),
-        ({"0": {}, "1": {}, "2": {}, "3": {}}, {"0": {}, "999": {}}, 0.25),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}],
+            0.75,
+        ),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}],
+            0.5,
+        ),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}],
+            0.25,
+        ),
+        (
+            [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}, {"d": [10, 11, 12]}],
+            [{"a": [1, 2, 3]}, {"x": [99, 99, 99]}],
+            0.25,
+        ),
     ],
 )
 def test_calculate_recall_happy_path(

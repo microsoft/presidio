@@ -748,7 +748,7 @@ def test_make_phi_list_happy_path(
 # DicomImageRedactorEngine._get_bboxes_from_analyzer_results()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "analyzer_results, expected_bboxes_dict",
+    "analyzer_results, expected_bboxes",
     [
         (
             [
@@ -783,8 +783,8 @@ def test_make_phi_list_happy_path(
                     score=0.6,
                 ),
             ],
-            {
-                "0": {
+            [
+                {
                     "entity_type": "TYPE_1",
                     "score": 0.99,
                     "left": 25,
@@ -792,7 +792,7 @@ def test_make_phi_list_happy_path(
                     "width": 100,
                     "height": 100,
                 },
-                "1": {
+                {
                     "entity_type": "TYPE_2",
                     "score": 0.7,
                     "left": 25,
@@ -800,7 +800,7 @@ def test_make_phi_list_happy_path(
                     "width": 75,
                     "height": 51,
                 },
-                "2": {
+                {
                     "entity_type": "TYPE_3",
                     "score": 0.6,
                     "left": 613,
@@ -808,39 +808,39 @@ def test_make_phi_list_happy_path(
                     "width": 226,
                     "height": 35,
                 },
-            },
+            ],
         ),
     ],
 )
 def test_get_bboxes_from_analyzer_results_happy_path(
     mock_engine: DicomImageRedactorEngine,
     analyzer_results: list,
-    expected_bboxes_dict: dict,
+    expected_bboxes: list,
 ):
     """Test happy path for DicomImageRedactorEngine._get_bboxes_from_analyzer_results
 
     Args:
         analyzer_results (list): Results from using ImageAnalyzerEngine.
-        expected_bboxes_dict (dict): Expected output bounding box dictionary.
+        expected_bboxes (list): Expected output bounding box list.
     """
     # Arrange
 
     # Act
-    test_bboxes_dict = mock_engine._get_bboxes_from_analyzer_results(analyzer_results)
+    test_bboxes = mock_engine._get_bboxes_from_analyzer_results(analyzer_results)
 
     # Assert
-    assert test_bboxes_dict == expected_bboxes_dict
+    assert test_bboxes == expected_bboxes
 
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine._format_bboxes()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "mock_intermediate_bbox, padding_width, expected_bboxes_dict",
+    "mock_intermediate_bbox, padding_width, expected_bboxes",
     [
         (
-            {
-                "0": {
+            [
+                {
                     "entity_type": "TYPE_1",
                     "score": 0.99,
                     "left": 10,
@@ -848,7 +848,7 @@ def test_get_bboxes_from_analyzer_results_happy_path(
                     "width": 100,
                     "height": 100,
                 },
-                "1": {
+                {
                     "entity_type": "TYPE_2",
                     "score": 0.7,
                     "left": 25,
@@ -856,7 +856,7 @@ def test_get_bboxes_from_analyzer_results_happy_path(
                     "width": 75,
                     "height": 51,
                 },
-                "2": {
+                {
                     "entity_type": "TYPE_3",
                     "score": 0.6,
                     "left": 613,
@@ -864,7 +864,7 @@ def test_get_bboxes_from_analyzer_results_happy_path(
                     "width": 226,
                     "height": 35,
                 },
-            },
+            ],
             25,
             [
                 {"top": 0, "left": 0, "width": 100, "height": 100},
@@ -879,7 +879,7 @@ def test_format_bboxes_happy_path(
     mock_engine: DicomImageRedactorEngine,
     mock_intermediate_bbox: dict,
     padding_width: int,
-    expected_bboxes_dict: dict,
+    expected_bboxes: list,
 ):
     """Test happy path for DicomImageRedactorEngine._format_bboxes
 
@@ -899,7 +899,7 @@ def test_format_bboxes_happy_path(
 
     # Assert
     assert mock_get_bboxes.call_count == 1
-    assert test_bboxes_dict == expected_bboxes_dict
+    assert test_bboxes_dict == expected_bboxes
 
 
 @pytest.mark.parametrize(

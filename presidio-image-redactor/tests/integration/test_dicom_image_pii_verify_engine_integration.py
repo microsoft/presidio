@@ -66,8 +66,7 @@ def test_verify_correctly(
     expected_ocr_results = mock_results["ocr_results_formatted"]
     expected_analyzer_results = mock_results["analyzer_results"]
     expected_ocr_results_labels = []
-    for i in expected_ocr_results:
-        item = expected_ocr_results[i]
+    for item in expected_ocr_results:
         expected_ocr_results_labels.append(item["label"])
 
     # Act
@@ -86,8 +85,7 @@ def test_verify_correctly(
     # Check most OCR results (labels) are the same
     # Don't worry about position since that is implied in analyzer results
     test_ocr_results_labels = []
-    for i in test_ocr_results_formatted:
-        item = test_ocr_results_formatted[i]
+    for item in test_ocr_results_formatted:
         test_ocr_results_labels.append(item["label"])
     common_labels = set(expected_ocr_results_labels).intersection(
         set(test_ocr_results_labels)
