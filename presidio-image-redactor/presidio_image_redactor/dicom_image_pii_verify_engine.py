@@ -40,7 +40,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         instance: pydicom.dataset.FileDataset,
         padding_width: int = 25,
         **kwargs,
-    ) -> Tuple[PIL.Image.Image, dict, dict]:
+    ) -> Tuple[PIL.Image.Image, dict, list]:
         """Verify PII on a single DICOM instance.
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
@@ -137,9 +137,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         """
         bboxes = {}
         item_count = 0
-        for i in range(0, len(ocr_results["text"])):
+        for i in range(len(ocr_results["text"])):
             detected_text = ocr_results["text"][i]
-            if len(detected_text) > 0:
+            if detected_text:
                 bboxes[str(item_count)] = {
                     "left": ocr_results["left"][i],
                     "top": ocr_results["top"][i],
@@ -176,21 +176,20 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
             # Ignore if we've already detected this dup combination
             for other in results:
-                if i not in dups:
-                    if i != other:
-                        other_left = results[other]["left"]
-                        other_top = results[other]["top"]
-                        other_width = results[other]["width"]
-                        other_height = results[other]["height"]
+                if i not in dups and i != other:
+                    other_left = results[other]["left"]
+                    other_top = results[other]["top"]
+                    other_width = results[other]["width"]
+                    other_height = results[other]["height"]
 
-                        match_left = abs(i_left - other_left) <= dup_pix_tolerance
-                        match_top = abs(i_top - other_top) <= dup_pix_tolerance
-                        match_width = abs(i_width - other_width) <= dup_pix_tolerance
-                        match_height = abs(i_height - other_height) <= dup_pix_tolerance
-                        matching = [match_left, match_top, match_width, match_height]
+                    match_left = abs(i_left - other_left) <= dup_pix_tolerance
+                    match_top = abs(i_top - other_top) <= dup_pix_tolerance
+                    match_width = abs(i_width - other_width) <= dup_pix_tolerance
+                    match_height = abs(i_height - other_height) <= dup_pix_tolerance
+                    matching = [match_left, match_top, match_width, match_height]
 
-                        if False not in matching:
-                            dups.append(other)
+                    if all(matching):
+                        dups.append(other)
 
         # Remove duplicates
         for dup in dups:
@@ -201,7 +200,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     @staticmethod
     def _match_with_source(
         all_pos: dict, phi_source_dict: dict, detected_phi: dict, tolerance: int = 50
-    ) -> dict:
+    ) -> Tuple[dict, bool]:
         """Match returned redacted PHI bbox data with some source of truth for PHI.
 
         Args:
@@ -251,12 +250,12 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         cls,
         gt_labels_dict: dict,
         ocr_results: dict,
-        analyzer_results: dict,
+        detected_phi: dict,
         tolerance: int = 50,
     ) -> dict:
         """Label all entities detected as PHI by using ground truth and OCR results.
 
-        All positives (analyzer_results) do not contain PHI labels and are thus
+        All positives (detected_phi) do not contain PHI labels and are thus
         difficult to work with intuitively. This method maps back to the
         actual PHI to each detected sensitive entity.
 
@@ -264,7 +263,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             gt_labels_dict (dict): Dictionary with ground truth labels for a
             single DICOM instance.
             ocr_results (dict): All detected text.
-            analyzer_results (dict): Detected PHI.
+            detected_phi (dict): Formatted analyzer_results.
             tolerance (int): Tolerance for exact coordinates and size data.
 
         Return:
@@ -273,8 +272,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         all_pos = {}
 
         # Cycle through each positive (TP or FP)
-        for i in analyzer_results:
-            analyzer_result = analyzer_results[i]
+        for i in detected_phi:
+            analyzer_result = detected_phi[i]
 
             # See if there are any ground truth matches
             all_pos, gt_match_found = cls._match_with_source(
