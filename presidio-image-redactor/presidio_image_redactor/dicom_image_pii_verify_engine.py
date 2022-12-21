@@ -129,11 +129,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     def _get_bboxes_from_ocr_results(ocr_results: dict) -> List[dict]:
         """Get bounding boxes on padded image for all detected words from ocr_results.
 
-        Args:
-            ocr_results (dict): Results from OCR.
-
-        Return:
-            bboxes (list): Bounding box information per word.
+        :param ocr_results: Raw results from OCR.
+        :return: Bounding box information per word.
         """
         bboxes = []
         item_count = 0
@@ -159,13 +156,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     ) -> List[dict]:
         """Handle when a word is detected multiple times as different types of entities.
 
-        Args:
-            results (list): Detected PHI.
-            dup_pix_tolerance (int): Pixel difference tolerance for
-            identifying duplicates.
-
-        Return:
-            results_no_dups (list): Detected PHI with no duplicate entities.
+        :param results: List of detected PHI with bbox info.
+        :param dup_pix_tolerance: Pixel difference tolerance for identifying duplicates.
+        :return: Detected PHI with no duplicate entities.
         """
         dups = []
         results_no_dups = results.copy()
@@ -209,18 +202,12 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     ) -> Tuple[dict, bool]:
         """Match returned redacted PHI bbox data with some source of truth for PHI.
 
-        Args:
-            all_pos (list): Dictionary storing all positives.
-            phi_source_dict (dict): List of PHI labels for
-            this instance.
-            detected_phi (dict): Detected PHI (single entity from
-            analyzer_results).
-            tolerance (int): Tolerance for exact coordinates and size data.
-
-        Return:
-            all_pos (list): List of all positives, PHI mapped back
-            as possible.
-            match_found (bool): Whether a match was found.
+        :param all_pos: Dictionary storing all positives.
+        :param phi_source_dict: List of PHI labels for this instance.
+        :param detected_phi: Detected PHI (single entity from analyzer_results).
+        :param tolerance: Tolerance for exact coordinates and size data.
+        :return: List of all positive with PHI mapped back as possible
+        and whether a match was found.
         """
         # Get info from detected PHI (positive)
         results_left = detected_phi["left"]
@@ -266,15 +253,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         difficult to work with intuitively. This method maps back to the
         actual PHI to each detected sensitive entity.
 
-        Args:
-            gt_labels_dict (dict): Dictionary with ground truth labels for a
-            single DICOM instance.
-            ocr_results (list): All detected text.
-            detected_phi (list): Formatted analyzer_results.
-            tolerance (int): Tolerance for exact coordinates and size data.
-
-        Return:
-            all_pos (list): Results dict with all positives, labeled.
+        :param gt_labels_dict: Dictionary with ground truth labels for a single DICOM instance.
+        :param ocr_results: All detected text.
+        :param detected_phi: Formatted analyzer_results.
+        :param tolerance: Tolerance for exact coordinates and size data.
+        :return: List of all positives, labeled.
         """
         all_pos = []
 
@@ -301,12 +284,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     def _calculate_precision(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate precision.
 
-        Args:
-            gt (list): List of ground truth labels.
-            all_pos (list): All Detected PHI (mapped back to have actual PHI text).
-
-        Return:
-            precision (float): Precision value.
+        :param gt: List of ground truth labels.
+        :param all_pos: All Detected PHI (mapped back to have actual PHI text).
+        :return: Precision value.
         """
         # Find True Positive (TP) and precision
         tp = [i for i in all_pos if i in gt]
@@ -318,12 +298,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     def _calculate_recall(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate recall.
 
-        Args:
-            gt (list): List of ground truth labels.
-            all_pos (list): All Detected PHI (mapped back to have actual PHI text).
-
-        Return:
-            recall (float): Recall value.
+        :param gt: List of ground truth labels.
+        :param all_pos: All Detected PHI (mapped back to have actual PHI text).
+        :return: Recall value.
         """
         # Find True Positive (TP) and precision
         tp = [i for i in all_pos if i in gt]
