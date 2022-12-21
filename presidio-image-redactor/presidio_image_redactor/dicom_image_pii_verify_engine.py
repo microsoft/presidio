@@ -253,7 +253,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         difficult to work with intuitively. This method maps back to the
         actual PHI to each detected sensitive entity.
 
-        :param gt_labels_dict: Dictionary with ground truth labels for a single DICOM instance.
+        :param gt_labels_dict: Dictionary with ground truth labels for a
+        single DICOM instance.
         :param ocr_results: All detected text.
         :param detected_phi: Formatted analyzer_results.
         :param tolerance: Tolerance for exact coordinates and size data.
