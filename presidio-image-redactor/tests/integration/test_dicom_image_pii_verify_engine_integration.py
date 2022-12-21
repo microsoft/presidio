@@ -18,7 +18,7 @@ SCRIPT_DIR = os.path.dirname(__file__)
 PADDING_WIDTH = 25
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def mock_engine():
     """Instance of the DicomImagePiiVerifyEngine"""
     # Arrange
