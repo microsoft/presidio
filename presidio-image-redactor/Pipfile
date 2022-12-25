@@ -8,11 +8,14 @@ flask = ">=1.1.2"
 pytesseract = ">=0.3.7"
 presidio-analyzer = ">=2.2.0"
 pillow = ">=9.0"
-matplotlib = ">=3.3.4"
+pydicom = ">=2.3.0"
+pypng = ">=0.20220715.0"
+matplotlib = ">=3.6.2"
 typing-extensions = "*"
 
 [dev-packages]
 pytest = "*"
+pytest-mock = "*"
 flake8 = { version = ">=3.9.2" }
 pep8-naming = "*"
 flake8-docstrings = "*"

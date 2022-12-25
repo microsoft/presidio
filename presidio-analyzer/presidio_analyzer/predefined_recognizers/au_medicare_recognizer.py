@@ -70,7 +70,7 @@ class AuMedicareRecognizer(PatternRecognizer):
         """
         # Pre-processing before validation checks
         text = self.__sanitize_value(pattern_text, self.replacement_pairs)
-        medicare_list = [int(digit) for digit in text]
+        medicare_list = [int(digit) for digit in text if not digit.isspace()]
 
         # Set weights based on digit position
         weight = [1, 3, 7, 9, 1, 3, 7, 9]
@@ -80,11 +80,7 @@ class AuMedicareRecognizer(PatternRecognizer):
         for i in range(8):
             sum_product += medicare_list[i] * weight[i]
         remainder = sum_product % 10
-        if remainder == medicare_list[8]:
-            result = True
-        else:
-            result = None
-        return result
+        return remainder == medicare_list[8]
 
     @staticmethod
     def __sanitize_value(text: str, replacement_pairs: List[Tuple[str, str]]) -> str:
