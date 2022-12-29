@@ -10,6 +10,7 @@
 | Usage       | Python                                | [Passing a lambda as a Presidio anonymizer using Faker](python/example_custom_lambda_anonymizer.py)                                             |
 | Usage       | Python Notebook                       | [Encrypting and Decrypting identified entities](python/encrypt_decrypt.ipynb)                                                           |
 | Usage       | Python Notebook                       | [Analyzing structured / semi-structured data in batch](python/batch_processing.ipynb)                                                           |
+| Usage       | Python                                | [Analyze and Anonymize CSV file](python/example_csv.py)                                                           |
 | Usage       | Python Notebook                       | [Getting the identified entity value using a custom Operator](python/getting_entity_values.ipynb)                                               |
 | Usage       | Python                                | [Using Flair as an external PII model](python/flair_recognizer.py)                                               |
 | Usage       | Python                                | [Using Transformers as an external PII model](python/transformers_recognizer/index.md)                                               |
