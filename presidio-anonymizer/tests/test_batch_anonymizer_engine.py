@@ -8,8 +8,8 @@ recognizer_results_list = [[RecognizerResult('PERSON', 0, 4, 0.85)],
                            [RecognizerResult('PERSON', 0, 4, 0.85)],
                            [RecognizerResult('PERSON', 0, 4, 0.85)]]
 analyzer_results = [DictRecognizerResult(key='name',
-                                       value=texts,
-                                       recognizer_results=recognizer_results_list)]
+                                         value=texts,
+                                         recognizer_results=recognizer_results_list)]
 
 
 def test_given_analyzer_result_we_anonymize_dict_correctly():
@@ -27,8 +27,8 @@ def test_given_analyzer_result_we_anonymize_list_correctly():
 
 def test_given_empty_recognizers_than_we_return_text_unchanged():
     empty_analyzer_results = [DictRecognizerResult(key='name',
-                                                 value=texts,
-                                                 recognizer_results=[])]
+                                                   value=texts,
+                                                   recognizer_results=[])]
     engine = BatchAnonymizerEngine()
     anonymized_results = engine.anonymize_dict(empty_analyzer_results)
     assert anonymized_results == {'name': ['John', 'Jill', 'Jack']}
@@ -37,8 +37,8 @@ def test_given_empty_recognizers_than_we_return_text_unchanged():
 def test_given_complex_analyzer_result_we_anonymize_dict_correctly():
     analyzer_results = [
       DictRecognizerResult(key='name',
-                         value=texts,
-                         recognizer_results=recognizer_results_list),
+                           value=texts,
+                           recognizer_results=recognizer_results_list),
       DictRecognizerResult(
         key='comments',
         value=['called him yesterday to confirm he requested to call back in 2 days',
