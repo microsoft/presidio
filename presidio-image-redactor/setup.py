@@ -8,11 +8,13 @@ requirements = [
     "pillow>=9.0",
     "pytesseract==0.3.7",
     "presidio-analyzer>=1.9.0",
-    "matplotlib==3.3.4",
+    "matplotlib==3.6.2",
     "pydantic==1.7.4",
+    "pydicom>=2.3.0",
+    "pypng>=0.20220715.0",
 ]
 
-test_requirements = ["pytest>=3", "flake8==3.7.9"]
+test_requirements = ["pytest>=3", "pytest-mock>=3.10.0", "flake8==3.7.9"]
 
 __version__ = ""
 this_directory = path.abspath(path.dirname(__file__))
