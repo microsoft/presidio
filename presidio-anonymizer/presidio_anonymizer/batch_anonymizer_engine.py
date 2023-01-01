@@ -33,7 +33,7 @@ class BatchAnonymizerEngine(AnonymizerEngine):
             recognizer_results_list = [[] for _ in range(len(texts))]
         for text, recognizer_results in zip(texts, recognizer_results_list):
             if type(text) in (str, bool, int, float):
-                res = self.anonymize(text=str(text), 
+                res = self.anonymize(text=str(text),
                                      analyzer_results=recognizer_results,
                                      **kwargs)
                 return_list.append(res.text)
@@ -44,11 +44,10 @@ class BatchAnonymizerEngine(AnonymizerEngine):
 
     def anonymize_dict(self, analyzer_results: Iterable[DictAnalyzerResult],
                        **kwargs) -> Dict[str, str]:
-
         """
         Anonymize values in a dictionary.
 
-        :param analyzer_results: Iterator of `DictAnalyzerResult` 
+        :param analyzer_results: Iterator of `DictAnalyzerResult`
         containing the output of the AnalyzerEngine.analyze_dict on the input text.
         :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method
         """
@@ -69,10 +68,10 @@ class BatchAnonymizerEngine(AnonymizerEngine):
                 return_dict[result.key] = resp.text
 
             elif isinstance(result.value, collections.abc.Iterable):
-                anonymize_respones = self.anonymize_list(texts=result.value,
-                                                         recognizer_results_list=
-                                                         result.recognizer_results,
-                                                         **kwargs)
+                anonymize_respones = self.anonymize_list(
+                                     texts=result.value,
+                                     recognizer_results_list=result.recognizer_results,
+                                     **kwargs)
                 return_dict[result.key] = anonymize_respones
             else:
                 return_dict[result.key] = result.value
