@@ -1,13 +1,13 @@
 from presidio_anonymizer import BatchAnonymizerEngine
-from presidio_analyzer import RecognizerResult, DictAnalyzerResult
-from presidio_anonymizer.entities import OperatorConfig
+from presidio_anonymizer.entities import (
+  OperatorConfig, RecognizerResult, DictRecognizerResult)
 
 
 texts = ['John', 'Jill', 'Jack']
 recognizer_results_list = [[RecognizerResult('PERSON', 0, 4, 0.85)],
                            [RecognizerResult('PERSON', 0, 4, 0.85)],
                            [RecognizerResult('PERSON', 0, 4, 0.85)]]
-analyzer_results = [DictAnalyzerResult(key='name',
+analyzer_results = [DictRecognizerResult(key='name',
                                        value=texts,
                                        recognizer_results=recognizer_results_list)]
 
@@ -26,7 +26,7 @@ def test_given_analyzer_result_we_anonymize_list_correctly():
 
 
 def test_given_empty_recognizers_than_we_return_text_unchanged():
-    empty_analyzer_results = [DictAnalyzerResult(key='name',
+    empty_analyzer_results = [DictRecognizerResult(key='name',
                                                  value=texts,
                                                  recognizer_results=[])]
     engine = BatchAnonymizerEngine()
@@ -36,10 +36,10 @@ def test_given_empty_recognizers_than_we_return_text_unchanged():
 
 def test_given_complex_analyzer_result_we_anonymize_dict_correctly():
     analyzer_results = [
-      DictAnalyzerResult(key='name',
+      DictRecognizerResult(key='name',
                          value=texts,
                          recognizer_results=recognizer_results_list),
-      DictAnalyzerResult(
+      DictRecognizerResult(
         key='comments',
         value=['called him yesterday to confirm he requested to call back in 2 days',
                'accepted the offer license number AC432223',

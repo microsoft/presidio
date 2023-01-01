@@ -1,9 +1,9 @@
 from typing import List, Dict, Union, Iterable
 import collections
 
-from presidio_analyzer import RecognizerResult, DictAnalyzerResult
+from presidio_anonymizer.entities import DictRecognizerResult
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import EngineResult
+from presidio_anonymizer.entities import EngineResult, RecognizerResult
 
 
 class BatchAnonymizerEngine(AnonymizerEngine):
@@ -42,12 +42,12 @@ class BatchAnonymizerEngine(AnonymizerEngine):
 
         return return_list
 
-    def anonymize_dict(self, analyzer_results: Iterable[DictAnalyzerResult],
+    def anonymize_dict(self, analyzer_results: Iterable[DictRecognizerResult],
                        **kwargs) -> Dict[str, str]:
         """
         Anonymize values in a dictionary.
 
-        :param analyzer_results: Iterator of `DictAnalyzerResult`
+        :param analyzer_results: Iterator of `DictRecognizerResult`
         containing the output of the AnalyzerEngine.analyze_dict on the input text.
         :param kwargs: Additional kwargs for the `AnonymizerEngine.anonymize` method
         """
