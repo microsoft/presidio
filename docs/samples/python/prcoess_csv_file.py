@@ -10,11 +10,8 @@ Example implementing a CSV analyzer
 
 This example shows how to use the Presidio Analyzer and Anonymizer
 to detect and anonymize PII in a CSV file.
-It uses the BatchAnalyzerEngine to analyze the CSV file, and the
+It uses the BatchAnalyzerEngine to analyze the CSV file, and 
 BatchAnonymizerEngine to anonymize the requested columns.
-Note that currently BatchAnonymizerEngine is not part of the anonymizer package,
-and is defined in this and the batch_processing notebook.
-https://github.com/microsoft/presidio/blob/main/docs/samples/python/batch_processing.ipynb
 
 Content of csv file:
 id,name,city,comments
@@ -45,7 +42,7 @@ class CSVAnalyzer(BatchAnalyzerEngine):
 if __name__ == "__main__":
 
     analyzer = CSVAnalyzer()
-    analyzer_results = analyzer.analyze_csv('docs/samples/python/csv_sample_data/sample_data.csv',
+    analyzer_results = analyzer.analyze_csv('./csv_sample_data/sample_data.csv',
                                             language="en")
     pprint.pprint(analyzer_results)
 

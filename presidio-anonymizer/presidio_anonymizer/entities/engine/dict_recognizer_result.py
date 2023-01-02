@@ -15,9 +15,9 @@ class DictRecognizerResult:
     Could be either:
      - A list of recognizer results if the input is one string
      - A list of lists of recognizer results, if the input is a list of strings.
-     - An iterator of a DictAnalyzerResult, if the input is a dictionary.
+     - An iterator of a DictRecognizerResult, if the input is a dictionary.
      In this case the recognizer_results would be the iterator
-     of the DictAnalyzerResults next level in the dictionary.
+     of the DictRecognizerResult next level in the dictionary.
     """
 
     key: str
