@@ -168,27 +168,21 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         """
         dups = []
         results_no_dups = results.copy()
+        dims = ["left", "top", "width", "height"]
 
         # Check for duplicates
-        for i in range(len(results)):
-            i_left = results[i]["left"]
-            i_top = results[i]["top"]
-            i_width = results[i]["width"]
-            i_height = results[i]["height"]
+        for i in range(len(results) - 1):
+            i_dims = {dim: results[i][dim] for dim in dims}
 
             # Ignore if we've already detected this dup combination
-            for other in range(len(results)):
-                if i != other and i not in dups:
-                    other_left = results[other]["left"]
-                    other_top = results[other]["top"]
-                    other_width = results[other]["width"]
-                    other_height = results[other]["height"]
-
-                    match_left = abs(i_left - other_left) <= dup_pix_tolerance
-                    match_top = abs(i_top - other_top) <= dup_pix_tolerance
-                    match_width = abs(i_width - other_width) <= dup_pix_tolerance
-                    match_height = abs(i_height - other_height) <= dup_pix_tolerance
-                    matching = [match_left, match_top, match_width, match_height]
+            for other in range(i + 1, len(results)):
+                if i not in dups:
+                    other_dims = {dim: results[other][dim] for dim in dims}
+                    matching_dims = {
+                        dim: abs(i_dims[dim] - other_dims[dim]) <= dup_pix_tolerance
+                        for dim in dims
+                    }
+                    matching = list(matching_dims.values())
 
                     if all(matching):
                         dups.append(other)
