@@ -415,10 +415,13 @@ def test_get_most_common_pixel_value_happy_path(
         expected_color (int or Tuple of int): The expected color returned for the image.
     """
     # Arrange
+    crop_ratio = 0.75
     test_instance = pydicom.dcmread(dcm_file)
 
     # Act
-    test_color = mock_engine._get_most_common_pixel_value(test_instance, fill)
+    test_color = mock_engine._get_most_common_pixel_value(
+        test_instance, crop_ratio, fill
+    )
 
     # Assert
     assert test_color == expected_color
@@ -441,10 +444,13 @@ def test_get_most_common_pixel_value_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Arrange
+        crop_ratio = 0.75
         test_instance = pydicom.dcmread(dcm_file)
 
         # Act
-        _ = mock_engine._get_most_common_pixel_value(test_instance, "contrast")
+        _ = mock_engine._get_most_common_pixel_value(
+            test_instance, crop_ratio, "contrast"
+        )
 
         # Assert
         assert expected_error_type == exc_info.typename
@@ -1127,6 +1133,7 @@ def test_add_redact_box_happy_path(
     """
     # Arrange
     test_instance = pydicom.dcmread(dcm_path)
+    crop_ratio = 0.75
     mock_check_if_greyscale = mocker.patch.object(
         DicomImageRedactorEngine,
         "_check_if_greyscale",
@@ -1146,7 +1153,7 @@ def test_add_redact_box_happy_path(
 
     # Act
     test_redacted_instance = mock_engine._add_redact_box(
-        test_instance, bounding_boxes_coordinates
+        test_instance, bounding_boxes_coordinates, crop_ratio
     )
 
     # Assert
@@ -1312,6 +1319,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         overwrite (bool): True if overwriting original files.
     """
     # Arrange
+    crop_ratio = 0.75
     mock_copy_files = mocker.patch(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=dcm_path,
@@ -1363,7 +1371,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
 
     # Act
     mock_engine._redact_single_dicom_image(
-        dcm_path, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
     )
 
     # Assert
@@ -1403,7 +1411,9 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine._redact_single_dicom_image(dcm_path, "contrast", 25, False, ".")
+        mock_engine._redact_single_dicom_image(
+            dcm_path, 0.75, "contrast", 25, False, "."
+        )
 
     # Assert
     assert expected_error_type == exc_info.typename
@@ -1438,6 +1448,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
         overwrite (bool): True if overwriting original files.
     """
     # Arrange
+    crop_ratio = 0.75
     mock_copy_files = mocker.patch(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=dcm_path,
@@ -1458,7 +1469,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
 
     # Act
     mock_engine._redact_multiple_dicom_images(
-        dcm_path, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
     )
 
     # Assert
@@ -1491,7 +1502,9 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine._redact_multiple_dicom_images(dcm_path, "contrast", 25, False, ".")
+        mock_engine._redact_multiple_dicom_images(
+            dcm_path, 0.75, "contrast", 25, False, "."
+        )
 
     # Assert
     assert expected_error_type == exc_info.typename
