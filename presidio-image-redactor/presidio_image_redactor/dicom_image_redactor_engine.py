@@ -39,8 +39,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param image: Loaded DICOM instance including pixel data and metadata.
         :param fill: Fill setting to use for redaction box ("contrast" or "background").
         :param padding_width: Padding width to use when running OCR.
-        :param crop_ratio: Determines proportion of image to use when
-        determining background color (remainder excludes the center).
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         :return: DICOM instance with redacted pixel data.
@@ -140,8 +140,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param input_dicom_path: String path to directory of DICOM images.
         :param output_dir: String path to parent output directory.
         :param padding_width : Padding width to use when running OCR.
-        :param crop_ratio: Determines what proportion of the image to
-        use when determining background color.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
@@ -337,12 +337,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _get_array_corners(pixel_array: np.ndarray, crop_ratio: float) -> np.ndarray:
         """Crop a pixel array to just return the corners in a single array.
 
-        Args:
-            pixel_array (np.ndarray): Numpy array containing the pixel data.
-            crop_ratio (float): Ratio to crop to.
+        :param pixel_array: Numpy array containing the pixel data.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
 
-        Return:
-            cropped_array (np.ndarray): Cropped input array.
+        :return: Cropped input array.
         """
         if crop_ratio >= 1.0 or crop_ratio <= 0:
             raise ValueError("crop_ratio must be between 0 and 1")
@@ -350,9 +349,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Set dimensions
         width = pixel_array.shape[0]
         height = pixel_array.shape[1]
-        effective_crop = crop_ratio / 2
-        crop_width = int(np.floor(width * effective_crop))
-        crop_height = int(np.floor(height * effective_crop))
+        crop_width = int(np.floor(width * crop_ratio / 2))
+        crop_height = int(np.floor(height * crop_ratio / 2))
 
         # Get coordinates for corners
         # (left, top, right, bottom)
@@ -382,8 +380,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Find the most common pixel value.
 
         :param instance: A singe DICOM instance.
-        :param crop_ratio: Used to select how much of the image to consider
-        when determining image background color.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Determines how box color is selected.
         'contrast' - Masks stand out relative to background.
         'background' - Masks are same color as background.
@@ -721,8 +719,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :param instance: A single DICOM instance.
         :param bounding_boxes_coordinates: Bounding box coordinates.
-        :param crop_ratio: Determines proportion of image to use
-        when determining background color.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Determines how box color is selected.
         'contrast' - Masks stand out relative to background.
         'background' - Masks are same color as background.
@@ -767,8 +765,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Redact text PHI present on a DICOM image.
 
         :param dcm_path: String path to the DICOM file.
-        :param crop_ratio: Determines what proportion of image
-        to use when determining background color.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
@@ -834,8 +832,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Redact text PHI present on all DICOM images in a directory.
 
         :param dcm_dir: String path to directory containing DICOM files (can be nested).
-        :param crop_ratio: Determines what proportion of image
-        to use when determining background color.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
