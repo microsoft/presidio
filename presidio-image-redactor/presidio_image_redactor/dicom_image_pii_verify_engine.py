@@ -291,7 +291,10 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         """
         # Find True Positive (TP) and precision
         tp = [i for i in all_pos if i in gt]
-        precision = len(tp) / len(all_pos)
+        try:
+            precision = len(tp) / len(all_pos)
+        except ZeroDivisionError:
+            precision = 0
 
         return precision
 
@@ -305,6 +308,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         """
         # Find True Positive (TP) and precision
         tp = [i for i in all_pos if i in gt]
-        recall = len(tp) / len(gt)
+        try:
+            recall = len(tp) / len(gt)
+        except ZeroDivisionError:
+            recall = 1
 
         return recall
