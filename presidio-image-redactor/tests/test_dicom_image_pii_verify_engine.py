@@ -1,8 +1,6 @@
 """Unit tests for dicom_image_pii_verify_engine
 """
-import os
 import pydicom
-import json
 
 from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine
 from presidio_image_redactor.dicom_image_pii_verify_engine import (
@@ -11,8 +9,6 @@ from presidio_image_redactor.dicom_image_pii_verify_engine import (
 from typing import List
 import pytest
 
-SCRIPT_DIR = os.path.dirname(__file__)
-
 
 @pytest.fixture(scope="module")
 def mock_engine():
@@ -20,29 +16,6 @@ def mock_engine():
     dicom_image_pii_verify_engine = DicomImagePiiVerifyEngine()
 
     return dicom_image_pii_verify_engine
-
-
-@pytest.fixture(scope="module")
-def mock_instance():
-    """DICOM instance to use in testing"""
-    # Assign
-    filepath = f"{SCRIPT_DIR}/test_data/0_ORIGINAL.dcm"
-
-    # Act
-    instance = pydicom.dcmread(filepath)
-
-    return instance
-
-
-@pytest.fixture(scope="module")
-def mock_results():
-    """Loaded json results file"""
-    with open(
-        f"{SCRIPT_DIR}/integration/resources/dicom_pii_verify_integration.json"
-    ) as json_file:
-        results_json = json.load(json_file)
-
-    return results_json
 
 
 @pytest.fixture(scope="module")

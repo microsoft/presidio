@@ -1,8 +1,13 @@
-import pytest
+import pydicom
+import json
+import os
 from presidio_analyzer.recognizer_result import RecognizerResult
 
 from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
+import pytest
+
+SCRIPT_DIR = os.path.dirname(__file__)
 
 
 @pytest.fixture(scope="function")
@@ -45,3 +50,26 @@ def get_image_recognizerresult():
 @pytest.fixture(scope="module")
 def image_analyzer_engine():
     return ImageAnalyzerEngine()
+
+
+@pytest.fixture(scope="module")
+def mock_instance():
+    """DICOM instance to use in testing"""
+    # Assign
+    filepath = f"{SCRIPT_DIR}/test_data/0_ORIGINAL.dcm"
+
+    # Act
+    instance = pydicom.dcmread(filepath)
+
+    return instance
+
+
+@pytest.fixture(scope="module")
+def mock_results():
+    """Loaded json results file"""
+    with open(
+        f"{SCRIPT_DIR}/integration/resources/dicom_pii_verify_integration.json"
+    ) as json_file:
+        results_json = json.load(json_file)
+
+    return results_json
