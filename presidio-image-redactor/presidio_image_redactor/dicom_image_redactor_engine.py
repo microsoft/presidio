@@ -356,14 +356,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         boxes = [box_top_left, box_top_right, box_bottom_left, box_bottom_right]
 
         # Only keep box pixels
-        cropped_pixel_arrays = list()
-        for box in boxes:
-            x_start = box[0]  # left
-            x_end = box[2]  # right
-            y_start = box[1]  # up
-            y_end = box[3]  # down
-
-            cropped_pixel_arrays.append(pixel_array[x_start:x_end, y_start:y_end])
+        cropped_pixel_arrays = [
+            pixel_array[box[0] : box[2], box[1] : box[3]] for box in boxes
+        ]
 
         # Combine the cropped pixel arrays
         cropped_array = np.vstack(cropped_pixel_arrays)
