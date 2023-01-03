@@ -5,6 +5,7 @@ from PIL import Image
 import pydicom
 
 from presidio_image_redactor import (
+    OCR,
     TesseractOCR,
     ImageAnalyzerEngine,
     DicomImageRedactorEngine,
@@ -20,9 +21,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
     def __init__(
         self,
-        ocr_engine: Optional[TesseractOCR] = None,
+        ocr_engine: Optional[OCR] = None,
         image_analyzer_engine: Optional[ImageAnalyzerEngine] = None,
     ):
+        """Initialize DicomImagePiiVerifyEngine object.
+
+        :param ocr_engine: OCR engine to use.
+        :param image_analyzer_engine: Image analyzer engine to use.
+        """
         # Initialize OCR engine
         if not ocr_engine:
             self.ocr_engine = TesseractOCR()
