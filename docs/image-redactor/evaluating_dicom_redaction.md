@@ -194,6 +194,6 @@ instance = pydicom.dcmread(file_of_interest)
 _, eval_results = dicom_engine.eval_dicom_instance(instance, ground_truth)
 ```
 
-For a full demonstration, please see the [evaluation notebook](../docs/samples/python/example_dicom_redactor_evaluation.ipynb).
+For a full demonstration, please see the [evaluation notebook](../samples/python/example_dicom_redactor_evaluation.ipynb).
 
 *Return to the [Table of Contents](#table-of-contents)*
