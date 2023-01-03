@@ -119,8 +119,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         )
 
         # Calculate evaluation metrics
-        precision = self._calculate_precision(ground_truth, all_pos)
-        recall = self._calculate_recall(ground_truth, all_pos)
+        precision = self.calculate_precision(ground_truth, all_pos)
+        recall = self.calculate_recall(ground_truth, all_pos)
 
         eval_results = {
             "all_positives": all_pos,
@@ -282,7 +282,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         return all_pos
 
     @staticmethod
-    def _calculate_precision(gt: List[dict], all_pos: List[dict]) -> float:
+    def calculate_precision(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate precision.
 
         :param gt: List of ground truth labels.
@@ -299,7 +299,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         return precision
 
     @staticmethod
-    def _calculate_recall(gt: List[dict], all_pos: List[dict]) -> float:
+    def calculate_recall(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate recall.
 
         :param gt: List of ground truth labels.

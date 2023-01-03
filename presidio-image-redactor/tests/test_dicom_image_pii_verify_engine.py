@@ -186,10 +186,10 @@ def test_eval_dicom_instance_happy_path(
         DicomImagePiiVerifyEngine, "_label_all_positives", return_value=None
     )
     mock_precision = mocker.patch.object(
-        DicomImagePiiVerifyEngine, "_calculate_precision", return_value=None
+        DicomImagePiiVerifyEngine, "calculate_precision", return_value=None
     )
     mock_recall = mocker.patch.object(
-        DicomImagePiiVerifyEngine, "_calculate_recall", return_value=None
+        DicomImagePiiVerifyEngine, "calculate_recall", return_value=None
     )
 
     # Act
@@ -851,7 +851,7 @@ def test_label_all_positives_happy_path(
 
 
 # ------------------------------------------------------
-# DicomImagePiiVerifyEngine._calculate_precision()
+# DicomImagePiiVerifyEngine.calculate_precision()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "gt_labels, all_pos, expected_result",
@@ -909,7 +909,7 @@ def test_calculate_precision_happy_path(
     all_pos: List[dict],
     expected_result: float,
 ):
-    """Test happy path for DicomImagePiiVerifyEngine._calculate_precision
+    """Test happy path for DicomImagePiiVerifyEngine.calculate_precision
 
     Args:
         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
@@ -918,14 +918,14 @@ def test_calculate_precision_happy_path(
         expected_result (float): Expected precision.
     """
     # Act
-    test_precision = mock_engine._calculate_precision(gt_labels, all_pos)
+    test_precision = mock_engine.calculate_precision(gt_labels, all_pos)
 
     # Assert
     assert test_precision == expected_result
 
 
 # ------------------------------------------------------
-# DicomImagePiiVerifyEngine._calculate_recall()
+# DicomImagePiiVerifyEngine.calculate_recall()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "gt_labels, all_pos, expected_result",
@@ -968,7 +968,7 @@ def test_calculate_recall_happy_path(
     all_pos: dict,
     expected_result: float,
 ):
-    """Test happy path for DicomImagePiiVerifyEngine._calculate_recall
+    """Test happy path for DicomImagePiiVerifyEngine.calculate_recall
 
     Args:
         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
@@ -977,7 +977,7 @@ def test_calculate_recall_happy_path(
         expected_result (float): Expected precision.
     """
     # Act
-    test_recall = mock_engine._calculate_recall(gt_labels, all_pos)
+    test_recall = mock_engine.calculate_recall(gt_labels, all_pos)
 
     # Assert
     assert test_recall == expected_result
