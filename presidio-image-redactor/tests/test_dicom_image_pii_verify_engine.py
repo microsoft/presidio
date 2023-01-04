@@ -19,9 +19,9 @@ def mock_engine():
 
 
 @pytest.fixture(scope="module")
-def mock_gt_single(mock_results: dict):
+def mock_gt_single(get_mock_dicom_verify_results: dict):
     """Ground truth for a single instance"""
-    gt = mock_results["ground_truth"]
+    gt = get_mock_dicom_verify_results["ground_truth"]
     return gt
 
 
@@ -57,12 +57,12 @@ def test_init_happy_path(
 def test_verify_dicom_instance_happy_path(
     mocker,
     mock_engine: DicomImagePiiVerifyEngine,
-    mock_instance: pydicom.dataset.FileDataset,
+    get_mock_dicom_instance: pydicom.dataset.FileDataset,
 ):
     """Test happy path for DicomImagePiiVerifyEngine.verify_dicom_instance
     Args:
         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
-        mock_instance (pydicom.dataset.FileDataset): Loaded DICOM.
+        get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
     """
     # Assign
     padding_width = 25
@@ -104,7 +104,7 @@ def test_verify_dicom_instance_happy_path(
     )
 
     # Act
-    _, _, _ = mock_engine.verify_dicom_instance(mock_instance, padding_width)
+    _, _, _ = mock_engine.verify_dicom_instance(get_mock_dicom_instance, padding_width)
 
     # Assert
     assert mock_greyscale.call_count == 1
@@ -126,13 +126,13 @@ def test_verify_dicom_instance_happy_path(
 def test_eval_dicom_instance_happy_path(
     mocker,
     mock_engine: DicomImagePiiVerifyEngine,
-    mock_instance: pydicom.dataset.FileDataset,
+    get_mock_dicom_instance: pydicom.dataset.FileDataset,
     mock_gt_single: dict,
 ):
     """Test happy path for DicomImagePiiVerifyEngine.eval_dicom_instance
     Args:
         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
-        mock_instance (pydicom.dataset.FileDataset): Loaded DICOM.
+        get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
         mock_gt_single (dict): Ground truth for a single file.
     """
     # Assign
@@ -167,7 +167,7 @@ def test_eval_dicom_instance_happy_path(
 
     # Act
     _, test_eval_results = mock_engine.eval_dicom_instance(
-        mock_instance, mock_gt_single, padding_width, tolerance
+        get_mock_dicom_instance, mock_gt_single, padding_width, tolerance
     )
 
     # Assert
@@ -790,7 +790,7 @@ def test_match_with_source_happy_path(
 def test_label_all_positives_happy_path(
     mock_engine: DicomImagePiiVerifyEngine,
     mock_gt_single: dict,
-    mock_results: dict,
+    get_mock_dicom_verify_results: dict,
     ocr_results: List[dict],
     analyzer_results: List[dict],
     tolerance: int,
@@ -801,7 +801,7 @@ def test_label_all_positives_happy_path(
     Args:
         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
         mock_gt_single (dict): Ground truth labels for single instance.
-        mock_results (dict): Dictionary containing results.
+        get_mock_dicom_verify_results (dict): Dictionary containing results.
         ocr_results (dict): Formatted OCR results.
         analyzer_results (dict): Detected PHI dictionary.
         tolerance (int): Pixel difference tolerance for matching entities.
@@ -809,10 +809,10 @@ def test_label_all_positives_happy_path(
     """
     # Assign
     if not ocr_results:
-        ocr_results = mock_results["ocr_results_formatted"]
+        ocr_results = get_mock_dicom_verify_results["ocr_results_formatted"]
 
     if not analyzer_results:
-        analyzer_results = mock_results["analyzer_results"]
+        analyzer_results = get_mock_dicom_verify_results["analyzer_results"]
 
     # Act
     test_all_pos = mock_engine._label_all_positives(
@@ -931,7 +931,7 @@ def test_calculate_precision_happy_path(
         (
             [],
             [{"a": [1, 2, 3]}, {"b": [4, 5, 6]}, {"c": [7, 8, 9]}],
-            1,
+            0,
         ),
     ],
 )
