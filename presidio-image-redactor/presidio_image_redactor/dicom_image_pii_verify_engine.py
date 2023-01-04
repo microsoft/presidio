@@ -85,7 +85,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         )
 
         # Get image with verification boxes
-        verify_image = None
+        verify_image = self.verify(
+            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+        )
 
         return verify_image, ocr_results, analyzer_results
 
