@@ -45,12 +45,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         self,
         instance: pydicom.dataset.FileDataset,
         padding_width: int = 25,
+        ocr_threshold: float = -1,
         **kwargs,
     ) -> Tuple[PIL.Image.Image, dict, list]:
         """Verify PII on a single DICOM instance.
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
+        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
         :return: DICOM instance with boxes identifying PHI, OCR results,
         and analyzer results.
@@ -76,13 +78,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         )
         ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+            image,
+            ad_hoc_recognizers=[deny_list_recognizer],
+            ocr_threshold=ocr_threshold,
+            **kwargs,
         )
 
         # Get image with verification boxes
-        verify_image = self.verify(
-            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
-        )
+        verify_image = None
 
         return verify_image, ocr_results, analyzer_results
 
@@ -92,6 +95,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         ground_truth: dict,
         padding_width: int = 25,
         tolerance: int = 50,
+        ocr_threshold: float = -1,
         **kwargs,
     ) -> Tuple[PIL.Image.Image, dict]:
         """Evaluate performance for a single DICOM instance.
@@ -100,12 +104,13 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param ground_truth: Dictionary containing ground truth labels for the instance.
         :param padding_width: Padding width to use when running OCR.
         :param tolerance: Pixel distance tolerance for matching to ground truth.
+        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
         :return: Evaluation comparing redactor engine results vs ground truth.
         """
         # Verify detected PHI
         verify_image, ocr_results, analyzer_results = self.verify_dicom_instance(
-            instance, padding_width, **kwargs
+            instance, padding_width, ocr_threshold, **kwargs
         )
         formatted_ocr_results = self._get_bboxes_from_ocr_results(ocr_results)
         detected_phi = self._get_bboxes_from_analyzer_results(analyzer_results)

@@ -23,7 +23,9 @@ class ImageAnalyzerEngine:
             ocr = TesseractOCR()
         self.ocr = ocr
 
-    def analyze(self, image: object, **kwargs) -> List[ImageRecognizerResult]:
+    def analyze(
+        self, image: object, ocr_threshold: float = -1, **kwargs
+    ) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
         :param image: PIL Image/numpy array or file path(str) to be processed
@@ -32,15 +34,40 @@ class ImageAnalyzerEngine:
         :return: list of the extract entities with image bounding boxes
         """
         ocr_result = self.ocr.perform_ocr(image)
-        text = self.ocr.get_text_from_ocr_dict(ocr_result)
+        ocr_result_filtered = self.threshold_ocr_result(ocr_result, ocr_threshold)
+        text = self.ocr.get_text_from_ocr_dict(ocr_result_filtered)
 
         analyzer_result = self.analyzer_engine.analyze(
             text=text, language="en", **kwargs
         )
         bboxes = self.map_analyzer_results_to_bounding_boxes(
-            analyzer_result, ocr_result, text
+            analyzer_result, ocr_result_filtered, text
         )
         return bboxes
+
+    @staticmethod
+    def threshold_ocr_result(ocr_result: dict, ocr_threshold: float):
+        """Filter out OCR results below confidence threshold.
+
+        Args:
+            ocr_result (dict): OCR results (raw).
+            ocr_threshold (float): Threshold value between -1 and 100.
+
+        Return:
+            filtered_ocr_result (dict): OCR results with low confidence items removed.
+        """
+        # Get indices of items above threshold
+        idx = list()
+        for i, val in enumerate(ocr_result["conf"]):
+            if float(val) >= ocr_threshold:
+                idx.append(i)
+
+        # Only retain high confidence items
+        filtered_ocr_result = {}
+        for key in list(ocr_result.keys()):
+            filtered_ocr_result[key] = [ocr_result[key][i] for i in idx]
+
+        return filtered_ocr_result
 
     @staticmethod
     def map_analyzer_results_to_bounding_boxes(
