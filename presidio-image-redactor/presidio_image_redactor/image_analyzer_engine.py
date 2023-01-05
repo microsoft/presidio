@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
 
@@ -14,7 +14,11 @@ class ImageAnalyzerEngine:
     :param ocr: the OCR object to be used to detect text in images.
     """
 
-    def __init__(self, analyzer_engine: AnalyzerEngine = None, ocr: OCR = None):
+    def __init__(
+        self,
+        analyzer_engine: Optional[AnalyzerEngine] = None,
+        ocr: Optional[OCR] = None,
+    ):
         if not analyzer_engine:
             analyzer_engine = AnalyzerEngine()
         self.analyzer_engine = analyzer_engine
@@ -24,7 +28,7 @@ class ImageAnalyzerEngine:
         self.ocr = ocr
 
     def analyze(
-        self, image: object, ocr_threshold: float = -1, **kwargs
+        self, image: Optional[object], ocr_threshold: Optional[float] = -1, **kwargs
     ) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
