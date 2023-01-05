@@ -142,6 +142,10 @@ Python script example can be found under:
     engine.redact_from_directory("path/to/your/dicom", output_dir, padding_width=25, fill="contrast")
     ```
 
+### Evaluating de-identification performance
+
+If you are interested in evaluating the performance of the DICOM de-identification against ground truth labels, please see the [evaluating DICOM de-identification page](./evaluating_dicom_redaction.md).
+
 ### Side note for Windows
 
 If you are using a Windows machine, you may run into issues if file paths are too long. Unfortunatley, this is not rare when working with DICOM images that are often nested in directories with descriptive names.
