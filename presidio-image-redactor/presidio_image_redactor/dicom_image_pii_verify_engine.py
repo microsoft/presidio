@@ -44,8 +44,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     def verify_dicom_instance(
         self,
         instance: pydicom.dataset.FileDataset,
-        padding_width: int = 25,
-        ocr_threshold: float = -1,
+        padding_width: Optional[int] = 25,
+        ocr_threshold: Optional[float] = -1,
         **kwargs,
     ) -> Tuple[PIL.Image.Image, dict, list]:
         """Verify PII on a single DICOM instance.
@@ -95,9 +95,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         self,
         instance: pydicom.dataset.FileDataset,
         ground_truth: dict,
-        padding_width: int = 25,
-        tolerance: int = 50,
-        ocr_threshold: float = -1,
+        padding_width: Optional[int] = 25,
+        tolerance: Optional[int] = 50,
+        ocr_threshold: Optional[float] = -1,
         **kwargs,
     ) -> Tuple[PIL.Image.Image, dict]:
         """Evaluate performance for a single DICOM instance.
