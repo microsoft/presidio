@@ -7,10 +7,12 @@ All notable changes to this project will be documented in this file.
 #### Image redactor
 * Added evaluation code for the DICOM image redaction capabilities
 * Modified `ImagePiiVerifyEngine` to allow passing of kwargs
-* Updatd `ImageAnalyzerEngine` to allow passing of an OCR confidence threshold
+* Updated `ImageAnalyzerEngine` to allow passing of an OCR confidence threshold
+* Updated `DicomImagePiiVerifyEngine` and `DicomImageRedactorEngine` to take in OCR confidence threshold
 
 #### General
 * Updated documentation to include instructions on using DICOM evaluation code
+* Updated documentation to mention OCR thresholding
 
 ## [2.2.31] - 14.12.2022
 ### Changed
