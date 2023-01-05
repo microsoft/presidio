@@ -53,7 +53,7 @@ def image_analyzer_engine():
 
 
 @pytest.fixture(scope="module")
-def mock_instance():
+def get_mock_dicom_instance():
     """DICOM instance to use in testing"""
     # Assign
     filepath = f"{SCRIPT_DIR}/test_data/0_ORIGINAL.dcm"
@@ -65,7 +65,7 @@ def mock_instance():
 
 
 @pytest.fixture(scope="module")
-def mock_results():
+def get_mock_dicom_verify_results():
     """Loaded json results file"""
     with open(
         f"{SCRIPT_DIR}/integration/resources/dicom_pii_verify_integration.json"
