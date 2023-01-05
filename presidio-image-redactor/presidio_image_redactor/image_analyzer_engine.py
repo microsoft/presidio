@@ -60,6 +60,9 @@ class ImageAnalyzerEngine:
         Return:
             filtered_ocr_result (dict): OCR results with low confidence items removed.
         """
+        if ocr_threshold < -1 or ocr_threshold > 100:
+            raise ValueError("ocr_threshold must be between -1 and 100")
+
         # Get indices of items above threshold
         idx = list()
         for i, val in enumerate(ocr_result["conf"]):
