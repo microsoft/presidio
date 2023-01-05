@@ -10,7 +10,7 @@ import PIL
 import png
 import numpy as np
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Optional
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
@@ -26,9 +26,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def redact(
         self,
         image: pydicom.dataset.FileDataset,
-        fill: str = "contrast",
-        padding_width: int = 25,
-        crop_ratio: float = 0.75,
+        fill: Optional[str] = "contrast",
+        padding_width: Optional[int] = 25,
+        crop_ratio: Optional[float] = 0.75,
+        ocr_threshold: Optional[float] = -1,
         **kwargs,
     ):
         """Redact method to redact the given DICOM image.
@@ -41,6 +42,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
+        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         :return: DICOM instance with redacted pixel data.
@@ -65,7 +67,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             supported_entity="PERSON", deny_list=phi_list
         )
         analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+            image,
+            ad_hoc_recognizers=[deny_list_recognizer],
+            ocr_threshold=ocr_threshold,
+            **kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
@@ -78,9 +83,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         self,
         input_dicom_path: str,
         output_dir: str,
-        padding_width: int = 25,
-        crop_ratio: float = 0.75,
-        fill: str = "contrast",
+        padding_width: Optional[int] = 25,
+        crop_ratio: Optional[float] = 0.75,
+        fill: Optional[str] = "contrast",
+        ocr_threshold: Optional[float] = -1,
         **kwargs,
     ) -> None:
         """Redact method to redact from a given file.
@@ -93,6 +99,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
         """
         # Verify the given paths
@@ -116,6 +123,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
+            ocr_threshold=ocr_threshold,
             **kwargs,
         )
 
@@ -127,9 +135,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         self,
         input_dicom_path: str,
         output_dir: str,
-        padding_width: int = 25,
-        crop_ratio: float = 0.75,
-        fill: str = "contrast",
+        padding_width: Optional[int] = 25,
+        crop_ratio: Optional[float] = 0.75,
+        fill: Optional[str] = "contrast",
+        ocr_threshold: Optional[float] = -1,
         **kwargs,
     ) -> None:
         """Redact method to redact from a directory of files.
@@ -144,6 +153,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
         """
         # Verify the given paths
@@ -167,6 +177,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
+            ocr_threshold=ocr_threshold,
             **kwargs,
         )
 
@@ -758,6 +769,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
+        ocr_threshold: float,
         **kwargs,
     ) -> str:
         """Redact text PHI present on a DICOM image.
@@ -771,6 +783,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
+        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         :return: Path to the output DICOM file.
@@ -805,7 +818,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             supported_entity="PERSON", deny_list=phi_list
         )
         analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+            image,
+            ad_hoc_recognizers=[deny_list_recognizer],
+            ocr_threshold=ocr_threshold,
+            **kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
@@ -825,6 +841,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
+        ocr_threshold: float,
         **kwargs,
     ) -> str:
         """Redact text PHI present on all DICOM images in a directory.
@@ -838,6 +855,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
+        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         Return:
@@ -865,6 +883,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 padding_width,
                 overwrite,
                 dst_parent_dir,
+                ocr_threshold,
                 **kwargs,
             )
 

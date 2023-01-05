@@ -1371,7 +1371,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
 
     # Act
     mock_engine._redact_single_dicom_image(
-        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir, -1
     )
 
     # Assert
@@ -1412,7 +1412,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_single_dicom_image(
-            dcm_path, 0.75, "contrast", 25, False, "."
+            dcm_path, 0.75, "contrast", 25, False, ".", -1
         )
 
     # Assert
@@ -1469,7 +1469,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
 
     # Act
     mock_engine._redact_multiple_dicom_images(
-        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir, -1
     )
 
     # Assert
@@ -1503,7 +1503,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_multiple_dicom_images(
-            dcm_path, 0.75, "contrast", 25, False, "."
+            dcm_path, 0.75, "contrast", 25, False, ".", -1
         )
 
     # Assert
