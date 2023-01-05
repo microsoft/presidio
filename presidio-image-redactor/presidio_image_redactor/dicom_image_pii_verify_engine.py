@@ -318,6 +318,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         try:
             recall = len(tp) / len(gt)
         except ZeroDivisionError:
-            recall = 1
+            recall = 0
 
         return recall
