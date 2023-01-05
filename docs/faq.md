@@ -1,26 +1,26 @@
 # Frequently Asked Questions (FAQ)
 
 - [General](#general)
-	- [What is Presidio?](#what-is-presidio)
-	- [Why did Microsoft create Presidio?](#why-did-microsoft-create-presidio)
-	- [Is Microsoft Presidio an official Microsoft product?](#is-microsoft-presidio-an-official-microsoft-product)
-	- [What is the difference between Presidio and different PII detection services like Azure Text Analytics and Amazon Comprehend?](#what-is-the-difference-between-presidio-and-different-pii-detection-services-like-azure-text-analytics-and-amazon-comprehend)
+  - [What is Presidio?](#what-is-presidio)
+  - [Why did Microsoft create Presidio?](#why-did-microsoft-create-presidio)
+  - [Is Microsoft Presidio an official Microsoft product?](#is-microsoft-presidio-an-official-microsoft-product)
+  - [What is the difference between Presidio and different PII detection services like Azure Text Analytics and Amazon Comprehend?](#what-is-the-difference-between-presidio-and-different-pii-detection-services-like-azure-text-analytics-and-amazon-comprehend)
 - [Using Presidio](#using-presidio)
-	- [How can I start using Presidio?](#how-can-i-start-using-presidio)
-	- [What are the main building blocks in Presidio?](#what-are-the-main-building-blocks-in-presidio)
+  - [How can I start using Presidio?](#how-can-i-start-using-presidio)
+  - [What are the main building blocks in Presidio?](#what-are-the-main-building-blocks-in-presidio)
 - [Customizing Presidio](#customizing-presidio)
-	- [How can Presidio be customized to my needs?](#how-can-presidio-be-customized-to-my-needs)
-	- [What NLP frameworks does Presidio support?](#what-nlp-frameworks-does-presidio-support)
-	- [Can Presidio be used for Pseudonymization?](#can-presidio-be-used-for-pseudonymization)
-	- [Does Presidio work on structured/tabular data?](#does-presidio-work-on-structuredtabular-data)
+  - [How can Presidio be customized to my needs?](#how-can-presidio-be-customized-to-my-needs)
+  - [What NLP frameworks does Presidio support?](#what-nlp-frameworks-does-presidio-support)
+  - [Can Presidio be used for Pseudonymization?](#can-presidio-be-used-for-pseudonymization)
+  - [Does Presidio work on structured/tabular data?](#does-presidio-work-on-structuredtabular-data)
 - [Improving detection accuracy](#improving-detection-accuracy)
-	- [What can I do if Presidio does not detect some of the PII entities in my data (False Negatives)?](#what-can-i-do-if-presidio-does-not-detect-some-of-the-pii-entities-in-my-data-false-negatives)
-	- [What can I do if Presidio falsely detects text as PII entities (False Positives)?](#what-can-i-do-if-presidio-falsely-detects-text-as-pii-entities-false-positives)
-	- [How can I evaluate the performance of my Presidio instance?](#how-can-i-evaluate-the-performance-of-my-presidio-instance)
+  - [What can I do if Presidio does not detect some of the PII entities in my data (False Negatives)?](#what-can-i-do-if-presidio-does-not-detect-some-of-the-pii-entities-in-my-data-false-negatives)
+  - [What can I do if Presidio falsely detects text as PII entities (False Positives)?](#what-can-i-do-if-presidio-falsely-detects-text-as-pii-entities-false-positives)
+  - [How can I evaluate the performance of my Presidio instance?](#how-can-i-evaluate-the-performance-of-my-presidio-instance)
 - [Deployment](#deployment)
-	- [How can I deploy Presidio into my environment?](#how-can-i-deploy-presidio-into-my-environment)
+  - [How can I deploy Presidio into my environment?](#how-can-i-deploy-presidio-into-my-environment)
 - [Contributing](#contributing)
-	- [How can I contribute to Presidio?](#how-can-i-contribute-to-presidio)
+  - [How can I contribute to Presidio?](#how-can-i-contribute-to-presidio)
 
 ## General
 
@@ -133,7 +133,8 @@ The main Presidio modules (analyzer, anonymizer, image-redactor) can be used bot
 
 ### How can I contribute to Presidio?
 
-First, review the [contribution guidelines](https://github.com/microsoft/presidio/blob/main/CONTRIBUTING.md), and feel free to reach out by opening and issue, posting a discussion or emailing us at presidio@microsoft.com
+First, review the [contribution guidelines](https://github.com/microsoft/presidio/blob/main/CONTRIBUTING.md), and feel free to reach out by opening an issue, posting a discussion or emailing us at presidio@microsoft.com
 
-### How can I report security vulnerabilities? 
+### How can I report security vulnerabilities?
+
 Please see the [security information](https://github.com/microsoft/presidio/blob/main/SECURITY.md).
