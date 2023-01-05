@@ -30,7 +30,7 @@ class ImageRedactorEngine:
         :param fill: colour to fill the shape - int (0-255) for
         grayscale or Tuple(R, G, B) for RGB
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
-        
+
         :return: the redacted image
         """
 
