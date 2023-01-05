@@ -47,14 +47,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         padding_width: Optional[int] = 25,
         display_image: Optional[bool] = True,
         **kwargs,
-    ) -> Tuple[PIL.Image.Image, dict, list]:
+    ) -> Tuple[Optional[PIL.Image.Image], dict, list]:
         """Verify PII on a single DICOM instance.
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
         :param display_image: If the verificationimage is displayed and returned.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
-        :return: DICOM instance with boxes identifying PHI, OCR results,
+        :return: Image with boxes identifying PHI, OCR results,
         and analyzer results.
         """
         instance_copy = deepcopy(instance)
@@ -98,7 +98,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         tolerance: Optional[int] = 50,
         display_image: Optional[bool] = False,
         **kwargs,
-    ) -> Tuple[PIL.Image.Image, dict]:
+    ) -> Tuple[Optional[PIL.Image.Image], dict]:
         """Evaluate performance for a single DICOM instance.
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
