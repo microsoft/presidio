@@ -46,7 +46,7 @@ class ImageAnalyzerEngine:
         return bboxes
 
     @staticmethod
-    def threshold_ocr_result(ocr_result: dict, ocr_threshold: float):
+    def threshold_ocr_result(ocr_result: dict, ocr_threshold: float) -> dict:
         """Filter out OCR results below confidence threshold.
 
         Args:
