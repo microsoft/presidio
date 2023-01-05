@@ -44,8 +44,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     def verify_dicom_instance(
         self,
         instance: pydicom.dataset.FileDataset,
-        padding_width: int = 25,
-        display_image: bool = True,
+        padding_width: Optional[int] = 25,
+        display_image: Optional[bool] = True,
         **kwargs,
     ) -> Tuple[PIL.Image.Image, dict, list]:
         """Verify PII on a single DICOM instance.
@@ -82,12 +82,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         )
 
         # Get image with verification boxes
-        if display_image:
-            verify_image = self.verify(
-                image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
-            )
-        else:
-            verify_image = None
+        verify_image = (
+            self.verify(image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs)
+            if display_image
+            else None
+        )
 
         return verify_image, ocr_results, analyzer_results
 
@@ -95,9 +94,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         self,
         instance: pydicom.dataset.FileDataset,
         ground_truth: dict,
-        padding_width: int = 25,
-        tolerance: int = 50,
-        display_image: bool = False,
+        padding_width: Optional[int] = 25,
+        tolerance: Optional[int] = 50,
+        display_image: Optional[bool] = False,
         **kwargs,
     ) -> Tuple[PIL.Image.Image, dict]:
         """Evaluate performance for a single DICOM instance.
