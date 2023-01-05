@@ -98,7 +98,7 @@ def test_eval_dicom_correctly(
 
     # Act
     test_image, test_eval_results = mock_engine.eval_dicom_instance(
-        get_mock_dicom_instance, ground_truth, PADDING_WIDTH, tolerance
+        get_mock_dicom_instance, ground_truth, PADDING_WIDTH, tolerance, True
     )
 
     # Assert
