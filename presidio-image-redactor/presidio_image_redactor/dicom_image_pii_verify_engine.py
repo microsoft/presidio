@@ -45,7 +45,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         self,
         instance: pydicom.dataset.FileDataset,
         padding_width: Optional[int] = 25,
-        ocr_threshold: Optional[float] = -1,
         display_image: Optional[bool] = True,
         **kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict, list]:
@@ -53,7 +52,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
-        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param display_image: If the verificationimage is displayed and returned.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
         :return: Image with boxes identifying PHI, OCR results,
@@ -82,7 +80,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         analyzer_results = self.image_analyzer_engine.analyze(
             image,
             ad_hoc_recognizers=[deny_list_recognizer],
-            ocr_threshold=ocr_threshold,
             **kwargs,
         )
 
@@ -101,7 +98,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         ground_truth: dict,
         padding_width: Optional[int] = 25,
         tolerance: Optional[int] = 50,
-        ocr_threshold: Optional[float] = -1,
         display_image: Optional[bool] = False,
         **kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict]:
@@ -111,14 +107,13 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param ground_truth: Dictionary containing ground truth labels for the instance.
         :param padding_width: Padding width to use when running OCR.
         :param tolerance: Pixel distance tolerance for matching to ground truth.
-        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param display_image: If the verificationimage is displayed and returned.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
         :return: Evaluation comparing redactor engine results vs ground truth.
         """
         # Verify detected PHI
         verify_image, ocr_results, analyzer_results = self.verify_dicom_instance(
-            instance, padding_width, ocr_threshold, display_image, **kwargs
+            instance, padding_width, display_image, **kwargs
         )
         formatted_ocr_results = self._get_bboxes_from_ocr_results(ocr_results)
         detected_phi = self._get_bboxes_from_analyzer_results(analyzer_results)

@@ -21,7 +21,6 @@ class ImageRedactorEngine:
         self,
         image: Image,
         fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
-        ocr_threshold: Optional[float] = -1,
         **kwargs,
     ) -> Image:
         """Redact method to redact the given image.
@@ -31,7 +30,6 @@ class ImageRedactorEngine:
         :param image: PIL Image to be processed
         :param fill: colour to fill the shape - int (0-255) for
         grayscale or Tuple(R, G, B) for RGB
-        :param ocr_threshold: OCR threshold value between -1 and 100.
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
 
         :return: the redacted image
@@ -39,9 +37,7 @@ class ImageRedactorEngine:
 
         image = ImageChops.duplicate(image)
 
-        bboxes = self.image_analyzer_engine.analyze(
-            image, ocr_threshold=ocr_threshold, **kwargs
-        )
+        bboxes = self.image_analyzer_engine.analyze(image, **kwargs)
         draw = ImageDraw.Draw(image)
 
         for box in bboxes:

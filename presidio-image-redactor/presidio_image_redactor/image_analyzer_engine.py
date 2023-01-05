@@ -27,9 +27,7 @@ class ImageAnalyzerEngine:
             ocr = TesseractOCR()
         self.ocr = ocr
 
-    def analyze(
-        self, image: Optional[object], ocr_threshold: Optional[float] = -1, **kwargs
-    ) -> List[ImageRecognizerResult]:
+    def analyze(self, image: Optional[object], **kwargs) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
         :param image: PIL Image/numpy array or file path(str) to be processed
@@ -38,14 +36,21 @@ class ImageAnalyzerEngine:
         :return: list of the extract entities with image bounding boxes
         """
         ocr_result = self.ocr.perform_ocr(image)
-        ocr_result_filtered = self.threshold_ocr_result(ocr_result, ocr_threshold)
-        text = self.ocr.get_text_from_ocr_dict(ocr_result_filtered)
+
+        # Apply OCR confidence threshold if it is passed in
+        if "ocr_threshold" in kwargs:
+            ocr_result = self.threshold_ocr_result(ocr_result, kwargs["ocr_threshold"])
+            kwargs = {
+                key: value for key, value in kwargs.items() if key != "ocr_threshold"
+            }
+
+        text = self.ocr.get_text_from_ocr_dict(ocr_result)
 
         analyzer_result = self.analyzer_engine.analyze(
             text=text, language="en", **kwargs
         )
         bboxes = self.map_analyzer_results_to_bounding_boxes(
-            analyzer_result, ocr_result_filtered, text
+            analyzer_result, ocr_result, text
         )
         return bboxes
 
