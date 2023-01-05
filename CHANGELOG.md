@@ -12,9 +12,6 @@ All notable changes to this project will be documented in this file.
 #### General
 * Updated documentation to include instructions on using DICOM evaluation code
 
-#### General
-* Updated documentation to include instructions on using DICOM evaluation code
-
 ## [2.2.31] - 14.12.2022
 ### Changed
 #### Image-Redactor
