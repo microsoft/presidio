@@ -30,7 +30,7 @@ class ImagePiiVerifyEngine:
         Please notice, this method duplicates the image, creates a
         new instance and manipulate it.
 
-        :param image: PIL Image to be processed.
+        :param image: PIL Image to be processed
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
         :return: the annotated image
         """

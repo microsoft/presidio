@@ -25,7 +25,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         image_analyzer_engine: Optional[ImageAnalyzerEngine] = None,
     ):
         """Initialize DicomImagePiiVerifyEngine object.
-
         :param ocr_engine: OCR engine to use.
         :param image_analyzer_engine: Image analyzer engine to use.
         """
@@ -49,7 +48,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         **kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict, list]:
         """Verify PII on a single DICOM instance.
-
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
         :param display_image: If the verificationimage is displayed and returned.
@@ -78,9 +76,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         )
         ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self.image_analyzer_engine.analyze(
-            image,
-            ad_hoc_recognizers=[deny_list_recognizer],
-            **kwargs,
+            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
         )
 
         # Get image with verification boxes
@@ -102,7 +98,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         **kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict]:
         """Evaluate performance for a single DICOM instance.
-
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param ground_truth: Dictionary containing ground truth labels for the instance.
         :param padding_width: Padding width to use when running OCR.
@@ -142,7 +137,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     @staticmethod
     def _get_bboxes_from_ocr_results(ocr_results: dict) -> List[dict]:
         """Get bounding boxes on padded image for all detected words from ocr_results.
-
         :param ocr_results: Raw results from OCR.
         :return: Bounding box information per word.
         """
@@ -169,7 +163,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         results: List[dict], dup_pix_tolerance: int = 5
     ) -> List[dict]:
         """Handle when a word is detected multiple times as different types of entities.
-
         :param results: List of detected PHI with bbox info.
         :param dup_pix_tolerance: Pixel difference tolerance for identifying duplicates.
         :return: Detected PHI with no duplicate entities.
@@ -209,7 +202,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         tolerance: int = 50,
     ) -> Tuple[dict, bool]:
         """Match returned redacted PHI bbox data with some source of truth for PHI.
-
         :param all_pos: Dictionary storing all positives.
         :param phi_source_dict: List of PHI labels for this instance.
         :param detected_phi: Detected PHI (single entity from analyzer_results).
@@ -256,11 +248,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         tolerance: int = 50,
     ) -> List[dict]:
         """Label all entities detected as PHI by using ground truth and OCR results.
-
         All positives (detected_phi) do not contain PHI labels and are thus
         difficult to work with intuitively. This method maps back to the
         actual PHI to each detected sensitive entity.
-
         :param gt_labels_dict: Dictionary with ground truth labels for a
         single DICOM instance.
         :param ocr_results: All detected text.
@@ -292,7 +282,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     @staticmethod
     def calculate_precision(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate precision.
-
         :param gt: List of ground truth labels.
         :param all_pos: All Detected PHI (mapped back to have actual PHI text).
         :return: Precision value.
@@ -309,7 +298,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     @staticmethod
     def calculate_recall(gt: List[dict], all_pos: List[dict]) -> float:
         """Calculate recall.
-
         :param gt: List of ground truth labels.
         :param all_pos: All Detected PHI (mapped back to have actual PHI text).
         :return: Recall value.
