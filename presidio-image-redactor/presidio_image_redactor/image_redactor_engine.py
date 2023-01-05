@@ -7,6 +7,7 @@ from presidio_image_redactor import ImageAnalyzerEngine
 
 class ImageRedactorEngine:
     """ImageRedactorEngine performs OCR + PII detection + bounding box redaction.
+
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
 
@@ -22,12 +23,14 @@ class ImageRedactorEngine:
         **kwargs,
     ) -> Image:
         """Redact method to redact the given image.
+
         Please notice, this method duplicates the image, creates a new instance and
         manipulate it.
         :param image: PIL Image to be processed
         :param fill: colour to fill the shape - int (0-255) for
         grayscale or Tuple(R, G, B) for RGB
         :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        
         :return: the redacted image
         """
 
