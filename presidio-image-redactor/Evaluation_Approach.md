@@ -194,7 +194,7 @@ instance = pydicom.dcmread(file_of_interest)
 _, eval_results = dicom_engine.eval_dicom_instance(instance, ground_truth)
 ```
 
-You can also set optional arguments to see the effect of padding width, ground-truth matching tolerance, and OCR confidence threshold.
+You can also set optional arguments to see the effect of padding width, ground-truth matching tolerance, and OCR confidence threshold (e.g., `ocr_kwargs={"ocr_threshold": 50}`).
 
 For a full demonstration, please see the [evaluation notebook](../docs/samples/python/example_dicom_redactor_evaluation.ipynb).
 

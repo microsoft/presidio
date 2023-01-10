@@ -44,8 +44,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
     def verify_dicom_instance(
         self,
         instance: pydicom.dataset.FileDataset,
-        padding_width: Optional[int] = 25,
-        display_image: Optional[bool] = True,
+        padding_width: int = 25,
+        display_image: bool = True,
+        ocr_kwargs: Optional[dict] = None,
         **kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict, list]:
         """Verify PII on a single DICOM instance.
@@ -53,7 +54,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
         :param display_image: If the verificationimage is displayed and returned.
+        :param ocr_kwargs: Additional params for OCR methods.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
+
         :return: Image with boxes identifying PHI, OCR results,
         and analyzer results.
         """
@@ -78,7 +81,10 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         )
         ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+            image,
+            ad_hoc_recognizers=[deny_list_recognizer],
+            ocr_kwargs=ocr_kwargs,
+            **kwargs,
         )
 
         # Get image with verification boxes
@@ -94,9 +100,10 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         self,
         instance: pydicom.dataset.FileDataset,
         ground_truth: dict,
-        padding_width: Optional[int] = 25,
-        tolerance: Optional[int] = 50,
-        display_image: Optional[bool] = False,
+        padding_width: int = 25,
+        tolerance: int = 50,
+        display_image: bool = False,
+        ocr_kwargs: Optional[dict] = None,
         **kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict]:
         """Evaluate performance for a single DICOM instance.
@@ -106,12 +113,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param tolerance: Pixel distance tolerance for matching to ground truth.
         :param display_image: If the verificationimage is displayed and returned.
+        :param ocr_kwargs: Additional params for OCR methods.
         :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
+
         :return: Evaluation comparing redactor engine results vs ground truth.
         """
         # Verify detected PHI
         verify_image, ocr_results, analyzer_results = self.verify_dicom_instance(
-            instance, padding_width, display_image, **kwargs
+            instance, padding_width, display_image, ocr_kwargs=ocr_kwargs, **kwargs
         )
         formatted_ocr_results = self._get_bboxes_from_ocr_results(ocr_results)
         detected_phi = self._get_bboxes_from_analyzer_results(analyzer_results)
