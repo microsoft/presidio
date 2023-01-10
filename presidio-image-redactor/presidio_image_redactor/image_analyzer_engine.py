@@ -28,7 +28,7 @@ class ImageAnalyzerEngine:
         self.ocr = ocr
 
     def analyze(
-        self, image: Optional[object], ocr_kwargs: Optional[dict] = None, **kwargs
+        self, image: object, ocr_kwargs: Optional[dict] = None, **kwargs
     ) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
