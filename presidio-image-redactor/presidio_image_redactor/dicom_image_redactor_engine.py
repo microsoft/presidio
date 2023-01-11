@@ -30,7 +30,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         ocr_kwargs: Optional[dict] = None,
-        **kwargs,
+        **text_analyzer_kwargs,
     ):
         """Redact method to redact the given DICOM image.
 
@@ -43,7 +43,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         :return: DICOM instance with redacted pixel data.
         """
@@ -70,7 +71,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             image,
             ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
-            **kwargs,
+            **text_analyzer_kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
@@ -87,7 +88,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float = 0.75,
         fill: str = "contrast",
         ocr_kwargs: Optional[dict] = None,
-        **kwargs,
+        **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a given file.
 
@@ -100,7 +101,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
         """
         # Verify the given paths
         if Path(input_dicom_path).is_dir() is True:
@@ -124,7 +126,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             overwrite=True,
             dst_parent_dir=".",
             ocr_kwargs=ocr_kwargs,
-            **kwargs,
+            **text_analyzer_kwargs,
         )
 
         print(f"Output written to {output_location}")
@@ -139,7 +141,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float = 0.75,
         fill: str = "contrast",
         ocr_kwargs: Optional[dict] = None,
-        **kwargs,
+        **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a directory of files.
 
@@ -154,7 +156,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
         """
         # Verify the given paths
         if Path(input_dicom_path).is_dir() is False:
@@ -178,7 +181,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             overwrite=True,
             dst_parent_dir=".",
             ocr_kwargs=ocr_kwargs,
-            **kwargs,
+            **text_analyzer_kwargs,
         )
 
         print(f"Output written to {output_location}")
@@ -770,7 +773,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         overwrite: bool,
         dst_parent_dir: str,
         ocr_kwargs: Optional[dict] = None,
-        **kwargs,
+        **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on a DICOM image.
 
@@ -784,7 +787,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         :return: Path to the output DICOM file.
         """
@@ -821,7 +825,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             image,
             ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
-            **kwargs,
+            **text_analyzer_kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
@@ -842,7 +846,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         overwrite: bool,
         dst_parent_dir: str,
         ocr_kwargs: Optional[dict] = None,
-        **kwargs,
+        **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on all DICOM images in a directory.
 
@@ -856,7 +860,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         Return:
             dst_dir (str): Path to the output DICOM directory.
@@ -884,7 +889,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 overwrite,
                 dst_parent_dir,
                 ocr_kwargs=ocr_kwargs,
-                **kwargs,
+                **text_analyzer_kwargs,
             )
 
         return dst_dir

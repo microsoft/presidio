@@ -25,7 +25,7 @@ class ImagePiiVerifyEngine:
         self.image_analyzer_engine = image_analyzer_engine
 
     def verify(
-        self, image: Image, ocr_kwargs: Optional[dict] = None, **kwargs
+        self, image: Image, ocr_kwargs: Optional[dict] = None, **text_analyzer_kwargs
     ) -> Image:
         """Annotate image with the detect PII entity.
 
@@ -34,13 +34,17 @@ class ImagePiiVerifyEngine:
 
         :param image: PIL Image to be processed.
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in ImageAnalyzerEngine.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in ImageAnalyzerEngine.
+
         :return: the annotated image
         """
 
         image = ImageChops.duplicate(image)
         image_x, image_y = image.size
-        bboxes = self.image_analyzer_engine.analyze(image, ocr_kwargs, **kwargs)
+        bboxes = self.image_analyzer_engine.analyze(
+            image, ocr_kwargs, **text_analyzer_kwargs
+        )
         fig, ax = plt.subplots()
         image_r = 70
         fig.set_size_inches(image_x / image_r, image_y / image_r)

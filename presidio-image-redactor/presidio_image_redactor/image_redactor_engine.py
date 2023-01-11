@@ -22,24 +22,27 @@ class ImageRedactorEngine:
         image: Image,
         fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
         ocr_kwargs: Optional[dict] = None,
-        **kwargs,
+        **text_analyzer_kwargs,
     ) -> Image:
         """Redact method to redact the given image.
 
         Please notice, this method duplicates the image, creates a new instance and
         manipulate it.
-        :param image: PIL Image to be processed
+        :param image: PIL Image to be processed.
         :param fill: colour to fill the shape - int (0-255) for
-        grayscale or Tuple(R, G, B) for RGB
+        grayscale or Tuple(R, G, B) for RGB.
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         :return: the redacted image
         """
 
         image = ImageChops.duplicate(image)
 
-        bboxes = self.image_analyzer_engine.analyze(image, ocr_kwargs, **kwargs)
+        bboxes = self.image_analyzer_engine.analyze(
+            image, ocr_kwargs, **text_analyzer_kwargs
+        )
         draw = ImageDraw.Draw(image)
 
         for box in bboxes:

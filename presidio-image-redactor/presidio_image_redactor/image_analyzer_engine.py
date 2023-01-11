@@ -28,13 +28,14 @@ class ImageAnalyzerEngine:
         self.ocr = ocr
 
     def analyze(
-        self, image: object, ocr_kwargs: Optional[dict] = None, **kwargs
+        self, image: object, ocr_kwargs: Optional[dict] = None, **text_analyzer_kwargs
     ) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
         :param image: PIL Image/numpy array or file path(str) to be processed.
         :param ocr_kwargs: Additional params for OCR methods.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         :return: List of the extract entities with image bounding boxes.
         """
@@ -50,7 +51,7 @@ class ImageAnalyzerEngine:
         text = self.ocr.get_text_from_ocr_dict(ocr_result)
 
         analyzer_result = self.analyzer_engine.analyze(
-            text=text, language="en", **kwargs
+            text=text, language="en", **text_analyzer_kwargs
         )
         bboxes = self.map_analyzer_results_to_bounding_boxes(
             analyzer_result, ocr_result, text
