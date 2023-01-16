@@ -188,19 +188,17 @@ class PatternRecognizer(LocalRecognizer):
             for match in matches:
                 start, end = match.span()
                 
-                pattern_from_match = pattern.get_improved_pattern(match)
-
                 current_match = text[start:end]
 
                 # Skip empty results
                 if current_match == "":
                     continue
 
-                score = pattern_from_match.score
+                score = pattern.score
 
                 validation_result = self.validate_result(current_match)
                 description = self.build_regex_explanation(
-                    self.name, pattern_from_match.name, pattern.regex, score, validation_result
+                    self.name, pattern.name, pattern.regex, score, validation_result
                 )
                 pattern_result = RecognizerResult(
                     entity_type=self.supported_entities[0],

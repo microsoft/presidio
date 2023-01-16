@@ -19,25 +19,12 @@ class Pattern:
         self,
         name: str,
         regex: str,
-        score: float,
-        get_improved_pattern_fn:
-            Optional[Callable[['Pattern', Match], 'Pattern']] = None
+        score: float
     ) -> None:
 
         self.name = name
         self.regex = regex
         self.score = score
-        self.get_improved_pattern_fn = get_improved_pattern_fn
-
-    def get_improved_pattern(self, match: Match) -> 'Pattern':
-        """
-        Get a new Pattern based on get_improved_pattern_fn function param
-        if get_improved_pattern_fn is not defined, return self
-        :param match: the regex match
-        """
-        if self.get_improved_pattern_fn:
-            return self.get_improved_pattern_fn(self, match)
-        return self
 
     def to_dict(self) -> Dict:
         """
