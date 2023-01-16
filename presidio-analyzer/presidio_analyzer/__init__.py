@@ -3,12 +3,14 @@
 import logging
 
 from presidio_analyzer.pattern import Pattern
+from presidio_analyzer.improvable_pattern import ImprovablePattern
 from presidio_analyzer.analysis_explanation import AnalysisExplanation
 from presidio_analyzer.recognizer_result import RecognizerResult
 from presidio_analyzer.dict_analyzer_result import DictAnalyzerResult
 from presidio_analyzer.entity_recognizer import EntityRecognizer
 from presidio_analyzer.local_recognizer import LocalRecognizer
 from presidio_analyzer.pattern_recognizer import PatternRecognizer
+from presidio_analyzer.improvable_pattern_recognizer import ImprovablePatternRecognizer
 from presidio_analyzer.remote_recognizer import RemoteRecognizer
 from presidio_analyzer.recognizer_registry import RecognizerRegistry
 from presidio_analyzer.analyzer_engine import AnalyzerEngine
@@ -16,7 +18,6 @@ from presidio_analyzer.batch_analyzer_engine import BatchAnalyzerEngine
 from presidio_analyzer.analyzer_request import AnalyzerRequest
 from presidio_analyzer.context_aware_enhancers import ContextAwareEnhancer
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
-
 
 # Define default loggers behavior
 
@@ -36,6 +37,7 @@ decision_process_logger.addHandler(ch)
 decision_process_logger.setLevel("INFO")
 __all__ = [
     "Pattern",
+    "ImprovablePattern",
     "AnalysisExplanation",
     "RecognizerResult",
     "DictAnalyzerResult",
@@ -49,4 +51,5 @@ __all__ = [
     "ContextAwareEnhancer",
     "LemmaContextAwareEnhancer",
     "BatchAnalyzerEngine",
+    "ImprovablePatternRecognizer",
 ]
