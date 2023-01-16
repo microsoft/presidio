@@ -187,7 +187,6 @@ class PatternRecognizer(LocalRecognizer):
 
             for match in matches:
                 start, end = match.span()
-                
                 current_match = text[start:end]
 
                 # Skip empty results

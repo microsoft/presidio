@@ -1,7 +1,5 @@
 import json
 from typing import Dict
-from regex import Match
-from typing import Callable, Optional
 
 
 class Pattern:
@@ -11,16 +9,9 @@ class Pattern:
     :param name: the name of the pattern
     :param regex: the regex pattern to detect
     :param score: the pattern's strength (values varies 0-1)
-    :param get_improved_pattern_func: a function that creates a new improved pattern based on the regex match info.
-    Useful when we want new a new score and or pattern name based on detected named groups in the regex match
     """
 
-    def __init__(
-        self,
-        name: str,
-        regex: str,
-        score: float
-    ) -> None:
+    def __init__(self, name: str, regex: str, score: float):
 
         self.name = name
         self.regex = regex
