@@ -1,10 +1,10 @@
 import argparse
-import os
-import sys
 import io
-import locale
-import platform
 import json
+import locale
+import os
+import platform
+import sys
 import traceback
 from typing import Generator, List
 
@@ -18,9 +18,10 @@ class Format(object):
     Class providing methods for formatting output with information about
     discovered PII problems.
     """
+
     @staticmethod
     def parsable(
-        problem: PIIProblem
+            problem: PIIProblem
     ) -> str:
         """
         Format the problem as JSON.
@@ -32,7 +33,7 @@ class Format(object):
 
     @staticmethod
     def standard(
-        problem: PIIProblem
+            problem: PIIProblem
     ) -> str:
         """
         Output the problem in standard format.
@@ -51,7 +52,7 @@ class Format(object):
 
     @staticmethod
     def standard_color(
-        problem: PIIProblem
+            problem: PIIProblem
     ) -> str:
         """
         Output the problem in standard, colored format.
@@ -73,8 +74,8 @@ class Format(object):
 
     @staticmethod
     def github(
-        problem: PIIProblem,
-        filename: str
+            problem: PIIProblem,
+            filename: str
     ) -> str:
         """
         Output the problem in git-diff-like format.
@@ -95,20 +96,21 @@ def supports_color() -> bool:
     Check whether the platform supports colored output.
     """
     supported_platform = not (
-        platform.system() == "Windows"
-        and not (
+            platform.system() == "Windows"
+            and not (
             "ANSICON" in os.environ
             or ("TERM" in os.environ and os.environ["TERM"] == "ANSI")
-        )
+    )
     )
     return supported_platform and hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
 
 
 def show_problems(
-    problems: Generator['PIIProblem', None, None],
-    file: str,
-    args_format: str,
-    no_warn: bool
+        problems: Generator['PIIProblem', None, None],
+        file: str,
+        args_format: str,
+        no_warn: bool,
+        args_threshold: float
 ):
     """
     Show formatted output of discovered problems.
@@ -128,6 +130,8 @@ def show_problems(
             args_format = "colored"
 
     for problem in problems:
+        if float(args_threshold) > 0 and float(problem.score) < float(args_threshold):
+            continue
         if no_warn and (problem.level != "error"):
             continue
         if args_format == "parsable":
@@ -158,8 +162,8 @@ def show_problems(
 
 
 def find_files_recursively(
-    items: List[str],
-    conf: PresidioCLIConfig
+        items: List[str],
+        conf: PresidioCLIConfig
 ) -> Generator[str, None, None]:
     """
     Generate all file names inside the directories.
@@ -185,7 +189,7 @@ def run() -> None:
     """
     parser = argparse.ArgumentParser(prog=SHELL_NAME, description=APP_DESCRIPTION)
 
-    parser.add_argument("-v", "--version", action="version", version=f"v{APP_VERSION}")
+    parser.add_argument("-v", "--version", action="version", version=f"v1.0.0")
 
     files_group = parser.add_mutually_exclusive_group(required=True)
     files_group.add_argument(
@@ -230,6 +234,15 @@ def run() -> None:
         help="output only error level problems",
     )
 
+    config_group.add_argument(
+        "-t",
+        "--threshold",
+        dest="threshold",
+        default=0,
+        action="store",
+        help="threshold for score",
+    )
+
     args = parser.parse_args()
 
     try:
@@ -260,7 +273,7 @@ def run() -> None:
             traceback.print_exc()
             continue
         prob_num = show_problems(
-            problems, file, args_format=args.format, no_warn=args.no_warnings
+            problems, file, args_format=args.format, no_warn=args.no_warnings, args_threshold=args.threshold
         )
 
     if args.stdin:
@@ -274,6 +287,7 @@ def run() -> None:
             "stdin",
             args_format=args.format,
             no_warn=args.no_warnings,
+            args_threshold=args.threshold
         )
 
     if prob_num > 0:

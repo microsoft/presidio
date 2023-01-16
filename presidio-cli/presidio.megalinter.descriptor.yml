@@ -1,0 +1,28 @@
+descriptor_id: Presidio
+descriptor_type: other
+descriptor_flavors:
+  - all
+lint_all_other_linters_files: true
+linters:
+  # presidio
+  #TODO: set a default configuration for each run
+  #TODO: override configuration for each run
+  #TODO: test this and see if fails on playbook
+  - linter_name: presidiopii
+    linter_url: https://github.com/microsoft/presidio
+    linter_repo: https://github.com/microsoft/presidio
+    config_file_name: .presidiocli
+    cli_config_arg_name: "-c"
+    cli_help_arg_name: "-h"
+    cli_version_arg_name: "-v"
+    cli_lint_mode: list_of_files
+    lint_all_files: false
+    examples:
+      - "presidio ."
+      - "presidio . -t 0.7"
+      - "presidio -c presidio_cli/conf/limited.yaml tests/"
+      - "presidio -c presidio_cli/conf/limited.yaml tests/test_analyzer.py"
+    install:
+      dockerfile:
+        - RUN python -m spacy download en_core_web_lg
+        - RUN python -m pip install presidio-cli
