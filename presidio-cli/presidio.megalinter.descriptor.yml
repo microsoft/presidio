@@ -1,4 +1,4 @@
-descriptor_id: Presidio
+descriptor_id: PRESIDIO
 descriptor_type: other
 descriptor_flavors:
   - all
@@ -8,7 +8,7 @@ linters:
   #TODO: set a default configuration for each run
   #TODO: override configuration for each run
   #TODO: test this and see if fails on playbook
-  - linter_name: presidiopii
+  - linter_name: PRESIDIOPII
     linter_url: https://github.com/microsoft/presidio
     linter_repo: https://github.com/microsoft/presidio
     config_file_name: .presidiocli
