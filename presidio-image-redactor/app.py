@@ -1,6 +1,8 @@
 """REST API server for image redactor."""
+import base64
 import logging
 import os
+from io import BytesIO
 
 from PIL import Image
 from flask import Flask, request, jsonify, Response
@@ -13,7 +15,7 @@ from presidio_image_redactor.entities.api_request_convertor import (
     color_fill_string_to_value,
 )
 
-DEFAULT_PORT = "3000"
+DEFAULT_PORT = "5003"
 
 WELCOME_MESSAGE = r"""
  _______  _______  _______  _______ _________ ______  _________ _______
@@ -47,15 +49,18 @@ class Server:
             """Return a redacted image."""
             params = get_json_data(request.form.get("data"))
             color_fill = color_fill_string_to_value(params)
-            image_file = request.files.get("image")
-            if not image_file:
+            if "image" in request.json:
+                im = Image.open(BytesIO(base64.b64decode(request.json.get("image"))))
+            elif "image" in request.files:
+                image_file = request.files.get("image")
+                im = Image.open(image_file)
+            else:
                 raise InvalidParamException("Invalid parameter, please add image data")
-            im = Image.open(image_file)
 
-            redacted_image = self.engine.redact(im, color_fill)
+            redacted_image = self.engine.redact(im, color_fill, entities=request.json.get('analyzer_entities'))
 
             img_byte_arr = image_to_byte_array(redacted_image, im.format)
-            return Response(img_byte_arr, mimetype="application/octet-stream")
+            return Response(base64.b64encode(img_byte_arr), mimetype="application/octet-stream")
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
