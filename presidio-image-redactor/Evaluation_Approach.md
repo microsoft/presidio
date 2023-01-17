@@ -111,13 +111,13 @@ Let's say we ran the above code block and see the following for `ocr_results_for
 // OCR Results (formatted)
 [
     {
-            "left": 25,
-            "top": 25,
-            "width": 241,
-            "height": 37,
-            "conf": 95.833916,
-            "label": "DAVIDSON"
-        },
+        "left": 25,
+        "top": 25,
+        "width": 241,
+        "height": 37,
+        "conf": 95.833916,
+        "label": "DAVIDSON"
+    },
     {
         "left": 287,
         "top": 25,
@@ -193,6 +193,8 @@ instance = pydicom.dcmread(file_of_interest)
 # Evaluate the DICOM de-identification performance
 _, eval_results = dicom_engine.eval_dicom_instance(instance, ground_truth)
 ```
+
+You can also set optional arguments to see the effect of padding width, ground-truth matching tolerance, and OCR confidence threshold (e.g., `ocr_kwargs={"ocr_threshold": 50}`).
 
 For a full demonstration, please see the [evaluation notebook](../docs/samples/python/example_dicom_redactor_evaluation.ipynb).
 

@@ -144,7 +144,8 @@ redacted_dicom_image = engine.redact(dicom_image, fill="contrast")
 engine.redact_from_file(input_path, output_dir, padding_width=25, fill="contrast")
 
 # Option 3: Redact from directory
-engine.redact_from_directory("path/to/your/dicom", output_dir, padding_width=25, fill="contrast")
+ocr_kwargs = {"ocr_threshold": 50}
+engine.redact_from_directory("path/to/your/dicom", output_dir, fill="background", ocr_kwargs=ocr_kwargs)
 ```
 
 See the example notebook for more details and visual confirmation of the output: [docs/samples/python/example_dicom_image_redactor.ipynb](../docs/samples/python/example_dicom_image_redactor.ipynb).
