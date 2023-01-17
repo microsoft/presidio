@@ -15,7 +15,7 @@ from presidio_image_redactor.entities.api_request_convertor import (
     color_fill_string_to_value,
 )
 
-DEFAULT_PORT = "5003"
+DEFAULT_PORT = "3000"
 
 WELCOME_MESSAGE = r"""
  _______  _______  _______  _______ _________ ______  _________ _______
