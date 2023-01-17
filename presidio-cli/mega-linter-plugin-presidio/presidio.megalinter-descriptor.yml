@@ -24,7 +24,6 @@ linters:
       - "presidio -c presidio_cli/conf/limited.yaml tests/test_analyzer.py"
     install:
       dockerfile:
-        - RUN pip install -U pip setuptools wheel
         - RUN pip install -U spacy
         - RUN python -m spacy download en_core_web_lg
         - RUN python -m pip install presidio-cli
