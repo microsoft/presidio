@@ -52,16 +52,20 @@ class Server:
             if request.get_json(silent=True) and "image" in request.json:
                 im = Image.open(BytesIO(base64.b64decode(request.json.get("image"))))
                 analyzer_entities = request.json.get('analyzer_entities')
-                redacted_image = self.engine.redact(im, color_fill, entities=analyzer_entities)
+                redacted_image = self.engine.redact(im, color_fill,
+                                                    entities=analyzer_entities)
+                img_byte_arr = image_to_byte_array(redacted_image, im.format)
+                return Response(base64.b64encode(img_byte_arr),
+                                mimetype="application/octet-stream")
+
             elif request.files and "image" in request.files:
                 im = Image.open(request.files.get("image"))
                 redacted_image = self.engine.redact(im, color_fill)
+                img_byte_arr = image_to_byte_array(redacted_image, im.format)
+                return Response(img_byte_arr,
+                                mimetype="application/octet-stream")
             else:
                 raise InvalidParamException("Invalid parameter, please add image data")
-
-            img_byte_arr = image_to_byte_array(redacted_image, im.format)
-            return Response(base64.b64encode(img_byte_arr),
-                            mimetype="application/octet-stream")
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
