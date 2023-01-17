@@ -90,7 +90,7 @@ def test_get_all_dcm_files_happy_path(
     print(expected_list)
 
     # Assert
-    assert test_files == expected_list
+    assert set(test_files) == set(expected_list)
 
 
 # ------------------------------------------------------
