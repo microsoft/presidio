@@ -44,7 +44,7 @@ class ImageAnalyzerEngine:
         ocr_result = self.ocr.perform_ocr(image, **perform_ocr_kwargs)
 
         # Apply OCR confidence threshold if it is passed in
-        if ocr_threshold is not None:
+        if ocr_threshold:
             ocr_result = self.threshold_ocr_result(ocr_result, ocr_threshold)
 
         # Analyze text
