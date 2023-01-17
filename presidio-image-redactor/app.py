@@ -57,10 +57,12 @@ class Server:
             else:
                 raise InvalidParamException("Invalid parameter, please add image data")
 
-            redacted_image = self.engine.redact(im, color_fill, entities=request.json.get('analyzer_entities'))
+            redacted_image = self.engine.redact(im, color_fill,
+                                                entities=request.json.get('analyzer_entities'))
 
             img_byte_arr = image_to_byte_array(redacted_image, im.format)
-            return Response(base64.b64encode(img_byte_arr), mimetype="application/octet-stream")
+            return Response(base64.b64encode(img_byte_arr),
+                            mimetype="application/octet-stream")
 
         @self.app.errorhandler(InvalidParamException)
         def invalid_param(err):
