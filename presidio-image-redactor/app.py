@@ -49,16 +49,15 @@ class Server:
             """Return a redacted image."""
             params = get_json_data(request.form.get("data"))
             color_fill = color_fill_string_to_value(params)
-            if "image" in request.json:
+            if request.get_json(silent=True) and "image" in request.json:
                 im = Image.open(BytesIO(base64.b64decode(request.json.get("image"))))
-            elif "image" in request.files:
-                image_file = request.files.get("image")
-                im = Image.open(image_file)
+                analyzer_entities = request.json.get('analyzer_entities')
+                redacted_image = self.engine.redact(im, color_fill, entities=analyzer_entities)
+            elif request.files and "image" in request.files:
+                im = Image.open(request.files.get("image"))
+                redacted_image = self.engine.redact(im, color_fill)
             else:
                 raise InvalidParamException("Invalid parameter, please add image data")
-
-            analyzer_entities = request.json.get('analyzer_entities')
-            redacted_image = self.engine.redact(im, color_fill, entities=analyzer_entities)
 
             img_byte_arr = image_to_byte_array(redacted_image, im.format)
             return Response(base64.b64encode(img_byte_arr),
