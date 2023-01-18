@@ -10,8 +10,7 @@ from presidio_image_redactor import (
     ImageAnalyzerEngine,
     DicomImageRedactorEngine,
 )
-from presidio_image_redactor import ImagePiiVerifyEngine
-from presidio_image_redactor.bbox import BboxProcessor
+from presidio_image_redactor import ImagePiiVerifyEngine, BboxProcessor
 from presidio_analyzer import PatternRecognizer
 
 from typing import Tuple, List, Optional
@@ -43,7 +42,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             self.image_analyzer_engine = image_analyzer_engine
 
         # Initialize bbox processor
-        self.bbox = BboxProcessor()
+        self.bbox_processor = BboxProcessor()
 
     def verify_dicom_instance(
         self,
@@ -134,8 +133,12 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             ocr_kwargs=ocr_kwargs,
             **text_analyzer_kwargs,
         )
-        formatted_ocr_results = self.bbox.get_bboxes_from_ocr_results(ocr_results)
-        detected_phi = self.bbox.get_bboxes_from_analyzer_results(analyzer_results)
+        formatted_ocr_results = self.bbox_processor.get_bboxes_from_ocr_results(
+            ocr_results
+        )
+        detected_phi = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
 
         # Remove duplicate entities in results
         detected_phi = self._remove_duplicate_entities(detected_phi)
@@ -221,13 +224,13 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         for analyzer_result in detected_phi:
 
             # See if there are any ground truth matches
-            all_pos, gt_match_found = self.bbox.match_with_source(
+            all_pos, gt_match_found = self.bbox_processor.match_with_source(
                 all_pos, gt_labels_dict, analyzer_result, tolerance
             )
 
             # If not, check back with OCR
             if not gt_match_found:
-                all_pos, _ = self.bbox.match_with_source(
+                all_pos, _ = self.bbox_processor.match_with_source(
                     all_pos, ocr_results, analyzer_result, tolerance
                 )
 

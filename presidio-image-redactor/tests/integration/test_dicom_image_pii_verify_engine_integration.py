@@ -7,10 +7,7 @@ the original parent ImagePiiVerifyEngine class.
 import PIL
 import pydicom
 
-from presidio_image_redactor.dicom_image_pii_verify_engine import (
-    DicomImagePiiVerifyEngine,
-)
-from presidio_image_redactor.bbox import BboxProcessor
+from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
 import pytest
 
 PADDING_WIDTH = 25

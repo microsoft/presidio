@@ -75,7 +75,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self.bbox.format_bboxes_for_dicom(analyzer_results, padding_width)
+        bboxes = self.bbox_processor.format_bboxes_for_dicom(analyzer_results, padding_width)
         redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
         return redacted_image
@@ -777,7 +777,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self.bbox.format_bboxes_for_dicom(analyzer_results, padding_width)
+        bboxes = self.bbox_processor.format_bboxes_for_dicom(analyzer_results, padding_width)
         redacted_dicom_instance = self._add_redact_box(
             instance, bboxes, crop_ratio, fill
         )

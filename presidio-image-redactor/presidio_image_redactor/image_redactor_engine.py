@@ -2,8 +2,7 @@ from typing import Union, Tuple, Optional
 
 from PIL import Image, ImageDraw, ImageChops
 
-from presidio_image_redactor import ImageAnalyzerEngine
-from presidio_image_redactor.bbox import BboxProcessor
+from presidio_image_redactor import ImageAnalyzerEngine, BboxProcessor
 
 
 class ImageRedactorEngine:
@@ -18,7 +17,7 @@ class ImageRedactorEngine:
         else:
             self.image_analyzer_engine = image_analyzer_engine
 
-        self.bbox = BboxProcessor()
+        self.bbox_processor = BboxProcessor()
 
     def redact(
         self,
