@@ -8,6 +8,7 @@ from .image_redactor_engine import ImageRedactorEngine
 from .image_pii_verify_engine import ImagePiiVerifyEngine
 from .dicom_image_redactor_engine import DicomImageRedactorEngine
 from .dicom_image_pii_verify_engine import DicomImagePiiVerifyEngine
+from .bbox import BboxProcessor
 
 # Set up default logging (with NullHandler)
 logging.getLogger("presidio-image-redactor").addHandler(logging.NullHandler())
@@ -20,4 +21,5 @@ __all__ = [
     "ImagePiiVerifyEngine",
     "DicomImageRedactorEngine",
     "DicomImagePiiVerifyEngine",
+    "BboxProcessor",
 ]

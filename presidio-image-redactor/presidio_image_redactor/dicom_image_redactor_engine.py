@@ -75,7 +75,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self._format_bboxes(analyzer_results, padding_width)
+        bboxes = self.bbox.format_bboxes_for_dicom(analyzer_results, padding_width)
         redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
         return redacted_image
@@ -634,58 +634,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return phi_str_list
 
-    @staticmethod
-    def _get_bboxes_from_analyzer_results(analyzer_results: list) -> List[dict]:
-        """Organize bounding box info from analyzer results.
-
-        :param analyzer_results: Results from using ImageAnalyzerEngine.
-
-        :return: Bounding box info organized.
-        """
-        bboxes = []
-        for i in range(len(analyzer_results)):
-            result = analyzer_results[i].to_dict()
-
-            bbox_item = {
-                "entity_type": result["entity_type"],
-                "score": result["score"],
-                "left": result["left"],
-                "top": result["top"],
-                "width": result["width"],
-                "height": result["height"],
-            }
-            bboxes.append(bbox_item)
-
-        return bboxes
-
-    @classmethod
-    def _format_bboxes(cls, analyzer_results: list, padding_width: int) -> List[dict]:
-        """Format the bounding boxes to write directly back to DICOM pixel data.
-
-        :param analyzer_results: The analyzer results.
-        :param padding_width: Pixel width used for padding (0 if no padding).
-
-        :return: Bounding box information per word.
-        """
-        if padding_width < 0:
-            raise ValueError("Padding width must be a positive number.")
-
-        # Write bounding box info to json files for now
-        bboxes = cls._get_bboxes_from_analyzer_results(analyzer_results)
-
-        # remove padding from all bounding boxes
-        bboxes = [
-            {
-                "top": max(0, bbox["top"] - padding_width),
-                "left": max(0, bbox["left"] - padding_width),
-                "width": bbox["width"],
-                "height": bbox["height"],
-            }
-            for bbox in bboxes
-        ]
-
-        return bboxes
-
     @classmethod
     def _set_bbox_color(
         cls, instance: pydicom.dataset.FileDataset, fill: str
@@ -829,7 +777,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self._format_bboxes(analyzer_results, padding_width)
+        bboxes = self.bbox.format_bboxes_for_dicom(analyzer_results, padding_width)
         redacted_dicom_instance = self._add_redact_box(
             instance, bboxes, crop_ratio, fill
         )

@@ -10,6 +10,7 @@ import pydicom
 from presidio_image_redactor.dicom_image_pii_verify_engine import (
     DicomImagePiiVerifyEngine,
 )
+from presidio_image_redactor.bbox import BboxProcessor
 import pytest
 
 PADDING_WIDTH = 25
@@ -39,6 +40,7 @@ def test_verify_correctly(
         get_mock_dicom_verify_results (dict): Dictionary with loaded results.
     """
     # Assign
+    bbox_processor = BboxProcessor()
     expected_ocr_results = get_mock_dicom_verify_results["ocr_results_formatted"]
     expected_analyzer_results = get_mock_dicom_verify_results["analyzer_results"]
     expected_ocr_results_labels = []
@@ -51,10 +53,10 @@ def test_verify_correctly(
         test_ocr_results,
         test_analyzer_results,
     ) = mock_engine.verify_dicom_instance(get_mock_dicom_instance, PADDING_WIDTH)
-    test_ocr_results_formatted = mock_engine._get_bboxes_from_ocr_results(
+    test_ocr_results_formatted = bbox_processor.get_bboxes_from_ocr_results(
         test_ocr_results
     )
-    test_analyzer_results_formatted = mock_engine._get_bboxes_from_analyzer_results(
+    test_analyzer_results_formatted = bbox_processor.get_bboxes_from_analyzer_results(
         test_analyzer_results
     )
 
