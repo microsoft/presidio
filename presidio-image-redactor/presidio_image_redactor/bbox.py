@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 
 class BboxProcessor:
-    """Common module for general bounding box operators"""
+    """Common module for general bounding box operators."""
 
     @staticmethod
     def get_bboxes_from_ocr_results(ocr_results: dict) -> List[dict]:
