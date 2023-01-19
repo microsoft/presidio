@@ -4,8 +4,7 @@ from typing import List, Tuple
 class BboxProcessor:
     """Common module for general bounding box operators."""
 
-    @staticmethod
-    def get_bboxes_from_ocr_results(ocr_results: dict) -> List[dict]:
+    def get_bboxes_from_ocr_results(self, ocr_results: dict) -> List[dict]:
         """Get bounding boxes on padded image for all detected words from ocr_results.
 
         :param ocr_results: Raw results from OCR.
@@ -29,8 +28,7 @@ class BboxProcessor:
 
         return bboxes
 
-    @staticmethod
-    def get_bboxes_from_analyzer_results(analyzer_results: list) -> List[dict]:
+    def get_bboxes_from_analyzer_results(self, analyzer_results: list) -> List[dict]:
         """Organize bounding box info from analyzer results.
 
         :param analyzer_results: Results from using ImageAnalyzerEngine.
@@ -53,9 +51,8 @@ class BboxProcessor:
 
         return bboxes
 
-    @classmethod
     def format_bboxes_for_dicom(
-        cls, analyzer_results: list, padding_width: int
+        self, analyzer_results: list, padding_width: int
     ) -> List[dict]:
         """Format the bounding boxes to write directly back to DICOM pixel data.
 
@@ -68,7 +65,7 @@ class BboxProcessor:
             raise ValueError("Padding width must be a positive number.")
 
         # Write bounding box info to json files for now
-        bboxes = cls.get_bboxes_from_analyzer_results(analyzer_results)
+        bboxes = self.get_bboxes_from_analyzer_results(analyzer_results)
 
         # remove padding from all bounding boxes
         bboxes = [
@@ -83,8 +80,8 @@ class BboxProcessor:
 
         return bboxes
 
-    @staticmethod
     def match_with_source(
+        self,
         all_pos: List[dict],
         pii_source_dict: List[dict],
         detected_pii: dict,
