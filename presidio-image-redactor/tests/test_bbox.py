@@ -179,7 +179,7 @@ def test_get_bboxes_from_analyzer_results_happy_path(
 
 
 # ------------------------------------------------------
-# BboxProcessor.format_bboxes_for_dicom()
+# BboxProcessor.remove_bbox_padding()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
     "mock_intermediate_bbox, padding_width, expected_bboxes",
@@ -220,14 +220,13 @@ def test_get_bboxes_from_analyzer_results_happy_path(
         ),
     ],
 )
-def test_format_bboxes_for_dicom_happy_path(
-    mocker,
+def test_remove_bbox_padding_happy_path(
     mock_bbox_processor: BboxProcessor,
     mock_intermediate_bbox: dict,
     padding_width: int,
     expected_bboxes: list,
 ):
-    """Test happy path for BboxProcessor.format_bboxes_for_dicom
+    """Test happy path for BboxProcessor.remove_bbox_padding
 
     Args:
         mock_intermediate_bbox (dict): Value for mock of get_bboxes_from_analyzer_results.
@@ -235,16 +234,11 @@ def test_format_bboxes_for_dicom_happy_path(
         expected_bboxes_dict (dict): Expected output bounding box dictionary.
     """
     # Arrange
-    mock_get_bboxes = mocker.patch(
-        "presidio_image_redactor.BboxProcessor.get_bboxes_from_analyzer_results",
-        return_value=mock_intermediate_bbox,
-    )
 
     # Act
-    test_bboxes_dict = mock_bbox_processor.format_bboxes_for_dicom([], padding_width)
+    test_bboxes_dict = mock_bbox_processor.remove_bbox_padding(mock_intermediate_bbox, padding_width)
 
     # Assert
-    assert mock_get_bboxes.call_count == 1
     assert test_bboxes_dict == expected_bboxes
 
 
@@ -252,10 +246,10 @@ def test_format_bboxes_for_dicom_happy_path(
     "padding_width, expected_error_type",
     [(-1, "ValueError"), (-200, "ValueError")],
 )
-def test_format_bboxes_for_dicom_exceptions(
+def test_remove_bbox_padding_exceptions(
     mock_bbox_processor: BboxProcessor, padding_width: int, expected_error_type: str
 ):
-    """Test error handling of format_bboxes_for_dicom
+    """Test error handling of remove_bbox_padding
 
     Args:
         padding_width (int): Pixel width used for padding.
@@ -263,7 +257,7 @@ def test_format_bboxes_for_dicom_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        _ = mock_bbox_processor.format_bboxes_for_dicom([], padding_width)
+        _ = mock_bbox_processor.remove_bbox_padding([], padding_width)
 
     # Assert
     assert expected_error_type == exc_info.typename
