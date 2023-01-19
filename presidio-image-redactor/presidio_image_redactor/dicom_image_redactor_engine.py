@@ -75,7 +75,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(analyzer_results)
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
         bboxes = self.bbox_processor.remove_bbox_padding(
             analyzer_bboxes, padding_width
         )
@@ -780,7 +782,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(analyzer_results)
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
         bboxes = self.bbox_processor.remove_bbox_padding(
             analyzer_bboxes, padding_width
         )

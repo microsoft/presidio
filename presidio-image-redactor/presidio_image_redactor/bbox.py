@@ -1,10 +1,14 @@
-from typing import List, Tuple
+from presidio_image_redactor.entities import ImageRecognizerResult
+from typing import List, Tuple, Dict, Union
 
 
 class BboxProcessor:
     """Common module for general bounding box operators."""
 
-    def get_bboxes_from_ocr_results(self, ocr_results: dict) -> List[dict]:
+    def get_bboxes_from_ocr_results(
+        self,
+        ocr_results: Dict[str, List[Union[int, str]]],
+    ) -> List[Dict[str, Union[int, float, str]]]:
         """Get bounding boxes on padded image for all detected words from ocr_results.
 
         :param ocr_results: Raw results from OCR.
@@ -28,7 +32,10 @@ class BboxProcessor:
 
         return bboxes
 
-    def get_bboxes_from_analyzer_results(self, analyzer_results: list) -> List[dict]:
+    def get_bboxes_from_analyzer_results(
+        self,
+        analyzer_results: List[ImageRecognizerResult],
+    ) -> List[Dict[str, Union[str, float, int]]]:
         """Organize bounding box info from analyzer results.
 
         :param analyzer_results: Results from using ImageAnalyzerEngine.
@@ -52,8 +59,10 @@ class BboxProcessor:
         return bboxes
 
     def remove_bbox_padding(
-        self, analyzer_bboxes: List[dict], padding_width: int
-    ) -> List[dict]:
+        self,
+        analyzer_bboxes: List[Dict[str, Union[str, float, int]]],
+        padding_width: int,
+    ) -> List[Dict[str, int]]:
         """Remove added padding in bounding box coordinates.
 
         :param analyzer_bboxes: The bounding boxes from analyzer results.
@@ -79,11 +88,11 @@ class BboxProcessor:
 
     def match_with_source(
         self,
-        all_pos: List[dict],
-        pii_source_dict: List[dict],
-        detected_pii: dict,
+        all_pos: List[Dict[str, Union[str, int, float]]],
+        pii_source_dict: List[Dict[str, Union[str, int, float]]],
+        detected_pii: Dict[str, Union[str, float, int]],
         tolerance: int = 50,
-    ) -> Tuple[dict, bool]:
+    ) -> Tuple[List[Dict[str, Union[str, int, float]]], bool]:
         """Match returned redacted PII bbox data with some source of truth for PII.
 
         :param all_pos: Dictionary storing all positives.
@@ -93,6 +102,8 @@ class BboxProcessor:
         :return: List of all positive with PII mapped back as possible
         and whether a match was found.
         """
+        all_pos_match = all_pos.copy()
+
         # Get info from detected PII (positive)
         results_left = detected_pii["left"]
         results_top = detected_pii["top"]
@@ -118,7 +129,7 @@ class BboxProcessor:
                 # If match is found, carry over ground truth info
                 positive = label
                 positive["score"] = results_score
-                all_pos.append(positive)
+                all_pos_match.append(positive)
                 match_found = True
 
-        return all_pos, match_found
+        return all_pos_match, match_found
