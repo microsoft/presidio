@@ -5,7 +5,7 @@ import os
 import numpy as np
 from PIL import Image
 import pydicom
-from presidio_image_redactor import DicomImageRedactorEngine, BboxProcessor
+from presidio_image_redactor import DicomImageRedactorEngine
 from typing import Union, Tuple
 import pytest
 
@@ -1076,9 +1076,13 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         return_value=None,
     )
 
-    mock_format_bboxes = mocker.patch.object(
-        BboxProcessor,
-        "format_bboxes_for_dicom",
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+        return_value=None,
+    )
+
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
         return_value=None,
     )
 
@@ -1103,7 +1107,8 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     assert mock_make_phi_list.call_count == 1
     assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
-    assert mock_format_bboxes.call_count == 1
+    assert mock_get_analyze_bbox.call_count == 1
+    assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
 
@@ -1173,8 +1178,13 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         return_value=None,
     )
 
-    mock_format_bboxes = mocker.patch(
-        "presidio_image_redactor.BboxProcessor.format_bboxes_for_dicom",
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+        return_value=None,
+    )
+
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
         return_value=None,
     )
 
@@ -1204,7 +1214,8 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     assert mock_make_phi_list.call_count == 1
     assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
-    assert mock_format_bboxes.call_count == 1
+    assert mock_get_analyze_bbox.call_count == 1
+    assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
 

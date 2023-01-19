@@ -51,23 +51,20 @@ class BboxProcessor:
 
         return bboxes
 
-    def format_bboxes_for_dicom(
-        self, analyzer_results: list, padding_width: int
+    def remove_bbox_padding(
+        self, analyzer_bboxes: List[dict], padding_width: int
     ) -> List[dict]:
-        """Format the bounding boxes to write directly back to DICOM pixel data.
+        """Remove added padding in bounding box coordinates.
 
-        :param analyzer_results: The analyzer results.
+        :param analyzer_bboxes: The bounding boxes from analyzer results.
         :param padding_width: Pixel width used for padding (0 if no padding).
 
         :return: Bounding box information per word.
         """
         if padding_width < 0:
-            raise ValueError("Padding width must be a positive number.")
+            raise ValueError("Padding width must be a non-negative integer.")
 
-        # Write bounding box info to json files for now
-        bboxes = self.get_bboxes_from_analyzer_results(analyzer_results)
-
-        # remove padding from all bounding boxes
+        # Remove padding from all bounding boxes
         bboxes = [
             {
                 "top": max(0, bbox["top"] - padding_width),
@@ -75,7 +72,7 @@ class BboxProcessor:
                 "width": bbox["width"],
                 "height": bbox["height"],
             }
-            for bbox in bboxes
+            for bbox in analyzer_bboxes
         ]
 
         return bboxes
