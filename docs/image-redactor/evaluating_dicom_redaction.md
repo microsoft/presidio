@@ -73,11 +73,10 @@ The `DicomImagePiiVerifyEngine` class can be used to assist in ground truth labe
 
 ```python
 import pydicom
-from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
+from presidio_image_redactor import DicomImagePiiVerifyEngine
 
-# Initialize engines
+# Initialize engine
 dicom_engine = DicomImagePiiVerifyEngine()
-bbox_processor = BboxProcessor()
 
 # Choose your file to create ground truth for
 filename = "path/to/your/file.dcm"
@@ -88,8 +87,8 @@ padding_width = 25
 verification_image, ocr_results, analyzer_results = dicom_engine.verify_dicom_instance(instance, padding_width)
 
 # Format results for more direct comparison
-ocr_results_formatted = bbox_processor.get_bboxes_from_ocr_results(ocr_results)
-analyzer_results_formatted = bbox_processor.get_bboxes_from_analyzer_results(analyzer_results)
+ocr_results_formatted = dicom_engine.bbox_processor.get_bboxes_from_ocr_results(ocr_results)
+analyzer_results_formatted = dicom_engine.bbox_processor.get_bboxes_from_analyzer_results(analyzer_results)
 ```
 
 By looking at the output of `verify_dicom_instance`, we can create a ground truth labels json.
