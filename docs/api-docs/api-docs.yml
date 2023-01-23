@@ -427,12 +427,13 @@ components:
         anonymizers:
           description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is the anonymizer definition"
           type: object
-          anyOf:
-            - $ref: "#/components/schemas/Replace"
-            - $ref: "#/components/schemas/Redact"
-            - $ref: "#/components/schemas/Mask"
-            - $ref: "#/components/schemas/Hash"
-            - $ref: "#/components/schemas/Encrypt"
+          additionalProperties:
+            anyOf:
+              - $ref: "#/components/schemas/Replace"
+              - $ref: "#/components/schemas/Redact"
+              - $ref: "#/components/schemas/Mask"
+              - $ref: "#/components/schemas/Hash"
+              - $ref: "#/components/schemas/Encrypt"
           default:
             { "DEFAULT": { "type": "replace", "new_value": "<ENTITY_TYPE>" } }
 
