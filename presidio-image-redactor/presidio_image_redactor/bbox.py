@@ -15,7 +15,6 @@ class BboxProcessor:
         :return: Bounding box information per word.
         """
         bboxes = []
-        item_count = 0
         for i in range(len(ocr_results["text"])):
             detected_text = ocr_results["text"][i]
             if detected_text:
@@ -28,7 +27,6 @@ class BboxProcessor:
                     "label": detected_text,
                 }
                 bboxes.append(bbox)
-                item_count += 1
 
         return bboxes
 
