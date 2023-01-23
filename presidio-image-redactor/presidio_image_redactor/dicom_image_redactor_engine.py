@@ -216,7 +216,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: FALSE if the Photometric Interpretation is RGB.
         """
-        # Check if image is grayscale or not using the Photometric Interpretation element
+        # Check if image is grayscale using the Photometric Interpretation element
         color_scale = instance[0x0028, 0x0004].value
         is_greyscale = color_scale != "RGB"
 
