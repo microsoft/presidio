@@ -9,8 +9,10 @@ from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedact
 from presidio_image_redactor.entities.image_recognizer_result import (
     ImageRecognizerResult,
 )
-from typing import Union, Tuple
+from typing import Union, Tuple, TypeVar
 import pytest
+
+T = TypeVar('T')
 
 SCRIPT_DIR = os.path.dirname(__file__)
 TEST_DICOM_PARENT_DIR = f"{SCRIPT_DIR}/test_data"
@@ -1288,6 +1290,35 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     assert mock_format_bboxes.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
+
+@pytest.mark.parametrize(
+    "image, expected_error_type",
+    [
+        (Path(TEST_DICOM_PARENT_DIR), "TypeError"),
+        ("path_here", "TypeError"),
+        (np.random.randint(255, size=(64, 64)), "TypeError"),
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError")
+    ],
+)
+def test_DicomImageRedactorEngine_redact_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    image: T,
+    expected_error_type: str,
+):
+    """Test error handling of DicomImageRedactorEngine _redact_single_dicom_image()
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        image (any): Input "image".
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Act
+        mock_engine.redact(image, "contrast", 25, False, "."
+        )
+
+    # Assert
+    assert expected_error_type == exc_info.typename
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine _redact_single_dicom_image()
