@@ -3,6 +3,7 @@ import logging
 
 from .ocr import OCR
 from .tesseract_ocr import TesseractOCR
+from .bbox import BboxProcessor
 from .image_analyzer_engine import ImageAnalyzerEngine
 from .image_redactor_engine import ImageRedactorEngine
 from .image_pii_verify_engine import ImagePiiVerifyEngine
@@ -15,6 +16,7 @@ logging.getLogger("presidio-image-redactor").addHandler(logging.NullHandler())
 __all__ = [
     "OCR",
     "TesseractOCR",
+    "BboxProcessor",
     "ImageAnalyzerEngine",
     "ImageRedactorEngine",
     "ImagePiiVerifyEngine",
