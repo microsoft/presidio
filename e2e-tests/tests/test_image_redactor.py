@@ -1,3 +1,4 @@
+import base64
 import os
 
 import pytest
@@ -12,6 +13,12 @@ def test_given_image_with_tuple_color_filling_then_we_get_redact_image():
     expected_result_image = get_file("purple_redact.png")
     response = redact(get_file("original_image.png"), "102, 0, 102")
     validate_and_close(expected_result_image, response)
+
+
+@pytest.mark.api
+def test_given_image_sent_in_json_payload_then_it_is_redacted():
+    response = redact(get_file("original_image.png"), "102, 0, 102", json_payload=True)
+    assert response.status_code == 200
 
 
 @pytest.mark.api
