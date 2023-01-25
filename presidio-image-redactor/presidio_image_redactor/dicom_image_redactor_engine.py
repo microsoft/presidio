@@ -222,9 +222,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :param instance: A single DICOM instance.
 
-        :return: FALSE if the Photometric Interpolation is RGB.
+        :return: FALSE if the Photometric Interpretation is RGB.
         """
-        # Check if image is grayscale or not using the Photometric Interpolation element
+        # Check if image is grayscale using the Photometric Interpretation element
         color_scale = instance[0x0028, 0x0004].value
         is_greyscale = color_scale != "RGB"
 
@@ -237,7 +237,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Rescale DICOM pixel_array.
 
         :param instance: A singe DICOM instance.
-        :param is_greyscale: FALSE if the Photometric Interpolation is RGB.
+        :param is_greyscale: FALSE if the Photometric Interpretation is RGB.
 
         :return: Rescaled DICOM pixel_array.
         """
@@ -305,7 +305,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         ds = pydicom.dcmread(filepath)
 
-        # Check if image is grayscale using the Photometric Interpolation element
+        # Check if image is grayscale using the Photometric Interpretation element
         is_greyscale = cls._check_if_greyscale(ds)
 
         # Rescale pixel array
