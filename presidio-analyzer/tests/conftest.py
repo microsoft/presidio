@@ -52,6 +52,15 @@ def nlp_engines(request, nlp_engine_provider) -> Dict[str, NlpEngine]:
     for name, engine_cls in nlp_engines.items():
         if name == "spacy" and not request.config.getoption("--runfast"):
             available_engines[f"{name}_en"] = engine_cls({"en": "en_core_web_lg"})
+        elif name == "transformers" and not request.config.getoption("--runfast"):
+            available_engines[f"{name}_en"] = engine_cls(
+                {
+                    "en": {
+                        "spacy": "en_core_web_lg",
+                        "transformers": "dslim/bert-base-NER",
+                    }
+                }
+            )
         else:
             available_engines[f"{name}_en"] = engine_cls()
 
