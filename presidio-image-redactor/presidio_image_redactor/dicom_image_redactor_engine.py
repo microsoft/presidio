@@ -48,6 +48,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: DICOM instance with redacted pixel data.
         """
+        # Check input
+        if type(image) != pydicom.dataset.FileDataset:
+            raise TypeError("The provided image must be a loaded DICOM instance.")
         instance = deepcopy(image)
 
         # Load image for processing
