@@ -9,6 +9,7 @@ from presidio_analyzer.nlp_engine import SpacyNlpEngine
 
 
 try:
+    import torch
     import transformers
     from transformers import (
         AutoTokenizer,
@@ -16,6 +17,7 @@ try:
         pipeline,
     )
 except ImportError:
+    torch = None
     transformers = None
 
 logger = logging.getLogger("presidio-analyzer")
