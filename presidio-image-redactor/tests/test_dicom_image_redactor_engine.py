@@ -6,11 +6,10 @@ import numpy as np
 from PIL import Image
 import pydicom
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
-from presidio_image_redactor.entities.image_recognizer_result import (
-    ImageRecognizerResult,
-)
-from typing import Union, Tuple
+from typing import Union, Tuple, TypeVar
 import pytest
+
+T = TypeVar('T')
 
 SCRIPT_DIR = os.path.dirname(__file__)
 TEST_DICOM_PARENT_DIR = f"{SCRIPT_DIR}/test_data"
@@ -90,7 +89,7 @@ def test_get_all_dcm_files_happy_path(
     print(expected_list)
 
     # Assert
-    assert test_files == expected_list
+    assert set(test_files) == set(expected_list)
 
 
 # ------------------------------------------------------
@@ -308,6 +307,84 @@ def test_get_bg_color_happy_path(
 
 
 # ------------------------------------------------------
+# DicomImageRedactorEngine._get_array_corners()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_file, crop_ratio",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 0.5),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), 0.5),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), 0.5),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), 0.5),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 0.75),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"), 0.25),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"), 0.31),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM"), 0.83),
+    ],
+)
+def test_get_array_corners_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_file: Path,
+    crop_ratio: float,
+):
+    """Test happy path for DicomImageRedactorEngine._get_array_corners
+
+    Args:
+        dcm_file (pathlib.Path): Path to a DICOM file.
+        crop_ratio (float): Ratio to crop to.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_file)
+    test_pixel_array = test_instance.pixel_array
+    full_width = test_pixel_array.shape[0]
+    full_height = test_pixel_array.shape[1]
+    full_min_pixel_val = np.min(test_pixel_array)
+    full_max_pixel_val = np.max(test_pixel_array)
+
+    # Act
+    test_cropped_array = mock_engine._get_array_corners(test_pixel_array, crop_ratio)
+    cropped_width = test_cropped_array.shape[0]
+    cropped_height = test_cropped_array.shape[1]
+    cropped_min_pixel_val = np.min(test_cropped_array)
+    cropped_max_pixel_val = np.max(test_cropped_array)
+
+    # Assert
+    assert cropped_width * cropped_height < full_width * full_height
+    assert cropped_min_pixel_val >= full_min_pixel_val
+    assert cropped_max_pixel_val <= full_max_pixel_val
+
+
+@pytest.mark.parametrize(
+    "crop_ratio, expected_error_type",
+    [
+        (0, "ValueError"),
+        (-0.4, "ValueError"),
+        (1.3, "ValueError"),
+    ],
+)
+def test_get_array_corners_exceptions(
+    mock_engine: DicomImageRedactorEngine, crop_ratio: float, expected_error_type: str
+):
+    """Test error handling of _get_array_corners
+
+    Args:
+        crop_ratio (float): Ratio to crop to.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        dcm_file = Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")
+        test_instance = pydicom.dcmread(dcm_file)
+        test_pixel_array = test_instance.pixel_array
+
+        # Act
+        _ = mock_engine._get_array_corners(test_pixel_array, crop_ratio)
+
+        # Assert
+        assert expected_error_type == exc_info.typename
+
+
+# ------------------------------------------------------
 # DicomImageRedactorEngine._get_most_common_pixel_value()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
@@ -337,10 +414,13 @@ def test_get_most_common_pixel_value_happy_path(
         expected_color (int or Tuple of int): The expected color returned for the image.
     """
     # Arrange
+    crop_ratio = 0.75
     test_instance = pydicom.dcmread(dcm_file)
 
     # Act
-    test_color = mock_engine._get_most_common_pixel_value(test_instance, fill)
+    test_color = mock_engine._get_most_common_pixel_value(
+        test_instance, crop_ratio, fill
+    )
 
     # Assert
     assert test_color == expected_color
@@ -363,10 +443,13 @@ def test_get_most_common_pixel_value_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Arrange
+        crop_ratio = 0.75
         test_instance = pydicom.dcmread(dcm_file)
 
         # Act
-        _ = mock_engine._get_most_common_pixel_value(test_instance, "contrast")
+        _ = mock_engine._get_most_common_pixel_value(
+            test_instance, crop_ratio, "contrast"
+        )
 
         # Assert
         assert expected_error_type == exc_info.typename
@@ -745,185 +828,6 @@ def test_make_phi_list_happy_path(
 
 
 # ------------------------------------------------------
-# DicomImageRedactorEngine._get_bboxes_from_analyzer_results()
-# ------------------------------------------------------
-@pytest.mark.parametrize(
-    "analyzer_results, expected_bboxes_dict",
-    [
-        (
-            [
-                ImageRecognizerResult(
-                    entity_type="TYPE_1",
-                    start=0,
-                    end=0,
-                    left=25,
-                    top=25,
-                    width=100,
-                    height=100,
-                    score=0.99,
-                ),
-                ImageRecognizerResult(
-                    entity_type="TYPE_2",
-                    start=10,
-                    end=10,
-                    left=25,
-                    top=49,
-                    width=75,
-                    height=51,
-                    score=0.7,
-                ),
-                ImageRecognizerResult(
-                    entity_type="TYPE_3",
-                    start=25,
-                    end=35,
-                    left=613,
-                    top=26,
-                    width=226,
-                    height=35,
-                    score=0.6,
-                ),
-            ],
-            {
-                "0": {
-                    "entity_type": "TYPE_1",
-                    "score": 0.99,
-                    "left": 25,
-                    "top": 25,
-                    "width": 100,
-                    "height": 100,
-                },
-                "1": {
-                    "entity_type": "TYPE_2",
-                    "score": 0.7,
-                    "left": 25,
-                    "top": 49,
-                    "width": 75,
-                    "height": 51,
-                },
-                "2": {
-                    "entity_type": "TYPE_3",
-                    "score": 0.6,
-                    "left": 613,
-                    "top": 26,
-                    "width": 226,
-                    "height": 35,
-                },
-            },
-        ),
-    ],
-)
-def test_get_bboxes_from_analyzer_results_happy_path(
-    mock_engine: DicomImageRedactorEngine,
-    analyzer_results: list,
-    expected_bboxes_dict: dict,
-):
-    """Test happy path for DicomImageRedactorEngine._get_bboxes_from_analyzer_results
-
-    Args:
-        analyzer_results (list): Results from using ImageAnalyzerEngine.
-        expected_bboxes_dict (dict): Expected output bounding box dictionary.
-    """
-    # Arrange
-
-    # Act
-    test_bboxes_dict = mock_engine._get_bboxes_from_analyzer_results(analyzer_results)
-
-    # Assert
-    assert test_bboxes_dict == expected_bboxes_dict
-
-
-# ------------------------------------------------------
-# DicomImageRedactorEngine._format_bboxes()
-# ------------------------------------------------------
-@pytest.mark.parametrize(
-    "mock_intermediate_bbox, padding_width, expected_bboxes_dict",
-    [
-        (
-            {
-                "0": {
-                    "entity_type": "TYPE_1",
-                    "score": 0.99,
-                    "left": 10,
-                    "top": 15,
-                    "width": 100,
-                    "height": 100,
-                },
-                "1": {
-                    "entity_type": "TYPE_2",
-                    "score": 0.7,
-                    "left": 25,
-                    "top": 49,
-                    "width": 75,
-                    "height": 51,
-                },
-                "2": {
-                    "entity_type": "TYPE_3",
-                    "score": 0.6,
-                    "left": 613,
-                    "top": 26,
-                    "width": 226,
-                    "height": 35,
-                },
-            },
-            25,
-            [
-                {"top": 0, "left": 0, "width": 100, "height": 100},
-                {"top": 24, "left": 0, "width": 75, "height": 51},
-                {"top": 1, "left": 588, "width": 226, "height": 35},
-            ],
-        ),
-    ],
-)
-def test_format_bboxes_happy_path(
-    mocker,
-    mock_engine: DicomImageRedactorEngine,
-    mock_intermediate_bbox: dict,
-    padding_width: int,
-    expected_bboxes_dict: dict,
-):
-    """Test happy path for DicomImageRedactorEngine._format_bboxes
-
-    Args:
-        mock_intermediate_bbox (dict): Value for mock of _get_bboxes_from_analyzer_results.
-        padding_width (int): Pixel width used for padding.
-        expected_bboxes_dict (dict): Expected output bounding box dictionary.
-    """
-    # Arrange
-    mock_get_bboxes = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_bboxes_from_analyzer_results",
-        return_value=mock_intermediate_bbox,
-    )
-
-    # Act
-    test_bboxes_dict = mock_engine._format_bboxes([], padding_width)
-
-    # Assert
-    assert mock_get_bboxes.call_count == 1
-    assert test_bboxes_dict == expected_bboxes_dict
-
-
-@pytest.mark.parametrize(
-    "padding_width, expected_error_type",
-    [(-1, "ValueError"), (-200, "ValueError")],
-)
-def test_format_bboxes_exceptions(
-    mock_engine: DicomImageRedactorEngine, padding_width: int, expected_error_type: str
-):
-    """Test error handling of _format_bboxes
-
-    Args:
-        padding_width (int): Pixel width used for padding.
-        expected_error_type (str): Type of error we expect to be raised.
-    """
-    with pytest.raises(Exception) as exc_info:
-        # Act
-        _ = mock_engine._format_bboxes([], padding_width)
-
-    # Assert
-    assert expected_error_type == exc_info.typename
-
-
-# ------------------------------------------------------
 # DicomImageRedactorEngine._set_bbox_color()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
@@ -1049,6 +953,7 @@ def test_add_redact_box_happy_path(
     """
     # Arrange
     test_instance = pydicom.dcmread(dcm_path)
+    crop_ratio = 0.75
     mock_check_if_greyscale = mocker.patch.object(
         DicomImageRedactorEngine,
         "_check_if_greyscale",
@@ -1068,7 +973,7 @@ def test_add_redact_box_happy_path(
 
     # Act
     test_redacted_instance = mock_engine._add_redact_box(
-        test_instance, bounding_boxes_coordinates
+        test_instance, bounding_boxes_coordinates, crop_ratio
     )
 
     # Assert
@@ -1173,9 +1078,13 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         return_value=None,
     )
 
-    mock_format_bboxes = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_format_bboxes",
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+        return_value=None,
+    )
+
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
         return_value=None,
     )
 
@@ -1200,9 +1109,39 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     assert mock_make_phi_list.call_count == 1
     assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
-    assert mock_format_bboxes.call_count == 1
+    assert mock_get_analyze_bbox.call_count == 1
+    assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
+
+@pytest.mark.parametrize(
+    "image, expected_error_type",
+    [
+        (Path(TEST_DICOM_PARENT_DIR), "TypeError"),
+        ("path_here", "TypeError"),
+        (np.random.randint(255, size=(64, 64)), "TypeError"),
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError")
+    ],
+)
+def test_DicomImageRedactorEngine_redact_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    image: T,
+    expected_error_type: str,
+):
+    """Test error handling of DicomImageRedactorEngine _redact_single_dicom_image()
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        image (any): Input "image".
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Act
+        mock_engine.redact(image, "contrast", 25, False, "."
+        )
+
+    # Assert
+    assert expected_error_type == exc_info.typename
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine _redact_single_dicom_image()
@@ -1234,6 +1173,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         overwrite (bool): True if overwriting original files.
     """
     # Arrange
+    crop_ratio = 0.75
     mock_copy_files = mocker.patch(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=dcm_path,
@@ -1269,8 +1209,13 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         return_value=None,
     )
 
-    mock_format_bboxes = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._format_bboxes",
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+        return_value=None,
+    )
+
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
         return_value=None,
     )
 
@@ -1285,7 +1230,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
 
     # Act
     mock_engine._redact_single_dicom_image(
-        dcm_path, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
     )
 
     # Assert
@@ -1300,7 +1245,8 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     assert mock_make_phi_list.call_count == 1
     assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
-    assert mock_format_bboxes.call_count == 1
+    assert mock_get_analyze_bbox.call_count == 1
+    assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
 
@@ -1325,7 +1271,9 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine._redact_single_dicom_image(dcm_path, "contrast", 25, False, ".")
+        mock_engine._redact_single_dicom_image(
+            dcm_path, 0.75, "contrast", 25, False, "."
+        )
 
     # Assert
     assert expected_error_type == exc_info.typename
@@ -1360,6 +1308,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
         overwrite (bool): True if overwriting original files.
     """
     # Arrange
+    crop_ratio = 0.75
     mock_copy_files = mocker.patch(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._copy_files_for_processing",
         return_value=dcm_path,
@@ -1380,7 +1329,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
 
     # Act
     mock_engine._redact_multiple_dicom_images(
-        dcm_path, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
     )
 
     # Assert
@@ -1413,7 +1362,9 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine._redact_multiple_dicom_images(dcm_path, "contrast", 25, False, ".")
+        mock_engine._redact_multiple_dicom_images(
+            dcm_path, 0.75, "contrast", 25, False, "."
+        )
 
     # Assert
     assert expected_error_type == exc_info.typename

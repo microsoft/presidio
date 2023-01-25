@@ -10,7 +10,7 @@ import PIL
 import png
 import numpy as np
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Optional
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
@@ -28,7 +28,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         image: pydicom.dataset.FileDataset,
         fill: str = "contrast",
         padding_width: int = 25,
-        **kwargs,
+        crop_ratio: float = 0.75,
+        ocr_kwargs: Optional[dict] = None,
+        **text_analyzer_kwargs,
     ):
         """Redact method to redact the given DICOM image.
 
@@ -38,10 +40,17 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param image: Loaded DICOM instance including pixel data and metadata.
         :param fill: Fill setting to use for redaction box ("contrast" or "background").
         :param padding_width: Padding width to use when running OCR.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         :return: DICOM instance with redacted pixel data.
         """
+        # Check input
+        if type(image) != pydicom.dataset.FileDataset:
+            raise TypeError("The provided image must be a loaded DICOM instance.")
         instance = deepcopy(image)
 
         # Load image for processing
@@ -62,12 +71,20 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             supported_entity="PERSON", deny_list=phi_list
         )
         analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+            image,
+            ad_hoc_recognizers=[deny_list_recognizer],
+            ocr_kwargs=ocr_kwargs,
+            **text_analyzer_kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self._format_bboxes(analyzer_results, padding_width)
-        redacted_image = self._add_redact_box(instance, bboxes, fill)
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
+        bboxes = self.bbox_processor.remove_bbox_padding(
+            analyzer_bboxes, padding_width
+        )
+        redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
         return redacted_image
 
@@ -76,8 +93,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         input_dicom_path: str,
         output_dir: str,
         padding_width: int = 25,
+        crop_ratio: float = 0.75,
         fill: str = "contrast",
-        **kwargs,
+        ocr_kwargs: Optional[dict] = None,
+        **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a given file.
 
@@ -89,7 +108,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
         """
         # Verify the given paths
         if Path(input_dicom_path).is_dir() is True:
@@ -107,11 +128,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Process DICOM file
         output_location = self._redact_single_dicom_image(
             dcm_path=dst_path,
+            crop_ratio=crop_ratio,
             fill=fill,
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
-            **kwargs,
+            ocr_kwargs=ocr_kwargs,
+            **text_analyzer_kwargs,
         )
 
         print(f"Output written to {output_location}")
@@ -123,8 +146,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         input_dicom_path: str,
         output_dir: str,
         padding_width: int = 25,
+        crop_ratio: float = 0.75,
         fill: str = "contrast",
-        **kwargs,
+        ocr_kwargs: Optional[dict] = None,
+        **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a directory of files.
 
@@ -134,9 +159,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param input_dicom_path: String path to directory of DICOM images.
         :param output_dir: String path to parent output directory.
         :param padding_width : Padding width to use when running OCR.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
         """
         # Verify the given paths
         if Path(input_dicom_path).is_dir() is False:
@@ -154,11 +183,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Process DICOM files
         output_location = self._redact_multiple_dicom_images(
             dcm_dir=dst_path,
+            crop_ratio=crop_ratio,
             fill=fill,
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
-            **kwargs,
+            ocr_kwargs=ocr_kwargs,
+            **text_analyzer_kwargs,
         )
 
         print(f"Output written to {output_location}")
@@ -191,9 +222,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :param instance: A single DICOM instance.
 
-        :return: FALSE if the Photometric Interpolation is RGB.
+        :return: FALSE if the Photometric Interpretation is RGB.
         """
-        # Check if image is grayscale or not using the Photometric Interpolation element
+        # Check if image is grayscale using the Photometric Interpretation element
         color_scale = instance[0x0028, 0x0004].value
         is_greyscale = color_scale != "RGB"
 
@@ -206,7 +237,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Rescale DICOM pixel_array.
 
         :param instance: A singe DICOM instance.
-        :param is_greyscale: FALSE if the Photometric Interpolation is RGB.
+        :param is_greyscale: FALSE if the Photometric Interpretation is RGB.
 
         :return: Rescaled DICOM pixel_array.
         """
@@ -274,7 +305,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         ds = pydicom.dcmread(filepath)
 
-        # Check if image is grayscale using the Photometric Interpolation element
+        # Check if image is grayscale using the Photometric Interpretation element
         is_greyscale = cls._check_if_greyscale(ds)
 
         # Rescale pixel array
@@ -324,21 +355,66 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return bg_color
 
+    @staticmethod
+    def _get_array_corners(pixel_array: np.ndarray, crop_ratio: float) -> np.ndarray:
+        """Crop a pixel array to just return the corners in a single array.
+
+        :param pixel_array: Numpy array containing the pixel data.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
+
+        :return: Cropped input array.
+        """
+        if crop_ratio >= 1.0 or crop_ratio <= 0:
+            raise ValueError("crop_ratio must be between 0 and 1")
+
+        # Set dimensions
+        width = pixel_array.shape[0]
+        height = pixel_array.shape[1]
+        crop_width = int(np.floor(width * crop_ratio / 2))
+        crop_height = int(np.floor(height * crop_ratio / 2))
+
+        # Get coordinates for corners
+        # (left, top, right, bottom)
+        box_top_left = (0, 0, crop_width, crop_height)
+        box_top_right = (width - crop_width, 0, width, crop_height)
+        box_bottom_left = (0, height - crop_height, crop_width, height)
+        box_bottom_right = (width - crop_width, height - crop_height, width, height)
+        boxes = [box_top_left, box_top_right, box_bottom_left, box_bottom_right]
+
+        # Only keep box pixels
+        cropped_pixel_arrays = [
+            pixel_array[box[0] : box[2], box[1] : box[3]] for box in boxes
+        ]
+
+        # Combine the cropped pixel arrays
+        cropped_array = np.vstack(cropped_pixel_arrays)
+
+        return cropped_array
+
     @classmethod
     def _get_most_common_pixel_value(
-        cls, instance: pydicom.dataset.FileDataset, fill: str = "contrast"
+        cls,
+        instance: pydicom.dataset.FileDataset,
+        crop_ratio: float,
+        fill: str = "contrast",
     ) -> Union[int, Tuple[int, int, int]]:
         """Find the most common pixel value.
 
         :param instance: A singe DICOM instance.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Determines how box color is selected.
         'contrast' - Masks stand out relative to background.
         'background' - Masks are same color as background.
 
         :return: Most or least common pixel value (depending on fill).
         """
+        # Crop down to just only look at image corners
+        cropped_array = cls._get_array_corners(instance.pixel_array, crop_ratio)
+
         # Get flattened pixel array
-        flat_pixel_array = np.array(instance.pixel_array).flatten()
+        flat_pixel_array = np.array(cropped_array).flatten()
 
         is_greyscale = cls._check_if_greyscale(instance)
         if is_greyscale:
@@ -566,60 +642,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return phi_str_list
 
-    @staticmethod
-    def _get_bboxes_from_analyzer_results(analyzer_results: list) -> dict:
-        """Organize bounding box info from analyzer results.
-
-        :param analyzer_results: Results from using ImageAnalyzerEngine.
-
-        :return: Bounding box info organized.
-        """
-        bboxes_dict = {}
-        for i in range(0, len(analyzer_results)):
-            result = analyzer_results[i].to_dict()
-
-            bboxes_dict[str(i)] = {
-                "entity_type": result["entity_type"],
-                "score": result["score"],
-                "left": result["left"],
-                "top": result["top"],
-                "width": result["width"],
-                "height": result["height"],
-            }
-
-        return bboxes_dict
-
-    @classmethod
-    def _format_bboxes(cls, analyzer_results: list, padding_width: int) -> List[dict]:
-        """Format the bounding boxes to write directly back to DICOM pixel data.
-
-        :param analyzer_results: The analyzer results.
-        :param padding_width: Pixel width used for padding (0 if no padding).
-
-        :return: Bounding box information per word.
-        """
-        if padding_width < 0:
-            raise ValueError("Padding width must be a positive number.")
-
-        # Write bounding box info to json files for now
-        phi_bboxes_dict = cls._get_bboxes_from_analyzer_results(analyzer_results)
-
-        # convert detected bounding boxes to list
-        bboxes = [phi_bboxes_dict[i] for i in phi_bboxes_dict.keys()]
-
-        # remove padding from all bounding boxes
-        bboxes = [
-            {
-                "top": max(0, bbox["top"] - padding_width),
-                "left": max(0, bbox["left"] - padding_width),
-                "width": bbox["width"],
-                "height": bbox["height"],
-            }
-            for bbox in bboxes
-        ]
-
-        return bboxes
-
     @classmethod
     def _set_bbox_color(
         cls, instance: pydicom.dataset.FileDataset, fill: str
@@ -658,12 +680,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         cls,
         instance: pydicom.dataset.FileDataset,
         bounding_boxes_coordinates: list,
+        crop_ratio: float,
         fill: str = "contrast",
     ) -> pydicom.dataset.FileDataset:
         """Add redaction bounding boxes on a DICOM instance.
 
         :param instance: A single DICOM instance.
         :param bounding_boxes_coordinates: Bounding box coordinates.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Determines how box color is selected.
         'contrast' - Masks stand out relative to background.
         'background' - Masks are same color as background.
@@ -676,7 +701,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Select masking box color
         is_greyscale = cls._check_if_greyscale(instance)
         if is_greyscale:
-            box_color = cls._get_most_common_pixel_value(instance, fill)
+            box_color = cls._get_most_common_pixel_value(instance, crop_ratio, fill)
         else:
             box_color = cls._set_bbox_color(redacted_instance, fill)
 
@@ -698,22 +723,28 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _redact_single_dicom_image(
         self,
         dcm_path: str,
+        crop_ratio: float,
         fill: str,
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
-        **kwargs,
+        ocr_kwargs: Optional[dict] = None,
+        **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on a DICOM image.
 
         :param dcm_path: String path to the DICOM file.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         :return: Path to the output DICOM file.
         """
@@ -747,12 +778,22 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             supported_entity="PERSON", deny_list=phi_list
         )
         analyzer_results = self.image_analyzer_engine.analyze(
-            image, ad_hoc_recognizers=[deny_list_recognizer], **kwargs
+            image,
+            ad_hoc_recognizers=[deny_list_recognizer],
+            ocr_kwargs=ocr_kwargs,
+            **text_analyzer_kwargs,
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self._format_bboxes(analyzer_results, padding_width)
-        redacted_dicom_instance = self._add_redact_box(instance, bboxes, fill)
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
+        bboxes = self.bbox_processor.remove_bbox_padding(
+            analyzer_bboxes, padding_width
+        )
+        redacted_dicom_instance = self._add_redact_box(
+            instance, bboxes, crop_ratio, fill
+        )
         redacted_dicom_instance.save_as(dst_path)
 
         return dst_path
@@ -760,22 +801,28 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     def _redact_multiple_dicom_images(
         self,
         dcm_dir: str,
+        crop_ratio: float,
         fill: str,
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
-        **kwargs,
+        ocr_kwargs: Optional[dict] = None,
+        **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on all DICOM images in a directory.
 
         :param dcm_dir: String path to directory containing DICOM files (can be nested).
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
         Return:
             dst_dir (str): Path to the output DICOM directory.
@@ -796,7 +843,14 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         all_dcm_files = self._get_all_dcm_files(Path(dst_dir))
         for dst_path in all_dcm_files:
             self._redact_single_dicom_image(
-                dst_path, fill, padding_width, overwrite, dst_parent_dir, **kwargs
+                dst_path,
+                crop_ratio,
+                fill,
+                padding_width,
+                overwrite,
+                dst_parent_dir,
+                ocr_kwargs=ocr_kwargs,
+                **text_analyzer_kwargs,
             )
 
         return dst_dir

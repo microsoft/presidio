@@ -162,8 +162,8 @@ class FlairRecognizer(EntityRecognizer):
 
         flair_results = RecognizerResult(
             entity_type=entity_type,
-            start=entity.start_pos,
-            end=entity.end_pos,
+            start=entity.start_position,
+            end=entity.end_position,
             score=flair_score,
             analysis_explanation=explanation,
         )

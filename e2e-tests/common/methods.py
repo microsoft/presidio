@@ -1,3 +1,5 @@
+import base64
+import json
 import os
 
 import requests
@@ -45,12 +47,16 @@ def analyzer_supported_entities(data):
     return response.status_code, response.content
 
 
-def redact(file, color_fill=None):
-    multipart_form_data = __get_multipart_form_data(file)
+def redact(file, color_fill=None, json_payload=False):
     payload = __get_redact_payload(color_fill)
-    response = requests.post(
-        f"{IMAGE_REDACTOR_BASE_URL}/redact", files=multipart_form_data, data=payload
-    )
+    if json_payload:
+        json_string = '{"image": "' + base64.b64encode(file.read()).decode("utf-8") + '"}'
+        response = requests.post(
+            f"{IMAGE_REDACTOR_BASE_URL}/redact", json=json.loads(json_string), headers=DEFAULT_HEADERS
+        )
+    else:
+        response = requests.post(
+        f"{IMAGE_REDACTOR_BASE_URL}/redact", files=__get_multipart_form_data(file), data=payload)
     return response
 
 

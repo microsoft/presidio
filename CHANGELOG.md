@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [2.2.32] - 19.12.2022
+## [2.2.32] - 25.01.2023
 ### Changed
 #### General
 * Updated dependencies
@@ -19,11 +19,20 @@ All notable changes to this project will be documented in this file.
 #### Image redactor
 * Modified `ImagePiiVerifyEngine` to allow passing of kwargs
 * Updated template for building image redactor yaml
+* Updated all image redactor engines and OCR classes to allow passing of an OCR confidence threshold and other OCR parameters
+* Moved general bounding box operations to new class `BboxProcessor`
 * Updated `presidio-image-redactor` version from 0.0.45 to 0.0.46
 
 ### Added
 #### Analyzer
 * Added revised example for transformer recognizer
+
+#### Image redactor
+* Added evaluation code for the DICOM image redaction capabilities
+
+#### General
+* Updated documentation to include instructions on using DICOM evaluation code
+* Updated documentation to mention OCR thresholding
 
 ## [2.2.31] - 14.12.2022
 ### Changed
