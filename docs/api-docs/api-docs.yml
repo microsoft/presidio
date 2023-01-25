@@ -457,8 +457,9 @@ components:
         deanonymizers:
           description: "Object where the key is DEFAULT or the ENTITY_TYPE and the value is decrypt since it is the only one supported"
           type: object
-          anyOf:
-            - $ref: "#/components/schemas/Decrypt"
+          additionalProperties:
+            anyOf:
+              - $ref: "#/components/schemas/Decrypt"
           default:
             { "DEFAULT": { "type": "decrypt", "key": "3t6w9z$C&F)J@NcR" } }
         anonymizer_results:
