@@ -2,9 +2,11 @@
 """
 import pydicom
 
-from presidio_image_redactor import TesseractOCR, ImageAnalyzerEngine
-from presidio_image_redactor.dicom_image_pii_verify_engine import (
+from presidio_image_redactor import (
+    TesseractOCR,
+    ImageAnalyzerEngine,
     DicomImagePiiVerifyEngine,
+    BboxProcessor,
 )
 from typing import List
 import pytest
@@ -145,11 +147,11 @@ def test_eval_dicom_instance_happy_path(
         return_value=[None, None, None],
     )
     mock_get_ocr_bboxes = mocker.patch.object(
-        DicomImagePiiVerifyEngine, "_get_bboxes_from_ocr_results", return_value=None
+        BboxProcessor, "get_bboxes_from_ocr_results", return_value=None
     )
     mock_get_analyzer_bboxes = mocker.patch.object(
-        DicomImagePiiVerifyEngine,
-        "_get_bboxes_from_analyzer_results",
+        BboxProcessor,
+        "get_bboxes_from_analyzer_results",
         return_value=None,
     )
     mock_remove_dups = mocker.patch.object(
@@ -179,80 +181,6 @@ def test_eval_dicom_instance_happy_path(
     assert mock_label_positives.call_count == 1
     assert mock_precision.call_count == 1
     assert mock_recall.call_count == 1
-
-
-# ------------------------------------------------------
-# DicomImagePiiVerifyEngine._get_bboxes_from_ocr_results()
-# ------------------------------------------------------
-@pytest.mark.parametrize(
-    "ocr_results_raw, expected_results",
-    [
-        (
-            {
-                "left": [123],
-                "top": [0],
-                "width": [100],
-                "height": [25],
-                "conf": ["1"],
-                "text": ["JOHN"],
-            },
-            [
-                {
-                    "left": 123,
-                    "top": 0,
-                    "width": 100,
-                    "height": 25,
-                    "conf": 1,
-                    "label": "JOHN",
-                }
-            ],
-        ),
-        (
-            {
-                "left": [123, 345],
-                "top": [0, 15],
-                "width": [100, 75],
-                "height": [25, 30],
-                "conf": ["1", "0.87"],
-                "text": ["JOHN", "DOE"],
-            },
-            [
-                {
-                    "left": 123,
-                    "top": 0,
-                    "width": 100,
-                    "height": 25,
-                    "conf": 1,
-                    "label": "JOHN",
-                },
-                {
-                    "left": 345,
-                    "top": 15,
-                    "width": 75,
-                    "height": 30,
-                    "conf": 0.87,
-                    "label": "DOE",
-                },
-            ],
-        ),
-    ],
-)
-def test_get_bboxes_from_ocr_results_happy_path(
-    mock_engine: DicomImagePiiVerifyEngine,
-    ocr_results_raw: dict,
-    expected_results: list,
-):
-    """Test happy path for DicomImagePiiVerifyEngine._get_bboxes_from_ocr_results
-    Args:
-        mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
-        ocr_results_raw (dict): Raw OCR results.
-        expected_results (list): Formatted OCR results.
-    """
-    # Act
-    test_bboxes = mock_engine._get_bboxes_from_ocr_results(ocr_results_raw)
-
-    # Assert
-    assert test_bboxes == expected_results
 
 
 # ------------------------------------------------------
@@ -469,171 +397,6 @@ def test_remove_duplicate_entities_happy_path(
 
     # Assert
     assert test_results_no_dups == expected_results
-
-
-# ------------------------------------------------------
-# DicomImagePiiVerifyEngine._match_with_source()
-# ------------------------------------------------------
-@pytest.mark.parametrize(
-    "source_labels, results, tolerance, expected_results, expected_match_found",
-    [
-        (
-            [
-                {
-                    "label": "DAVIDSON",
-                    "left": 25,
-                    "top": 25,
-                    "width": 241,
-                    "height": 37,
-                },
-                {
-                    "label": "DOUGLAS",
-                    "left": 287,
-                    "top": 25,
-                    "width": 230,
-                    "height": 36,
-                },
-                {
-                    "label": "[M]",
-                    "left": 535,
-                    "top": 25,
-                    "width": 60,
-                    "height": 45,
-                },
-            ],
-            {
-                "entity_type": "PERSON",
-                "score": 1.0,
-                "left": 287,
-                "top": 25,
-                "width": 230,
-                "height": 36,
-            },
-            50,
-            [
-                {
-                    "label": "DOUGLAS",
-                    "score": 1.0,
-                    "left": 287,
-                    "top": 25,
-                    "width": 230,
-                    "height": 36,
-                }
-            ],
-            True,
-        ),
-        (
-            [
-                {
-                    "label": "DAVIDSON",
-                    "left": 25,
-                    "top": 25,
-                    "width": 241,
-                    "height": 37,
-                },
-                {
-                    "label": "DOUGLAS",
-                    "left": 287,
-                    "top": 25,
-                    "width": 230,
-                    "height": 36,
-                },
-                {
-                    "label": "[M]",
-                    "left": 535,
-                    "top": 25,
-                    "width": 60,
-                    "height": 45,
-                },
-            ],
-            {
-                "entity_type": "PERSON",
-                "score": 1.0,
-                "left": 300,
-                "top": 15,
-                "width": 250,
-                "height": 40,
-            },
-            50,
-            [
-                {
-                    "label": "DOUGLAS",
-                    "score": 1.0,
-                    "left": 287,
-                    "top": 25,
-                    "width": 230,
-                    "height": 36,
-                }
-            ],
-            True,
-        ),
-        (
-            [
-                {
-                    "label": "DAVIDSON",
-                    "left": 25,
-                    "top": 25,
-                    "width": 241,
-                    "height": 37,
-                },
-                {
-                    "label": "DOUGLAS",
-                    "left": 287,
-                    "top": 25,
-                    "width": 230,
-                    "height": 36,
-                },
-                {
-                    "label": "[M]",
-                    "left": 535,
-                    "top": 25,
-                    "width": 60,
-                    "height": 45,
-                },
-            ],
-            {
-                "entity_type": "PERSON",
-                "score": 1.0,
-                "left": 99,
-                "top": 99,
-                "width": 99,
-                "height": 99,
-            },
-            10,
-            [],
-            False,
-        ),
-    ],
-)
-def test_match_with_source_happy_path(
-    mock_engine: DicomImagePiiVerifyEngine,
-    source_labels: List[dict],
-    results: dict,
-    tolerance: int,
-    expected_results: List[dict],
-    expected_match_found: bool,
-):
-    """Test happy path for DicomImagePiiVerifyEngine._match_with_source
-
-    Args:
-        mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
-        source_labels (dict): Ground truth labels for single instance.
-        results (dict): Detected PHI dictionary.
-        tolerance (int): Pixel difference tolerance for matching entities.
-        expected_results (dict): Expected output dictionary.
-        expected_match_found (bool): Expected match_found.
-    """
-    # Assign
-    all_pos = []
-
-    # Act
-    test_all_pos, test_match_found = mock_engine._match_with_source(
-        all_pos, source_labels, results, tolerance
-    )
-
-    # Assert
-    assert test_all_pos == expected_results
-    assert test_match_found == expected_match_found
 
 
 # ------------------------------------------------------
