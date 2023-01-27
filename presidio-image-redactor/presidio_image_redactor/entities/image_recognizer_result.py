@@ -47,3 +47,16 @@ class ImageRecognizerResult(RecognizerResult):
         equal_box2 = (self.width == other.width) and (self.height == other.height)
         equal_box = equal_box1 and equal_box2
         return equal_type and equal_pos and equal_score and equal_box
+
+    def __str__(self) -> str:
+        """Return a string representation of the instance."""
+        return (
+            f"type: {self.entity_type}, "
+            f"start: {self.start}, "
+            f"end: {self.end}, "
+            f"score: {self.score}, "
+            f"left: {self.left}, "
+            f"top: {self.top}, "
+            f"width: {self.width}, "
+            f"height: {self.height}"
+        )

@@ -10,7 +10,7 @@ from presidio_image_redactor import (
     ImageAnalyzerEngine,
     DicomImageRedactorEngine,
 )
-from presidio_image_redactor.image_pii_verify_engine import ImagePiiVerifyEngine
+from presidio_image_redactor import ImagePiiVerifyEngine, BboxProcessor
 from presidio_analyzer import PatternRecognizer
 
 from typing import Tuple, List, Optional
@@ -40,6 +40,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             self.image_analyzer_engine = ImageAnalyzerEngine()
         else:
             self.image_analyzer_engine = image_analyzer_engine
+
+        # Initialize bbox processor
+        self.bbox_processor = BboxProcessor()
 
     def verify_dicom_instance(
         self,
@@ -130,8 +133,12 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             ocr_kwargs=ocr_kwargs,
             **text_analyzer_kwargs,
         )
-        formatted_ocr_results = self._get_bboxes_from_ocr_results(ocr_results)
-        detected_phi = self._get_bboxes_from_analyzer_results(analyzer_results)
+        formatted_ocr_results = self.bbox_processor.get_bboxes_from_ocr_results(
+            ocr_results
+        )
+        detected_phi = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
 
         # Remove duplicate entities in results
         detected_phi = self._remove_duplicate_entities(detected_phi)
@@ -153,31 +160,6 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         }
 
         return verify_image, eval_results
-
-    @staticmethod
-    def _get_bboxes_from_ocr_results(ocr_results: dict) -> List[dict]:
-        """Get bounding boxes on padded image for all detected words from ocr_results.
-
-        :param ocr_results: Raw results from OCR.
-        :return: Bounding box information per word.
-        """
-        bboxes = []
-        item_count = 0
-        for i in range(len(ocr_results["text"])):
-            detected_text = ocr_results["text"][i]
-            if detected_text:
-                bbox = {
-                    "left": ocr_results["left"][i],
-                    "top": ocr_results["top"][i],
-                    "width": ocr_results["width"][i],
-                    "height": ocr_results["height"][i],
-                    "conf": float(ocr_results["conf"][i]),
-                    "label": detected_text,
-                }
-                bboxes.append(bbox)
-                item_count += 1
-
-        return bboxes
 
     @staticmethod
     def _remove_duplicate_entities(
@@ -216,55 +198,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         return results_no_dups
 
-    @staticmethod
-    def _match_with_source(
-        all_pos: List[dict],
-        phi_source_dict: List[dict],
-        detected_phi: dict,
-        tolerance: int = 50,
-    ) -> Tuple[dict, bool]:
-        """Match returned redacted PHI bbox data with some source of truth for PHI.
-
-        :param all_pos: Dictionary storing all positives.
-        :param phi_source_dict: List of PHI labels for this instance.
-        :param detected_phi: Detected PHI (single entity from analyzer_results).
-        :param tolerance: Tolerance for exact coordinates and size data.
-        :return: List of all positive with PHI mapped back as possible
-        and whether a match was found.
-        """
-        # Get info from detected PHI (positive)
-        results_left = detected_phi["left"]
-        results_top = detected_phi["top"]
-        results_width = detected_phi["width"]
-        results_height = detected_phi["height"]
-        results_score = detected_phi["score"]
-        match_found = False
-
-        # See what in the ground truth this positive matches
-        for label in phi_source_dict:
-            source_left = label["left"]
-            source_top = label["top"]
-            source_width = label["width"]
-            source_height = label["height"]
-
-            match_left = abs(source_left - results_left) <= tolerance
-            match_top = abs(source_top - results_top) <= tolerance
-            match_width = abs(source_width - results_width) <= tolerance
-            match_height = abs(source_height - results_height) <= tolerance
-            matching = [match_left, match_top, match_width, match_height]
-
-            if False not in matching:
-                # If match is found, carry over ground truth info
-                positive = label
-                positive["score"] = results_score
-                all_pos.append(positive)
-                match_found = True
-
-        return all_pos, match_found
-
-    @classmethod
     def _label_all_positives(
-        cls,
+        self,
         gt_labels_dict: dict,
         ocr_results: List[dict],
         detected_phi: List[dict],
@@ -289,18 +224,18 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         for analyzer_result in detected_phi:
 
             # See if there are any ground truth matches
-            all_pos, gt_match_found = cls._match_with_source(
+            all_pos, gt_match_found = self.bbox_processor.match_with_source(
                 all_pos, gt_labels_dict, analyzer_result, tolerance
             )
 
             # If not, check back with OCR
             if not gt_match_found:
-                all_pos, _ = cls._match_with_source(
+                all_pos, _ = self.bbox_processor.match_with_source(
                     all_pos, ocr_results, analyzer_result, tolerance
                 )
 
         # Remove any duplicates
-        all_pos = cls._remove_duplicate_entities(all_pos, 0)
+        all_pos = self._remove_duplicate_entities(all_pos, 0)
 
         return all_pos
 

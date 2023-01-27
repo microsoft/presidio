@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 * Added evaluation code for the DICOM image redaction capabilities
 * Modified `ImagePiiVerifyEngine` to allow passing of kwargs
 * Updated all image redactor engines and OCR classes to allow passing of an OCR confidence threshold and other OCR parameters
+* Moved general bounding box operations to new class `BboxProcessor`
 
 #### General
 * Updated documentation to include instructions on using DICOM evaluation code

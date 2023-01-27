@@ -48,6 +48,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: DICOM instance with redacted pixel data.
         """
+        # Check input
+        if type(image) != pydicom.dataset.FileDataset:
+            raise TypeError("The provided image must be a loaded DICOM instance.")
         instance = deepcopy(image)
 
         # Load image for processing
@@ -75,7 +78,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self._format_bboxes(analyzer_results, padding_width)
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
+        bboxes = self.bbox_processor.remove_bbox_padding(
+            analyzer_bboxes, padding_width
+        )
         redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
         return redacted_image
@@ -214,9 +222,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :param instance: A single DICOM instance.
 
-        :return: FALSE if the Photometric Interpolation is RGB.
+        :return: FALSE if the Photometric Interpretation is RGB.
         """
-        # Check if image is grayscale or not using the Photometric Interpolation element
+        # Check if image is grayscale using the Photometric Interpretation element
         color_scale = instance[0x0028, 0x0004].value
         is_greyscale = color_scale != "RGB"
 
@@ -229,7 +237,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """Rescale DICOM pixel_array.
 
         :param instance: A singe DICOM instance.
-        :param is_greyscale: FALSE if the Photometric Interpolation is RGB.
+        :param is_greyscale: FALSE if the Photometric Interpretation is RGB.
 
         :return: Rescaled DICOM pixel_array.
         """
@@ -297,7 +305,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         ds = pydicom.dcmread(filepath)
 
-        # Check if image is grayscale using the Photometric Interpolation element
+        # Check if image is grayscale using the Photometric Interpretation element
         is_greyscale = cls._check_if_greyscale(ds)
 
         # Rescale pixel array
@@ -634,58 +642,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return phi_str_list
 
-    @staticmethod
-    def _get_bboxes_from_analyzer_results(analyzer_results: list) -> List[dict]:
-        """Organize bounding box info from analyzer results.
-
-        :param analyzer_results: Results from using ImageAnalyzerEngine.
-
-        :return: Bounding box info organized.
-        """
-        bboxes = []
-        for i in range(len(analyzer_results)):
-            result = analyzer_results[i].to_dict()
-
-            bbox_item = {
-                "entity_type": result["entity_type"],
-                "score": result["score"],
-                "left": result["left"],
-                "top": result["top"],
-                "width": result["width"],
-                "height": result["height"],
-            }
-            bboxes.append(bbox_item)
-
-        return bboxes
-
-    @classmethod
-    def _format_bboxes(cls, analyzer_results: list, padding_width: int) -> List[dict]:
-        """Format the bounding boxes to write directly back to DICOM pixel data.
-
-        :param analyzer_results: The analyzer results.
-        :param padding_width: Pixel width used for padding (0 if no padding).
-
-        :return: Bounding box information per word.
-        """
-        if padding_width < 0:
-            raise ValueError("Padding width must be a positive number.")
-
-        # Write bounding box info to json files for now
-        bboxes = cls._get_bboxes_from_analyzer_results(analyzer_results)
-
-        # remove padding from all bounding boxes
-        bboxes = [
-            {
-                "top": max(0, bbox["top"] - padding_width),
-                "left": max(0, bbox["left"] - padding_width),
-                "width": bbox["width"],
-                "height": bbox["height"],
-            }
-            for bbox in bboxes
-        ]
-
-        return bboxes
-
     @classmethod
     def _set_bbox_color(
         cls, instance: pydicom.dataset.FileDataset, fill: str
@@ -829,7 +785,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
 
         # Redact all bounding boxes from DICOM file
-        bboxes = self._format_bboxes(analyzer_results, padding_width)
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
+        bboxes = self.bbox_processor.remove_bbox_padding(
+            analyzer_bboxes, padding_width
+        )
         redacted_dicom_instance = self._add_redact_box(
             instance, bboxes, crop_ratio, fill
         )

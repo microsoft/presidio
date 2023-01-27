@@ -253,7 +253,7 @@ def test_given_text_with_pii_using_package_then_analyze_and_anonymize_complete_s
     # Create configuration containing engine name and models
     configuration = {
         "nlp_engine_name": "spacy",
-        "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+        "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
     }
 
     # Create NLP engine based on configuration

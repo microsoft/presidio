@@ -6,11 +6,10 @@ import numpy as np
 from PIL import Image
 import pydicom
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
-from presidio_image_redactor.entities.image_recognizer_result import (
-    ImageRecognizerResult,
-)
-from typing import Union, Tuple
+from typing import Union, Tuple, TypeVar
 import pytest
+
+T = TypeVar('T')
 
 SCRIPT_DIR = os.path.dirname(__file__)
 TEST_DICOM_PARENT_DIR = f"{SCRIPT_DIR}/test_data"
@@ -829,185 +828,6 @@ def test_make_phi_list_happy_path(
 
 
 # ------------------------------------------------------
-# DicomImageRedactorEngine._get_bboxes_from_analyzer_results()
-# ------------------------------------------------------
-@pytest.mark.parametrize(
-    "analyzer_results, expected_bboxes",
-    [
-        (
-            [
-                ImageRecognizerResult(
-                    entity_type="TYPE_1",
-                    start=0,
-                    end=0,
-                    left=25,
-                    top=25,
-                    width=100,
-                    height=100,
-                    score=0.99,
-                ),
-                ImageRecognizerResult(
-                    entity_type="TYPE_2",
-                    start=10,
-                    end=10,
-                    left=25,
-                    top=49,
-                    width=75,
-                    height=51,
-                    score=0.7,
-                ),
-                ImageRecognizerResult(
-                    entity_type="TYPE_3",
-                    start=25,
-                    end=35,
-                    left=613,
-                    top=26,
-                    width=226,
-                    height=35,
-                    score=0.6,
-                ),
-            ],
-            [
-                {
-                    "entity_type": "TYPE_1",
-                    "score": 0.99,
-                    "left": 25,
-                    "top": 25,
-                    "width": 100,
-                    "height": 100,
-                },
-                {
-                    "entity_type": "TYPE_2",
-                    "score": 0.7,
-                    "left": 25,
-                    "top": 49,
-                    "width": 75,
-                    "height": 51,
-                },
-                {
-                    "entity_type": "TYPE_3",
-                    "score": 0.6,
-                    "left": 613,
-                    "top": 26,
-                    "width": 226,
-                    "height": 35,
-                },
-            ],
-        ),
-    ],
-)
-def test_get_bboxes_from_analyzer_results_happy_path(
-    mock_engine: DicomImageRedactorEngine,
-    analyzer_results: list,
-    expected_bboxes: list,
-):
-    """Test happy path for DicomImageRedactorEngine._get_bboxes_from_analyzer_results
-
-    Args:
-        analyzer_results (list): Results from using ImageAnalyzerEngine.
-        expected_bboxes (list): Expected output bounding box list.
-    """
-    # Arrange
-
-    # Act
-    test_bboxes = mock_engine._get_bboxes_from_analyzer_results(analyzer_results)
-
-    # Assert
-    assert test_bboxes == expected_bboxes
-
-
-# ------------------------------------------------------
-# DicomImageRedactorEngine._format_bboxes()
-# ------------------------------------------------------
-@pytest.mark.parametrize(
-    "mock_intermediate_bbox, padding_width, expected_bboxes",
-    [
-        (
-            [
-                {
-                    "entity_type": "TYPE_1",
-                    "score": 0.99,
-                    "left": 10,
-                    "top": 15,
-                    "width": 100,
-                    "height": 100,
-                },
-                {
-                    "entity_type": "TYPE_2",
-                    "score": 0.7,
-                    "left": 25,
-                    "top": 49,
-                    "width": 75,
-                    "height": 51,
-                },
-                {
-                    "entity_type": "TYPE_3",
-                    "score": 0.6,
-                    "left": 613,
-                    "top": 26,
-                    "width": 226,
-                    "height": 35,
-                },
-            ],
-            25,
-            [
-                {"top": 0, "left": 0, "width": 100, "height": 100},
-                {"top": 24, "left": 0, "width": 75, "height": 51},
-                {"top": 1, "left": 588, "width": 226, "height": 35},
-            ],
-        ),
-    ],
-)
-def test_format_bboxes_happy_path(
-    mocker,
-    mock_engine: DicomImageRedactorEngine,
-    mock_intermediate_bbox: dict,
-    padding_width: int,
-    expected_bboxes: list,
-):
-    """Test happy path for DicomImageRedactorEngine._format_bboxes
-
-    Args:
-        mock_intermediate_bbox (dict): Value for mock of _get_bboxes_from_analyzer_results.
-        padding_width (int): Pixel width used for padding.
-        expected_bboxes_dict (dict): Expected output bounding box dictionary.
-    """
-    # Arrange
-    mock_get_bboxes = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_bboxes_from_analyzer_results",
-        return_value=mock_intermediate_bbox,
-    )
-
-    # Act
-    test_bboxes_dict = mock_engine._format_bboxes([], padding_width)
-
-    # Assert
-    assert mock_get_bboxes.call_count == 1
-    assert test_bboxes_dict == expected_bboxes
-
-
-@pytest.mark.parametrize(
-    "padding_width, expected_error_type",
-    [(-1, "ValueError"), (-200, "ValueError")],
-)
-def test_format_bboxes_exceptions(
-    mock_engine: DicomImageRedactorEngine, padding_width: int, expected_error_type: str
-):
-    """Test error handling of _format_bboxes
-
-    Args:
-        padding_width (int): Pixel width used for padding.
-        expected_error_type (str): Type of error we expect to be raised.
-    """
-    with pytest.raises(Exception) as exc_info:
-        # Act
-        _ = mock_engine._format_bboxes([], padding_width)
-
-    # Assert
-    assert expected_error_type == exc_info.typename
-
-
-# ------------------------------------------------------
 # DicomImageRedactorEngine._set_bbox_color()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
@@ -1258,9 +1078,13 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         return_value=None,
     )
 
-    mock_format_bboxes = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_format_bboxes",
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+        return_value=None,
+    )
+
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
         return_value=None,
     )
 
@@ -1285,9 +1109,39 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     assert mock_make_phi_list.call_count == 1
     assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
-    assert mock_format_bboxes.call_count == 1
+    assert mock_get_analyze_bbox.call_count == 1
+    assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
+
+@pytest.mark.parametrize(
+    "image, expected_error_type",
+    [
+        (Path(TEST_DICOM_PARENT_DIR), "TypeError"),
+        ("path_here", "TypeError"),
+        (np.random.randint(255, size=(64, 64)), "TypeError"),
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError")
+    ],
+)
+def test_DicomImageRedactorEngine_redact_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    image: T,
+    expected_error_type: str,
+):
+    """Test error handling of DicomImageRedactorEngine _redact_single_dicom_image()
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        image (any): Input "image".
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Act
+        mock_engine.redact(image, "contrast", 25, False, "."
+        )
+
+    # Assert
+    assert expected_error_type == exc_info.typename
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine _redact_single_dicom_image()
@@ -1355,8 +1209,13 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         return_value=None,
     )
 
-    mock_format_bboxes = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._format_bboxes",
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+        return_value=None,
+    )
+
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
         return_value=None,
     )
 
@@ -1386,7 +1245,8 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     assert mock_make_phi_list.call_count == 1
     assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
-    assert mock_format_bboxes.call_count == 1
+    assert mock_get_analyze_bbox.call_count == 1
+    assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
 
