@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 
 #### Analyzer
 * Fixed exception on whitespace in AU recognizers
-* Updated API vesrion for Text Analytics in sample
+* Updated API version for Text Analytics in sample
 
 #### Anonymizer
 * Fixed merge entity from the same type
@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 
 #### Image redactor
 * Added evaluation code for the DICOM image redaction capabilities
+* REST API to support web applications payload
 
 #### General
 * Updated documentation to include instructions on using DICOM evaluation code
