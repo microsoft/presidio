@@ -1041,6 +1041,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.threshold_ocr_result" class="md-nav__link">
+    threshold_ocr_result()
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1204,6 +1211,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.threshold_ocr_result" class="md-nav__link">
+    threshold_ocr_result()
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1247,26 +1261,34 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">image_analyzer_engine</span> <span class="o">=</span> <span class="n">image_analyzer_engine</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">bbox_processor</span> <span class="o">=</span> <span class="n">BboxProcessor</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">redact</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span>
         <span class="n">fill</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="n">ocr_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">text_analyzer_kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Redact method to redact the given image.</span>
 
 <span class="sd">        Please notice, this method duplicates the image, creates a new instance and</span>
 <span class="sd">        manipulate it.</span>
-<span class="sd">        :param image: PIL Image to be processed</span>
+<span class="sd">        :param image: PIL Image to be processed.</span>
 <span class="sd">        :param fill: colour to fill the shape - int (0-255) for</span>
-<span class="sd">        grayscale or Tuple(R, G, B) for RGB</span>
-<span class="sd">        :param kwargs: Additional values for the analyze method in AnalyzerEngine</span>
+<span class="sd">        grayscale or Tuple(R, G, B) for RGB.</span>
+<span class="sd">        :param ocr_kwargs: Additional params for OCR methods.</span>
+<span class="sd">        :param text_analyzer_kwargs: Additional values for the analyze method</span>
+<span class="sd">        in AnalyzerEngine.</span>
 
 <span class="sd">        :return: the redacted image</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">image</span> <span class="o">=</span> <span class="n">ImageChops</span><span class="o">.</span><span class="n">duplicate</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
-        <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
+            <span class="n">image</span><span class="p">,</span> <span class="n">ocr_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span>
+        <span class="p">)</span>
         <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
@@ -1298,7 +1320,7 @@
 
 
 <h2 id="presidio_image_redactor.image_redactor_engine.ImageRedactorEngine.redact" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">redact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">redact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">ocr_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1308,34 +1330,42 @@
       <p>Redact method to redact the given image.</p>
 <p>Please notice, this method duplicates the image, creates a new instance and
 manipulate it.
-:param image: PIL Image to be processed
+:param image: PIL Image to be processed.
 :param fill: colour to fill the shape - int (0-255) for
-grayscale or Tuple(R, G, B) for RGB
-:param kwargs: Additional values for the analyze method in AnalyzerEngine</p>
+grayscale or Tuple(R, G, B) for RGB.
+:param ocr_kwargs: Additional params for OCR methods.
+:param text_analyzer_kwargs: Additional values for the analyze method
+in AnalyzerEngine.</p>
 <p>:return: the redacted image</p>
 
         <details class="quote">
           <summary>Source code in <code>presidio_image_redactor/image_redactor_engine.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">redact</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span>
     <span class="n">fill</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="n">ocr_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">text_analyzer_kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Redact method to redact the given image.</span>
 
 <span class="sd">    Please notice, this method duplicates the image, creates a new instance and</span>
 <span class="sd">    manipulate it.</span>
-<span class="sd">    :param image: PIL Image to be processed</span>
+<span class="sd">    :param image: PIL Image to be processed.</span>
 <span class="sd">    :param fill: colour to fill the shape - int (0-255) for</span>
-<span class="sd">    grayscale or Tuple(R, G, B) for RGB</span>
-<span class="sd">    :param kwargs: Additional values for the analyze method in AnalyzerEngine</span>
+<span class="sd">    grayscale or Tuple(R, G, B) for RGB.</span>
+<span class="sd">    :param ocr_kwargs: Additional params for OCR methods.</span>
+<span class="sd">    :param text_analyzer_kwargs: Additional values for the analyze method</span>
+<span class="sd">    in AnalyzerEngine.</span>
 
 <span class="sd">    :return: the redacted image</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">image</span> <span class="o">=</span> <span class="n">ImageChops</span><span class="o">.</span><span class="n">duplicate</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
-    <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">,</span> <span class="n">ocr_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span>
+    <span class="p">)</span>
     <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
@@ -1385,7 +1415,11 @@ grayscale or Tuple(R, G, B) for RGB
 <span class="sd">    :param ocr: the OCR object to be used to detect text in images.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analyzer_engine</span><span class="p">:</span> <span class="n">AnalyzerEngine</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ocr</span><span class="p">:</span> <span class="n">OCR</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">analyzer_engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnalyzerEngine</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ocr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OCR</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">analyzer_engine</span><span class="p">:</span>
             <span class="n">analyzer_engine</span> <span class="o">=</span> <span class="n">AnalyzerEngine</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">analyzer_engine</span> <span class="o">=</span> <span class="n">analyzer_engine</span>
@@ -1394,24 +1428,61 @@ grayscale or Tuple(R, G, B) for RGB
             <span class="n">ocr</span> <span class="o">=</span> <span class="n">TesseractOCR</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span> <span class="o">=</span> <span class="n">ocr</span>
 
-    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ImageRecognizerResult</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">ocr_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ImageRecognizerResult</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Analyse method to analyse the given image.</span>
 
-<span class="sd">        :param image: PIL Image/numpy array or file path(str) to be processed</span>
-<span class="sd">        :param kwargs: Additional values for the analyze method in AnalyzerEngine</span>
+<span class="sd">        :param image: PIL Image/numpy array or file path(str) to be processed.</span>
+<span class="sd">        :param ocr_kwargs: Additional params for OCR methods.</span>
+<span class="sd">        :param text_analyzer_kwargs: Additional values for the analyze method</span>
+<span class="sd">        in AnalyzerEngine.</span>
 
-<span class="sd">        :return: list of the extract entities with image bounding boxes</span>
+<span class="sd">        :return: List of the extract entities with image bounding boxes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ocr_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">perform_ocr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="c1"># Perform OCR</span>
+        <span class="n">perform_ocr_kwargs</span><span class="p">,</span> <span class="n">ocr_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ocr_kwargs</span><span class="p">(</span><span class="n">ocr_kwargs</span><span class="p">)</span>
+        <span class="n">ocr_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">perform_ocr</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">perform_ocr_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Apply OCR confidence threshold if it is passed in</span>
+        <span class="k">if</span> <span class="n">ocr_threshold</span><span class="p">:</span>
+            <span class="n">ocr_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold_ocr_result</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">,</span> <span class="n">ocr_threshold</span><span class="p">)</span>
+
+        <span class="c1"># Analyze text</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">get_text_from_ocr_dict</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">)</span>
 
         <span class="n">analyzer_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
-            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span>
         <span class="p">)</span>
         <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_analyzer_results_to_bounding_boxes</span><span class="p">(</span>
             <span class="n">analyzer_result</span><span class="p">,</span> <span class="n">ocr_result</span><span class="p">,</span> <span class="n">text</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">bboxes</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">threshold_ocr_result</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ocr_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Filter out OCR results below confidence threshold.</span>
+
+<span class="sd">        :param ocr_result: OCR results (raw).</span>
+<span class="sd">        :param ocr_threshold: Threshold value between -1 and 100.</span>
+
+<span class="sd">        :return: OCR results with low confidence items removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ocr_threshold</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">ocr_threshold</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ocr_threshold must be between -1 and 100&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get indices of items above threshold</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">[</span><span class="s2">&quot;conf&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">ocr_threshold</span><span class="p">:</span>
+                <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Only retain high confidence items</span>
+        <span class="n">filtered_ocr_result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ocr_result</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">filtered_ocr_result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ocr_result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">filtered_ocr_result</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">map_analyzer_results_to_bounding_boxes</span><span class="p">(</span>
@@ -1487,6 +1558,28 @@ grayscale or Tuple(R, G, B) for RGB
                 <span class="n">pos</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">bboxes</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_ocr_kwargs</span><span class="p">(</span><span class="n">ocr_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Parse the OCR-related kwargs.</span>
+
+<span class="sd">        :param ocr_kwargs: Parameters for OCR operations.</span>
+
+<span class="sd">        :return: Params for ocr.perform_ocr and ocr_threshold</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ocr_threshold</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">ocr_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;ocr_threshold&quot;</span> <span class="ow">in</span> <span class="n">ocr_kwargs</span><span class="p">:</span>
+                <span class="n">ocr_threshold</span> <span class="o">=</span> <span class="n">ocr_kwargs</span><span class="p">[</span><span class="s2">&quot;ocr_threshold&quot;</span><span class="p">]</span>
+                <span class="n">ocr_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ocr_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;ocr_threshold&quot;</span>
+                <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ocr_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="n">ocr_kwargs</span><span class="p">,</span> <span class="n">ocr_threshold</span>
 </code></pre></div>
         </details>
 
@@ -1508,7 +1601,7 @@ grayscale or Tuple(R, G, B) for RGB
 
 
 <h2 id="presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.analyze" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">ocr_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1516,25 +1609,39 @@ grayscale or Tuple(R, G, B) for RGB
     <div class="doc doc-contents ">
 
       <p>Analyse method to analyse the given image.</p>
-<p>:param image: PIL Image/numpy array or file path(str) to be processed
-:param kwargs: Additional values for the analyze method in AnalyzerEngine</p>
-<p>:return: list of the extract entities with image bounding boxes</p>
+<p>:param image: PIL Image/numpy array or file path(str) to be processed.
+:param ocr_kwargs: Additional params for OCR methods.
+:param text_analyzer_kwargs: Additional values for the analyze method
+in AnalyzerEngine.</p>
+<p>:return: List of the extract entities with image bounding boxes.</p>
 
         <details class="quote">
           <summary>Source code in <code>presidio_image_redactor/image_analyzer_engine.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ImageRecognizerResult</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">ocr_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ImageRecognizerResult</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Analyse method to analyse the given image.</span>
 
-<span class="sd">    :param image: PIL Image/numpy array or file path(str) to be processed</span>
-<span class="sd">    :param kwargs: Additional values for the analyze method in AnalyzerEngine</span>
+<span class="sd">    :param image: PIL Image/numpy array or file path(str) to be processed.</span>
+<span class="sd">    :param ocr_kwargs: Additional params for OCR methods.</span>
+<span class="sd">    :param text_analyzer_kwargs: Additional values for the analyze method</span>
+<span class="sd">    in AnalyzerEngine.</span>
 
-<span class="sd">    :return: list of the extract entities with image bounding boxes</span>
+<span class="sd">    :return: List of the extract entities with image bounding boxes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ocr_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">perform_ocr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="c1"># Perform OCR</span>
+    <span class="n">perform_ocr_kwargs</span><span class="p">,</span> <span class="n">ocr_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ocr_kwargs</span><span class="p">(</span><span class="n">ocr_kwargs</span><span class="p">)</span>
+    <span class="n">ocr_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">perform_ocr</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">perform_ocr_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Apply OCR confidence threshold if it is passed in</span>
+    <span class="k">if</span> <span class="n">ocr_threshold</span><span class="p">:</span>
+        <span class="n">ocr_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold_ocr_result</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">,</span> <span class="n">ocr_threshold</span><span class="p">)</span>
+
+    <span class="c1"># Analyze text</span>
     <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocr</span><span class="o">.</span><span class="n">get_text_from_ocr_dict</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">)</span>
 
     <span class="n">analyzer_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer_engine</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
-        <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_analyzer_kwargs</span>
     <span class="p">)</span>
     <span class="n">bboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_analyzer_results_to_bounding_boxes</span><span class="p">(</span>
         <span class="n">analyzer_result</span><span class="p">,</span> <span class="n">ocr_result</span><span class="p">,</span> <span class="n">text</span>
@@ -1647,6 +1754,60 @@ and word (in ocr dict) in the text.</p>
             <span class="n">pos</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="k">return</span> <span class="n">bboxes</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h2 id="presidio_image_redactor.image_analyzer_engine.ImageAnalyzerEngine.threshold_ocr_result" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">threshold_ocr_result</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">,</span> <span class="n">ocr_threshold</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Filter out OCR results below confidence threshold.</p>
+<p>:param ocr_result: OCR results (raw).
+:param ocr_threshold: Threshold value between -1 and 100.</p>
+<p>:return: OCR results with low confidence items removed.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_image_redactor/image_analyzer_engine.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">threshold_ocr_result</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ocr_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Filter out OCR results below confidence threshold.</span>
+
+<span class="sd">    :param ocr_result: OCR results (raw).</span>
+<span class="sd">    :param ocr_threshold: Threshold value between -1 and 100.</span>
+
+<span class="sd">    :return: OCR results with low confidence items removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ocr_threshold</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">ocr_threshold</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ocr_threshold must be between -1 and 100&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get indices of items above threshold</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ocr_result</span><span class="p">[</span><span class="s2">&quot;conf&quot;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">ocr_threshold</span><span class="p">:</span>
+            <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c1"># Only retain high confidence items</span>
+    <span class="n">filtered_ocr_result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ocr_result</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">filtered_ocr_result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ocr_result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">filtered_ocr_result</span>
 </code></pre></div>
         </details>
     </div>

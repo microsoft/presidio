@@ -1354,6 +1354,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.intersects" class="md-nav__link">
+    intersects()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2612,6 +2619,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.intersects" class="md-nav__link">
+    intersects()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3538,12 +3552,39 @@ and replaces the PII entities with the desired anonymizers.</p>
 <span class="sd">        2. Have the same indices as other results but with larger score.</span>
 <span class="sd">        :return: List</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">unique_text_metadata_elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tmp_analyzer_results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># This list contains all elements which we need to check a single result</span>
         <span class="c1"># against. If a result is dropped, it can also be dropped from this list</span>
         <span class="c1"># since it is intersecting with another result and we selected the other one.</span>
         <span class="n">other_elements</span> <span class="o">=</span> <span class="n">analyzer_results</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">analyzer_results</span><span class="p">:</span>
+            <span class="n">other_elements</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="n">is_merge_same_entity_type</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">other_element</span> <span class="ow">in</span> <span class="n">other_elements</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">other_element</span><span class="o">.</span><span class="n">entity_type</span> <span class="o">!=</span> <span class="n">result</span><span class="o">.</span><span class="n">entity_type</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">other_element</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">other_element</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">other_element</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+                <span class="n">other_element</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">other_element</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+                <span class="n">other_element</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">other_element</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+                <span class="n">is_merge_same_entity_type</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_merge_same_entity_type</span><span class="p">:</span>
+                <span class="n">other_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="n">tmp_analyzer_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;removing element </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2"> from &quot;</span>
+                                  <span class="sa">f</span><span class="s2">&quot;results list due to merge&quot;</span><span class="p">)</span>
+
+        <span class="n">unique_text_metadata_elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># This list contains all elements which we need to check a single result</span>
+        <span class="c1"># against. If a result is dropped, it can also be dropped from this list</span>
+        <span class="c1"># since it is intersecting with another result and we selected the other one.</span>
+        <span class="n">other_elements</span> <span class="o">=</span> <span class="n">tmp_analyzer_results</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">tmp_analyzer_results</span><span class="p">:</span>
             <span class="n">other_elements</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
             <span class="n">result_conflicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__is_result_conflicted_with_other_elements</span><span class="p">(</span>
                 <span class="n">other_elements</span><span class="p">,</span> <span class="n">result</span>
@@ -5115,6 +5156,21 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span>
+
+    <span class="k">def</span> <span class="nf">intersects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if self intersects with a different RecognizerResult.</span>
+
+<span class="sd">        :return: If intersecting, returns the number of</span>
+<span class="sd">        intersecting characters.</span>
+<span class="sd">        If not, returns 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if they do not overlap the intersection is 0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="c1"># otherwise the intersection is min(end) - max(start)</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -5437,6 +5493,47 @@ RecognizerResult            (<a class="autorefs autorefs-internal" title="presid
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_indices</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">score</span>
     <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h6 id="presidio_anonymizer.entities.engine.recognizer_result.RecognizerResult.intersects" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">intersects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></code>
+
+
+</h6>
+
+    <div class="doc doc-contents ">
+
+      <p>Check if self intersects with a different RecognizerResult.</p>
+<p>:return: If intersecting, returns the number of
+intersecting characters.
+If not, returns 0</p>
+
+        <details class="quote">
+          <summary>Source code in <code>presidio_anonymizer/entities/engine/recognizer_result.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">intersects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if self intersects with a different RecognizerResult.</span>
+
+<span class="sd">    :return: If intersecting, returns the number of</span>
+<span class="sd">    intersecting characters.</span>
+<span class="sd">    If not, returns 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if they do not overlap the intersection is 0</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="c1"># otherwise the intersection is min(end) - max(start)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

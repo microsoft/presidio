@@ -139,8 +139,13 @@ Python script example can be found under:
     engine.redact_from_file(input_path, output_dir, padding_width=25, fill="contrast")
 
     # Option 3: Redact from directory
-    engine.redact_from_directory("path/to/your/dicom", output_dir, padding_width=25, fill="contrast")
+    ocr_kwargs = {"ocr_threshold": 50}
+    engine.redact_from_directory("path/to/your/dicom", output_dir, fill="background", ocr_kwargs=ocr_kwargs)
     ```
+
+### Evaluating de-identification performance
+
+If you are interested in evaluating the performance of the DICOM de-identification against ground truth labels, please see the [evaluating DICOM de-identification page](./evaluating_dicom_redaction.md).
 
 ### Side note for Windows
 

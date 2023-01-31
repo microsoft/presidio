@@ -874,6 +874,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#evaluating-de-identification-performance" class="md-nav__link">
+    Evaluating de-identification performance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#side-note-for-windows" class="md-nav__link">
     Side note for Windows
   </a>
@@ -1227,6 +1234,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#evaluating-de-identification-performance" class="md-nav__link">
+    Evaluating de-identification performance
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#side-note-for-windows" class="md-nav__link">
     Side note for Windows
   </a>
@@ -1386,10 +1400,13 @@ curl -XPOST <span class="s2">&quot;http://localhost:3000/redact&quot;</span> -H 
 <span class="n">engine</span><span class="o">.</span><span class="n">redact_from_file</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">padding_width</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;contrast&quot;</span><span class="p">)</span>
 
 <span class="c1"># Option 3: Redact from directory</span>
-<span class="n">engine</span><span class="o">.</span><span class="n">redact_from_directory</span><span class="p">(</span><span class="s2">&quot;path/to/your/dicom&quot;</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">padding_width</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;contrast&quot;</span><span class="p">)</span>
+<span class="n">ocr_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ocr_threshold&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">redact_from_directory</span><span class="p">(</span><span class="s2">&quot;path/to/your/dicom&quot;</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;background&quot;</span><span class="p">,</span> <span class="n">ocr_kwargs</span><span class="o">=</span><span class="n">ocr_kwargs</span><span class="p">)</span>
 </code></pre></div>
 </div>
 </div>
+<h3 id="evaluating-de-identification-performance">Evaluating de-identification performance</h3>
+<p>If you are interested in evaluating the performance of the DICOM de-identification against ground truth labels, please see the <a href="evaluating_dicom_redaction/">evaluating DICOM de-identification page</a>.</p>
 <h3 id="side-note-for-windows">Side note for Windows</h3>
 <p>If you are using a Windows machine, you may run into issues if file paths are too long. Unfortunatley, this is not rare when working with DICOM images that are often nested in directories with descriptive names.</p>
 <p>To avoid errors where the code may not recognize a path as existing due to the length of the characters in the file path, please <a href="https://learn.microsoft.com/en-us/answers/questions/293227/longpathsenabled.html">enable long paths on your system</a>.</p>
