@@ -38,3 +38,36 @@ class QRRecognizer(ABC):
         """
         pass
 
+
+class OpenCVQRRecongnizer(QRRecognizer):
+    def __init__(self) -> None:
+        self.detector = cv2.QRCodeDetector()
+
+    def recognize(self, image) -> List[QRRecognizerResult]:
+        recognized = []
+
+        ret, points = self._detect(image)
+               
+        if ret:
+            text = self._decode(image, points)
+
+            (x, y, w, h) = cv2.boundingRect(points)
+
+            recognized.append(QRRecognizerResult(
+                text=text,
+                bbox=[x, y, w, h],
+                polygon=[*points.flatten(), *points[0]]
+            ))
+
+        return recognized
+
+    def _detect(self, image) -> Tuple[float, List[Tuple[int, int]]]:
+        ret, points = self.detector.detect(image)
+        points = points[0].astype(int)
+
+        return ret, points
+
+    def _decode(self, image, points) -> str:
+        res = self.detector.decode(image, points)
+
+        return res[0]
