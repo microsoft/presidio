@@ -66,9 +66,10 @@ class OpenCVQRRecongnizer(QRRecognizer):
 
         return recognized
 
-    def _detect(self, image) -> Tuple[float, List[List[Tuple[int, int]]]]:
+    def _detect(self, image) -> Tuple[float, Optional[np.ndarray]]:
         ret, points = self.detector.detect(image)
-        points = points.astype(int)
+        if points is not None:
+            points = points.astype(int)
 
         return ret, points
 
