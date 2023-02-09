@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, List, Optional
 import cv2
+import numpy as np
 
 
 class QRRecognizerResult:
@@ -44,6 +45,9 @@ class OpenCVQRRecongnizer(QRRecognizer):
         self.detector = cv2.QRCodeDetector()
 
     def recognize(self, image) -> List[QRRecognizerResult]:
+        if not isinstance(image, np.ndarray):
+            image = np.array(image)
+
         recognized = []
 
         ret, points = self._detect(image)
