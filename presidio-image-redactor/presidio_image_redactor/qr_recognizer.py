@@ -6,8 +6,7 @@ import numpy as np
 
 class QRRecognizerResult:
     """
-    QRRecognizerResult represents the results of analysing the image
-    by QRRecognizer.
+    Represent the results of analysing the image by QRRecognizer.
 
     :param text: decoded text
     :param bbox: bounding box in the following format - [left, top, width, height]
@@ -18,7 +17,7 @@ class QRRecognizerResult:
         self,
         text: str,
         bbox: Tuple[int, int, int, int],
-        polygon: Optional[List[Tuple[int, int]]] = None
+        polygon: Optional[List[Tuple[int, int]]] = None,
     ):
         self.text = text
         self.bbox = bbox
@@ -27,17 +26,18 @@ class QRRecognizerResult:
 
 class QRRecognizer(ABC):
     """
+    A class representing an abstract QR code recognizer.
+
     QRRecognizer is an abstract class to be inherited by
-    recognizers which hold the logic for recognizing qr codes on the images.
+    recognizers which hold the logic for recognizing QR codes on the images.
     """
 
     @abstractmethod
     def recognize(self, image) -> List[QRRecognizerResult]:
-        """Detects and decodes QR codes on the image.
+        """Detect and decode QR codes on the image.
 
         :param image: PIL.Image/Numpy array to be processed
         """
-        pass
 
 
 class OpenCVQRRecongnizer(QRRecognizer):
@@ -56,10 +56,15 @@ class OpenCVQRRecongnizer(QRRecognizer):
         rec = OpenCVQRRecongnizer()
         recognized = rec.recognize(image)
     """
+
     def __init__(self) -> None:
         self.detector = cv2.QRCodeDetector()
 
     def recognize(self, image) -> List[QRRecognizerResult]:
+        """Detect and decode QR codes on the image.
+
+        :param image: PIL.Image/Numpy array to be processed
+        """
         if not isinstance(image, np.ndarray):
             image = np.array(image, dtype=np.uint8)
 
@@ -73,11 +78,11 @@ class OpenCVQRRecongnizer(QRRecognizer):
             for text, p in zip(decoded, points):
                 (x, y, w, h) = cv2.boundingRect(p)
 
-                recognized.append(QRRecognizerResult(
-                    text=text,
-                    bbox=[x, y, w, h],
-                    polygon=[*p.flatten(), *p[0]]
-                ))
+                recognized.append(
+                    QRRecognizerResult(
+                        text=text, bbox=[x, y, w, h], polygon=[*p.flatten(), *p[0]]
+                    )
+                )
 
         return recognized
 
@@ -95,7 +100,7 @@ class OpenCVQRRecongnizer(QRRecognizer):
     def _decode(self, image, points) -> Tuple[str]:
         if len(points) == 1:
             decoded, _ = self.detector.decode(image, points)
-            decoded = (decoded, )
+            decoded = (decoded,)
         else:
             _, decoded, _ = self.detector.decodeMulti(image, points)
 
