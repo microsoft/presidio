@@ -12,6 +12,7 @@ pydicom = ">=2.3.0"
 pypng = ">=0.20220715.0"
 matplotlib = ">=3.6.2"
 typing-extensions = "*"
+opencv-python = ">=4.5.0"
 
 [dev-packages]
 pytest = "*"
