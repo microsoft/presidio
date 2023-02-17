@@ -4,6 +4,7 @@ import os
 from presidio_analyzer.recognizer_result import RecognizerResult
 
 from presidio_image_redactor import ImageAnalyzerEngine
+from presidio_image_redactor import QRImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
 import pytest
 
@@ -50,6 +51,11 @@ def get_image_recognizerresult():
 @pytest.fixture(scope="module")
 def image_analyzer_engine():
     return ImageAnalyzerEngine()
+
+
+@pytest.fixture(scope="module")
+def qr_image_analyzer_engine():
+    return QRImageAnalyzerEngine()
 
 
 @pytest.fixture(scope="module")
