@@ -12,7 +12,7 @@ class QRImageAnalyzerEngine:
 
     :param analyzer_engine: The Presidio AnalyzerEngine instance
         to be used to detect PII in text
-    :param qr: the QRRecognizer object to detect and decode text in qr codes
+    :param qr: the QRRecognizer object to detect and decode text in QR codes
     """
 
     def __init__(

@@ -16,6 +16,10 @@ Process for standard images:
 
 ![Image Redactor Design](../docs/assets/image-redactor-design.png)
 
+Process for images with QR codes:
+
+![QRImage Redactor Design](../docs/assets/qr-image-redactor-design.png)
+
 Process for DICOM files:
 
 ![DICOM image Redactor Design](../docs/assets/dicom-image-redactor-design.png)
@@ -116,6 +120,30 @@ curl -XPOST "http://localhost:3000/redact" -H "content-type: multipart/form-data
 
 Python script example can be found under:
 /presidio/e2e-tests/tests/test_image_redactor.py
+
+## Getting started (images with QR codes)
+
+`QRImageAnalyzerEngine` is used by `ImageRedactorEngineto` to redact QR codes.
+
+```python
+from PIL import Image
+from presidio_image_redactor import ImageRedactorEngine
+from presidio_image_redactor import QRImageAnalyzerEngine
+
+# Get the image to redact using PIL lib (pillow)
+image = Image.open("presidio-image-redactor/tests/integration/resources/qr.png")
+
+# Initialize the engine
+engine = ImageRedactorEngine(image_analyzer_engine=QRImageAnalyzerEngine())
+
+# Redact the image with pink color
+redacted_image = engine.redact(image, (255, 192, 203))
+
+# save the redacted image 
+redacted_image.save("new_image.png")
+# uncomment to open the image for viewing
+# redacted_image.show()
+```
 
 ## Getting started (DICOM images)
 
