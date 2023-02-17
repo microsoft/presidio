@@ -117,11 +117,10 @@ class OpenCVQRRecongnizer(QRRecognizer):
         :return: Detection status and list of the points around QR codes
         """
 
-        ret, points = self.detector.detect(image)
+        ret, points = self.detector.detectMulti(image)
 
         if not ret:
-            ret, points = self.detector.detectMulti(image)
-
+            ret, points = self.detector.detect(image)
         if points is not None:
             points = points.astype(int)
 
@@ -137,6 +136,7 @@ class OpenCVQRRecongnizer(QRRecognizer):
         """
 
         if len(points) == 1:
+            _, decoded, _ = self.detector.decodeMulti(image, points)
             decoded, _ = self.detector.decode(image, points)
             decoded = (decoded,)
         else:
