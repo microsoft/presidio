@@ -6,7 +6,7 @@ ENV PIP_NO_CACHE_DIR=1
 WORKDIR /usr/bin/${NAME}
 
 RUN apt-get update \
-  && apt-get install tesseract-ocr -y \
+  && apt-get install tesseract-ocr ffmpeg libsm6 libxext6 -y \
   && rm -rf /var/lib/apt/lists/* \
   && tesseract -v
 
