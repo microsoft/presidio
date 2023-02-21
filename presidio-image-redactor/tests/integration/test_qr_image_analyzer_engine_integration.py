@@ -14,10 +14,10 @@ def test_given_qr_image_then_text_entities_are_recognized_correctly(
         start=0,
         end=37,
         score=0.6,
-        left=301,
-        top=124,
-        width=683,
-        height=678,
+        left=71,
+        top=71,
+        width=1013,
+        height=1013,
     )
 
 
