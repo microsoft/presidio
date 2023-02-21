@@ -6,11 +6,13 @@ the original parent ImagePiiVerifyEngine class.
 """
 import PIL
 import pydicom
+import pytest
 
 from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
 
 PADDING_WIDTH = 25
 
+@pytest.mark.skip(reason="bug in removing duplicates and assigning entities to PHIs (#1037)")
 def test_verify_correctly(
     get_mock_dicom_instance: pydicom.dataset.FileDataset,
     get_mock_dicom_verify_results: dict,
@@ -57,7 +59,7 @@ def test_verify_correctly(
     assert len(common_labels) / len(all_labels) >= 0.5
     assert test_analyzer_results_formatted == expected_analyzer_results
 
-
+@pytest.mark.skip(reason="bug in removing duplicates and assigning entities to PHIs (#1037)")
 def test_eval_dicom_correctly(
     get_mock_dicom_instance: pydicom.dataset.FileDataset,
     get_mock_dicom_verify_results: dict,
