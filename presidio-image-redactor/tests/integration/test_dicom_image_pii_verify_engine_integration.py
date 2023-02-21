@@ -8,31 +8,16 @@ import PIL
 import pydicom
 
 from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
-import pytest
 
 PADDING_WIDTH = 25
 
-
-@pytest.fixture(scope="function")
-def mock_engine():
-    """Instance of the DicomImagePiiVerifyEngine"""
-    # Arrange
-
-    # Act
-    dicom_image_pii_verify_engine = DicomImagePiiVerifyEngine()
-
-    return dicom_image_pii_verify_engine
-
-
 def test_verify_correctly(
-    mock_engine: DicomImagePiiVerifyEngine,
     get_mock_dicom_instance: pydicom.dataset.FileDataset,
     get_mock_dicom_verify_results: dict,
 ):
     """Test the verify_dicom_instance function.
 
     Args:
-        mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
         get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
         get_mock_dicom_verify_results (dict): Dictionary with loaded results.
     """
@@ -49,7 +34,7 @@ def test_verify_correctly(
         test_image,
         test_ocr_results,
         test_analyzer_results,
-    ) = mock_engine.verify_dicom_instance(get_mock_dicom_instance, PADDING_WIDTH)
+    ) = DicomImagePiiVerifyEngine().verify_dicom_instance(get_mock_dicom_instance, PADDING_WIDTH)
     test_ocr_results_formatted = bbox_processor.get_bboxes_from_ocr_results(
         test_ocr_results
     )
@@ -74,7 +59,6 @@ def test_verify_correctly(
 
 
 def test_eval_dicom_correctly(
-    mock_engine: DicomImagePiiVerifyEngine,
     get_mock_dicom_instance: pydicom.dataset.FileDataset,
     get_mock_dicom_verify_results: dict,
 ):
@@ -96,7 +80,7 @@ def test_eval_dicom_correctly(
     }
 
     # Act
-    test_image, test_eval_results = mock_engine.eval_dicom_instance(
+    test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
         get_mock_dicom_instance, ground_truth, PADDING_WIDTH, tolerance, True
     )
 
