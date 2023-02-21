@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 flask = ">=1.1.2"
 pytesseract = ">=0.3.7"
-presidio-analyzer = ">=2.2.0"
+presidio-analyzer = "==2.2.31"
 pillow = ">=9.0"
 pydicom = ">=2.3.0"
 pypng = ">=0.20220715.0"
