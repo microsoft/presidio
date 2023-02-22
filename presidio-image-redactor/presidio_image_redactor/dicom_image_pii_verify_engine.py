@@ -81,7 +81,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         original_metadata, is_name, is_patient = self._get_text_metadata(instance_copy)
         phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
         deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
+            supported_entity="DICOM_METADATA", deny_list=phi_list
         )
         ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self.image_analyzer_engine.analyze(
@@ -172,6 +172,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :return: Detected PHI with no duplicate entities.
         """
         dups = []
+        sorted(results, key=lambda x: x['score'], reverse=True)
         results_no_dups = results.copy()
         dims = ["left", "top", "width", "height"]
 
@@ -190,7 +191,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     matching = list(matching_dims.values())
 
                     if all(matching):
-                        dups.append(other)
+                        higher_scored_index = other if results[other]['score'] > results[i]['score'] else i
+                        dups.append(higher_scored_index)
 
         # Remove duplicates
         for dup_index in sorted(dups, reverse=True):
