@@ -191,7 +191,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     matching = list(matching_dims.values())
 
                     if all(matching):
-                        higher_scored_index = other if results[other]['score'] > results[i]['score'] else i
+                        higher_scored_index = other if \
+                            results[other]['score'] > results[i]['score'] else i
                         dups.append(higher_scored_index)
 
         # Remove duplicates
