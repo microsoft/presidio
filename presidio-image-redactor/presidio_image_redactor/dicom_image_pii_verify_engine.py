@@ -176,7 +176,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         for result in results:
             criteria = tuple(result[dim] for dim in dims)
             if criteria in comparison_map:
-                comparison_map[criteria] = comparison_map[criteria] if comparison_map[criteria]['score'] > result['score'] else result
+                comparison_map[criteria] = comparison_map[criteria] \
+                    if comparison_map[criteria]['score'] > result['score'] else result
             else:
                 comparison_map[criteria] = result
         return list(comparison_map.values())
