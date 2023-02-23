@@ -173,7 +173,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         """
         dups = []
         sorted(results, key=lambda x: x['score'], reverse=True)
-        results_no_dups = results.copy()
+        results_no_dups = []
         dims = ["left", "top", "width", "height"]
 
         # Check for duplicates
@@ -191,13 +191,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     matching = list(matching_dims.values())
 
                     if all(matching):
-                        higher_scored_index = other if \
-                            results[other]['score'] > results[i]['score'] else i
-                        dups.append(higher_scored_index)
+                        lower_scored_index = other if \
+                            results[other]['score'] < results[i]['score'] else i
+                        dups.append(lower_scored_index)
 
         # Remove duplicates
-        for dup_index in sorted(dups, reverse=True):
-            del results_no_dups[dup_index]
+        for i in range(len(results)):
+            if i not in dups:
+                results_no_dups.append(results[i])
 
         return results_no_dups
 

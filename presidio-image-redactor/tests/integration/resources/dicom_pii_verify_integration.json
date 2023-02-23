@@ -438,7 +438,7 @@
         },
         {
             "entity_type": "PHONE_NUMBER",
-            "score": 0.4,
+            "score": 1.0,
             "left": 170,
             "top": 72,
             "width": 218,
@@ -492,7 +492,7 @@
             "label": "DAVIDSON"
         },
         {
-            "score": 1.0,
+            "score": 0.85,
             "left": 287,
             "top": 25,
             "width": 230,
@@ -516,7 +516,7 @@
             "label": "01.09.2012"
         },
         {
-            "score": 0.4,
+            "score": 1.0,
             "left": 170,
             "top": 72,
             "width": 218,
