@@ -163,12 +163,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
     @staticmethod
     def _remove_duplicate_entities(
-        results: List[dict], dup_pix_tolerance: int = 5
+        results: List[dict]
     ) -> List[dict]:
         """Handle when a word is detected multiple times as different types of entities.
 
         :param results: List of detected PHI with bbox info.
-        :param dup_pix_tolerance: Pixel difference tolerance for identifying duplicates.
         :return: Detected PHI with no duplicate entities.
         """
         dims = ["left", "top", "width", "height"]
