@@ -81,7 +81,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         original_metadata, is_name, is_patient = self._get_text_metadata(instance_copy)
         phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
         deny_list_recognizer = PatternRecognizer(
-            supported_entity="DICOM_METADATA", deny_list=phi_list
+            supported_entity="PERSON", deny_list=phi_list
         )
         ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self.image_analyzer_engine.analyze(
@@ -163,24 +163,44 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
     @staticmethod
     def _remove_duplicate_entities(
-        results: List[dict]
+        results: List[dict], dup_pix_tolerance: int = 5
     ) -> List[dict]:
         """Handle when a word is detected multiple times as different types of entities.
 
         :param results: List of detected PHI with bbox info.
+        :param dup_pix_tolerance: Pixel difference tolerance for identifying duplicates.
         :return: Detected PHI with no duplicate entities.
         """
+        dups = []
+        sorted(results, key=lambda x: x['score'], reverse=True)
+        results_no_dups = []
         dims = ["left", "top", "width", "height"]
 
-        comparison_map = {}
-        for result in results:
-            criteria = tuple(result[dim] for dim in dims)
-            if criteria in comparison_map:
-                comparison_map[criteria] = comparison_map[criteria] \
-                    if comparison_map[criteria]['score'] > result['score'] else result
-            else:
-                comparison_map[criteria] = result
-        return list(comparison_map.values())
+        # Check for duplicates
+        for i in range(len(results) - 1):
+            i_dims = {dim: results[i][dim] for dim in dims}
+
+            # Ignore if we've already detected this dup combination
+            for other in range(i + 1, len(results)):
+                if i not in results_no_dups:
+                    other_dims = {dim: results[other][dim] for dim in dims}
+                    matching_dims = {
+                        dim: abs(i_dims[dim] - other_dims[dim]) <= dup_pix_tolerance
+                        for dim in dims
+                    }
+                    matching = list(matching_dims.values())
+
+                    if all(matching):
+                        lower_scored_index = other if \
+                            results[other]['score'] < results[i]['score'] else i
+                        dups.append(lower_scored_index)
+
+        # Remove duplicates
+        for i in range(len(results)):
+            if i not in dups:
+                results_no_dups.append(results[i])
+
+        return results_no_dups
 
     def _label_all_positives(
         self,
@@ -219,7 +239,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                 )
 
         # Remove any duplicates
-        all_pos = self._remove_duplicate_entities(all_pos, 0)
+        all_pos = self._remove_duplicate_entities(all_pos)
 
         return all_pos
 

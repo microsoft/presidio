@@ -389,7 +389,7 @@
     ],
     "analyzer_results": [
         {
-            "entity_type": "DICOM_METADATA",
+            "entity_type": "PERSON",
             "score": 1.0,
             "left": 25,
             "top": 25,
@@ -397,7 +397,7 @@
             "height": 37
         },
         {
-            "entity_type": "DICOM_METADATA",
+            "entity_type": "PERSON",
             "height": 36,
             "left": 287,
             "score": 1,
@@ -413,7 +413,7 @@
             "height": 36
         },
         {
-            "entity_type": "DICOM_METADATA",
+            "entity_type": "PERSON",
             "score": 1.0,
             "left": 535,
             "top": 25,
@@ -429,7 +429,7 @@
             "height": 35
         },
         {
-            "entity_type": "DICOM_METADATA",
+            "entity_type": "PERSON",
             "score": 1.0,
             "left": 170,
             "top": 72,
