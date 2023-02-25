@@ -136,7 +136,6 @@ class OpenCVQRRecongnizer(QRRecognizer):
         """
 
         if len(points) == 1:
-            _, decoded, _ = self.detector.decodeMulti(image, points)
             decoded, _ = self.detector.decode(image, points)
             decoded = (decoded,)
         else:
