@@ -1,6 +1,6 @@
 pipenv run python app.py --host 0.0.0.0 &
 
-export HB_PORT=21230
+export HB_PORT=24488
 echo Heartbeat port: $HB_PORT
 
 function hasHeartbeat {
