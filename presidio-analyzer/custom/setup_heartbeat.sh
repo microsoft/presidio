@@ -1,7 +1,5 @@
 
 export HB_PORT=21230
-echo Heartbeat port: $HB_PORT
-
 function hasHeartbeat {
   c=$(netstat -an | grep ${HB_PORT} | grep -i ESTABLISHED)
   if [[ -n $c ]]; then
@@ -12,53 +10,39 @@ function hasHeartbeat {
 
 }
 
-function hasListener {
-  c=$(netstat -an | grep ${HB_PORT} | grep -i LISTEN)
-  if [[ -n $c ]]; then
-    echo yes
-  else
-    echo no
-  fi
-}
-
 function heartbeat_loop {
   pkill nc
   sleep 1
-  while :; do sleep 1; done | nc -l ${HB_PORT} > /dev/null 2>&1 &
+  #nc -k -l -p ${HB_PORT} > /dev/null 2>&1 &            //different linux version?
+  #nc -k -l ${HB_PORT} > /dev/null 2>&1 &             // dont send to standard output
+  nc -k -l -d ${HB_PORT} &
 
-  # 5 Second wait before proceeding
-  echo 5 second sleep...
-  sleep 5
+  #30 minute wait time
+  #let l=1800
+  let l=20
 
-
-  # 30 minute wait before terminating Presidio container
-  time_remaining=1800
-  while (( time_remaining-- > 0 ))
+  while (( l-- > 0 ))
   do
-    echo Wait for Heartbeat. Time remaining: "$time_remaining"
+    echo wait for heartbeat $l
     [[ $(hasHeartbeat) == yes  ]] && {
       break;
-    }
-    [[ $(hasListener) == no && $(hasHeartbeat) == no  ]] && {
-      echo Heartbeat unavailable. hasListener: "$hasListener" hasHeartbeat: "$hasHeartbeat"
-      return 1
     }
     sleep 1
   done
 
-  if (( time_remaining <= 0 ))
+  if (( l <= 0 ))
   then
-    echo Heartbeat connection timeout.
+    echo heartbeat connection timeout.
     return 1
   fi
 
-  echo Heartbeat connected.
+  echo heartbeat connected.
 
-  heartbeat_count=0
+  l=0
 
-  while (( ++heartbeat_count > 0 ))
+  while (( ++l > 0 ))
   do
-    echo Heartbeat count: "$heartbeat_count"
+    echo heart is beating $l
     [[ $(hasHeartbeat) == no  ]] && {
       break;
     }
@@ -66,11 +50,12 @@ function heartbeat_loop {
   done
 
   echo Heartbeat stopped. Terminating ...
-
   return 0
 }
 
-heartbeat_loop
-RET=$?
-echo RET=$RET
-exit $RET
+heartbeat_result=1
+while((heartbeat_result!=0));
+do
+  heartbeat_result=heartbeat_loop
+  sleep 1
+done
