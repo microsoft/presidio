@@ -17,4 +17,7 @@ RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
 
+RUN apt update --fix-missing && apt upgrade -y
+RUN apt install -y vim libaio1 libssh2-1 iputils-ping gdb netcat net-tools clang-9 iproute2
+
 ENTRYPOINT [ "/bin/bash", "setup_heartbeat.sh" ]
