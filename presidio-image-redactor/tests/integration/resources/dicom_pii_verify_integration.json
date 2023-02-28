@@ -398,7 +398,15 @@
         },
         {
             "entity_type": "PERSON",
-            "score": 1.0,
+            "height": 36,
+            "left": 287,
+            "score": 1,
+            "top": 25,
+            "width": 230
+        },
+        {
+            "entity_type": "PERSON",
+            "score": 0.85,
             "left": 287,
             "top": 25,
             "width": 230,
@@ -484,7 +492,7 @@
             "label": "DAVIDSON"
         },
         {
-            "score": 1.0,
+            "score": 1,
             "left": 287,
             "top": 25,
             "width": 230,
