@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Optional
 
 from presidio_analyzer import AnalyzerEngine, RecognizerResult
 
@@ -14,7 +14,11 @@ class ImageAnalyzerEngine:
     :param ocr: the OCR object to be used to detect text in images.
     """
 
-    def __init__(self, analyzer_engine: AnalyzerEngine = None, ocr: OCR = None):
+    def __init__(
+        self,
+        analyzer_engine: Optional[AnalyzerEngine] = None,
+        ocr: Optional[OCR] = None,
+    ):
         if not analyzer_engine:
             analyzer_engine = AnalyzerEngine()
         self.analyzer_engine = analyzer_engine
@@ -23,24 +27,61 @@ class ImageAnalyzerEngine:
             ocr = TesseractOCR()
         self.ocr = ocr
 
-    def analyze(self, image: object, **kwargs) -> List[ImageRecognizerResult]:
+    def analyze(
+        self, image: object, ocr_kwargs: Optional[dict] = None, **text_analyzer_kwargs
+    ) -> List[ImageRecognizerResult]:
         """Analyse method to analyse the given image.
 
-        :param image: PIL Image/numpy array or file path(str) to be processed
-        :param kwargs: Additional values for the analyze method in AnalyzerEngine
+        :param image: PIL Image/numpy array or file path(str) to be processed.
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
 
-        :return: list of the extract entities with image bounding boxes
+        :return: List of the extract entities with image bounding boxes.
         """
-        ocr_result = self.ocr.perform_ocr(image)
+        # Perform OCR
+        perform_ocr_kwargs, ocr_threshold = self._parse_ocr_kwargs(ocr_kwargs)
+        ocr_result = self.ocr.perform_ocr(image, **perform_ocr_kwargs)
+
+        # Apply OCR confidence threshold if it is passed in
+        if ocr_threshold:
+            ocr_result = self.threshold_ocr_result(ocr_result, ocr_threshold)
+
+        # Analyze text
         text = self.ocr.get_text_from_ocr_dict(ocr_result)
 
         analyzer_result = self.analyzer_engine.analyze(
-            text=text, language="en", **kwargs
+            text=text, language="en", **text_analyzer_kwargs
         )
         bboxes = self.map_analyzer_results_to_bounding_boxes(
             analyzer_result, ocr_result, text
         )
         return bboxes
+
+    @staticmethod
+    def threshold_ocr_result(ocr_result: dict, ocr_threshold: float) -> dict:
+        """Filter out OCR results below confidence threshold.
+
+        :param ocr_result: OCR results (raw).
+        :param ocr_threshold: Threshold value between -1 and 100.
+
+        :return: OCR results with low confidence items removed.
+        """
+        if ocr_threshold < -1 or ocr_threshold > 100:
+            raise ValueError("ocr_threshold must be between -1 and 100")
+
+        # Get indices of items above threshold
+        idx = list()
+        for i, val in enumerate(ocr_result["conf"]):
+            if float(val) >= ocr_threshold:
+                idx.append(i)
+
+        # Only retain high confidence items
+        filtered_ocr_result = {}
+        for key in list(ocr_result.keys()):
+            filtered_ocr_result[key] = [ocr_result[key][i] for i in idx]
+
+        return filtered_ocr_result
 
     @staticmethod
     def map_analyzer_results_to_bounding_boxes(
@@ -116,3 +157,25 @@ class ImageAnalyzerEngine:
                 pos += len(word) + 1
 
         return bboxes
+
+    @staticmethod
+    def _parse_ocr_kwargs(ocr_kwargs: dict) -> Tuple[dict, float]:
+        """Parse the OCR-related kwargs.
+
+        :param ocr_kwargs: Parameters for OCR operations.
+
+        :return: Params for ocr.perform_ocr and ocr_threshold
+        """
+        ocr_threshold = None
+        if ocr_kwargs is not None:
+            if "ocr_threshold" in ocr_kwargs:
+                ocr_threshold = ocr_kwargs["ocr_threshold"]
+                ocr_kwargs = {
+                    key: value
+                    for key, value in ocr_kwargs.items()
+                    if key != "ocr_threshold"
+                }
+        else:
+            ocr_kwargs = {}
+
+        return ocr_kwargs, ocr_threshold

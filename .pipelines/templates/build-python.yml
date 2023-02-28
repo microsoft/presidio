@@ -21,7 +21,7 @@ steps:
               set -eux  # fail on error
               # Install pytest and run tests
               pipenv install --dev --skip-lock pytest-azurepipelines
-              pipenv run pytest
+              pipenv run pytest -vv
 
     - task: Bash@3
       displayName: 'Package Wheel: ${{ parameters.SERVICE }}'
