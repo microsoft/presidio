@@ -13,7 +13,7 @@ requirements = [
     "pydicom>=2.3.0",
     "pypng>=0.20220715.0",
     "opencv-python>=4.5.0",
-    "importlib-resources = *",
+    "importlib-resources",
 ]
 
 test_requirements = ["pytest>=3", "pytest-mock>=3.10.0", "flake8==3.7.9"]
