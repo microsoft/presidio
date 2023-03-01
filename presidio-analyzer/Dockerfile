@@ -16,4 +16,8 @@ RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
-CMD pipenv run python app.py --host 0.0.0.0
+
+RUN apt update --fix-missing && apt upgrade -y
+RUN apt install -y netcat net-tools
+
+ENTRYPOINT [ "/bin/bash", "setup_heartbeat.sh" ]
