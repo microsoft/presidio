@@ -12,7 +12,7 @@ requirements = [
     "pydantic==1.7.4",
     "pydicom>=2.3.0",
     "pypng>=0.20220715.0",
-    "opencv-python = >=4.5.0",
+    "opencv-python>=4.5.0",
     "importlib-resources = *",
 ]
 
