@@ -32,8 +32,8 @@ function heartbeat_loop {
   sleep 5
 
 
-  # 30 minute wait before terminating Presidio container
-  time_remaining=1800
+  # 5 minute wait before terminating Presidio container
+  time_remaining=300
   while (( time_remaining-- > 0 ))
   do
     echo Wait for Heartbeat. Time remaining: "$time_remaining"
