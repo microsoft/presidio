@@ -91,22 +91,23 @@ class OpenCVQRRecongnizer(QRRecognizer):
         if not isinstance(image, np.ndarray):
             image = np.array(image, dtype=np.uint8)
 
-        recognized = []
-
         ret, points = self._detect(image)
 
         if ret:
             decoded = self._decode(image, points)
-
-            for text, p in zip(decoded, points):
-                (x, y, w, h) = cv2.boundingRect(p)
-
-                recognized.append(
-                    QRRecognizerResult(
-                        text=text, bbox=[x, y, w, h], polygon=[*p.flatten(), *p[0]]
-                    )
+                
+            recognized = [
+                QRRecognizerResult(
+                    text=text,
+                    bbox=cv2.boundingRect(point),
+                    polygon=self._get_ploygon(point),
                 )
+                for text, point in zip(decoded, points)
+            ]
 
+        else:
+            recognized = []
+        
         return recognized
 
     def _detect(self, image: object) -> Tuple[float, Optional[np.ndarray]]:
@@ -142,3 +143,13 @@ class OpenCVQRRecongnizer(QRRecognizer):
             _, decoded, _ = self.detector.decodeMulti(image, points)
 
         return decoded
+    
+    def _get_ploygon(self, points: np.ndarray) -> List[int]:
+        """Convert a list of points to a polygon.
+
+        :param points: Points around the QR code
+
+        :return: Polygon
+        """
+
+        return [*points.flatten(), *points[0]]

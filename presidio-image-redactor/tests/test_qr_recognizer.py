@@ -25,7 +25,7 @@ def test_given_image_with_qr_then_opencvqrrecognizer_returns_expected_results(
     assert len(recognized) == 1
     assert recognized[0] == QRRecognizerResult(
         text="https://github.com/microsoft/presidio",
-        bbox=[71, 71, 1013, 1013],
+        bbox=(71, 71, 1013, 1013),
         polygon=[71, 71, 1083, 71, 1083, 1083, 71, 1083, 71, 71],
     )
 
