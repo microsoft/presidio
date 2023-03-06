@@ -172,7 +172,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :return: Detected PHI with no duplicate entities.
         """
         dups = []
-        results_no_dups = results.copy()
+        sorted(results, key=lambda x: x['score'], reverse=True)
+        results_no_dups = []
         dims = ["left", "top", "width", "height"]
 
         # Check for duplicates
@@ -181,7 +182,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
             # Ignore if we've already detected this dup combination
             for other in range(i + 1, len(results)):
-                if i not in dups:
+                if i not in results_no_dups:
                     other_dims = {dim: results[other][dim] for dim in dims}
                     matching_dims = {
                         dim: abs(i_dims[dim] - other_dims[dim]) <= dup_pix_tolerance
@@ -190,11 +191,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                     matching = list(matching_dims.values())
 
                     if all(matching):
-                        dups.append(other)
+                        lower_scored_index = other if \
+                            results[other]['score'] < results[i]['score'] else i
+                        dups.append(lower_scored_index)
 
         # Remove duplicates
-        for dup_index in sorted(dups, reverse=True):
-            del results_no_dups[dup_index]
+        for i in range(len(results)):
+            if i not in dups:
+                results_no_dups.append(results[i])
 
         return results_no_dups
 
@@ -235,7 +239,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
                 )
 
         # Remove any duplicates
-        all_pos = self._remove_duplicate_entities(all_pos, 0)
+        all_pos = self._remove_duplicate_entities(all_pos)
 
         return all_pos
 

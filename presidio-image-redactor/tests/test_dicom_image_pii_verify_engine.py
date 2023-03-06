@@ -266,11 +266,11 @@ def test_eval_dicom_instance_happy_path(
             999,
             [
                 {
-                    "entity_type": "DATE_TIME",
-                    "score": 0.6,
-                    "left": 613,
-                    "top": 26,
-                    "width": 226,
+                    "entity_type": "PERSON",
+                    "score": 1.0,
+                    "left": 170,
+                    "top": 72,
+                    "width": 218,
                     "height": 35,
                 }
             ],
@@ -305,12 +305,12 @@ def test_eval_dicom_instance_happy_path(
             5,
             [
                 {
-                    "entity_type": "DATE_TIME",
-                    "score": 0.6,
-                    "left": 123,
-                    "top": 17,
-                    "width": 100,
-                    "height": 50,
+                    "entity_type": "PERSON",
+                    "score": 1.0,
+                    "left": 127,
+                    "top": 14,
+                    "width": 98,
+                    "height": 55,
                 },
                 {
                     "entity_type": "PHONE_NUMBER",
@@ -420,7 +420,7 @@ def test_remove_duplicate_entities_happy_path(
                 },
                 {
                     "label": "DOUGLAS",
-                    "score": 1.0,
+                    "score": 0.85,
                     "left": 287,
                     "top": 25,
                     "width": 230,
