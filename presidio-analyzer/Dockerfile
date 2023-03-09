@@ -4,6 +4,7 @@ ARG NAME
 ARG NLP_CONF_FILE=conf/default.yaml
 ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIP_NO_CACHE_DIR=1
+ENV HBPORT=24488
 WORKDIR /usr/bin/${NAME}
 
 COPY ./Pipfile* /usr/bin/${NAME}/
@@ -16,6 +17,7 @@ RUN pipenv run python install_nlp_models.py --conf_file ${NLP_CONF_FILE}
 
 COPY . /usr/bin/${NAME}/
 EXPOSE ${PORT}
+EXPOSE ${HBPORT}
 
 RUN apt update --fix-missing && apt upgrade -y
 RUN apt install -y netcat net-tools

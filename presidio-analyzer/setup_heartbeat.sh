@@ -1,10 +1,9 @@
 pipenv run python app.py --host 0.0.0.0 &
 
-export HB_PORT=24488
-echo Heartbeat port: $HB_PORT
+echo Heartbeat port: $HBPORT
 
 function hasHeartbeat {
-  c=$(netstat -an | grep ${HB_PORT} | grep -i ESTABLISHED)
+  c=$(netstat -an | grep ${HBPORT} | grep -i ESTABLISHED)
   if [[ -n $c ]]; then
     echo yes
   else
@@ -14,7 +13,7 @@ function hasHeartbeat {
 }
 
 function hasListener {
-  c=$(netstat -an | grep ${HB_PORT} | grep -i LISTEN)
+  c=$(netstat -an | grep ${HBPORT} | grep -i LISTEN)
   if [[ -n $c ]]; then
     echo yes
   else
@@ -25,7 +24,7 @@ function hasListener {
 function heartbeat_loop {
   pkill nc
   sleep 1
-  while :; do sleep 1; done | nc -l ${HB_PORT} > /dev/null 2>&1 &
+  while :; do sleep 1; done | nc -l ${HBPORT} > /dev/null 2>&1 &
 
   # 5 Second wait before proceeding
   echo 5 second sleep...
