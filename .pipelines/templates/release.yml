@@ -114,6 +114,7 @@ stages:
                 DOCKER_COMPOSE_FILE: 'docker-compose-image.yml'
 
   - stage: DeployProd
+    condition: false
     dependsOn: Release
     variables:
       REGISTRY_NAME: 'mcr.microsoft.com/'
