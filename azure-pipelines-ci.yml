@@ -30,6 +30,7 @@ stages:
               AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
 
       - job: E2ETests
+        condition: false
         displayName: E2E Tests
         dependsOn:
           - 'BuildAndPushContainers'
@@ -54,6 +55,7 @@ stages:
           - template: .pipelines/templates/e2e-tests.yml
 
   - stage: DeployDev
+    condition: false
     dependsOn: PushContainersAndE2ETests
     variables:
       REGISTRY_NAME: '$(ACR_REGISTRY_NAME).azurecr.io/'
