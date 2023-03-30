@@ -7,6 +7,8 @@
 # Declarations
 declare SynapseWorkspaceName="YOURWORKSPACENAME"
 declare TenantId="TENANTID"
+declare SubscriptionId="SUBSCRIPTIONID"
+
 sudo apt-get install python3-setuptools
 sudo apt-get update
 sudo apt-get install python3-pip
@@ -21,17 +23,20 @@ wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-pr
 sudo dpkg -i packages-microsoft-prod.deb
 sudo apt-get update
 sudo apt-get install -y powershell
-Install-Module -Name Az.Synapse
-# Login to your Azure subscription using device flow
-echo "Connect-AzAccount -UseDeviceAuthentication -TenantId $TenantId" > upload.ps1
-# If necessary specify the subscription
-# Select-AzSubscription -Default [SUBSCRIPTION_NAME]
+
+# install Synapse module
+pwsh -Command Install-Module -Name Az.Synapse
+
+# Adds a line to the powershell script to connect to your Azure subscription using device flow
+echo "Connect-AzAccount -UseDeviceAuthentication -TenantId $TenantId -SubscriptionId $SubscriptionId" > upload.ps1
+
 # Generate the list of packages to upload
 for i in *.whl; do echo "New-AzSynapseWorkspacePackage -WorkspaceName $SynapseWorkspaceName -Package $i"; done >> upload.ps1
 
 # Download the language pack. Note this may take some time
 wget -q https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.4.0/en_core_web_lg-3.4.0-py3-none-any.whl
+# Add another entry for the desired language model. This could also be invoked by running python -m spacy download en_core_web_lg
 echo "New-AzSynapseWorkspacePackage -WorkspaceName $SynapseWorkspaceName -Package en_core_web_lg-3.4.0-py3-none-any.whl" >> upload.ps1
 
-# Run the upload, this may take some time
+# Run the upload, note that you will be prompted to connect and authenticate to your subscription using devicelogin url and code. The upload process may take some time.
 pwsh upload.ps1
