@@ -6,7 +6,7 @@
 
 # Declarations
 declare SynapseWorkspaceName="YOURWORKSPACENAME"
-
+declare TenantId="TENANTID"
 sudo apt-get install python3-setuptools
 sudo apt-get update
 sudo apt-get install python3-pip
@@ -23,11 +23,11 @@ sudo apt-get update
 sudo apt-get install -y powershell
 Install-Module -Name Az.Synapse
 # Login to your Azure subscription using device flow
-Connect-AzAccount -UseDeviceAuthentication
+echo "Connect-AzAccount -UseDeviceAuthentication -TenantId $TenantId" > upload.ps1
 # If necessary specify the subscription
 # Select-AzSubscription -Default [SUBSCRIPTION_NAME]
 # Generate the list of packages to upload
-for i in *.whl; do echo "New-AzSynapseWorkspacePackage -WorkspaceName $SynapseWorkspaceName -Package $i"; done > upload.ps1
+for i in *.whl; do echo "New-AzSynapseWorkspacePackage -WorkspaceName $SynapseWorkspaceName -Package $i"; done >> upload.ps1
 
 # Download the language pack. Note this may take some time
 wget -q https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.4.0/en_core_web_lg-3.4.0-py3-none-any.whl
