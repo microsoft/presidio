@@ -1,0 +1,643 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.15.31.15270",
+      "templateHash": "12911277302404547420"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the location for all resources."
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "(Optional) Specifies the resource tags to apply to all resources."
+      }
+    },
+    "synapseName": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the name of the synapse workspace."
+      }
+    },
+    "administratorUsername": {
+      "type": "string",
+      "defaultValue": "SqlServerMainUser",
+      "metadata": {
+        "description": "(Optional) Specifies the administrator username of the synapse workspace."
+      }
+    },
+    "administratorPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the administrator password of the synapse workspace."
+      }
+    },
+    "synapseSqlAdminGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the AAD admin group name for the synapse workspace."
+      }
+    },
+    "synapseSqlAdminGroupObjectID": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the AAD admin group object ID for the synapse workspace."
+      }
+    },
+    "storageName": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the name of the storage account."
+      }
+    },
+    "storageSkuName": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "(Optional) Specifies the sku name of the storage account."
+      },
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_GZRS",
+        "Standard_RAGRS",
+        "Standard_RAGZRS",
+        "Premium_LRS",
+        "Premium_ZRS"
+      ]
+    },
+    "subnetId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the resource id of the subnet to use for private endpoints."
+      }
+    },
+    "privateDnsZoneIdSynapseSql": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the private DNS zone for synapse sql."
+      }
+    },
+    "privateDnsZoneIdSynapseDev": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the private DNS zone for synapse dev."
+      }
+    },
+    "privateDnsZoneIdBlob": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the private DNS zone for storage blob."
+      }
+    },
+    "privateDnsZoneIdDfs": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the private DNS zone for storage dfs."
+      }
+    },
+    "purviewId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "(Optional) Specifies the resource ID of the Purview account."
+      }
+    },
+    "enableSqlPool": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "(Optional) Specifies whether a synapse dedicated sql pool should be deployed."
+      }
+    }
+  },
+  "variables": {
+    "storageNameCleaned": "[replace(parameters('storageName'), '-', '')]",
+    "storagePrivateEndpointNameBlob": "[format('{0}-blob-pe', variables('storageNameCleaned'))]",
+    "storagePrivateEndpointNameDfs": "[format('{0}-dfs-pe', variables('storageNameCleaned'))]",
+    "synapsePrivateEndpointNameSql": "[format('{0}-sql-pe', parameters('synapseName'))]",
+    "synapsePrivateEndpointNameSqlOnDemand": "[format('{0}-sqlondemand-pe', parameters('synapseName'))]",
+    "synapsePrivateEndpointNameDev": "[format('{0}-dev-pe', parameters('synapseName'))]",
+    "storageContainerNames": [
+      "default"
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('storageNameCleaned')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "sku": {
+        "name": "[parameters('storageSkuName')]"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "allowedCopyScope": "AAD",
+        "allowBlobPublicAccess": false,
+        "allowCrossTenantReplication": false,
+        "allowSharedKeyAccess": true,
+        "defaultToOAuthAuthentication": true,
+        "encryption": {
+          "keySource": "Microsoft.Storage",
+          "requireInfrastructureEncryption": false,
+          "services": {
+            "blob": {
+              "enabled": true,
+              "keyType": "Account"
+            },
+            "file": {
+              "enabled": true,
+              "keyType": "Account"
+            },
+            "queue": {
+              "enabled": true,
+              "keyType": "Service"
+            },
+            "table": {
+              "enabled": true,
+              "keyType": "Service"
+            }
+          }
+        },
+        "isLocalUserEnabled": false,
+        "isSftpEnabled": false,
+        "isHnsEnabled": true,
+        "isNfsV3Enabled": false,
+        "keyPolicy": {
+          "keyExpirationPeriodInDays": 7
+        },
+        "largeFileSharesState": "Disabled",
+        "minimumTlsVersion": "TLS1_2",
+        "networkAcls": {
+          "bypass": "Metrics",
+          "defaultAction": "Deny",
+          "ipRules": [],
+          "virtualNetworkRules": []
+        },
+        "publicNetworkAccess": "Enabled",
+        "routingPreference": {
+          "routingChoice": "MicrosoftRouting",
+          "publishInternetEndpoints": false,
+          "publishMicrosoftEndpoints": false
+        },
+        "supportsHttpsTrafficOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2021-02-01",
+      "name": "[format('{0}/{1}', variables('storageNameCleaned'), 'default')]",
+      "properties": {
+        "containerDeleteRetentionPolicy": {
+          "enabled": true,
+          "days": 7
+        },
+        "cors": {
+          "corsRules": []
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameCleaned'))]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "storageContainers",
+        "count": "[length(variables('storageContainerNames'))]"
+      },
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2021-02-01",
+      "name": "[format('{0}/{1}/{2}', variables('storageNameCleaned'), 'default', variables('storageContainerNames')[copyIndex()])]",
+      "properties": {
+        "publicAccess": "None",
+        "metadata": {}
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageNameCleaned'), 'default')]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('subnetId')))]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('storagePrivateEndpointNameBlob')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "applicationSecurityGroups": [],
+        "customDnsConfigs": [],
+        "customNetworkInterfaceName": "[format('{0}-nic', variables('storagePrivateEndpointNameBlob'))]",
+        "ipConfigurations": [],
+        "manualPrivateLinkServiceConnections": [],
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('storagePrivateEndpointNameBlob')]",
+            "properties": {
+              "groupIds": [
+                "blob"
+              ],
+              "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameCleaned'))]",
+              "requestMessage": ""
+            }
+          }
+        ],
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameCleaned'))]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('subnetId'))), not(empty(parameters('privateDnsZoneIdBlob'))))]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}/{1}', variables('storagePrivateEndpointNameBlob'), 'default')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[format('{0}-arecord', variables('storagePrivateEndpointNameBlob'))]",
+            "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneIdBlob')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('storagePrivateEndpointNameBlob'))]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('subnetId')))]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('storagePrivateEndpointNameDfs')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "applicationSecurityGroups": [],
+        "customDnsConfigs": [],
+        "customNetworkInterfaceName": "[format('{0}-nic', variables('storagePrivateEndpointNameDfs'))]",
+        "ipConfigurations": [],
+        "manualPrivateLinkServiceConnections": [],
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('storagePrivateEndpointNameDfs')]",
+            "properties": {
+              "groupIds": [
+                "dfs"
+              ],
+              "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameCleaned'))]",
+              "requestMessage": ""
+            }
+          }
+        ],
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameCleaned'))]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('subnetId'))), not(empty(parameters('privateDnsZoneIdDfs'))))]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}/{1}', variables('storagePrivateEndpointNameDfs'), 'default')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[format('{0}-arecord', variables('storagePrivateEndpointNameDfs'))]",
+            "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneIdDfs')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('storagePrivateEndpointNameDfs'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Synapse/workspaces",
+      "apiVersion": "2021-06-01",
+      "name": "[parameters('synapseName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "azureADOnlyAuthentication": true,
+        "defaultDataLakeStorage": {
+          "accountUrl": "[format('https://{0}.dfs.{1}', variables('storageNameCleaned'), environment().suffixes.storage)]",
+          "filesystem": "[variables('storageContainerNames')[0]]",
+          "createManagedPrivateEndpoint": true,
+          "resourceId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameCleaned'))]"
+        },
+        "managedResourceGroupName": "[parameters('synapseName')]",
+        "managedVirtualNetwork": "default",
+        "managedVirtualNetworkSettings": {
+          "allowedAadTenantIdsForLinking": [],
+          "linkedAccessCheckOnTargetResource": true,
+          "preventDataExfiltration": true
+        },
+        "publicNetworkAccess": "Disabled",
+        "purviewConfiguration": "[if(empty(parameters('purviewId')), createObject(), createObject('purviewResourceId', parameters('purviewId')))]",
+        "sqlAdministratorLogin": "[parameters('administratorUsername')]",
+        "sqlAdministratorLoginPassword": "[if(equals(parameters('administratorPassword'), ''), null(), parameters('administratorPassword'))]",
+        "virtualNetworkProfile": {
+          "computeSubnetId": ""
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageNameCleaned'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('storageNameCleaned'), 'default', variables('storageContainerNames')[0])]"
+      ]
+    },
+    {
+      "condition": "[parameters('enableSqlPool')]",
+      "type": "Microsoft.Synapse/workspaces/sqlPools",
+      "apiVersion": "2021-06-01",
+      "name": "[format('{0}/{1}', parameters('synapseName'), 'sqlPool001')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "DW100c"
+      },
+      "properties": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "createMode": "Default",
+        "storageAccountType": "GRS"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Synapse/workspaces/bigDataPools",
+      "apiVersion": "2021-06-01",
+      "name": "[format('{0}/{1}', parameters('synapseName'), 'bigDataPool001')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "autoPause": {
+          "enabled": true,
+          "delayInMinutes": 15
+        },
+        "autoScale": {
+          "enabled": true,
+          "minNodeCount": 3,
+          "maxNodeCount": 10
+        },
+        "customLibraries": [],
+        "defaultSparkLogFolder": "logs/",
+        "dynamicExecutorAllocation": {
+          "enabled": true,
+          "minExecutors": 1,
+          "maxExecutors": 9
+        },
+        "nodeSize": "Small",
+        "nodeSizeFamily": "MemoryOptimized",
+        "sessionLevelPackagesEnabled": true,
+        "sparkEventsFolder": "events/",
+        "sparkVersion": "3.2"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Synapse/workspaces/managedIdentitySqlControlSettings",
+      "apiVersion": "2021-06-01",
+      "name": "[format('{0}/{1}', parameters('synapseName'), 'default')]",
+      "properties": {
+        "grantSqlControlToManagedIdentity": {
+          "desiredState": "Enabled"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('synapseSqlAdminGroupName'))), not(empty(parameters('synapseSqlAdminGroupObjectID'))))]",
+      "type": "Microsoft.Synapse/workspaces/administrators",
+      "apiVersion": "2021-06-01",
+      "name": "[format('{0}/{1}', parameters('synapseName'), 'activeDirectory')]",
+      "properties": {
+        "administratorType": "ActiveDirectory",
+        "login": "[parameters('synapseSqlAdminGroupName')]",
+        "sid": "[parameters('synapseSqlAdminGroupObjectID')]",
+        "tenantId": "[subscription().tenantId]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('subnetId')))]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('synapsePrivateEndpointNameSql')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "applicationSecurityGroups": [],
+        "customDnsConfigs": [],
+        "customNetworkInterfaceName": "[format('{0}-nic', variables('synapsePrivateEndpointNameSql'))]",
+        "ipConfigurations": [],
+        "manualPrivateLinkServiceConnections": [],
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('synapsePrivateEndpointNameSql')]",
+            "properties": {
+              "groupIds": [
+                "Sql"
+              ],
+              "privateLinkServiceId": "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]",
+              "requestMessage": ""
+            }
+          }
+        ],
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('subnetId'))), not(empty(parameters('privateDnsZoneIdSynapseSql'))))]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}/{1}', variables('synapsePrivateEndpointNameSql'), 'default')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[format('{0}-arecord', variables('synapsePrivateEndpointNameSql'))]",
+            "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneIdSynapseSql')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('synapsePrivateEndpointNameSql'))]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('subnetId')))]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('synapsePrivateEndpointNameSqlOnDemand')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "applicationSecurityGroups": [],
+        "customDnsConfigs": [],
+        "customNetworkInterfaceName": "[format('{0}-nic', variables('synapsePrivateEndpointNameSqlOnDemand'))]",
+        "ipConfigurations": [],
+        "manualPrivateLinkServiceConnections": [],
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('synapsePrivateEndpointNameSqlOnDemand')]",
+            "properties": {
+              "groupIds": [
+                "SqlOnDemand"
+              ],
+              "privateLinkServiceId": "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]",
+              "requestMessage": ""
+            }
+          }
+        ],
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('subnetId'))), not(empty(parameters('privateDnsZoneIdSynapseSql'))))]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}/{1}', variables('synapsePrivateEndpointNameSqlOnDemand'), 'default')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[format('{0}-arecord', variables('synapsePrivateEndpointNameSqlOnDemand'))]",
+            "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneIdSynapseSql')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('synapsePrivateEndpointNameSqlOnDemand'))]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('subnetId')))]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('synapsePrivateEndpointNameDev')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "applicationSecurityGroups": [],
+        "customDnsConfigs": [],
+        "customNetworkInterfaceName": "[format('{0}-nic', variables('synapsePrivateEndpointNameDev'))]",
+        "ipConfigurations": [],
+        "manualPrivateLinkServiceConnections": [],
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('synapsePrivateEndpointNameDev')]",
+            "properties": {
+              "groupIds": [
+                "Dev"
+              ],
+              "privateLinkServiceId": "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]",
+              "requestMessage": ""
+            }
+          }
+        ],
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+      ]
+    },
+    {
+      "condition": "[and(not(empty(parameters('subnetId'))), not(empty(parameters('privateDnsZoneIdSynapseDev'))))]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}/{1}', variables('synapsePrivateEndpointNameDev'), 'default')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[format('{0}-arecord', variables('synapsePrivateEndpointNameDev'))]",
+            "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneIdSynapseDev')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('synapsePrivateEndpointNameDev'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "synapseId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseName'))]"
+    },
+    "synapseName": {
+      "type": "string",
+      "value": "[parameters('synapseName')]"
+    },
+    "synapseBigDataPool001Id": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Synapse/workspaces/bigDataPools', parameters('synapseName'), 'bigDataPool001')]"
+    },
+    "synapseBigDataPool001Name": {
+      "type": "string",
+      "value": "bigDataPool001"
+    },
+    "synapseSqlPool001Name": {
+      "type": "string",
+      "value": "sqlPool001"
+    }
+  }
+}
