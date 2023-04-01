@@ -14,9 +14,6 @@
         "administratorUsername": {
             "value": "SqlServerMainUser"
         },
-        "administratorPassword": {
-            "value": ""
-        },
         "storageName": {
             "value": ""
         }
