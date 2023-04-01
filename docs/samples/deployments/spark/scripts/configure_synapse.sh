@@ -24,11 +24,11 @@ sudo dpkg -i packages-microsoft-prod.deb
 sudo apt-get update
 sudo apt-get install -y powershell
 
-# install Synapse module
+# Install pwsh modules for Synapse and Accounts
 pwsh -Command Install-Module -Name Az.Accounts
 pwsh -Command Install-Module -Name Az.Synapse
 
-# Adds a line to the powershell script to connect to your Azure subscription using device flow
+# Add a line to the powershell script to connect to your Azure subscription using device flow
 echo "Connect-AzAccount -UseDeviceAuthentication -TenantId $TenantId -SubscriptionId $SubscriptionId" > upload.ps1
 
 # Generate the list of packages to upload
