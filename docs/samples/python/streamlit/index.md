@@ -3,15 +3,15 @@ Here's a simple app, written in pure Python, to create a demo website for Presid
 The app is based on the [streamlit](https://streamlit.io/) package.
 
 ## Requirements
-1. Install dependencies (preferably in a virtual environment)
+1. Clone the repo / download the `streamlit` folder
+2. Install dependencies (preferably in a virtual environment)
 
 ```sh
-pip install streamlit pandas presidio-analyzer presidio-anonymizer
+pip install -r requirements.txt
 ```
 
-2. Download the [presidio_streamlit.py](presidio_streamlit.py) file.
 3. *Optional*: Update the `analyzer_engine` and `anonymizer_engine` functions for your specific implementation 
-3. Start the app:
+4. Start the app:
 
 ```sh
 streamlit run presidio_streamlit.py
