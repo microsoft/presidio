@@ -1,0 +1,7 @@
+presidio-analyzer
+presidio-anonymizer
+streamlit
+pandas
+st-annotated-text
+torch
+transformers
