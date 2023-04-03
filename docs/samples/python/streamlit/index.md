@@ -19,4 +19,4 @@ streamlit run presidio_streamlit.py
 
 ## Output
 Output should be similar to this screenshot:
-![image](https://user-images.githubusercontent.com/3776619/120109161-efe21080-c170-11eb-8a29-9eaf71e722ee.png)
+![image](https://user-images.githubusercontent.com/3776619/229591761-849d368e-49a8-4e71-890d-3407bca7a011.png)
