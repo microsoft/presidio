@@ -1,18 +1,16 @@
 """Streamlit app for Presidio."""
 
-import json
-import webbrowser
 from json import JSONEncoder
 from typing import List
 
 import pandas as pd
 import spacy
 import streamlit as st
+from annotated_text import annotated_text
 from presidio_analyzer import AnalyzerEngine, RecognizerResult, RecognizerRegistry
-from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
-from annotated_text import annotated_text
 
 from transformers_rec import (
     STANFORD_COFIGURATION,
@@ -142,19 +140,18 @@ def annotate(text: str, analyze_results: List[RecognizerResult]):
             tokens.append(text[: res.start])
 
         # append entity text and entity type
-        tokens.append((text[res.start : res.end], res.entity_type))
+        tokens.append((text[res.start: res.end], res.entity_type))
 
         # if another entity coming i.e. we're not at the last results element, add text up to next entity
         if i != len(results) - 1:
-            tokens.append(text[res.end : results[i + 1].start])
+            tokens.append(text[res.end: results[i + 1].start])
         # if no more entities coming, add all remaining text
         else:
-            tokens.append(text[res.end :])
+            tokens.append(text[res.end:])
     return tokens
 
 
 st.set_page_config(page_title="Presidio demo", layout="wide")
-
 
 # Sidebar
 st.sidebar.header(
@@ -168,17 +165,14 @@ st.sidebar.info(
     "[Code](https://aka.ms/presidio) | "
     "[Tutorial](https://microsoft.github.io/presidio/tutorial/) | "
     "[Installation](https://microsoft.github.io/presidio/installation/) | "
-    "[FAQ](https://microsoft.github.io/presidio/faq/)", icon="ℹ️"
+    "[FAQ](https://microsoft.github.io/presidio/faq/)",
+    icon="ℹ️",
 )
-
 
 st.sidebar.markdown(
     "[![Pypi Downloads](https://img.shields.io/pypi/dm/presidio-analyzer.svg)](https://img.shields.io/pypi/dm/presidio-analyzer.svg)"
-
     "[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)"
-
     "![GitHub Repo stars](https://img.shields.io/github/stars/microsoft/presidio?style=social)"
-
 )
 
 st_model = st.sidebar.selectbox(
@@ -198,7 +192,6 @@ st_operator = st.sidebar.selectbox(
     index=1,
 )
 
-
 if st_operator == "mask":
     st_number_of_chars = st.sidebar.number_input(
         "number of chars", value=15, min_value=0, max_value=100
@@ -206,7 +199,6 @@ if st_operator == "mask":
     st_mask_char = st.sidebar.text_input("Mask character", value="*", max_chars=1)
 elif st_operator == "encrypt":
     st_encrypt_key = st.sidebar.text_input("AES key", value="WmZq4t7w!z%C&F)J")
-
 
 st_threshold = st.sidebar.slider(
     label="Acceptance threshold", min_value=0.0, max_value=1.0, value=0.35
@@ -216,13 +208,11 @@ st_return_decision_process = st.sidebar.checkbox(
     "Add analysis explanations to findings", value=False
 )
 
-
 st_entities = st.sidebar.multiselect(
     label="Which entities to look for?",
     options=get_supported_entities(),
     default=list(get_supported_entities()),
 )
-
 
 # Main panel
 analyzer_load_state = st.info("Starting Presidio analyzer...")
@@ -232,7 +222,6 @@ analyzer_load_state.empty()
 # Read default text
 with open("demo_text.txt") as f:
     demo_text = f.readlines()
-
 
 # Create two columns for before and after
 col1, col2 = st.columns(2)
@@ -276,10 +265,12 @@ class ToDictEncoder(JSONEncoder):
 
 
 # table result
-st.subheader("Findings" if not st_return_decision_process else "Findings with decision factors")
+st.subheader(
+    "Findings" if not st_return_decision_process else "Findings with decision factors"
+)
 if st_analyze_results:
     df = pd.DataFrame.from_records([r.to_dict() for r in st_analyze_results])
-    df["text"] = [st_text[res.start : res.end] for res in st_analyze_results]
+    df["text"] = [st_text[res.start: res.end] for res in st_analyze_results]
 
     df_subset = df[["entity_type", "text", "start", "end", "score"]].rename(
         {
@@ -291,7 +282,7 @@ if st_analyze_results:
         },
         axis=1,
     )
-    df_subset["Text"] = [st_text[res.start : res.end] for res in st_analyze_results]
+    df_subset["Text"] = [st_text[res.start: res.end] for res in st_analyze_results]
     if st_return_decision_process:
         analysis_explanation_df = pd.DataFrame.from_records(
             [r.analysis_explanation.to_dict() for r in st_analyze_results]
@@ -300,7 +291,3 @@ if st_analyze_results:
     st.dataframe(df_subset.reset_index(drop=True), use_container_width=True)
 else:
     st.text("No findings")
-
-# JSON output
-# st.subheader("JSON response")
-# st.json(json.dumps(st_analyze_results, cls=ToDictEncoder))
