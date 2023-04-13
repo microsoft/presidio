@@ -2,6 +2,8 @@
 Here's a simple app, written in pure Python, to create a demo website for Presidio.
 The app is based on the [streamlit](https://streamlit.io/) package.
 
+> Note: To see a live version of this app, visit [https://huggingface.co/spaces/presidio/presidio_demo](https://huggingface.co/spaces/presidio/presidio_demo).
+
 ## Requirements
 1. Clone the repo / download the `streamlit` folder
 2. Install dependencies (preferably in a virtual environment)
