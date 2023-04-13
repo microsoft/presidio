@@ -35,15 +35,12 @@ def analyzer_engine(model_path: str):
 
     # Set up NLP Engine according to the model of choice
     if model_path == "en_core_web_lg":
-        if not spacy.util.is_package("en_core_web_lg"):
-            spacy.cli.download("en_core_web_lg")
+
         nlp_configuration = {
             "nlp_engine_name": "spacy",
             "models": [{"lang_code": "en", "model_name": "en_core_web_lg"}],
         }
     else:
-        if not spacy.util.is_package("en_core_web_sm"):
-            spacy.cli.download("en_core_web_sm")
         # Using a small spaCy model + a HF NER model
         transformers_recognizer = TransformersRecognizer(model_path=model_path)
 
