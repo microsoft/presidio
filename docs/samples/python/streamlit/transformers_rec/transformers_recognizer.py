@@ -1,3 +1,5 @@
+Modified from https://github.com/microsoft/presidio/blob/main/docs/samples/python/transformers_recognizer/transformer_recognizer.py
+
 import copy
 import logging
 from typing import Optional, List
