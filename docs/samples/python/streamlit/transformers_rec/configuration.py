@@ -1,3 +1,5 @@
+## Taken from https://github.com/microsoft/presidio/blob/main/docs/samples/python/transformers_recognizer/configuration.py
+
 STANFORD_COFIGURATION = {
     "DEFAULT_MODEL_PATH": "StanfordAIMI/stanford-deidentifier-base",
     "PRESIDIO_SUPPORTED_ENTITIES": [
