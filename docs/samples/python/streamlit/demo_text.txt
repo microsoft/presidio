@@ -1,4 +1,4 @@
-Here are a few examples sentences we currently support:
+Here are a few example sentences we currently support:
 
 Hello, my name is David Johnson and I live in Maine.
 My credit card number is 4095-2609-9393-4932 and my crypto wallet id is 16Yeky6GMjeNkAiNcBY7ZhrLoMSgg1BoyZ.

@@ -5,3 +5,5 @@ pandas
 st-annotated-text
 torch
 transformers
+flair
+openai
