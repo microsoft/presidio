@@ -10,8 +10,8 @@ class BatchAnonymizerEngine(AnonymizerEngine):
     """
     BatchAnonymizerEngine class.
 
-    Class inheriting from the AnonymizerEngine, with additional functionality
-    for anonymizing lists or dictionaries.
+    Class inheriting from the AnonymizerEngine, with additional anonymize functionality
+    for lists and dictionaries.
     """
 
     def anonymize_list(
@@ -68,11 +68,11 @@ class BatchAnonymizerEngine(AnonymizerEngine):
                 return_dict[result.key] = resp.text
 
             elif isinstance(result.value, collections.abc.Iterable):
-                anonymize_respones = self.anonymize_list(
+                anonymize_response = self.anonymize_list(
                                      texts=result.value,
                                      recognizer_results_list=result.recognizer_results,
                                      **kwargs)
-                return_dict[result.key] = anonymize_respones
+                return_dict[result.key] = anonymize_response
             else:
                 return_dict[result.key] = result.value
         return return_dict
