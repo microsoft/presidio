@@ -1,6 +1,6 @@
 import pytest
 
-from presidio_anonymizer.operators import Redact
+from presidio_anonymizer.operators import Keep
 
 
 @pytest.mark.parametrize(
@@ -13,9 +13,9 @@ from presidio_anonymizer.operators import Redact
     # fmt: on
 )
 def test_given_value_for_redact_then_we_return_empty_value(params):
-    text = Redact().operate("bla", params)
-    assert text == ""
+    text = Keep().operate("bla", params)
+    assert text == "bla"
 
 
 def test_when_validate_anonymizer_then_correct_name():
-    assert Redact().operator_name() == "redact"
+    assert Keep().operator_name() == "keep"
