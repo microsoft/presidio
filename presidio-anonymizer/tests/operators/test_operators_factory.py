@@ -7,7 +7,15 @@ from presidio_anonymizer.operators import OperatorsFactory, OperatorType
 def test_given_anonymizers_list_then_all_classes_are_there():
     anonymizers = OperatorsFactory.get_anonymizers()
     assert len(anonymizers) == 7
-    for class_name in ["hash", "mask", "redact", "replace", "encrypt", "custom", "keep"]:
+    for class_name in [
+        "hash",
+        "mask",
+        "redact",
+        "replace",
+        "encrypt",
+        "custom",
+        "keep",
+    ]:
         assert anonymizers.get(class_name)
 
 

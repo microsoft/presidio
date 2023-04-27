@@ -306,7 +306,7 @@ def test_keep_name():
 
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
-    
+
 
 @pytest.mark.api
 def test_overlapping_keep_first():
@@ -325,7 +325,7 @@ def test_overlapping_keep_first():
     """
 
     response_status, response_content = anonymize(request_body)
-    
+
     expected_response = """
     {
         "text": "I'm George Washington<LOCATION>", 
@@ -338,7 +338,7 @@ def test_overlapping_keep_first():
 
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
-    
+
 
 @pytest.mark.api
 def test_overlapping_keep_second():
@@ -370,7 +370,8 @@ def test_overlapping_keep_second():
 
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
-    
+
+
 @pytest.mark.api
 def test_overlapping_keep_both():
     request_body = """
