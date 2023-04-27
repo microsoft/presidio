@@ -12,7 +12,7 @@ from presidio_anonymizer.operators import Keep
     ],
     # fmt: on
 )
-def test_given_value_for_redact_then_we_return_empty_value(params):
+def when_given_valid_value_then_same_string_returned(params):
     text = Keep().operate("bla", params)
     assert text == "bla"
 
