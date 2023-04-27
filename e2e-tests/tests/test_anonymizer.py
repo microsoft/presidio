@@ -274,3 +274,129 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
 
     decrypted_text = json.loads(decrypted_text_response)["text"]
     assert decrypted_text == text_for_encryption
+
+
+@pytest.mark.api
+def test_keep_name():
+    request_body = """
+    {
+        "text": "hello world, my name is Jane Doe. My number is: 034453334",
+        "anonymizers": {
+            "NAME": { "type": "keep"},
+            "PHONE_NUMBER": { "type": "replace" }
+        },
+        "analyzer_results": [
+            { "start": 24, "end": 32, "score": 0.80, "entity_type": "NAME" },
+            { "start": 48, "end": 57, "score": 0.95, "entity_type": "PHONE_NUMBER" }
+        ]
+    }
+    """
+
+    response_status, response_content = anonymize(request_body)
+
+    expected_response = """
+    {
+        "text": "hello world, my name is Jane Doe. My number is: <PHONE_NUMBER>", 
+        "items": [
+            {"operator": "replace", "entity_type": "PHONE_NUMBER", "start": 48, "end": 62, "text":"<PHONE_NUMBER>"}, 
+            {"operator": "keep", "entity_type": "NAME", "start": 24, "end": 32, "text":"Jane Doe"}
+        ]
+    }
+    """
+
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+    
+
+@pytest.mark.api
+def test_overlapping_keep_first():
+    request_body = """
+    {
+        "text": "I'm George Washington Square Park",
+        "anonymizers": {
+            "NAME": { "type": "keep"},
+            "LOCATION": { "type": "replace" }
+        },
+        "analyzer_results": [
+            { "start": 4, "end": 21, "score": 0.80, "entity_type": "NAME" },
+            { "start": 11, "end": 33, "score": 0.80, "entity_type": "LOCATION" }
+        ]
+    }
+    """
+
+    response_status, response_content = anonymize(request_body)
+    
+    expected_response = """
+    {
+        "text": "I'm George Washington<LOCATION>", 
+        "items": [
+            {"operator": "replace", "entity_type": "LOCATION", "start": 21, "end": 31, "text":"<LOCATION>"}, 
+            {"operator": "keep", "entity_type": "NAME", "start": 4, "end": 21, "text":"George Washington"}
+        ]
+    }
+    """
+
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+    
+
+@pytest.mark.api
+def test_overlapping_keep_second():
+    request_body = """
+    {
+        "text": "I'm George Washington Square Park",
+        "anonymizers": {
+            "NAME": { "type": "replace"},
+            "LOCATION": { "type": "keep" }
+        },
+        "analyzer_results": [
+            { "start": 4, "end": 21, "score": 0.80, "entity_type": "NAME" },
+            { "start": 11, "end": 33, "score": 0.80, "entity_type": "LOCATION" }
+        ]
+    }
+    """
+
+    response_status, response_content = anonymize(request_body)
+
+    expected_response = """
+    {
+        "text": "I'm <NAME>Washington Square Park", 
+        "items": [
+            {"operator": "keep", "entity_type": "LOCATION", "start": 10, "end": 32, "text":"Washington Square Park"}, 
+            {"operator": "replace", "entity_type": "NAME", "start": 4, "end": 10, "text":"<NAME>"}
+        ]
+    }
+    """
+
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
+    
+@pytest.mark.api
+def test_overlapping_keep_both():
+    request_body = """
+    {
+        "text": "I'm George Washington Square Park",
+        "anonymizers": {
+            "DEFAULT": { "type": "keep" }
+        },
+        "analyzer_results": [
+            { "start": 4, "end": 21, "score": 0.80, "entity_type": "NAME" },
+            { "start": 11, "end": 33, "score": 0.80, "entity_type": "LOCATION" }
+        ]
+    }
+    """
+
+    response_status, response_content = anonymize(request_body)
+
+    expected_response = """
+    {
+        "text": "I'm George WashingtonWashington Square Park", 
+        "items": [
+            {"operator": "keep", "entity_type": "LOCATION", "start": 21, "end": 43, "text":"Washington Square Park"}, 
+            {"operator": "keep", "entity_type": "NAME", "start": 4, "end": 21, "text":"George Washington"}
+        ]
+    }
+    """
+
+    assert response_status == 200
+    assert equal_json_strings(expected_response, response_content)
