@@ -1,5 +1,5 @@
 import collections
-from typing import List, Dict, Union, Iterable
+from typing import List, Dict, Union, Iterable, Optional
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import DictRecognizerResult
@@ -11,9 +11,10 @@ class BatchAnonymizerEngine:
     BatchAnonymizerEngine class.
 
     A class that provides functionality to anonymize in batches.
+    :param anonymizer_engine: An instance of the AnonymizerEngine class.
     """
 
-    def __init__(self, anonymizer_engine: AnonymizerEngine = None):
+    def __init__(self, anonymizer_engine: Optional[AnonymizerEngine] = None):
         self.anonymizer_engine = anonymizer_engine or AnonymizerEngine()
 
     def anonymize_list(
