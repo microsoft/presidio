@@ -59,3 +59,18 @@ def test_given_analzyer_kwargs_then_different_entities_are_redacted():
     assert not compare_images(redacted_image_no_args, redacted_image_entities_args)
     assert not compare_images(redacted_image_no_args, redacted_image_score_args)
     assert not compare_images(redacted_image_entities_args, redacted_image_score_args)
+
+
+def test_given_qr_image_with_pii_then_qr_bbox_is_redacted(qr_image_analyzer_engine):
+    # QR image with PII entities
+    image = get_resource_image("qr.png")
+    result_image = get_resource_image("qr_redacted.png")
+    redacted_image = ImageRedactorEngine(image_analyzer_engine=qr_image_analyzer_engine).redact(image)
+    assert compare_images(redacted_image, result_image)
+
+
+def test_given_qr_image_without_pii_then_image_does_not_change(qr_image_analyzer_engine):
+    # QR image without PII entities
+    image = get_resource_image("qr_no_pii.png")
+    redacted_image = ImageRedactorEngine(image_analyzer_engine=qr_image_analyzer_engine).redact(image)
+    assert compare_images(redacted_image, image)

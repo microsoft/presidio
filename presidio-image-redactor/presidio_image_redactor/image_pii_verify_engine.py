@@ -1,9 +1,10 @@
 from PIL import Image, ImageChops
 from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
+from presidio_image_redactor import QRImageAnalyzerEngine
 import matplotlib
 import io
 from matplotlib import pyplot as plt
-from typing import Optional
+from typing import Optional, Union
 
 
 def fig2img(fig):
@@ -19,7 +20,10 @@ def fig2img(fig):
 class ImagePiiVerifyEngine:
     """ImagePiiVerifyEngine class only supporting Pii verification currently."""
 
-    def __init__(self, image_analyzer_engine: Optional[ImageAnalyzerEngine] = None):
+    def __init__(
+        self,
+        image_analyzer_engine: Union[ImageAnalyzerEngine, QRImageAnalyzerEngine] = None,
+    ):
         if not image_analyzer_engine:
             image_analyzer_engine = ImageAnalyzerEngine()
         self.image_analyzer_engine = image_analyzer_engine
@@ -42,9 +46,12 @@ class ImagePiiVerifyEngine:
 
         image = ImageChops.duplicate(image)
         image_x, image_y = image.size
-        bboxes = self.image_analyzer_engine.analyze(
-            image, ocr_kwargs, **text_analyzer_kwargs
-        )
+        if isinstance(self.image_analyzer_engine, QRImageAnalyzerEngine):
+            bboxes = self.image_analyzer_engine.analyze(image, **text_analyzer_kwargs)
+        else:
+            bboxes = self.image_analyzer_engine.analyze(
+                image, ocr_kwargs, **text_analyzer_kwargs
+            )
         fig, ax = plt.subplots()
         image_r = 70
         fig.set_size_inches(image_x / image_r, image_y / image_r)

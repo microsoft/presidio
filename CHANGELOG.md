@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file.
 #### Anonymizer
 * Added `keep`, an no-op anonymizer that allows preserving some types of PII while keeping track of its position in anonymized output.
 
+### Added
+#### Image redactor
+* Added abstract class `QRRecognizer` for QR code recognizers
+* Added `OpenCVQRRecongnizer` which uses OpenCV to recognize QR codes
+* Added `QRImageAnalyzerEngine` which uses `QRRecognizer` for QR code recognition and `AnalyzerEngine` to analyze its contents for PII entities
+
+### Changed
+#### Image redactor
+* Modified `ImagePiiVerifyEngine` and `ImageRedactorEngine` to allow using `QRImageAnalyzerEngine` as an alternative to `ImageAnalyzerEngine`
+
 ## [2.2.32] - 25.01.2023
 ### Changed
 #### General

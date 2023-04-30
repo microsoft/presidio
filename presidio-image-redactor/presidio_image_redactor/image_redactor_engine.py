@@ -2,7 +2,11 @@ from typing import Union, Tuple, Optional
 
 from PIL import Image, ImageDraw, ImageChops
 
-from presidio_image_redactor import ImageAnalyzerEngine, BboxProcessor
+from presidio_image_redactor import (
+    ImageAnalyzerEngine,
+    QRImageAnalyzerEngine,
+    BboxProcessor,
+)
 
 
 class ImageRedactorEngine:
@@ -11,7 +15,10 @@ class ImageRedactorEngine:
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
 
-    def __init__(self, image_analyzer_engine: ImageAnalyzerEngine = None):
+    def __init__(
+        self,
+        image_analyzer_engine: Union[ImageAnalyzerEngine, QRImageAnalyzerEngine] = None,
+    ):
         if not image_analyzer_engine:
             self.image_analyzer_engine = ImageAnalyzerEngine()
         else:
@@ -42,9 +49,12 @@ class ImageRedactorEngine:
 
         image = ImageChops.duplicate(image)
 
-        bboxes = self.image_analyzer_engine.analyze(
-            image, ocr_kwargs, **text_analyzer_kwargs
-        )
+        if isinstance(self.image_analyzer_engine, QRImageAnalyzerEngine):
+            bboxes = self.image_analyzer_engine.analyze(image, **text_analyzer_kwargs)
+        else:
+            bboxes = self.image_analyzer_engine.analyze(
+                image, ocr_kwargs, **text_analyzer_kwargs
+            )
         draw = ImageDraw.Draw(image)
 
         for box in bboxes:
