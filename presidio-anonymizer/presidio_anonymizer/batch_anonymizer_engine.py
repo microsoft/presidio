@@ -1,18 +1,21 @@
-from typing import List, Dict, Union, Iterable
 import collections
+from typing import List, Dict, Union, Iterable
 
-from presidio_anonymizer.entities import DictRecognizerResult
 from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import DictRecognizerResult
 from presidio_anonymizer.entities import EngineResult, RecognizerResult
 
 
-class BatchAnonymizerEngine(AnonymizerEngine):
+class BatchAnonymizerEngine:
     """
     BatchAnonymizerEngine class.
 
     Class inheriting from the AnonymizerEngine, with additional anonymize functionality
     for lists and dictionaries.
     """
+
+    def __init__(self, anonymizer_engine: AnonymizerEngine = None):
+        self.anonymizer_engine = anonymizer_engine or AnonymizerEngine()
 
     def anonymize_list(
         self,
@@ -33,7 +36,7 @@ class BatchAnonymizerEngine(AnonymizerEngine):
             recognizer_results_list = [[] for _ in range(len(texts))]
         for text, recognizer_results in zip(texts, recognizer_results_list):
             if type(text) in (str, bool, int, float):
-                res = self.anonymize(
+                res = self.anonymizer_engine.anonymize(
                     text=str(text), analyzer_results=recognizer_results, **kwargs
                 )
                 return_list.append(res.text)
@@ -62,7 +65,7 @@ class BatchAnonymizerEngine(AnonymizerEngine):
                 return_dict[result.key] = resp
 
             elif isinstance(result.value, str):
-                resp = self.anonymize(
+                resp = self.anonymizer_engine.anonymize(
                     text=result.value,
                     analyzer_results=result.recognizer_results,
                     **kwargs
