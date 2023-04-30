@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+#### Anonymizer
+* Added `keep`, an no-op anonymizer that allows preserving some types of PII while keeping track of its position in anonymized output.
 
 ## [2.2.32] - 25.01.2023
 ### Changed

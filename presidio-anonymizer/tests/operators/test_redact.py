@@ -13,7 +13,7 @@ from presidio_anonymizer.operators import Redact
     # fmt: on
 )
 def test_given_value_for_redact_then_we_return_empty_value(params):
-    text = Redact().operate("", params)
+    text = Redact().operate("bla", params)
     assert text == ""
 
 
