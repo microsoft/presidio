@@ -10,8 +10,7 @@ class BatchAnonymizerEngine:
     """
     BatchAnonymizerEngine class.
 
-    Class inheriting from the AnonymizerEngine, with additional anonymize functionality
-    for lists and dictionaries.
+    A class that provides functionality to anonymize in batches.
     """
 
     def __init__(self, anonymizer_engine: AnonymizerEngine = None):
