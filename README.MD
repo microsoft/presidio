@@ -29,6 +29,8 @@ Presidio _(Origin from Latin praesidium ‘protection, garrison’)_ helps to en
 
 ### :question: [Frequently Asked Questions](docs/faq.md)
 
+### :thought_balloon: [Demo](https://aka.ms/presidio-demo)
+
 ### :flight_departure: [Examples](https://microsoft.github.io/presidio/samples/)
 
 ---

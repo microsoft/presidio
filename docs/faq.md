@@ -61,6 +61,7 @@ Based on our internal research, leveraging Presidio in parallel to 3rd party PII
 
 1. Check out the [installation docs](https://microsoft.github.io/presidio/installation/).
 2. Take a look at the [different samples](https://microsoft.github.io/presidio/samples/).
+3. Try the [demo website](https://aka.ms/presidio-demo).
 
 ### What are the main building blocks in Presidio?
 
