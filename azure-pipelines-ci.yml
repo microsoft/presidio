@@ -30,7 +30,6 @@ stages:
               AZURE_SUBSCRIPTION: $(ACR_AZURE_SUBSCRIPTION)
 
       - job: E2ETests
-        condition: false
         displayName: E2E Tests
         dependsOn:
           - 'BuildAndPushContainers'

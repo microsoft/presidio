@@ -24,7 +24,6 @@ steps:
           IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
           TAG=${{ parameters.TAG }}
   - task: DockerCompose@0
-    condition: false
     displayName: Push Presidio Images to ACR
     inputs:
         action: Push services
