@@ -2,8 +2,8 @@
 import logging
 from typing import List, Dict, Optional
 
-from presidio_anonymizer.entities import OperatorConfig, RecognizerResult, EngineResult
 from presidio_anonymizer.core import EngineBase
+from presidio_anonymizer.entities import OperatorConfig, RecognizerResult, EngineResult
 from presidio_anonymizer.operators import OperatorType
 
 DEFAULT = "replace"
@@ -23,10 +23,10 @@ class AnonymizerEngine(EngineBase):
         EngineBase.__init__(self)
 
     def anonymize(
-        self,
-        text: str,
-        analyzer_results: List[RecognizerResult],
-        operators: Optional[Dict[str, OperatorConfig]] = None,
+            self,
+            text: str,
+            analyzer_results: List[RecognizerResult],
+            operators: Optional[Dict[str, OperatorConfig]] = None,
     ) -> EngineResult:
         """Anonymize method to anonymize the given text.
 
@@ -83,7 +83,7 @@ class AnonymizerEngine(EngineBase):
         return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
 
     def _remove_conflicts_and_get_text_manipulation_data(
-        self, analyzer_results: List[RecognizerResult]
+            self, analyzer_results: List[RecognizerResult]
     ) -> List[RecognizerResult]:
         """
         Iterate the list and create a sorted unique results list from it.
@@ -152,7 +152,7 @@ class AnonymizerEngine(EngineBase):
 
     @staticmethod
     def __check_or_add_default_operator(
-        operators: Dict[str, OperatorConfig]
+            operators: Dict[str, OperatorConfig]
     ) -> Dict[str, OperatorConfig]:
         default_operator = OperatorConfig(DEFAULT)
         if not operators:

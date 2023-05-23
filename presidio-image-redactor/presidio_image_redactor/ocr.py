@@ -5,10 +5,11 @@ class OCR(ABC):
     """OCR class that performs OCR on a given image."""
 
     @abstractmethod
-    def perform_ocr(self, image: object) -> dict:
+    def perform_ocr(self, image: object, **kwargs) -> dict:
         """Perform OCR on a given image.
 
         :param image: PIL Image/numpy array or file path(str) to be processed
+        :param kwargs: Additional values for perform OCR method
 
         :return: results dictionary containing bboxes and text for each detected word
         """

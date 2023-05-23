@@ -45,7 +45,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 |FieldType|Description|Detection Method|
 |--- |--- |--- |
-|NIF| A spanish NIF number (Personal tax ID) .|Pattern match, context and checksum|
+|ES_NIF| A spanish NIF number (Personal tax ID) .|Pattern match, context and checksum|
 
 ### Italy
 
@@ -61,7 +61,7 @@ For more information, refer to the [adding new recognizers documentation](analyz
 
 |FieldType|Description|Detection Method|
 |--- |--- |--- |
-|FIN/NRIC| A National Registration Identification Card | Pattern match and context |
+|SG_NRIC_FIN| A National Registration Identification Card | Pattern match and context |
 
 ### Australia
 

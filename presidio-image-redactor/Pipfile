@@ -10,7 +10,7 @@ presidio-analyzer = ">=2.2.0"
 pillow = ">=9.0"
 pydicom = ">=2.3.0"
 pypng = ">=0.20220715.0"
-matplotlib = ">=3.3.4"
+matplotlib = "==3.6.2"
 typing-extensions = "*"
 
 [dev-packages]

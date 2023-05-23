@@ -19,24 +19,32 @@ def fig2img(fig):
 class ImagePiiVerifyEngine:
     """ImagePiiVerifyEngine class only supporting Pii verification currently."""
 
-    def __init__(self, analyzer_engine: Optional[ImageAnalyzerEngine] = None):
-        if not analyzer_engine:
-            analyzer_engine = ImageAnalyzerEngine()
-        self.analyzer_engine = analyzer_engine
+    def __init__(self, image_analyzer_engine: Optional[ImageAnalyzerEngine] = None):
+        if not image_analyzer_engine:
+            image_analyzer_engine = ImageAnalyzerEngine()
+        self.image_analyzer_engine = image_analyzer_engine
 
-    def verify(self, image: Image) -> Image:
+    def verify(
+        self, image: Image, ocr_kwargs: Optional[dict] = None, **text_analyzer_kwargs
+    ) -> Image:
         """Annotate image with the detect PII entity.
 
-        Please notice, this method duplicates the image, creates a new instance and
-        manipulate it.
+        Please notice, this method duplicates the image, creates a
+        new instance and manipulate it.
 
-        :param image: PIL Image to be processed
+        :param image: PIL Image to be processed.
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in ImageAnalyzerEngine.
+
         :return: the annotated image
         """
 
         image = ImageChops.duplicate(image)
         image_x, image_y = image.size
-        bboxes = self.analyzer_engine.analyze(image)
+        bboxes = self.image_analyzer_engine.analyze(
+            image, ocr_kwargs, **text_analyzer_kwargs
+        )
         fig, ax = plt.subplots()
         image_r = 70
         fig.set_size_inches(image_x / image_r, image_y / image_r)
@@ -50,11 +58,7 @@ class ImagePiiVerifyEngine:
                 x1 = x0 + box.width
                 y1 = y0 + box.height
                 rect = matplotlib.patches.Rectangle(
-                    (x0, y0),
-                    x1 - x0,
-                    y1 - y0,
-                    edgecolor="b",
-                    facecolor="none"
+                    (x0, y0), x1 - x0, y1 - y0, edgecolor="b", facecolor="none"
                 )
                 ax.add_patch(rect)
                 ax.annotate(

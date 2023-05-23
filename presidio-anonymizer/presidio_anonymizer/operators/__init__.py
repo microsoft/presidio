@@ -5,6 +5,7 @@ from .mask import Mask
 from .redact import Redact
 from .replace import Replace
 from .custom import Custom
+from .keep import Keep
 from .encrypt import Encrypt
 from .decrypt import Decrypt
 from .aes_cipher import AESCipher
@@ -16,6 +17,7 @@ __all__ = [
     "Hash",
     "Mask",
     "Redact",
+    "Keep",
     "Replace",
     "Custom",
     "Encrypt",

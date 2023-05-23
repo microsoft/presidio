@@ -10,11 +10,13 @@
 | Usage       | Python                                | [Passing a lambda as a Presidio anonymizer using Faker](python/example_custom_lambda_anonymizer.py)                                             |
 | Usage       | Python Notebook                       | [Encrypting and Decrypting identified entities](python/encrypt_decrypt.ipynb)                                                           |
 | Usage       | Python Notebook                       | [Analyzing structured / semi-structured data in batch](python/batch_processing.ipynb)                                                           |
+| Usage       | Python                                | [Analyze and Anonymize CSV file](python/process_csv_file.py)                                                           |
 | Usage       | Python Notebook                       | [Getting the identified entity value using a custom Operator](python/getting_entity_values.ipynb)                                               |
 | Usage       | Python                                | [Using Flair as an external PII model](python/flair_recognizer.py)                                               |
-| Usage       | Python                                | [Using Transformers as an external PII model](python/transformers_recognizer.py)                                               |
+| Usage       | Python                                | [Using Transformers as an external PII model](python/transformers_recognizer/index.md)                                               |
 | Usage       | Python Notebook                       | [Anonymizing known values](python/Anonymizing%20known%20values.ipynb)
 | Usage       | Python Notebook                       | [Redacting text PII from DICOM images](python/example_dicom_image_redactor.ipynb)
+| Usage       | Python Notebook                       | [Annotating PII in a PDF](python/example_pdf_annotation.ipynb)
 | Usage       | REST API (postman)                    | [Presidio as a REST endpoint](docker/index.md)                                              |
 | Deployment  | App Service                           | [Presidio with App Service](deployments/app-service/index.md)                                                                                   |
 | Deployment  | Kubernetes                            | [Presidio with Kubernetes](deployments/k8s/index.md)                                                                                            |
