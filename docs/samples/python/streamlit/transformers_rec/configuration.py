@@ -13,7 +13,8 @@ STANFORD_COFIGURATION = {
         "DEVICE",
         "ZIP",
         "PROFESSION",
-        "USERNAME"
+        "USERNAME",
+        "ID"
 
     ],
     "LABELS_TO_IGNORE": ["O"],
@@ -24,8 +25,8 @@ STANFORD_COFIGURATION = {
         "DOCTOR": "PERSON",
         "PATIENT": "PERSON",
         "HOSPITAL": "LOCATION",
-        "MEDICALRECORD": "O",
-        "IDNUM": "O",
+        "MEDICALRECORD": "ID",
+        "IDNUM": "ID",
         "ORGANIZATION": "ORGANIZATION",
         "ZIP": "ZIP",
         "PHONE": "PHONE_NUMBER",
@@ -57,6 +58,8 @@ STANFORD_COFIGURATION = {
     },
     "CHUNK_OVERLAP_SIZE": 40,
     "CHUNK_SIZE": 600,
+    "ID_SCORE_MULTIPLIER": 0.4,
+    "ID_ENTITY_NAME": "ID"
 }
 
 
@@ -72,6 +75,7 @@ BERT_DEID_CONFIGURATION = {
         "ZIP",
         "PROFESSION",
         "USERNAME",
+        "ID"
     ],
     "DEFAULT_MODEL_PATH": "obi/deid_roberta_i2b2",
     "LABELS_TO_IGNORE": ["O"],
@@ -104,7 +108,7 @@ BERT_DEID_CONFIGURATION = {
         "LOC": "LOCATION",
         "ORG": "ORGANIZATION",
         "AGE": "AGE",
-        "ID": "O",
+        "ID": "ID",
         "EMAIL": "EMAIL",
         "PATIENT": "PERSON",
         "STAFF": "PERSON",
@@ -115,4 +119,6 @@ BERT_DEID_CONFIGURATION = {
     },
     "CHUNK_OVERLAP_SIZE": 40,
     "CHUNK_SIZE": 600,
+    "ID_SCORE_MULTIPLIER": 0.4,
+    "ID_ENTITY_NAME": "ID"
 }
