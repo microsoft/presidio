@@ -3,7 +3,7 @@ import shutil
 from copy import deepcopy
 import tempfile
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps
 import pydicom
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import PIL
@@ -335,13 +335,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 # Handle transparency as needed
                 r, g, b, a = image.split()
                 rgb_image = Image.merge("RGB", (r, g, b))
-                inverted_image = PIL.ImageOps.invert(rgb_image)
+                inverted_image = ImageOps.invert(rgb_image)
                 r2, g2, b2 = inverted_image.split()
 
                 image = Image.merge("RGBA", (r2, g2, b2, a))
 
             else:
-                image = PIL.ImageOps.invert(image)
+                image = ImageOps.invert(image)
 
         # Get background color
         if is_greyscale:
