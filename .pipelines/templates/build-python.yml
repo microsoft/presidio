@@ -20,6 +20,7 @@ steps:
           script: |
               set -eux  # fail on error
               # Install pytest and run tests
+              export HOME=/home
               pipenv install --dev --skip-lock pytest-azurepipelines
               pipenv run pytest -vv
 
