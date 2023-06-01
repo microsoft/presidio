@@ -41,7 +41,7 @@ class PresidioCLIConfig(object):
 
         :param filepath: Path of file to be processed.
         """
-        return self.ignore and self.ignore.match_file(filepath)
+        return self.ignore and filepath and self.ignore.match_file(filepath)
 
     def is_text_file(
         self,

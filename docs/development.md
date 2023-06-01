@@ -87,14 +87,14 @@ pipenv lock
 
 Lock considerations:
 
-1. Consider running `pipenv lock` on a Python 3.7 environment. Using Python 3.7 makes sure the lock would apply to all Python versions supported by Presidio (3.7 and on).
+1. Consider running `pipenv lock` on a Python 3.8 environment. Using Python 3.7 makes sure the lock would apply to all Python versions supported by Presidio (3.7 and on).
 2. Consider locking on mac/linux and not Windows to support all platforms. In windows you can use [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
-For example, use conda to create a Python 3.7 environment:
+For example, use conda to create a Python 3.8 environment:
 
 ```sh
-conda create -n presidio_37 python=3.7
-conda activate presidio_37
+conda create -n presidio_38 python=3.8
+conda activate presidio_38
 # in the package's directory:
 pipenv lock
 ```
