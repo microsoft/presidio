@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 * Added `BatchAnonymizerEngine` to complement the `BatchAnalyzerEngine` for lists, and dicts (#993)
 
 ### General
+* Drop support for Python 3.7
+* Add support for Python 3.11
 * New demo app for Presidio, based on Streamlit (#1054)
 * GPT based synthetic data generation (#1051)
 
