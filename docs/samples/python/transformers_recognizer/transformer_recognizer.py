@@ -336,8 +336,9 @@ class TransformersRecognizer(EntityRecognizer):
 
 if __name__ == "__main__":
 
-    from configuration import BERT_DEID_CONFIGURATION
     from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+    from presidio_analyzer.nlp_engine import NlpEngineProvider
+    import spacy
 
     model_path = "obi/deid_roberta_i2b2"
     supported_entities = BERT_DEID_CONFIGURATION.get(
@@ -351,7 +352,20 @@ if __name__ == "__main__":
     # Add transformers model to the registry
     registry = RecognizerRegistry()
     registry.add_recognizer(transformers_recognizer)
-    analyzer = AnalyzerEngine(registry=registry)
+    registry.remove_recognizer("SpacyRecognizer")
+
+    # Use small spacy model, for faster inference.
+    if not spacy.util.is_package("en_core_web_sm"):
+        spacy.cli.download("en_core_web_sm")
+
+    nlp_configuration = {
+        "nlp_engine_name": "spacy",
+        "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+    }
+
+    nlp_engine = NlpEngineProvider(nlp_configuration=nlp_configuration).create_engine()
+
+    analyzer = AnalyzerEngine(registry=registry, nlp_engine = nlp_engine)
 
     sample = "My name is John and I live in NY"
     results = analyzer.analyze(sample, language="en",
