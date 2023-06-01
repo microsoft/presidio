@@ -76,17 +76,24 @@ class FlairRecognizer(EntityRecognizer):
         supported_entities: Optional[List[str]] = None,
         check_label_groups: Optional[Tuple[Set, Set]] = None,
         model: SequenceTagger = None,
+        model_path: Optional[str] = None
     ):
         self.check_label_groups = (
             check_label_groups if check_label_groups else self.CHECK_LABEL_GROUPS
         )
 
         supported_entities = supported_entities if supported_entities else self.ENTITIES
-        self.model = (
-            model
-            if model
-            else SequenceTagger.load(self.MODEL_LANGUAGES.get(supported_language))
-        )
+
+        if model and model_path:
+            raise ValueError("Only one of model or model_path should be provided.")
+        elif model and not model_path:
+            self.model = model
+        elif not model and model_path:
+            print(f"Loading model from {model_path}")
+            self.model = SequenceTagger.load(model_path)
+        else:
+            print(f"Loading model for language {supported_language}")
+            self.model = SequenceTagger.load(self.MODEL_LANGUAGES.get(supported_language))
 
         super().__init__(
             supported_entities=supported_entities,
