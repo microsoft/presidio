@@ -365,7 +365,7 @@ if __name__ == "__main__":
 
     nlp_engine = NlpEngineProvider(nlp_configuration=nlp_configuration).create_engine()
 
-    analyzer = AnalyzerEngine(registry=registry, nlp_engine = nlp_engine)
+    analyzer = AnalyzerEngine(registry=registry, nlp_engine=nlp_engine)
 
     sample = "My name is John and I live in NY"
     results = analyzer.analyze(sample, language="en",
