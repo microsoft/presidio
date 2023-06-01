@@ -3,9 +3,16 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [2.2.33] - June 1st 2023
 ### Added
 #### Anonymizer
-* Added `keep`, an no-op anonymizer that allows preserving some types of PII while keeping track of its position in anonymized output.
+* Added `keep`, an no-op anonymizer that allows preserving some types of PII while keeping track of its position in anonymized output. (#1062)
+* Added `BatchAnonymizerEngine` to complement the `BatchAnalyzerEngine` for lists, and dicts (#993)
+
+### General
+* New demo app for Presidio, based on Streamlit (#1054)
+* GPT based synthetic data generation (#1051)
 
 ## [2.2.32] - 25.01.2023
 ### Changed
@@ -229,7 +236,8 @@ Upgrade Analyzer spacy version to 3.0.5
 #### Deanonymize:
 New endpoint for deanonymizing encrypted entities by the anonymizer.
 
-[unreleased]: https://github.com/microsoft/presidio/compare/2.2.32...HEAD
+[unreleased]: https://github.com/microsoft/presidio/compare/2.2.33...HEAD
+[2.2.33]: https://github.com/microsoft/presidio/compare/2.2.32...2.2.33
 [2.2.32]: https://github.com/microsoft/presidio/compare/2.2.31...2.2.32
 [2.2.31]: https://github.com/microsoft/presidio/compare/2.2.30...2.2.31
 [2.2.30]: https://github.com/microsoft/presidio/compare/2.2.29...2.2.30
