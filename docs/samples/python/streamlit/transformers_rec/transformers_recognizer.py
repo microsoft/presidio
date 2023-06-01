@@ -1,4 +1,4 @@
-Modified from https://github.com/microsoft/presidio/blob/main/docs/samples/python/transformers_recognizer/transformer_recognizer.py
+# Modified from https://github.com/microsoft/presidio/blob/main/docs/samples/python/transformers_recognizer/transformer_recognizer.py
 
 import copy
 import logging
@@ -92,6 +92,8 @@ class TransformersRecognizer(EntityRecognizer):
         self.default_explanation = None
         self.text_overlap_length = None
         self.chunk_length = None
+        self.id_entity_name = None
+        self.id_score_reduction = None
 
     def load_transformer(self, **kwargs) -> None:
         """Load external configuration parameters and set default values.
@@ -106,6 +108,8 @@ class TransformersRecognizer(EntityRecognizer):
         **CHUNK_SIZE (int) - number of characters in each chunk of text
         **LABELS_TO_IGNORE (List(str)) - List of entities to skip evaluation. Defaults to ["O"]
         **DEFAULT_EXPLANATION (str) - string format to use for prediction explanations
+        **ID_ENTITY_NAME (str) - name of the ID entity
+        **ID_SCORE_REDUCTION (float) - score multiplier for ID entities
         """
 
         self.entity_mapping = kwargs.get("DATASET_TO_PRESIDIO_MAPPING", {})
@@ -115,6 +119,9 @@ class TransformersRecognizer(EntityRecognizer):
         self.default_explanation = kwargs.get("DEFAULT_EXPLANATION", None)
         self.text_overlap_length = kwargs.get("CHUNK_OVERLAP_SIZE", 40)
         self.chunk_length = kwargs.get("CHUNK_SIZE", 600)
+        self.id_entity_name = kwargs.get("ID_ENTITY_NAME", "ID")
+        self.id_score_reduction = kwargs.get("ID_SCORE_REDUCTION", 0.5)
+
         if not self.pipeline:
             if not self.model_path:
                 self.model_path = "obi/deid_roberta_i2b2"
@@ -167,11 +174,14 @@ class TransformersRecognizer(EntityRecognizer):
         ner_results = self._get_ner_results_for_text(text)
 
         for res in ner_results:
-            entity = self.model_to_presidio_mapping.get(res["entity_group"], None)
-            if not entity:
+            res["entity_group"] = self.__check_label_transformer(res["entity_group"])
+            if not res["entity_group"]:
                 continue
 
-            res["entity_group"] = self.__check_label_transformer(res["entity_group"])
+            if res["entity_group"] == self.id_entity_name:
+                print(f"ID entity found, multiplying score by {self.id_score_reduction}")
+                res["score"] = res["score"] * self.id_score_reduction
+
             textual_explanation = self.default_explanation.format(res["entity_group"])
             explanation = self.build_transformers_explanation(
                 float(round(res["score"], 2)), textual_explanation, res["word"]
@@ -227,28 +237,31 @@ class TransformersRecognizer(EntityRecognizer):
         # calculate inputs based on the text
         text_length = len(text)
         # split text into chunks
-        logger.info(
-            f"splitting the text into chunks, length {text_length} > {model_max_length*2}"
-        )
-        predictions = list()
-        chunk_indexes = TransformersRecognizer.split_text_to_word_chunks(
-            text_length, self.chunk_length, self.text_overlap_length
-        )
+        if text_length <= model_max_length:
+            predictions = self.pipeline(text)
+        else:
+            logger.info(
+                f"splitting the text into chunks, length {text_length} > {model_max_length}"
+            )
+            predictions = list()
+            chunk_indexes = TransformersRecognizer.split_text_to_word_chunks(
+                text_length, self.chunk_length, self.text_overlap_length
+                )
 
-        # iterate over text chunks and run inference
-        for chunk_start, chunk_end in chunk_indexes:
-            chunk_text = text[chunk_start:chunk_end]
-            chunk_preds = self.pipeline(chunk_text)
+            # iterate over text chunks and run inference
+            for chunk_start, chunk_end in chunk_indexes:
+                chunk_text = text[chunk_start:chunk_end]
+                chunk_preds = self.pipeline(chunk_text)
 
-            # align indexes to match the original text - add to each position the value of chunk_start
-            aligned_predictions = list()
-            for prediction in chunk_preds:
-                prediction_tmp = copy.deepcopy(prediction)
-                prediction_tmp["start"] += chunk_start
-                prediction_tmp["end"] += chunk_start
-                aligned_predictions.append(prediction_tmp)
+                # align indexes to match the original text - add to each position the value of chunk_start
+                aligned_predictions = list()
+                for prediction in chunk_preds:
+                    prediction_tmp = copy.deepcopy(prediction)
+                    prediction_tmp["start"] += chunk_start
+                    prediction_tmp["end"] += chunk_start
+                    aligned_predictions.append(prediction_tmp)
 
-            predictions.extend(aligned_predictions)
+                predictions.extend(aligned_predictions)
 
         # remove duplicates
         predictions = [dict(t) for t in {tuple(d.items()) for d in predictions}]
@@ -300,27 +313,24 @@ class TransformersRecognizer(EntityRecognizer):
         )
         return explanation
 
-    def __check_label_transformer(self, label: str) -> str:
+    def __check_label_transformer(self, label: str) -> Optional[str]:
         """The function validates the predicted label is identified by Presidio
         and maps the string into a Presidio representation
         :param label: Predicted label by the model
-        :type label: str
-        :return: Returns the predicted entity if the label is found in model_to_presidio mapping dictionary
-        and is supported by Presidio entities
-        :rtype: str
+        :return: Returns the adjusted entity name
         """
-
-        if label == "O":
-            return label
 
         # convert model label to presidio label
         entity = self.model_to_presidio_mapping.get(label, None)
 
+        if entity in self.ignore_labels:
+            return None
+
         if entity is None:
-            logger.warning(f"Found unrecognized label {label}, returning entity as 'O'")
-            return "O"
+            logger.warning(f"Found unrecognized label {label}, returning entity as is")
+            return label
 
         if entity not in self.supported_entities:
             logger.warning(f"Found entity {entity} which is not supported by Presidio")
-            return "O"
+            return entity
         return entity
