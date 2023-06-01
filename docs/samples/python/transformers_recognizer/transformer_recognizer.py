@@ -24,12 +24,12 @@ try:
     )
 
 except ImportError:
-    logger.error("transformers_rec is not installed")
+    logger.error("transformers is not installed")
 
 
 class TransformersRecognizer(EntityRecognizer):
     """
-    Wrapper for a transformers_rec model, if needed to be used within Presidio Analyzer.
+    Wrapper for a transformers model, if needed to be used within Presidio Analyzer.
     The class loads models hosted on HuggingFace - https://huggingface.co/
     and loads the model and tokenizer into a TokenClassification pipeline.
     Samples are split into short text chunks, ideally shorter than max_length input_ids of the individual model,
@@ -130,7 +130,7 @@ class TransformersRecognizer(EntityRecognizer):
         self._load_pipeline()
 
     def _load_pipeline(self) -> None:
-        """Initialize NER transformers_rec pipeline using the model_path provided"""
+        """Initialize NER transformers pipeline using the model_path provided"""
 
         logging.debug(f"Initializing NER pipeline using {self.model_path} path")
         device = 0 if torch.cuda.is_available() else -1
@@ -154,17 +154,17 @@ class TransformersRecognizer(EntityRecognizer):
         """
         return self.supported_entities
 
-    # Class to use transformers_rec with Presidio as an external recognizer.
+    # Class to use transformers with Presidio as an external recognizer.
     def analyze(
         self, text: str, entities: List[str], nlp_artifacts: NlpArtifacts = None
     ) -> List[RecognizerResult]:
         """
-        Analyze text using transformers_rec model to produce NER tagging.
+        Analyze text using transformers model to produce NER tagging.
         :param text : The text for analysis.
         :param entities: Not working properly for this recognizer.
         :param nlp_artifacts: Not used by this recognizer.
         :return: The list of Presidio RecognizerResult constructed from the recognized
-            transformers_rec detections.
+            transformers detections.
         """
 
         results = list()
