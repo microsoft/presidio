@@ -5,7 +5,7 @@ from os import path
 
 from setuptools import setup, find_packages
 
-test_requirements = ["pytest>=3", "flake8==3.7.9", "flask==1.1.2"]
+test_requirements = ["pytest>=3", "flake8==3.7.9", "flask==2.2.5"]
 
 __version__ = ""
 this_directory = path.abspath(path.dirname(__file__))
