@@ -3,4 +3,4 @@
 ::: presidio_anonymizer
     handler: python
     selection:
-      docstring_style: restructured-text
+      docstring_style: sphinx

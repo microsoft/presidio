@@ -1,11 +1,10 @@
 mkdocs
 mkdocs-material
-mkdocs-jupyter
-pymdown-extensions<9.4
+mknotebooks
+pymdown-extensions
 markdown
-mkdocstrings[python-legacy]
+mkdocstrings-python
 presidio_analyzer
 presidio_anonymizer
 presidio_image_redactor
-jupyter_contrib_nbextensions
-pygments>=2.10,<2.12
+pygments>=2.10

@@ -134,4 +134,4 @@ vendor/
 .idea
 
 #mkdocs
-/mkdocs
+mkdocs/
