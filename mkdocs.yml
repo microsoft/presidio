@@ -84,7 +84,7 @@ plugins:
 - mknotebooks:
     binder: true
     binder_service_name: "gh"
-    binder_branch: "master"
+    binder_branch: "main"
     binder_ui: "lab"
 
 extra:
