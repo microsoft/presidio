@@ -14,7 +14,7 @@ For tools and documentation on evaluating and analyzing recognizers, refer to th
     When contributing recognizers to the Presidio OSS,
     new predefined recognizers should be added to the
     [supported entities list](../supported_entities.md),
-    and follow the [contribution guidelines](https://github.com/microsoft/presidio/blob/main/CONTRIBUTING.MD).
+    and follow the [contribution guidelines](https://github.com/microsoft/presidio/blob/main/CONTRIBUTING.md).
 
 ### Performance
 
