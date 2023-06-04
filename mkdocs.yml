@@ -55,6 +55,7 @@ nav:
   - Samples: samples/index.md
   - Community: community.md
   - FAQ: faq.md
+  - Demo: https://huggingface.co/spaces/presidio/presidio_demo" target="_blank
 theme:
   name: material
   custom_dir: overrides
@@ -75,10 +76,16 @@ theme:
     # - navigation.tabs.sticky
 plugins:
 - search
-- mkdocstrings
-- mkdocs-jupyter:
-    include_source: True
-    include: ["*.ipynb"]
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          docstring_style: sphinx
+- mknotebooks:
+    binder: true
+    binder_service_name: "gh"
+    binder_branch: "main"
+    binder_ui: "lab"
 
 extra:
   social:
