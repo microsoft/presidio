@@ -1,0 +1,36 @@
+/* Pretty Pandas Dataframes */
+/* Supports mkdocs-material color variables */
+.dataframe {
+    border: 0;
+    font-size: smaller;
+}
+.dataframe tr {
+    border: none;
+    background: var(--md-code-bg-color, #ffffff);
+}
+.dataframe tr:nth-child(even) {
+    background: var(--md-default-bg-color, #f5f5f5);
+}
+.dataframe tr:hover {
+    background-color: var(--md-footer-bg-color--dark, #e1f5fe);
+}
+
+.dataframe thead th {
+    background: var(--md-default-bg-color, #ffffff);
+    border-bottom: 1px solid #aaa;
+    font-weight: bold;
+}
+.dataframe th {
+    border: none;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.dataframe td{
+    /* background: #fff; */
+    border: none;
+    text-align: right;
+    min-width:5em;
+    padding-left: 10px;
+    padding-right: 10px;
+}

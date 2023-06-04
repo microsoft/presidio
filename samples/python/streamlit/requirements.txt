@@ -1,0 +1,13 @@
+presidio-analyzer
+presidio-anonymizer
+streamlit
+streamlit-tags
+pandas
+python-dotenv
+st-annotated-text
+torch
+transformers
+flair
+openai
+spacy
+azure-ai-textanalytics
