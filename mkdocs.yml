@@ -82,7 +82,7 @@ plugins:
         options:
           docstring_style: sphinx
 - mknotebooks:
-    binder: true
+    binder: false
     binder_service_name: "gh"
     binder_branch: "main"
     binder_ui: "lab"
