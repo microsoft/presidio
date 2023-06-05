@@ -30,8 +30,6 @@ steps:
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         containerregistrytype: 'Container Registry'
         dockerRegistryEndpoint: 'presidio-acr'
-        azureSubscriptionEndpoint: ${{ parameters.AZURE_SUBSCRIPTION }}
-        azureContainerRegistry: ${{ parameters.REGISTRY_NAME }}
         dockerComposeFileArgs: |
           REGISTRY_NAME=${{ parameters.REGISTRY_NAME }}
           IMAGE_PREFIX=${{ parameters.IMAGE_PREFIX }}
