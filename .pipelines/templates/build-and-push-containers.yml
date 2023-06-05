@@ -26,7 +26,7 @@ steps:
   - task: DockerCompose@0
     displayName: Push Presidio Images to ACR
     inputs:
-        action: 'Push services'@2
+        action: 'Push services'
         dockerComposeFile: ${{ parameters.DOCKER_COMPOSE_FILE }}
         containerregistrytype: 'Container Registry'
         dockerRegistryEndpoint: 'presidio-acr'
