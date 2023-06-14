@@ -20,6 +20,6 @@ EXPOSE ${PORT}
 EXPOSE ${HBPORT}
 
 RUN apt update --fix-missing && apt upgrade -y
-RUN apt install -y netcat net-tools
+RUN apt install -y netcat-traditional net-tools
 
 ENTRYPOINT [ "/bin/bash", "setup_heartbeat.sh" ]
