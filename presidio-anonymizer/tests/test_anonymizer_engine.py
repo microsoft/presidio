@@ -157,6 +157,25 @@ def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result
     assert result.items[0].text == "text"
 
 
+def test_given_sorted_analyzer_results_merge_entities_separated_by_white_space():
+    analyzer_results = [
+        RecognizerResult(start=11, end=16, score=0.8, entity_type="PERSON"),
+        RecognizerResult(start=17, end=22, score=0.8, entity_type="PERSON"),
+    ]
+    engine = AnonymizerEngine()
+    result = engine.anonymize(
+        "My name is David Jones",
+        analyzer_results,
+        operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})},
+    )
+    assert result.text == "My name is BIP"
+    assert result.items[0].operator == "replace"
+    assert result.items[0].entity_type == "PERSON"
+    assert result.items[0].start == 11
+    assert result.items[0].end == 14
+    assert result.items[0].text == "BIP"
+
+
 def _operate(
     text: str,
     text_metadata: List[PIIEntity],
