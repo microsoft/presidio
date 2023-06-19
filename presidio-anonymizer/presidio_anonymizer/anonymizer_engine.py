@@ -79,18 +79,9 @@ class AnonymizerEngine(EngineBase):
             analyzer_results
         )
 
-        # This list merges adjacent entities of the same type
-        # if there is whitespace between them.
-        merged_results = []
-        prev_result = None
-        for result in analyzer_results:
-            if prev_result is not None:
-                if prev_result.entity_type == result.entity_type:
-                    if re.search(r'^( )+$', text[prev_result.end:result.start]):
-                        merged_results.remove(prev_result)
-                        result.start = prev_result.start
-            merged_results.append(result)
-            prev_result = result
+        merged_results = self._merge_entities_with_whitespace_between(
+                text, analyzer_results
+        )
 
         operators = self.__check_or_add_default_operator(operators)
 
@@ -152,6 +143,24 @@ class AnonymizerEngine(EngineBase):
                     f"removing element {result} from results list due to conflict"
                 )
         return unique_text_metadata_elements
+
+    def _merge_entities_with_whitespace_between(
+        self,
+        text: str,
+        analyzer_results: List[RecognizerResult]
+    ) -> List[RecognizerResult]:
+        """Merge adjacent entities of the same type separated by whitespace."""
+        merged_results = []
+        prev_result = None
+        for result in analyzer_results:
+            if prev_result is not None:
+                if prev_result.entity_type == result.entity_type:
+                    if re.search(r'^( )+$', text[prev_result.end:result.start]):
+                        merged_results.remove(prev_result)
+                        result.start = prev_result.start
+            merged_results.append(result)
+            prev_result = result
+        return merged_results
 
     def get_anonymizers(self) -> List[str]:
         """Return a list of supported anonymizers."""
