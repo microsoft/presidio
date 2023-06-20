@@ -64,8 +64,17 @@ class OperatorsFactory:
         return OperatorsFactory._deanonymizers
 
     @staticmethod
+    def __get_all_subclasses(cls):  # add this method
+        subclasses = []
+        for subclass in cls.__subclasses__():
+            subclasses.append(subclass)
+            subclasses.extend(OperatorsFactory.__get_all_subclasses(subclass))
+        return subclasses
+
+    @staticmethod
     def __get_operators_by_type(operator_type: OperatorType):
-        operators = Operator.__subclasses__()
+        #operators = Operator.__subclasses__()  #see https://github.com/microsoft/presidio/issues/1093
+        operators = OperatorsFactory.__get_all_subclasses(Operator)
         return {
             cls.operator_name(cls): cls
             for cls in operators
