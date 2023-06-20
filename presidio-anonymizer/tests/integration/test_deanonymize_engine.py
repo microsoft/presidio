@@ -1,6 +1,5 @@
 import pytest
 
-from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
 from presidio_anonymizer.entities import (
     InvalidParamException,
@@ -8,7 +7,8 @@ from presidio_anonymizer.entities import (
     OperatorResult,
     OperatorConfig,
 )
-from presidio_anonymizer.operators import Decrypt
+from presidio_anonymizer.operators import Decrypt, AESCipher, OperatorsFactory
+
 
 
 def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully():
@@ -95,3 +95,69 @@ def test_given_request_deanonymizers_return_list():
     anon_list = engine.get_deanonymizers()
 
     assert anon_list == expected_list
+
+
+def test_given_anonymize_operators_class_then_we_get_the_correct_class():
+    OperatorsFactory._operator_class = None  # cleanup
+    OperatorsFactory._deanonymizers = None  # simulates first run
+
+    for operator_name in ["encrypt", "decrypt3", "decrypt2"]:
+        if operator == "decrypt3":
+            #encrypt3 inherits Operator directly
+            from tests.operators.decrypt3 import Decrypt3
+        if operator == "decrypt2":
+            #encrypt3 inherits Operator inderactely
+            #first lets unload encrypt3 module
+            del Encrypt3
+            #now, lets import decrypt2
+            from tests.operators.decrypt2 import Decrypt2
+
+
+
+        operator = OperatorsFactory().create_operator_class(
+            operator_name, OperatorType.Anonymize
+        )
+        assert operator
+        assert operator.operator_name() == operator_name
+        assert (
+            operator.operator_type() == OperatorType.Anonymize
+            or operator.operator_type() == OperatorType.All
+        )
+
+        OperatorsFactory._operator_class = None  # cleanup
+        OperatorsFactory._anonymizers = None  # simulates first run
+        del encrypt2
+
+
+
+def test_given_deanonymize_operators_class_then_we_get_the_correct_class():
+    OperatorsFactory._operator_class = None  # cleanup
+    OperatorsFactory._anonymizers = None  # simulates first run
+
+    for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom",
+                           "encrypt3", "encrypt2"]:
+        if operator == "encrypt3":
+            #encrypt3 inherits Operator directly
+            from tests.operators.encrypt3 import Encrypt3
+        if operator == "encrypt2":
+            #encrypt3 inherits Operator inderactely
+            #first lets unload encrypt3 module
+            del Encrypt3
+            #now, lets import encrypt2
+            from tests.operators.encrypt3 import encrypt2
+
+
+
+        operator = OperatorsFactory().create_operator_class(
+            operator_name, OperatorType.Anonymize
+        )
+        assert operator
+        assert operator.operator_name() == operator_name
+        assert (
+            operator.operator_type() == OperatorType.Anonymize
+            or operator.operator_type() == OperatorType.All
+        )
+
+        OperatorsFactory._operator_class = None  # cleanup
+        OperatorsFactory._anonymizers = None  # simulates first run
+        del encrypt2

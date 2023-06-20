@@ -27,7 +27,23 @@ def test_given_decryptors_list_then_all_classes_are_there():
 
 
 def test_given_anonymize_operators_class_then_we_get_the_correct_class():
-    for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom"]:
+    OperatorsFactory._operator_class = None  # cleanup
+    OperatorsFactory._anonymizers = None  # simulates first run
+
+    for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom",
+                           "encrypt3", "encrypt2"]:
+        if operator == "encrypt3":
+            #encrypt3 inherits Operator directly
+            from tests.operators.encrypt3 import Encrypt3
+        if operator == "encrypt2":
+            #encrypt3 inherits Operator inderactely
+            #first lets unload encrypt3 module
+            del Encrypt3
+            #now, lets import encrypt2
+            from tests.operators.encrypt2 import encrypt2
+
+
+
         operator = OperatorsFactory().create_operator_class(
             operator_name, OperatorType.Anonymize
         )
@@ -37,6 +53,34 @@ def test_given_anonymize_operators_class_then_we_get_the_correct_class():
             operator.operator_type() == OperatorType.Anonymize
             or operator.operator_type() == OperatorType.All
         )
+
+        OperatorsFactory._operator_class = None  # cleanup
+        OperatorsFactory._anonymizers = None  # simulates first run
+        del encrypt2
+def test_given_direct_custom_anonymize_operator_then_we_get_the_correct_class():
+    OperatorsFactory._operator_class = None  # cleanup
+    OperatorsFactory._anonymizers = None  # simulates first run
+
+    from tests.operators.encrypt3 import Encrypt3
+
+
+def test_given_indirect_custom_anonymize_operator_then_we_get_the_correct_class():
+    OperatorsFactory._operator_class = None  # cleanup
+    OperatorsFactory._anonymizers = None  # simulates first run
+
+    from tests.operators.encrypt3 import Encrypt2
+
+def test_given_direct_custom_deanonymize_operator_then_we_get_the_correct_class():
+    OperatorsFactory._operator_class = None  # cleanup
+    OperatorsFactory._anonymizers = None  # simulates first run
+
+    from tests.operators.decrypt3 import Decrypt3
+
+def test_given_indirect_custom_deanonymize_operator_then_we_get_the_correct_class():
+    OperatorsFactory._operator_class = None  # cleanup
+    OperatorsFactory._anonymizers = None  # simulates first run
+
+    from tests.operators.decrypt3 import Decrypt3
 
 
 def test_given_decrypt_operator_class_then_we_get_the_correct_class():

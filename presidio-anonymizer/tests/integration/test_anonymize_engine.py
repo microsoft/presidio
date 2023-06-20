@@ -1,12 +1,13 @@
 import pytest
 
+import re
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import (
     InvalidParamException,
     RecognizerResult,
     OperatorConfig,
 )
-from presidio_anonymizer.operators import AESCipher
+from presidio_anonymizer.operators import AESCipher, OperatorsFactory
 
 
 def test_given_url_at_the_end_then_we_redact_is_successfully():
@@ -206,6 +207,81 @@ def test_given_hash_then_we_anonymize_correctly(hash_type, result):
     ]
     run_engine_and_validate(text, anonymizer_config, analyzer_results, result)
 
+
+def test_indirect_inheritance_from_operator_works():
+    OperatorsFactory._operator_class = None     #cleanup
+    OperatorsFactory._anonymizers = None        #simulates rirst run
+
+    from tests.operators.encrypt2 import Encrypt2
+
+
+    text = "Hello world, my name is Jane Doe. My number is: 034453334"
+    anonymizer_config = {"DEFAULT": OperatorConfig("encrypt2", {"key": "128bitslengthkey"})}
+    analyzer_results = [
+        RecognizerResult(start=24, end=32, score=0.6, entity_type="PERSON"),
+        RecognizerResult(start=48, end=57, score=0.6, entity_type="PHONE_NUMBER"),
+    ]
+
+    engine = AnonymizerEngine()
+    #it's ok to exception to propogate
+    actual_anonymize_result = engine.anonymize(
+        text, analyzer_results, anonymizer_config
+    )
+    _assert_delim_in_the_text(actual_anonymize_result.text, '@@@', 4)
+    actual_anonymize_result.text = None
+
+    for item in actual_anonymize_result.items:
+        _assert_delim_in_the_text(item.text, '@@@', 2)
+        item.text = None
+
+    expected_result = (
+        '{"text": null, '
+        '"items": [{"start": 90, "end": 140, "entity_type": "PHONE_NUMBER", "text": null, "operator": "encrypt2"}, '
+                  '{"start": 24, "end": 74, "entity_type": "PERSON", "text": null, "operator": "encrypt2"}]}'
+    )
+
+    assert actual_anonymize_result.to_json() ==  expected_result
+
+
+def test_direct_inheritance_from_operator_works():
+    OperatorsFactory._operator_class = None     #cleanup
+    OperatorsFactory._anonymizers = None        #simulates first run
+
+    from tests.operators.encrypt3 import Encrypt3
+
+
+    text = "Hello world, my name is Jane Doe. My number is: 034453334"
+    anonymizer_config = {"DEFAULT": OperatorConfig("encrypt3", {"key": "128bitslengthkey"})}
+    analyzer_results = [
+        RecognizerResult(start=24, end=32, score=0.6, entity_type="PERSON"),
+        RecognizerResult(start=48, end=57, score=0.6, entity_type="PHONE_NUMBER"),
+    ]
+
+    engine = AnonymizerEngine()
+    #it's ok to exception to propogate
+    actual_anonymize_result = engine.anonymize(
+        text, analyzer_results, anonymizer_config
+    )
+    _assert_delim_in_the_text(actual_anonymize_result.text, '@@@', 4)
+    actual_anonymize_result.text = None
+
+    for item in actual_anonymize_result.items:
+        _assert_delim_in_the_text(item.text, '@@@', 2)
+        item.text = None
+
+    expected_result = (
+        '{"text": null, '
+        '"items": [{"start": 90, "end": 140, "entity_type": "PHONE_NUMBER", "text": null, "operator": "encrypt3"}, '
+                  '{"start": 24, "end": 74, "entity_type": "PERSON", "text": null, "operator": "encrypt3"}]}'
+    )
+
+    assert actual_anonymize_result.to_json() ==  expected_result
+
+
+
+
+def _assert_delim_in_the_text(text, special_delim, expected_counts):
+    assert len(re.findall(special_delim, text)) == expected_counts
 
 def run_engine_and_validate(
     text: str, anonymizers_config, analyzer_results, expected_result
