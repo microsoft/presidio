@@ -18,11 +18,14 @@ def entities():
     "text, expected_len, expected_position, expected_score",
     [
         # fmt: off
-        ("ABCPD1234Z", 1, (0, 9), 0.8), ("AAAA1111R", 0, (), (),)
+        ("AAASA1111R", 1, (0,10), 0.6) ,
+        ("ABCPD1234Z", 1, (0, 10), 0.85),
+        ("ABCND1234Z", 1, (0, 10), 0.6),
+        ("A1111DFSFS", 1, (0,10),0.05),
         # fmt: on
     ],
 )
-def test_when_sgfins_in_text_then_all_sg_fins_found(
+def test_when_pan_in_text_then_all_pans_found(
     text,
     expected_len,
     expected_position,
@@ -31,6 +34,8 @@ def test_when_sgfins_in_text_then_all_sg_fins_found(
     entities,
 ):
     results = recognizer.analyze(text, entities)
+    print(results)
+
     assert len(results) == expected_len
     if results:
         assert_result(
