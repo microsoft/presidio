@@ -88,6 +88,7 @@ class RecognizerRegistry:
                 AuAcnRecognizer,
                 AuTfnRecognizer,
                 AuMedicareRecognizer,
+                InPanRecognizer,
             ],
             "es": [EsNifRecognizer],
             "it": [
