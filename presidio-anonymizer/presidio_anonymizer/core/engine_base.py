@@ -65,7 +65,8 @@ class EngineBase(ABC):
                 operator.entity_type,
                 changed_text,
                 operator_metadata.operator_name,
-                operator.instance_id
+                operator.instance_id,
+                text_to_operate_on
             )
             engine_result.add_item(result_item)
 
