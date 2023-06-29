@@ -268,3 +268,25 @@ def test_empty_text_returns_correct_results():
     actual_anonymize_result = AnonymizerEngine().anonymize(text, analyzer_results)
 
     assert actual_anonymize_result.text == text
+
+
+def test_given_name_then_we_replace_and_preserve_instances_correctly():
+    text = "hello world, my name is Jane Doe. Thats Bob Smith, but I am Jane Doe."
+    anonymizer_config = {
+        "DEFAULT": OperatorConfig(
+            "replace", {"preserve_instances": True}
+        ),
+    }
+    analyzer_results = [
+        RecognizerResult(start=24, end=32, score=0.8, entity_type="NAME"),
+        RecognizerResult(start=40, end=49, score=0.8, entity_type="NAME"),
+        RecognizerResult(start=60, end=68, score=0.8, entity_type="NAME"),
+    ]
+    expected_result = (
+        '{"text": "hello world, my name is <NAME 0>. Thats <NAME 1>, but I am <NAME 0>.'
+        '", "items": [{"start": 59, "end": 67, "entity_type": "NAME", "text": "<NAME 0>'
+        '", "operator": "replace"}, {"start": 40, "end": 48, "entity_type": "NAME", "te'
+        'xt": "<NAME 1>", "operator": "replace"}, {"start": 24, "end": 32, "entity_type'
+        '": "NAME", "text": "<NAME 0>", "operator": "replace"}]}'
+    )
+    run_engine_and_validate(text, anonymizer_config, analyzer_results, expected_result)

@@ -80,6 +80,15 @@ class AnonymizerEngine(EngineBase):
 
         operators = self.__check_or_add_default_operator(operators)
 
+        instances = []
+        for result in analyzer_results:
+            instance = text[result.start:result.end]
+            if instance in instances:
+                result.instance_id = instances.index(instance)
+            else:
+                instances.append(instance)
+                result.instance_id = len(instances) - 1
+
         return self._operate(text, analyzer_results, operators, OperatorType.Anonymize)
 
     def _remove_conflicts_and_get_text_manipulation_data(

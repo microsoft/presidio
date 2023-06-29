@@ -14,10 +14,11 @@ class PIIEntity(ABC):
 
     logger = logging.getLogger("presidio-anonymizer")
 
-    def __init__(self, start: int, end: int, entity_type: str):
+    def __init__(self, start: int, end: int, entity_type: str, instance_id: int = None):
         self.start = start
         self.end = end
         self.entity_type = entity_type
+        self.instance_id = instance_id
         self.__validate_fields()
 
     def __repr__(self):
@@ -25,7 +26,8 @@ class PIIEntity(ABC):
         return (
             f"start: {self.start}"
             f"end: {self.end},"
-            f"entity_type: {self.entity_type}"
+            f"entity_type: {self.entity_type},"
+            f"instance_id: {self.instance_id}"
         )
 
     def __gt__(self, other):
@@ -55,3 +57,5 @@ class PIIEntity(ABC):
                 f"Invalid input, start index '{self.start}' "
                 f"must be smaller than end index '{self.end}'"
             )
+        if self.instance_id is not None:
+            validate_type(self.instance_id, "instance_id", int)

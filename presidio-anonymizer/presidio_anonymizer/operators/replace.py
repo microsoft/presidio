@@ -9,11 +9,16 @@ class Replace(Operator):
     """Receives new text to replace old PII text entity with."""
 
     NEW_VALUE = "new_value"
+    PRESERVE_INSTANCES = "preserve_instances"
+    INSTANCE_ID = "instance_id"
 
     def operate(self, text: str = None, params: Dict = None) -> str:
         """:return: new_value."""
         new_val = params.get(self.NEW_VALUE)
         if not new_val:
+            instance_id = params.get(self.INSTANCE_ID)
+            if params.get(self.PRESERVE_INSTANCES) and instance_id is not None:
+                return f"<{params.get('entity_type')} {instance_id}>"
             return f"<{params.get('entity_type')}>"
         return new_val
 
