@@ -64,7 +64,7 @@ class OperatorsFactory:
         return OperatorsFactory._deanonymizers
 
     @staticmethod
-    def __get_all_subclasses(cls):  # add this method
+    def __get_all_subclasses(cls):
         subclasses = []
         for subclass in cls.__subclasses__():
             subclasses.append(subclass)
