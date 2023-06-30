@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+#### Anonymizer
+*  Now custom operators can also inherit Operator indirectly (#1095) 
+
+* Deanonymizaer
+*  Now custom operators can also inherit Operator indirectly (#1095)
 
 ## [2.2.33] - June 1st 2023
 ### Added
