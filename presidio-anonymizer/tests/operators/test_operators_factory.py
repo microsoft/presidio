@@ -1,12 +1,12 @@
 import pytest
 
 from presidio_anonymizer.entities import InvalidParamException
-from presidio_anonymizer.operators import OperatorsFactory, OperatorType
-
+from presidio_anonymizer.operators import OperatorType
+from tests.operators.mock_operators_utils import OperatorsFactory, setup_function, teardown_function, resetOperatorsFactory, custom_indirect_operator
 
 def test_given_anonymizers_list_then_all_classes_are_there():
     anonymizers = OperatorsFactory.get_anonymizers()
-    assert len(anonymizers) == 7
+    assert len(anonymizers) == 9
     for class_name in [
         "hash",
         "mask",
@@ -15,32 +15,33 @@ def test_given_anonymizers_list_then_all_classes_are_there():
         "encrypt",
         "custom",
         "keep",
+        "encrypt2",
+        "encrypt3"
     ]:
         assert anonymizers.get(class_name)
 
 
 def test_given_decryptors_list_then_all_classes_are_there():
     decryptors = OperatorsFactory.get_deanonymizers()
-    assert len(decryptors) == 1
-    for class_name in ["decrypt"]:
+    assert len(decryptors) == 3
+    for class_name in ["decrypt", "decrypt2", "decrypt3"]:
         assert decryptors.get(class_name)
 
 
 def test_given_anonymize_operators_class_then_we_get_the_correct_class():
-    OperatorsFactory._operator_class = None  # cleanup
-    OperatorsFactory._anonymizers = None  # simulates first run
 
     for operator_name in ["hash", "mask", "redact", "replace", "encrypt", "custom",
                            "encrypt3", "encrypt2"]:
-        if operator == "encrypt3":
+        resetOperatorsFactory()
+        if operator_name == "encrypt3":
             #encrypt3 inherits Operator directly
-            from tests.operators.encrypt3 import Encrypt3
-        if operator == "encrypt2":
+            from tests.operators.mock_operators  import Encrypt3
+        if operator_name == "encrypt2":
             #encrypt3 inherits Operator inderactely
             #first lets unload encrypt3 module
             del Encrypt3
             #now, lets import encrypt2
-            from tests.operators.encrypt2 import encrypt2
+            from tests.operators.mock_operators import Encrypt2
 
 
 
@@ -54,33 +55,29 @@ def test_given_anonymize_operators_class_then_we_get_the_correct_class():
             or operator.operator_type() == OperatorType.All
         )
 
-        OperatorsFactory._operator_class = None  # cleanup
-        OperatorsFactory._anonymizers = None  # simulates first run
-        del encrypt2
+    resetOperatorsFactory()
+    del Encrypt2
+
 def test_given_direct_custom_anonymize_operator_then_we_get_the_correct_class():
-    OperatorsFactory._operator_class = None  # cleanup
-    OperatorsFactory._anonymizers = None  # simulates first run
 
-    from tests.operators.encrypt3 import Encrypt3
-
+    from tests.operators.mock_operators import Encrypt3
+    del Encrypt3
 
 def test_given_indirect_custom_anonymize_operator_then_we_get_the_correct_class():
-    OperatorsFactory._operator_class = None  # cleanup
-    OperatorsFactory._anonymizers = None  # simulates first run
 
-    from tests.operators.encrypt3 import Encrypt2
+    from tests.operators.mock_operators import Encrypt2
+    del Encrypt2
 
 def test_given_direct_custom_deanonymize_operator_then_we_get_the_correct_class():
-    OperatorsFactory._operator_class = None  # cleanup
-    OperatorsFactory._anonymizers = None  # simulates first run
 
-    from tests.operators.decrypt3 import Decrypt3
+    from tests.operators.mock_operators import Decrypt3
+    del Decrypt3
+
 
 def test_given_indirect_custom_deanonymize_operator_then_we_get_the_correct_class():
-    OperatorsFactory._operator_class = None  # cleanup
-    OperatorsFactory._anonymizers = None  # simulates first run
 
-    from tests.operators.decrypt3 import Decrypt3
+    from tests.operators.mock_operators import Decrypt3
+    del Decrypt3
 
 
 def test_given_decrypt_operator_class_then_we_get_the_correct_class():

@@ -7,8 +7,8 @@ from presidio_anonymizer.entities import (
     RecognizerResult,
     OperatorConfig,
 )
-from presidio_anonymizer.operators import AESCipher, OperatorsFactory
-
+from presidio_anonymizer.operators import AESCipher
+from tests.operators.mock_operators_utils import OperatorsFactory, setup_function, teardown_function, resetOperatorsFactory, custom_indirect_operator
 
 def test_given_url_at_the_end_then_we_redact_is_successfully():
     text = "The url is http://microsoft.com"
@@ -207,12 +207,9 @@ def test_given_hash_then_we_anonymize_correctly(hash_type, result):
     ]
     run_engine_and_validate(text, anonymizer_config, analyzer_results, result)
 
-
+@custom_indirect_operator
 def test_indirect_inheritance_from_operator_works():
-    OperatorsFactory._operator_class = None     #cleanup
-    OperatorsFactory._anonymizers = None        #simulates rirst run
-
-    from tests.operators.encrypt2 import Encrypt2
+    from tests.operators.mock_operators import Encrypt2
 
 
     text = "Hello world, my name is Jane Doe. My number is: 034453334"
@@ -241,13 +238,11 @@ def test_indirect_inheritance_from_operator_works():
     )
 
     assert actual_anonymize_result.to_json() ==  expected_result
+    del Encrypt2
 
-
+@custom_indirect_operator
 def test_direct_inheritance_from_operator_works():
-    OperatorsFactory._operator_class = None     #cleanup
-    OperatorsFactory._anonymizers = None        #simulates first run
-
-    from tests.operators.encrypt3 import Encrypt3
+    from tests.operators.mock_operators import Encrypt3
 
 
     text = "Hello world, my name is Jane Doe. My number is: 034453334"
@@ -276,6 +271,7 @@ def test_direct_inheritance_from_operator_works():
     )
 
     assert actual_anonymize_result.to_json() ==  expected_result
+    del Encrypt3
 
 
 
