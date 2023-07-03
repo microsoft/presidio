@@ -225,8 +225,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :return: FALSE if the Photometric Interpretation is RGB.
         """
         # Check if image is grayscale using the Photometric Interpretation element
-        color_scale = instance[0x0028, 0x0004].value
-        is_greyscale = color_scale != "RGB"
+        try:
+            color_scale = instance.PhotometricInterpretation
+        except AttributeError:
+            color_scale = None
+        is_greyscale = (color_scale in ["MONOCHROME1", "MONOCHROME2"])
 
         return is_greyscale
 
@@ -243,7 +246,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         # Normalize contrast
         if "WindowWidth" in instance:
-            image_2d = apply_voi_lut(instance.pixel_array, instance)
+            if is_greyscale:
+                image_2d = apply_voi_lut(instance.pixel_array, instance)
+            else:
+                image_2d = instance.pixel_array
         else:
             image_2d = instance.pixel_array
 
