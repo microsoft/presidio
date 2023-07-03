@@ -1,4 +1,5 @@
 import os
+import uuid
 import shutil
 from copy import deepcopy
 import tempfile
@@ -58,9 +59,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             # Convert DICOM to PNG and add padding for OCR (during analysis)
             is_greyscale = self._check_if_greyscale(instance)
             image = self._rescale_dcm_pixel_array(instance, is_greyscale)
-            self._save_pixel_array_as_png(image, is_greyscale, "tmp_dcm", tmpdirname)
+            image_name = str(uuid.uuid4())
+            self._save_pixel_array_as_png(image, is_greyscale, image_name, tmpdirname)
 
-            png_filepath = f"{tmpdirname}/tmp_dcm.png"
+            png_filepath = f"{tmpdirname}/{image_name}.png"
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
