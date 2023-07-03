@@ -41,7 +41,7 @@ def mock_engine():
             Path(TEST_DICOM_PARENT_DIR),
             [
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
                 Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
                 Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
@@ -913,10 +913,22 @@ def test_set_bbox_color_exceptions(
 # DicomImageRedactorEngine._add_redact_box()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "dcm_path, mock_is_greyscale, mock_box_color, bounding_boxes_coordinates",
+    "dcm_path, mock_is_compressed, mock_is_greyscale, mock_box_color, bounding_boxes_coordinates",
     [
         (
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False,
+            True,
+            0,
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100},
+                {"top": 24, "left": 0, "width": 75, "height": 51},
+                {"top": 1, "left": 588, "width": 226, "height": 35},
+            ],
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
+            True,
             True,
             0,
             [
@@ -927,6 +939,7 @@ def test_set_bbox_color_exceptions(
         ),
         (
             Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
+            False,
             False,
             (0, 0, 0),
             [
@@ -940,6 +953,7 @@ def test_set_bbox_color_exceptions(
 def test_add_redact_box_happy_path(
     mocker,
     dcm_path: Path,
+    mock_is_compressed: bool,
     mock_is_greyscale: bool,
     mock_box_color: Union[int, Tuple[int, int, int]],
     bounding_boxes_coordinates: dict,
@@ -948,6 +962,7 @@ def test_add_redact_box_happy_path(
 
     Args:
         dcm_path (pathlib.Path): Path to DICOM file.
+        mock_is_compressed (bool): If the pixel data is compressed.
         mock_is_greyscale (bool): Value to use when mocking _check_if_greyscale.
         mock_box_color (int or Tuple of int): Color value to assign to mocker.
         bouding_boxes_coordinates (dict): Formatted bbox coordinates.
@@ -955,6 +970,11 @@ def test_add_redact_box_happy_path(
     # Arrange
     test_instance = pydicom.dcmread(dcm_path)
     crop_ratio = 0.75
+    mock_check_if_compressed = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_check_if_compressed",
+        return_value=mock_is_compressed
+    )
     mock_check_if_greyscale = mocker.patch.object(
         DicomImageRedactorEngine,
         "_check_if_greyscale",
@@ -978,6 +998,7 @@ def test_add_redact_box_happy_path(
     )
 
     # Assert
+    mock_check_if_compressed.call_count == 1
     mock_check_if_greyscale.call_count == 1
     if mock_is_greyscale is True:
         original_pixel_values = np.array(test_instance.pixel_array).flatten()
@@ -1121,8 +1142,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         (Path(TEST_DICOM_PARENT_DIR), "TypeError"),
         ("path_here", "TypeError"),
         (np.random.randint(255, size=(64, 64)), "TypeError"),
-        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError"),
-        (pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm")), "AttributeError")
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError")
     ],
 )
 def test_DicomImageRedactorEngine_redact_exceptions(
@@ -1257,7 +1277,6 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     [
         (Path(TEST_DICOM_PARENT_DIR), "FileNotFoundError"),
         (Path("nonexistentfile.extension"), "FileNotFoundError"),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"), "AttributeError")
     ],
 )
 def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(

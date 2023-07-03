@@ -687,6 +687,49 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             box_color = cls._get_bg_color(loaded_image, is_greyscale, invert_flag)
 
         return box_color
+    
+    @staticmethod
+    def _check_if_compressed(instance: pydicom.dataset.FileDataset) -> bool:
+        """Check if the pixel data is compressed.
+
+        :param instance: DICOM instance.
+
+        :return: Boolean for whether the pixel data is compressed.
+        """
+        # Calculate expected bytes
+        rows = instance.Rows
+        columns = instance.Columns
+        samples_per_pixel = instance.SamplesPerPixel
+        bits_allocated = instance.BitsAllocated
+        try:
+            number_of_frames = instance[0x0028, 0x0008].value
+        except:
+            number_of_frames = 1
+        expected_num_bytes = rows * columns * number_of_frames * samples_per_pixel * (bits_allocated/8)
+
+        # Compare expected vs actual
+        is_compressed = (int(expected_num_bytes)) > len(instance.PixelData)
+
+        return is_compressed
+
+    @staticmethod
+    def _compress_pixel_data(instance: pydicom.dataset.FileDataset) -> pydicom.dataset.FileDataset:
+        """Recompress pixel data that was decompressed during redaction.
+
+        :param instance: Loaded DICOM instance.
+
+        :return: Instance with compressed pixel data.
+        """
+        compression_method = pydicom.uid.RLELossless
+
+        # Temporarily change syntax to an "uncompressed" method
+        instance.file_meta.TransferSyntaxUID = pydicom.uid.UID('1.2.840.10008.1.2')
+
+        # Compress and update syntax
+        instance.compress(compression_method, encoding_plugin='gdcm')
+        instance.file_meta.TransferSyntaxUID = compression_method
+
+        return instance
 
     @classmethod
     def _add_redact_box(
@@ -710,6 +753,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         # Copy instance
         redacted_instance = deepcopy(instance)
+        is_compressed = cls._check_if_compressed(redacted_instance)
 
         # Select masking box color
         is_greyscale = cls._check_if_greyscale(instance)
@@ -730,6 +774,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             ] = box_color
 
         redacted_instance.PixelData = redacted_instance.pixel_array.tobytes()
+
+        # If original pixel data is compressed, recompress after redaction
+        if is_compressed:
+            redacted_instance = cls._compress_pixel_data(redacted_instance)
 
         return redacted_instance
 
