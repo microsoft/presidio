@@ -50,12 +50,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         # Check input
         if type(image) not in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]:
-            raise TypeError(f"The provided image must be a loaded DICOM instance. {type(image)}")
+            raise TypeError("The provided image must be a loaded DICOM instance.")
         try:
             image.PixelData
         except AttributeError:
-            raise AttributeError(f'Provided DICOM instance does not contain pixel data.')
-        
+            raise AttributeError("Provided DICOM instance lacks pixel data.")
+
         instance = deepcopy(image)
 
         # Load image for processing
@@ -771,7 +771,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         try:
             instance.PixelData
         except AttributeError:
-            raise AttributeError(f'Provided DICOM file does not contain pixel data.')
+            raise AttributeError("Provided DICOM file lacks pixel data.")
 
         # Load image for processing
         with tempfile.TemporaryDirectory() as tmpdirname:
