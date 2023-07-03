@@ -66,6 +66,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         """
         instance_copy = deepcopy(instance)
 
+        try:
+            instance_copy.PixelData
+        except AttributeError as e:
+            raise(f'Provided DICOM instance does not contain pixel data: {e}')
+
         # Load image for processing
         with tempfile.TemporaryDirectory() as tmpdirname:
             # Convert DICOM to PNG and add padding for OCR (during analysis)
