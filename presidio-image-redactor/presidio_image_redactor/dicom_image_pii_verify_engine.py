@@ -69,7 +69,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         try:
             instance_copy.PixelData
         except AttributeError:
-            raise AttributeError(f'Provided DICOM instance lacks pixel data.')
+            raise AttributeError("Provided DICOM instance lacks pixel data.")
 
         # Load image for processing
         with tempfile.TemporaryDirectory() as tmpdirname:
