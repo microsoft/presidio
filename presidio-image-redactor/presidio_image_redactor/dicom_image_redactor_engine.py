@@ -687,7 +687,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             box_color = cls._get_bg_color(loaded_image, is_greyscale, invert_flag)
 
         return box_color
-    
+
     @staticmethod
     def _check_if_compressed(instance: pydicom.dataset.FileDataset) -> bool:
         """Check if the pixel data is compressed.
@@ -703,9 +703,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         bits_allocated = instance.BitsAllocated
         try:
             number_of_frames = instance[0x0028, 0x0008].value
-        except:
+        except AttributeError:
             number_of_frames = 1
-        expected_num_bytes = rows * columns * number_of_frames * samples_per_pixel * (bits_allocated/8)
+        expected_num_bytes = (rows * columns * number_of_frames
+                              * samples_per_pixel * (bits_allocated/8))
 
         # Compare expected vs actual
         is_compressed = (int(expected_num_bytes)) > len(instance.PixelData)
@@ -713,7 +714,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return is_compressed
 
     @staticmethod
-    def _compress_pixel_data(instance: pydicom.dataset.FileDataset) -> pydicom.dataset.FileDataset:
+    def _compress_pixel_data(
+        instance: pydicom.dataset.FileDataset
+    ) -> pydicom.dataset.FileDataset:
         """Recompress pixel data that was decompressed during redaction.
 
         :param instance: Loaded DICOM instance.
