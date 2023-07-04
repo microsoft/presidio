@@ -22,6 +22,8 @@ def entities():
         ("ABCPD1234Z", 1, (0, 10), 0.85),
         ("ABCND1234Z", 1, (0, 10), 0.6),
         ("A1111DFSFS", 1, (0,10),0.05),
+        ("ABCD1234",0,(),(),),
+        ("My PAN number is ABBPM4567S with a lot of text beyond it", 1, (17,27),.85),
         # fmt: on
     ],
 )
