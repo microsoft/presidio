@@ -86,8 +86,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self.image_analyzer_engine.analyze(
             image,
-            ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=[deny_list_recognizer],
             **text_analyzer_kwargs,
         )
 
