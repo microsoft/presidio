@@ -1128,7 +1128,7 @@ def test_DicomImageRedactorEngine_redact_exceptions(
     image: T,
     expected_error_type: str,
 ):
-    """Test error handling of DicomImageRedactorEngine _redact_single_dicom_image()
+    """Test error handling of DicomImageRedactorEngine _redact()
 
     Args:
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
@@ -1137,7 +1137,7 @@ def test_DicomImageRedactorEngine_redact_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine.redact(image, "contrast", 25, False, "."
+        mock_engine.redact(image, "contrast", 25, False, ".", False
         )
 
     # Assert
@@ -1230,7 +1230,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
 
     # Act
     mock_engine._redact_single_dicom_image(
-        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir, False
     )
 
     # Assert
@@ -1272,7 +1272,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_single_dicom_image(
-            dcm_path, 0.75, "contrast", 25, False, "."
+            dcm_path, 0.75, "contrast", 25, False, ".", False
         )
 
     # Assert
@@ -1329,7 +1329,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
 
     # Act
     mock_engine._redact_multiple_dicom_images(
-        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir, False
     )
 
     # Assert
@@ -1363,7 +1363,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_multiple_dicom_images(
-            dcm_path, 0.75, "contrast", 25, False, "."
+            dcm_path, 0.75, "contrast", 25, False, ".", False
         )
 
     # Assert
