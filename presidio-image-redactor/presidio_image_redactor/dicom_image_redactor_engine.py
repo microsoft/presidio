@@ -11,7 +11,7 @@ import png
 import json
 import numpy as np
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
-from typing import Tuple, List, Union, Optional
+from typing import Tuple, List, Dict, Union, Optional
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
@@ -736,7 +736,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return redacted_instance
 
     @staticmethod
-    def _save_bbox_json(output_dcm_path: str, bboxes: dict) -> None:
+    def _save_bbox_json(output_dcm_path: str, bboxes: List[Dict[str, int]]) -> None:
         """Save the redacted bounding box info as a json file.
 
         :param output_dcm_path: Path to the redacted DICOM file.

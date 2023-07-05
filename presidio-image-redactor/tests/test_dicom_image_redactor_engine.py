@@ -2,11 +2,12 @@
 from pathlib import Path
 import tempfile
 import os
+import json
 import numpy as np
 from PIL import Image
 import pydicom
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
-from typing import Union, Tuple, TypeVar
+from typing import Union, List, Tuple, Dict, TypeVar
 import pytest
 
 T = TypeVar('T')
@@ -1246,6 +1247,90 @@ def test_DicomImageRedactorEngine_redact_exceptions(
 
     # Assert
     assert expected_error_type == exc_info.typename
+
+# ------------------------------------------------------
+# DicomImageRedactorEngine _save_bbox_json()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "output_path, expected_output_json_path, bboxes",
+    [
+        (
+            "dir1/dir2/output_dicom.dcm",
+            "dir1/dir2/output_dicom.json",
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100}, 
+                {"top": 35, "left": 72, "width": 50, "height": 14}
+            ]
+        ),
+        (
+            "dir1/output_dicom.dcm",
+            "dir1/output_dicom.json",
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100}, 
+                {"top": 35, "left": 72, "width": 50, "height": 14}
+            ]
+        ),
+        (
+            "output_dicom.dcm",
+            "output_dicom.json",
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100}, 
+                {"top": 35, "left": 72, "width": 50, "height": 14}
+            ]
+        ),
+        (
+            "dir1/dir2/output_dicom.DCM",
+            "dir1/dir2/output_dicom.json",
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100}, 
+                {"top": 35, "left": 72, "width": 50, "height": 14}
+            ]
+        ),
+        (
+            "dir1/dir2/output_dicom.dicom",
+            "dir1/dir2/output_dicom.json",
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100}, 
+                {"top": 35, "left": 72, "width": 50, "height": 14}
+            ]
+        ),
+        (
+            "dir1/dir2/output_dicom.DICOM",
+            "dir1/dir2/output_dicom.json",
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100}, 
+                {"top": 35, "left": 72, "width": 50, "height": 14}
+            ]
+        )
+    ],
+)
+def test_DicomImageRedactorEngine_save_bbox_json_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    output_path: str,
+    expected_output_json_path: str,
+    bboxes: List[Dict[str, int]],
+):
+    """Test happy path for DicomImageRedactorEngine _save_bbox_json()
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        output_path (str): Path to output DICOM file.
+        expected_output_json_path (str): Expected path to the output JSON file.
+        bboxes (list): Bounding boxes to write out to JSON file.
+    """
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Arrange
+        temp_output_path = Path(tmpdirname, output_path)
+        temp_output_path.mkdir(parents=True, exist_ok=True)
+        temp_expected_json_path = Path(tmpdirname, expected_output_json_path)
+
+        # Act
+        mock_engine._save_bbox_json(temp_output_path, bboxes)
+
+        # Assert
+        with open(temp_expected_json_path, "r") as read_file:
+            loaded_json = json.load(read_file)
+        assert loaded_json == bboxes
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine _redact_single_dicom_image()
