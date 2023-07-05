@@ -1085,21 +1085,22 @@ def test_DicomImageRedactorEngine_redact_happy_path(
 
     mock_remove_bbox_padding = mocker.patch(
         "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
-        return_value=None,
+        return_value={},
     )
 
     mock_add_redact_box = mocker.patch.object(
         DicomImageRedactorEngine,
         "_add_redact_box",
-        return_value=None,
+        return_value=test_image,
     )
 
     mock_engine = DicomImageRedactorEngine()
 
     # Act
-    mock_engine.redact(test_image)
+    test_results = mock_engine.redact(test_image)
 
     # Assert
+    assert type(test_results) == pydicom.dataset.FileDataset
     assert mock_check_greyscale.call_count == 1
     assert mock_rescale_dcm.call_count == 1
     assert mock_save_pixel_array.call_count == 1
@@ -1113,6 +1114,109 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
+@pytest.mark.parametrize(
+    "dcm_path",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM")),
+        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom")),
+        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM")),
+    ],
+)
+def test_DicomImageRedactorEngine_redact_return_bbox(
+    mocker,
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: str,
+):
+    """Test happy path for DicomImageRedactorEngine redact() when we return bboxes
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (str): Path to input DICOM file or dir.
+        output_dir (str): Path to parent directory to write output to.
+        overwrite (bool): True if overwriting original files.
+    """
+    # Arrange
+    test_image = pydicom.dcmread(dcm_path)
+
+    mock_check_greyscale = mocker.patch.object(
+        DicomImageRedactorEngine, "_check_if_greyscale", return_value=None
+    )
+    mock_rescale_dcm = mocker.patch.object(
+        DicomImageRedactorEngine, "_rescale_dcm_pixel_array", return_value=None
+    )
+    mock_save_pixel_array = mocker.patch.object(
+        DicomImageRedactorEngine, "_save_pixel_array_as_png", return_value=None
+    )
+    mock_image_open = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
+        return_value=None,
+    )
+    mock_add_padding = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_add_padding",
+        return_value=None,
+    )
+
+    mock_get_text_metadata = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_get_text_metadata",
+        return_value=[None, None, None],
+    )
+    mock_make_phi_list = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_make_phi_list",
+        return_value=None,
+    )
+
+    mock_pattern_recognizer = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
+        return_value=None,
+    )
+
+    mock_analyze = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+        return_value=None,
+    )
+
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+        return_value=None,
+    )
+
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
+        return_value={},
+    )
+
+    mock_add_redact_box = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_add_redact_box",
+        return_value=test_image,
+    )
+
+    mock_engine = DicomImageRedactorEngine()
+
+    # Act
+    test_results = mock_engine.redact(test_image, return_bboxes=True)
+
+    # Assert
+    assert type(test_results[0]) == pydicom.dataset.FileDataset
+    assert type(test_results[1]) == dict
+    assert mock_check_greyscale.call_count == 1
+    assert mock_rescale_dcm.call_count == 1
+    assert mock_save_pixel_array.call_count == 1
+    assert mock_image_open.call_count == 1
+    assert mock_add_padding.call_count == 1
+    assert mock_get_text_metadata.call_count == 1
+    assert mock_make_phi_list.call_count == 1
+    assert mock_pattern_recognizer.call_count == 1
+    assert mock_analyze.call_count == 1
+    assert mock_get_analyze_bbox.call_count == 1
+    assert mock_remove_bbox_padding.call_count == 1
+    assert mock_add_redact_box.call_count == 1
 
 @pytest.mark.parametrize(
     "image, expected_error_type",
