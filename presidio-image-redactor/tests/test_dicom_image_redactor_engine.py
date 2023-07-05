@@ -1137,7 +1137,7 @@ def test_DicomImageRedactorEngine_redact_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine.redact(image, "contrast", 25, False, "."
+        mock_engine.redact(image, fill="contrast", padding_width=25, redact_approach="metadata"
         )
 
     # Assert
@@ -1230,7 +1230,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
 
     # Act
     mock_engine._redact_single_dicom_image(
-        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, "metadata", overwrite, output_dir
     )
 
     # Assert
@@ -1272,7 +1272,7 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_single_dicom_image(
-            dcm_path, 0.75, "contrast", 25, False, "."
+            dcm_path, 0.75, "contrast", 25, "metadata", False, "."
         )
 
     # Assert
@@ -1329,7 +1329,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
 
     # Act
     mock_engine._redact_multiple_dicom_images(
-        dcm_path, crop_ratio, "contrast", 25, overwrite, output_dir
+        dcm_path, crop_ratio, "contrast", 25, "metadata", overwrite, output_dir
     )
 
     # Assert
@@ -1363,7 +1363,7 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_multiple_dicom_images(
-            dcm_path, 0.75, "contrast", 25, False, "."
+            dcm_path, 0.75, "contrast", 25, "metadata", False, "."
         )
 
     # Assert
@@ -1418,7 +1418,7 @@ def test_DicomImageRedactorEngine_redact_from_file_happy_path(
     )
 
     # Act
-    mock_engine.redact_from_file(dcm_path, "output", 25, "contrast")
+    mock_engine.redact_from_file(dcm_path, "output", padding_width=25, fill="contrast", redact_approach="metadata")
 
     # Assert
     assert mock_copy_files.call_count == 1
@@ -1460,7 +1460,7 @@ def test_DicomImageRedactorEngine_redact_from_file_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine.redact_from_file(input_path, output_path, 25, "contrast")
+        mock_engine.redact_from_file(input_path, output_path, padding_width=25, fill="contrast", redact_approach="metadata")
 
     # Assert
     assert expected_error_type == exc_info.typename
@@ -1502,7 +1502,7 @@ def test_DicomImageRedactorEngine_redact_from_directory_happy_path(
     )
 
     # Act
-    mock_engine.redact_from_directory(dcm_path, "output", 25, "contrast")
+    mock_engine.redact_from_directory(dcm_path, "output", padding_width=25, fill="contrast", redact_approach="metadata")
 
     # Assert
     assert mock_copy_files.call_count == 1
@@ -1533,7 +1533,7 @@ def test_DicomImageRedactorEngine_redact_from_directory_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine.redact_from_directory(input_path, output_path, 25, "contrast")
+        mock_engine.redact_from_directory(input_path, output_path, padding_width=25, fill="contrast", redact_approach="metadata")
 
     # Assert
     assert expected_error_type == exc_info.typename
