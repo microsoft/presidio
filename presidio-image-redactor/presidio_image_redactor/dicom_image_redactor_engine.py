@@ -8,6 +8,7 @@ import pydicom
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import PIL
 import png
+import json
 import numpy as np
 from matplotlib import pyplot as plt  # necessary import for PIL typing # noqa: F401
 from typing import Tuple, List, Union, Optional
@@ -29,9 +30,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         fill: str = "contrast",
         padding_width: int = 25,
         crop_ratio: float = 0.75,
+        return_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
-    ):
+    ) -> Union[pydicom.dataset.FileDataset, Tuple[pydicom.dataset.FileDataset, dict]]:
         """Redact method to redact the given DICOM image.
 
         Please note, this method duplicates the image, creates a
@@ -42,6 +44,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
+        :param return_bboxes: True if we want to return boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -86,7 +89,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
         redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
-        return redacted_image
+        # Return just redacted image or image with bboxes
+        if return_bboxes:
+            results = [redacted_image, bboxes]
+        else:
+            results = redacted_image
+
+        return results
 
     def redact_from_file(
         self,
@@ -95,6 +104,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
+        return_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> None:
@@ -108,6 +118,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param return_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -133,6 +144,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
+            return_bboxes=return_bboxes,
             ocr_kwargs=ocr_kwargs,
             **text_analyzer_kwargs,
         )
@@ -148,6 +160,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
+        return_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> None:
@@ -163,6 +176,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param return_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -188,6 +202,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
+            return_bboxes=return_bboxes,
             ocr_kwargs=ocr_kwargs,
             **text_analyzer_kwargs,
         )
@@ -503,7 +518,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         elif Path(src_path).is_file() is True:
             # Create the output dir manually if working with a single file
             os.makedirs(Path(dst_path).parent, exist_ok=True)
-            shutil.copy(src_path, dst_path)
+            shutil.copyfile(src_path, dst_path)
         else:
             raise FileNotFoundError(f"{src_path} does not exist")
 
@@ -720,6 +735,19 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return redacted_instance
 
+    @staticmethod
+    def _save_bbox_json(output_dcm_path: str, bboxes: dict) -> None:
+        """Save the redacted bounding box info as a json file.
+
+        :param output_dcm_path: Path to the redacted DICOM file.
+
+        :param bboxes: Bounding boxes used in redaction.
+        """
+        output_json_path = Path(output_dcm_path).with_suffix(".json")
+
+        with open(output_json_path, "w") as write_file:
+            json.dump(bboxes, write_file, indent=4)
+
     def _redact_single_dicom_image(
         self,
         dcm_path: str,
@@ -728,6 +756,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
+        return_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> str:
@@ -742,6 +771,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
+        :param return_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -796,6 +826,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
         redacted_dicom_instance.save_as(dst_path)
 
+        # Save redacted bboxes
+        if return_bboxes:
+            self._save_bbox_json(dst_path, bboxes)
+
         return dst_path
 
     def _redact_multiple_dicom_images(
@@ -806,6 +840,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
+        return_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> str:
@@ -820,6 +855,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
+        :param return_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -849,6 +885,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 padding_width,
                 overwrite,
                 dst_parent_dir,
+                return_bboxes,
                 ocr_kwargs=ocr_kwargs,
                 **text_analyzer_kwargs,
             )
