@@ -675,6 +675,25 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return box_color
 
+    @staticmethod
+    def _check_if_has_image_icon_sequence(instance: pydicom.dataset.FileDataset) -> bool:
+        """Check if there is an image icon sequence tag in the metadata.
+
+        This leads to pixel data being present in multiple locations.
+
+        :param instance: DICOM instance.
+
+        :return: Boolean for whether the instance has an image icon sequence tag.
+        """
+        has_image_icon_sequence = False
+        try:
+            _ = instance[0x0088, 0x0200]
+            has_image_icon_sequence = True
+        except KeyError:
+            has_image_icon_sequence = False
+
+        return has_image_icon_sequence
+
     @classmethod
     def _add_redact_box(
         cls,
