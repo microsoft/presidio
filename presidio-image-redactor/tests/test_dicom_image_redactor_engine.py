@@ -978,7 +978,7 @@ def test_add_redact_box_happy_path(
     )
 
     # Assert
-    mock_check_if_greyscale.call_count == 1
+    assert mock_check_if_greyscale.call_count == 1
     if mock_is_greyscale is True:
         original_pixel_values = np.array(test_instance.pixel_array).flatten()
         redacted_pixel_values = np.array(test_redacted_instance.pixel_array).flatten()
@@ -988,7 +988,7 @@ def test_add_redact_box_happy_path(
         box_color_pixels_redacted = len(
             np.where(redacted_pixel_values == mock_box_color)[0]
         )
-        mock_get_common_pixel.call_count == 1
+        assert mock_get_common_pixel.call_count == 1
     else:
         list_of_RGB_pixels_original = np.vstack(test_instance.pixel_array).tolist()
         list_of_RGB_pixels_redacted = np.vstack(
@@ -1004,10 +1004,140 @@ def test_add_redact_box_happy_path(
                 np.where(np.array(list_of_RGB_pixels_redacted) == mock_box_color)[0]
             )
         )
-        mock_set_bbox_color.call_count == 1
+        assert mock_set_bbox_color.call_count == 1
 
     assert box_color_pixels_redacted > box_color_pixels_original
 
+# ------------------------------------------------------
+# DicomImageRedactorEngine._get_analyzer_results()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "image, dcm_path, redact_approach",
+    [
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "default"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "DEFAULT"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "metadata"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "METADATA"
+        ),
+    ],
+)
+def test_get_analyzer_results_happy_path(
+    mocker,
+    image: Image,
+    dcm_path: str,
+    redact_approach: str
+):
+    """Test happy path for DicomImageRedactorEngine._get_analyzer_results
+
+    Args:
+        image (PIL.Image): A PIL image.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        redact_approach (str): The redact approach to use.
+    """
+    # Arrange
+    mock_analyze = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+        return_value=None,
+    )
+    mock_get_text_metadata = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_get_text_metadata",
+        return_value=[None, None, None],
+    )
+    mock_make_phi_list = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_make_phi_list",
+        return_value=None,
+    )
+    mock_pattern_recognizer = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
+        return_value=None,
+    )
+    mock_engine = DicomImageRedactorEngine()
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    _ = mock_engine._get_analyzer_results(
+        image, test_instance, redact_approach, None
+    )
+
+    # Assert
+    if redact_approach.lower() == "default":
+        assert mock_analyze.call_count == 1
+        assert mock_get_text_metadata.call_count == 0
+        assert mock_make_phi_list.call_count == 0
+        assert mock_pattern_recognizer.call_count == 0
+    elif redact_approach.lower() == "metadata":
+        assert mock_analyze.call_count == 1
+        assert mock_get_text_metadata.call_count == 1
+        assert mock_make_phi_list.call_count == 1
+        assert mock_pattern_recognizer.call_count == 1
+
+@pytest.mark.parametrize(
+    "image, dcm_path, redact_approach, expected_error_type",
+    [
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "someotherapproach",
+            "ValueError"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "deefault",
+            "ValueError"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "meta",
+            "ValueError"
+        ),
+    ],
+)
+def test_get_analyzer_results_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    image: Image,
+    dcm_path: str,
+    redact_approach: str,
+    expected_error_type: str,
+):
+    """Test error handling of DicomImageRedactorEngine _get_analyzer_results()
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        image (PIL.Image): A PIL image.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        redact_approach (str): The redact approach to use.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        test_instance = pydicom.dcmread(dcm_path)
+
+        # Act
+        _ = mock_engine._get_analyzer_results(
+        image, test_instance, redact_approach, None
+    )
+
+    # Assert
+    assert expected_error_type == exc_info.typename
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine redact()
@@ -1058,24 +1188,9 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         return_value=None,
     )
 
-    mock_get_text_metadata = mocker.patch.object(
+    mock_analyze = mocker.patch.object(
         DicomImageRedactorEngine,
-        "_get_text_metadata",
-        return_value=[None, None, None],
-    )
-    mock_make_phi_list = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_make_phi_list",
-        return_value=None,
-    )
-
-    mock_pattern_recognizer = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
-        return_value=None,
-    )
-
-    mock_analyze = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+        "_get_analyzer_results",
         return_value=None,
     )
 
@@ -1106,9 +1221,6 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     assert mock_save_pixel_array.call_count == 1
     assert mock_image_open.call_count == 1
     assert mock_add_padding.call_count == 1
-    assert mock_get_text_metadata.call_count == 1
-    assert mock_make_phi_list.call_count == 1
-    assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
     assert mock_get_analyze_bbox.call_count == 1
     assert mock_remove_bbox_padding.call_count == 1
@@ -1192,22 +1304,10 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._add_padding",
         return_value=None,
     )
-    mock_get_text_metadata = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_text_metadata",
-        return_value=[None, None, None],
-    )
-    mock_make_phi_list = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._make_phi_list",
-        return_value=None,
-    )
 
-    mock_pattern_recognizer = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
-        return_value=None,
-    )
-
-    mock_analyze = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+    mock_analyze = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_get_analyzer_results",
         return_value=None,
     )
 
@@ -1243,9 +1343,6 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     assert mock_convert_dcm_to_png.call_count == 1
     assert mock_image_open.call_count == 1
     assert mock_add_padding.call_count == 1
-    assert mock_get_text_metadata.call_count == 1
-    assert mock_make_phi_list.call_count == 1
-    assert mock_pattern_recognizer.call_count == 1
     assert mock_analyze.call_count == 1
     assert mock_get_analyze_bbox.call_count == 1
     assert mock_remove_bbox_padding.call_count == 1
