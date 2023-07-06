@@ -784,8 +784,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                     **text_analyzer_kwargs,
                 )
             else:
-                raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach") # noqa: E501
-        elif type(redact_approach)==PatternRecognizer:
+                raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach")  # noqa: E501
+        elif type(redact_approach) == PatternRecognizer:
             # Use passed in recognizer
             analyzer_results = self.image_analyzer_engine.analyze(
                 image,
@@ -794,7 +794,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 **text_analyzer_kwargs,
             )
         else:
-            raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach") # noqa: E501
+            raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach")  # noqa: E501
 
         return analyzer_results
 
