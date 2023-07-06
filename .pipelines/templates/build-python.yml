@@ -20,8 +20,8 @@ steps:
           script: |
               set -eux  # fail on error
               # Install pytest and run tests
-              pipenv install --dev --skip-lock pytest-azurepipelines
-              pipenv run pytest -vv -m trace --trace
+              pipenv install --dev --skip-lock pytest-azurepipelines pytest-timeout
+              pipenv run pytest --timeout=60
 
     - task: Bash@3
       displayName: 'Package Wheel: ${{ parameters.SERVICE }}'
