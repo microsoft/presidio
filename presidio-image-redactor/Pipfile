@@ -13,6 +13,7 @@ pypng = ">=0.20220715.0"
 python-gdcm = ">=3.0.22"
 matplotlib = "==3.6.2"
 typing-extensions = "*"
+numpy = "*"
 
 [dev-packages]
 pytest = "*"
