@@ -15,7 +15,7 @@ from typing import Tuple, List, Union, Optional
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
-from presidio_analyzer import Pattern, PatternRecognizer
+from presidio_analyzer import PatternRecognizer
 from presidio_image_redactor.entities import ImageRecognizerResult
 
 
@@ -45,7 +45,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
-        :param redact_approach: What approach to use when redacting ("default", "metadata", or a PatternRecognizer object).
+        :param redact_approach: What approach to use when redacting
+        ("default", "metadata", or a PatternRecognizer object).
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -75,7 +76,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
         # Detect PII
-        analyzer_results = self._get_analyzer_results(image, instance, redact_approach, ocr_kwargs, **text_analyzer_kwargs)
+        analyzer_results = self._get_analyzer_results(
+            image, instance, redact_approach, ocr_kwargs, **text_analyzer_kwargs
+        )
 
         # Redact all bounding boxes from DICOM file
         analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
@@ -109,7 +112,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
-        :param redact_approach: What approach to use when redacting ("default", "metadata", or a PatternRecognizer object).
+        :param redact_approach: What approach to use when redacting
+        ("default", "metadata", or a PatternRecognizer object).
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -167,7 +171,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
-        :param redact_approach: What approach to use when redacting ("default", "metadata", or a PatternRecognizer object).
+        :param redact_approach: What approach to use when redacting
+        ("default", "metadata", or a PatternRecognizer object).
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -744,7 +749,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :param image: DICOM pixel data as PIL image.
         :param instance: DICOM instance (with metadata).
-        :param redact_approach: What approach to use when redacting ("default", "metadata", "allow", or a PatternRecognizer object).
+        :param redact_approach: What approach to use when redacting
+        ("default", "metadata", "allow", or a PatternRecognizer object).
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine (e.g., allow_list).
@@ -762,8 +768,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 )
             elif redact_approach.lower() == "metadata":
                 # Create custom recognizer using DICOM metadata
-                original_metadata, is_name, is_patient = self._get_text_metadata(instance)
-                phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
+                original_metadata, is_name, is_patient = self._get_text_metadata(
+                    instance
+                )
+                phi_list = self._make_phi_list(
+                    original_metadata, is_name, is_patient
+                )
                 deny_list_recognizer = PatternRecognizer(
                     supported_entity="PERSON", deny_list=phi_list
                 )
@@ -774,7 +784,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                     **text_analyzer_kwargs,
                 )
             else:
-                raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach")
+                raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach") # noqa: E501
         elif type(redact_approach)==PatternRecognizer:
             # Use passed in recognizer
             analyzer_results = self.image_analyzer_engine.analyze(
@@ -784,10 +794,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 **text_analyzer_kwargs,
             )
         else:
-            raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach")
+            raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach") # noqa: E501
 
         return analyzer_results
-    
+
     def _redact_single_dicom_image(
         self,
         dcm_path: str,
@@ -808,7 +818,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
-        :param redact_approach: What approach to use when redacting ("default", "metadata", or a PatternRecognizer object).
+        :param redact_approach: What approach to use when redacting
+        ("default", "metadata", or a PatternRecognizer object).
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
@@ -847,7 +858,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
         # Detect PII
-        analyzer_results = self._get_analyzer_results(image, instance, redact_approach, ocr_kwargs, **text_analyzer_kwargs)
+        analyzer_results = self._get_analyzer_results(
+            image, instance, redact_approach, ocr_kwargs, **text_analyzer_kwargs
+        )
 
         # Redact all bounding boxes from DICOM file
         analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
@@ -883,7 +896,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
-        :param redact_approach: What approach to use when redacting ("default", "metadata", or a PatternRecognizer object).
+        :param redact_approach: What approach to use when redacting
+        ("default", "metadata", or a PatternRecognizer object).
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
