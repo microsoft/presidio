@@ -1,4 +1,5 @@
 import os
+import uuid
 import shutil
 from copy import deepcopy
 import tempfile
@@ -58,9 +59,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             # Convert DICOM to PNG and add padding for OCR (during analysis)
             is_greyscale = self._check_if_greyscale(instance)
             image = self._rescale_dcm_pixel_array(instance, is_greyscale)
-            self._save_pixel_array_as_png(image, is_greyscale, "tmp_dcm", tmpdirname)
+            image_name = str(uuid.uuid4())
+            self._save_pixel_array_as_png(image, is_greyscale, image_name, tmpdirname)
 
-            png_filepath = f"{tmpdirname}/tmp_dcm.png"
+            png_filepath = f"{tmpdirname}/{image_name}.png"
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
@@ -225,8 +227,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :return: FALSE if the Photometric Interpretation is RGB.
         """
         # Check if image is grayscale using the Photometric Interpretation element
-        color_scale = instance[0x0028, 0x0004].value
-        is_greyscale = color_scale != "RGB"
+        try:
+            color_scale = instance.PhotometricInterpretation
+        except AttributeError:
+            color_scale = None
+        is_greyscale = (color_scale in ["MONOCHROME1", "MONOCHROME2"])
 
         return is_greyscale
 
@@ -243,7 +248,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         # Normalize contrast
         if "WindowWidth" in instance:
-            image_2d = apply_voi_lut(instance.pixel_array, instance)
+            if is_greyscale:
+                image_2d = apply_voi_lut(instance.pixel_array, instance)
+            else:
+                image_2d = instance.pixel_array
         else:
             image_2d = instance.pixel_array
 
