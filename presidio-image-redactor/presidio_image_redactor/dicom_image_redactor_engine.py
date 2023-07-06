@@ -111,7 +111,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
-        return_bboxes: bool = False,
+        save_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> None:
@@ -125,7 +125,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
-        :param return_bboxes: True if we want to save boundings boxes.
+        :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -151,7 +151,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
-            return_bboxes=return_bboxes,
+            save_bboxes=save_bboxes,
             ocr_kwargs=ocr_kwargs,
             **text_analyzer_kwargs,
         )
@@ -167,7 +167,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
-        return_bboxes: bool = False,
+        save_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> None:
@@ -183,7 +183,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
-        :param return_bboxes: True if we want to save boundings boxes.
+        :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -209,7 +209,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             overwrite=True,
             dst_parent_dir=".",
-            return_bboxes=return_bboxes,
+            save_bboxes=save_bboxes,
             ocr_kwargs=ocr_kwargs,
             **text_analyzer_kwargs,
         )
@@ -769,7 +769,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
-        return_bboxes: bool,
+        save_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> str:
@@ -784,7 +784,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
-        :param return_bboxes: True if we want to save boundings boxes.
+        :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -845,7 +845,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         redacted_dicom_instance.save_as(dst_path)
 
         # Save redacted bboxes
-        if return_bboxes:
+        if save_bboxes:
             self._save_bbox_json(dst_path, bboxes)
 
         return dst_path
@@ -858,7 +858,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int,
         overwrite: bool,
         dst_parent_dir: str,
-        return_bboxes: bool,
+        save_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> str:
@@ -873,7 +873,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
-        :param return_bboxes: True if we want to save boundings boxes.
+        :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -903,7 +903,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 padding_width,
                 overwrite,
                 dst_parent_dir,
-                return_bboxes,
+                save_bboxes,
                 ocr_kwargs=ocr_kwargs,
                 **text_analyzer_kwargs,
             )
