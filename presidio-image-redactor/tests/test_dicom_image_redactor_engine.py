@@ -42,6 +42,7 @@ def mock_engine():
             [
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
                 Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
                 Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
