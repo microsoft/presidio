@@ -66,6 +66,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         """
         instance_copy = deepcopy(instance)
 
+        try:
+            instance_copy.PixelData
+        except AttributeError:
+            raise AttributeError("Provided DICOM instance lacks pixel data.")
+
         # Load image for processing
         with tempfile.TemporaryDirectory() as tmpdirname:
             # Convert DICOM to PNG and add padding for OCR (during analysis)
@@ -86,8 +91,8 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         ocr_results = self.ocr_engine.perform_ocr(image)
         analyzer_results = self.image_analyzer_engine.analyze(
             image,
-            ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=[deny_list_recognizer],
             **text_analyzer_kwargs,
         )
 

@@ -1,4 +1,5 @@
 import os
+import uuid
 import shutil
 from copy import deepcopy
 import tempfile
@@ -49,8 +50,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :return: DICOM instance with redacted pixel data.
         """
         # Check input
-        if type(image) != pydicom.dataset.FileDataset:
+        if type(image) not in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]:
             raise TypeError("The provided image must be a loaded DICOM instance.")
+        try:
+            image.PixelData
+        except AttributeError:
+            raise AttributeError("Provided DICOM instance lacks pixel data.")
+
         instance = deepcopy(image)
 
         # Load image for processing
@@ -58,9 +64,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             # Convert DICOM to PNG and add padding for OCR (during analysis)
             is_greyscale = self._check_if_greyscale(instance)
             image = self._rescale_dcm_pixel_array(instance, is_greyscale)
-            self._save_pixel_array_as_png(image, is_greyscale, "tmp_dcm", tmpdirname)
+            image_name = str(uuid.uuid4())
+            self._save_pixel_array_as_png(image, is_greyscale, image_name, tmpdirname)
 
-            png_filepath = f"{tmpdirname}/tmp_dcm.png"
+            png_filepath = f"{tmpdirname}/{image_name}.png"
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
@@ -72,8 +79,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
         analyzer_results = self.image_analyzer_engine.analyze(
             image,
-            ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=[deny_list_recognizer],
             **text_analyzer_kwargs,
         )
 
@@ -225,8 +232,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :return: FALSE if the Photometric Interpretation is RGB.
         """
         # Check if image is grayscale using the Photometric Interpretation element
-        color_scale = instance[0x0028, 0x0004].value
-        is_greyscale = color_scale != "RGB"
+        try:
+            color_scale = instance.PhotometricInterpretation
+        except AttributeError:
+            color_scale = None
+        is_greyscale = (color_scale in ["MONOCHROME1", "MONOCHROME2"])
 
         return is_greyscale
 
@@ -243,7 +253,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         """
         # Normalize contrast
         if "WindowWidth" in instance:
-            image_2d = apply_voi_lut(instance.pixel_array, instance)
+            if is_greyscale:
+                image_2d = apply_voi_lut(instance.pixel_array, instance)
+            else:
+                image_2d = instance.pixel_array
         else:
             image_2d = instance.pixel_array
 
@@ -814,6 +827,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Load instance
         instance = pydicom.dcmread(dst_path)
 
+        try:
+            instance.PixelData
+        except AttributeError:
+            raise AttributeError("Provided DICOM file lacks pixel data.")
+
         # Load image for processing
         with tempfile.TemporaryDirectory() as tmpdirname:
             # Convert DICOM to PNG and add padding for OCR (during analysis)
@@ -830,8 +848,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
         analyzer_results = self.image_analyzer_engine.analyze(
             image,
-            ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=[deny_list_recognizer],
             **text_analyzer_kwargs,
         )
 
