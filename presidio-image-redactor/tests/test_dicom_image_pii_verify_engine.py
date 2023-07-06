@@ -1,5 +1,6 @@
 """Unit tests for dicom_image_pii_verify_engine
 """
+from copy import deepcopy
 import pydicom
 
 from presidio_image_redactor import (
@@ -120,6 +121,28 @@ def test_verify_dicom_instance_happy_path(
     assert mock_perform_ocr.call_count == 1
     assert mock_analyze.call_count == 1
     assert mock_verify.call_count == 1
+
+def test_verify_dicom_instance_exception(
+    mock_engine: DicomImagePiiVerifyEngine,
+    get_mock_dicom_instance: pydicom.dataset.FileDataset,
+):
+    """Test exceptions for DicomImagePiiVerifyEngine.verify_dicom_instance
+    Args:
+        mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
+        get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        padding_width = 25
+        test_instance = deepcopy(get_mock_dicom_instance)
+        del test_instance.PixelData
+        expected_error_type = AttributeError
+
+        # Act
+        _, _, _ = mock_engine.verify_dicom_instance(test_instance, padding_width)
+
+        # Assert
+        assert expected_error_type == exc_info.typename
 
 
 # ------------------------------------------------------
