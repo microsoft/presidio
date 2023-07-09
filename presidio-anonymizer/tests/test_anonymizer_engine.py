@@ -157,6 +157,85 @@ def test_given_several_results_then_we_filter_them_and_get_correct_mocked_result
     assert result.items[0].text == "text"
 
 
+@pytest.mark.parametrize(
+    # fmt: off
+    "text, analyzer_results, expected",
+    [
+        (
+            "My name is David Jones",
+            [
+                RecognizerResult(start=11, end=16, score=0.8, entity_type="PERSON"),
+                RecognizerResult(start=17, end=22, score=0.8, entity_type="PERSON"),
+            ],
+            EngineResult(
+                text="My name is BIP",
+                items=[
+                    OperatorResult(11, 14, "PERSON", "BIP", "replace"),
+                ]
+            )
+        ),
+        (
+            "My name is David   Jones",
+            [
+                RecognizerResult(start=11, end=16, score=0.8, entity_type="PERSON"),
+                RecognizerResult(start=19, end=24, score=0.8, entity_type="PERSON"),
+            ],
+            EngineResult(
+                text="My name is BIP",
+                items=[
+                    OperatorResult(11, 14, "PERSON", "BIP", "replace"),
+                ]
+            )
+        ),
+        (
+            "My name is Jones, David",
+            [
+                RecognizerResult(start=11, end=16, score=0.8, entity_type="PERSON"),
+                RecognizerResult(start=18, end=23, score=0.8, entity_type="PERSON"),
+            ],
+            EngineResult(
+                text="My name is BIP, BIP",
+                items=[
+                    OperatorResult(11, 14, "PERSON", "BIP", "replace"),
+                    OperatorResult(16, 19, "PERSON", "BIP", "replace"),
+                ]
+            )
+        ),
+        (
+            "The phone book said: Jones 212-555-5555",
+            [
+                RecognizerResult(start=21, end=26, score=0.8, entity_type="PERSON"),
+                RecognizerResult(
+                    start=27, end=39, score=0.8, entity_type="PHONE NUMBER"
+                ),
+            ],
+            EngineResult(
+                text="The phone book said: BIP BEEP",
+                items=[
+                    OperatorResult(21, 24, "PERSON", "BIP", "replace"),
+                    OperatorResult(25, 29, "PHONE NUMBER", "BEEP", "replace"),
+                ]
+            )
+        ),
+    ]
+    # fmt: on
+)
+def test_given_sorted_analyzer_results_merge_entities_separated_by_white_space(
+    text, analyzer_results, expected
+):
+    engine = AnonymizerEngine()
+    result = engine.anonymize(
+        text,
+        analyzer_results,
+        operators={
+            "PERSON": OperatorConfig("replace", {"new_value": "BIP"}),
+            "PHONE NUMBER": OperatorConfig("replace", {"new_value": "BEEP"}),
+        },
+    )
+    assert result.text == expected.text
+    assert sorted(result.items) == sorted(expected.items)
+
+
 def _operate(
     text: str,
     text_metadata: List[PIIEntity],
