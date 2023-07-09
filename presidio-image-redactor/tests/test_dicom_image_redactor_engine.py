@@ -42,6 +42,7 @@ def mock_engine():
             [
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
                 Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
                 Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
@@ -538,7 +539,7 @@ def test_add_padding_exceptions(
     "src_path, expected_num_of_files",
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 1),
-        (Path(TEST_DICOM_PARENT_DIR), 16),
+        (Path(TEST_DICOM_PARENT_DIR), 17),
         (Path(TEST_DICOM_DIR_1), 3),
         (Path(TEST_DICOM_DIR_2), 2),
         (Path(TEST_DICOM_DIR_3), 1),
