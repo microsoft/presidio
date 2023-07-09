@@ -913,69 +913,69 @@ def test_set_bbox_color_exceptions(
 # ------------------------------------------------------
 # DicomImageRedactorEngine._check_if_compressed()
 # ------------------------------------------------------
-# @pytest.mark.parametrize(
-#     "dcm_path, compression_status",
-#     [
-#         (
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             False
-#         ),
-#         (
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
-#             True
-#         ),
-#     ],
-# )
-# def test_check_if_compressed_happy_path(
-#     mock_engine: DicomImageRedactorEngine,
-#     dcm_path: Path,
-#     compression_status: bool,
-# ):
-#     """Test happy path for DicomImageRedactorEngine._check_if_compressed
-#
-#     Args:
-#         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
-#         dcm_path (pathlib.Path): Path to DICOM file.
-#         compression_status (bool): If the pixel data is compressed.
-#     """
-#     # Arrange
-#     test_instance = pydicom.dcmread(dcm_path)
-#
-#     # Act
-#     test_is_compressed = mock_engine._check_if_compressed(test_instance)
-#
-#     # Assert
-#     assert test_is_compressed == compression_status
+@pytest.mark.parametrize(
+    "dcm_path, compression_status",
+    [
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
+            True
+        ),
+    ],
+)
+def test_check_if_compressed_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: Path,
+    compression_status: bool,
+):
+    """Test happy path for DicomImageRedactorEngine._check_if_compressed
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        compression_status (bool): If the pixel data is compressed.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    test_is_compressed = mock_engine._check_if_compressed(test_instance)
+
+    # Assert
+    assert test_is_compressed == compression_status
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine._compress_pixel_data()
 # ------------------------------------------------------
-# @pytest.mark.parametrize(
-#     "dcm_path",
-#     [
-#         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
-#         (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"))
-#     ],
-# )
-# def test_compress_pixel_data_happy_path(
-#     mock_engine: DicomImageRedactorEngine,
-#     dcm_path: Path,
-# ):
-#     """Test happy path for DicomImageRedactorEngine._compress_pixel_data
-#
-#     Args:
-#         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
-#         dcm_path (pathlib.Path): Path to DICOM file.
-#     """
-#     # Arrange
-#     test_instance = pydicom.dcmread(dcm_path)
-#
-#     # Act
-#     test_compressed = mock_engine._compress_pixel_data(test_instance)
-#
-#     # Assert
-#     assert mock_engine._check_if_compressed(test_compressed) == True
-#
+@pytest.mark.parametrize(
+    "dcm_path",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"))
+    ],
+)
+def test_compress_pixel_data_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: Path,
+):
+    """Test happy path for DicomImageRedactorEngine._compress_pixel_data
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (pathlib.Path): Path to DICOM file.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    test_compressed = mock_engine._compress_pixel_data(test_instance)
+
+    # Assert
+    assert mock_engine._check_if_compressed(test_compressed) == True
+
 # ------------------------------------------------------
 # DicomImageRedactorEngine._add_redact_box()
 # ------------------------------------------------------
