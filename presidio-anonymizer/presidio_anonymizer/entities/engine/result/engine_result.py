@@ -38,9 +38,15 @@ class EngineResult:
             result_item.start = text_len - result_item.end
             result_item.end = result_item.start + len(result_item.text)
 
+    @staticmethod
+    def _serialize_json(x) -> dict:
+        if isinstance(x, OperatorResult):
+            return {k: x.__dict__[k] for k in x.__dict__ if k != "instance_id"}
+        return x.__dict__
+
     def to_json(self) -> str:
         """Return a json string serializing this instance."""
-        return json.dumps(self, default=lambda x: x.__dict__)
+        return json.dumps(self, default=EngineResult._serialize_json)
 
     def __repr__(self):
         """Return a string representation of the object."""

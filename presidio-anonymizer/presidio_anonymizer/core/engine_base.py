@@ -65,6 +65,8 @@ class EngineBase(ABC):
                 operator.entity_type,
                 changed_text,
                 operator_metadata.operator_name,
+                operator.instance_id,
+                text_to_operate_on
             )
             engine_result.add_item(result_item)
 
@@ -88,6 +90,7 @@ class EngineBase(ABC):
         operator.validate(params=operator_metadata.params)
         params = operator_metadata.params
         params["entity_type"] = entity_type
+        params["instance_id"] = text_metadata.instance_id
         self.logger.debug(f"operating on {entity_type} with {operator}")
         operated_on_text = operator.operate(params=params, text=text_to_operate_on)
         return operated_on_text

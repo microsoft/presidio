@@ -28,3 +28,12 @@ def test_given_no_value_for_replace_then_we_return_default_value_from_entity_typ
 
 def test_when_validate_anonymizer_then_correct_name():
     assert Replace().operator_name() == "replace"
+
+
+def test_instance_preserving():
+    text = Replace().operate("", {
+        "entity_type": "PHONE_NUMBER",
+        "preserve_instances": True,
+        "instance_id": 1
+    })
+    assert text == "<PHONE_NUMBER 1>"

@@ -13,10 +13,13 @@ class OperatorResult(PIIEntity):
         entity_type: str,
         text: str = None,
         operator: str = None,
+        instance_id: int = None,
+        plaintext: str = None,
     ):
-        PIIEntity.__init__(self, start, end, entity_type)
+        PIIEntity.__init__(self, start, end, entity_type, instance_id)
         self.text = text
         self.operator = operator
+        self.plaintext = plaintext
 
     def __repr__(self):
         """Return a string representation of the object."""
