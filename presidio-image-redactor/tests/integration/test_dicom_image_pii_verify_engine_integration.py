@@ -6,6 +6,7 @@ the original parent ImagePiiVerifyEngine class.
 """
 import PIL
 import pydicom
+from copy import deepcopy
 
 from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
 
@@ -23,8 +24,8 @@ def test_verify_correctly(
     """
     # Assign
     bbox_processor = BboxProcessor()
-    expected_ocr_results = get_mock_dicom_verify_results["ocr_results_formatted"]
-    expected_analyzer_results = get_mock_dicom_verify_results["analyzer_results"]
+    expected_ocr_results = deepcopy(get_mock_dicom_verify_results["ocr_results_formatted"])
+    expected_analyzer_results = deepcopy(get_mock_dicom_verify_results["analyzer_results"])
     expected_ocr_results_labels = []
     for item in expected_ocr_results:
         expected_ocr_results_labels.append(item["label"])
@@ -72,8 +73,8 @@ def test_eval_dicom_correctly(
     """
     # Assign
     tolerance = 50
-    ground_truth = get_mock_dicom_verify_results["ground_truth"]
-    all_pos = get_mock_dicom_verify_results["all_pos"]
+    ground_truth = deepcopy(get_mock_dicom_verify_results["ground_truth"])
+    all_pos = deepcopy(get_mock_dicom_verify_results["all_pos"])
     expected_results = {
         "all_positives": all_pos,
         "ground_truth": ground_truth,
@@ -82,7 +83,6 @@ def test_eval_dicom_correctly(
     }
 
     # Act
-    print("Calling eval_dicom_instance()")
     test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
         instance = get_mock_dicom_instance,
         ground_truth = ground_truth,
@@ -91,7 +91,6 @@ def test_eval_dicom_correctly(
         display_image = True,
         ocr_kwargs = None
     )
-    print("Finished calling eval_dicom_instance()")
 
     # Assert
     assert type(test_image) == PIL.Image.Image
