@@ -74,12 +74,12 @@ def test_eval_dicom_correctly(
     """
     # Assign
     test_instance = deepcopy(get_mock_dicom_instance)
-    tolerance = 50
-    ground_truth = deepcopy(get_mock_dicom_verify_results["ground_truth"])
-    all_pos = deepcopy(get_mock_dicom_verify_results["all_pos"])
+    test_tolerance = 50
+    test_ground_truth = deepcopy(get_mock_dicom_verify_results["ground_truth"])
+    test_all_pos = deepcopy(get_mock_dicom_verify_results["all_pos"])
     expected_results = {
-        "all_positives": all_pos,
-        "ground_truth": ground_truth,
+        "all_positives": test_all_pos,
+        "ground_truth": test_ground_truth,
         "precision": 1.0,
         "recall": 1.0,
     }
@@ -87,9 +87,9 @@ def test_eval_dicom_correctly(
     # Act
     test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
         instance = test_instance,
-        ground_truth = ground_truth,
+        ground_truth = test_ground_truth,
         padding_width = PADDING_WIDTH,
-        tolerance = tolerance,
+        tolerance = test_tolerance,
         display_image = True,
         ocr_kwargs = None
     )
