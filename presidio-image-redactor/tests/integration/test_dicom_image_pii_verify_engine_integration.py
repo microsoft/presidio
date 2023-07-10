@@ -61,8 +61,8 @@ def test_verify_correctly(
     # Assert
     assert type(test_image_verify) == PIL.Image.Image
     assert len(test_common_labels) / len(test_all_labels) >= 0.5
-    _strip_score(expected_analyzer_results)
-    _strip_score(test_analyzer_results_formatted)
+    expected_analyzer_results = _strip_score(expected_analyzer_results)
+    test_analyzer_results_formatted = _strip_score(test_analyzer_results_formatted)
     assert all([result in expected_analyzer_results for result in test_analyzer_results_formatted])
 
 def test_eval_dicom_correctly(
@@ -100,9 +100,10 @@ def test_eval_dicom_correctly(
 
     # Assert
     assert type(test_image) == PIL.Image.Image
-    _strip_score(test_eval_results['all_positives'])
-    _strip_score(expected_results['all_positives'])
+    test_eval_results['all_positives'] = _strip_score(test_eval_results['all_positives'])
+    expected_results['all_positives'] = _strip_score(expected_results['all_positives'])
     assert test_eval_results == expected_results
 
-def _strip_score(analyzer_results):
-    [result.pop('score') for result in analyzer_results]
+def _strip_score(analyzer_results_to_remove_score_from):
+    stripped_analyzer_results = deepcopy(analyzer_results_to_remove_score_from)
+    return [result.pop('score') for result in stripped_analyzer_results]
