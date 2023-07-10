@@ -41,6 +41,7 @@ def mock_engine():
             Path(TEST_DICOM_PARENT_DIR),
             [
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
@@ -975,6 +976,42 @@ def test_compress_pixel_data_happy_path(
 
     # Assert
     assert mock_engine._check_if_compressed(test_compressed) == True
+
+# ------------------------------------------------------
+# DicomImageRedactorEngine._check_if_has_image_icon_sequence()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_path, has_sequence",
+    [
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
+            True
+        ),
+    ],
+)
+def test_check_if_has_image_icon_sequence_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: Path,
+    has_sequence: bool,
+):
+    """Test happy path for DicomImageRedactorEngine._check_if_has_image_icon_sequence
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        has_sequence (bool): If additional pixel data is available in the instance.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    test_has_sequence = mock_engine._check_if_has_image_icon_sequence(test_instance)
+
+    # Assert
+    assert test_has_sequence == has_sequence
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine._add_redact_box()

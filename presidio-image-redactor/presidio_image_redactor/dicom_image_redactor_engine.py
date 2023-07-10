@@ -79,8 +79,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
         analyzer_results = self.image_analyzer_engine.analyze(
             image,
-            ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=[deny_list_recognizer],
             **text_analyzer_kwargs,
         )
 
@@ -733,6 +733,25 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         instance.file_meta.TransferSyntaxUID = compression_method
 
         return instance
+    def _check_if_has_image_icon_sequence(
+        instance: pydicom.dataset.FileDataset
+    ) -> bool:
+        """Check if there is an image icon sequence tag in the metadata.
+
+        This leads to pixel data being present in multiple locations.
+
+        :param instance: DICOM instance.
+
+        :return: Boolean for whether the instance has an image icon sequence tag.
+        """
+        has_image_icon_sequence = False
+        try:
+            _ = instance[0x0088, 0x0200]
+            has_image_icon_sequence = True
+        except KeyError:
+            has_image_icon_sequence = False
+
+        return has_image_icon_sequence
 
     @classmethod
     def _add_redact_box(
@@ -848,8 +867,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
         analyzer_results = self.image_analyzer_engine.analyze(
             image,
-            ad_hoc_recognizers=[deny_list_recognizer],
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=[deny_list_recognizer],
             **text_analyzer_kwargs,
         )
 
