@@ -23,6 +23,7 @@ def test_verify_correctly(
         get_mock_dicom_verify_results (dict): Dictionary with loaded results.
     """
     # Assign
+    test_instance = deepcopy(get_mock_dicom_instance)
     bbox_processor = BboxProcessor()
     expected_ocr_results = deepcopy(get_mock_dicom_verify_results["ocr_results_formatted"])
     expected_analyzer_results = deepcopy(get_mock_dicom_verify_results["analyzer_results"])
@@ -35,7 +36,7 @@ def test_verify_correctly(
         test_image,
         test_ocr_results,
         test_analyzer_results,
-    ) = DicomImagePiiVerifyEngine().verify_dicom_instance(get_mock_dicom_instance, PADDING_WIDTH)
+    ) = DicomImagePiiVerifyEngine().verify_dicom_instance(test_instance, PADDING_WIDTH)
     test_ocr_results_formatted = bbox_processor.get_bboxes_from_ocr_results(
         test_ocr_results
     )
@@ -72,6 +73,7 @@ def test_eval_dicom_correctly(
         get_mock_dicom_verify_results (dict): Dictionary with loaded results.
     """
     # Assign
+    test_instance = deepcopy(get_mock_dicom_instance)
     tolerance = 50
     ground_truth = deepcopy(get_mock_dicom_verify_results["ground_truth"])
     all_pos = deepcopy(get_mock_dicom_verify_results["all_pos"])
@@ -84,7 +86,7 @@ def test_eval_dicom_correctly(
 
     # Act
     test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
-        instance = get_mock_dicom_instance,
+        instance = test_instance,
         ground_truth = ground_truth,
         padding_width = PADDING_WIDTH,
         tolerance = tolerance,
