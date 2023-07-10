@@ -733,6 +733,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         instance.file_meta.TransferSyntaxUID = compression_method
 
         return instance
+
     def _check_if_has_image_icon_sequence(
         instance: pydicom.dataset.FileDataset
     ) -> bool:

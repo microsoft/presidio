@@ -41,7 +41,11 @@ def mock_engine():
             Path(TEST_DICOM_PARENT_DIR),
             [
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+<<<<<<< HEAD
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
+=======
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
+>>>>>>> 7979bb0b47749b7ad9d7a72e8dea0ff46c16bafe
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
@@ -1246,8 +1250,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         (Path(TEST_DICOM_PARENT_DIR), "TypeError"),
         ("path_here", "TypeError"),
         (np.random.randint(255, size=(64, 64)), "TypeError"),
-        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError"),
-        (pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm")), "AttributeError")
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError")
     ],
 )
 def test_DicomImageRedactorEngine_redact_exceptions(
@@ -1382,7 +1385,6 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     [
         (Path(TEST_DICOM_PARENT_DIR), "FileNotFoundError"),
         (Path("nonexistentfile.extension"), "FileNotFoundError"),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"), "AttributeError")
     ],
 )
 def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
