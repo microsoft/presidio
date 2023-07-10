@@ -73,23 +73,31 @@ def test_eval_dicom_correctly(
     # Assign
     tolerance = 50
     ground_truth = get_mock_dicom_verify_results["ground_truth"]
+    all_pos = get_mock_dicom_verify_results["all_pos"]
     expected_results = {
-        "all_positives": get_mock_dicom_verify_results["all_pos"],
+        "all_positives": all_pos,
         "ground_truth": ground_truth,
         "precision": 1.0,
         "recall": 1.0,
     }
 
     # Act
+    print("Calling eval_dicom_instance()")
     test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
-        get_mock_dicom_instance, ground_truth, PADDING_WIDTH, tolerance, True
+        instance = get_mock_dicom_instance,
+        ground_truth = ground_truth,
+        padding_width = PADDING_WIDTH,
+        tolerance = tolerance,
+        display_image = True,
+        ocr_kwargs = None
     )
+    print("Finished calling eval_dicom_instance()")
 
     # Assert
-    # assert type(test_image) == PIL.Image.Image
-    # _strip_score(test_eval_results['all_positives'])
-    # _strip_score(expected_results['all_positives'])
-    # assert test_eval_results == expected_results
+    assert type(test_image) == PIL.Image.Image
+    _strip_score(test_eval_results['all_positives'])
+    _strip_score(expected_results['all_positives'])
+    assert test_eval_results == expected_results
 
 def _strip_score(analyzer_results):
     [result.pop('score') for result in analyzer_results]
