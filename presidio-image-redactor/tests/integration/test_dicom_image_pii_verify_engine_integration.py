@@ -12,54 +12,58 @@ from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
 
 PADDING_WIDTH = 25
 
-# def test_verify_correctly(
-#     get_mock_dicom_instance: pydicom.dataset.FileDataset,
-#     get_mock_dicom_verify_results: dict,
-# ):
-#     """Test the verify_dicom_instance function.
+def test_verify_correctly(
+    get_mock_dicom_instance: pydicom.dataset.FileDataset,
+    get_mock_dicom_verify_results: dict,
+):
+    """Test the verify_dicom_instance function.
 
-#     Args:
-#         get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
-#         get_mock_dicom_verify_results (dict): Dictionary with loaded results.
-#     """
-#     # Assign
-#     test_instance = deepcopy(get_mock_dicom_instance)
-#     bbox_processor = BboxProcessor()
-#     expected_ocr_results = deepcopy(get_mock_dicom_verify_results["ocr_results_formatted"])
-#     expected_analyzer_results = deepcopy(get_mock_dicom_verify_results["analyzer_results"])
-#     expected_ocr_results_labels = []
-#     for item in expected_ocr_results:
-#         expected_ocr_results_labels.append(item["label"])
+    Args:
+        get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
+        get_mock_dicom_verify_results (dict): Dictionary with loaded results.
+    """
+    # Assign
+    test_instance_verify = deepcopy(get_mock_dicom_instance)
+    expected_ocr_results = deepcopy(get_mock_dicom_verify_results["ocr_results_formatted"])
+    expected_analyzer_results = deepcopy(get_mock_dicom_verify_results["analyzer_results"])
+    expected_ocr_results_labels = []
+    for item in expected_ocr_results:
+        expected_ocr_results_labels.append(item["label"])
 
-#     # Act
-#     (
-#         test_image,
-#         test_ocr_results,
-#         test_analyzer_results,
-#     ) = DicomImagePiiVerifyEngine().verify_dicom_instance(test_instance, PADDING_WIDTH)
-#     test_ocr_results_formatted = bbox_processor.get_bboxes_from_ocr_results(
-#         test_ocr_results
-#     )
-#     test_analyzer_results_formatted = bbox_processor.get_bboxes_from_analyzer_results(
-#         test_analyzer_results
-#     )
+    # Act
+    (
+        test_image_verify,
+        test_ocr_results,
+        test_analyzer_results,
+    ) = DicomImagePiiVerifyEngine().verify_dicom_instance(
+        instance=test_instance_verify,
+        padding_width=PADDING_WIDTH,
+        display_image=True,
+        ocr_kwargs=None
+    )
+    test_ocr_results_formatted = BboxProcessor().get_bboxes_from_ocr_results(
+        ocr_results=test_ocr_results
+    )
+    test_analyzer_results_formatted = BboxProcessor().get_bboxes_from_analyzer_results(
+        analyzer_results=test_analyzer_results
+    )
 
-#     # Check most OCR results (labels) are the same
-#     # Don't worry about position since that is implied in analyzer results
-#     test_ocr_results_labels = []
-#     for item in test_ocr_results_formatted:
-#         test_ocr_results_labels.append(item["label"])
-#     common_labels = set(expected_ocr_results_labels).intersection(
-#         set(test_ocr_results_labels)
-#     )
-#     all_labels = set(expected_ocr_results_labels).union(set(test_ocr_results_labels))
+    # Check most OCR results (labels) are the same
+    # Don't worry about position since that is implied in analyzer results
+    test_ocr_results_labels = []
+    for item in test_ocr_results_formatted:
+        test_ocr_results_labels.append(item["label"])
+    test_common_labels = set(expected_ocr_results_labels).intersection(
+        set(test_ocr_results_labels)
+    )
+    test_all_labels = set(expected_ocr_results_labels).union(set(test_ocr_results_labels))
 
-#     # Assert
-#     assert type(test_image) == PIL.Image.Image
-#     assert len(common_labels) / len(all_labels) >= 0.5
-#     _strip_score(expected_analyzer_results)
-#     _strip_score(test_analyzer_results_formatted)
-#     assert all([result in expected_analyzer_results for result in test_analyzer_results_formatted])
+    # Assert
+    assert type(test_image_verify) == PIL.Image.Image
+    assert len(test_common_labels) / len(test_all_labels) >= 0.5
+    _strip_score(expected_analyzer_results)
+    _strip_score(test_analyzer_results_formatted)
+    assert all([result in expected_analyzer_results for result in test_analyzer_results_formatted])
 
 def test_eval_dicom_correctly(
     get_mock_dicom_instance: pydicom.dataset.FileDataset,
