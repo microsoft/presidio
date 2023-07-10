@@ -734,6 +734,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return instance
 
+    @staticmethod
     def _check_if_has_image_icon_sequence(
         instance: pydicom.dataset.FileDataset
     ) -> bool:
@@ -777,6 +778,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         # Copy instance
         redacted_instance = deepcopy(instance)
         is_compressed = cls._check_if_compressed(redacted_instance)
+        has_image_icon_sequence = cls._check_if_has_image_icon_sequence(redacted_instance)
 
         # Select masking box color
         is_greyscale = cls._check_if_greyscale(instance)
@@ -798,8 +800,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         redacted_instance.PixelData = redacted_instance.pixel_array.tobytes()
 
-        # If original pixel data is compressed, recompress after redaction
-        if is_compressed:
+        ## If original pixel data is compressed, recompress after redaction
+        if is_compressed or has_image_icon_sequence:
+            # Temporary "fix" to manually set all YBR photometric interp as YBR_FULL
+            if "YBR" in redacted_instance.PhotometricInterpretation:
+                redacted_instance.PhotometricInterpretation = "YBR_FULL"
             redacted_instance = cls._compress_pixel_data(redacted_instance)
 
         return redacted_instance
