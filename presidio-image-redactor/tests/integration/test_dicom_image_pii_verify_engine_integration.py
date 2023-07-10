@@ -91,5 +91,5 @@ def test_verify_correctly(
 #     _strip_score(expected_results['all_positives'])
 #     assert test_eval_results == expected_results
 
-# def _strip_score(analyzer_results):
-#     [result.pop('score') for result in analyzer_results]
+def _strip_score(analyzer_results):
+    [result.pop('score') for result in analyzer_results]
