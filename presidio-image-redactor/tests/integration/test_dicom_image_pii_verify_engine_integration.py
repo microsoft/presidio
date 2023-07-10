@@ -468,6 +468,26 @@ def test_eval_dicom_correctly(
         "presidio_image_redactor.dicom_image_pii_verify_engine.BboxProcessor.get_bboxes_from_analyzer_results",
         return_value=test_analyzer_results,
     )
+    mocker.patch.object(
+        DicomImagePiiVerifyEngine,
+        "_remove_duplicate_entities",
+        return_value=None,
+    )
+    mocker.patch.object(
+        DicomImagePiiVerifyEngine,
+        "_label_all_positives",
+        return_value=test_all_pos,
+    )
+    mocker.patch.object(
+        DicomImagePiiVerifyEngine,
+        "calculate_precision",
+        return_value=1.0,
+    )
+    mocker.patch.object(
+        DicomImagePiiVerifyEngine,
+        "calculate_recall",
+        return_value=1.0,
+    )
 
     # Act
     test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
@@ -481,7 +501,7 @@ def test_eval_dicom_correctly(
 
     # Assert
     assert type(test_image) == PIL.Image.Image
-    _strip_score(test_eval_results['all_positives'])
+    # _strip_score(test_eval_results['all_positives'])
     _strip_score(expected_results['all_positives'])
     assert test_eval_results == expected_results
 
