@@ -32,6 +32,7 @@ from .it_fiscal_code_recognizer import ItFiscalCodeRecognizer
 from .it_vat_code import ItVatCodeRecognizer
 from .it_identity_card_recognizer import ItIdentityCardRecognizer
 from .it_passport_recognizer import ItPassportRecognizer
+from .in_pan_recognizer import InPanRecognizer
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -71,4 +72,5 @@ __all__ = [
     "ItVatCodeRecognizer",
     "ItIdentityCardRecognizer",
     "ItPassportRecognizer",
+    "InPanRecognizer"
 ]

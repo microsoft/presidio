@@ -15,6 +15,7 @@ from presidio_analyzer.predefined_recognizers import (
     IpRecognizer,
     UsSsnRecognizer,
     SgFinRecognizer,
+    InPanRecognizer,
 )
 from presidio_analyzer.nlp_engine import NlpArtifacts
 from presidio_analyzer.context_aware_enhancers import LemmaContextAwareEnhancer
@@ -32,6 +33,7 @@ def recognizers_map():
         "US_BANK_NUMBER": UsBankRecognizer(),
         "US_PASSPORT": UsPassportRecognizer(),
         "FIN": SgFinRecognizer(),
+        "IN_PAN": InPanRecognizer(),
     }
     return rec_map
 
@@ -70,9 +72,9 @@ def dataset(recognizers_map):
             raise ValueError(f"bad entity type {entity_type}")
 
         test_items.append((item, recognizer, [entity_type]))
-    # Currently we have 28 sentences, this is a sanity check
-    if not len(test_items) == 28:
-        raise ValueError(f"expected 28 context sentences but found {len(test_items)}")
+    # Currently we have 31 sentences, this is a sanity check
+    if not len(test_items) == 31:
+        raise ValueError(f"expected 31 context sentences but found {len(test_items)}")
 
     yield test_items
 
