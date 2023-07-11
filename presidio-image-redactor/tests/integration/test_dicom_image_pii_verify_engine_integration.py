@@ -21,6 +21,13 @@ def mock_instance(get_mock_dicom_instance: pydicom.dataset.FileDataset):
 def mock_verify_results(get_mock_dicom_verify_results: dict):
     return deepcopy(get_mock_dicom_verify_results)
 
+def _strip_score(analyzer_results_to_remove_score_from):
+    [result.pop('score') for result in analyzer_results_to_remove_score_from]
+
+def _set_of_tuples(list_of_dict):
+    return set(frozenset(d.items()) for d in list_of_dict)
+
+
 def test_verify_correctly(
     mock_instance: pydicom.dataset.FileDataset,
     mock_verify_results: dict,
@@ -62,11 +69,11 @@ def test_verify_correctly(
     test_all_labels = set(expected_ocr_results_labels).union(set(test_ocr_results_labels))
 
     # Assert
-    # assert type(test_image_verify) == PIL.Image.Image
-    # assert len(test_common_labels) / len(test_all_labels) >= 0.5
-    # _strip_score(expected_analyzer_results)
-    # _strip_score(test_analyzer_results_formatted)
-    # assert _set_of_tuples(test_analyzer_results_formatted) == _set_of_tuples(expected_analyzer_results)
+    assert type(test_image_verify) == PIL.Image.Image
+    assert len(test_common_labels) / len(test_all_labels) >= 0.5
+    _strip_score(expected_analyzer_results)
+    _strip_score(test_analyzer_results_formatted)
+    assert _set_of_tuples(test_analyzer_results_formatted) == _set_of_tuples(expected_analyzer_results)
 
 def test_eval_dicom_correctly(
     mock_instance: pydicom.dataset.FileDataset,
@@ -101,13 +108,7 @@ def test_eval_dicom_correctly(
     )
 
     # Assert
-    # assert type(test_image_eval) == PIL.Image.Image
+    assert type(test_image_eval) == PIL.Image.Image
     _strip_score(test_eval_results['all_positives'])
     _strip_score(expected_results['all_positives'])
     assert test_eval_results == expected_results
-
-def _strip_score(analyzer_results_to_remove_score_from):
-    [result.pop('score') for result in analyzer_results_to_remove_score_from]
-
-def _set_of_tuples(list_of_dict):
-    return set(frozenset(d.items()) for d in list_of_dict)
