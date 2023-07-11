@@ -63,8 +63,7 @@ def test_verify_correctly(
     assert len(test_common_labels) / len(test_all_labels) >= 0.5
     _strip_score(expected_analyzer_results)
     _strip_score(test_analyzer_results_formatted)
-    for result in test_analyzer_results_formatted:
-        assert result in expected_analyzer_results
+    assert _set_of_tuples(test_analyzer_results_formatted) == _set_of_tuples(expected_analyzer_results)
 
 def test_eval_dicom_correctly(
     get_mock_dicom_instance: pydicom.dataset.FileDataset,
@@ -107,3 +106,6 @@ def test_eval_dicom_correctly(
 
 def _strip_score(analyzer_results_to_remove_score_from):
     [result.pop('score') for result in analyzer_results_to_remove_score_from]
+
+def _set_of_tuples(list_of_dict):
+    return set(frozenset(d.items()) for d in list_of_dict)
