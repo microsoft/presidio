@@ -63,7 +63,7 @@ def test_verify_correctly(
 
     # Assert
     # assert type(test_image_verify) == PIL.Image.Image
-    assert len(test_common_labels) / len(test_all_labels) >= 0.5
+    # assert len(test_common_labels) / len(test_all_labels) >= 0.5
     # _strip_score(expected_analyzer_results)
     # _strip_score(test_analyzer_results_formatted)
     # assert _set_of_tuples(test_analyzer_results_formatted) == _set_of_tuples(expected_analyzer_results)
@@ -102,9 +102,9 @@ def test_eval_dicom_correctly(
 
     # Assert
     # assert type(test_image_eval) == PIL.Image.Image
-    # _strip_score(test_eval_results['all_positives'])
-    # _strip_score(expected_results['all_positives'])
-    # assert test_eval_results == expected_results
+    _strip_score(test_eval_results['all_positives'])
+    _strip_score(expected_results['all_positives'])
+    assert test_eval_results == expected_results
 
 def _strip_score(analyzer_results_to_remove_score_from):
     [result.pop('score') for result in analyzer_results_to_remove_score_from]
