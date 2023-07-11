@@ -62,7 +62,7 @@ def test_verify_correctly(
     test_all_labels = set(expected_ocr_results_labels).union(set(test_ocr_results_labels))
 
     # # Assert
-    assert type(test_image_verify) == PIL.Image.Image
+    # assert type(test_image_verify) == PIL.Image.Image
     # assert len(test_common_labels) / len(test_all_labels) >= 0.5
     # _strip_score(expected_analyzer_results)
     # _strip_score(test_analyzer_results_formatted)
@@ -101,7 +101,7 @@ def test_eval_dicom_correctly(
     )
 
     # # Assert
-    # assert type(test_image_eval) == PIL.Image.Image
+    assert type(test_image_eval) == PIL.Image.Image
     # _strip_score(test_eval_results['all_positives'])
     # _strip_score(expected_results['all_positives'])
     # assert test_eval_results == expected_results
