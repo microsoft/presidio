@@ -63,46 +63,47 @@ def test_verify_correctly(
     assert len(test_common_labels) / len(test_all_labels) >= 0.5
     _strip_score(expected_analyzer_results)
     _strip_score(test_analyzer_results_formatted)
-    # assert all([result in expected_analyzer_results for result in test_analyzer_results_formatted])
+    for result in test_analyzer_results_formatted:
+        assert result in expected_analyzer_results
 
-# def test_eval_dicom_correctly(
-#     get_mock_dicom_instance: pydicom.dataset.FileDataset,
-#     get_mock_dicom_verify_results: dict,
-# ):
-#     """Test the eval_dicom_instance function
+def test_eval_dicom_correctly(
+    get_mock_dicom_instance: pydicom.dataset.FileDataset,
+    get_mock_dicom_verify_results: dict,
+):
+    """Test the eval_dicom_instance function
 
-#     Args:
-#         mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
-#         get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
-#         get_mock_dicom_verify_results (dict): Dictionary with loaded results.
-#     """
-#     # Assign
-#     test_instance = deepcopy(get_mock_dicom_instance)
-#     test_tolerance = 50
-#     test_ground_truth = deepcopy(get_mock_dicom_verify_results["ground_truth"])
-#     test_all_pos = deepcopy(get_mock_dicom_verify_results["all_pos"])
-#     expected_results = {
-#         "all_positives": test_all_pos,
-#         "ground_truth": test_ground_truth,
-#         "precision": 1.0,
-#         "recall": 1.0,
-#     }
+    Args:
+        mock_engine (DicomImagePiiVerifyEngine): Instantiated engine.
+        get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
+        get_mock_dicom_verify_results (dict): Dictionary with loaded results.
+    """
+    # Assign
+    test_instance = deepcopy(get_mock_dicom_instance)
+    test_tolerance = 50
+    test_ground_truth = deepcopy(get_mock_dicom_verify_results["ground_truth"])
+    test_all_pos = deepcopy(get_mock_dicom_verify_results["all_pos"])
+    expected_results = {
+        "all_positives": test_all_pos,
+        "ground_truth": test_ground_truth,
+        "precision": 1.0,
+        "recall": 1.0,
+    }
 
-#     # Act
-#     test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
-#         instance = test_instance,
-#         ground_truth = test_ground_truth,
-#         padding_width = PADDING_WIDTH,
-#         tolerance = test_tolerance,
-#         display_image = True,
-#         ocr_kwargs = None
-#     )
+    # Act
+    test_image, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
+        instance = test_instance,
+        ground_truth = test_ground_truth,
+        padding_width = PADDING_WIDTH,
+        tolerance = test_tolerance,
+        display_image = True,
+        ocr_kwargs = None
+    )
 
-#     # Assert
-#     assert type(test_image) == PIL.Image.Image
-#     _strip_score(test_eval_results['all_positives'])
-#     _strip_score(expected_results['all_positives'])
-#     assert test_eval_results == expected_results
+    # Assert
+    assert type(test_image) == PIL.Image.Image
+    _strip_score(test_eval_results['all_positives'])
+    _strip_score(expected_results['all_positives'])
+    assert test_eval_results == expected_results
 
 def _strip_score(analyzer_results_to_remove_score_from):
     [result.pop('score') for result in analyzer_results_to_remove_score_from]
