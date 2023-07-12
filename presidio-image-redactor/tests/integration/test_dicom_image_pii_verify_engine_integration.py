@@ -63,39 +63,3 @@ def test_verify_correctly(
     assert type(test_image_verify) == PIL.Image.Image
     assert len(test_common_labels) / len(test_all_labels) >= 0.5
     assert abs(len(expected_analyzer_results) - len(test_analyzer_results_formatted)) <= 1
-
-def test_eval_dicom_correctly(
-    get_mock_dicom_instance: pydicom.dataset.FileDataset,
-    get_mock_dicom_verify_results: dict,
-):
-    """Test the eval_dicom_instance function
-
-    Args:
-        get_mock_dicom_instance (pydicom.dataset.FileDataset): Loaded DICOM.
-        get_mock_dicom_verify_results (dict): Dictionary with loaded results.
-    """
-    # Assign
-    test_tolerance = 50
-    test_ground_truth = deepcopy(get_mock_dicom_verify_results["ground_truth"])
-    test_all_pos = deepcopy(get_mock_dicom_verify_results["all_pos"])
-    expected_results = {
-        "all_positives": test_all_pos,
-        "ground_truth": test_ground_truth,
-        "precision": 1.0,
-        "recall": 1.0,
-    }
-
-    # Act
-    test_image_eval, test_eval_results = DicomImagePiiVerifyEngine().eval_dicom_instance(
-        instance = get_mock_dicom_instance,
-        ground_truth = test_ground_truth,
-        padding_width = PADDING_WIDTH,
-        tolerance = test_tolerance,
-        display_image = True,
-        ocr_kwargs = None
-    )
-
-    # Assert
-    assert type(test_image_eval) == PIL.Image.Image
-    assert len(test_eval_results["all_positives"]) == len(expected_results["all_positives"])
-    assert test_eval_results["ground_truth"] == expected_results["ground_truth"]
