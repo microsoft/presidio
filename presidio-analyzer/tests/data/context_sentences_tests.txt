@@ -94,3 +94,16 @@ Special NRIC numbers e.g. S0000001I that are numerically significant have been i
 # Verify SG NRIC/FIN mixed case (e.g. lower case )
 FIN
 my fin is g3300299L
+
+#Verify IN PAN in adjacent context words
+IN_PAN
+my pan is DJPMS1234Z amongst so many other things
+
+#Verify IN PAN context words
+IN_PAN
+Typical tax filing identifier is known as PAN in India also known as permanent account number
+
+
+#Verify IN PAN mixed case
+IN_PAN
+my PAN number is DJPMS1234Z
