@@ -6,8 +6,6 @@ the original parent ImagePiiVerifyEngine class.
 """
 import PIL
 import pydicom
-from copy import deepcopy
-import pytest
 
 from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
 
@@ -29,7 +27,7 @@ def test_verify_correctly(
         expected_ocr_results_labels.append(item["label"])
 
     # Act
-    test_image_verify, test_ocr_results, test_analyzer_results = DicomImagePiiVerifyEngine().verify_dicom_instance(
+    test_image_verify, test_ocr_results, _ = DicomImagePiiVerifyEngine().verify_dicom_instance(
         instance=get_mock_dicom_instance,
         padding_width=PADDING_WIDTH,
         display_image=True,
