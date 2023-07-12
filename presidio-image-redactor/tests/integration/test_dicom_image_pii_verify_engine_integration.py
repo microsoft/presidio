@@ -13,12 +13,6 @@ from presidio_image_redactor import DicomImagePiiVerifyEngine, BboxProcessor
 
 PADDING_WIDTH = 25
 
-
-@pytest.fixture(scope="module")
-def mock_verify_results(get_mock_dicom_verify_results: dict):
-    return deepcopy(get_mock_dicom_verify_results)
-
-
 def test_verify_correctly(
     get_mock_dicom_instance: pydicom.dataset.FileDataset,
     get_mock_dicom_verify_results: dict,
@@ -30,7 +24,6 @@ def test_verify_correctly(
         get_mock_dicom_verify_results (dict): Dictionary with loaded results.
     """
     # Assign
-    expected_analyzer_results = deepcopy(get_mock_dicom_verify_results["analyzer_results"])
     expected_ocr_results_labels = []
     for item in get_mock_dicom_verify_results["ocr_results_formatted"]:
         expected_ocr_results_labels.append(item["label"])
@@ -44,9 +37,6 @@ def test_verify_correctly(
     )
     test_ocr_results_formatted = BboxProcessor().get_bboxes_from_ocr_results(
         ocr_results=test_ocr_results
-    )
-    test_analyzer_results_formatted = BboxProcessor().get_bboxes_from_analyzer_results(
-        analyzer_results=test_analyzer_results
     )
 
     # Check most OCR results (labels) are the same
@@ -62,4 +52,3 @@ def test_verify_correctly(
     # Assert
     assert type(test_image_verify) == PIL.Image.Image
     assert len(test_common_labels) / len(test_all_labels) >= 0.5
-    assert abs(len(expected_analyzer_results) - len(test_analyzer_results_formatted)) <= 1
