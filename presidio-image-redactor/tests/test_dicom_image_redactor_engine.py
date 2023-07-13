@@ -41,8 +41,9 @@ def mock_engine():
             Path(TEST_DICOM_PARENT_DIR),
             [
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
                 Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
                 Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom"),
@@ -539,7 +540,7 @@ def test_add_padding_exceptions(
     "src_path, expected_num_of_files",
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 1),
-        (Path(TEST_DICOM_PARENT_DIR), 17),
+        (Path(TEST_DICOM_PARENT_DIR), 18),
         (Path(TEST_DICOM_DIR_1), 3),
         (Path(TEST_DICOM_DIR_2), 2),
         (Path(TEST_DICOM_DIR_3), 1),
@@ -911,6 +912,72 @@ def test_set_bbox_color_exceptions(
 
 
 # ------------------------------------------------------
+# DicomImageRedactorEngine._check_if_compressed()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_path, compression_status",
+    [
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
+            True
+        ),
+    ],
+)
+def test_check_if_compressed_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: Path,
+    compression_status: bool,
+):
+    """Test happy path for DicomImageRedactorEngine._check_if_compressed
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        compression_status (bool): If the pixel data is compressed.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    test_is_compressed = mock_engine._check_if_compressed(test_instance)
+
+    # Assert
+    assert test_is_compressed == compression_status
+
+# ------------------------------------------------------
+# DicomImageRedactorEngine._compress_pixel_data()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_path",
+    [
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"))
+    ],
+)
+def test_compress_pixel_data_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: Path,
+):
+    """Test happy path for DicomImageRedactorEngine._compress_pixel_data
+
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (pathlib.Path): Path to DICOM file.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    test_compressed = mock_engine._compress_pixel_data(test_instance)
+
+    # Assert
+    assert mock_engine._check_if_compressed(test_compressed) == True
+
+# ------------------------------------------------------
 # DicomImageRedactorEngine._check_if_has_image_icon_sequence()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
@@ -950,10 +1017,36 @@ def test_check_if_has_image_icon_sequence_happy_path(
 # DicomImageRedactorEngine._add_redact_box()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "dcm_path, mock_is_greyscale, mock_box_color, bounding_boxes_coordinates",
+    "dcm_path, mock_is_compressed, mock_has_image_icon_sequence, mock_is_greyscale, mock_box_color, bounding_boxes_coordinates",
     [
         (
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False,
+            False,
+            True,
+            0,
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100},
+                {"top": 24, "left": 0, "width": 75, "height": 51},
+                {"top": 1, "left": 588, "width": 226, "height": 35},
+            ],
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm"),
+            True,
+            False,
+            True,
+            0,
+            [
+                {"top": 0, "left": 0, "width": 100, "height": 100},
+                {"top": 24, "left": 0, "width": 75, "height": 51},
+                {"top": 1, "left": 588, "width": 226, "height": 35},
+            ],
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
+            False,
+            True,
             True,
             0,
             [
@@ -964,6 +1057,8 @@ def test_check_if_has_image_icon_sequence_happy_path(
         ),
         (
             Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
+            False,
+            False,
             False,
             (0, 0, 0),
             [
@@ -977,6 +1072,8 @@ def test_check_if_has_image_icon_sequence_happy_path(
 def test_add_redact_box_happy_path(
     mocker,
     dcm_path: Path,
+    mock_is_compressed: bool,
+    mock_has_image_icon_sequence: bool,
     mock_is_greyscale: bool,
     mock_box_color: Union[int, Tuple[int, int, int]],
     bounding_boxes_coordinates: dict,
@@ -985,6 +1082,8 @@ def test_add_redact_box_happy_path(
 
     Args:
         dcm_path (pathlib.Path): Path to DICOM file.
+        mock_is_compressed (bool): If the pixel data is compressed.
+        mock_has_image_icon_sequence (bool): If there is more than one set of pixel data.
         mock_is_greyscale (bool): Value to use when mocking _check_if_greyscale.
         mock_box_color (int or Tuple of int): Color value to assign to mocker.
         bouding_boxes_coordinates (dict): Formatted bbox coordinates.
@@ -992,6 +1091,16 @@ def test_add_redact_box_happy_path(
     # Arrange
     test_instance = pydicom.dcmread(dcm_path)
     crop_ratio = 0.75
+    mock_check_if_compressed = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_check_if_compressed",
+        return_value=mock_is_compressed
+    )
+    mock_check_if_has_image_icon_sequence = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "_check_if_has_image_icon_sequence",
+        return_value=mock_has_image_icon_sequence
+    )
     mock_check_if_greyscale = mocker.patch.object(
         DicomImageRedactorEngine,
         "_check_if_greyscale",
@@ -1015,7 +1124,9 @@ def test_add_redact_box_happy_path(
     )
 
     # Assert
-    mock_check_if_greyscale.call_count == 1
+    assert mock_check_if_compressed.call_count == 1
+    assert mock_check_if_has_image_icon_sequence.call_count == 1
+    assert mock_check_if_greyscale.call_count == 1
     if mock_is_greyscale is True:
         original_pixel_values = np.array(test_instance.pixel_array).flatten()
         redacted_pixel_values = np.array(test_redacted_instance.pixel_array).flatten()
@@ -1025,7 +1136,7 @@ def test_add_redact_box_happy_path(
         box_color_pixels_redacted = len(
             np.where(redacted_pixel_values == mock_box_color)[0]
         )
-        mock_get_common_pixel.call_count == 1
+        assert mock_get_common_pixel.call_count == 1
     else:
         list_of_RGB_pixels_original = np.vstack(test_instance.pixel_array).tolist()
         list_of_RGB_pixels_redacted = np.vstack(
@@ -1041,7 +1152,7 @@ def test_add_redact_box_happy_path(
                 np.where(np.array(list_of_RGB_pixels_redacted) == mock_box_color)[0]
             )
         )
-        mock_set_bbox_color.call_count == 1
+        assert mock_set_bbox_color.call_count == 1
 
     assert box_color_pixels_redacted > box_color_pixels_original
 
@@ -1158,8 +1269,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         (Path(TEST_DICOM_PARENT_DIR), "TypeError"),
         ("path_here", "TypeError"),
         (np.random.randint(255, size=(64, 64)), "TypeError"),
-        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError"),
-        (pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm")), "AttributeError")
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError")
     ],
 )
 def test_DicomImageRedactorEngine_redact_exceptions(
@@ -1294,7 +1404,6 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
     [
         (Path(TEST_DICOM_PARENT_DIR), "FileNotFoundError"),
         (Path("nonexistentfile.extension"), "FileNotFoundError"),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"), "AttributeError")
     ],
 )
 def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
