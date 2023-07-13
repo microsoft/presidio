@@ -1305,7 +1305,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     mock_redact_return_bbox = mocker.patch.object(
         DicomImageRedactorEngine,
         "redact_and_return_bbox",
-        return_value=[test_image, None]
+        return_value=[test_image, []]
     )
     test_mock_redact_engine = DicomImageRedactorEngine()
 
