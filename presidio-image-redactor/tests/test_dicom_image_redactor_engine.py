@@ -1174,16 +1174,12 @@ def test_add_redact_box_happy_path(
 )
 def test_DicomImageRedactorEngine_redact_and_return_bbox(
     mocker,
-    mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
 ):
     """Test happy path for DicomImageRedactorEngine redact_and_return_bbox()
 
     Args:
-        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         dcm_path (str): Path to input DICOM file or dir.
-        output_dir (str): Path to parent directory to write output to.
-        overwrite (bool): True if overwriting original files.
     """
     # Arrange
     test_image = pydicom.dcmread(dcm_path)
@@ -1301,25 +1297,20 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
     "dcm_path",
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
         (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")),
         (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM")),
         (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom")),
         (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM")),
     ],
 )
-def test_DicomImageRedactorEngine_happy_path(
+def test_DicomImageRedactorEngine_redact_happy_path(
     mocker,
-    mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
 ):
     """Test happy path for DicomImageRedactorEngine redact()
 
     Args:
-        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         dcm_path (str): Path to input DICOM file or dir.
-        output_dir (str): Path to parent directory to write output to.
-        overwrite (bool): True if overwriting original files.
     """
     # Arrange
     test_image = pydicom.dcmread(dcm_path)
