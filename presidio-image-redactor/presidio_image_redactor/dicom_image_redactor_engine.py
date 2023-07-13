@@ -122,11 +122,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :return: DICOM instance with redacted pixel data.
         """
         redacted_image, _ = self.redact_and_return_bbox(
-            image = image,
-            fill = fill,
-            padding_width = padding_width,
-            crop_ratio = crop_ratio,
-            ocr_kwargs = ocr_kwargs,
+            image=image,
+            fill=fill,
+            padding_width=padding_width,
+            crop_ratio=crop_ratio,
+            ocr_kwargs=ocr_kwargs,
             **text_analyzer_kwargs
         )
 
