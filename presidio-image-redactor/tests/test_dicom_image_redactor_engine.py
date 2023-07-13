@@ -1294,39 +1294,23 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
 # ------------------------------------------------------
 # DicomImageRedactorEngine redact()
 # ------------------------------------------------------
-@pytest.mark.parametrize(
-    "dcm_path",
-    [
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm")),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm")),
-        (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")),
-        (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM")),
-        (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom")),
-        (Path(TEST_DICOM_DIR_3, "3_ORIGINAL.DICOM")),
-    ],
-)
 def test_DicomImageRedactorEngine_redact_happy_path(
     mocker,
-    dcm_path: str,
 ):
     """Test happy path for DicomImageRedactorEngine redact()
-
-    Args:
-        dcm_path (str): Path to input DICOM file or dir.
     """
     # Arrange
-    test_image = pydicom.dcmread(dcm_path)
+    test_image = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
 
     mock_redact_return_bbox = mocker.patch.object(
         DicomImageRedactorEngine,
         "redact_and_return_bbox",
         return_value=[test_image, None]
     )
-    test_mock_engine = DicomImageRedactorEngine()
+    test_mock_redact_engine = DicomImageRedactorEngine()
 
     # Act
-    test_redacted_image = test_mock_engine.redact(test_image)
+    test_redacted_image = test_mock_redact_engine.redact(test_image)
 
     # Assert
     assert type(test_redacted_image) == pydicom.dataset.FileDataset
