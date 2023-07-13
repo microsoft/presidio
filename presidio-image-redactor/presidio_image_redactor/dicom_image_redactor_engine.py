@@ -25,17 +25,16 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
 
-    def redact(
+    def redact_and_return_bbox(
         self,
         image: pydicom.dataset.FileDataset,
         fill: str = "contrast",
         padding_width: int = 25,
         crop_ratio: float = 0.75,
-        return_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> Union[pydicom.dataset.FileDataset, Tuple[pydicom.dataset.FileDataset, dict]]:
-        """Redact method to redact the given DICOM image.
+        """Redact method to redact the given DICOM image and return redacted bboxes.
 
         Please note, this method duplicates the image, creates a
         new instance and manipulates it.
@@ -45,7 +44,6 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
-        :param return_bboxes: True if we want to return boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -96,13 +94,43 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         )
         redacted_image = self._add_redact_box(instance, bboxes, crop_ratio, fill)
 
-        # Return just redacted image or image with bboxes
-        if return_bboxes:
-            results = [redacted_image, bboxes]
-        else:
-            results = redacted_image
+        return redacted_image, bboxes
 
-        return results
+    def redact(
+        self,
+        image: pydicom.dataset.FileDataset,
+        fill: str = "contrast",
+        padding_width: int = 25,
+        crop_ratio: float = 0.75,
+        ocr_kwargs: Optional[dict] = None,
+        **text_analyzer_kwargs,
+    ) -> pydicom.dataset.FileDataset:
+        """Redact method to redact the given DICOM image.
+
+        Please note, this method duplicates the image, creates a
+        new instance and manipulates it.
+
+        :param image: Loaded DICOM instance including pixel data and metadata.
+        :param fill: Fill setting to use for redaction box ("contrast" or "background").
+        :param padding_width: Padding width to use when running OCR.
+        :param crop_ratio: Portion of image to consider when selecting
+        most common pixel value as the background color value.
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine.
+
+        :return: DICOM instance with redacted pixel data.
+        """
+        redacted_image, _ = self.redact_and_return_bbox(
+            image = image,
+            fill = fill,
+            padding_width = padding_width,
+            crop_ratio = crop_ratio,
+            ocr_kwargs = ocr_kwargs,
+            **text_analyzer_kwargs
+        )
+
+        return redacted_image
 
     def redact_from_file(
         self,
