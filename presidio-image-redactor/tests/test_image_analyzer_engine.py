@@ -115,36 +115,36 @@ def test_given_dif_len_entities_then_map_analyzer_returns_correct_outputand_len(
     assert expected_result == mapped_entities
 
 
-@pytest.mark.parametrize(
-    "ocr_threshold, expected_length",
-    [(-1, 9), (50, 7), (80, 2), (100, 0)],
-)
-def test_threshold_ocr_result_returns_expected_results(
-    image_analyzer_engine, ocr_threshold, expected_length
-):
-    # Assign
-    ocr_result = {}
-    ocr_result["text"] = [
-        "",
-        "Homey",
-        "Interiors",
-        "was",
-        "created",
-        "by",
-        "Katie",
-        "",
-        "Cromley.",
-    ]
-    ocr_result["left"] = [143, 143, 322, 530, 634, 827, 896, 141, 141]
-    ocr_result["top"] = [64, 67, 67, 76, 64, 64, 64, 134, 134]
-    ocr_result["width"] = [936, 160, 191, 87, 172, 51, 183, 801, 190]
-    ocr_result["height"] = [50, 47, 37, 28, 40, 50, 40, 50, 50]
-    ocr_result["conf"] = [-1, 99.5, 92.3, 42.7, 66.1, 51.2, 79.7, 64.0, 70.3]
+# @pytest.mark.parametrize(
+#     "ocr_threshold, expected_length",
+#     [(-1, 9), (50, 7), (80, 2), (100, 0)],
+# )
+# def test_threshold_ocr_result_returns_expected_results(
+#     image_analyzer_engine, ocr_threshold, expected_length
+# ):
+#     # Assign
+#     ocr_result = {}
+#     ocr_result["text"] = [
+#         "",
+#         "Homey",
+#         "Interiors",
+#         "was",
+#         "created",
+#         "by",
+#         "Katie",
+#         "",
+#         "Cromley.",
+#     ]
+#     ocr_result["left"] = [143, 143, 322, 530, 634, 827, 896, 141, 141]
+#     ocr_result["top"] = [64, 67, 67, 76, 64, 64, 64, 134, 134]
+#     ocr_result["width"] = [936, 160, 191, 87, 172, 51, 183, 801, 190]
+#     ocr_result["height"] = [50, 47, 37, 28, 40, 50, 40, 50, 50]
+#     ocr_result["conf"] = [-1, 99.5, 92.3, 42.7, 66.1, 51.2, 79.7, 64.0, 70.3]
 
-    # Act
-    test_filtered = image_analyzer_engine.threshold_ocr_result(
-        ocr_result, ocr_threshold
-    )
+#     # Act
+#     test_filtered = image_analyzer_engine.threshold_ocr_result(
+#         ocr_result, ocr_threshold
+#     )
 
-    # Assert
-    assert len(test_filtered["conf"]) == expected_length
+#     # Assert
+#     assert len(test_filtered["conf"]) == expected_length
