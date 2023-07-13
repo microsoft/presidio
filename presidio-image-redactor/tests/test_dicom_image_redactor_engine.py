@@ -1165,7 +1165,8 @@ def test_add_redact_box_happy_path(
     "dcm_path",
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm")),
         (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")),
         (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM")),
         (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom")),
@@ -1240,10 +1241,10 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
         return_value=test_image,
     )
 
-    mock_engine = DicomImageRedactorEngine()
+    test_mock_engine = DicomImageRedactorEngine()
 
     # Act
-    test_redacted_image, test_bboxes = mock_engine.redact_and_return_bbox(test_image)
+    test_redacted_image, test_bboxes = test_mock_engine.redact_and_return_bbox(test_image)
 
     # Assert
     assert type(test_redacted_image) == pydicom.dataset.FileDataset
@@ -1297,6 +1298,8 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
     "dcm_path",
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_compressed.dcm")),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm")),
         (Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm")),
         (Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM")),
         (Path(TEST_DICOM_DIR_2, "2_ORIGINAL.dicom")),
@@ -1320,10 +1323,10 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         "redact_and_return_bbox",
         return_value=[test_image, None]
     )
-    mock_engine = DicomImageRedactorEngine()
+    test_mock_engine = DicomImageRedactorEngine()
 
     # Act
-    test_redacted_image = mock_engine.redact(test_image)
+    test_redacted_image = test_mock_engine.redact(test_image)
 
     # Assert
     assert type(test_redacted_image) == pydicom.dataset.FileDataset
