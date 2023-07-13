@@ -42,6 +42,7 @@ def mock_engine():
             Path(TEST_DICOM_PARENT_DIR),
             [
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+                Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"),
                 Path(TEST_DICOM_PARENT_DIR, "RGB_ORIGINAL.dcm"),
                 Path(TEST_DICOM_DIR_2, "1_ORIGINAL.DCM"),
@@ -539,7 +540,7 @@ def test_add_padding_exceptions(
     "src_path, expected_num_of_files",
     [
         (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"), 1),
-        (Path(TEST_DICOM_PARENT_DIR), 16),
+        (Path(TEST_DICOM_PARENT_DIR), 17),
         (Path(TEST_DICOM_DIR_1), 3),
         (Path(TEST_DICOM_DIR_2), 2),
         (Path(TEST_DICOM_DIR_3), 1),
@@ -909,6 +910,42 @@ def test_set_bbox_color_exceptions(
     # Assert
     assert expected_error_type == exc_info.typename
 
+
+# ------------------------------------------------------
+# DicomImageRedactorEngine._check_if_has_image_icon_sequence()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "dcm_path, has_sequence",
+    [
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False
+        ),
+        (
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_icon_image_sequence.dcm"),
+            True
+        ),
+    ],
+)
+def test_check_if_has_image_icon_sequence_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    dcm_path: Path,
+    has_sequence: bool,
+):
+    """Test happy path for DicomImageRedactorEngine._check_if_has_image_icon_sequence
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        has_sequence (bool): If additional pixel data is available in the instance.
+    """
+    # Arrange
+    test_instance = pydicom.dcmread(dcm_path)
+
+    # Act
+    test_has_sequence = mock_engine._check_if_has_image_icon_sequence(test_instance)
+
+    # Assert
+    assert test_has_sequence == has_sequence
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine._add_redact_box()
