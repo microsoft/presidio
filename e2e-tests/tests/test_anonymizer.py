@@ -1,3 +1,4 @@
+import base64
 import json
 
 import pytest
@@ -140,7 +141,12 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz+YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
-        "deanonymizers": {"NUMBER": {"type": "decrypt", "key": "1111111111111111"}},
+        "deanonymizers": {
+            "NUMBER": {
+                "type": "decrypt",
+                "key": base64.b64encode(b"1111111111111111").decode("utf-8"),
+            }
+        },
         "anonymizer_results": [{"start": 0, "end": len(text), "entity_type": "NUMBER"}],
     }
 
@@ -153,7 +159,7 @@ def test_given_decrypt_called_with_encrypted_text_then_decrypted_text_returned()
 
 
 @pytest.mark.api
-def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_returned():
+def test_given_decrypt_called_with_not_base64_encoded_key_then_invalid_input_response_returned():
     text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz + YqHNnMW2mC5r3AWoay8Spsoajyyy"
     request_body = {
         "text": text,
@@ -165,7 +171,33 @@ def test_given_decrypt_called_with_invalid_key_then_invalid_input_response_retur
 
     expected_response = """
     {
-        "error": "Invalid input, key must be of length 128, 192 or 256 bits"
+        "error": "Invalid input, key must be base64 encoded"
+    }
+    """
+
+    assert response_status == 422
+    assert equal_json_strings(expected_response, response_content)
+
+
+@pytest.mark.api
+def test_given_decrypt_called_with_length_invalid_key_then_invalid_input_response_returned():
+    text = "e6HnOMnIxbd4a8Qea44LshQDnjvxwzBIaAz + YqHNnMW2mC5r3AWoay8Spsoajyyy"
+    request_body = {
+        "text": text,
+        "deanonymizers": {
+            "NUMBER": {
+                "type": "decrypt",
+                "key": base64.b64encode(b"invalidkey").decode("utf-8"),
+            }
+        },
+        "anonymizer_results": [{"start": 0, "end": len(text), "entity_type": "NUMBER"}],
+    }
+
+    response_status, response_content = deanonymize(json.dumps(request_body))
+
+    expected_response = """
+    {
+        "error": "Invalid input, key must be of base64 encoded bytes of length 128, 192 or 256 bits"
     }
     """
 
@@ -225,12 +257,13 @@ def test_given_decrypt_called_with_missing_payload_then_bad_request_response_ret
 @pytest.mark.api
 def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text():
     text_for_encryption = "Lorem Ipsum is a Software Engineer"
-    key = "1111111111111111"
+    key1 = base64.b64encode(b"1111111111111111").decode("utf-8")
+    key2 = base64.b64encode(b"2222222222222222").decode("utf-8")
     anonymize_request = {
         "text": text_for_encryption,
         "anonymizers": {
-            "DEFAULT": {"type": "encrypt", "key": key},
-            "TITLE": {"type": "encrypt", "key": "2222222222222222"},
+            "DEFAULT": {"type": "encrypt", "key": key1},
+            "TITLE": {"type": "encrypt", "key": key2},
         },
         "analyzer_results": [
             {
@@ -253,8 +286,8 @@ def test_given_encrypt_called_then_decrypt_returns_the_original_encrypted_text()
     decrypt_request = {
         "text": encrypted_text,
         "deanonymizers": {
-            "DEFAULT": {"type": "decrypt", "key": "1111111111111111"},
-            "TITLE": {"type": "decrypt", "key": "2222222222222222"},
+            "DEFAULT": {"type": "decrypt", "key": key1},
+            "TITLE": {"type": "decrypt", "key": key2},
         },
         "anonymizer_results": [
             {

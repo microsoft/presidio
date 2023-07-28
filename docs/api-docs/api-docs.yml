@@ -360,7 +360,7 @@ components:
                   "deanonymizers": {
                     "PERSON": {
                       "type": "decrypt",
-                      "key": "WmZq4t7w!z%C&F)J"
+                      "key": base64.b64encode(b"WmZq4t7w!z%C&F)J").decode('utf-8')
                     }
                   },
                   "anonymizer_results": [ {
@@ -461,7 +461,7 @@ components:
             anyOf:
               - $ref: "#/components/schemas/Decrypt"
           default:
-            { "DEFAULT": { "type": "decrypt", "key": "3t6w9z$C&F)J@NcR" } }
+            { "DEFAULT": { "type": "decrypt", "key": base64.b64encode(b"3t6w9z$C&F)J@NcR").decode('utf-8') } }
         anonymizer_results:
           type: array
           description: "Array of anonymized PIIs"

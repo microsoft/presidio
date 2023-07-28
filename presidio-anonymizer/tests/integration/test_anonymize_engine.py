@@ -1,4 +1,5 @@
 import pytest
+import base64
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import (
@@ -34,8 +35,8 @@ def test_given_operator_decrypt_then_we_fail():
     ]
     engine = AnonymizerEngine()
     with pytest.raises(
-            InvalidParamException,
-            match="Invalid operator class 'decrypt'.",
+        InvalidParamException,
+        match="Invalid operator class 'decrypt'.",
     ):
         engine.anonymize(text, analyzer_results, anonymizers_config)
 
@@ -246,7 +247,7 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     text = unencrypted_text + expected_encrypted_text
     start_index = 11
     end_index = 16
-    key = "WmZq4t7w!z%C&F)J"
+    key = base64.b64encode(b"WmZq4t7w!z%C&F)J").decode("utf-8")
     analyzer_results = [RecognizerResult("PERSON", start_index, end_index, 0.8)]
     anonymizers_config = {"PERSON": OperatorConfig("encrypt", {"key": key})}
 
@@ -257,7 +258,9 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     assert actual_anonymize_result[:start_index] == unencrypted_text
     actual_encrypted_text = actual_anonymize_result[start_index:]
     assert actual_encrypted_text != expected_encrypted_text
-    actual_decrypted_text = AESCipher.decrypt(key.encode(), actual_encrypted_text)
+    actual_decrypted_text = AESCipher.decrypt(
+        base64.b64decode(key), actual_encrypted_text
+    )
     assert actual_decrypted_text == expected_encrypted_text
 
 

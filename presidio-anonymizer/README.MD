@@ -164,7 +164,7 @@ and decrypt it back to the original text:
 ```python
 from presidio_anonymizer import DeanonymizeEngine
 from presidio_anonymizer.entities import OperatorResult, OperatorConfig
-
+import base64
 # Initialize the engine with logger.
 engine = DeanonymizeEngine()
 
@@ -175,7 +175,7 @@ result = engine.deanonymize(
     entities=[
         OperatorResult(start=11, end=55, entity_type="PERSON"),
     ],
-    operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})},
+    operators={"DEFAULT": OperatorConfig("decrypt", {"key": base64.b64encode(b"WmZq4t7w!z%C&F)J").decode('utf-8')})},
 )
 
 print(result)

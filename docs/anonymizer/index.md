@@ -98,7 +98,7 @@ with some other value by applying a certain operator (e.g. replace, mask, redact
         entities=[
             OperatorResult(start=11, end=55, entity_type="PERSON"),
         ],
-        operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})},
+        operators={"DEFAULT": OperatorConfig("decrypt", {"key": base64.b64encode(b"WmZq4t7w!z%C&F)J").decode('utf-8')})},
     )
 
     print(result)
@@ -176,7 +176,7 @@ with some other value by applying a certain operator (e.g. replace, mask, redact
     "deanonymizers": {
         "PERSON": {
             "type": "decrypt",
-            "key": "WmZq4t7w!z%C&F)J"
+            "key": base64.b64encode(b"WmZq4t7w!z%C&F)J").decode('utf-8')
         }
     },
     "anonymizer_results": [

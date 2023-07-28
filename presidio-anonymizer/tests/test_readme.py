@@ -1,3 +1,6 @@
+import base64
+
+
 def test_readme():
     # Tests that the readme code snippet doesn't fail
     from presidio_anonymizer import AnonymizerEngine
@@ -35,7 +38,12 @@ def test_readme_decrypt():
         entities=[
             OperatorResult(start=11, end=55, entity_type="PERSON"),
         ],
-        operators={"DEFAULT": OperatorConfig("decrypt", {"key": "WmZq4t7w!z%C&F)J"})},
+        operators={
+            "DEFAULT": OperatorConfig(
+                "decrypt",
+                {"key": base64.b64encode(b"WmZq4t7w!z%C&F)J").decode("utf-8")},
+            )
+        },
     )
 
     print(result)

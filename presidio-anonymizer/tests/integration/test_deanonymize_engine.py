@@ -1,4 +1,5 @@
 import pytest
+import base64
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.deanonymize_engine import DeanonymizeEngine
@@ -17,10 +18,11 @@ def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully
         OperatorResult(start=11, end=55, entity_type="PERSON"),
     ]
     engine = DeanonymizeEngine()
+    key = base64.b64encode(b"WmZq4t7w!z%C&F)J").decode("utf-8")
     decryption = engine.deanonymize(
         text,
         encryption_results,
-        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": "WmZq4t7w!z%C&F)J"})},
+        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": key})},
     )
     assert decryption.text == "My name is Chloë"
     assert len(decryption.items) == 1
@@ -43,13 +45,28 @@ def test_empty_text_returns_empty_text():
     assert text == decryption.text
 
 
+def test_given_non_base64_encoded_key_then_we_fail():
+    text = "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
+    encryption_results = [
+        OperatorResult(start=11, end=55, entity_type="PERSON"),
+    ]
+    engine = DeanonymizeEngine()
+    expected_result = "Invalid input, key must be base64 encoded"
+    with pytest.raises(InvalidParamException, match=expected_result):
+        engine.deanonymize(
+            text,
+            encryption_results,
+            {"PERSON": OperatorConfig(Decrypt.NAME, {"key": "WmZq4t7w!z%C&F)J"})},
+        )
+
+
 def test_given_short_key_then_we_fail():
     text = "My name is S184CMt9Drj7QaKQ21JTrpYzghnboTF9pn/neN8JME0="
     encryption_results = [
         OperatorResult(start=11, end=55, entity_type="PERSON"),
     ]
     engine = DeanonymizeEngine()
-    expected_result = "Invalid input, key must be of length 128, 192 or 256 bits"
+    expected_result = "Invalid input, key must be of base64 encoded bytes of length 128, 192 or 256 bits"
     with pytest.raises(InvalidParamException, match=expected_result):
         engine.deanonymize(
             text,
@@ -64,7 +81,7 @@ def test_given_anonymize_with_encrypt_then_text_returned_with_encrypted_content(
     text = unencrypted_text + expected_encrypted_text
     start_index = 11
     end_index = 16
-    key = "WmZq4t7w!z%C&F)J"
+    key = base64.b64encode(b"WmZq4t7w!z%C&F)J").decode("utf-8")
     analyzer_results = [RecognizerResult("PERSON", start_index, end_index, 0.8)]
     anonymizers_config = {"PERSON": OperatorConfig("encrypt", {"key": key})}
 

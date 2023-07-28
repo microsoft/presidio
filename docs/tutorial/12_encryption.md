@@ -12,13 +12,15 @@ from presidio_anonymizer.entities import (
     OperatorResult,
     OperatorConfig,
 )
+import base64
+import os
 ```
 
 ## Define a cryptographic key (for both encryption and decryption)
 
 <!--pytest-codeblocks:cont-->
 ```python
-crypto_key = "WmZq4t7w!z%C&F)J"
+crypto_key = base64.b64encode(os.urandom(16)).decode('utf-8')
 ```
 
 ## Presidio Anonymizer: Encrypt
