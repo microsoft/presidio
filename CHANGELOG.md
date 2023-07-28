@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+* Use base64 encoded keys in encrypt and decrypt operators
 
 ## [2.2.33] - June 1st 2023
 ### Added
