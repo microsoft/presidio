@@ -1176,44 +1176,42 @@ def test_add_redact_box_happy_path(
 )
 def test_DicomImageRedactorEngine_redact_and_return_bbox(
     mocker,
+    mock_engine: DicomImageRedactorEngine,
     dcm_path: str,
 ):
     """Test happy path for DicomImageRedactorEngine redact_and_return_bbox()
 
     Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         dcm_path (str): Path to input DICOM file or dir.
     """
     # Arrange
     test_image = pydicom.dcmread(dcm_path)
 
-    mock_check_greyscale = mocker.patch.object(
-        DicomImageRedactorEngine, "_check_if_greyscale", return_value=None
+    mock_check_greyscale = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._check_if_greyscale", return_value=None
     )
-    mock_rescale_dcm = mocker.patch.object(
-        DicomImageRedactorEngine, "_rescale_dcm_pixel_array", return_value=None
+    mock_rescale_dcm = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._rescale_dcm_pixel_array", return_value=None
     )
-    mock_save_pixel_array = mocker.patch.object(
-        DicomImageRedactorEngine, "_save_pixel_array_as_png", return_value=None
+    mock_save_pixel_array = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._save_pixel_array_as_png", return_value=None
     )
-    mock_image_open = mocker.patch.object(
-        Image,
-        "open",
+    mock_image_open = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
         return_value=None,
     )
-    mock_add_padding = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_add_padding",
+    mock_add_padding = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._add_padding",
         return_value=None,
     )
 
-    mock_get_text_metadata = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_get_text_metadata",
+    mock_get_text_metadata = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_text_metadata",
         return_value=[None, None, None],
     )
-    mock_make_phi_list = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_make_phi_list",
+    mock_make_phi_list = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._make_phi_list",
         return_value=None,
     )
 
@@ -1222,34 +1220,28 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
         return_value=None,
     )
 
-    mock_analyze = mocker.patch.object(
-        ImageAnalyzerEngine,
-        "analyze",
+    mock_analyze = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
         return_value=None,
     )
 
-    mock_get_analyze_bbox = mocker.patch.object(
-        BboxProcessor,
-        "get_bboxes_from_analyzer_results",
+    mock_get_analyze_bbox = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
         return_value=None,
     )
 
-    mock_remove_bbox_padding = mocker.patch.object(
-        BboxProcessor,
-        "remove_bbox_padding",
+    mock_remove_bbox_padding = mocker.patch(
+        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
         return_value=[{}, {}, {}],
     )
 
-    mock_add_redact_box = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_add_redact_box",
+    mock_add_redact_box = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._add_redact_box",
         return_value=test_image,
     )
 
-    test_mock_engine = DicomImageRedactorEngine()
-
     # Act
-    test_redacted_image, test_bboxes = test_mock_engine.redact_and_return_bbox(test_image)
+    test_redacted_image, test_bboxes = mock_engine.redact_and_return_bbox(test_image)
 
     # Assert
     # assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
