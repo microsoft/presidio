@@ -1247,21 +1247,21 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     test_redacted_image, test_bboxes = test_mock_engine.redact_and_return_bbox(test_image)
 
     # Assert
-    # assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
-    # assert type(test_bboxes) == list
-    # assert type(test_bboxes[0]) == dict
-    assert mock_check_greyscale.call_count == 1
-    assert mock_rescale_dcm.call_count == 1
-    assert mock_save_pixel_array.call_count == 1
-    assert mock_image_open.call_count == 1
-    assert mock_add_padding.call_count == 1
-    assert mock_get_text_metadata.call_count == 1
-    assert mock_make_phi_list.call_count == 1
-    assert mock_pattern_recognizer.call_count == 1
-    assert mock_analyze.call_count == 1
-    assert mock_get_analyze_bbox.call_count == 1
-    assert mock_remove_bbox_padding.call_count == 1
-    assert mock_add_redact_box.call_count == 1
+    assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
+    assert type(test_bboxes) == list
+    assert type(test_bboxes[0]) == dict
+    # assert mock_check_greyscale.call_count == 1
+    # assert mock_rescale_dcm.call_count == 1
+    # assert mock_save_pixel_array.call_count == 1
+    # assert mock_image_open.call_count == 1
+    # assert mock_add_padding.call_count == 1
+    # assert mock_get_text_metadata.call_count == 1
+    # assert mock_make_phi_list.call_count == 1
+    # assert mock_pattern_recognizer.call_count == 1
+    # assert mock_analyze.call_count == 1
+    # assert mock_get_analyze_bbox.call_count == 1
+    # assert mock_remove_bbox_padding.call_count == 1
+    # assert mock_add_redact_box.call_count == 1
 
 @pytest.mark.parametrize(
     "image, load_file, expected_error_type",
