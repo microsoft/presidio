@@ -1232,7 +1232,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
 
     mock_remove_bbox_padding = mocker.patch(
         "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
-        return_value={},
+        return_value=[{}, {}, {}],
     )
 
     mock_add_redact_box = mocker.patch.object(
@@ -1248,7 +1248,8 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
 
     # Assert
     assert type(test_redacted_image) == pydicom.dataset.FileDataset
-    assert type(test_bboxes) == dict
+    assert type(test_bboxes) == list
+    assert type(test_bboxes[0]) == dict
     assert mock_check_greyscale.call_count == 1
     assert mock_rescale_dcm.call_count == 1
     assert mock_save_pixel_array.call_count == 1
@@ -1291,30 +1292,30 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
     # Assert
     assert expected_error_type == exc_info.typename
 
-# # ------------------------------------------------------
-# # DicomImageRedactorEngine redact()
-# # ------------------------------------------------------
-# def test_DicomImageRedactorEngine_redact_happy_path(
-#     mocker,
-# ):
-#     """Test happy path for DicomImageRedactorEngine redact()
-#     """
-#     # Arrange
-#     test_image = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
+# ------------------------------------------------------
+# DicomImageRedactorEngine redact()
+# ------------------------------------------------------
+def test_DicomImageRedactorEngine_redact_happy_path(
+    mocker,
+):
+    """Test happy path for DicomImageRedactorEngine redact()
+    """
+    # Arrange
+    test_image = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
 
-#     mock_redact_return_bbox = mocker.patch.object(
-#         DicomImageRedactorEngine,
-#         "redact_and_return_bbox",
-#         return_value=[test_image, []]
-#     )
-#     test_mock_redact_engine = DicomImageRedactorEngine()
+    mock_redact_return_bbox = mocker.patch.object(
+        DicomImageRedactorEngine,
+        "redact_and_return_bbox",
+        return_value=[test_image, [{}, {}, {}]]
+    )
+    test_mock_redact_engine = DicomImageRedactorEngine()
 
-#     # Act
-#     test_redacted_image = test_mock_redact_engine.redact(test_image)
+    # Act
+    test_redacted_image = test_mock_redact_engine.redact(test_image)
 
-#     # Assert
-#     assert type(test_redacted_image) == pydicom.dataset.FileDataset
-#     assert mock_redact_return_bbox.call_count == 1
+    # Assert
+    assert type(test_redacted_image) == pydicom.dataset.FileDataset
+    assert mock_redact_return_bbox.call_count == 1
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine _save_bbox_json()

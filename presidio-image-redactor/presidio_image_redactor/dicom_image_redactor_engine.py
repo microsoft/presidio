@@ -33,7 +33,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float = 0.75,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
-    ) -> Tuple[pydicom.dataset.FileDataset, dict]:
+    ) -> Tuple[pydicom.dataset.FileDataset, List[Dict[str, int]]]:
         """Redact method to redact the given DICOM image and return redacted bboxes.
 
         Please note, this method duplicates the image, creates a
