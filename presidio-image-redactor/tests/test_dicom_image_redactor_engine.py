@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 import pydicom
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
+from presidio_image_redactor import BboxProcessor, ImageAnalyzerEngine
 from typing import Union, List, Tuple, Dict, TypeVar
 import pytest
 
@@ -1194,8 +1195,9 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     mock_save_pixel_array = mocker.patch.object(
         DicomImageRedactorEngine, "_save_pixel_array_as_png", return_value=None
     )
-    mock_image_open = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.Image.open",
+    mock_image_open = mocker.patch.object(
+        Image,
+        "open",
         return_value=None,
     )
     mock_add_padding = mocker.patch.object(
@@ -1220,18 +1222,21 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
         return_value=None,
     )
 
-    mock_analyze = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+    mock_analyze = mocker.patch.object(
+        ImageAnalyzerEngine,
+        "analyze",
         return_value=None,
     )
 
-    mock_get_analyze_bbox = mocker.patch(
-        "presidio_image_redactor.image_redactor_engine.BboxProcessor.get_bboxes_from_analyzer_results",
+    mock_get_analyze_bbox = mocker.patch.object(
+        BboxProcessor,
+        "get_bboxes_from_analyzer_results",
         return_value=None,
     )
 
-    mock_remove_bbox_padding = mocker.patch(
-        "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
+    mock_remove_bbox_padding = mocker.patch.object(
+        BboxProcessor,
+        "remove_bbox_padding",
         return_value=[{}, {}, {}],
     )
 
