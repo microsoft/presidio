@@ -58,7 +58,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         except AttributeError as e:
             raise AttributeError(f"Provided DICOM instance lacks pixel data: {e}")
         except PermissionError as e:
-            raise Exception(f"Unable to access pixel data (may not exist): {e}")
+            raise PermissionError(f"Unable to access pixel data (may not exist): {e}")
+        except IsADirectoryError as e:
+            raise IsADirectoryError(f"DICOM instance is a directory: {e}")
 
         instance = deepcopy(image)
 

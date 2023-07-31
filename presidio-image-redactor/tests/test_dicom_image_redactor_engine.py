@@ -1266,19 +1266,19 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
 @pytest.mark.parametrize(
     "image, load_file, expected_error_type",
     [
-        (Path(TEST_DICOM_PARENT_DIR), True, "PermissionError"),
-        (Path(TEST_DICOM_PARENT_DIR), False, "TypeError"),
-        ("path_here", False, "TypeError"),
-        (np.random.randint(255, size=(64, 64)), False, "TypeError"),
-        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), False, "TypeError"),
-        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"), True, "AttributeError"),
+        (Path(TEST_DICOM_PARENT_DIR), True, ["TypeError", "IsADirectoryError", "PermissionError"]),
+        (Path(TEST_DICOM_PARENT_DIR), False, ["TypeError"]),
+        ("path_here", False, ["TypeError"]),
+        (np.random.randint(255, size=(64, 64)), False, ["TypeError"]),
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), False, ["TypeError"]),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"), True, ["AttributeError"]),
     ],
 )
 def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
     mock_engine: DicomImageRedactorEngine,
     image: T,
     load_file: bool,
-    expected_error_type: str,
+    expected_error_type: List[str],
 ):
     """Test error handling of DicomImageRedactorEngine redact_and_return_bbox()
 
@@ -1286,7 +1286,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         image (any): Input "image".
         load_file (bool): Whether to run pydicom.dcmread() on the input image.
-        expected_error_type (str): Type of error we expect to be raised.
+        expected_error_type (List(str)): Type of error we expect to be raised.
     """
     with pytest.raises(Exception) as exc_info:
         # Arrange
@@ -1298,7 +1298,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
         mock_engine.redact_and_return_bbox(test_image)
 
     # Assert
-    assert expected_error_type == exc_info.typename
+    assert exc_info.typename in expected_error_type
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine redact()
