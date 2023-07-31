@@ -7,7 +7,6 @@ import numpy as np
 from PIL import Image
 import pydicom
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
-from presidio_image_redactor import BboxProcessor, ImageAnalyzerEngine
 from typing import Union, List, Tuple, Dict, TypeVar
 import pytest
 
@@ -1246,8 +1245,9 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     # Assert
     assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
     assert type(test_bboxes) == list
-    if len(test_bboxes) > 1:
-        assert type(test_bboxes[0]) == dict
+    if type(test_bboxes) == list:
+        if len(test_bboxes) > 1:
+            assert type(test_bboxes[0]) == dict
     # assert mock_check_greyscale.call_count == 1
     # assert mock_rescale_dcm.call_count == 1
     # assert mock_save_pixel_array.call_count == 1
