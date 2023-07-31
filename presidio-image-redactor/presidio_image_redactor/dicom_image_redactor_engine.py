@@ -55,8 +55,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             raise TypeError("The provided image must be a loaded DICOM instance.")
         try:
             image.PixelData
-        except AttributeError:
-            raise AttributeError("Provided DICOM instance lacks pixel data.")
+        except AttributeError as e:
+            raise AttributeError(f"Provided DICOM instance lacks pixel data: {e}")
+        except PermissionError as e:
+            raise Exception(f"Unable to access pixel data (may not exist): {e}")
 
         instance = deepcopy(image)
 

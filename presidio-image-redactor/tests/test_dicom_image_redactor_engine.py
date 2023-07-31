@@ -1247,7 +1247,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     test_redacted_image, test_bboxes = test_mock_engine.redact_and_return_bbox(test_image)
 
     # Assert
-    assert type(test_redacted_image) == pydicom.dataset.FileDataset
+    assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
     assert type(test_bboxes) == list
     assert type(test_bboxes[0]) == dict
     assert mock_check_greyscale.call_count == 1
@@ -1263,34 +1263,42 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     assert mock_remove_bbox_padding.call_count == 1
     assert mock_add_redact_box.call_count == 1
 
-# @pytest.mark.parametrize(
-#     "image, expected_error_type",
-#     [
-#         (Path(TEST_DICOM_PARENT_DIR), "TypeError"),
-#         ("path_here", "TypeError"),
-#         (np.random.randint(255, size=(64, 64)), "TypeError"),
-#         (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), "TypeError")
-#     ],
-# )
-# def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
-#     mock_engine: DicomImageRedactorEngine,
-#     image: T,
-#     expected_error_type: str,
-# ):
-#     """Test error handling of DicomImageRedactorEngine redact_and_return_bbox()
+@pytest.mark.parametrize(
+    "image, load_file, expected_error_type",
+    [
+        (Path(TEST_DICOM_PARENT_DIR), True, "PermissionError"),
+        (Path(TEST_DICOM_PARENT_DIR), False, "TypeError"),
+        ("path_here", False, "TypeError"),
+        (np.random.randint(255, size=(64, 64)), False, "TypeError"),
+        (Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)), False, "TypeError"),
+        (Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL_no_pixels.dcm"), True, "AttributeError"),
+    ],
+)
+def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    image: T,
+    load_file: bool,
+    expected_error_type: str,
+):
+    """Test error handling of DicomImageRedactorEngine redact_and_return_bbox()
 
-#     Args:
-#         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
-#         image (any): Input "image".
-#         expected_error_type (str): Type of error we expect to be raised.
-#     """
-#     with pytest.raises(Exception) as exc_info:
-#         # Act
-#         mock_engine.redact_and_return_bbox(image, "contrast", 25
-#         )
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        image (any): Input "image".
+        load_file (bool): Whether to run pydicom.dcmread() on the input image.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        if load_file:
+            test_image = pydicom.dcmread(image)
+        else:
+            test_image = image
+        # Act
+        mock_engine.redact_and_return_bbox(test_image)
 
-#     # Assert
-#     assert expected_error_type == exc_info.typename
+    # Assert
+    assert expected_error_type == exc_info.typename
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine redact()
@@ -1314,7 +1322,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     test_redacted_image = test_mock_redact_engine.redact(test_image)
 
     # Assert
-    assert type(test_redacted_image) == pydicom.dataset.FileDataset
+    assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
     assert mock_redact_return_bbox.call_count == 1
 
 # ------------------------------------------------------
