@@ -1244,8 +1244,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
 
     # Assert
     assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
-    # assert type(test_bboxes) == list
-    # assert type(test_bboxes[0]) == dict
+    assert type(test_bboxes) == list
     mock_check_greyscale.assert_called_once()
     mock_rescale_dcm.assert_called_once()
     mock_save_pixel_array.assert_called_once()
