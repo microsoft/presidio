@@ -1231,7 +1231,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
 
     mock_remove_bbox_padding = mocker.patch(
         "presidio_image_redactor.image_redactor_engine.BboxProcessor.remove_bbox_padding",
-        return_value=[{"mock_data": [1, 2, 3]}, {"mock_data": [1, 2, 3]}, {"mock_data": [1, 2, 3]}],
+        return_value=[{"mock_data": 1}, {"mock_data": 2}, {"mock_data": 3}],
     )
 
     mock_add_redact_box = mocker.patch(
@@ -1244,7 +1244,8 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
 
     # Assert
     assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
-    assert type(test_bboxes) == list
+    assert isinstance(test_bboxes, list)
+    assert isinstance(test_bboxes[0], dict)
     mock_check_greyscale.assert_called_once()
     mock_rescale_dcm.assert_called_once()
     mock_save_pixel_array.assert_called_once()
