@@ -1225,15 +1225,15 @@ def test_get_analyzer_results_happy_path(
 
     # Assert
     if redact_approach.lower() == "default":
-        assert mock_analyze.call_count == 1
-        assert mock_get_text_metadata.call_count == 0
-        assert mock_make_phi_list.call_count == 0
-        assert mock_pattern_recognizer.call_count == 0
+        mock_analyze.assert_called_once()
+        mock_get_text_metadata.assert_not_called()
+        mock_make_phi_list.assert_not_called()
+        mock_pattern_recognizer.assert_not_called()
     elif redact_approach.lower() == "metadata":
-        assert mock_analyze.call_count == 1
-        assert mock_get_text_metadata.call_count == 1
-        assert mock_make_phi_list.call_count == 1
-        assert mock_pattern_recognizer.call_count == 1
+        mock_analyze.assert_called_once()
+        mock_get_text_metadata.assert_called_once()
+        mock_make_phi_list.assert_called_once()
+        mock_pattern_recognizer.assert_called_once()
 
 @pytest.mark.parametrize(
     "image, dcm_path, redact_approach, expected_error_type",
