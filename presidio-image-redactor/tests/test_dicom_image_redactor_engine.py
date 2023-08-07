@@ -1203,14 +1203,12 @@ def test_get_analyzer_results_happy_path(
         "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
         return_value=None,
     )
-    mock_get_text_metadata = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_get_text_metadata",
+    mock_get_text_metadata = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_text_metadata",
         return_value=[None, None, None],
     )
-    mock_make_phi_list = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_make_phi_list",
+    mock_make_phi_list = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._make_phi_list",
         return_value=None,
     )
     mock_pattern_recognizer = mocker.patch(
@@ -1436,9 +1434,8 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     # Arrange
     test_image = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
 
-    mock_redact_return_bbox = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "redact_and_return_bbox",
+    mock_redact_return_bbox = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine.redact_and_return_bbox",
         return_value=[test_image, [{}, {}, {}]]
     )
     test_mock_redact_engine = DicomImageRedactorEngine()
@@ -1448,7 +1445,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
 
     # Assert
     assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
-    assert mock_redact_return_bbox.call_count == 1
+    mock_redact_return_bbox.assert_called_once()
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine _save_bbox_json()
@@ -1582,9 +1579,8 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
         return_value=None,
     )
 
-    mock_analyze = mocker.patch.object(
-        DicomImageRedactorEngine,
-        "_get_analyzer_results",
+    mock_analyze = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_analyzer_results",
         return_value=None,
     )
 
