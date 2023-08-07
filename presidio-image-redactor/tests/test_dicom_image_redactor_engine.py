@@ -1187,6 +1187,7 @@ def test_add_redact_box_happy_path(
 )
 def test_get_analyzer_results_happy_path(
     mocker,
+    mock_engine: DicomImageRedactorEngine,
     image: Image,
     dcm_path: str,
     redact_approach: str
@@ -1194,6 +1195,7 @@ def test_get_analyzer_results_happy_path(
     """Test happy path for DicomImageRedactorEngine._get_analyzer_results
 
     Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         image (PIL.Image): A PIL image.
         dcm_path (pathlib.Path): Path to DICOM file.
         redact_approach (str): The redact approach to use.
@@ -1215,7 +1217,6 @@ def test_get_analyzer_results_happy_path(
         "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
         return_value=None,
     )
-    mock_engine = DicomImageRedactorEngine()
     test_instance = pydicom.dcmread(dcm_path)
 
     # Act
@@ -1411,6 +1412,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
 # ------------------------------------------------------
 def test_DicomImageRedactorEngine_redact_happy_path(
     mocker,
+    mock_engine: DicomImageRedactorEngine,
 ):
     """Test happy path for DicomImageRedactorEngine redact()
     """
@@ -1421,10 +1423,9 @@ def test_DicomImageRedactorEngine_redact_happy_path(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine.redact_and_return_bbox",
         return_value=[test_image, [{}, {}, {}]]
     )
-    test_mock_redact_engine = DicomImageRedactorEngine()
 
     # Act
-    test_redacted_image = test_mock_redact_engine.redact(test_image)
+    test_redacted_image = mock_engine.redact(test_image)
 
     # Assert
     assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
