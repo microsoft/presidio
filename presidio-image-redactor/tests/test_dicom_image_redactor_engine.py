@@ -1347,7 +1347,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     )
 
     mock_analyze = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_analyzer_results",
         return_value=None,
     )
 
