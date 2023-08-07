@@ -1332,20 +1332,6 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._add_padding",
         return_value=None,
     )
-    mock_get_text_metadata = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_text_metadata",
-        return_value=[None, None, None],
-    )
-    mock_make_phi_list = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._make_phi_list",
-        return_value=None,
-    )
-
-    mock_pattern_recognizer = mocker.patch(
-        "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
-        return_value=None,
-    )
-
     mock_analyze = mocker.patch(
         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_analyzer_results",
         return_value=None,
@@ -1377,9 +1363,6 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     mock_save_pixel_array.assert_called_once()
     mock_image_open.assert_called_once()
     mock_add_padding.assert_called_once()
-    mock_get_text_metadata.assert_called_once()
-    mock_make_phi_list.assert_called_once()
-    mock_pattern_recognizer.assert_called_once()
     mock_analyze.assert_called_once()
     mock_get_analyze_bbox.assert_called_once()
     mock_remove_bbox_padding.assert_called_once()
