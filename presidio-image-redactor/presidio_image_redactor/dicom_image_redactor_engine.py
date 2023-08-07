@@ -31,7 +31,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         fill: str = "contrast",
         padding_width: int = 25,
         crop_ratio: float = 0.75,
-        redact_approach: Union[str, PatternRecognizer] = "metadata",
+        redact_approach: Union[str, PatternRecognizer] = "default",
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ):
@@ -98,7 +98,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
-        redact_approach: Union[str, PatternRecognizer] = "metadata",
+        redact_approach: Union[str, PatternRecognizer] = "default",
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> None:
@@ -155,7 +155,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
-        redact_approach: Union[str, PatternRecognizer] = "metadata",
+        redact_approach: Union[str, PatternRecognizer] = "default",
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> None:

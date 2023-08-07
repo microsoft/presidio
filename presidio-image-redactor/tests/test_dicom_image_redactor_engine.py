@@ -1213,7 +1213,7 @@ def test_DicomImageRedactorEngine_redact_happy_path(
     mock_engine = DicomImageRedactorEngine()
 
     # Act
-    mock_engine.redact(test_image)
+    mock_engine.redact(test_image, redact_approach="metadata")
 
     # Assert
     assert mock_check_greyscale.call_count == 1

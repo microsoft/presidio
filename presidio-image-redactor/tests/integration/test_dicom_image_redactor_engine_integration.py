@@ -43,7 +43,7 @@ def test_redact_image_correctly(
         dcm_filepath (Path): Path to DICOM file to load.
     """
     test_image = pydicom.dcmread(dcm_filepath)
-    test_redacted_image = mock_engine.redact(test_image)
+    test_redacted_image = mock_engine.redact(test_image, redact_approach="metadata")
 
     assert (
         np.array_equal(test_image.pixel_array, test_redacted_image.pixel_array) is False
@@ -63,6 +63,7 @@ def test_redact_from_single_file_correctly(mock_engine: DicomImageRedactorEngine
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             fill="contrast",
+            redact_approach="metadata"
         )
         output_path = Path(tmpdirname, f"{input_path.stem}.dcm")
 
@@ -105,6 +106,7 @@ def test_redact_from_directory_correctly(mock_engine: DicomImageRedactorEngine):
             input_dicom_path=str(input_path),
             output_dir=tmpdirname,
             fill="contrast",
+            redact_approach="metadata"
         )
 
         # Get list of all DICOM files
