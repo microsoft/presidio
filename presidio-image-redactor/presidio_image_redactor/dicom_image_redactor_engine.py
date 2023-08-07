@@ -922,6 +922,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             raise ValueError("Please enter valid string or PatternRecognizer object for redact_approach")  # noqa: E501
 
         return analyzer_results
+
     @staticmethod
     def _save_bbox_json(output_dcm_path: str, bboxes: List[Dict[str, int]]) -> None:
         """Save the redacted bounding box info as a json file.
