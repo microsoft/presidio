@@ -50,7 +50,7 @@ class SpacyRecognizer(LocalRecognizer):
         supported_language: str = "en",
         supported_entities: Optional[List[str]] = None,
         ner_strength: float = 0.85,
-        check_label_groups: Optional[Tuple[Set, Set]] = None,
+        check_label_groups: Optional[List[Tuple[Set, Set]]] = None,
         context: Optional[List[str]] = None,
     ):
         self.ner_strength = ner_strength
