@@ -1361,7 +1361,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     )
 
     # Act
-    test_redacted_image, test_bboxes = mock_engine.redact_and_return_bbox(test_image, use_metadata=True)
+    test_redacted_image, _ = mock_engine.redact_and_return_bbox(test_image, use_metadata=True)
 
     # Assert
     assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
