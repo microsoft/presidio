@@ -148,3 +148,57 @@ def test_threshold_ocr_result_returns_expected_results(
 
     # Assert
     assert len(test_filtered["conf"]) == expected_length
+
+
+def test_remove_space_boxes_happy_path(
+    image_analyzer_engine
+):
+    # Arrange
+    ocr_result = {
+        "text": ["John", " ", "Doe", "", "  "],
+        "left": [100, 0, 275, 415, 999],
+        "top": [5, 315, 900, 0, 17]
+    }
+
+    # Act
+    test_results = image_analyzer_engine.remove_space_boxes(ocr_result)
+
+    # Assert
+    assert len(test_results["text"]) == 2
+    assert test_results["text"] == ["John","Doe"]
+    assert test_results["left"] == [100, 275]
+    assert test_results["top"] == [5, 900]
+
+
+@pytest.mark.parametrize(
+    "text_analyzer_kwargs, expected_allow_list",
+    [
+        (None, []),
+        (
+            {
+                "arg1": 1,
+                "arg2": 2,
+                "allow_list": ["a", "b", "c"]
+            },
+            ["a", "b", "c"]
+        ),
+        (
+            {
+                "arg1": 1,
+                "arg2": 2,
+                "allow_list": []
+            },
+            []
+        )
+    ],
+)
+def test_check_for_allow_list_happy_path(
+    image_analyzer_engine: ImageAnalyzerEngine,
+    text_analyzer_kwargs: dict,
+    expected_allow_list: list
+):
+    # Act
+    test_allow_list = image_analyzer_engine._check_for_allow_list(text_analyzer_kwargs)
+
+    # Assert
+    assert test_allow_list == expected_allow_list
