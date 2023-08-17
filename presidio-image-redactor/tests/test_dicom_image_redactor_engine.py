@@ -1256,7 +1256,7 @@ def test_add_redact_box_happy_path(
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
             [],
-            "ValueError"
+            "TypeError"
         ),
         (
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
