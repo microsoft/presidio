@@ -1161,87 +1161,87 @@ def test_add_redact_box_happy_path(
 # ------------------------------------------------------
 # DicomImageRedactorEngine._get_analyzer_results()
 # ------------------------------------------------------
-# @pytest.mark.parametrize(
-#     "image, dcm_path, use_metadata, ad_hoc_recognizers",
-#     [
-#         (
-#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             False,
-#             None
-#         ),
-#         (
-#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             False,
-#             [PatternRecognizer(supported_entity="PERSON", deny_list=["1"])]
-#         ),
-#         (
-#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             True,
-#             None
-#         ),
-#         (
-#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             True,
-#             [PatternRecognizer(supported_entity="PERSON", deny_list=["2"])]
-#         ),
-#     ],
-# )
-# def test_get_analyzer_results_happy_path(
-#     mocker,
-#     mock_engine: DicomImageRedactorEngine,
-#     image: Image,
-#     dcm_path: str,
-#     use_metadata: bool,
-#     ad_hoc_recognizers: Optional[List[PatternRecognizer]]
-# ):
-#     """Test happy path for DicomImageRedactorEngine._get_analyzer_results
+@pytest.mark.parametrize(
+    "image, dcm_path, use_metadata, ad_hoc_recognizers",
+    [
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False,
+            None
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            False,
+            [PatternRecognizer(supported_entity="PERSON", deny_list=["1"])]
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            True,
+            None
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            True,
+            [PatternRecognizer(supported_entity="PERSON", deny_list=["2"])]
+        ),
+    ],
+)
+def test_get_analyzer_results_happy_path(
+    mocker,
+    mock_engine: DicomImageRedactorEngine,
+    image: Image,
+    dcm_path: str,
+    use_metadata: bool,
+    ad_hoc_recognizers: Optional[List[PatternRecognizer]]
+):
+    """Test happy path for DicomImageRedactorEngine._get_analyzer_results
 
-#     Args:
-#         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
-#         image (PIL.Image): A PIL image.
-#         dcm_path (pathlib.Path): Path to DICOM file.
-#         use_metadata (bool): Whether to consider metadata when running analysis.
-#         ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
-#     """
-#     # Arrange
-#     mock_analyze = mocker.patch(
-#         "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
-#         return_value=None,
-#     )
-#     mock_get_text_metadata = mocker.patch(
-#         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_text_metadata",
-#         return_value=[None, None, None],
-#     )
-#     mock_make_phi_list = mocker.patch(
-#         "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._make_phi_list",
-#         return_value=None,
-#     )
-#     mock_pattern_recognizer = mocker.patch(
-#         "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
-#         return_value=None,
-#     )
-#     test_instance = pydicom.dcmread(dcm_path)
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        image (PIL.Image): A PIL image.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        use_metadata (bool): Whether to consider metadata when running analysis.
+        ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
+    """
+    # Arrange
+    mock_analyze = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.ImageAnalyzerEngine.analyze",
+        return_value=None,
+    )
+    mock_get_text_metadata = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._get_text_metadata",
+        return_value=[None, None, None],
+    )
+    mock_make_phi_list = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.DicomImageRedactorEngine._make_phi_list",
+        return_value=None,
+    )
+    mock_pattern_recognizer = mocker.patch(
+        "presidio_image_redactor.dicom_image_redactor_engine.PatternRecognizer",
+        return_value=None,
+    )
+    test_instance = pydicom.dcmread(dcm_path)
 
-#     # Act
-#     _ = mock_engine._get_analyzer_results(
-#         image, test_instance, use_metadata, None, ad_hoc_recognizers
-#     )
+    # Act
+    _ = mock_engine._get_analyzer_results(
+        image, test_instance, use_metadata, None, ad_hoc_recognizers
+    )
 
-#     # Assert
-#     if use_metadata is False:
-#         mock_analyze.assert_called_once()
-#         mock_get_text_metadata.assert_not_called()
-#         mock_make_phi_list.assert_not_called()
-#         mock_pattern_recognizer.assert_not_called()
-#     elif use_metadata is True:
-#         mock_analyze.assert_called_once()
-#         mock_get_text_metadata.assert_called_once()
-#         mock_make_phi_list.assert_called_once()
-#         mock_pattern_recognizer.assert_called_once()
+    # Assert
+    if use_metadata is False:
+        mock_analyze.assert_called_once()
+        mock_get_text_metadata.assert_not_called()
+        mock_make_phi_list.assert_not_called()
+        mock_pattern_recognizer.assert_not_called()
+    elif use_metadata is True:
+        mock_analyze.assert_called_once()
+        mock_get_text_metadata.assert_called_once()
+        mock_make_phi_list.assert_called_once()
+        mock_pattern_recognizer.assert_called_once()
 
 @pytest.mark.parametrize(
     "image, dcm_path, ad_hoc_recognizers",
