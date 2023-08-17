@@ -1228,7 +1228,11 @@ def test_get_analyzer_results_happy_path(
 
     # Act
     _ = mock_engine._get_analyzer_results(
-        image, test_instance, use_metadata, None, ad_hoc_recognizers
+        image=image,
+        instance=test_instance,
+        use_metadata=use_metadata,
+        ocr_kwargs=None,
+        ad_hoc_recognizers=ad_hoc_recognizers
     )
 
     # Assert
