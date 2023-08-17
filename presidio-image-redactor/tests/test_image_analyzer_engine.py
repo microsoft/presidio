@@ -18,6 +18,15 @@ def test_given_valid_ocr_and_entities_then_map_analyzer_returns_correct_len_and_
     assert len(expected_result) == len(mapped_entities)
     assert expected_result == mapped_entities
 
+def test_given_allow_list_then_map_analyzer_results_contain_allowed_words(
+    get_ocr_analyzer_results
+):
+    ocr_result, text, recognizer_result = get_ocr_analyzer_results
+    mapped_entities = ImageAnalyzerEngine.map_analyzer_results_to_bounding_boxes(
+        recognizer_result, ocr_result, text, allow_list=["Katie", "Cromley."]
+    )
+
+    assert len(mapped_entities) == 0
 
 def test_given_empty_ocr_entities_lists_then_map_analyzer_results_returns_empty_list(
     get_ocr_analyzer_results,
