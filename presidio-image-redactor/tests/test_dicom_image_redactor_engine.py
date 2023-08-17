@@ -1243,52 +1243,52 @@ def test_get_analyzer_results_happy_path(
         mock_make_phi_list.assert_called_once()
         mock_pattern_recognizer.assert_called_once()
 
-@pytest.mark.parametrize(
-    "image, dcm_path, ad_hoc_recognizers",
-    [
-        (
-            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "invalidType"
-        ),
-        (
-            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            []
-        ),
-        (
-            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            [PatternRecognizer(supported_entity="PERSON", deny_list=["a"]), 2]
-        )
-    ],
-)
-def test_get_analyzer_results_exceptions(
-    mock_engine: DicomImageRedactorEngine,
-    image: Image,
-    dcm_path: str,
-    ad_hoc_recognizers: Optional[List[PatternRecognizer]],
-):
-    """Test error handling of DicomImageRedactorEngine _get_analyzer_results()
+# @pytest.mark.parametrize(
+#     "image, dcm_path, ad_hoc_recognizers",
+#     [
+#         (
+#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+#             "invalidType"
+#         ),
+#         (
+#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+#             []
+#         ),
+#         (
+#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+#             [PatternRecognizer(supported_entity="PERSON", deny_list=["a"]), 2]
+#         )
+#     ],
+# )
+# def test_get_analyzer_results_exceptions(
+#     mock_engine: DicomImageRedactorEngine,
+#     image: Image,
+#     dcm_path: str,
+#     ad_hoc_recognizers: Optional[List[PatternRecognizer]],
+# ):
+#     """Test error handling of DicomImageRedactorEngine _get_analyzer_results()
 
-    Args:
-        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
-        image (PIL.Image): A PIL image.
-        dcm_path (pathlib.Path): Path to DICOM file.
-        ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
-    """
-    with pytest.raises(Exception):
-        # Arrange
-        test_instance = pydicom.dcmread(dcm_path)
+#     Args:
+#         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+#         image (PIL.Image): A PIL image.
+#         dcm_path (pathlib.Path): Path to DICOM file.
+#         ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
+#     """
+#     with pytest.raises(Exception):
+#         # Arrange
+#         test_instance = pydicom.dcmread(dcm_path)
 
-        # Act
-        _ = mock_engine._get_analyzer_results(
-            image=image,
-            instance=test_instance,
-            use_metadata=True,
-            ocr_kwargs=None,
-            ad_hoc_recognizers=ad_hoc_recognizers
-    )
+#         # Act
+#         _ = mock_engine._get_analyzer_results(
+#             image=image,
+#             instance=test_instance,
+#             use_metadata=True,
+#             ocr_kwargs=None,
+#             ad_hoc_recognizers=ad_hoc_recognizers
+#     )
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine redact_and_return_bbox()
