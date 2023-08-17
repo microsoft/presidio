@@ -7,7 +7,8 @@ import numpy as np
 from PIL import Image
 import pydicom
 from presidio_image_redactor.dicom_image_redactor_engine import DicomImageRedactorEngine
-from typing import Union, List, Tuple, Dict, TypeVar
+from presidio_analyzer import PatternRecognizer
+from typing import Union, List, Tuple, Dict, TypeVar, Optional
 import pytest
 
 T = TypeVar('T')
@@ -1161,27 +1162,31 @@ def test_add_redact_box_happy_path(
 # DicomImageRedactorEngine._get_analyzer_results()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "image, dcm_path, redact_approach",
+    "image, dcm_path, use_metadata, ad_hoc_recognizers",
     [
         (
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "default"
+            False,
+            None
         ),
         (
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "DEFAULT"
+            False,
+            [PatternRecognizer(supported_entity="PERSON", deny_list=["1"])]
         ),
         (
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "metadata"
+            True,
+            None
         ),
         (
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "METADATA"
+            True,
+            [PatternRecognizer(supported_entity="PERSON", deny_list=["2"])]
         ),
     ],
 )
@@ -1190,7 +1195,8 @@ def test_get_analyzer_results_happy_path(
     mock_engine: DicomImageRedactorEngine,
     image: Image,
     dcm_path: str,
-    redact_approach: str
+    use_metadata: bool,
+    ad_hoc_recognizers: Optional[List[PatternRecognizer]]
 ):
     """Test happy path for DicomImageRedactorEngine._get_analyzer_results
 
@@ -1198,7 +1204,8 @@ def test_get_analyzer_results_happy_path(
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         image (PIL.Image): A PIL image.
         dcm_path (pathlib.Path): Path to DICOM file.
-        redact_approach (str): The redact approach to use.
+        use_metadata (bool): Whether to consider metadata when running analysis.
+        ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
     """
     # Arrange
     mock_analyze = mocker.patch(
@@ -1221,41 +1228,41 @@ def test_get_analyzer_results_happy_path(
 
     # Act
     _ = mock_engine._get_analyzer_results(
-        image, test_instance, redact_approach, None
+        image, test_instance, use_metadata, None, ad_hoc_recognizers
     )
 
     # Assert
-    if redact_approach.lower() == "default":
+    if use_metadata is False:
         mock_analyze.assert_called_once()
         mock_get_text_metadata.assert_not_called()
         mock_make_phi_list.assert_not_called()
         mock_pattern_recognizer.assert_not_called()
-    elif redact_approach.lower() == "metadata":
+    elif use_metadata is True:
         mock_analyze.assert_called_once()
         mock_get_text_metadata.assert_called_once()
         mock_make_phi_list.assert_called_once()
         mock_pattern_recognizer.assert_called_once()
 
 @pytest.mark.parametrize(
-    "image, dcm_path, redact_approach, expected_error_type",
+    "image, dcm_path, ad_hoc_recognizers, expected_error_type",
     [
         (
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "someotherapproach",
+            "invalidType",
+            "TypeError"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            [],
             "ValueError"
         ),
         (
             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "deefault",
-            "ValueError"
-        ),
-        (
-            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-            "meta",
-            "ValueError"
+            [PatternRecognizer(supported_entity="PERSON", deny_list=["a"]), 2],
+            "TypeError"
         ),
     ],
 )
@@ -1263,7 +1270,7 @@ def test_get_analyzer_results_exceptions(
     mock_engine: DicomImageRedactorEngine,
     image: Image,
     dcm_path: str,
-    redact_approach: str,
+    ad_hoc_recognizers: Optional[List[PatternRecognizer]],
     expected_error_type: str,
 ):
     """Test error handling of DicomImageRedactorEngine _get_analyzer_results()
@@ -1272,7 +1279,7 @@ def test_get_analyzer_results_exceptions(
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         image (PIL.Image): A PIL image.
         dcm_path (pathlib.Path): Path to DICOM file.
-        redact_approach (str): The redact approach to use.
+        ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
         expected_error_type (str): Type of error we expect to be raised.
     """
     with pytest.raises(Exception) as exc_info:
@@ -1281,7 +1288,7 @@ def test_get_analyzer_results_exceptions(
 
         # Act
         _ = mock_engine._get_analyzer_results(
-        image, test_instance, redact_approach, None
+        image, test_instance, True, None, ad_hoc_recognizers
     )
 
     # Assert
@@ -1354,7 +1361,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox(
     )
 
     # Act
-    test_redacted_image, test_bboxes = mock_engine.redact_and_return_bbox(test_image, redact_approach="metadata")
+    test_redacted_image, test_bboxes = mock_engine.redact_and_return_bbox(test_image, use_metadata=True)
 
     # Assert
     assert type(test_redacted_image) in [pydicom.dataset.FileDataset, pydicom.dataset.Dataset]
@@ -1401,7 +1408,7 @@ def test_DicomImageRedactorEngine_redact_and_return_bbox_exceptions(
         else:
             test_image = image
         # Act
-        mock_engine.redact(test_image, fill="contrast", padding_width=25, redact_approach="metadata"
+        mock_engine.redact(test_image, fill="contrast", padding_width=25, use_metadata=True
         )
 
     # Assert
@@ -1589,7 +1596,14 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_happy_path(
 
     # Act
     mock_engine._redact_single_dicom_image(
-        dcm_path, crop_ratio, "contrast", 25, "metadata", overwrite, output_dir, False
+        dcm_path=dcm_path,
+        crop_ratio=crop_ratio,
+        fill="contrast",
+        padding_width=25,
+        use_metadata=True,
+        overwrite=overwrite,
+        dst_parent_dir=output_dir,
+        save_bboxes=False
     )
 
     # Assert
@@ -1628,7 +1642,14 @@ def test_DicomImageRedactorEngine_redact_single_dicom_image_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_single_dicom_image(
-            dcm_path, 0.75, "contrast", 25, "metadata", False, ".", False
+            dcm_path=dcm_path,
+            crop_ratio=0.75,
+            fill="contrast",
+            padding_width=25,
+            use_metadata=True,
+            overwrite=False,
+            dst_parent_dir=".",
+            save_bboxes=False
         )
 
     # Assert
@@ -1685,7 +1706,14 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_happy_path(
 
     # Act
     mock_engine._redact_multiple_dicom_images(
-        dcm_path, crop_ratio, "contrast", 25, "metadata", overwrite, output_dir, False
+        dcm_dir=dcm_path,
+        crop_ratio=crop_ratio,
+        fill="contrast",
+        padding_width=25,
+        use_metadata=True,
+        overwrite=overwrite,
+        dst_parent_dir=output_dir,
+        save_bboxes=False
     )
 
     # Assert
@@ -1719,7 +1747,14 @@ def test_DicomImageRedactorEngine_redact_multiple_dicom_images_exceptions(
     with pytest.raises(Exception) as exc_info:
         # Act
         mock_engine._redact_multiple_dicom_images(
-            dcm_path, 0.75, "contrast", 25, "metadata", False, ".", False
+            dcm_dir=dcm_path,
+            crop_ratio=0.75,
+            fill="contrast",
+            padding_width=25,
+            use_metadata=True,
+            overwrite=False,
+            dst_parent_dir=".",
+            save_bboxes=False
         )
 
     # Assert
@@ -1774,7 +1809,7 @@ def test_DicomImageRedactorEngine_redact_from_file_happy_path(
     )
 
     # Act
-    mock_engine.redact_from_file(dcm_path, "output", padding_width=25, fill="contrast", redact_approach="metadata")
+    mock_engine.redact_from_file(dcm_path, "output", padding_width=25, fill="contrast", use_metadata=True)
 
     # Assert
     assert mock_copy_files.call_count == 1
@@ -1816,7 +1851,7 @@ def test_DicomImageRedactorEngine_redact_from_file_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine.redact_from_file(input_path, output_path, padding_width=25, fill="contrast", redact_approach="metadata")
+        mock_engine.redact_from_file(input_path, output_path, padding_width=25, fill="contrast", use_metadata=True)
 
     # Assert
     assert expected_error_type == exc_info.typename
@@ -1858,7 +1893,7 @@ def test_DicomImageRedactorEngine_redact_from_directory_happy_path(
     )
 
     # Act
-    mock_engine.redact_from_directory(dcm_path, "output", padding_width=25, fill="contrast", redact_approach="metadata")
+    mock_engine.redact_from_directory(dcm_path, "output", padding_width=25, fill="contrast", use_metadata=True)
 
     # Assert
     assert mock_copy_files.call_count == 1
@@ -1889,7 +1924,7 @@ def test_DicomImageRedactorEngine_redact_from_directory_exceptions(
     """
     with pytest.raises(Exception) as exc_info:
         # Act
-        mock_engine.redact_from_directory(input_path, output_path, padding_width=25, fill="contrast", redact_approach="metadata")
+        mock_engine.redact_from_directory(input_path, output_path, padding_width=25, fill="contrast", use_metadata=True)
 
     # Assert
     assert expected_error_type == exc_info.typename
