@@ -1158,9 +1158,9 @@ def test_add_redact_box_happy_path(
 
     assert box_color_pixels_redacted > box_color_pixels_original
 
-# # ------------------------------------------------------
-# # DicomImageRedactorEngine._get_analyzer_results()
-# # ------------------------------------------------------
+# ------------------------------------------------------
+# DicomImageRedactorEngine._get_analyzer_results()
+# ------------------------------------------------------
 # @pytest.mark.parametrize(
 #     "image, dcm_path, use_metadata, ad_hoc_recognizers",
 #     [
@@ -1243,56 +1243,56 @@ def test_add_redact_box_happy_path(
 #         mock_make_phi_list.assert_called_once()
 #         mock_pattern_recognizer.assert_called_once()
 
-# @pytest.mark.parametrize(
-#     "image, dcm_path, ad_hoc_recognizers, expected_error_type",
-#     [
-#         (
-#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             "invalidType",
-#             "TypeError"
-#         ),
-#         (
-#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             [],
-#             "ValueError"
-#         ),
-#         (
-#             Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
-#             Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
-#             [PatternRecognizer(supported_entity="PERSON", deny_list=["a"]), 2],
-#             "TypeError"
-#         ),
-#     ],
-# )
-# def test_get_analyzer_results_exceptions(
-#     mock_engine: DicomImageRedactorEngine,
-#     image: Image,
-#     dcm_path: str,
-#     ad_hoc_recognizers: Optional[List[PatternRecognizer]],
-#     expected_error_type: str,
-# ):
-#     """Test error handling of DicomImageRedactorEngine _get_analyzer_results()
+@pytest.mark.parametrize(
+    "image, dcm_path, ad_hoc_recognizers, expected_error_type",
+    [
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            "invalidType",
+            "TypeError"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            [],
+            "ValueError"
+        ),
+        (
+            Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8)),
+            Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"),
+            [PatternRecognizer(supported_entity="PERSON", deny_list=["a"]), 2],
+            "TypeError"
+        ),
+    ],
+)
+def test_get_analyzer_results_exceptions(
+    mock_engine: DicomImageRedactorEngine,
+    image: Image,
+    dcm_path: str,
+    ad_hoc_recognizers: Optional[List[PatternRecognizer]],
+    expected_error_type: str,
+):
+    """Test error handling of DicomImageRedactorEngine _get_analyzer_results()
 
-#     Args:
-#         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
-#         image (PIL.Image): A PIL image.
-#         dcm_path (pathlib.Path): Path to DICOM file.
-#         ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
-#         expected_error_type (str): Type of error we expect to be raised.
-#     """
-#     with pytest.raises(Exception) as exc_info:
-#         # Arrange
-#         test_instance = pydicom.dcmread(dcm_path)
+    Args:
+        mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
+        image (PIL.Image): A PIL image.
+        dcm_path (pathlib.Path): Path to DICOM file.
+        ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
+        expected_error_type (str): Type of error we expect to be raised.
+    """
+    with pytest.raises(Exception) as exc_info:
+        # Arrange
+        test_instance = pydicom.dcmread(dcm_path)
 
-#         # Act
-#         _ = mock_engine._get_analyzer_results(
-#         image, test_instance, True, None, ad_hoc_recognizers
-#     )
+        # Act
+        _ = mock_engine._get_analyzer_results(
+        image, test_instance, True, None, ad_hoc_recognizers
+    )
 
-#     # Assert
-#     assert expected_error_type == exc_info.typename
+    # Assert
+    assert expected_error_type == exc_info.typename
 
 # ------------------------------------------------------
 # DicomImageRedactorEngine redact_and_return_bbox()
