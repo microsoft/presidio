@@ -88,7 +88,7 @@ class ImageAnalyzerEngine:
     @staticmethod
     def remove_space_boxes(ocr_result: dict) -> dict:
         """Remove OCR bboxes that are for spaces.
-        
+
         :param ocr_result: OCR results (raw or thresholded).
         :return: OCR results with empty words removed.
         """
@@ -224,7 +224,7 @@ class ImageAnalyzerEngine:
     @staticmethod
     def _check_for_allow_list(text_analyzer_kwargs: dict) -> List[str]:
         """Check the text_analyzer_kwargs for an allow_list.
-        
+
         :param text_analyzer_kwargs: Text analyzer kwargs.
         :return: The allow list if it exists.
         """
