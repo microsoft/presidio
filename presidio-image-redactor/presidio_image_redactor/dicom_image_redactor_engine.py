@@ -144,6 +144,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float = 0.75,
         fill: str = "contrast",
         save_bboxes: bool = False,
+        verbose: bool = True,
         ocr_kwargs: Optional[dict] = None,
         **text_analyzer_kwargs,
     ) -> None:
@@ -158,6 +159,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
         :param save_bboxes: True if we want to save boundings boxes.
+        :param verbose: True to print where redacted file was written to.
         :param ocr_kwargs: Additional params for OCR methods.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
@@ -188,7 +190,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             **text_analyzer_kwargs,
         )
 
-        print(f"Output written to {output_location}")
+        if verbose:
+            print(f"Output written to {output_location}")
 
         return None
 
