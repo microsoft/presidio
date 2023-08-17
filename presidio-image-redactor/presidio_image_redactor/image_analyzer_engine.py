@@ -88,13 +88,14 @@ class ImageAnalyzerEngine:
     @staticmethod
     def remove_space_boxes(ocr_result: dict) -> dict:
         """Remove OCR bboxes that are for spaces.
+        
         :param ocr_result: OCR results (raw or thresholded).
         :return: OCR results with empty words removed.
         """
         # Get indices of items with no text
         idx = list()
         for i, text in enumerate(ocr_result["text"]):
-            is_not_space = text.isspace() == False
+            is_not_space = text.isspace() is False
             if text != "" and is_not_space:
                 idx.append(i)
 
@@ -146,7 +147,7 @@ class ImageAnalyzerEngine:
                         yes_make_bbox_for_word = (
                             (word is not None)
                             and (word != "")
-                            and (word.isspace() == False)
+                            and (word.isspace() is False)
                             and (word not in allow_list)
                         )
                         # Do not add bbox for standalone spaces / empty strings
@@ -173,7 +174,7 @@ class ImageAnalyzerEngine:
                                 yes_make_bbox_for_word = (
                                     (word is not None)
                                     and (word != "")
-                                    and (word.isspace() == False)
+                                    and (word.isspace() is False)
                                     and (word not in allow_list)
                                 )
                                 if yes_make_bbox_for_word:
@@ -223,6 +224,7 @@ class ImageAnalyzerEngine:
     @staticmethod
     def _check_for_allow_list(text_analyzer_kwargs: dict) -> List[str]:
         """Check the text_analyzer_kwargs for an allow_list.
+        
         :param text_analyzer_kwargs: Text analyzer kwargs.
         :return: The allow list if it exists.
         """
