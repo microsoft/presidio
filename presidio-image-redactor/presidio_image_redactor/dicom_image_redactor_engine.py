@@ -16,8 +16,7 @@ from typing import Tuple, List, Dict, Union, Optional
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
-import presidio_analyzer # required for isinstance check
-  # which throws an error when trying to specify PatternRecognizer
+import presidio_analyzer  # required for isinstance check which throws an error when trying to specify PatternRecognizer  # noqa: E501
 from presidio_analyzer import PatternRecognizer
 from presidio_image_redactor.entities import ImageRecognizerResult
 
@@ -907,13 +906,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         if isinstance(ad_hoc_recognizers, (list, type(None))):
             if isinstance(ad_hoc_recognizers, list):
                 if len(ad_hoc_recognizers) >= 1:
-                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers) # noqa: E501
+                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers)  # noqa: E501
                     if are_recognizers is False:
-                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects") # noqa: E501
+                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects")  # noqa: E501
                 else:
-                    raise ValueError("ad_hoc_recognizers must be None or list of PatternRecognizer") # noqa: E501
+                    raise ValueError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
         else:
-            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer") # noqa: E501
+            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
 
         # Create custom recognizer using DICOM metadata
         if use_metadata:
