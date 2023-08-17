@@ -17,7 +17,7 @@ from typing import Tuple, List, Dict, Union, Optional
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
 import presidio_analyzer # required for isinstance check
-# which throws an error when trying to specify PatternRecognizer
+  # which throws an error when trying to specify PatternRecognizer
 from presidio_analyzer import PatternRecognizer
 from presidio_image_redactor.entities import ImageRecognizerResult
 
@@ -87,7 +87,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(
-            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers, **text_analyzer_kwargs
+            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
+            **text_analyzer_kwargs
         )
 
         # Redact all bounding boxes from DICOM file
@@ -902,18 +903,18 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         :return: Analyzer results.
         """
-        # Check the ad-hoc recognizres list
+        # Check the ad-hoc recognizers list
         if isinstance(ad_hoc_recognizers, (list, type(None))):
             if isinstance(ad_hoc_recognizers, list):
                 if len(ad_hoc_recognizers) >= 1:
-                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers)
+                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers) # noqa: E501
                     if are_recognizers is False:
-                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects")
+                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects") # noqa: E501
                 else:
-                    raise ValueError("ad_hoc_recognizers must be None or list of PatternRecognizer")
+                    raise ValueError("ad_hoc_recognizers must be None or list of PatternRecognizer") # noqa: E501
         else:
-            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")
-        
+            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer") # noqa: E501
+
         # Create custom recognizer using DICOM metadata
         if use_metadata:
             original_metadata, is_name, is_patient = self._get_text_metadata(
@@ -930,7 +931,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 ad_hoc_recognizers = [deny_list_recognizer]
             elif type(ad_hoc_recognizers) is list:
                 ad_hoc_recognizers.append(deny_list_recognizer)
-        
+
         # Detect PII
         if ad_hoc_recognizers is None:
             analyzer_results = self.image_analyzer_engine.analyze(
@@ -1027,7 +1028,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         # Detect PII
         analyzer_results = self._get_analyzer_results(
-            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers, **text_analyzer_kwargs
+            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
+            **text_analyzer_kwargs
         )
 
         # Redact all bounding boxes from DICOM file
