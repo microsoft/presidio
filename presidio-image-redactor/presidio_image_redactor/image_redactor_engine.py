@@ -3,7 +3,7 @@ from typing import Union, Tuple, Optional, List
 from PIL import Image, ImageDraw, ImageChops
 
 from presidio_image_redactor import ImageAnalyzerEngine, BboxProcessor
-import presidio_analyzer
+import presidio_analyzer  # required for isinstance check which throws an error when trying to specify PatternRecognizer  # noqa: E501
 from presidio_analyzer import PatternRecognizer
 
 
@@ -49,7 +49,7 @@ class ImageRedactorEngine:
 
         # Check the ad-hoc recognizers list
         self._check_ad_hoc_recognizer_list(ad_hoc_recognizers)
-        
+
         # Detect PII
         if ad_hoc_recognizers is None:
             bboxes = self.image_analyzer_engine.analyze(
@@ -77,7 +77,9 @@ class ImageRedactorEngine:
         return image
 
     @staticmethod
-    def _check_ad_hoc_recognizer_list(ad_hoc_recognizers: Optional[List[PatternRecognizer]]=None):
+    def _check_ad_hoc_recognizer_list(
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None
+    ):
         """Check if the provided ad-hoc recognizer list is valid.
 
         :param ad_hoc_recognizers: List of PatternRecognizer objects to use

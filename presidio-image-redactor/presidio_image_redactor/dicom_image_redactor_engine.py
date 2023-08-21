@@ -16,7 +16,6 @@ from typing import Tuple, List, Dict, Union, Optional
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
-import presidio_analyzer  # required for isinstance check which throws an error when trying to specify PatternRecognizer  # noqa: E501
 from presidio_analyzer import PatternRecognizer
 from presidio_image_redactor.entities import ImageRecognizerResult
 
