@@ -903,16 +903,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :return: Analyzer results.
         """
         # Check the ad-hoc recognizers list
-        if isinstance(ad_hoc_recognizers, (list, type(None))):
-            if isinstance(ad_hoc_recognizers, list):
-                if len(ad_hoc_recognizers) >= 1:
-                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers)  # noqa: E501
-                    if are_recognizers is False:
-                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects")  # noqa: E501
-                else:
-                    raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
-        else:
-            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
+        self._check_ad_hoc_recognizer_list(ad_hoc_recognizers)
 
         # Create custom recognizer using DICOM metadata
         if use_metadata:
