@@ -631,7 +631,47 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return metadata_text, is_name, is_patient
 
     @staticmethod
-    def _process_names(text_metadata: list, is_name: list) -> list:
+    def augment_word(word: list) -> list:
+        """Apply multiple types of casing to the provided string.
+
+        :param words: String containing the word or term of interest.
+
+        :return: List of the same string with different casings and spacing.
+        """
+        word_list = []
+
+        # Replacing separator character with space, if any
+        text_1 = word.replace("^", " ")
+        text_1 = text_1.replace("-", " ")
+
+        # Capitalize all characters in string
+        text_2 = text_1.upper()
+
+        # Lowercase all characters in string
+        text_3 = text_1.lower()
+
+        # Capitalize first letter in each part of string
+        text_4 = text_1.title()
+
+        # Append iterations
+        word_list.append(text_1)
+        word_list.append(text_2)
+        word_list.append(text_3)
+        word_list.append(text_4)
+
+        # Adding each term as a separate item in the list
+        word_list = word_list + text_1.split(" ")
+        word_list = word_list + text_2.split(" ")
+        word_list = word_list + text_3.split(" ")
+        word_list = word_list + text_4.split(" ")
+
+        # Remove any duplicates
+        word_list = list(set(word_list))
+
+        return word_list
+
+    @classmethod
+    def _process_names(cls, text_metadata: list, is_name: list) -> list:
         """Process names to have multiple iterations in our PHI list.
 
         :param metadata_text: List of all the instance's element values
@@ -645,30 +685,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         for i in range(0, len(text_metadata)):
             if is_name[i] is True:
                 original_text = str(text_metadata[i])
-
-                # Replacing separator character with space
-                text_1 = original_text.replace("^", " ")
-
-                # Capitalize all characters in name
-                text_2 = text_1.upper()
-
-                # Lowercase all characters in name
-                text_3 = text_1.lower()
-
-                # Capitalize first letter in each name
-                text_4 = text_1.title()
-
-                # Append iterations
-                phi_list.append(text_1)
-                phi_list.append(text_2)
-                phi_list.append(text_3)
-                phi_list.append(text_4)
-
-                # Adding each name as a separate item in the list
-                phi_list = phi_list + text_1.split(" ")
-                phi_list = phi_list + text_2.split(" ")
-                phi_list = phi_list + text_3.split(" ")
-                phi_list = phi_list + text_4.split(" ")
+                phi_list += cls.augment_word(original_text)
 
         return phi_list
 
