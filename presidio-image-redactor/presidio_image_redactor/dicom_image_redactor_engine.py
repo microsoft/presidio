@@ -16,7 +16,9 @@ from typing import Tuple, List, Dict, Union, Optional
 
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
+import presidio_analyzer  # required for isinstance check which throws an error when trying to specify PatternRecognizer  # noqa: E501
 from presidio_analyzer import PatternRecognizer
+from presidio_image_redactor.entities import ImageRecognizerResult
 
 
 class DicomImageRedactorEngine(ImageRedactorEngine):
@@ -31,7 +33,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         fill: str = "contrast",
         padding_width: int = 25,
         crop_ratio: float = 0.75,
+        use_metadata: bool = True,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> Tuple[pydicom.dataset.FileDataset, List[Dict[str, int]]]:
         """Redact method to redact the given DICOM image and return redacted bboxes.
@@ -44,7 +48,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -76,17 +84,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
-        # Create custom recognizer using DICOM metadata
-        original_metadata, is_name, is_patient = self._get_text_metadata(instance)
-        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
-        deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
-        )
-        analyzer_results = self.image_analyzer_engine.analyze(
-            image,
-            ocr_kwargs=ocr_kwargs,
-            ad_hoc_recognizers=[deny_list_recognizer],
-            **text_analyzer_kwargs,
+        # Detect PII
+        analyzer_results = self._get_analyzer_results(
+            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
+            **text_analyzer_kwargs
         )
 
         # Redact all bounding boxes from DICOM file
@@ -107,6 +108,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> pydicom.dataset.FileDataset:
         """Redact method to redact the given DICOM image.
@@ -120,6 +122,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -131,6 +135,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             crop_ratio=crop_ratio,
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=ad_hoc_recognizers,
             **text_analyzer_kwargs
         )
 
@@ -143,9 +148,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
+        use_metadata: bool = True,
         save_bboxes: bool = False,
         verbose: bool = True,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a given file.
@@ -158,9 +165,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param save_bboxes: True if we want to save boundings boxes.
         :param verbose: True to print where redacted file was written to.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
         """
@@ -183,10 +194,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             crop_ratio=crop_ratio,
             fill=fill,
             padding_width=padding_width,
+            use_metadata=use_metadata,
             overwrite=True,
             dst_parent_dir=".",
             save_bboxes=save_bboxes,
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=ad_hoc_recognizers,
             **text_analyzer_kwargs,
         )
 
@@ -202,8 +215,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
+        use_metadata: bool = True,
         save_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a directory of files.
@@ -218,8 +233,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
         """
@@ -242,6 +261,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             crop_ratio=crop_ratio,
             fill=fill,
             padding_width=padding_width,
+            use_metadata=use_metadata,
+            ad_hoc_recognizers=ad_hoc_recognizers,
             overwrite=True,
             dst_parent_dir=".",
             save_bboxes=save_bboxes,
@@ -861,6 +882,75 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return redacted_instance
 
+    def _get_analyzer_results(
+        self,
+        image: PIL.PngImagePlugin.PngImageFile,
+        instance: pydicom.dataset.FileDataset,
+        use_metadata: bool,
+        ocr_kwargs: Optional[dict],
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]],
+        **text_analyzer_kwargs
+    ) -> List[ImageRecognizerResult]:
+        """Analyze image with selected redaction approach.
+
+        :param image: DICOM pixel data as PIL image.
+        :param instance: DICOM instance (with metadata).
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine (e.g., allow_list).
+
+        :return: Analyzer results.
+        """
+        # Check the ad-hoc recognizers list
+        if isinstance(ad_hoc_recognizers, (list, type(None))):
+            if isinstance(ad_hoc_recognizers, list):
+                if len(ad_hoc_recognizers) >= 1:
+                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers)  # noqa: E501
+                    if are_recognizers is False:
+                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects")  # noqa: E501
+                else:
+                    raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
+        else:
+            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
+
+        # Create custom recognizer using DICOM metadata
+        if use_metadata:
+            original_metadata, is_name, is_patient = self._get_text_metadata(
+                instance
+            )
+            phi_list = self._make_phi_list(
+                original_metadata, is_name, is_patient
+            )
+            deny_list_recognizer = PatternRecognizer(
+                supported_entity="PERSON", deny_list=phi_list
+            )
+
+            if type(ad_hoc_recognizers) is None:
+                ad_hoc_recognizers = [deny_list_recognizer]
+            elif type(ad_hoc_recognizers) is list:
+                ad_hoc_recognizers.append(deny_list_recognizer)
+
+        # Detect PII
+        if ad_hoc_recognizers is None:
+            analyzer_results = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                **text_analyzer_kwargs,
+            )
+        else:
+            analyzer_results = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                ad_hoc_recognizers=ad_hoc_recognizers,
+                **text_analyzer_kwargs,
+            )
+
+        return analyzer_results
+
     @staticmethod
     def _save_bbox_json(output_dcm_path: str, bboxes: List[Dict[str, int]]) -> None:
         """Save the redacted bounding box info as a json file.
@@ -880,10 +970,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float,
         fill: str,
         padding_width: int,
+        use_metadata: bool,
         overwrite: bool,
         dst_parent_dir: str,
         save_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on a DICOM image.
@@ -894,11 +986,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
         :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -932,17 +1028,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
-        # Create custom recognizer using DICOM metadata
-        original_metadata, is_name, is_patient = self._get_text_metadata(instance)
-        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
-        deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
-        )
-        analyzer_results = self.image_analyzer_engine.analyze(
-            image,
-            ocr_kwargs=ocr_kwargs,
-            ad_hoc_recognizers=[deny_list_recognizer],
-            **text_analyzer_kwargs,
+        # Detect PII
+        analyzer_results = self._get_analyzer_results(
+            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
+            **text_analyzer_kwargs
         )
 
         # Redact all bounding boxes from DICOM file
@@ -969,10 +1058,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float,
         fill: str,
         padding_width: int,
+        use_metadata: bool,
         overwrite: bool,
         dst_parent_dir: str,
         save_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on all DICOM images in a directory.
@@ -983,11 +1074,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
         :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -1014,10 +1109,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 crop_ratio,
                 fill,
                 padding_width,
+                use_metadata,
                 overwrite,
                 dst_parent_dir,
                 save_bboxes,
                 ocr_kwargs=ocr_kwargs,
+                ad_hoc_recognizers=ad_hoc_recognizers,
                 **text_analyzer_kwargs,
             )
 
