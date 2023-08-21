@@ -631,7 +631,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return metadata_text, is_name, is_patient
 
     @staticmethod
-    def augment_word(word: list) -> list:
+    def augment_word(word: str) -> list:
         """Apply multiple types of casing to the provided string.
 
         :param words: String containing the word or term of interest.
@@ -639,34 +639,36 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :return: List of the same string with different casings and spacing.
         """
         word_list = []
+        if word != "":
+            word_list = []
 
-        # Replacing separator character with space, if any
-        text_1 = word.replace("^", " ")
-        text_1 = text_1.replace("-", " ")
+            # Replacing separator character with space, if any
+            text_1 = word.replace("^", " ")
+            text_1 = text_1.replace("-", " ")
 
-        # Capitalize all characters in string
-        text_2 = text_1.upper()
+            # Capitalize all characters in string
+            text_2 = text_1.upper()
 
-        # Lowercase all characters in string
-        text_3 = text_1.lower()
+            # Lowercase all characters in string
+            text_3 = text_1.lower()
 
-        # Capitalize first letter in each part of string
-        text_4 = text_1.title()
+            # Capitalize first letter in each part of string
+            text_4 = text_1.title()
 
-        # Append iterations
-        word_list.append(text_1)
-        word_list.append(text_2)
-        word_list.append(text_3)
-        word_list.append(text_4)
+            # Append iterations
+            word_list.append(text_1)
+            word_list.append(text_2)
+            word_list.append(text_3)
+            word_list.append(text_4)
 
-        # Adding each term as a separate item in the list
-        word_list = word_list + text_1.split(" ")
-        word_list = word_list + text_2.split(" ")
-        word_list = word_list + text_3.split(" ")
-        word_list = word_list + text_4.split(" ")
+            # Adding each term as a separate item in the list
+            word_list = word_list + text_1.split(" ")
+            word_list = word_list + text_2.split(" ")
+            word_list = word_list + text_3.split(" ")
+            word_list = word_list + text_4.split(" ")
 
-        # Remove any duplicates
-        word_list = list(set(word_list))
+            # Remove any duplicates
+            word_list = list(set(word_list))
 
         return word_list
 

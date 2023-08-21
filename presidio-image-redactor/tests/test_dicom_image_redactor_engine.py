@@ -621,6 +621,60 @@ def test_get_text_metadata_happy_path(
 
 
 # ------------------------------------------------------
+# DicomImageRedactorEngine.augment_word()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "word, expected_list",
+    [
+        ("", []),
+        (" ", ["", " "]),
+        ("JOHN^DOE",[
+            "JOHN",
+            "DOE",
+            "John",
+            "Doe",
+            "john",
+            "doe",
+            "JOHN DOE",
+            "John Doe",
+            "john doe"
+            ]
+        ),
+        ("City Hospital", [
+            "City Hospital",
+            "CITY HOSPITAL",
+            "city hospital",
+            "city",
+            "hospital",
+            "City",
+            "Hospital",
+            "CITY",
+            "HOSPITAL"
+            ]
+        ),
+        ("12345", ["12345"])
+    ],
+)
+def test_augment_word_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    word: str,
+    expected_list: list,
+):
+    """Test happy path for DicomImageRedactorEngine.augment_word
+
+    Args:
+        word (str): String to augment.
+        expected_list (list): List of expected output.
+    """
+    # Arrange
+
+    # Act
+    test_list = mock_engine.augment_word(word)
+
+    # Assert
+    assert set(test_list) == set(expected_list)
+
+# ------------------------------------------------------
 # DicomImageRedactorEngine._process_names()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
