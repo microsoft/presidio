@@ -17,6 +17,7 @@ steps:
       script: |
         set -eux  # fail on error
         pipenv sync --dev
+        echo $(pipenv requirements --dev)
         pipenv run python -m spacy download en_core_web_lg
 
   - template: ./build-python.yml
