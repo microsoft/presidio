@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "67e224868fdfb67f0b7cbaee6f874d6f255f19e2e2aeac1255f2a0d595caddf7"
+            "sha256": "2636446a767c9518bd28c5f22501de879a1150b1b0af10929dc1b03fd79ff8b7"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -223,6 +223,7 @@
                 "sha256:f69fcd559dc907ed196ab9df0e48471709175e696d6e698dd4dbe940f96ce66b"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==2.3.3"
         },
         "idna": {
@@ -375,6 +376,7 @@
                 "sha256:f08f2e037bba04e707eebf4bc934f1972a315c883a9e0ebfa8a7756eabf9e357",
                 "sha256:fd608e19c8d7c55021dffd43bfe5492fab8cc105cc8986f813f8c3c048b38760"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==1.25.2"
         },
@@ -600,6 +602,7 @@
                 "sha256:fd66fc5d0da6d9815ba2cebeb4205f95818ff4b79c3ebe268e75d961704af52f"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.6'",
             "version": "==6.0.1"
         },
         "regex": {
@@ -694,6 +697,7 @@
                 "sha256:fcbdc5f2b0f1cd0f6a56cdb46fe41d2cce1e644e3b68832f3eeebc5fb0f7712e"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.6'",
             "version": "==2023.8.8"
         },
         "requests": {
@@ -724,7 +728,7 @@
                 "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
                 "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==1.16.0"
         },
         "smart-open": {
@@ -767,6 +771,7 @@
                 "sha256:eb93b401f7070fb7e6be64b4d9ac5c69f6ed49c9a7c13532481b425a9ee5d980"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.6'",
             "version": "==3.6.1"
         },
         "spacy-legacy": {
@@ -859,6 +864,7 @@
                 "sha256:5fe3210c577463545191d45ad522d3d5e78d55218ce97215e82004dcae1e1234"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==3.4.4"
         },
         "tqdm": {
@@ -883,6 +889,7 @@
                 "sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==4.7.1"
         },
         "urllib3": {
@@ -947,7 +954,7 @@
                 "sha256:d5b3857f07c030bdb5bf41c7f53799571d75c4491748a3adcd47de929e34cd23",
                 "sha256:ffdfce58ea94c6580c77888a86506937f9a1a227dfcd15f245d694ae20a6b6e5"
             ],
-            "index": "pypi",
+            "markers": "python_full_version >= '3.8.1'",
             "version": "==6.1.0"
         },
         "flake8-docstrings": {
@@ -956,6 +963,7 @@
                 "sha256:51f2344026da083fc084166a9353f5082b01f72901df422f74b4d953ae88ac75"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==1.7.0"
         },
         "identify": {
@@ -1004,6 +1012,7 @@
                 "sha256:1a86b8c71a03337c97181917e2b472f0f5e4ccb06844a0d6f0a33522549e7a80"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==0.13.3"
         },
         "platformdirs": {
@@ -1027,7 +1036,7 @@
                 "sha256:10badb65d6a38caff29703362271d7dca483d01da88f9d7e05d0b97171c136cb",
                 "sha256:a2256f489cd913d575c145132ae196fe335da32d91a8294b7afe6622335dd023"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==3.3.3"
         },
         "pycodestyle": {
@@ -1060,6 +1069,7 @@
                 "sha256:b4bf8c45bd59934ed84001ad51e11b4ee40d40a1229d2c79f9c592b0a3f6bd8a"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==7.4.0"
         },
         "pyyaml": {
@@ -1106,6 +1116,7 @@
                 "sha256:fd66fc5d0da6d9815ba2cebeb4205f95818ff4b79c3ebe268e75d961704af52f"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.6'",
             "version": "==6.0.1"
         },
         "setuptools": {
