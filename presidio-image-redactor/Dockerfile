@@ -12,7 +12,7 @@ RUN apt-get update \
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv \
-  && pipenv sync \
+  && pipenv install --deploy \
   && pipenv run python -m spacy download en_core_web_lg
 
 COPY . /usr/bin/${NAME}/
