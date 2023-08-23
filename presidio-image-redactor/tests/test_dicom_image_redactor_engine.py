@@ -624,11 +624,11 @@ def test_get_text_metadata_happy_path(
 # DicomImageRedactorEngine.augment_word()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
-    "word, expected_list",
+    "word, case_sensitive, expected_list",
     [
-        ("", []),
-        (" ", ["", " "]),
-        ("JOHN^DOE",[
+        ("", False, []),
+        (" ", True, []),
+        ("JOHN^DOE", False, [
             "JOHN",
             "DOE",
             "John",
@@ -640,7 +640,37 @@ def test_get_text_metadata_happy_path(
             "john doe"
             ]
         ),
-        ("City Hospital", [
+        ("JOHN^DOE", True, [
+            "JOHN",
+            "DOE",
+            "JOHN DOE"
+            ]
+        ),
+        ("JOHN-DOE", False, [
+            "JOHN",
+            "DOE",
+            "John",
+            "Doe",
+            "john",
+            "doe",
+            "JOHN DOE",
+            "John Doe",
+            "john doe"
+            ]
+        ),
+        ("JOHN^-DOE", False, [
+            "JOHN",
+            "DOE",
+            "John",
+            "Doe",
+            "john",
+            "doe",
+            "JOHN DOE",
+            "John Doe",
+            "john doe"
+            ]
+        ),
+        ("City Hospital", False, [
             "City Hospital",
             "CITY HOSPITAL",
             "city hospital",
@@ -652,24 +682,26 @@ def test_get_text_metadata_happy_path(
             "HOSPITAL"
             ]
         ),
-        ("12345", ["12345"])
+        ("12345", False, ["12345"])
     ],
 )
 def test_augment_word_happy_path(
     mock_engine: DicomImageRedactorEngine,
     word: str,
+    case_sensitive: bool,
     expected_list: list,
 ):
     """Test happy path for DicomImageRedactorEngine.augment_word
 
     Args:
         word (str): String to augment.
+        case_sensitive (bool): True if casing matters.
         expected_list (list): List of expected output.
     """
     # Arrange
 
     # Act
-    test_list = mock_engine.augment_word(word)
+    test_list = mock_engine.augment_word(word, case_sensitive)
 
     # Assert
     assert set(test_list) == set(expected_list)

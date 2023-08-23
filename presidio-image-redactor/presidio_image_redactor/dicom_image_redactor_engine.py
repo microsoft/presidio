@@ -634,44 +634,69 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return metadata_text, is_name, is_patient
 
     @staticmethod
-    def augment_word(word: str) -> list:
+    def augment_word(word: str, case_sensitive: bool=False) -> list:
         """Apply multiple types of casing to the provided string.
 
         :param words: String containing the word or term of interest.
+        :param case_sensitive: True if we want to preserve casing.
 
         :return: List of the same string with different casings and spacing.
         """
         word_list = []
         if word != "":
-            word_list = []
-
             # Replacing separator character with space, if any
-            text_1 = word.replace("^", " ")
-            text_1 = text_1.replace("-", " ")
+            text_no_separator = word.replace("^", " ")
+            text_no_separator = text_no_separator.replace("-", " ")
+            text_no_separator = " ".join(text_no_separator.split())
 
-            # Capitalize all characters in string
-            text_2 = text_1.upper()
+            if case_sensitive:
+                word_list.append(text_no_separator)
+                word_list.extend(
+                    [
+                        text_no_separator.split(" "),
+                    ]
+                )
+            else:
+                # Capitalize all characters in string
+                text_upper = text_no_separator.upper()
 
-            # Lowercase all characters in string
-            text_3 = text_1.lower()
+                # Lowercase all characters in string
+                text_lower = text_no_separator.lower()
 
-            # Capitalize first letter in each part of string
-            text_4 = text_1.title()
+                # Capitalize first letter in each part of string
+                text_title = text_no_separator.title()
 
-            # Append iterations
-            word_list.append(text_1)
-            word_list.append(text_2)
-            word_list.append(text_3)
-            word_list.append(text_4)
+                # Append iterations
+                word_list.extend(
+                    [
+                        text_no_separator,
+                        text_upper,
+                        text_lower,
+                        text_title
+                    ]
+                )
 
-            # Adding each term as a separate item in the list
-            word_list = word_list + text_1.split(" ")
-            word_list = word_list + text_2.split(" ")
-            word_list = word_list + text_3.split(" ")
-            word_list = word_list + text_4.split(" ")
+                # Adding each term as a separate item in the list
+                word_list.extend(
+                    [
+                        text_no_separator.split(" "),
+                        text_upper.split(" "),
+                        text_lower.split(" "),
+                        text_title.split(" ")
+                    ]
+                )
 
-            # Remove any duplicates
-            word_list = list(set(word_list))
+            # Flatten list
+            flat_list = []
+            for item in word_list:
+                if isinstance(item, list):
+                    flat_list.extend(item)
+                else:
+                    flat_list.append(item)
+
+            # Remove any duplicates and empty strings
+            word_list = list(set(flat_list))
+            word_list = list(filter(None, word_list))
 
         return word_list
 
