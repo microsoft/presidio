@@ -1,8 +1,10 @@
-from typing import Union, Tuple, Optional
+from typing import Union, Tuple, Optional, List
 
 from PIL import Image, ImageDraw, ImageChops
 
 from presidio_image_redactor import ImageAnalyzerEngine, BboxProcessor
+import presidio_analyzer  # required for isinstance check which throws an error when trying to specify PatternRecognizer  # noqa: E501
+from presidio_analyzer import PatternRecognizer
 
 
 class ImageRedactorEngine:
@@ -24,6 +26,7 @@ class ImageRedactorEngine:
         image: Image,
         fill: Union[int, Tuple[int, int, int]] = (0, 0, 0),
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> Image:
         """Redact method to redact the given image.
@@ -34,6 +37,8 @@ class ImageRedactorEngine:
         :param fill: colour to fill the shape - int (0-255) for
         grayscale or Tuple(R, G, B) for RGB.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -42,9 +47,24 @@ class ImageRedactorEngine:
 
         image = ImageChops.duplicate(image)
 
-        bboxes = self.image_analyzer_engine.analyze(
-            image, ocr_kwargs, **text_analyzer_kwargs
-        )
+        # Check the ad-hoc recognizers list
+        self._check_ad_hoc_recognizer_list(ad_hoc_recognizers)
+
+        # Detect PII
+        if ad_hoc_recognizers is None:
+            bboxes = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                **text_analyzer_kwargs,
+            )
+        else:
+            bboxes = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                ad_hoc_recognizers=ad_hoc_recognizers,
+                **text_analyzer_kwargs,
+            )
+
         draw = ImageDraw.Draw(image)
 
         for box in bboxes:
@@ -55,3 +75,23 @@ class ImageRedactorEngine:
             draw.rectangle([x0, y0, x1, y1], fill=fill)
 
         return image
+
+    @staticmethod
+    def _check_ad_hoc_recognizer_list(
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None
+    ):
+        """Check if the provided ad-hoc recognizer list is valid.
+
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
+        """
+        if isinstance(ad_hoc_recognizers, (list, type(None))):
+            if isinstance(ad_hoc_recognizers, list):
+                if len(ad_hoc_recognizers) >= 1:
+                    are_recognizers = all(isinstance(x, presidio_analyzer.pattern_recognizer.PatternRecognizer) for x in ad_hoc_recognizers)  # noqa: E501
+                    if are_recognizers is False:
+                        raise TypeError("All items in ad_hoc_recognizers list must be PatternRecognizer objects")  # noqa: E501
+                else:
+                    raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
+        else:
+            raise TypeError("ad_hoc_recognizers must be None or list of PatternRecognizer")  # noqa: E501
