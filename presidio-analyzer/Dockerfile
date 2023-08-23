@@ -8,7 +8,7 @@ WORKDIR /usr/bin/${NAME}
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv \
-  && pipenv sync
+  && pipenv install --deploy
 # install nlp models specified in conf/default.yaml
 COPY ./install_nlp_models.py /usr/bin/${NAME}/
 COPY ${NLP_CONF_FILE} /usr/bin/${NAME}/${NLP_CONF_FILE}
