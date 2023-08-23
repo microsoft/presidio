@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = ">=1.1"
-pycryptodome = ">=3.10"
+flask = ">=1.1,<2.0.0"
+pycryptodome = ">=3.10,<4.0.0"
 
 [dev-packages]
 pytest = "*"
