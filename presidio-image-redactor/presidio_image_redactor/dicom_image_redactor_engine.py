@@ -634,7 +634,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return metadata_text, is_name, is_patient
 
     @staticmethod
-    def augment_word(word: str, case_sensitive: bool=False) -> list:
+    def augment_word(word: str, case_sensitive: bool = False) -> list:
         """Apply multiple types of casing to the provided string.
 
         :param words: String containing the word or term of interest.
