@@ -149,6 +149,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         fill: str = "contrast",
         use_metadata: bool = True,
         save_bboxes: bool = False,
+        verbose: bool = True,
         ocr_kwargs: Optional[dict] = None,
         ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
@@ -166,6 +167,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param use_metadata: Whether to redact text in the image that
         are present in the metadata.
         :param save_bboxes: True if we want to save boundings boxes.
+        :param verbose: True to print where redacted file was written to.
         :param ocr_kwargs: Additional params for OCR methods.
         :param ad_hoc_recognizers: List of PatternRecognizer objects to use
         for ad-hoc recognizer.
@@ -200,7 +202,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             **text_analyzer_kwargs,
         )
 
-        print(f"Output written to {output_location}")
+        if verbose:
+            print(f"Output written to {output_location}")
 
         return None
 
