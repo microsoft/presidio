@@ -633,7 +633,74 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return metadata_text, is_name, is_patient
 
     @staticmethod
-    def _process_names(text_metadata: list, is_name: list) -> list:
+    def augment_word(word: str, case_sensitive: bool = False) -> list:
+        """Apply multiple types of casing to the provided string.
+
+        :param words: String containing the word or term of interest.
+        :param case_sensitive: True if we want to preserve casing.
+
+        :return: List of the same string with different casings and spacing.
+        """
+        word_list = []
+        if word != "":
+            # Replacing separator character with space, if any
+            text_no_separator = word.replace("^", " ")
+            text_no_separator = text_no_separator.replace("-", " ")
+            text_no_separator = " ".join(text_no_separator.split())
+
+            if case_sensitive:
+                word_list.append(text_no_separator)
+                word_list.extend(
+                    [
+                        text_no_separator.split(" "),
+                    ]
+                )
+            else:
+                # Capitalize all characters in string
+                text_upper = text_no_separator.upper()
+
+                # Lowercase all characters in string
+                text_lower = text_no_separator.lower()
+
+                # Capitalize first letter in each part of string
+                text_title = text_no_separator.title()
+
+                # Append iterations
+                word_list.extend(
+                    [
+                        text_no_separator,
+                        text_upper,
+                        text_lower,
+                        text_title
+                    ]
+                )
+
+                # Adding each term as a separate item in the list
+                word_list.extend(
+                    [
+                        text_no_separator.split(" "),
+                        text_upper.split(" "),
+                        text_lower.split(" "),
+                        text_title.split(" ")
+                    ]
+                )
+
+            # Flatten list
+            flat_list = []
+            for item in word_list:
+                if isinstance(item, list):
+                    flat_list.extend(item)
+                else:
+                    flat_list.append(item)
+
+            # Remove any duplicates and empty strings
+            word_list = list(set(flat_list))
+            word_list = list(filter(None, word_list))
+
+        return word_list
+
+    @classmethod
+    def _process_names(cls, text_metadata: list, is_name: list) -> list:
         """Process names to have multiple iterations in our PHI list.
 
         :param metadata_text: List of all the instance's element values
@@ -647,30 +714,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         for i in range(0, len(text_metadata)):
             if is_name[i] is True:
                 original_text = str(text_metadata[i])
-
-                # Replacing separator character with space
-                text_1 = original_text.replace("^", " ")
-
-                # Capitalize all characters in name
-                text_2 = text_1.upper()
-
-                # Lowercase all characters in name
-                text_3 = text_1.lower()
-
-                # Capitalize first letter in each name
-                text_4 = text_1.title()
-
-                # Append iterations
-                phi_list.append(text_1)
-                phi_list.append(text_2)
-                phi_list.append(text_3)
-                phi_list.append(text_4)
-
-                # Adding each name as a separate item in the list
-                phi_list = phi_list + text_1.split(" ")
-                phi_list = phi_list + text_2.split(" ")
-                phi_list = phi_list + text_3.split(" ")
-                phi_list = phi_list + text_4.split(" ")
+                phi_list += cls.augment_word(original_text)
 
         return phi_list
 
