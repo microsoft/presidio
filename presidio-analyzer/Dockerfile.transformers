@@ -8,7 +8,7 @@ WORKDIR /usr/bin/${NAME}
 
 COPY ./Pipfile* /usr/bin/${NAME}/
 RUN pip install pipenv \
-  && pipenv sync
+  && pipenv install --deploy
 RUN pipenv install torch transformers huggingface_hub --skip-lock
 
 # install nlp models specified in conf/default.yaml

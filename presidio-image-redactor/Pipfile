@@ -5,13 +5,13 @@ name = "pypi"
 
 [packages]
 flask = ">=1.1.2"
-pytesseract = ">=0.3.7"
+pytesseract = ">=0.3.7,<1.0.0"
 presidio-analyzer = ">=2.2.0"
-pillow = ">=9.0"
-pydicom = ">=2.3.0"
-pypng = ">=0.20220715.0"
-python-gdcm = ">=3.0.22"
-matplotlib = "==3.6.2"
+pillow = ">=9.0,<10.0.0"
+pydicom = ">=2.3.0,<3.0.0"
+pypng = ">=0.20220715.0,<1.0.0"
+python-gdcm = ">=3.0.22,<4.0.0"
+matplotlib = ">=3.6.2,<4.0.0"
 typing-extensions = "*"
 
 [dev-packages]
