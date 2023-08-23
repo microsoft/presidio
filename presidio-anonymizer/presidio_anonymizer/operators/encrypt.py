@@ -17,11 +17,13 @@ class Encrypt(Operator):
 
         :param text: The text for encryption.
         :param params:
-            * *key* The key supplied by the user for the encryption.
+            * *key* The key supplied by the user for the encryption (bytes or str).
         :return: The encrypted text
         """
-        encoded_key = params.get(self.KEY).encode("utf8")
-        encrypted_text = AESCipher.encrypt(encoded_key, text)
+        key = params.get(self.KEY)
+        if type(key) is str:
+            key = key.encode("utf8")
+        encrypted_text = AESCipher.encrypt(key, text)
         return encrypted_text
 
     def validate(self, params: Dict = None) -> None:
@@ -34,8 +36,15 @@ class Encrypt(Operator):
         :raises InvalidParamException in case on an invalid parameter.
         """
         key = params.get(self.KEY)
-        validate_parameter(key, self.KEY, str)
-        if not AESCipher.is_valid_key_size(key.encode("utf8")):
+        if type(key) is str:
+            validate_parameter(key, self.KEY, str)
+            if not AESCipher.is_valid_key_size(key.encode("utf8")):
+                raise InvalidParamException(
+                    f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
+                )
+        else:
+            validate_parameter(key, self.KEY, bytes)
+        if not AESCipher.is_valid_key_size(key):
             raise InvalidParamException(
                 f"Invalid input, {self.KEY} must be of length 128, 192 or 256 bits"
             )
