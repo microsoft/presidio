@@ -20,7 +20,7 @@ def test_given_operator_decrypt_with_valid_params_then_decrypt_text_successfully
     decryption = engine.deanonymize(
         text,
         encryption_results,
-        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": "WmZq4t7w!z%C&F)J"})},
+        {"DEFAULT": OperatorConfig(Decrypt.NAME, {"key": b'WmZq4t7w!z%C&F)J'})},
     )
     assert decryption.text == "My name is Chloë"
     assert len(decryption.items) == 1

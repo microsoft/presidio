@@ -1,8 +1,6 @@
 steps:
-    - task: CredScan@2
+    - task: CredScan@3
       displayName: 'Find credentials in source code'
-      inputs:
-          toolMajorVersion: 'V2'
     - task: SdtReport@1
       displayName: 'Security analysis report'
       inputs:

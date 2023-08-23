@@ -1319,7 +1319,7 @@ def test_get_analyzer_results_exceptions(
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
     """
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         # Arrange
         image = Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8))
         test_instance = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
