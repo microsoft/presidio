@@ -22,19 +22,19 @@ def test_given_image_without_text_then_no_entities_recognized(image_analyzer_eng
 def __get_expected_ocr_test_image_analysis_results():
     # fmt: off
     return [
-        ImageRecognizerResult(entity_type="PERSON", start=31, end=44,
+        ImageRecognizerResult(entity_type="PERSON", start=27, end=40,
                               score=0.85, left=472, top=20, width=91, height=31),
-        ImageRecognizerResult(entity_type="PERSON", start=31, end=44,
+        ImageRecognizerResult(entity_type="PERSON", start=27, end=40,
                               score=0.85, left=576, top=20, width=147, height=31),
-        ImageRecognizerResult(entity_type="URL", start=295, end=320,
+        ImageRecognizerResult(entity_type="URL", start=286, end=311,
                               score=0.6, left=28, top=299, width=438, height=38),
-        ImageRecognizerResult(entity_type="PHONE_NUMBER", start=332, end=346,
+        ImageRecognizerResult(entity_type="PHONE_NUMBER", start=323, end=337,
                               score=0.4, left=666, top=298, width=88, height=40),
-        ImageRecognizerResult(entity_type="PHONE_NUMBER", start=332, end=346,
+        ImageRecognizerResult(entity_type="PHONE_NUMBER", start=323, end=337,
                               score=0.4, left=769, top=301, width=169, height=29),
-        ImageRecognizerResult(entity_type="EMAIL_ADDRESS", start=772, end=794,
+        ImageRecognizerResult(entity_type="EMAIL_ADDRESS", start=749, end=771,
                               score=1.0, left=27, top=912, width=458, height=39),
-        ImageRecognizerResult(entity_type="URL", start=781, end=794,
+        ImageRecognizerResult(entity_type="URL", start=758, end=771,
                               score=0.5, left=27, top=912, width=458, height=39),
     ]
     # fmt: on
