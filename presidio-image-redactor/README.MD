@@ -140,12 +140,15 @@ engine = DicomImageRedactorEngine()
 dicom_image = pydicom.dcmread(input_path)
 redacted_dicom_image = engine.redact(dicom_image, fill="contrast")
 
-# Option 2: Redact from DICOM file
-engine.redact_from_file(input_path, output_dir, padding_width=25, fill="contrast")
+# Option 2: Redact from a loaded DICOM image and return redacted regions
+redacted_dicom_image, bboxes = engine.redact_and_return_bbox(dicom_image, fill="contrast")
 
-# Option 3: Redact from directory
+# Option 3: Redact from DICOM file and save redacted regions as json file
+engine.redact_from_file(input_path, output_dir, padding_width=25, fill="contrast", save_bboxes=True)
+
+# Option 4: Redact from directory and save redacted regions as json files
 ocr_kwargs = {"ocr_threshold": 50}
-engine.redact_from_directory("path/to/your/dicom", output_dir, fill="background", ocr_kwargs=ocr_kwargs)
+engine.redact_from_directory("path/to/your/dicom", output_dir, fill="background", save_bboxes=True, ocr_kwargs=ocr_kwargs)
 ```
 
 See the example notebook for more details and visual confirmation of the output: [docs/samples/python/example_dicom_image_redactor.ipynb](../docs/samples/python/example_dicom_image_redactor.ipynb).
