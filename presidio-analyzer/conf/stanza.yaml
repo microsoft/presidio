@@ -19,3 +19,4 @@ ner_model_configuration:
   - low_confidence_score_multiplier: 0.4
   - low_score_entity_names:
       -
+  - default_score: 0.85
