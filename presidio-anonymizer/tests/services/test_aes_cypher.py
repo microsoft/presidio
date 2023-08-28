@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from presidio_anonymizer.operators import AESCipher
@@ -14,6 +16,7 @@ from presidio_anonymizer.operators import AESCipher
         (b'1111111111111111', "面汤"),  # Chinese text
         (b'1111111111111111', "הצפן אותי"),  # Hebrew text
         (b'1111111111111111', "😈😈😈😈"),  # Text with EmojiSources character
+        (os.urandom(16), "text_for_encryption"),   # random 16 bits key
     ],
     # fmt: on
 )
@@ -43,6 +46,7 @@ def test_given_invalid_key_length_then_value_error_raised():
         (b'1111111111111111111111111', False),  # 25 bits key
         (b'11111111111111111111111111111111', True),  # 32 bits key
         (b'111111111111111111111111111111111', False),  # 33 bits key
+        (os.urandom(16), True),  # random 16 bits key
     ],
     # fmt: on
 )

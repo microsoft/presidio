@@ -621,6 +621,92 @@ def test_get_text_metadata_happy_path(
 
 
 # ------------------------------------------------------
+# DicomImageRedactorEngine.augment_word()
+# ------------------------------------------------------
+@pytest.mark.parametrize(
+    "word, case_sensitive, expected_list",
+    [
+        ("", False, []),
+        (" ", True, []),
+        ("JOHN^DOE", False, [
+            "JOHN",
+            "DOE",
+            "John",
+            "Doe",
+            "john",
+            "doe",
+            "JOHN DOE",
+            "John Doe",
+            "john doe"
+            ]
+        ),
+        ("JOHN^DOE", True, [
+            "JOHN",
+            "DOE",
+            "JOHN DOE"
+            ]
+        ),
+        ("JOHN-DOE", False, [
+            "JOHN",
+            "DOE",
+            "John",
+            "Doe",
+            "john",
+            "doe",
+            "JOHN DOE",
+            "John Doe",
+            "john doe"
+            ]
+        ),
+        ("JOHN^-DOE", False, [
+            "JOHN",
+            "DOE",
+            "John",
+            "Doe",
+            "john",
+            "doe",
+            "JOHN DOE",
+            "John Doe",
+            "john doe"
+            ]
+        ),
+        ("City Hospital", False, [
+            "City Hospital",
+            "CITY HOSPITAL",
+            "city hospital",
+            "city",
+            "hospital",
+            "City",
+            "Hospital",
+            "CITY",
+            "HOSPITAL"
+            ]
+        ),
+        ("12345", False, ["12345"])
+    ],
+)
+def test_augment_word_happy_path(
+    mock_engine: DicomImageRedactorEngine,
+    word: str,
+    case_sensitive: bool,
+    expected_list: list,
+):
+    """Test happy path for DicomImageRedactorEngine.augment_word
+
+    Args:
+        word (str): String to augment.
+        case_sensitive (bool): True if casing matters.
+        expected_list (list): List of expected output.
+    """
+    # Arrange
+
+    # Act
+    test_list = mock_engine.augment_word(word, case_sensitive)
+
+    # Assert
+    assert set(test_list) == set(expected_list)
+
+# ------------------------------------------------------
 # DicomImageRedactorEngine._process_names()
 # ------------------------------------------------------
 @pytest.mark.parametrize(
@@ -1265,7 +1351,7 @@ def test_get_analyzer_results_exceptions(
         mock_engine (DicomImageRedactorEngine): DicomImageRedactorEngine object.
         ad_hoc_recognizers(None or list): Ad-hoc recognizers to use.
     """
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         # Arrange
         image = Image.fromarray(np.random.randint(255, size=(400, 400),dtype=np.uint8))
         test_instance = pydicom.dcmread(Path(TEST_DICOM_PARENT_DIR, "0_ORIGINAL.dcm"))
