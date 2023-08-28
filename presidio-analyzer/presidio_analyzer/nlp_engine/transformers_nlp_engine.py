@@ -1,9 +1,8 @@
 import logging
-from typing import Optional, Dict, List
+from typing import Optional, Dict
 
 import spacy
-from spacy.tokens import Doc, Span, SpanGroup
-from spacy.tokens.doc import SpanGroups
+from spacy.tokens import Doc, SpanGroup
 
 try:
     import spacy_huggingface_pipelines
@@ -38,7 +37,8 @@ class TransformersNlpEngine(SpacyNlpEngine):
             "transformers": "dslim/bert-base-NER"
             }
     }]
-    :param ner_model_configuration: Parameters for the NER model. See conf/transformers.yaml for an example
+    :param ner_model_configuration: Parameters for the NER model.
+    See conf/transformers.yaml for an example
 
 
     Note that since the spaCy model is not used for NER,
@@ -91,14 +91,14 @@ class TransformersNlpEngine(SpacyNlpEngine):
                     "annotate": "spans",
                     "stride": self.ner_model_configuration.stride,
                     "alignment_mode": self.ner_model_configuration.alignment_mode,
-                    "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,
+                    "aggregation_strategy": self.ner_model_configuration.aggregation_strategy,  # noqa E501
                     "annotate_spans_key": self.entity_key,
                 },
             )
             self.nlp[model["lang_code"]] = nlp
 
     @staticmethod
-    def _validate_model_params(model: Dict):
+    def _validate_model_params(model: Dict) -> None:
         if "lang_code" not in model:
             raise ValueError("lang_code is missing from model configuration")
         if "model_name" not in model:
@@ -123,8 +123,10 @@ class TransformersNlpEngine(SpacyNlpEngine):
     def _get_entities(self, doc: Doc) -> SpanGroup:
         """
         Get an updated list of entities based on the ner model configuration.
+
         Remove entities that are in labels_to_ignore,
-        update entity names based on model_to_presidio_entity_mapping
+        update entity names based on model_to_presidio_entity_mapping.
+
         :param doc: Output of a spaCy model
         :return: SpanGroup holding on the entities and confidence scores
         """
@@ -146,7 +148,8 @@ class TransformersNlpEngine(SpacyNlpEngine):
                 ent.label_ = mapping[ent.label_]
             else:
                 logger.warning(
-                    f"Entity {ent.label_} is not mapped to a Presidio entity, but keeping anyway"
+                    f"Entity {ent.label_} is not mapped to a Presidio entity, "
+                    f"but keeping anyway"
                 )
 
             # Remove presidio entities in the ignore list

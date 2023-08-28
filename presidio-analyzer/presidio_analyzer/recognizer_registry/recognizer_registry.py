@@ -1,7 +1,9 @@
 import copy
 import logging
-from pathlib import Path
-from typing import Optional, List, Iterable, Union, Type, Dict
+from typing import Optional, List, Iterable, Union, Type, Dict, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pathlib import Path
 from presidio_analyzer.nlp_engine.transformers_nlp_engine import (
     TransformersNlpEngine,
 )
@@ -120,7 +122,7 @@ class RecognizerRegistry:
             if nlp_engine:
                 nlp_recognizer_inst = nlp_recognizer(
                     supported_language=lang,
-                    supported_entities=nlp_engine.get_supported_entities()
+                    supported_entities=nlp_engine.get_supported_entities(),
                 )
             else:
                 nlp_recognizer_inst = nlp_recognizer(supported_language=lang)

@@ -8,7 +8,7 @@ from presidio_analyzer.nlp_engine import (
     StanzaNlpEngine,
     SpacyNlpEngine,
     NlpEngine,
-    TransformersNlpEngine, NerModelConfiguration,
+    TransformersNlpEngine,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -37,7 +37,6 @@ class NlpEngineProvider:
         conf_file: Optional[Union[Path, str]] = None,
         nlp_configuration: Optional[Dict] = None,
     ):
-
         if not nlp_engines:
             nlp_engines = (SpacyNlpEngine, StanzaNlpEngine, TransformersNlpEngine)
 
@@ -87,7 +86,9 @@ class NlpEngineProvider:
             nlp_models = self.nlp_configuration["models"]
 
             ner_model_configuration = self.nlp_configuration.get("ner_model_params")
-            engine = nlp_engine_class(models=nlp_models, ner_model_configuration=ner_model_configuration)
+            engine = nlp_engine_class(
+                models=nlp_models, ner_model_configuration=ner_model_configuration
+            )
             engine.load()
             logger.info(
                 f"Created NLP engine: {engine.engine_name}. "

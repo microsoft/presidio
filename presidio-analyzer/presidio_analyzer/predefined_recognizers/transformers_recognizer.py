@@ -1,8 +1,6 @@
 import logging
-from typing import List
 
 from presidio_analyzer.predefined_recognizers.spacy_recognizer import SpacyRecognizer
-from presidio_analyzer import RecognizerResult
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -16,7 +14,7 @@ class TransformersRecognizer(SpacyRecognizer):
     See:
      - https://huggingface.co/docs/transformers/main/en/index for transformer models
      - https://github.com/explosion/spacy-huggingface-pipelines on the spaCy wrapper to transformers
-    """ # noqa E501
+    """  # noqa E501
 
     ENTITIES = [
         "PERSON",
@@ -31,7 +29,7 @@ class TransformersRecognizer(SpacyRecognizer):
 
     LOW_SCORE_ENTITY_NAMES = {"ID"}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # noqa ANN003
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace(
             "Spacy", "Transfromers"
         )

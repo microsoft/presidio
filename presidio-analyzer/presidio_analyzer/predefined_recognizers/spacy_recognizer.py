@@ -12,6 +12,15 @@ logger = logging.getLogger("presidio-analyzer")
 
 
 class SpacyRecognizer(LocalRecognizer):
+    """
+    Recognize PII entities using a spaCy NLP model.
+
+        Since the spaCy pipeline is ran by the AnalyzerEngine/SpacyNlpEngine,
+        this recognizer only extracts the entities from the NlpArtifacts
+        and returns them.
+
+    """
+
     ENTITIES = ["DATE_TIME", "NRP", "LOCATION", "PERSON", "ORGANIZATION"]
 
     DEFAULT_EXPLANATION = "Identified as {} by Spacy's Named Entity Recognition"
@@ -35,11 +44,6 @@ class SpacyRecognizer(LocalRecognizer):
         context: Optional[List[str]] = None,
     ):
         """
-        Recognize PII entities using a spaCy NLP model.
-
-        Since the spaCy pipeline is ran by the AnalyzerEngine,
-        this recognizer only extracts the entities from the NlpArtifacts
-        and replaces their types to align with Presidio's.
 
         :param supported_language: Language this recognizer supports
         :param supported_entities: The entities this recognizer can detect
@@ -51,7 +55,8 @@ class SpacyRecognizer(LocalRecognizer):
         self.ner_strength = ner_strength
         if check_label_groups:
             warnings.warn(
-                "check_label_groups is deprecated and isn't used;entities are mapped in NerModelConfiguration",
+                "check_label_groups is deprecated and isn't used;"
+                "entities are mapped in NerModelConfiguration",
                 DeprecationWarning,
                 2,
             )
@@ -88,7 +93,7 @@ class SpacyRecognizer(LocalRecognizer):
         )
         return explanation
 
-    def analyze(self, text:str, entities, nlp_artifacts=None):  # noqa D102
+    def analyze(self, text: str, entities, nlp_artifacts=None):  # noqa D102
         results = []
         if not nlp_artifacts:
             logger.warning("Skipping SpaCy, nlp artifacts not provided...")
@@ -99,12 +104,13 @@ class SpacyRecognizer(LocalRecognizer):
 
         for ner_entity, ner_score in zip(ner_entities, ner_scores):
             if ner_entity.label_ not in entities:
-                logger.debug(f"Skipping entity {ner_entity.label_} as it is not in the supported entities list")
+                logger.debug(
+                    f"Skipping entity {ner_entity.label_} "
+                    f"as it is not in the supported entities list"
+                )
                 continue
 
-            textual_explanation = self.DEFAULT_EXPLANATION.format(
-                ner_entity.label_
-            )
+            textual_explanation = self.DEFAULT_EXPLANATION.format(ner_entity.label_)
             explanation = self.build_explanation(ner_score, textual_explanation)
             spacy_result = RecognizerResult(
                 entity_type=ner_entity.label_,

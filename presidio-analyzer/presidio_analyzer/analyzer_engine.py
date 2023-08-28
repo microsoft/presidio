@@ -336,7 +336,7 @@ class AnalyzerEngine:
     @staticmethod
     def __add_recognizer_id_if_not_exists(
         results: List[RecognizerResult], recognizer: EntityRecognizer
-    ):
+    ) -> None:
         """Ensure recognition metadata with recognizer id existence.
 
         Ensure recognizer result list contains recognizer id inside recognition

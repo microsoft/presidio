@@ -1,9 +1,11 @@
 import logging
-from typing import Optional, Dict, Iterator, Tuple, Union, List
+from typing import Optional, Dict, Iterator, Tuple, Union, List, TYPE_CHECKING
 
 import spacy
-from spacy.language import Language
-from spacy.tokens import Doc, Span, SpanGroup
+
+if TYPE_CHECKING:
+    from spacy.language import Language
+from spacy.tokens import Doc, SpanGroup
 
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NerModelConfiguration
 
@@ -32,7 +34,8 @@ class SpacyNlpEngine(NlpEngine):
 
         :param models: Dictionary with the name of the spaCy model per language.
         For example: models = [{"lang_code": "en", "model_name": "en_core_web_lg"}]
-        :param ner_model_configuration: Parameters for the NER model. See conf/spacy.yaml for an example
+        :param ner_model_configuration: Parameters for the NER model.
+        See conf/spacy.yaml for an example
         """
         if not models:
             models = [{"lang_code": "en", "model_name": "en_core_web_lg"}]
@@ -56,14 +59,14 @@ class SpacyNlpEngine(NlpEngine):
             self.nlp[model["lang_code"]] = spacy.load(model["model_name"])
 
     @staticmethod
-    def _download_spacy_model_if_needed(model_name):
+    def _download_spacy_model_if_needed(model_name: str) -> None:
         if not spacy.util.is_package(model_name):
             logger.warning(f"Model {model_name} is not installed. Downloading...")
             spacy.cli.download(model_name)
             logger.info(f"Finished downloading model {model_name}")
 
     @staticmethod
-    def _validate_model_params(model: Dict):
+    def _validate_model_params(model: Dict) -> None:
         if "lang_code" not in model:
             raise ValueError("lang_code is missing from model configuration")
         if "model_name" not in model:
@@ -100,6 +103,7 @@ class SpacyNlpEngine(NlpEngine):
         as_tuples: bool = False,
     ) -> Iterator[Optional[NlpArtifacts]]:
         """Execute the NLP pipeline on a batch of texts using spacy pipe.
+
         :param texts: A list of texts to process.
         :param language: The language of the texts.
         :param as_tuples: If set to True, inputs should be a sequence of
@@ -162,8 +166,10 @@ class SpacyNlpEngine(NlpEngine):
     def _get_entities(self, doc: Doc) -> SpanGroup:
         """
         Get an updated list of entities based on the ner model configuration.
+
         Remove entities that are in labels_to_ignore,
         update entity names based on model_to_presidio_entity_mapping
+
         :param doc: Output of a spaCy model
         :return: SpanGroup holding on the entities and confidence scores
         """
@@ -180,7 +186,8 @@ class SpacyNlpEngine(NlpEngine):
                 ent.label_ = mapping[ent.label_]
             else:
                 logger.warning(
-                    f"Entity {ent.label_} is not mapped to a Presidio entity, but keeping anyway"
+                    f"Entity {ent.label_} is not mapped to a Presidio entity, "
+                    f"but keeping anyway"
                 )
 
             # Remove presidio entities in the ignore list
@@ -189,7 +196,8 @@ class SpacyNlpEngine(NlpEngine):
 
             output_spans.append(ent)
 
-            # Set default confidence (spaCy models don't have built in confidence scores)
+            # Set default confidence
+            # (spaCy models don't have built in confidence scores)
             score = self.ner_model_configuration.default_score
 
             # Update score if entity is in low score entity names

@@ -65,18 +65,26 @@ class NerModelConfiguration:
     low_confidence_score_multiplier: Optional[float] = 0.4
 
     def __post_init__(self):
+        """Validate the configuration and set defaults."""
         if self.model_to_presidio_entity_mapping is None:
-            logger.warning(f"model_to_presidio_entity_mapping is missing from configuration, using default")
+            logger.warning(
+                "model_to_presidio_entity_mapping is missing from configuration, "
+                "using default"
+            )
             self.model_to_presidio_entity_mapping = MODEL_TO_PRESIDIO_ENTITY_MAPPING
         if self.low_score_entity_names is None:
-            logger.warning(f"low_score_entity_names is missing from configuration, using default")
+            logger.warning(
+                "low_score_entity_names is missing from configuration, " "using default"
+            )
             self.low_score_entity_names = LOW_SCORE_ENTITY_NAMES
         if self.labels_to_ignore is None:
-            logger.warning(f"labels_to_ignore is missing from configuration, using default")
+            logger.warning(
+                "labels_to_ignore is missing from configuration, " "using default"
+            )
             self.labels_to_ignore = LABELS_TO_IGNORE
 
     @classmethod
-    def _validate_input(cls, nlp_engine_configuration: Dict):
+    def _validate_input(cls, nlp_engine_configuration: Dict) -> None:
         if "nlp_engine_name" not in nlp_engine_configuration:
             raise ValueError("nlp_engine_name is a required parameter")
         if "labels_to_ignore" in nlp_engine_configuration:
@@ -109,7 +117,8 @@ class NerModelConfiguration:
     def from_yaml(cls, yaml_file: Union[Path, str]) -> "NerModelConfiguration":
         """Load NLP engine configuration from yaml file.
 
-        :param yaml_file: Path to the yaml file."""
+        :param yaml_file: Path to the yaml file.
+        """
 
         if not Path(yaml_file).exists():
             raise FileNotFoundError(f"configuration file {yaml_file} not found.")
@@ -125,7 +134,8 @@ class NerModelConfiguration:
     def from_json(cls, json_file: Union[Path, str]) -> "NerModelConfiguration":
         """Load NLP engine configuration from json file.
 
-        :param json_file: Path to the json file."""
+        :param json_file: Path to the json file.
+        """
 
         if not Path(json_file).exists():
             raise FileNotFoundError(f"configuration file {json_file} not found.")
@@ -155,11 +165,12 @@ class NerModelConfiguration:
     ) -> Path:
         """Return a Path to the default conf file.
 
-        :param default_conf_file: Name of the default conf file."""
+        :param default_conf_file: Name of the default conf file.
+        """
         return Path(Path(__file__).parent.parent.parent, "conf", default_conf_file)
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa D105
         return str(self.to_dict())
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # noqa D105
         return str(self)

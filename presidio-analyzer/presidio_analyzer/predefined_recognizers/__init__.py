@@ -28,16 +28,10 @@ from .us_driver_license_recognizer import UsLicenseRecognizer
 from .us_itin_recognizer import UsItinRecognizer
 from .us_passport_recognizer import UsPassportRecognizer
 from .us_ssn_recognizer import UsSsnRecognizer
-from .es_nif_recognizer import EsNifRecognizer
 from .au_abn_recognizer import AuAbnRecognizer
 from .au_acn_recognizer import AuAcnRecognizer
 from .au_tfn_recognizer import AuTfnRecognizer
 from .au_medicare_recognizer import AuMedicareRecognizer
-from .it_driver_license_recognizer import ItDriverLicenseRecognizer
-from .it_fiscal_code_recognizer import ItFiscalCodeRecognizer
-from .it_vat_code import ItVatCodeRecognizer
-from .it_identity_card_recognizer import ItIdentityCardRecognizer
-from .it_passport_recognizer import ItPassportRecognizer
 from .in_pan_recognizer import InPanRecognizer
 
 

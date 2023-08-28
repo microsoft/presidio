@@ -1,7 +1,8 @@
 import json
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
-from spacy.tokens import Doc, Span
+if TYPE_CHECKING:
+    from spacy.tokens import Doc, Span
 
 
 class NlpArtifacts:
@@ -10,6 +11,14 @@ class NlpArtifacts:
 
     processing over a given text, it holds attributes such as entities,
     tokens and lemmas which can be used by any recognizer
+
+    :param entities: Identified entities
+    :param tokens: Tokenized text
+    :param tokens_indices: Indices of tokens
+    :param lemmas: List of lemmas in text
+    :param nlp_engine: NlpEngine object
+    :param language: Text language
+    :param scores: Entity confidence scores
     """
 
     def __init__(
@@ -18,20 +27,10 @@ class NlpArtifacts:
         tokens: Doc,
         tokens_indices: List[int],
         lemmas: List[str],
-        nlp_engine: "NlpEngine", # noqa F821
+        nlp_engine: "NlpEngine",  # noqa F821
         language: str,
-        scores: Optional[List[float]] = None
+        scores: Optional[List[float]] = None,
     ):
-        """
-        :param entities: Identified entities
-        :param tokens: Tokenized text
-        :param tokens_indices: Indices of tokens
-        :param lemmas: List of lemmas in text
-        :param nlp_engine: NlpEngine object
-        :param language: Text language
-        :param scores: Entity confidence scores
-        """
-
         self.entities = entities
         self.tokens = tokens
         self.lemmas = lemmas
