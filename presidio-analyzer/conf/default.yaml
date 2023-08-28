@@ -18,3 +18,4 @@ ner_model_configuration:
 - low_score_entity_names:
   - ORGANIZATION
   - ORG
+- default_score: 0.85
