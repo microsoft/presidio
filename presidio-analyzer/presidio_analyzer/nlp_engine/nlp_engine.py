@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable, Iterator, Tuple
+from typing import Iterable, Iterator, Tuple, Dict, List
 
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
@@ -11,6 +11,14 @@ class NlpEngine(ABC):
     It provides NLP preprocessing functionality as well as other queries
     on tokens.
     """
+
+    @abstractmethod
+    def load(self):
+        """Load the NLP model."""
+
+    @abstractmethod
+    def is_loaded(self) -> bool:
+        """Return True if the model is already loaded."""
 
     @abstractmethod
     def process_text(self, text: str, language: str) -> NlpArtifacts:
@@ -40,3 +48,8 @@ class NlpEngine(ABC):
 
         (within the given language)
         """
+
+    @abstractmethod
+    def get_supported_entities(self) -> List[str]:
+        """Return the supported entities for this NLP engine."""
+        pass

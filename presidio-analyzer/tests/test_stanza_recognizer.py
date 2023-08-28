@@ -21,6 +21,7 @@ def nlp_recognizer(nlp_recognizers):
 
 
 def prepare_and_analyze(nlp, recognizer, text, ents):
+    nlp.load()
     nlp_artifacts = nlp.process_text(text, "en")
     results = recognizer.analyze(text, ents, nlp_artifacts)
     return results
@@ -50,7 +51,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
         # fmt: on
     ],
 )
-def test_when_using_stanze_then_all_stanza_result_correct(
+def test_when_using_stanza_then_all_stanza_result_correct(
     text,
     expected_len,
     expected_positions,

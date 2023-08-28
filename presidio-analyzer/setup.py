@@ -39,7 +39,8 @@ setuptools.setup(
         "phonenumbers>=8.12",
     ],
     extras_require={
-        'transformers': ['torch', 'transformers'],
+        'transformers': ['spacy_huggingface_pipelines'],
+        "stanza": ["stanza", "spacy_stanza"],
     },
     include_package_data=True,
     license="MIT",

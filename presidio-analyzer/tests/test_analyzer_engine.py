@@ -152,7 +152,6 @@ def test_when_analyze_added_pattern_recognizer_then_succeed(unit_test_guid):
     )
 
     mock_recognizer_registry = RecognizerRegistryMock()
-
     # Make sure the analyzer doesn't get this entity
     analyze_engine = AnalyzerEngine(
         registry=mock_recognizer_registry,

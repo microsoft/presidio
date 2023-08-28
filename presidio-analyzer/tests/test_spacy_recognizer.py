@@ -1,7 +1,7 @@
 import pytest
 
+from presidio_analyzer.nlp_engine import SpacyNlpEngine
 from tests import assert_result_within_score_range
-
 
 @pytest.fixture(scope="module")
 def entities():
@@ -77,3 +77,9 @@ def test_when_person_in_text_then_person_full_name_complex_found(
         covered_text += text[sl]
 
     assert len(text) - len(covered_text) < 5
+
+
+def test_nlp_not_loaded_value_error():
+    spacy_nlp = SpacyNlpEngine()
+    with pytest.raises(ValueError):
+        spacy_nlp.process_text("This should fail as the NLP model isn't loaded", language="en")

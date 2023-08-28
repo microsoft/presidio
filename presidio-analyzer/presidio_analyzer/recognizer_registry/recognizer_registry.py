@@ -55,7 +55,6 @@ class RecognizerRegistry:
     """
 
     def __init__(self, recognizers: Optional[Iterable[EntityRecognizer]] = None):
-
         if recognizers:
             self.recognizers = recognizers
         else:
@@ -75,6 +74,7 @@ class RecognizerRegistry:
             languages = ["en"]
 
         nlp_recognizer = self._get_nlp_recognizer(nlp_engine)
+
         recognizers_map = {
             "en": [
                 UsBankRecognizer,
@@ -106,7 +106,6 @@ class RecognizerRegistry:
                 IbanRecognizer,
                 IpRecognizer,
                 MedicalLicenseRecognizer,
-                nlp_recognizer,
                 PhoneRecognizer,
                 UrlRecognizer,
             ],
@@ -118,11 +117,19 @@ class RecognizerRegistry:
                 rc(supported_language=lang) for rc in recognizers_map.get("ALL", [])
             ]
             self.recognizers.extend(all_recognizers)
+            if nlp_engine:
+                nlp_recognizer_inst = nlp_recognizer(
+                    supported_language=lang,
+                    supported_entities=nlp_engine.get_supported_entities()
+                )
+            else:
+                nlp_recognizer_inst = nlp_recognizer(supported_language=lang)
+            self.recognizers.append(nlp_recognizer_inst)
 
     @staticmethod
     def _get_nlp_recognizer(
         nlp_engine: NlpEngine,
-    ) -> Union[Type[SpacyRecognizer], Type[StanzaRecognizer]]:
+    ) -> Type[SpacyRecognizer]:
         """Return the recognizer leveraging the selected NLP Engine."""
 
         if not nlp_engine or type(nlp_engine) == SpacyNlpEngine:

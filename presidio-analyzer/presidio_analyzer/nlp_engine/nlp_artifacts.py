@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Optional
 
 from spacy.tokens import Doc, Span
 
@@ -18,15 +18,27 @@ class NlpArtifacts:
         tokens: Doc,
         tokens_indices: List[int],
         lemmas: List[str],
-        nlp_engine,  # noqa ANN001
+        nlp_engine: "NlpEngine", # noqa F821
         language: str,
+        scores: Optional[List[float]] = None
     ):
+        """
+        :param entities: Identified entities
+        :param tokens: Tokenized text
+        :param tokens_indices: Indices of tokens
+        :param lemmas: List of lemmas in text
+        :param nlp_engine: NlpEngine object
+        :param language: Text language
+        :param scores: Entity confidence scores
+        """
+
         self.entities = entities
         self.tokens = tokens
         self.lemmas = lemmas
         self.tokens_indices = tokens_indices
         self.keywords = self.set_keywords(nlp_engine, lemmas, language)
         self.nlp_engine = nlp_engine
+        self.scores = scores if scores else [0.85] * len(entities)
 
     @staticmethod
     def set_keywords(

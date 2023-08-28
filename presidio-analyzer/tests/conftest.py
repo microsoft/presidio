@@ -51,18 +51,27 @@ def nlp_engines(request, nlp_engine_provider) -> Dict[str, NlpEngine]:
     nlp_engines = nlp_engine_provider.nlp_engines
     for name, engine_cls in nlp_engines.items():
         if name == "spacy" and not request.config.getoption("--runfast"):
-            available_engines[f"{name}_en"] = engine_cls({"en": "en_core_web_lg"})
+            available_engines[f"{name}_en"] = engine_cls(
+                models=[{"lang_code": "en", "model_name": "en_core_web_lg"}]
+            )
+        elif name == "stanza" and not request.config.getoption("--runfast"):
+            available_engines[f"{name}_en"] = engine_cls(
+                models=[{"lang_code": "en", "model_name": "en"}]
+            )
         elif name == "transformers" and not request.config.getoption("--runfast"):
             available_engines[f"{name}_en"] = engine_cls(
-                {
-                    "en": {
-                        "spacy": "en_core_web_lg",
-                        "transformers": "dslim/bert-base-NER",
-                    }
-                }
+                models=[{
+                    "lang_code": "en",
+                    "model_name": {
+                        "spacy": "en_core_web_sm",
+                        "transformers": "StanfordAIMI/stanford-deidentifier-base",
+                    },
+                }]
             )
         else:
-            available_engines[f"{name}_en"] = engine_cls()
+            raise ValueError("Unsupported engine for tests")
+        # Load engine
+        available_engines[f"{name}_en"].load()
 
     return available_engines
 
@@ -89,6 +98,11 @@ def ner_strength() -> float:
 @pytest.fixture(scope="session")
 def max_score() -> float:
     return EntityRecognizer.MAX_SCORE
+
+
+@pytest.fixture(scope="session")
+def min_score() -> float:
+    return EntityRecognizer.MIN_SCORE
 
 
 @pytest.fixture(scope="module")

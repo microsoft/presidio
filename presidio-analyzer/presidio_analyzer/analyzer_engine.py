@@ -67,6 +67,9 @@ class AnalyzerEngine:
         self.supported_languages = supported_languages
 
         self.nlp_engine = nlp_engine
+        if not self.nlp_engine.is_loaded():
+            self.nlp_engine.load()
+
         self.registry = registry
 
         # load all recognizers

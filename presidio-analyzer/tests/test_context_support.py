@@ -47,11 +47,6 @@ def recognizers_list(recognizers_map):
 
 
 @pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
-
-
-@pytest.fixture(scope="module")
 def dataset(recognizers_map):
     """Loads up a group of sentences with relevant context words and creates
     a list of tuples of the sentence, a recognizer and entity types.

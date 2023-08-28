@@ -8,8 +8,14 @@ from .credit_card_recognizer import CreditCardRecognizer
 from .crypto_recognizer import CryptoRecognizer
 from .date_recognizer import DateRecognizer
 from .email_recognizer import EmailRecognizer
+from .es_nif_recognizer import EsNifRecognizer
 from .iban_recognizer import IbanRecognizer
 from .ip_recognizer import IpRecognizer
+from .it_driver_license_recognizer import ItDriverLicenseRecognizer
+from .it_fiscal_code_recognizer import ItFiscalCodeRecognizer
+from .it_identity_card_recognizer import ItIdentityCardRecognizer
+from .it_passport_recognizer import ItPassportRecognizer
+from .it_vat_code import ItVatCodeRecognizer
 from .medical_license_recognizer import MedicalLicenseRecognizer
 from .phone_recognizer import PhoneRecognizer
 from .sg_fin_recognizer import SgFinRecognizer
@@ -33,6 +39,7 @@ from .it_vat_code import ItVatCodeRecognizer
 from .it_identity_card_recognizer import ItIdentityCardRecognizer
 from .it_passport_recognizer import ItPassportRecognizer
 from .in_pan_recognizer import InPanRecognizer
+
 
 NLP_RECOGNIZERS = {
     "spacy": SpacyRecognizer,
@@ -72,5 +79,5 @@ __all__ = [
     "ItVatCodeRecognizer",
     "ItIdentityCardRecognizer",
     "ItPassportRecognizer",
-    "InPanRecognizer"
+    "InPanRecognizer",
 ]
