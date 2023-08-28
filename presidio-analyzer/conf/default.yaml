@@ -14,15 +14,8 @@ ner_model_configuration:
     DATE: DATE_TIME
     TIME: DATE_TIME
     NORP: NRP
-- aggregation_strategy: simple # "simple", "first", "average", "max"
-- stride: 16  # If stride >= 0, process long texts in
-              # overlapping windows of the model max
-              # length. The value is the length of the
-              # window overlap in transformer tokenizer
-              # tokens, NOT the length of the stride.
-- alignment_mode: strict # "strict", "contract", "expand"
-- labels_to_ignore: ["O"]
 - low_confidence_score_multiplier: 0.4
 - low_score_entity_names:
   - ORGANIZATION
   - ORG
+- default_score: 0.85
