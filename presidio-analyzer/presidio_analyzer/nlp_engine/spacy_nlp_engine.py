@@ -21,7 +21,6 @@ class SpacyNlpEngine(NlpEngine):
 
     engine_name = "spacy"
     is_available = bool(spacy)
-    DEFAULT_CONFIDENCE = 0.85
 
     def __init__(
         self,
@@ -191,7 +190,7 @@ class SpacyNlpEngine(NlpEngine):
             output_spans.append(ent)
 
             # Set default confidence (spaCy models don't have built in confidence scores)
-            score = self.DEFAULT_CONFIDENCE
+            score = self.ner_model_configuration.default_score
 
             # Update score if entity is in low score entity names
             if ent.label_ in self.ner_model_configuration.low_score_entity_names:

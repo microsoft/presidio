@@ -66,10 +66,13 @@ class NerModelConfiguration:
 
     def __post_init__(self):
         if self.model_to_presidio_entity_mapping is None:
+            logger.warning(f"model_to_presidio_entity_mapping is missing from configuration, using default")
             self.model_to_presidio_entity_mapping = MODEL_TO_PRESIDIO_ENTITY_MAPPING
         if self.low_score_entity_names is None:
+            logger.warning(f"low_score_entity_names is missing from configuration, using default")
             self.low_score_entity_names = LOW_SCORE_ENTITY_NAMES
         if self.labels_to_ignore is None:
+            logger.warning(f"labels_to_ignore is missing from configuration, using default")
             self.labels_to_ignore = LABELS_TO_IGNORE
 
     @classmethod
