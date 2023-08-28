@@ -17,7 +17,7 @@ In addition, other types of NLP frameworks [can be integrated into Presidio](dev
 
 ## Configure Presidio to use the new model
 
-Configuration can be done in three ways:
+Configuration can be done in two ways:
 
 - **Via the `NlpEngineConfiguration` object:
 
@@ -72,7 +72,7 @@ Configuration can be done in three ways:
 
     ```python
     from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
-    from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngineConfiguration
+    from presidio_analyzer.nlp_engine import NlpEngineProvider
 
     LANGUAGES_CONFIG_FILE = "./docs/analyzer/languages-config.yml"
 
