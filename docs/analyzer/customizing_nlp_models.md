@@ -19,9 +19,6 @@ In addition, other types of NLP frameworks [can be integrated into Presidio](dev
 
 Configuration can be done in two ways:
 
-- **Via the `NlpEngineConfiguration` object:
-
-
 - **Via code**: Create an `NlpEngine` using the `NlpEnginerProvider` class, and pass it to the `AnalyzerEngine` as input:
 
     ```python
