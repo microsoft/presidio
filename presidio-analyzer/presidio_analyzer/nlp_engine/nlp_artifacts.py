@@ -1,8 +1,7 @@
 import json
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional
 
-if TYPE_CHECKING:
-    from spacy.tokens import Doc, Span
+from spacy.tokens import Doc, Span
 
 
 class NlpArtifacts:

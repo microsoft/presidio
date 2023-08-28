@@ -1,9 +1,8 @@
 import copy
 import logging
-from typing import Optional, List, Iterable, Union, Type, Dict, TYPE_CHECKING
+from typing import Optional, List, Iterable, Union, Type, Dict
 
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
 from presidio_analyzer.nlp_engine.transformers_nlp_engine import (
     TransformersNlpEngine,
 )

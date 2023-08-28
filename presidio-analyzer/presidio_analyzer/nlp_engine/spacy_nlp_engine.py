@@ -1,10 +1,9 @@
 import logging
-from typing import Optional, Dict, Iterator, Tuple, Union, List, TYPE_CHECKING
+from typing import Optional, Dict, Iterator, Tuple, Union, List
 
 import spacy
 
-if TYPE_CHECKING:
-    from spacy.language import Language
+from spacy.language import Language
 from spacy.tokens import Doc, SpanGroup
 
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NerModelConfiguration
