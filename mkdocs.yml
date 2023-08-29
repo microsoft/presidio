@@ -8,6 +8,7 @@ edit_uri: ""
 
 nav:
   - Home: index.md
+  - Installation: installation.md
   - Quickstart: getting_started.md
   - Step by step tutorial: 
     - Home: tutorial/index.md
@@ -26,7 +27,6 @@ nav:
     - Encryption/Decryption: tutorial/12_encryption.md
     - Allow-lists: tutorial/13_allow_list.md
   - Docs:
-    - Installation: installation.md
     - Handling text:
       - Home: text_anonymization.md
       - Presidio Analyzer:
@@ -72,6 +72,7 @@ theme:
   favicon: assets/ms_icon.png
   features:
     - navigation.instant
+    - content.tabs.link
     # - navigation.tabs
     # - navigation.tabs.sticky
 plugins:
@@ -102,4 +103,5 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
   - pymdownx.pathconverter
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true 
