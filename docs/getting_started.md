@@ -1,10 +1,10 @@
 # Getting started with Presidio
 
-## Simple flow
+## Simple flow: Text
 
 Using Presidio's modules as Python packages to get started
 
-=== "Anonymize PII in text"
+=== "Anonymize PII in text (Default spaCy model)"
 
     1. Install Presidio
         
@@ -40,6 +40,54 @@ Using Presidio's modules as Python packages to get started
         
         print(anonymized_text)
         ```
+
+=== "Anonymize PII in text (transformers)"
+
+    1. Install Presidio
+        
+        ```sh
+        pip install presidio-analyzer
+        pip install presidio-anonymizer
+        python -m spacy download en_core_web_sm
+        ```
+    
+    2. Analyze + Anonymize
+    
+        ```py
+        from presidio_analyzer import AnalyzerEngine
+        from presidio_analyzer.nlp_engine import TransformersNlpEngine
+        from presidio_anonymizer import AnonymizerEngine
+        
+        text="My name is Don and my phone number is 212-555-5555"
+        
+        # Define which transformers model to use
+        model_config = [{"lang_code": "en", "model_name": {
+            "spacy": "en_core_web_sm",  # use a small spaCy model for lemmas, tokens etc.
+            "transformers": "dslim/bert-base-NER"
+            }
+        }]
+
+        nlp_engine = TransformersNlpEngine(models=model_config)
+
+        # Set up the engine, loads the NLP module (spaCy model by default) 
+        # and other PII recognizers
+        analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
+        
+        # Call analyzer to get results
+        results = analyzer.analyze(text=text,
+                                   language='en')
+        print(results)
+        
+        # Analyzer results are passed to the AnonymizerEngine for anonymization
+        
+        anonymizer = AnonymizerEngine()
+        
+        anonymized_text = anonymizer.anonymize(text=text,analyzer_results=results)
+        
+        print(anonymized_text)
+        ```
+
+## Simple flow: Images
 
 === "Anonymize PII in images"
 
