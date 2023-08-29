@@ -239,7 +239,7 @@ class RecognizerRegistry:
         )
         self.recognizers = new_recognizers
 
-    def add_pattern_recognizer_from_dict(self, recognizer_dict: Dict):
+    def add_pattern_recognizer_from_dict(self, recognizer_dict: Dict) -> None:
         """
         Load a pattern recognizer from a Dict into the recognizer registry.
 
@@ -254,7 +254,7 @@ class RecognizerRegistry:
         recognizer = PatternRecognizer.from_dict(recognizer_dict)
         self.add_recognizer(recognizer)
 
-    def add_recognizers_from_yaml(self, yml_path: Union[str, Path]):
+    def add_recognizers_from_yaml(self, yml_path: Union[str, Path]) -> None:
         r"""
         Read YAML file and load recognizers into the recognizer registry.
 

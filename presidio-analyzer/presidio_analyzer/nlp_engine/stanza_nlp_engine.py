@@ -24,7 +24,7 @@ class StanzaNlpEngine(SpacyNlpEngine):
     engine_name = "stanza"
     is_available = bool(stanza)
 
-    def load(self):
+    def load(self) -> None:
         """Load the NLP model."""
 
         logger.debug(f"Loading Stanza models: {self.models}")

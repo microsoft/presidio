@@ -13,7 +13,7 @@ class NlpEngine(ABC):
     """
 
     @abstractmethod
-    def load(self):
+    def load(self) -> None:
         """Load the NLP model."""
 
     @abstractmethod
