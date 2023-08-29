@@ -87,6 +87,8 @@ Using Presidio's modules as Python packages to get started
         print(anonymized_text)
         ```
 
+        The transformers model and the spacy model would be downloaded on the first call to the `AnalyzerEngine`.
+
 ## Simple flow: Images
 
 === "Anonymize PII in images"
