@@ -170,7 +170,7 @@ class SpacyNlpEngine(NlpEngine):
         update entity names based on model_to_presidio_entity_mapping
 
         :param doc: Output of a spaCy model
-        :return: SpanGroup holding on the entities and confidence scores
+        :return: SpanGroup holding the entities and confidence scores
         """
         output_spans = SpanGroup(doc, attrs={"scores": []})
 
