@@ -74,15 +74,14 @@ Using Presidio's modules as Python packages to get started
         analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
         
         # Call analyzer to get results
-        results = analyzer.analyze(text=text,
-                                   language='en')
+        results = analyzer.analyze(text=text, language='en')
         print(results)
         
         # Analyzer results are passed to the AnonymizerEngine for anonymization
         
         anonymizer = AnonymizerEngine()
         
-        anonymized_text = anonymizer.anonymize(text=text,analyzer_results=results)
+        anonymized_text = anonymizer.anonymize(text=text, analyzer_results=results)
         
         print(anonymized_text)
         ```
