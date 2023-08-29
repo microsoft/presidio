@@ -46,7 +46,7 @@ Using Presidio's modules as Python packages to get started
     1. Install Presidio
         
         ```sh
-        pip install presidio-analyzer[transformers]
+        pip install "presidio-analyzer[transformers]"
         pip install presidio-anonymizer
         python -m spacy download en_core_web_sm
         ```
