@@ -20,7 +20,7 @@ Using Presidio's modules as Python packages to get started
         from presidio_analyzer import AnalyzerEngine
         from presidio_anonymizer import AnonymizerEngine
         
-        text="My phone number is 212-555-5555"
+        text = "My phone number is 212-555-5555"
         
         # Set up the engine, loads the NLP module (spaCy model by default) 
         # and other PII recognizers
@@ -58,7 +58,7 @@ Using Presidio's modules as Python packages to get started
         from presidio_analyzer.nlp_engine import TransformersNlpEngine
         from presidio_anonymizer import AnonymizerEngine
         
-        text="My name is Don and my phone number is 212-555-5555"
+        text = "My name is Don and my phone number is 212-555-5555"
         
         # Define which transformers model to use
         model_config = [{"lang_code": "en", "model_name": {
