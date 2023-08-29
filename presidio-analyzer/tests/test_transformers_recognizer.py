@@ -20,7 +20,6 @@ def nlp_recognizer(nlp_recognizers):
     return nlp_recognizers.get("transformers", None)
 
 
-
 def prepare_and_analyze(nlp, recognizer, text, entities):
     nlp.load()
     nlp_artifacts = nlp.process_text(text, "en")
