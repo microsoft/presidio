@@ -39,13 +39,13 @@ In addition, Presidio requires at least one NLP engine (spaCy, transformers or s
 === "Transformers"
 
     ```
-    pip install presidio_analyzer[transformers]
+    pip install "presidio_analyzer[transformers]"
     ```
 
 === "Stanza"
 
     ```
-    pip install presidio_analyzer[stanza]
+    pip install "presidio_analyzer[stanza]"
     ```
 
 For a more detailed installation of each package, refer to the specific documentation:
