@@ -5,8 +5,8 @@ from typing import List, Tuple, Dict, Union
 class BboxProcessor:
     """Common module for general bounding box operators."""
 
+    @staticmethod
     def get_bboxes_from_ocr_results(
-        self,
         ocr_results: Dict[str, List[Union[int, str]]],
     ) -> List[Dict[str, Union[int, float, str]]]:
         """Get bounding boxes on padded image for all detected words from ocr_results.
@@ -30,8 +30,8 @@ class BboxProcessor:
 
         return bboxes
 
+    @staticmethod
     def get_bboxes_from_analyzer_results(
-        self,
         analyzer_results: List[ImageRecognizerResult],
     ) -> List[Dict[str, Union[str, float, int]]]:
         """Organize bounding box info from analyzer results.
@@ -56,8 +56,8 @@ class BboxProcessor:
 
         return bboxes
 
+    @staticmethod
     def remove_bbox_padding(
-        self,
         analyzer_bboxes: List[Dict[str, Union[str, float, int]]],
         padding_width: int,
     ) -> List[Dict[str, int]]:
@@ -84,8 +84,8 @@ class BboxProcessor:
 
         return bboxes
 
+    @staticmethod
     def match_with_source(
-        self,
         all_pos: List[Dict[str, Union[str, int, float]]],
         pii_source_dict: List[Dict[str, Union[str, int, float]]],
         detected_pii: Dict[str, Union[str, float, int]],
@@ -107,7 +107,11 @@ class BboxProcessor:
         results_top = detected_pii["top"]
         results_width = detected_pii["width"]
         results_height = detected_pii["height"]
-        results_score = detected_pii["score"]
+        try:
+            results_score = detected_pii["score"]
+        except KeyError:
+            # Handle matching when no score available
+            results_score = 0
         match_found = False
 
         # See what in the ground truth this positive matches
