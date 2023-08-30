@@ -70,7 +70,7 @@ class BboxProcessor:
         """
         if padding_width < 0:
             raise ValueError("Padding width must be a non-negative integer.")
-        
+
         if len(analyzer_bboxes) > 0:
             # Get fields
             has_label = False
