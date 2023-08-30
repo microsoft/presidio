@@ -13,7 +13,7 @@ from presidio_image_redactor import (
 from presidio_image_redactor import ImagePiiVerifyEngine, BboxProcessor
 from presidio_analyzer import PatternRecognizer
 
-from typing import Tuple, List, Optional, Union
+from typing import Tuple, List, Optional
 
 
 class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
