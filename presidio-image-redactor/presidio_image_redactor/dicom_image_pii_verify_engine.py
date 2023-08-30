@@ -13,7 +13,7 @@ from presidio_image_redactor import (
 from presidio_image_redactor import ImagePiiVerifyEngine, BboxProcessor
 from presidio_analyzer import PatternRecognizer
 
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Union
 
 
 class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
@@ -49,7 +49,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         instance: pydicom.dataset.FileDataset,
         padding_width: int = 25,
         display_image: bool = True,
+        use_metadata: bool = True,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict, list]:
         """Verify PII on a single DICOM instance.
@@ -57,7 +59,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param instance: Loaded DICOM instance including pixel data and metadata.
         :param padding_width: Padding width to use when running OCR.
         :param display_image: If the verificationimage is displayed and returned.
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in ImageAnalyzerEngine.
 
@@ -82,24 +88,17 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
-        # Create custom recognizer using DICOM metadata
-        original_metadata, is_name, is_patient = self._get_text_metadata(instance_copy)
-        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
-        deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
-        )
+        # Get analyzer results
         ocr_results = self.ocr_engine.perform_ocr(image)
-        analyzer_results = self.image_analyzer_engine.analyze(
-            image,
-            ocr_kwargs=ocr_kwargs,
-            ad_hoc_recognizers=[deny_list_recognizer],
-            **text_analyzer_kwargs,
+        analyzer_results = self._get_analyzer_results(
+            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
+            **text_analyzer_kwargs
         )
 
         # Get image with verification boxes
         verify_image = (
             self.verify(
-                image, ad_hoc_recognizers=[deny_list_recognizer], **text_analyzer_kwargs
+                image, ad_hoc_recognizers=ad_hoc_recognizers, **text_analyzer_kwargs
             )
             if display_image
             else None
@@ -114,7 +113,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         padding_width: int = 25,
         tolerance: int = 50,
         display_image: bool = False,
+        use_metadata: bool = True,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> Tuple[Optional[PIL.Image.Image], dict]:
         """Evaluate performance for a single DICOM instance.
@@ -124,7 +125,11 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param tolerance: Pixel distance tolerance for matching to ground truth.
         :param display_image: If the verificationimage is displayed and returned.
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in ImageAnalyzerEngine.
 
@@ -135,7 +140,9 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             instance,
             padding_width,
             display_image,
+            use_metadata,
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=ad_hoc_recognizers,
             **text_analyzer_kwargs,
         )
         formatted_ocr_results = self.bbox_processor.get_bboxes_from_ocr_results(
