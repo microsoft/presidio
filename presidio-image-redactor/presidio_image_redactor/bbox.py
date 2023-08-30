@@ -70,17 +70,69 @@ class BboxProcessor:
         """
         if padding_width < 0:
             raise ValueError("Padding width must be a non-negative integer.")
+        
+        if len(analyzer_bboxes) > 0:
+            # Get fields
+            has_label = False
+            has_entity_type = False
+            try:
+                _ = analyzer_bboxes[0]["label"]
+                has_label = True
+            except KeyError:
+                has_label = False
+            try:
+                _ = analyzer_bboxes[0]["entity_type"]
+                has_entity_type = True
+            except KeyError:
+                has_entity_type = False
 
-        # Remove padding from all bounding boxes
-        bboxes = [
-            {
-                "top": max(0, bbox["top"] - padding_width),
-                "left": max(0, bbox["left"] - padding_width),
-                "width": bbox["width"],
-                "height": bbox["height"],
-            }
-            for bbox in analyzer_bboxes
-        ]
+            # Remove padding from all bounding boxes
+            if has_label is True and has_entity_type is True:
+                bboxes = [
+                    {
+                        "left": max(0, bbox["left"] - padding_width),
+                        "top": max(0, bbox["top"] - padding_width),
+                        "width": bbox["width"],
+                        "height": bbox["height"],
+                        "label": bbox["label"],
+                        "entity_type": bbox["entity_type"]
+                    }
+                    for bbox in analyzer_bboxes
+                ]
+            elif has_label is True and has_entity_type is False:
+                bboxes = [
+                    {
+                        "left": max(0, bbox["left"] - padding_width),
+                        "top": max(0, bbox["top"] - padding_width),
+                        "width": bbox["width"],
+                        "height": bbox["height"],
+                        "label": bbox["label"]
+                    }
+                    for bbox in analyzer_bboxes
+                ]
+            elif has_label is False and has_entity_type is True:
+                bboxes = [
+                    {
+                        "left": max(0, bbox["left"] - padding_width),
+                        "top": max(0, bbox["top"] - padding_width),
+                        "width": bbox["width"],
+                        "height": bbox["height"],
+                        "entity_type": bbox["entity_type"]
+                    }
+                    for bbox in analyzer_bboxes
+                ]
+            elif has_label is False and has_entity_type is False:
+                bboxes = [
+                    {
+                        "left": max(0, bbox["left"] - padding_width),
+                        "top": max(0, bbox["top"] - padding_width),
+                        "width": bbox["width"],
+                        "height": bbox["height"]
+                    }
+                    for bbox in analyzer_bboxes
+                ]
+        else:
+            bboxes = analyzer_bboxes
 
         return bboxes
 
