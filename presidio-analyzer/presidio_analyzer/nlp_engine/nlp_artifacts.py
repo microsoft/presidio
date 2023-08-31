@@ -80,5 +80,7 @@ class NlpArtifacts:
             return_dict["tokens"] = [token.text for token in self.tokens]
         if "entities" in return_dict:
             return_dict["entities"] = [entity.text for entity in self.entities]
+        if "scores" in return_dict:
+            return_dict["scores"] = [float(score) for score in self.scores]
 
         return json.dumps(return_dict)

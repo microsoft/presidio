@@ -4,7 +4,7 @@ from typing import Optional, Dict, Iterator, Tuple, Union, List
 import spacy
 
 from spacy.language import Language
-from spacy.tokens import Doc, SpanGroup
+from spacy.tokens import Doc, SpanGroup, Span
 
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NerModelConfiguration
 
@@ -148,12 +148,12 @@ class SpacyNlpEngine(NlpEngine):
         tokens_indices = [token.idx for token in doc]
 
         entities = self._get_entities(doc)
-        scores = entities.attrs["scores"]
+        scores = self._get_scores_for_entities(doc)
 
-        entities_as_spans = [ent for ent in entities]
+        entities, scores = self._get_updated_entities(entities, scores)
 
         return NlpArtifacts(
-            entities=entities_as_spans,
+            entities=entities,
             tokens=doc,
             tokens_indices=tokens_indices,
             lemmas=lemmas,
@@ -162,22 +162,53 @@ class SpacyNlpEngine(NlpEngine):
             scores=scores,
         )
 
-    def _get_entities(self, doc: Doc) -> SpanGroup:
+    def _get_entities(self, doc:Doc) -> List[Span]:
+        """
+        Extract entities out of a spaCy pipeline, depending on the type of pipeline.
+
+        For normal spaCy, this would be doc.ents
+        :param doc: the output spaCy doc.
+        :return: List of entities
+        """
+
+        return doc.ents
+
+    def _get_scores_for_entities(self, doc: Doc) -> List[float]:
+        """Extract scores for entities from the doc.
+
+        Since spaCy does not provide confidence scores for entities by default,
+        we use the default score from the ner model configuration.
+        :param doc: SpaCy doc
+        """
+
+        entities = doc.ents
+        scores = [self.ner_model_configuration.default_score] * len(entities)
+        return scores
+
+    def _get_updated_entities(
+        self, entities: List[Span], scores: List[float]
+    ) -> Tuple[List[Span], List[float]]:
         """
         Get an updated list of entities based on the ner model configuration.
 
         Remove entities that are in labels_to_ignore,
         update entity names based on model_to_presidio_entity_mapping
 
-        :param doc: Output of a spaCy model
-        :return: SpanGroup holding the entities and confidence scores
+        :param entities: Entities that were extracted from a spaCy pipeline
+        :param scores: Original confidence scores for the entities extracted
+        :return: Tuple holding the entities and confidence scores
         """
-        output_spans = SpanGroup(doc, attrs={"scores": []})
+        if len(entities) != len(scores):
+            raise ValueError("Entities and scores must be the same length")
+
+        new_entities = []
+        new_scores = []
 
         mapping = self.ner_model_configuration.model_to_presidio_entity_mapping
-        for ent in doc.ents:
+        to_ignore = self.ner_model_configuration.labels_to_ignore
+        for ent, score in zip(entities, scores):
             # Remove model labels in the ignore list
-            if ent.label_ in self.ner_model_configuration.labels_to_ignore:
+            if ent.label_ in to_ignore:
                 continue
 
             # Update entity label based on mapping
@@ -190,19 +221,15 @@ class SpacyNlpEngine(NlpEngine):
                 )
 
             # Remove presidio entities in the ignore list
-            if ent.label_ in self.ner_model_configuration.labels_to_ignore:
+            if ent.label_ in to_ignore:
                 continue
 
-            output_spans.append(ent)
-
-            # Set default confidence
-            # (spaCy models don't have built in confidence scores)
-            score = self.ner_model_configuration.default_score
+            new_entities.append(ent)
 
             # Update score if entity is in low score entity names
             if ent.label_ in self.ner_model_configuration.low_score_entity_names:
                 score *= self.ner_model_configuration.low_confidence_score_multiplier
 
-            output_spans.attrs["scores"].append(score)
+            new_scores.append(score)
 
-        return output_spans
+        return new_entities, new_scores

@@ -1,8 +1,8 @@
 import logging
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 import spacy
-from spacy.tokens import Doc, SpanGroup
+from spacy.tokens import Doc, SpanGroup, Span
 
 try:
     import spacy_huggingface_pipelines
@@ -120,50 +120,23 @@ class TransformersNlpEngine(SpacyNlpEngine):
         doc = self.nlp[language](text)
         return self._doc_to_nlp_artifact(doc, language)
 
-    def _get_entities(self, doc: Doc) -> SpanGroup:
+    def _get_entities(self, doc: Doc) -> List[Span]:
         """
-        Get an updated list of entities based on the ner model configuration.
+        Extract entities out of a spaCy pipeline, depending on the type of pipeline.
 
-        Remove entities that are in labels_to_ignore,
-        update entity names based on model_to_presidio_entity_mapping.
-
-        :param doc: Output of a spaCy model
-        :return: SpanGroup holding on the entities and confidence scores
+        For spacy-huggingface-pipeline, this would be doc.spans[key]
+        :param doc: the output spaCy doc.
+        :return: List of entities
         """
 
-        current_ents = doc.spans[self.entity_key]
-        current_scores = doc.spans[self.entity_key].attrs["scores"]
+        return doc.spans[self.entity_key]
 
-        output_spans = SpanGroup(doc, attrs={"scores": []})
+    def _get_scores_for_entities(self, doc: Doc) -> List[float]:
+        """Extract scores for entities from the doc.
 
-        mapping = self.ner_model_configuration.model_to_presidio_entity_mapping
-        to_ignore = self.ner_model_configuration.labels_to_ignore
-        for i, ent in enumerate(current_ents):
-            # Remove model labels in the ignore list
-            if ent.label_ in to_ignore:
-                continue
+        While spaCy does not provide confidence scores,
+        the spacy-huggingface-pipeline flow adds confidence scores as SpanGroup attributes.
+        :param doc: SpaCy doc
+        """
 
-            # Update entity label based on mapping
-            if ent.label_ in mapping:
-                ent.label_ = mapping[ent.label_]
-            else:
-                logger.warning(
-                    f"Entity {ent.label_} is not mapped to a Presidio entity, "
-                    f"but keeping anyway"
-                )
-
-            # Remove presidio entities in the ignore list
-            if ent.label_ in to_ignore:
-                continue
-
-            output_spans.append(ent)
-
-            score = current_scores[i]
-            # Update score if entity is in low score entity names
-            if ent.label_ in self.ner_model_configuration.low_score_entity_names:
-                score *= self.ner_model_configuration.low_confidence_score_multiplier
-
-            # Update scores list
-            output_spans.attrs["scores"].append(score)
-
-        return output_spans
+        return doc.spans[self.entity_key].attrs["scores"]
