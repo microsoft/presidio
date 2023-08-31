@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import io
 
+
 class ImageAnalyzerEngine:
     """ImageAnalyzerEngine class.
 
@@ -287,7 +288,7 @@ class ImageAnalyzerEngine:
                 current_bbox["is_PII"] = False
 
             bboxes.append(current_bbox)
-        
+
         return bboxes
 
     @classmethod
@@ -295,11 +296,11 @@ class ImageAnalyzerEngine:
         cls,
         image: Image,
         bboxes: List[dict],
-        show_text_annotation: bool=True,
-        use_greyscale_cmap: bool=False
-        ) -> Image:
+        show_text_annotation: bool = True,
+        use_greyscale_cmap: bool = False
+    ) -> Image:
         """Add custom bounding boxes to image.
-        
+
         :param image: Standard image of DICOM pixels.
         :param bboxes: List of bounding boxes to display (with is_PII field).
         :param gt_bboxes: Ground truth bboxes (list of dictionaries).
@@ -324,7 +325,7 @@ class ImageAnalyzerEngine:
                     entity_type = box["entity_type"]
                 except KeyError:
                     entity_type = "UNKNOWN"
-                
+
                 try:
                     if box["is_PII"]:
                         bbox_color = "r"

@@ -300,6 +300,38 @@ def test_get_pii_bboxes_happy_path(
             False,
             False
         ),
+        (
+            [
+                {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": True},
+                {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": False},
+            ],
+            False,
+            True
+        ),
+        (
+            [
+                {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": True},
+                {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": False},
+            ],
+            True,
+            False
+        ),
+        (
+            [
+                {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": True},
+                {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": False},
+            ],
+            True,
+            True
+        ),
+        (
+            [
+                {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": False},
+                {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": False},
+            ],
+            False,
+            False
+        ),
     ],
 )
 def test_add_custom_bboxes_happy_path(
@@ -308,26 +340,49 @@ def test_add_custom_bboxes_happy_path(
     show_text_annotation: bool,
     use_greyscale_cmap: bool
 ):
+    """Ideal version of this test would check for pixel color
+    at the bbox positions, but the returned image includes
+    the axes and padding which offset everything, making it
+    difficult to check for color at exact positions.
+    """
     # Assign
     imarray = np.random.rand(100, 100) * 255
     img = PIL.Image.fromarray(imarray.astype('uint8')).convert('L')
+    color_red = [255, 0, 0, 255]
+    color_blue = [0, 0, 255, 255]
+    red_pixels = 0
+    blue_pixels = 0
+    is_any_PII = True in [bbox["is_PII"] for bbox in bboxes]
 
     # Act
     test_img = image_analyzer_engine.add_custom_bboxes(img, bboxes, show_text_annotation, use_greyscale_cmap)
-    
-    # Add test to assert appropriate blue and/or red is present in expected position
-    # Note that the current returned image has padding which throws off any getpixel at position checks
-    # Though we likely want to keep axes and padding on for the user
-    # print("DEBUGGING----------------")
-    # print(np.shape(test_img))
-    
-    # print("-----Getting color of pixel-----")
-    # print(test_img.getpixel((bboxes[0]["left"], bboxes[0]["top"])))
-    # print(test_img.getpixel((bboxes[1]["left"], bboxes[1]["top"])))
-    # print(test_img.getpixel((17, 99)))
-    # print(test_img.getpixel((0, 0)))
-    # print(test_img.getpixel((50, 50)))
+    test_img_arr = np.array(test_img)
+    def compare_color(actual_pixels, expected_color, threshold=10):
+        """Compare single pixel from image to expected bbox color.
 
-    # # Assert
-    # assert 1==2
+        Note this allows for some variation due to color distortion
+        from image scaling. Thin bbox edge color does not come all
+        the way through when at small scale.
+        """
+        C = [abs(a - b) for a, b in zip(actual_pixels, expected_color)]
+        amount_match = sum(C)
+        if amount_match >= threshold:
+            color_match = True
+        else:
+            color_match = False
+        return color_match
+
+    for dim in test_img_arr:
+        for pixel in dim:
+            if compare_color(list(pixel), color_red):
+                red_pixels += 1
+            if compare_color(list(pixel), color_blue):
+                blue_pixels+=1
+    
+    # Assert
+    if is_any_PII:
+        assert red_pixels > 0
+    else:
+        assert blue_pixels > 0
+
     
