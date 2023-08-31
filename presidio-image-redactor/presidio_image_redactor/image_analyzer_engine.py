@@ -247,7 +247,6 @@ class ImageAnalyzerEngine:
 
         :return: Image of figure.
         """
-
         buf = io.BytesIO()
         fig.savefig(buf)
         buf.seek(0)
@@ -270,7 +269,6 @@ class ImageAnalyzerEngine:
         bboxes = []
         for ocr_bbox in ocr_bboxes:
             has_match = False
-            current_box = {}
 
             # Check if we have the same bbox in analyzer results
             for analyzer_bbox in analyzer_bboxes:
@@ -280,13 +278,13 @@ class ImageAnalyzerEngine:
 
                 if is_same is True:
                     current_bbox = analyzer_bbox
-                    current_bbox["is_PII"] = "Y"
+                    current_bbox["is_PII"] = True
                     has_match = True
                     break
 
             if has_match is False:
                 current_bbox = ocr_bbox
-                current_bbox["is_PII"] = "N"
+                current_bbox["is_PII"] = False
 
             bboxes.append(current_bbox)
         
@@ -310,16 +308,16 @@ class ImageAnalyzerEngine:
         :param use_greyscale_cmap: Use greyscale color map.
         :return: Image with bounding boxes drawn on.
         """
-        image = ImageChops.duplicate(image)
-        image_x, image_y = image.size
+        image_custom = ImageChops.duplicate(image)
+        image_x, image_y = image_custom.size
 
         fig, ax = plt.subplots()
         image_r = 70
         fig.set_size_inches(image_x / image_r, image_y / image_r)
 
         if len(bboxes) == 0:
-            ax.imshow(image)
-            return image
+            ax.imshow(image_custom)
+            return image_custom
         else:
             for box in bboxes:
                 try:
@@ -328,9 +326,9 @@ class ImageAnalyzerEngine:
                     entity_type = "UNKNOWN"
                 
                 try:
-                    if box["is_PII"].upper() == "Y":
+                    if box["is_PII"]:
                         bbox_color = "r"
-                    elif box["is_PII"].upper() == "N":
+                    else:
                         bbox_color = "b"
                 except KeyError:
                     bbox_color = "b"
@@ -355,9 +353,9 @@ class ImageAnalyzerEngine:
                         bbox=dict(boxstyle="round4,pad=.5", fc="0.9"),
                     )
             if use_greyscale_cmap:
-                ax.imshow(image, cmap="gray")
+                ax.imshow(image_custom, cmap="gray")
             else:
-                ax.imshow(image)
+                ax.imshow(image_custom)
             im_from_fig = cls.fig2img(fig)
             im_resized = im_from_fig.resize((image_x, image_y))
 

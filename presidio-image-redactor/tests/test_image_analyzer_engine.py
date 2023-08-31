@@ -4,6 +4,12 @@ from presidio_analyzer import RecognizerResult
 from presidio_image_redactor import ImageAnalyzerEngine
 from presidio_image_redactor.entities import ImageRecognizerResult
 
+import PIL
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+from typing import List
 
 def test_given_valid_ocr_and_entities_then_map_analyzer_returns_correct_len_and_output(
     get_ocr_analyzer_results, get_image_recognizerresult
@@ -211,3 +217,117 @@ def test_check_for_allow_list_happy_path(
 
     # Assert
     assert test_allow_list == expected_allow_list
+
+
+def test_fig2img_happy_path(image_analyzer_engine: ImageAnalyzerEngine):
+    # Assign
+    img = (np.random.standard_normal([10, 10, 3]) * 255).astype(np.uint8)
+    test_fig = plt.figure()
+    _ = plt.imshow(img, interpolation='none')
+
+    # Act
+    test_img = image_analyzer_engine.fig2img(test_fig)
+
+    # Assert
+    assert type(test_img) == PIL.PngImagePlugin.PngImageFile
+
+
+@pytest.mark.parametrize(
+    "ocr_bboxes, analyzer_bboxes, expected_output",
+    [
+        ([
+            {"left": 50, "top": 0, "width": 30, "height":10},
+            {"left": 3, "top": 17, "width": 14, "height":8},
+            {"left": 100, "top": 70, "width": 40, "height":40}
+        ],
+        [
+            {"left": 50, "top": 0, "width": 30, "height":10},
+            {"left": 3, "top": 17, "width": 14, "height":8}
+        ],
+        [
+            {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": True},
+            {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": True},
+            {"left": 100, "top": 70, "width": 40, "height":40, "is_PII": False}
+        ]),
+        ([
+            {"left": 50, "top": 0, "width": 30, "height":10},
+            {"left": 3, "top": 17, "width": 14, "height":8},
+            {"left": 100, "top": 70, "width": 40, "height":40}
+        ],
+        [],
+        [
+            {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": False},
+            {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": False},
+            {"left": 100, "top": 70, "width": 40, "height":40, "is_PII": False}
+        ]),
+        ([
+            {"left": 50, "top": 0, "width": 30, "height":10},
+            {"left": 3, "top": 17, "width": 14, "height":8},
+            {"left": 100, "top": 70, "width": 40, "height":40}
+        ],
+        [
+            {"left": 49, "top": 0, "width": 30, "height":10},
+            {"left": 13, "top": 17, "width": 14, "height":8}
+        ],
+        [
+            {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": False},
+            {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": False},
+            {"left": 100, "top": 70, "width": 40, "height":40, "is_PII": False}
+        ]),
+    ],
+)
+def test_get_pii_bboxes_happy_path(
+    image_analyzer_engine: ImageAnalyzerEngine,
+    ocr_bboxes: List[dict],
+    analyzer_bboxes: List[dict],
+    expected_output: List[dict]
+):
+    # Act
+    test_pii_bboxes = image_analyzer_engine.get_pii_bboxes(ocr_bboxes, analyzer_bboxes)
+
+    # Assert
+    assert test_pii_bboxes == expected_output
+
+
+@pytest.mark.parametrize(
+    "bboxes, show_text_annotation, use_greyscale_cmap",
+    [
+        (
+            [
+                {"left": 50, "top": 0, "width": 30, "height":10, "is_PII": True},
+                {"left": 3, "top": 17, "width": 14, "height":8, "is_PII": False},
+            ],
+            False,
+            False
+        ),
+    ],
+)
+def test_add_custom_bboxes_happy_path(
+    image_analyzer_engine: ImageAnalyzerEngine,
+    bboxes: List[dict],
+    show_text_annotation: bool,
+    use_greyscale_cmap: bool
+):
+    # Assign
+    imarray = np.random.rand(100, 100) * 255
+    img = PIL.Image.fromarray(imarray.astype('uint8')).convert('L')
+
+    # Act
+    test_img = image_analyzer_engine.add_custom_bboxes(img, bboxes, show_text_annotation, use_greyscale_cmap)
+    
+    # Add test to assert appropriate blue and/or red is present in expected position
+    # Note that the current returned image has padding which throws off any getpixel at position checks
+    # Though we likely want to keep axes and padding on for the user
+    # print("DEBUGGING----------------")
+    # print(np.shape(test_img))
+    
+    # print("-----Getting color of pixel-----")
+    # print(test_img.getpixel((bboxes[0]["left"], bboxes[0]["top"])))
+    # print(test_img.getpixel((bboxes[1]["left"], bboxes[1]["top"])))
+    # print(test_img.getpixel((17, 99)))
+    # print(test_img.getpixel((0, 0)))
+    # print(test_img.getpixel((50, 50)))
+
+    # # Assert
+    # assert 1==2
+    
