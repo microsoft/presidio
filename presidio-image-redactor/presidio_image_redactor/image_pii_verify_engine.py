@@ -21,11 +21,6 @@ def fig2img(fig):
 class ImagePiiVerifyEngine(ImageRedactorEngine):
     """ImagePiiVerifyEngine class only supporting Pii verification currently."""
 
-    def __init__(self, image_analyzer_engine: Optional[ImageAnalyzerEngine] = None):
-        if not image_analyzer_engine:
-            image_analyzer_engine = ImageAnalyzerEngine()
-        self.image_analyzer_engine = image_analyzer_engine
-
     def verify(
         self,
         image: Image,
