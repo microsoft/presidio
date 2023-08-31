@@ -2,7 +2,7 @@ import logging
 from typing import Optional, Dict, List
 
 import spacy
-from spacy.tokens import Doc, SpanGroup, Span
+from spacy.tokens import Doc, Span
 
 try:
     import spacy_huggingface_pipelines
@@ -135,7 +135,8 @@ class TransformersNlpEngine(SpacyNlpEngine):
         """Extract scores for entities from the doc.
 
         While spaCy does not provide confidence scores,
-        the spacy-huggingface-pipeline flow adds confidence scores as SpanGroup attributes.
+        the spacy-huggingface-pipeline flow adds confidence scores
+        as SpanGroup attributes.
         :param doc: SpaCy doc
         """
 

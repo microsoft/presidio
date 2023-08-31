@@ -4,7 +4,7 @@ from typing import Optional, Dict, Iterator, Tuple, Union, List
 import spacy
 
 from spacy.language import Language
-from spacy.tokens import Doc, SpanGroup, Span
+from spacy.tokens import Doc, Span
 
 from presidio_analyzer.nlp_engine import NlpArtifacts, NlpEngine, NerModelConfiguration
 
@@ -162,7 +162,7 @@ class SpacyNlpEngine(NlpEngine):
             scores=scores,
         )
 
-    def _get_entities(self, doc:Doc) -> List[Span]:
+    def _get_entities(self, doc: Doc) -> List[Span]:
         """
         Extract entities out of a spaCy pipeline, depending on the type of pipeline.
 
