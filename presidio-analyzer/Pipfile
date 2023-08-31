@@ -21,5 +21,4 @@ pytest-mock = "*"
 flake8= {version = ">=3.7.9"}
 pep8-naming = "*"
 flake8-docstrings = "*"
-flake8-annotations = "*"
 pre_commit = "*"
