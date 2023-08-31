@@ -1,5 +1,4 @@
 from PIL import Image, ImageChops
-from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
 from presidio_image_redactor.image_redactor_engine import ImageRedactorEngine
 from presidio_analyzer import PatternRecognizer
 import matplotlib
