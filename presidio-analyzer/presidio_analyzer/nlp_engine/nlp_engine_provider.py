@@ -85,7 +85,7 @@ class NlpEngineProvider:
             nlp_engine_class = self.nlp_engines[nlp_engine_name]
             nlp_models = self.nlp_configuration["models"]
 
-            ner_model_configuration = self.nlp_configuration.get("ner_model_params")
+            ner_model_configuration = self.nlp_configuration.get("ner_model_configuration")
             engine = nlp_engine_class(
                 models=nlp_models, ner_model_configuration=ner_model_configuration
             )
