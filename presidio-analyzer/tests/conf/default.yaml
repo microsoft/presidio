@@ -3,26 +3,4 @@ models:
   -
     lang_code: en
     model_name: en_core_web_lg
-ner_model_configuration:
-- model_to_presidio_entity_mapping:
-    PER: PERSON
-    PERSON: PERSON
-    LOC: LOCATION
-    LOCATION: LOCATION
-    GPE: LOCATION
-    ORG: ORGANIZATION
-    DATE: DATE_TIME
-    TIME: DATE_TIME
-    NORP: NRP
-- aggregation_strategy: simple # "simple", "first", "average", "max"
-- stride: 16  # If stride >= 0, process long texts in
-              # overlapping windows of the model max
-              # length. The value is the length of the
-              # window overlap in transformer tokenizer
-              # tokens, NOT the length of the stride.
-- alignment_mode: strict # "strict", "contract", "expand"
-- labels_to_ignore: ["O"]
-- low_confidence_score_multiplier: 0.4
-- low_score_entity_names:
-  - ORGANIZATION
-  - ORG
+
