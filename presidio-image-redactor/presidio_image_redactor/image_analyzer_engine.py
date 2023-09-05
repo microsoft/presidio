@@ -53,13 +53,6 @@ class ImageAnalyzerEngine:
         ocr_result = self.ocr.perform_ocr(image, **perform_ocr_kwargs)
         ocr_result = self.remove_space_boxes(ocr_result)
 
-        ocr_result = self._remove_space_boxes(ocr_result)
-        if preprocessing_metadata and ("scale_factor" in preprocessing_metadata):
-            ocr_result = self._scale_bbox_results(
-                ocr_result, preprocessing_metadata["scale_factor"]
-            )
-
-        ocr_result = self._remove_space_boxes(ocr_result)
         if preprocessing_metadata and ("scale_factor" in preprocessing_metadata):
             ocr_result = self._scale_bbox_results(
                 ocr_result, preprocessing_metadata["scale_factor"]
@@ -320,7 +313,7 @@ class ImageAnalyzerEngine:
         # Get indices of items with no text
         idx = list()
         for i, text in enumerate(ocr_result["text"]):
-            is_not_space = text.isspace() == False
+            is_not_space = text.isspace() is False
             if text != "" and is_not_space:
                 idx.append(i)
 
