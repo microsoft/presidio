@@ -30,7 +30,8 @@ class ImagePreprocessor:
 
         :param image: Loaded PIL image.
 
-        :return: The processed image and any metadata regarding the preprocessing approach.
+        :return: The processed image and any metadata regarding the
+             preprocessing approach.
         """
         return image, {}
 
@@ -43,7 +44,7 @@ class ImagePreprocessor:
 
         """
 
-        if type(image) == np.ndarray:
+        if isinstance(image, np.ndarray):
             img = image
         else:
             image = image.convert("L")
@@ -102,6 +103,8 @@ class ImagePreprocessor:
 
 
 class BilateralFilter(ImagePreprocessor):
+    """BilateralFilter class."""
+
     def __init__(self, diameter=3, sigma_color=40, sigma_space=40):
         """Initialize the BilateralFilter class.
 
@@ -143,12 +146,14 @@ class BilateralFilter(ImagePreprocessor):
 
 
 class SegmentedAdaptiveThreshold(ImagePreprocessor):
+    """SegmentedAdaptiveThreshold class."""
+
     def __init__(
         self,
         block_size=5,
         contrast_threshold=40,
-        C_low_contrast=10,
-        C_high_contrast=40,
+        c_low_contrast=10,
+        c_high_contrast=40,
         bg_threshold=122,
     ):
         """Initialize the SegmentedAdaptiveThreshold class.
@@ -160,8 +165,8 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
         :param bg_threshold: Threshold for background color.
         """
         self.block_size = block_size
-        self.C_low_contrast = C_low_contrast
-        self.C_high_contrast = C_high_contrast
+        self.c_low_contrast = c_low_contrast
+        self.c_high_contrast = c_high_contrast
         self.bg_threshold = bg_threshold
         self.contrast_threshold = contrast_threshold
 
@@ -174,17 +179,17 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
 
         :return: The processed image and metadata (C, background_color, contrast).
         """
-        if type(image) == np.ndarray:
+        if isinstance(image, np.ndarray):
             image = self.convert_image_to_array(image)
 
         # Determine background color
         background_color = self._get_bg_color(image, True)
         contrast, _ = self._get_image_contrast(image)
 
-        C = (
-            self.C_low_contrast
+        c = (
+            self.c_low_contrast
             if contrast <= self.contrast_threshold
-            else self.C_high_contrast
+            else self.c_high_contrast
         )
 
         if background_color < self.bg_threshold:
@@ -194,7 +199,7 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
                 cv2.ADAPTIVE_THRESH_MEAN_C,
                 cv2.THRESH_BINARY_INV,
                 self.block_size,
-                -C,
+                -c,
             )
         else:
             adaptive_threshold_image = cv2.adaptiveThreshold(
@@ -203,14 +208,16 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
                 cv2.ADAPTIVE_THRESH_MEAN_C,
                 cv2.THRESH_BINARY,
                 self.block_size,
-                C,
+                c,
             )
 
-        metadata = {"C": C, "background_color": background_color, "contrast": contrast}
+        metadata = {"C": c, "background_color": background_color, "contrast": contrast}
         return Image.fromarray(adaptive_threshold_image), metadata
 
 
 class ImageRescaling(ImagePreprocessor):
+    """ImageRescaling class. Rescales images based on their size."""
+
     def __init__(
         self,
         small_size: int = 1048576,
@@ -298,7 +305,8 @@ class ContrastSegmentedImageEnhancer(ImagePreprocessor):
 
         :param image: Loaded PIL image.
 
-        :return: The processed image and metadata (background color, scale percentage, contrast level, and C value).
+        :return: The processed image and metadata (background color, scale percentage,
+             contrast level, and C value).
         """
         image = self.convert_image_to_array(image)
 
@@ -337,7 +345,8 @@ class ContrastSegmentedImageEnhancer(ImagePreprocessor):
 
         :param image: Input image.
 
-        :return: A tuple containing the improved image, the initial contrast level, and the adjusted contrast level.
+        :return: A tuple containing the improved image, the initial contrast level,
+             and the adjusted contrast level.
         """
         contrast, mean_intensity = self._get_image_contrast(image)
 

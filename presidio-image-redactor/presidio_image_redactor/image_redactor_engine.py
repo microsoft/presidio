@@ -99,7 +99,8 @@ class ImageRedactorEngine:
                     )  # noqa: E501
                     if are_recognizers is False:
                         raise TypeError(
-                            "All items in ad_hoc_recognizers list must be PatternRecognizer objects"
+                            """All items in ad_hoc_recognizers list must be
+                            PatternRecognizer objects"""
                         )  # noqa: E501
                 else:
                     raise TypeError(
