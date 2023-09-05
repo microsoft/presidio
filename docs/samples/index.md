@@ -9,6 +9,7 @@
 | Usage       | Python Notebook                       | [Getting the identified entity value using a custom Operator](python/getting_entity_values.ipynb)|
 | Usage       | Python Notebook                       | [Anonymizing known values](https://github.com/microsoft/presidio/blob/main/docs/samples/python/Anonymizing%20known%20values.ipynb)
 | Usage       | Python Notebook                       | [Redacting text PII from DICOM images](https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_dicom_image_redactor.ipynb)
+| Usage       | Python Notebook                       | [Using an allow list with image redaction](https://github.com/microsoft/presidio/blob/main/docs/samples/python/image_redaction_allow_list_approach.ipynb)
 | Usage       | Python Notebook                       | [Annotating PII in a PDF](https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_pdf_annotation.ipynb)
 | Usage       | Python Notebook                       | [Integrating with external services](https://github.com/microsoft/presidio/blob/main/docs/samples/python/integrating_with_external_services.ipynb) |
 | Usage       | Python                                | [Remote Recognizer](https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py) |

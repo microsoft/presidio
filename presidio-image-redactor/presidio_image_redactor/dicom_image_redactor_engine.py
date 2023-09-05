@@ -17,6 +17,7 @@ from typing import Tuple, List, Dict, Union, Optional
 from presidio_image_redactor import ImageRedactorEngine
 from presidio_image_redactor import ImageAnalyzerEngine  # noqa: F401
 from presidio_analyzer import PatternRecognizer
+from presidio_image_redactor.entities import ImageRecognizerResult
 
 
 class DicomImageRedactorEngine(ImageRedactorEngine):
@@ -31,7 +32,9 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         fill: str = "contrast",
         padding_width: int = 25,
         crop_ratio: float = 0.75,
+        use_metadata: bool = True,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> Tuple[pydicom.dataset.FileDataset, List[Dict[str, int]]]:
         """Redact method to redact the given DICOM image and return redacted bboxes.
@@ -44,7 +47,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width: Padding width to use when running OCR.
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -76,17 +83,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
-        # Create custom recognizer using DICOM metadata
-        original_metadata, is_name, is_patient = self._get_text_metadata(instance)
-        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
-        deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
-        )
-        analyzer_results = self.image_analyzer_engine.analyze(
-            image,
-            ocr_kwargs=ocr_kwargs,
-            ad_hoc_recognizers=[deny_list_recognizer],
-            **text_analyzer_kwargs,
+        # Detect PII
+        analyzer_results = self._get_analyzer_results(
+            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
+            **text_analyzer_kwargs
         )
 
         # Redact all bounding boxes from DICOM file
@@ -107,6 +107,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> pydicom.dataset.FileDataset:
         """Redact method to redact the given DICOM image.
@@ -120,6 +121,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param crop_ratio: Portion of image to consider when selecting
         most common pixel value as the background color value.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -131,6 +134,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             padding_width=padding_width,
             crop_ratio=crop_ratio,
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=ad_hoc_recognizers,
             **text_analyzer_kwargs
         )
 
@@ -143,8 +147,11 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
+        use_metadata: bool = True,
         save_bboxes: bool = False,
+        verbose: bool = True,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a given file.
@@ -157,8 +164,13 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param padding_width : Padding width to use when running OCR.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param save_bboxes: True if we want to save boundings boxes.
+        :param verbose: True to print where redacted file was written to.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
         """
@@ -181,14 +193,17 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             crop_ratio=crop_ratio,
             fill=fill,
             padding_width=padding_width,
+            use_metadata=use_metadata,
             overwrite=True,
             dst_parent_dir=".",
             save_bboxes=save_bboxes,
             ocr_kwargs=ocr_kwargs,
+            ad_hoc_recognizers=ad_hoc_recognizers,
             **text_analyzer_kwargs,
         )
 
-        print(f"Output written to {output_location}")
+        if verbose:
+            print(f"Output written to {output_location}")
 
         return None
 
@@ -199,8 +214,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         padding_width: int = 25,
         crop_ratio: float = 0.75,
         fill: str = "contrast",
+        use_metadata: bool = True,
         save_bboxes: bool = False,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> None:
         """Redact method to redact from a directory of files.
@@ -215,8 +232,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         most common pixel value as the background color value.
         :param fill: Color setting to use for redaction box
         ("contrast" or "background").
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
         """
@@ -239,6 +260,8 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             crop_ratio=crop_ratio,
             fill=fill,
             padding_width=padding_width,
+            use_metadata=use_metadata,
+            ad_hoc_recognizers=ad_hoc_recognizers,
             overwrite=True,
             dst_parent_dir=".",
             save_bboxes=save_bboxes,
@@ -610,7 +633,74 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         return metadata_text, is_name, is_patient
 
     @staticmethod
-    def _process_names(text_metadata: list, is_name: list) -> list:
+    def augment_word(word: str, case_sensitive: bool = False) -> list:
+        """Apply multiple types of casing to the provided string.
+
+        :param words: String containing the word or term of interest.
+        :param case_sensitive: True if we want to preserve casing.
+
+        :return: List of the same string with different casings and spacing.
+        """
+        word_list = []
+        if word != "":
+            # Replacing separator character with space, if any
+            text_no_separator = word.replace("^", " ")
+            text_no_separator = text_no_separator.replace("-", " ")
+            text_no_separator = " ".join(text_no_separator.split())
+
+            if case_sensitive:
+                word_list.append(text_no_separator)
+                word_list.extend(
+                    [
+                        text_no_separator.split(" "),
+                    ]
+                )
+            else:
+                # Capitalize all characters in string
+                text_upper = text_no_separator.upper()
+
+                # Lowercase all characters in string
+                text_lower = text_no_separator.lower()
+
+                # Capitalize first letter in each part of string
+                text_title = text_no_separator.title()
+
+                # Append iterations
+                word_list.extend(
+                    [
+                        text_no_separator,
+                        text_upper,
+                        text_lower,
+                        text_title
+                    ]
+                )
+
+                # Adding each term as a separate item in the list
+                word_list.extend(
+                    [
+                        text_no_separator.split(" "),
+                        text_upper.split(" "),
+                        text_lower.split(" "),
+                        text_title.split(" ")
+                    ]
+                )
+
+            # Flatten list
+            flat_list = []
+            for item in word_list:
+                if isinstance(item, list):
+                    flat_list.extend(item)
+                else:
+                    flat_list.append(item)
+
+            # Remove any duplicates and empty strings
+            word_list = list(set(flat_list))
+            word_list = list(filter(None, word_list))
+
+        return word_list
+
+    @classmethod
+    def _process_names(cls, text_metadata: list, is_name: list) -> list:
         """Process names to have multiple iterations in our PHI list.
 
         :param metadata_text: List of all the instance's element values
@@ -624,30 +714,7 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         for i in range(0, len(text_metadata)):
             if is_name[i] is True:
                 original_text = str(text_metadata[i])
-
-                # Replacing separator character with space
-                text_1 = original_text.replace("^", " ")
-
-                # Capitalize all characters in name
-                text_2 = text_1.upper()
-
-                # Lowercase all characters in name
-                text_3 = text_1.lower()
-
-                # Capitalize first letter in each name
-                text_4 = text_1.title()
-
-                # Append iterations
-                phi_list.append(text_1)
-                phi_list.append(text_2)
-                phi_list.append(text_3)
-                phi_list.append(text_4)
-
-                # Adding each name as a separate item in the list
-                phi_list = phi_list + text_1.split(" ")
-                phi_list = phi_list + text_2.split(" ")
-                phi_list = phi_list + text_3.split(" ")
-                phi_list = phi_list + text_4.split(" ")
+                phi_list += cls.augment_word(original_text)
 
         return phi_list
 
@@ -858,6 +925,66 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
 
         return redacted_instance
 
+    def _get_analyzer_results(
+        self,
+        image: PIL.PngImagePlugin.PngImageFile,
+        instance: pydicom.dataset.FileDataset,
+        use_metadata: bool,
+        ocr_kwargs: Optional[dict],
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]],
+        **text_analyzer_kwargs
+    ) -> List[ImageRecognizerResult]:
+        """Analyze image with selected redaction approach.
+
+        :param image: DICOM pixel data as PIL image.
+        :param instance: DICOM instance (with metadata).
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
+        :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
+        :param text_analyzer_kwargs: Additional values for the analyze method
+        in AnalyzerEngine (e.g., allow_list).
+
+        :return: Analyzer results.
+        """
+        # Check the ad-hoc recognizers list
+        self._check_ad_hoc_recognizer_list(ad_hoc_recognizers)
+
+        # Create custom recognizer using DICOM metadata
+        if use_metadata:
+            original_metadata, is_name, is_patient = self._get_text_metadata(
+                instance
+            )
+            phi_list = self._make_phi_list(
+                original_metadata, is_name, is_patient
+            )
+            deny_list_recognizer = PatternRecognizer(
+                supported_entity="PERSON", deny_list=phi_list
+            )
+
+            if type(ad_hoc_recognizers) is None:
+                ad_hoc_recognizers = [deny_list_recognizer]
+            elif type(ad_hoc_recognizers) is list:
+                ad_hoc_recognizers.append(deny_list_recognizer)
+
+        # Detect PII
+        if ad_hoc_recognizers is None:
+            analyzer_results = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                **text_analyzer_kwargs,
+            )
+        else:
+            analyzer_results = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                ad_hoc_recognizers=ad_hoc_recognizers,
+                **text_analyzer_kwargs,
+            )
+
+        return analyzer_results
+
     @staticmethod
     def _save_bbox_json(output_dcm_path: str, bboxes: List[Dict[str, int]]) -> None:
         """Save the redacted bounding box info as a json file.
@@ -877,10 +1004,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float,
         fill: str,
         padding_width: int,
+        use_metadata: bool,
         overwrite: bool,
         dst_parent_dir: str,
         save_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on a DICOM image.
@@ -891,11 +1020,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param overwrite: Only set to True if you are providing the
         duplicated DICOM path in dcm_path.
         :param dst_parent_dir: String path to parent directory of where to store copies.
         :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -929,17 +1062,10 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
-        # Create custom recognizer using DICOM metadata
-        original_metadata, is_name, is_patient = self._get_text_metadata(instance)
-        phi_list = self._make_phi_list(original_metadata, is_name, is_patient)
-        deny_list_recognizer = PatternRecognizer(
-            supported_entity="PERSON", deny_list=phi_list
-        )
-        analyzer_results = self.image_analyzer_engine.analyze(
-            image,
-            ocr_kwargs=ocr_kwargs,
-            ad_hoc_recognizers=[deny_list_recognizer],
-            **text_analyzer_kwargs,
+        # Detect PII
+        analyzer_results = self._get_analyzer_results(
+            image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
+            **text_analyzer_kwargs
         )
 
         # Redact all bounding boxes from DICOM file
@@ -966,10 +1092,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         crop_ratio: float,
         fill: str,
         padding_width: int,
+        use_metadata: bool,
         overwrite: bool,
         dst_parent_dir: str,
         save_bboxes: bool,
         ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
         **text_analyzer_kwargs,
     ) -> str:
         """Redact text PHI present on all DICOM images in a directory.
@@ -980,11 +1108,15 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
         :param fill: Color setting to use for bounding boxes
         ("contrast" or "background").
         :param padding_width: Pixel width of padding (uniform).
+        :param use_metadata: Whether to redact text in the image that
+        are present in the metadata.
         :param overwrite: Only set to True if you are providing
         the duplicated DICOM dir in dcm_dir.
         :param dst_parent_dir: String path to parent directory of where to store copies.
         :param save_bboxes: True if we want to save boundings boxes.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in AnalyzerEngine.
 
@@ -1011,10 +1143,12 @@ class DicomImageRedactorEngine(ImageRedactorEngine):
                 crop_ratio,
                 fill,
                 padding_width,
+                use_metadata,
                 overwrite,
                 dst_parent_dir,
                 save_bboxes,
                 ocr_kwargs=ocr_kwargs,
+                ad_hoc_recognizers=ad_hoc_recognizers,
                 **text_analyzer_kwargs,
             )
 

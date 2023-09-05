@@ -51,6 +51,13 @@ class ImageAnalyzerEngine:
         perform_ocr_kwargs, ocr_threshold = self._parse_ocr_kwargs(ocr_kwargs)
         image, preprocessing_metadata = self.image_preprocessor.preprocess_image(image)
         ocr_result = self.ocr.perform_ocr(image, **perform_ocr_kwargs)
+        ocr_result = self.remove_space_boxes(ocr_result)
+
+        ocr_result = self._remove_space_boxes(ocr_result)
+        if preprocessing_metadata and ("scale_factor" in preprocessing_metadata):
+            ocr_result = self._scale_bbox_results(
+                ocr_result, preprocessing_metadata["scale_factor"]
+            )
 
         ocr_result = self._remove_space_boxes(ocr_result)
         if preprocessing_metadata and ("scale_factor" in preprocessing_metadata):
@@ -68,8 +75,9 @@ class ImageAnalyzerEngine:
         analyzer_result = self.analyzer_engine.analyze(
             text=text, language="en", **text_analyzer_kwargs
         )
+        allow_list = self._check_for_allow_list(text_analyzer_kwargs)
         bboxes = self.map_analyzer_results_to_bounding_boxes(
-            analyzer_result, ocr_result, text
+            analyzer_result, ocr_result, text, allow_list
         )
 
         return bboxes
@@ -100,8 +108,32 @@ class ImageAnalyzerEngine:
         return filtered_ocr_result
 
     @staticmethod
+    def remove_space_boxes(ocr_result: dict) -> dict:
+        """Remove OCR bboxes that are for spaces.
+
+        :param ocr_result: OCR results (raw or thresholded).
+        :return: OCR results with empty words removed.
+        """
+        # Get indices of items with no text
+        idx = list()
+        for i, text in enumerate(ocr_result["text"]):
+            is_not_space = text.isspace() is False
+            if text != "" and is_not_space:
+                idx.append(i)
+
+        # Only retain items with text
+        filtered_ocr_result = {}
+        for key in list(ocr_result.keys()):
+            filtered_ocr_result[key] = [ocr_result[key][i] for i in idx]
+
+        return filtered_ocr_result
+
+    @staticmethod
     def map_analyzer_results_to_bounding_boxes(
-        text_analyzer_results: List[RecognizerResult], ocr_result: dict, text: str
+        text_analyzer_results: List[RecognizerResult],
+        ocr_result: dict,
+        text: str,
+        allow_list: List[str],
     ) -> List[ImageRecognizerResult]:
         """Map extracted PII entities to image bounding boxes.
 
@@ -111,6 +143,7 @@ class ImageAnalyzerEngine:
         :param text_analyzer_results: PII entities recognized by presidio analyzer
         :param ocr_result: dict results with words and bboxes from OCR
         :param text: text the results are based on
+        :param allow_list: List of words to not redact
 
         return: list of extracted entities with image bounding boxes
         """
@@ -133,40 +166,54 @@ class ImageAnalyzerEngine:
                     if (
                         max(pos, element.start) < min(element.end, pos + len(word))
                     ) and ((text_element in word) or (word in text_element)):
-                        bboxes.append(
-                            ImageRecognizerResult(
-                                element.entity_type,
-                                element.start,
-                                element.end,
-                                element.score,
-                                ocr_result["left"][index],
-                                ocr_result["top"][index],
-                                ocr_result["width"][index],
-                                ocr_result["height"][index],
-                            )
+                        yes_make_bbox_for_word = (
+                            (word is not None)
+                            and (word != "")
+                            and (word.isspace() is False)
+                            and (word not in allow_list)
                         )
-
-                        # add bounding boxes for all words in ocr dict
-                        # contained within the text of recognized entity
-                        # based on relative position in the full text
-                        while pos + len(word) < element.end:
-                            prev_word = word
-                            index, word = next(iter_ocr)
-                            if word:
-                                bboxes.append(
-                                    ImageRecognizerResult(
-                                        element.entity_type,
-                                        element.start,
-                                        element.end,
-                                        element.score,
-                                        ocr_result["left"][index],
-                                        ocr_result["top"][index],
-                                        ocr_result["width"][index],
-                                        ocr_result["height"][index],
-                                    )
+                        # Do not add bbox for standalone spaces / empty strings
+                        if yes_make_bbox_for_word:
+                            bboxes.append(
+                                ImageRecognizerResult(
+                                    element.entity_type,
+                                    element.start,
+                                    element.end,
+                                    element.score,
+                                    ocr_result["left"][index],
+                                    ocr_result["top"][index],
+                                    ocr_result["width"][index],
+                                    ocr_result["height"][index],
                                 )
-                            pos += len(prev_word) + 1
-                        proc_indexes += 1
+                            )
+
+                            # add bounding boxes for all words in ocr dict
+                            # contained within the text of recognized entity
+                            # based on relative position in the full text
+                            while pos + len(word) < element.end:
+                                prev_word = word
+                                index, word = next(iter_ocr)
+                                yes_make_bbox_for_word = (
+                                    (word is not None)
+                                    and (word != "")
+                                    and (word.isspace() is False)
+                                    and (word not in allow_list)
+                                )
+                                if yes_make_bbox_for_word:
+                                    bboxes.append(
+                                        ImageRecognizerResult(
+                                            element.entity_type,
+                                            element.start,
+                                            element.end,
+                                            element.score,
+                                            ocr_result["left"][index],
+                                            ocr_result["top"][index],
+                                            ocr_result["width"][index],
+                                            ocr_result["height"][index],
+                                        )
+                                    )
+                                pos += len(prev_word) + 1
+                            proc_indexes += 1
 
                 if proc_indexes == indexes:
                     break

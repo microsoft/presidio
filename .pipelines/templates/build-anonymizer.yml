@@ -16,7 +16,7 @@ steps:
       workingDirectory: 'presidio-anonymizer'
       script: |
         set -eux  # fail on error
-        pipenv sync --dev
+        pipenv install --deploy --dev
 
   - template: ./build-python.yml
     parameters:
