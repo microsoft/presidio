@@ -13,7 +13,8 @@ class ImageAnalyzerEngine:
     :param analyzer_engine: The Presidio AnalyzerEngine instance
         to be used to detect PII in text
     :param ocr: the OCR object to be used to detect text in images.
-    :param image_preprocessor: The ImagePreprocessor object to be used to preprocess the image
+    :param image_preprocessor: The ImagePreprocessor object to be
+        used to preprocess the image
     """
 
     def __init__(
@@ -246,6 +247,20 @@ class ImageAnalyzerEngine:
             ocr_kwargs = {}
 
         return ocr_kwargs, ocr_threshold
+
+    @staticmethod
+    def _check_for_allow_list(text_analyzer_kwargs: dict) -> List[str]:
+        """Check the text_analyzer_kwargs for an allow_list.
+
+        :param text_analyzer_kwargs: Text analyzer kwargs.
+        :return: The allow list if it exists.
+        """
+        allow_list = []
+        if text_analyzer_kwargs is not None:
+            if "allow_list" in text_analyzer_kwargs:
+                allow_list = text_analyzer_kwargs["allow_list"]
+
+        return allow_list
 
     @staticmethod
     def _remove_space_boxes(ocr_result: dict) -> dict:
