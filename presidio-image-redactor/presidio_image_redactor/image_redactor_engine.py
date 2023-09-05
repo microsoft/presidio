@@ -11,7 +11,10 @@ class ImageRedactorEngine:
     :param image_analyzer_engine: Engine which performs OCR + PII detection.
     """
 
-    def __init__(self, image_analyzer_engine: ImageAnalyzerEngine = None):
+    def __init__(
+        self,
+        image_analyzer_engine: ImageAnalyzerEngine = None,
+    ):
         if not image_analyzer_engine:
             self.image_analyzer_engine = ImageAnalyzerEngine()
         else:
