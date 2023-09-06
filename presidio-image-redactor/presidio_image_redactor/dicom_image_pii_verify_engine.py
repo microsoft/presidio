@@ -102,7 +102,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
         ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(
             ocr_results
         )
-        
+
         # Get analyzer results
         analyzer_results = self._get_analyzer_results(
             image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
