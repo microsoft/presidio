@@ -1,9 +1,7 @@
 from PIL import Image, ImageChops
 from presidio_image_redactor.image_redactor_engine import ImageRedactorEngine
 from presidio_analyzer import PatternRecognizer
-import matplotlib
 import io
-from matplotlib import pyplot as plt
 from typing import Optional, List
 
 
@@ -38,7 +36,8 @@ class ImagePiiVerifyEngine(ImageRedactorEngine):
         :param image: PIL Image to be processed.
         :param is_greyscale: Whether the image is greyscale or not.
         :param display_image: If the verificationimage is displayed and returned.
-        :param show_text_annotation: True to display entity type when displaying image with bounding boxes.
+        :param show_text_annotation: True to display entity type when displaying
+        image with bounding boxes.
         :param ocr_kwargs: Additional params for OCR methods.
         :param ad_hoc_recognizers: List of PatternRecognizer objects to use
         for ad-hoc recognizer.
@@ -53,10 +52,16 @@ class ImagePiiVerifyEngine(ImageRedactorEngine):
         self._check_ad_hoc_recognizer_list(ad_hoc_recognizers)
 
         # Detect text
-        perform_ocr_kwargs, ocr_threshold = self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)
-        ocr_results = self.image_analyzer_engine.ocr.perform_ocr(image, **perform_ocr_kwargs)
+        perform_ocr_kwargs, ocr_threshold = self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)  # noqa: E501
+        ocr_results = self.image_analyzer_engine.ocr.perform_ocr(
+            image,
+            **perform_ocr_kwargs
+        )
         if ocr_threshold:
-            ocr_results = self.image_analyzer_engine.threshold_ocr_result(ocr_results, ocr_threshold)
+            ocr_results = self.image_analyzer_engine.threshold_ocr_result(
+                ocr_results,
+                ocr_threshold
+            )
         ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(ocr_results)
 
         # Detect PII
@@ -73,10 +78,15 @@ class ImagePiiVerifyEngine(ImageRedactorEngine):
                 ad_hoc_recognizers=ad_hoc_recognizers,
                 **text_analyzer_kwargs,
             )
-        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(analyzer_results)
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(
+            analyzer_results
+        )
 
         # Prepare for plotting
-        pii_bboxes = self.image_analyzer_engine.get_pii_bboxes(ocr_bboxes, analyzer_bboxes)
+        pii_bboxes = self.image_analyzer_engine.get_pii_bboxes(
+            ocr_bboxes,
+            analyzer_bboxes
+        )
         if is_greyscale:
             use_greyscale_cmap = True
         else:
@@ -90,5 +100,5 @@ class ImagePiiVerifyEngine(ImageRedactorEngine):
             if display_image
             else None
         )
-    
+
         return verify_image
