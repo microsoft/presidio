@@ -116,6 +116,7 @@ class BilateralFilter(ImagePreprocessor):
         :param sigma_color: value of sigma in the color space.
         :param sigma_space: value of sigma in the coordinate space.
         """
+        super().__init__(use_greyscale=True)
 
         self.diameter = diameter
         self.sigma_color = sigma_color
@@ -174,6 +175,8 @@ class SegmentedAdaptiveThreshold(ImagePreprocessor):
         :param C_high_contrast: Constant added to the mean for high contrast images.
         :param bg_threshold: Threshold for background color.
         """
+
+        super().__init__(use_greyscale=True)
         self.block_size = block_size
         self.c_low_contrast = c_low_contrast
         self.c_high_contrast = c_high_contrast
@@ -242,6 +245,7 @@ class ImageRescaling(ImagePreprocessor):
         :param factor: Scaling factor for resizing.
         :param interpolation: Interpolation method for resizing.
         """
+        super().__init__(use_greyscale=True)
 
         self.small_size = small_size
         self.large_size = large_size
@@ -297,6 +301,8 @@ class ContrastSegmentedImageEnhancer(ImagePreprocessor):
         :param image_rescaling: Optional ImageRescaling instance.
         :param low_contrast_threshold: Threshold for low contrast images.
         """
+
+        super().__init__(use_greyscale=True)
         if not bilateral_filter:
             self.bilateral_filter = BilateralFilter()
         else:
