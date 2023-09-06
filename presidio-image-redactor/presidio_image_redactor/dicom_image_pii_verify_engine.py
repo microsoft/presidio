@@ -90,9 +90,14 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             loaded_image = Image.open(png_filepath)
             image = self._add_padding(loaded_image, is_greyscale, padding_width)
 
-        # Get analyzer results
-        ocr_results = self.ocr_engine.perform_ocr(image)
+        # Get OCR results
+        perform_ocr_kwargs, ocr_threshold = self.image_analyzer_engine._parse_ocr_kwargs(ocr_kwargs)
+        ocr_results = self.ocr_engine.perform_ocr(image, **perform_ocr_kwargs)
+        if ocr_threshold:
+            ocr_results = self.image_analyzer_engine.threshold_ocr_result(ocr_results, ocr_threshold)
         ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(ocr_results)
+        
+        # Get analyzer results
         analyzer_results = self._get_analyzer_results(
             image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
             **text_analyzer_kwargs
