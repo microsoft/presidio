@@ -92,13 +92,15 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
 
         # Get analyzer results
         ocr_results = self.ocr_engine.perform_ocr(image)
+        ocr_bboxes = self.bbox_processor.get_bboxes_from_ocr_results(ocr_results)
         analyzer_results = self._get_analyzer_results(
             image, instance, use_metadata, ocr_kwargs, ad_hoc_recognizers,
             **text_analyzer_kwargs
         )
+        analyzer_bboxes = self.bbox_processor.get_bboxes_from_analyzer_results(analyzer_results)
 
         # Prepare for plotting
-        pii_bboxes = self.image_analyzer_engine.get_pii_bboxes(ocr_results, analyzer_results)
+        pii_bboxes = self.image_analyzer_engine.get_pii_bboxes(ocr_bboxes, analyzer_bboxes)
         if is_greyscale:
             use_greyscale_cmap = True
         else:
@@ -113,7 +115,7 @@ class DicomImagePiiVerifyEngine(ImagePiiVerifyEngine, DicomImageRedactorEngine):
             else None
         )
 
-        return verify_image, ocr_results, analyzer_results
+        return verify_image, ocr_bboxes, analyzer_bboxes
 
     def eval_dicom_instance(
         self,
