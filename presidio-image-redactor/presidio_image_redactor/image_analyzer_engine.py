@@ -301,25 +301,3 @@ class ImageAnalyzerEngine:
                 allow_list = text_analyzer_kwargs["allow_list"]
 
         return allow_list
-
-    @staticmethod
-    def _remove_space_boxes(ocr_result: dict) -> dict:
-        """Remove OCR bboxes that are for spaces.
-
-        :param ocr_result: OCR results (raw or thresholded).
-
-        :return: OCR results with empty words removed.
-        """
-        # Get indices of items with no text
-        idx = list()
-        for i, text in enumerate(ocr_result["text"]):
-            is_not_space = text.isspace() is False
-            if text != "" and is_not_space:
-                idx.append(i)
-
-        # Only retain items with text
-        filtered_ocr_result = {}
-        for key in list(ocr_result.keys()):
-            filtered_ocr_result[key] = [ocr_result[key][i] for i in idx]
-
-        return filtered_ocr_result

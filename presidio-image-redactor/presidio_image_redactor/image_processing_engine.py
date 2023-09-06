@@ -12,16 +12,12 @@ class ImagePreprocessor:
     Parent class for image preprocessing objects.
     """
 
-    def __init__(
-        self,
-        preprocessing_kwargs: Optional[dict] = None,
-    ) -> None:
-        """Initialize the class.
+    def __init__(self, use_greyscale: bool = True) -> None:
+        """Initialize the ImagePreprocessor class.
 
-        :param preprocessing_kwargs: Optional preprocessing keyword arguments.
+        :param use_grayscale: Whether to convert the image to greyscale.
         """
-
-        self.preprocessing_kwargs = preprocessing_kwargs
+        self.use_grayscale = use_greyscale
 
     def preprocess_image(
         self, image: PngImagePlugin.PngImageFile
@@ -39,6 +35,7 @@ class ImagePreprocessor:
         """Convert PIL image to numpy array.
 
         :param image: Loaded PNG image.
+        :param convert_to_greyscale: Whether to convert the image to greyscale.
 
         :return: image pixels as a numpy array.
 
@@ -47,7 +44,8 @@ class ImagePreprocessor:
         if isinstance(image, np.ndarray):
             img = image
         else:
-            image = image.convert("L")
+            if self.use_greyscale:
+                image = image.convert("L")
             img = np.asarray(image)
         return img
 
@@ -90,7 +88,7 @@ class ImagePreprocessor:
         return bg_color
 
     @staticmethod
-    def _get_image_contrast(image: np.ndarray) -> Tuple[str, float]:
+    def _get_image_contrast(image: np.ndarray) -> Tuple[float, float]:
         """Compute the contrast level and mean intensity of an image.
 
         :param image: Input image pixels (as a numpy array).
@@ -103,9 +101,15 @@ class ImagePreprocessor:
 
 
 class BilateralFilter(ImagePreprocessor):
-    """BilateralFilter class."""
+    """BilateralFilter class.
 
-    def __init__(self, diameter=3, sigma_color=40, sigma_space=40):
+    The class applies bilateral filtering to an image. and returns the filtered
+      image and metadata.
+    """
+
+    def __init__(
+        self, diameter: int = 3, sigma_color: int = 40, sigma_space: int = 40
+    ) -> None:
         """Initialize the BilateralFilter class.
 
         :param diameter: Diameter of each pixel neighborhood.
@@ -146,16 +150,22 @@ class BilateralFilter(ImagePreprocessor):
 
 
 class SegmentedAdaptiveThreshold(ImagePreprocessor):
-    """SegmentedAdaptiveThreshold class."""
+    """SegmentedAdaptiveThreshold class.
+
+    The class applies adaptive thresholding to an image
+    and returns the thresholded image and metadata.
+    The parameters used to run the adaptivethresholding are selected based on
+    the contrast level of the image.
+    """
 
     def __init__(
         self,
-        block_size=5,
-        contrast_threshold=40,
-        c_low_contrast=10,
-        c_high_contrast=40,
-        bg_threshold=122,
-    ):
+        block_size: int = 5,
+        contrast_threshold: int = 40,
+        c_low_contrast: int = 10,
+        c_high_contrast: int = 40,
+        bg_threshold: int = 122,
+    ) -> None:
         """Initialize the SegmentedAdaptiveThreshold class.
 
         :param block_size: Size of the neighborhood area for threshold calculation.
@@ -222,9 +232,9 @@ class ImageRescaling(ImagePreprocessor):
         self,
         small_size: int = 1048576,
         large_size: int = 4000000,
-        factor=2,
-        interpolation=cv2.INTER_AREA,
-    ):
+        factor: int = 2,
+        interpolation: int = cv2.INTER_AREA,
+    ) -> None:
         """Initialize the ImageRescaling class.
 
         :param small_size: Threshold for small image size.
@@ -265,7 +275,13 @@ class ImageRescaling(ImagePreprocessor):
 
 
 class ContrastSegmentedImageEnhancer(ImagePreprocessor):
-    """Class containing all logic to perform contrastive segmentation."""
+    """Class containing all logic to perform contrastive segmentation.
+
+    Contrastive segmentation is a preprocessing step that aims to enhance the
+    text in an image by increasing the contrast between the text and the
+    background. The parameters used to run the preprocessing are selected based
+    on the contrast level of the image.
+    """
 
     def __init__(
         self,
