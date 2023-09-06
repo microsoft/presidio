@@ -15,9 +15,9 @@ class ImagePreprocessor:
     def __init__(self, use_greyscale: bool = True) -> None:
         """Initialize the ImagePreprocessor class.
 
-        :param use_grayscale: Whether to convert the image to greyscale.
+        :param use_greyscale: Whether to convert the image to greyscale.
         """
-        self.use_grayscale = use_greyscale
+        self.use_greyscale = use_greyscale
 
     def preprocess_image(
         self, image: PngImagePlugin.PngImageFile
