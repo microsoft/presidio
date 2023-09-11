@@ -1,9 +1,10 @@
 from PIL import Image, ImageChops
-from presidio_image_redactor.image_analyzer_engine import ImageAnalyzerEngine
+from presidio_image_redactor.image_redactor_engine import ImageRedactorEngine
+from presidio_analyzer import PatternRecognizer
 import matplotlib
 import io
 from matplotlib import pyplot as plt
-from typing import Optional
+from typing import Optional, List
 
 
 def fig2img(fig):
@@ -16,16 +17,15 @@ def fig2img(fig):
     return img
 
 
-class ImagePiiVerifyEngine:
+class ImagePiiVerifyEngine(ImageRedactorEngine):
     """ImagePiiVerifyEngine class only supporting Pii verification currently."""
 
-    def __init__(self, image_analyzer_engine: Optional[ImageAnalyzerEngine] = None):
-        if not image_analyzer_engine:
-            image_analyzer_engine = ImageAnalyzerEngine()
-        self.image_analyzer_engine = image_analyzer_engine
-
     def verify(
-        self, image: Image, ocr_kwargs: Optional[dict] = None, **text_analyzer_kwargs
+        self,
+        image: Image,
+        ocr_kwargs: Optional[dict] = None,
+        ad_hoc_recognizers: Optional[List[PatternRecognizer]] = None,
+        **text_analyzer_kwargs
     ) -> Image:
         """Annotate image with the detect PII entity.
 
@@ -34,6 +34,8 @@ class ImagePiiVerifyEngine:
 
         :param image: PIL Image to be processed.
         :param ocr_kwargs: Additional params for OCR methods.
+        :param ad_hoc_recognizers: List of PatternRecognizer objects to use
+        for ad-hoc recognizer.
         :param text_analyzer_kwargs: Additional values for the analyze method
         in ImageAnalyzerEngine.
 
@@ -42,9 +44,23 @@ class ImagePiiVerifyEngine:
 
         image = ImageChops.duplicate(image)
         image_x, image_y = image.size
-        bboxes = self.image_analyzer_engine.analyze(
-            image, ocr_kwargs, **text_analyzer_kwargs
-        )
+
+        # Detect PII
+        self._check_ad_hoc_recognizer_list(ad_hoc_recognizers)
+        if ad_hoc_recognizers is None:
+            bboxes = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                **text_analyzer_kwargs,
+            )
+        else:
+            bboxes = self.image_analyzer_engine.analyze(
+                image,
+                ocr_kwargs=ocr_kwargs,
+                ad_hoc_recognizers=ad_hoc_recognizers,
+                **text_analyzer_kwargs,
+            )
+
         fig, ax = plt.subplots()
         image_r = 70
         fig.set_size_inches(image_x / image_r, image_y / image_r)
