@@ -96,17 +96,17 @@ class ImageRedactorEngine:
                             x, presidio_analyzer.pattern_recognizer.PatternRecognizer
                         )
                         for x in ad_hoc_recognizers
-                    )  # noqa: E501
+                    )
                     if are_recognizers is False:
                         raise TypeError(
                             """All items in ad_hoc_recognizers list must be
                             PatternRecognizer objects"""
-                        )  # noqa: E501
+                        )
                 else:
                     raise TypeError(
                         "ad_hoc_recognizers must be None or list of PatternRecognizer"
-                    )  # noqa: E501
+                    )
         else:
             raise TypeError(
                 "ad_hoc_recognizers must be None or list of PatternRecognizer"
-            )  # noqa: E501
+            )

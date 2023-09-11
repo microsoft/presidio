@@ -1,5 +1,3 @@
-import pydicom
-import unittest
 import PIL
 import numpy as np
 import pytest
@@ -38,10 +36,13 @@ def test_bilateral_filter_preprocess_image():
 low_contrast_image = 255 * np.ones((100, 100), dtype=np.uint8)
 high_contrast_image = np.zeros((100, 100), dtype=np.uint8)
 high_contrast_image[:50, :] = 255
-test_data = [(low_contrast_image, (10, 255, 0)), (high_contrast_image, (40, 0, 127.5))]
+adaptive_threshold_test_data = [
+    (low_contrast_image, (10, 255, 0)),
+    (high_contrast_image, (40, 0, 127.5)),
+]
 
 
-@pytest.mark.parametrize("image,expected", test_data)
+@pytest.mark.parametrize("image,expected", adaptive_threshold_test_data)
 def test_segmented_adaptive_threshold_preprocess_image(image, expected):
     # Create an instance of SegmentedAdaptiveThreshold
     segmented_adaptive_threshold = SegmentedAdaptiveThreshold()
@@ -63,14 +64,14 @@ def test_segmented_adaptive_threshold_preprocess_image(image, expected):
 small_image = np.zeros((512, 512), dtype=np.uint8)
 large_image = np.zeros((4096, 4096), dtype=np.uint8)
 regular_image = np.zeros((1024, 1024), dtype=np.uint8)
-test_data = [
+rescaling_test_data = [
     (small_image, (2, (1024, 1024))),
     (large_image, (0.5, (2048, 2048))),
     (regular_image, (1, (1024, 1024))),
 ]
 
 
-@pytest.mark.parametrize("image,expected", test_data)
+@pytest.mark.parametrize("image,expected", rescaling_test_data)
 def test_segmented_image_rescaling_preprocess_image(image, expected):
     # Create an instance of SegmentedAdaptiveThreshold
     segmented_adaptive_threshold = ImageRescaling()
