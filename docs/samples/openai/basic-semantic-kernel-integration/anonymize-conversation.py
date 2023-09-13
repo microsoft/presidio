@@ -44,7 +44,7 @@ results = analyzer.analyze(text=summary.result,
 result = engine.anonymize(
     text= summary.result,
     analyzer_results=results,
-    operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})},
+    operators={"PERSON": OperatorConfig("replace", {"new_value": "SomeName"})},
 )
 
 print(f"Output: {result.text}") # Outputs a story about anonymic person
