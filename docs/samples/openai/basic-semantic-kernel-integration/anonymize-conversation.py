@@ -1,8 +1,8 @@
 import semantic_kernel as sk
 from presidio_analyzer import AnalyzerEngine
-from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion, OpenAIChatCompletion
+from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import RecognizerResult, OperatorConfig
+from presidio_anonymizer.entities import  OperatorConfig
 
 # Semantic Kernel Setup
 
@@ -19,7 +19,7 @@ analyzer = AnalyzerEngine()
 engine = AnonymizerEngine()
 
 # Anonymize the prompt:
-sk_prompt = "Tell me a story about John Smith."
+sk_prompt = "Tell me about Madonna"
 
 prompt_analyzer_results = analyzer.analyze(text=sk_prompt,
                            entities=["PERSON"],
@@ -28,7 +28,7 @@ prompt_analyzer_results = analyzer.analyze(text=sk_prompt,
 anonymized_prompt = engine.anonymize(
     text= sk_prompt,
     analyzer_results=prompt_analyzer_results,
-    operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})},
+    operators={"PERSON": OperatorConfig("replace", {"new_value": "SomeName"})},
 )
 
 
