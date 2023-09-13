@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+## [2.2.3x] - 24.10.23
+### Added
+#### Structured
+* Added V1 of presidio-structured, a library (presidio-structured) which re-uses existing logic from existing presidio components to allow anonymization of (semi-)structured data.
 
 ## [2.2.33] - June 1st 2023
 ### Added
