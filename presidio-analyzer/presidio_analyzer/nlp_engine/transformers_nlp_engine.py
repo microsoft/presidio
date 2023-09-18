@@ -13,7 +13,6 @@ except ImportError:
 
 from presidio_analyzer.nlp_engine import (
     SpacyNlpEngine,
-    NlpArtifacts,
     NerModelConfiguration,
 )
 
@@ -111,14 +110,6 @@ class TransformersNlpEngine(SpacyNlpEngine):
             raise ValueError(
                 "transformers model name is missing from model configuration"
             )
-
-    def process_text(self, text: str, language: str) -> NlpArtifacts:
-        """Execute the SpaCy NLP pipeline on the given text and language."""
-        if not self.nlp:
-            raise ValueError("NLP engine is not loaded. Consider calling .load()")
-
-        doc = self.nlp[language](text)
-        return self._doc_to_nlp_artifact(doc, language)
 
     def _get_entities(self, doc: Doc) -> List[Span]:
         """

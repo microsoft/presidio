@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Dict
 
 import pytest
-import spacy
 
 from presidio_analyzer import (
     EntityRecognizer,
@@ -14,29 +13,15 @@ from presidio_analyzer import (
 from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
-from tests.mocks import RecognizerRegistryMock
+from tests.mocks import RecognizerRegistryMock, NlpEngineMock
 
-
-def pytest_addoption(parser):
-    parser.addoption(
-        "--runfast", action="store_true", default=False, help="run fast tests"
-    )
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "slow: mark test as slow to run")
     config.addinivalue_line(
         "markers", "skip_engine(nlp_engine): skip test for given nlp engine"
     )
-
-
-def pytest_collection_modifyitems(config, items):
-    if config.getoption("--runfast"):
-        # --runfast given in cli: skip slow tests
-        skip_slow = pytest.mark.skip(reason="remove --runfast option to run")
-        for item in items:
-            if "slow" in item.keywords:
-                item.add_marker(skip_slow)
+    config.addinivalue_line("markers", "integration: mark test as an integration test")
 
 
 @pytest.fixture(scope="session")
@@ -50,28 +35,28 @@ def nlp_engines(request, nlp_engine_provider) -> Dict[str, NlpEngine]:
 
     nlp_engines = nlp_engine_provider.nlp_engines
     for name, engine_cls in nlp_engines.items():
-        if name == "spacy" and not request.config.getoption("--runfast"):
+        if name == "spacy":
             available_engines[f"{name}_en"] = engine_cls(
                 models=[{"lang_code": "en", "model_name": "en_core_web_lg"}]
             )
-        elif name == "stanza" and not request.config.getoption("--runfast"):
+        elif name == "stanza":
             available_engines[f"{name}_en"] = engine_cls(
                 models=[{"lang_code": "en", "model_name": "en"}]
             )
-        elif name == "transformers" and not request.config.getoption("--runfast"):
+        elif name == "transformers":
             available_engines[f"{name}_en"] = engine_cls(
-                models=[{
-                    "lang_code": "en",
-                    "model_name": {
-                        "spacy": "en_core_web_sm",
-                        "transformers": "StanfordAIMI/stanford-deidentifier-base",
-                    },
-                }]
+                models=[
+                    {
+                        "lang_code": "en",
+                        "model_name": {
+                            "spacy": "en_core_web_sm",
+                            "transformers": "StanfordAIMI/stanford-deidentifier-base",
+                        },
+                    }
+                ]
             )
         else:
             raise ValueError("Unsupported engine for tests")
-        # Load engine
-        available_engines[f"{name}_en"].load()
 
     return available_engines
 
@@ -83,6 +68,15 @@ def skip_by_engine(request, nlp_engines):
         marker_arg = marker.args[0]
         if marker_arg not in nlp_engines:
             pytest.skip(f"skipped on this engine: {marker_arg}")
+
+
+@pytest.mark.skip_engine("spacy_en")
+@pytest.fixture(scope="session")
+def spacy_nlp_engine(nlp_engines):
+    nlp_engine = nlp_engines.get("spacy_en", None)
+    if nlp_engine:
+        nlp_engine.load()
+    return nlp_engine
 
 
 @pytest.fixture(scope="session")
@@ -111,40 +105,18 @@ def loaded_registry() -> RecognizerRegistry:
 
 
 @pytest.fixture(scope="module")
-def nlp_engine(nlp_engines) -> NlpEngine:
-    return nlp_engines["spacy_en"]
-
-
-@pytest.fixture(scope="module")
 def mock_registry() -> RecognizerRegistryMock:
     return RecognizerRegistryMock()
 
 
 @pytest.fixture(scope="module")
-def analyzer_engine_simple(mock_registry, nlp_engine) -> AnalyzerEngine:
-    return AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
+def mock_nlp_engine() -> NlpEngineMock:
+    return NlpEngineMock()
 
 
-@pytest.fixture(scope="session")
-def mock_he_model():
-    """
-    Create an empty Hebrew spaCy pipeline and save it to disk.
-
-    So that it could be loaded using spacy.load()
-    """
-    he = spacy.blank("he")
-    he.to_disk("he_test")
-
-
-@pytest.fixture(scope="session")
-def mock_bn_model():
-    """
-    Create an empty Bengali spaCy pipeline and save it to disk.
-
-    So that it could be loaded using spacy.load()
-    """
-    bn = spacy.blank("bn")
-    bn.to_disk("bn_test")
+@pytest.fixture(scope="module")
+def analyzer_engine_simple(mock_registry, mock_nlp_engine) -> AnalyzerEngine:
+    return AnalyzerEngine(registry=mock_registry, nlp_engine=mock_nlp_engine)
 
 
 @pytest.fixture(scope="session")

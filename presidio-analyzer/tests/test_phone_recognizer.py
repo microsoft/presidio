@@ -9,10 +9,6 @@ def recognizer():
     return PhoneRecognizer()
 
 
-@pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines["spacy_en"]
-
 
 @pytest.mark.parametrize(
     "text, expected_len, entities, expected_positions, score",
@@ -32,7 +28,7 @@ def nlp_engine(nlp_engines):
     ],
 )
 def test_when_all_phones_then_succeed(
-    nlp_engine,
+    spacy_nlp_engine,
     text,
     expected_len,
     entities,
@@ -40,7 +36,7 @@ def test_when_all_phones_then_succeed(
     score,
     recognizer,
 ):
-    nlp_artifacts = nlp_engine.process_text(text, "en")
+    nlp_artifacts = spacy_nlp_engine.process_text(text, "en")
     results = recognizer.analyze(text, entities, nlp_artifacts=nlp_artifacts)
     assert len(results) == expected_len
     for i, (res, (st_pos, fn_pos)) in enumerate(zip(results, expected_positions)):
