@@ -17,7 +17,40 @@ with some other value by applying a certain operator (e.g. replace, mask, redact
 
 ## Installation
 
-see [Installing Presidio](../installation.md).
+=== "Using pip"
+
+    !!! note "Note"
+        Consider installing the Presidio python packages on a virtual environment like venv or conda.
+    
+    To install Presidio Anonymizer, run:
+    
+    ```sh
+    pip install presidio-anonymizer
+    ```
+
+=== "Using Docker"
+
+    !!! note "Note"
+        This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
+    
+    ```sh
+    # Download image from Dockerhub
+    docker pull mcr.microsoft.com/presidio-anonymizer
+    
+    # Run the container with the default port
+    docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
+    ```
+
+=== "From source"
+
+    First, clone the Presidio repo. [See here for instructions](../installation.md#install-from-source).
+    
+    Then, build the presidio-anonymizer container:
+    
+    ```sh
+    cd presidio-anonymizer
+    docker build . -t presidio/presidio-anonymizer
+    ```
 
 ## Getting started
 

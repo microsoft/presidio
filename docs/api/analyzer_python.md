@@ -2,5 +2,5 @@
 
 ::: presidio_analyzer
     handler: python
-    options:
+    selection:
       docstring_style: sphinx
