@@ -49,9 +49,9 @@ See some examples here:
 Many PII entities are undetectable using naive approaches like deny-lists or regular expressions.
 In these cases, we would wish to utilize a Machine Learning model capable of identifying entities in free text, or a rule-based recognizer. There are four options for adding ML and rule based recognizers:
 
-#### Utilize SpaCy or Stanza
+#### Utilize SpaCy, Stanza or Transformers
 
-Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER), and [stanza](https://stanfordnlp.github.io/stanza/) as an alternative. To avoid introducing new tools, it is recommended to first try to use `spaCy` or `stanza` over other tools if possible.
+Presidio currently uses [spaCy](https://spacy.io/) as a framework for text analysis and Named Entity Recognition (NER), and [stanza](https://stanfordnlp.github.io/stanza/) and [huggingface transformers](https://huggingface.co/docs/transformers/index) as an alternative. To avoid introducing new tools, it is recommended to first try to use `spaCy`, `stanza` or `transformers` over other tools if possible.
 `spaCy` provides descent results compared to state-of-the-art NER models, but with much better computational performance.
 `spaCy` and `stanza` models could be trained from scratch, used in combination with pre-trained embeddings, or retrained to detect new entities.
 When integrating such a model into Presidio, a class inheriting from the [`EntityRecognizer`](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/presidio_analyzer/entity_recognizer.py) should be created.

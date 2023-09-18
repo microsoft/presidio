@@ -19,6 +19,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
     results = recognizer.analyze(text, ents, nlp_artifacts)
     return results
 
+
 @pytest.mark.itegration
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",

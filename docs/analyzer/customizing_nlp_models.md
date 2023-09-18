@@ -1,11 +1,11 @@
-# Customizing the NLP models in Presidio Analyzer
+# Customizing the NLP engine in Presidio Analyzer
 
-Presidio uses NLP engines for two main tasks: NER based PII identification, 
-and feature extraction for custom rule based logic (such as leveraging context words for improved detection).
-While Presidio comes with an open-source model (the `en_core_web_lg` model from spaCy), 
-it can be customized by leveraging other NLP models, either public or proprietary.
-These models can be trained or downloaded from existing NLP frameworks like [spaCy](https://spacy.io/usage/models), 
-[Stanza](https://github.com/stanfordnlp/stanza) and 
+Presidio uses NLP engines for two main tasks: NER based PII identification,
+and feature extraction for downstream rule based logic (such as leveraging context words for improved detection).
+While Presidio comes with an open-source model (the `en_core_web_lg` model from spaCy),
+additional NLP models and frameworks could be plugged in, either public or proprietary.
+These models can be trained or downloaded from existing NLP frameworks like [spaCy](https://spacy.io/usage/models),
+[Stanza](https://github.com/stanfordnlp/stanza) and
 [transformers](https://github.com/huggingface/transformers).
 
 In addition, other types of NLP frameworks [can be integrated into Presidio](developing_recognizers.md#machine-learning-ml-based-or-rule-based).
@@ -63,9 +63,30 @@ Configuration can be done in two ways:
         -
         lang_code: es
         model_name: es_core_news_md 
+    ner_model_configuration:
+    labels_to_ignore:
+    - O
+    model_to_presidio_entity_mapping:
+        PER: PERSON
+        LOC: LOCATION
+        ORG: ORGANIZATION
+        AGE: AGE
+        ID: ID
+        DATE: DATE_TIME
+    low_confidence_score_multiplier: 0.4
+    low_score_entity_names:
+    - ID
+    - ORG
     ```
 
-    The default conf file is read during the default initialization of the `AnalyzerEngine`. Alternatively, the path to a custom configuration file can be passed to the `NlpEngineProvider`:
+    The `ner_model_configuration` section contains the following parameters:
+
+  - `labels_to_ignore`: A list of labels to ignore. For example, `O` (no entity) or entities you are not interested in returning.
+  - `model_to_presidio_entity_mapping`: A mapping between the transformers model labels and the Presidio entity types.
+  - `low_confidence_score_multiplier`: A multiplier to apply to the score of entities with low confidence.
+  - `low_score_entity_names`: A list of entity types to apply the low confidence score multiplier to.
+
+    The [default conf file](https://github.com/microsoft/presidio/blob/main/presidio-analyzer/conf/default.yaml) is read during the default initialization of the `AnalyzerEngine`. Alternatively, the path to a custom configuration file can be passed to the `NlpEngineProvider`:
 
     ```python
     from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
@@ -97,12 +118,14 @@ Configuration can be done in two ways:
         c. pass requests in each of these languages.
 
     !!! note "Note"
-        Presidio can currently use one NLP model per language.
+        Presidio can currently use one NER model per language via the `NlpEngine`. If multiple are required,
+        consider wrapping NER models as additional recognizers ([see sample here](https://github.com/microsoft/presidio/blob/main/docs/samples/python/example_remote_recognizer.py)).
 
 ## Leverage frameworks other than spaCy, Stanza and transformers for ML based PII detection
 
 In addition to the built-in spaCy/Stanza/transformers capabitilies, it is possible to create new recognizers which serve as interfaces to other models.
 For more information:
+
 - [Remote recognizer documentation](adding_recognizers.md#creating-a-remote-recognizer) and [samples](../samples/python/integrating_with_external_services.ipynb).
 - [Flair recognizer example](../samples/python/flair_recognizer.py)
 

@@ -21,7 +21,6 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "skip_engine(nlp_engine): skip test for given nlp engine"
     )
-    config.addinivalue_line("markers", "integration: mark test as an integration test")
 
 
 @pytest.fixture(scope="session")
@@ -129,28 +128,18 @@ def zip_code_recognizer():
     return zip_recognizer
 
 
-@pytest.fixture(scope="session")
-def zip_code_deny_list_recognizer():
-    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
-    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
-    zip_recognizer = PatternRecognizer(
-        supported_entity="ZIP", deny_list=["999"], patterns=[zipcode_pattern]
-    )
-    return zip_recognizer
-
 
 def pytest_sessionfinish():
     """Remove files created during mock spaCy models creation."""
-    he_test_model_path = Path(Path(__file__).parent.parent, "he_test")
-    if he_test_model_path.exists():
-        try:
-            shutil.rmtree(he_test_model_path)
-        except OSError as e:
-            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))
 
-    bn_test_model_path = Path(Path(__file__).parent.parent, "bn_test")
-    if bn_test_model_path.exists():
-        try:
-            shutil.rmtree(bn_test_model_path)
-        except OSError as e:
-            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))
+    mock_models = ("he_test", "bn_test")
+
+    for mock_model in mock_models:
+        test_model_path1 = Path(Path(__file__).parent, mock_model)
+        test_model_path2 = Path(Path(__file__).parent.parent, mock_model)
+        for path in (test_model_path1, test_model_path2):
+            if path.exists():
+                try:
+                    shutil.rmtree(path)
+                except OSError as e:
+                    print("Failed to remove file: %s - %s." % (e.filename, e.strerror))

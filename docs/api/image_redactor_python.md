@@ -1,15 +1,6 @@
 # Presidio Image Redactor API Reference
 
-## ImageRedactorEngine class
-
-::: presidio_image_redactor.ImageRedactorEngine
+::: presidio_image_redactor
     handler: python
-    selection:
-      docstring_style: sphinx
-
-## ImageAnalyzerEngine class
-
-::: presidio_image_redactor.ImageAnalyzerEngine
-    handler: python
-    selection:
+    options:
       docstring_style: sphinx

@@ -40,6 +40,16 @@ def loaded_analyzer_engine(loaded_registry, app_tracer):
 
 
 @pytest.fixture(scope="module")
+def zip_code_deny_list_recognizer():
+    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
+    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
+    zip_recognizer = PatternRecognizer(
+        supported_entity="ZIP", deny_list=["999"], patterns=[zipcode_pattern]
+    )
+    return zip_recognizer
+
+
+@pytest.fixture(scope="module")
 def unit_test_guid():
     return "00000000-0000-0000-0000-000000000000"
 

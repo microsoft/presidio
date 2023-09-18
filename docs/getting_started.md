@@ -2,7 +2,7 @@
 
 ## Simple flow: Text
 
-Using Presidio's modules as Python packages to get started
+Using Presidio's modules as Python packages to get started:
 
 === "Anonymize PII in text (Default spaCy model)"
 
@@ -84,9 +84,10 @@ Using Presidio's modules as Python packages to get started
         anonymized_text = anonymizer.anonymize(text=text, analyzer_results=results)
         
         print(anonymized_text)
+        
         ```
-
-        The transformers model and the spacy model would be downloaded on the first call to the `AnalyzerEngine`.
+        !!! tip "Tip: Downloading models"
+            If not available, the transformers model and the spacy model would be downloaded on the first call to the `AnalyzerEngine`. To pre-download, see [this doc](./analyzer/nlp_engines/transformers.md#downloading-a-pre-trained-model).
 
 ## Simple flow: Images
 
