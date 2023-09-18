@@ -16,7 +16,6 @@ from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
 from tests.mocks import RecognizerRegistryMock, NlpEngineMock
 
 
-
 def pytest_configure(config):
     config.addinivalue_line(
         "markers", "skip_engine(nlp_engine): skip test for given nlp engine"
@@ -126,7 +125,6 @@ def zip_code_recognizer():
         supported_entity="ZIP", patterns=[zipcode_pattern]
     )
     return zip_recognizer
-
 
 
 def pytest_sessionfinish():

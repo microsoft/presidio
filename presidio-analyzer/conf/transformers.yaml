@@ -18,8 +18,12 @@ ner_model_configuration:
   alignment_mode: strict # "strict", "contract", "expand"
   model_to_presidio_entity_mapping:
     PER: PERSON
+    PERSON: PERSON
     LOC: LOCATION
+    LOCATION: LOCATION
     ORG: ORGANIZATION
+    ORGANIZATION: ORGANIZATION
+    NORP: NRP
     AGE: AGE
     ID: ID
     EMAIL: EMAIL
@@ -31,6 +35,7 @@ ner_model_configuration:
     PHONE: PHONE_NUMBER
     HCW: PERSON
     HOSPITAL: ORGANIZATION
+    FACILITY: LOCATION
 
   low_confidence_score_multiplier: 0.4
   low_score_entity_names:

@@ -21,14 +21,10 @@ def test_validate_model_params_happy_path():
 
     TransformersNlpEngine._validate_model_params(model)
 
+
 @pytest.mark.parametrize(
     "key",
-    [
-        ("lang_code"),
-        ("model_name"),
-        ("model_name.spacy"),
-        ("model_name.transformers")
-    ],
+    [("lang_code"), ("model_name"), ("model_name.spacy"), ("model_name.transformers")],
 )
 def test_validate_model_params_missing_fields(key):
     model = {
