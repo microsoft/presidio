@@ -125,12 +125,12 @@ class RecognizerRegistry:
     ) -> Union[Type[SpacyRecognizer], Type[StanzaRecognizer]]:
         """Return the recognizer leveraging the selected NLP Engine."""
 
-        if not nlp_engine or isinstance(nlp_engine, SpacyNlpEngine):
-            return SpacyRecognizer
         if isinstance(nlp_engine, StanzaNlpEngine):
             return StanzaRecognizer
         if isinstance(nlp_engine, TransformersNlpEngine):
             return TransformersRecognizer
+        if not nlp_engine or isinstance(nlp_engine, SpacyNlpEngine):
+            return SpacyRecognizer
         else:
             logger.warning(
                 "nlp engine should be either SpacyNlpEngine,"
