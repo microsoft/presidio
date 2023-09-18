@@ -1,7 +1,8 @@
 import pytest
 
-from presidio_analyzer.nlp_engine import SpacyNlpEngine
+from presidio_analyzer.predefined_recognizers import SpacyRecognizer
 from tests import assert_result_within_score_range
+
 
 @pytest.fixture(scope="module")
 def entities():
@@ -19,6 +20,7 @@ def prepare_and_analyze(nlp, recognizer, text, ents):
     return results
 
 
+@pytest.mark.itegration
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
     [
@@ -47,13 +49,13 @@ def test_when_using_spacy_then_all_spacy_result_found(
     expected_len,
     expected_positions,
     entity_num,
-    nlp_engine,
+    spacy_nlp_engine,
     nlp_recognizer,
     entities,
     ner_strength,
     max_score,
 ):
-    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
     assert len(results) == expected_len
     entity_to_check = entities[entity_num]
     for res, (st_pos, fn_pos) in zip(results, expected_positions):
@@ -63,10 +65,10 @@ def test_when_using_spacy_then_all_spacy_result_found(
 
 
 def test_when_person_in_text_then_person_full_name_complex_found(
-    nlp_engine, nlp_recognizer, entities
+    spacy_nlp_engine, nlp_recognizer, entities
 ):
     text = "William Bill Alexander"
-    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
 
     assert len(results) > 0
 
@@ -79,7 +81,7 @@ def test_when_person_in_text_then_person_full_name_complex_found(
     assert len(text) - len(covered_text) < 5
 
 
-def test_nlp_not_loaded_value_error():
-    spacy_nlp = SpacyNlpEngine()
-    with pytest.raises(ValueError):
-        spacy_nlp.process_text("This should fail as the NLP model isn't loaded", language="en")
+def test_analyze_no_nlp_artifacts():
+    spacy_recognizer = SpacyRecognizer()
+    res = spacy_recognizer.analyze(text="text", nlp_artifacts=None, entities=["PERSON"])
+    assert len(res) == 0
