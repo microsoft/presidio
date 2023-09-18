@@ -1,6 +1,10 @@
+import json
 import logging
 from dataclasses import dataclass
-from typing import Dict, Optional, Collection, Type
+from pathlib import Path
+from typing import Dict, Optional, Union, Collection
+
+import yaml
 
 logger = logging.getLogger("presidio-analyzer")
 
@@ -34,6 +38,7 @@ LABELS_TO_IGNORE = {"O"}
 class NerModelConfiguration:
     """NER model configuration.
 
+    :param nlp_engine_name: Name of the NLP engine to use.
     :param labels_to_ignore: List of labels to not return predictions for.
     :param aggregation_strategy:
     See https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy
@@ -49,6 +54,7 @@ class NerModelConfiguration:
     Multiplier to the score given for low_score_entity_names.
     """  # noqa E501
 
+    nlp_engine_name: str
     labels_to_ignore: Optional[Collection[str]] = None
     aggregation_strategy: Optional[str] = "simple"
     stride: Optional[int] = 14
@@ -78,43 +84,90 @@ class NerModelConfiguration:
             self.labels_to_ignore = LABELS_TO_IGNORE
 
     @classmethod
-    def _validate_input(cls, ner_model_configuration_dict: Dict) -> None:
-        key_to_type = {
-            "labels_to_ignore": list,
-            "aggregation_strategy": str,
-            "alignment_mode": str,
-            "model_to_presidio_entity_mapping": dict,
-            "low_confidence_score_multiplier": float,
-            "low_score_entity_names": list,
-            "stride": int,
-        }
-
-        for key, field_type in key_to_type.items():
-            cls.__validate_type(
-                config_dict=ner_model_configuration_dict, key=key, field_type=field_type
-            )
-
-    @staticmethod
-    def __validate_type(config_dict: Dict, key: str, field_type: Type) -> None:
-        if key in config_dict:
-            if not isinstance(config_dict[key], field_type):
-                raise ValueError(f"{key} must be of type {field_type}")
-        else:
-            raise ValueError(f"NER configuration is missing '{key}'")
+    def _validate_input(cls, nlp_engine_configuration: Dict) -> None:
+        if "nlp_engine_name" not in nlp_engine_configuration:
+            raise ValueError("nlp_engine_name is a required parameter")
+        if "labels_to_ignore" in nlp_engine_configuration:
+            if not isinstance(nlp_engine_configuration["labels_to_ignore"], list):
+                raise ValueError("labels_to_ignore must be a list")
+        if "aggregation_strategy" in nlp_engine_configuration:
+            if not isinstance(nlp_engine_configuration["aggregation_strategy"], str):
+                raise ValueError("aggregation_strategy must be a string")
+        if "alignment_mode" in nlp_engine_configuration:
+            if not isinstance(nlp_engine_configuration["alignment_mode"], str):
+                raise ValueError("alignment_mode must be a string")
+        if "stride" in nlp_engine_configuration:
+            if not isinstance(nlp_engine_configuration["stride"], int):
+                raise ValueError("stride must be an integer")
+        if "model_to_presidio_entity_mapping" in nlp_engine_configuration:
+            if not isinstance(
+                nlp_engine_configuration["model_to_presidio_entity_mapping"], dict
+            ):
+                raise ValueError("model_to_presidio_entity_mapping must be a dict")
+        if "low_score_entity_names" in nlp_engine_configuration:
+            if not isinstance(nlp_engine_configuration["low_score_entity_names"], list):
+                raise ValueError("low_score_entity_names must be a list")
+        if "low_confidence_score_multiplier" in nlp_engine_configuration:
+            if not isinstance(
+                nlp_engine_configuration["low_confidence_score_multiplier"], float
+            ):
+                raise ValueError("low_confidence_score_multiplier must be a float")
 
     @classmethod
-    def from_dict(cls, nlp_engine_configuration: Dict) -> "NerModelConfiguration":
-        """Load NLP engine configuration from dict.
+    def from_yaml(cls, yaml_file: Union[Path, str]) -> "NerModelConfiguration":
+        """Load NLP engine configuration from yaml file.
 
-        :param nlp_engine_configuration: Dict with the configuration to load.
+        :param yaml_file: Path to the yaml file.
         """
+
+        if not Path(yaml_file).exists():
+            raise FileNotFoundError(f"configuration file {yaml_file} not found.")
+
+        with open(yaml_file, "r") as f:
+            nlp_engine_configuration = yaml.safe_load(f)
+
         cls._validate_input(nlp_engine_configuration)
 
-        return cls(**nlp_engine_configuration)
+        return cls.from_dict(nlp_engine_configuration)
+
+    @classmethod
+    def from_json(cls, json_file: Union[Path, str]) -> "NerModelConfiguration":
+        """Load NLP engine configuration from json file.
+
+        :param json_file: Path to the json file.
+        """
+
+        if not Path(json_file).exists():
+            raise FileNotFoundError(f"configuration file {json_file} not found.")
+
+        with open(json_file, "r") as f:
+            nlp_engine_configuration = json.load(f)
+
+        cls._validate_input(nlp_engine_configuration)
+
+        return cls.from_dict(nlp_engine_configuration)
+
+    @classmethod
+    def from_dict(cls, config_dict: Dict) -> "NerModelConfiguration":
+        """Load NLP engine configuration from dict.
+
+        :param config_dict: Dict with the configuration to load.
+        """
+        return cls(**config_dict)
 
     def to_dict(self) -> Dict:
         """Return the configuration as a dict."""
         return self.__dict__
+
+    @staticmethod
+    def get_full_conf_path(
+        default_conf_file: Union[Path, str] = "default.yaml"
+    ) -> Path:
+        """Return a Path to the default conf file.
+
+        :param default_conf_file: Name of the default conf file.
+        """
+        return Path(Path(__file__).parent.parent.parent, "conf", default_conf_file)
 
     def __str__(self) -> str:  # noqa D105
         return str(self.to_dict())

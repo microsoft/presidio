@@ -35,5 +35,4 @@ class StanzaNlpEngine(SpacyNlpEngine):
             self.nlp[model["lang_code"]] = spacy_stanza.load_pipeline(
                 model["model_name"],
                 processors="tokenize,pos,lemma,ner",
-                download_method=None,
             )
