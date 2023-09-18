@@ -1,48 +1,30 @@
+import json
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
+from unittest.mock import patch
 
 import pytest
 import spacy
+import yaml
 
 from presidio_analyzer.nlp_engine import (
     SpacyNlpEngine,
     StanzaNlpEngine,
     NlpEngineProvider,
+    NerModelConfiguration,
 )
 from presidio_analyzer.nlp_engine.transformers_nlp_engine import TransformersNlpEngine
-
-
-@pytest.fixture(scope="module")
-def mock_he_model():
-    """
-    Create an empty Hebrew spaCy pipeline and save it to disk.
-
-    So that it could be loaded using spacy.load()
-    """
-    he = spacy.blank("he")
-    he.to_disk("he_test")
-
-
-@pytest.fixture(scope="module")
-def mock_bn_model():
-    """
-    Create an empty Bengali spaCy pipeline and save it to disk.
-
-    So that it could be loaded using spacy.load()
-    """
-    bn = spacy.blank("bn")
-    bn.to_disk("bn_test")
 
 
 @pytest.fixture(scope="session")
 def nlp_configuration_dict() -> Dict:
     nlp_configuration = {
-        "lang_code": "en",
-        "model_name": {
-            "spacy": "en_core_web_lg",
-            "transformers": "StanfordAIMI/stanford-deidentifier-base",
-        },
-    }
+            "lang_code": "en",
+            "model_name": {
+                "spacy": "en_core_web_lg",
+                "transformers": "StanfordAIMI/stanford-deidentifier-base",
+            },
+        }
 
     return nlp_configuration
 
@@ -228,7 +210,7 @@ def test_when_create_transformers_nlp_engine_from_wrong_conf_with_model_name_not
 
 
 def test_when_create_transformers_nlp_engine_from_wrong_conf_with_model_name_keys_not_include_spacy_then_fail(
-    nlp_configuration_dict,
+        nlp_configuration_dict,
 ):
     nlp_configuration = nlp_configuration_dict.copy()
     del nlp_configuration["model_name"]["spacy"]
@@ -238,13 +220,68 @@ def test_when_create_transformers_nlp_engine_from_wrong_conf_with_model_name_key
 
 
 def test_when_create_transformers_nlp_engine_from_wrong_conf_with_model_name_keys_not_include_transformers_then_fail(
-    nlp_configuration_dict,
+        nlp_configuration_dict,
 ):
     nlp_configuration = nlp_configuration_dict.copy()
     del nlp_configuration["model_name"]["transformers"]
     nlp_configuration["model_name"]["not_transformers"] = "ERROR"
     with pytest.raises(ValueError):
         NlpEngineProvider(nlp_configuration=nlp_configuration).create_engine()
+
+
+def test_ner_model_configuration_from_json(
+    ner_model_configuration_dict, tmp_path_factory
+):
+    fn = tmp_path_factory.mktemp("data") / "nlp_configuration.json"
+    fn.write_text(json.dumps(ner_model_configuration_dict), "UTF-8")
+
+    ner_model_configuration = NerModelConfiguration.from_json(fn.absolute())
+    assert ner_model_configuration.nlp_engine_name == "transformers"
+    assert (
+        ner_model_configuration.low_score_entity_names
+        == ner_model_configuration_dict["low_score_entity_names"]
+    )
+    assert (
+        ner_model_configuration.aggregation_strategy
+        == ner_model_configuration_dict["aggregation_strategy"]
+    )
+    assert (
+        ner_model_configuration.alignment_mode
+        == ner_model_configuration_dict["alignment_mode"]
+    )
+
+
+def test_nlp_model_configuration_from_yaml(
+    ner_model_configuration_dict, tmp_path_factory
+):
+    fn = tmp_path_factory.mktemp("data") / "nlp_configuration.yaml"
+    fn.write_text(yaml.safe_dump(ner_model_configuration_dict), "UTF-8")
+
+    ner_model_configuration = NerModelConfiguration.from_yaml(fn.absolute())
+    assert ner_model_configuration.nlp_engine_name == "transformers"
+    assert (
+        ner_model_configuration.low_score_entity_names
+        == ner_model_configuration_dict["low_score_entity_names"]
+    )
+    assert (
+        ner_model_configuration.aggregation_strategy
+        == ner_model_configuration_dict["aggregation_strategy"]
+    )
+    assert (
+        ner_model_configuration.alignment_mode
+        == ner_model_configuration_dict["alignment_mode"]
+    )
+
+
+def test_nlp_model_configuration_from_yaml_missing_field(
+    ner_model_configuration_dict, tmp_path_factory
+):
+    fn = tmp_path_factory.mktemp("data") / "nlp_configuration.yaml"
+    del ner_model_configuration_dict["nlp_engine_name"]
+    fn.write_text(yaml.safe_dump(ner_model_configuration_dict), "UTF-8")
+
+    with pytest.raises(ValueError):
+        NerModelConfiguration.from_yaml(fn.absolute())
 
 
 def test_nlp_engine_provider_init_through_nlp_engine_configuration():

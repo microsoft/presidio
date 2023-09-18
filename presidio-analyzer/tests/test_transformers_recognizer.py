@@ -10,17 +10,14 @@ def entities():
 
 @pytest.mark.skip_engine("transformers_en")
 @pytest.fixture(scope="module")
-def nlp_recognizer(nlp_recognizers):
-    return nlp_recognizers.get("transformers", None)
+def nlp_engine(nlp_engines):
+    return nlp_engines.get("transformers_en", None)
 
 
 @pytest.mark.skip_engine("transformers_en")
 @pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    nlp_engine = nlp_engines.get("transformers_en", None)
-    if nlp_engine:
-        nlp_engine.load()
-    return nlp_engine
+def nlp_recognizer(nlp_recognizers):
+    return nlp_recognizers.get("transformers", None)
 
 
 def prepare_and_analyze(nlp, recognizer, text, entities):
@@ -30,7 +27,6 @@ def prepare_and_analyze(nlp, recognizer, text, entities):
     return results
 
 
-@pytest.mark.itegration
 @pytest.mark.skip_engine("transformers_en")
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
@@ -80,10 +76,9 @@ def test_when_using_transformers_then_all_transformers_result_correct(
         )
 
 
-@pytest.mark.itegration
 @pytest.mark.skip_engine("transformers_en")
 def test_when_person_in_text_then_person_full_name_complex_found(
-        nlp_engine, nlp_recognizer, entities
+    nlp_engine, nlp_recognizer, entities
 ):
     text = "Richard (Rick) C. Henderson"
     results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)

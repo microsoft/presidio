@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict
 
 import pytest
+import spacy
 
 from presidio_analyzer import (
     EntityRecognizer,
@@ -13,14 +14,29 @@ from presidio_analyzer import (
 from presidio_analyzer import RecognizerRegistry
 from presidio_analyzer.nlp_engine import NlpEngineProvider, NlpEngine
 from presidio_analyzer.predefined_recognizers import NLP_RECOGNIZERS
-from tests.mocks import RecognizerRegistryMock, NlpEngineMock
+from tests.mocks import RecognizerRegistryMock
 
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--runfast", action="store_true", default=False, help="run fast tests"
+    )
 
 
 def pytest_configure(config):
+    config.addinivalue_line("markers", "slow: mark test as slow to run")
     config.addinivalue_line(
         "markers", "skip_engine(nlp_engine): skip test for given nlp engine"
     )
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("--runfast"):
+        # --runfast given in cli: skip slow tests
+        skip_slow = pytest.mark.skip(reason="remove --runfast option to run")
+        for item in items:
+            if "slow" in item.keywords:
+                item.add_marker(skip_slow)
 
 
 @pytest.fixture(scope="session")
@@ -34,28 +50,28 @@ def nlp_engines(request, nlp_engine_provider) -> Dict[str, NlpEngine]:
 
     nlp_engines = nlp_engine_provider.nlp_engines
     for name, engine_cls in nlp_engines.items():
-        if name == "spacy":
+        if name == "spacy" and not request.config.getoption("--runfast"):
             available_engines[f"{name}_en"] = engine_cls(
                 models=[{"lang_code": "en", "model_name": "en_core_web_lg"}]
             )
-        elif name == "stanza":
+        elif name == "stanza" and not request.config.getoption("--runfast"):
             available_engines[f"{name}_en"] = engine_cls(
                 models=[{"lang_code": "en", "model_name": "en"}]
             )
-        elif name == "transformers":
+        elif name == "transformers" and not request.config.getoption("--runfast"):
             available_engines[f"{name}_en"] = engine_cls(
-                models=[
-                    {
-                        "lang_code": "en",
-                        "model_name": {
-                            "spacy": "en_core_web_sm",
-                            "transformers": "StanfordAIMI/stanford-deidentifier-base",
-                        },
-                    }
-                ]
+                models=[{
+                    "lang_code": "en",
+                    "model_name": {
+                        "spacy": "en_core_web_sm",
+                        "transformers": "StanfordAIMI/stanford-deidentifier-base",
+                    },
+                }]
             )
         else:
             raise ValueError("Unsupported engine for tests")
+        # Load engine
+        available_engines[f"{name}_en"].load()
 
     return available_engines
 
@@ -67,15 +83,6 @@ def skip_by_engine(request, nlp_engines):
         marker_arg = marker.args[0]
         if marker_arg not in nlp_engines:
             pytest.skip(f"skipped on this engine: {marker_arg}")
-
-
-@pytest.mark.skip_engine("spacy_en")
-@pytest.fixture(scope="session")
-def spacy_nlp_engine(nlp_engines):
-    nlp_engine = nlp_engines.get("spacy_en", None)
-    if nlp_engine:
-        nlp_engine.load()
-    return nlp_engine
 
 
 @pytest.fixture(scope="session")
@@ -104,18 +111,40 @@ def loaded_registry() -> RecognizerRegistry:
 
 
 @pytest.fixture(scope="module")
+def nlp_engine(nlp_engines) -> NlpEngine:
+    return nlp_engines["spacy_en"]
+
+
+@pytest.fixture(scope="module")
 def mock_registry() -> RecognizerRegistryMock:
     return RecognizerRegistryMock()
 
 
 @pytest.fixture(scope="module")
-def mock_nlp_engine() -> NlpEngineMock:
-    return NlpEngineMock()
+def analyzer_engine_simple(mock_registry, nlp_engine) -> AnalyzerEngine:
+    return AnalyzerEngine(registry=mock_registry, nlp_engine=nlp_engine)
 
 
-@pytest.fixture(scope="module")
-def analyzer_engine_simple(mock_registry, mock_nlp_engine) -> AnalyzerEngine:
-    return AnalyzerEngine(registry=mock_registry, nlp_engine=mock_nlp_engine)
+@pytest.fixture(scope="session")
+def mock_he_model():
+    """
+    Create an empty Hebrew spaCy pipeline and save it to disk.
+
+    So that it could be loaded using spacy.load()
+    """
+    he = spacy.blank("he")
+    he.to_disk("he_test")
+
+
+@pytest.fixture(scope="session")
+def mock_bn_model():
+    """
+    Create an empty Bengali spaCy pipeline and save it to disk.
+
+    So that it could be loaded using spacy.load()
+    """
+    bn = spacy.blank("bn")
+    bn.to_disk("bn_test")
 
 
 @pytest.fixture(scope="session")
@@ -128,18 +157,28 @@ def zip_code_recognizer():
     return zip_recognizer
 
 
+@pytest.fixture(scope="session")
+def zip_code_deny_list_recognizer():
+    regex = r"(\b\d{5}(?:\-\d{4})?\b)"
+    zipcode_pattern = Pattern(name="zip code (weak)", regex=regex, score=0.01)
+    zip_recognizer = PatternRecognizer(
+        supported_entity="ZIP", deny_list=["999"], patterns=[zipcode_pattern]
+    )
+    return zip_recognizer
+
 
 def pytest_sessionfinish():
     """Remove files created during mock spaCy models creation."""
+    he_test_model_path = Path(Path(__file__).parent.parent, "he_test")
+    if he_test_model_path.exists():
+        try:
+            shutil.rmtree(he_test_model_path)
+        except OSError as e:
+            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))
 
-    mock_models = ("he_test", "bn_test")
-
-    for mock_model in mock_models:
-        test_model_path1 = Path(Path(__file__).parent, mock_model)
-        test_model_path2 = Path(Path(__file__).parent.parent, mock_model)
-        for path in (test_model_path1, test_model_path2):
-            if path.exists():
-                try:
-                    shutil.rmtree(path)
-                except OSError as e:
-                    print("Failed to remove file: %s - %s." % (e.filename, e.strerror))
+    bn_test_model_path = Path(Path(__file__).parent.parent, "bn_test")
+    if bn_test_model_path.exists():
+        try:
+            shutil.rmtree(bn_test_model_path)
+        except OSError as e:
+            print("Failed to remove file: %s - %s." % (e.filename, e.strerror))

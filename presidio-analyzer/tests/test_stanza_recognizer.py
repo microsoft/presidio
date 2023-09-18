@@ -10,11 +10,9 @@ def entities():
 
 @pytest.mark.skip_engine("stanza_en")
 @pytest.fixture(scope="module")
-def spacy_nlp_engine(nlp_engines):
-    nlp_engine = nlp_engines.get("stanza_en", None)
-    if nlp_engine:
-        nlp_engine.load()
-    return nlp_engine
+def nlp_engine(nlp_engines):
+    return nlp_engines.get("stanza_en", None)
+
 
 @pytest.mark.skip_engine("stanza_en")
 @pytest.fixture(scope="module")
@@ -58,13 +56,13 @@ def test_when_using_stanza_then_all_stanza_result_correct(
     expected_len,
     expected_positions,
     entity_num,
-        spacy_nlp_engine,
+    nlp_engine,
     nlp_recognizer,
     entities,
     ner_strength,
     max_score,
 ):
-    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
     assert len(results) == expected_len
     entity_to_check = entities[entity_num]
     for res, (st_pos, fn_pos) in zip(results, expected_positions):
@@ -75,10 +73,10 @@ def test_when_using_stanza_then_all_stanza_result_correct(
 
 @pytest.mark.skip_engine("stanza_en")
 def test_when_person_in_text_then_person_full_name_complex_found(
-        spacy_nlp_engine, nlp_recognizer, entities
+    nlp_engine, nlp_recognizer, entities
 ):
     text = "Richard (Rick) C. Henderson"
-    results = prepare_and_analyze(spacy_nlp_engine, nlp_recognizer, text, entities)
+    results = prepare_and_analyze(nlp_engine, nlp_recognizer, text, entities)
 
     assert len(results) > 0
 
