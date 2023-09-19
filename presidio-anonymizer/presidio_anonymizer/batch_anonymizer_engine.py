@@ -22,7 +22,7 @@ class BatchAnonymizerEngine:
         texts: List[Union[str, bool, int, float]],
         recognizer_results_list: List[List[RecognizerResult]],
         **kwargs
-    ) -> List[EngineResult]:
+    ) -> List[Union[str, object]]:
         """
         Anonymize a list of strings.
 
