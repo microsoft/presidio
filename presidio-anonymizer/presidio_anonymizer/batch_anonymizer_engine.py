@@ -3,7 +3,7 @@ from typing import List, Dict, Union, Iterable, Optional
 
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import DictRecognizerResult
-from presidio_anonymizer.entities import EngineResult, RecognizerResult
+from presidio_anonymizer.entities import RecognizerResult
 
 
 class BatchAnonymizerEngine:
