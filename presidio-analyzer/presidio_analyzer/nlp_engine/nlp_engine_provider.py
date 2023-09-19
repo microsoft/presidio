@@ -90,7 +90,9 @@ class NlpEngineProvider:
                 "ner_model_configuration"
             )
             if ner_model_configuration:
-                ner_model_configuration = NerModelConfiguration.from_dict(ner_model_configuration)
+                ner_model_configuration = NerModelConfiguration.from_dict(
+                    ner_model_configuration
+                )
 
             engine = nlp_engine_class(
                 models=nlp_models, ner_model_configuration=ner_model_configuration
