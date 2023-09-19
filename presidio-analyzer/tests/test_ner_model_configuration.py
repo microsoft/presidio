@@ -55,21 +55,3 @@ def test_from_dict_wrong_types(ner_model_configuration_dict, key, value):
     with pytest.raises(ValueError):
         NerModelConfiguration.from_dict(new_config)
 
-
-@pytest.mark.parametrize(
-    "key",
-    [
-        ("labels_to_ignore"),
-        ("aggregation_strategy"),
-        ("alignment_mode"),
-        ("model_to_presidio_entity_mapping"),
-        ("low_confidence_score_multiplier"),
-        ("low_score_entity_names"),
-        ("stride"),
-    ],
-)
-def test_from_dict_missing_fields(ner_model_configuration_dict, key):
-    new_config = ner_model_configuration_dict.copy()
-    del new_config[key]
-    with pytest.raises(ValueError):
-        NerModelConfiguration.from_dict(new_config)

@@ -59,7 +59,6 @@ def nlp_engine(nlp_engines):
     return nlp_engines["spacy_en"]
 
 
-@pytest.mark.integration
 def test_simple():
     dic = {
         "text": "John Smith drivers license is AC432223",

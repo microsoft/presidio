@@ -99,8 +99,6 @@ class NerModelConfiguration:
         if key in config_dict:
             if not isinstance(config_dict[key], field_type):
                 raise ValueError(f"{key} must be of type {field_type}")
-        else:
-            raise ValueError(f"NER configuration is missing '{key}'")
 
     @classmethod
     def from_dict(cls, nlp_engine_configuration: Dict) -> "NerModelConfiguration":

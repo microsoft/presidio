@@ -30,7 +30,6 @@ def prepare_and_analyze(nlp, recognizer, text, entities):
     return results
 
 
-@pytest.mark.itegration
 @pytest.mark.skip_engine("transformers_en")
 @pytest.mark.parametrize(
     "text, expected_len, expected_positions, entity_num",
@@ -80,7 +79,7 @@ def test_when_using_transformers_then_all_transformers_result_correct(
         )
 
 
-@pytest.mark.itegration
+
 @pytest.mark.skip_engine("transformers_en")
 def test_when_person_in_text_then_person_full_name_complex_found(
     nlp_engine, nlp_recognizer, entities
