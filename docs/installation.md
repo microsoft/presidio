@@ -10,43 +10,31 @@ Presidio suite using `pip` (as Python packages) or using `Docker` (As containeri
 ## Using pip
 
 !!! note "Note"
-
-    Consider installing the Presidio python packages
-    on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
-    or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
+ Consider installing the Presidio python packages
+ on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
+ or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
 ### Supported Python Versions
 
-Presidio is supported for the following python versions: 3.7, 3.8, 3.9, 3.10, 3.11.
+Presidio is supported for the following python versions:
 
-### PII de-identification in text
+* 3.7
+* 3.8
+* 3.9
+* 3.10
+* 3.11
+
+### PII anonymization on text
 
 For PII anonymization on text, install the `presidio-analyzer` and `presidio-anonymizer` packages:
 
 ```sh
 pip install presidio_analyzer
 pip install presidio_anonymizer
+
+# Presidio analyzer requires a spaCy language model.
+python -m spacy download en_core_web_lg
 ```
-
-In addition, Presidio requires at least one NLP engine (spaCy, transformers or stanza):
-
-=== "spaCy (default)"
-
-    ```
-    python -m spacy download en_core_web_lg
-    ```
-
-=== "Transformers"
-
-    ```
-    pip install "presidio_analyzer[transformers]"
-    ```
-
-=== "Stanza"
-
-    ```
-    pip install "presidio_analyzer[stanza]"
-    ```
 
 For a more detailed installation of each package, refer to the specific documentation:
 
@@ -73,10 +61,9 @@ Presidio can expose REST endpoints for each service using Flask and Docker.
 To download the Presidio Docker containers, run the following command:
 
 !!! note "Note"
+ This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
 
-    This requires Docker to be installed. [Download Docker](https://docs.docker.com/get-docker/).
-
-### For PII de-identification in text
+### For PII anonymization in text
 
 For PII detection and anonymization in text, the `presidio-analyzer`
 and `presidio-anonymizer` modules are required.
@@ -126,8 +113,7 @@ git clone git@github.com:microsoft/presidio.git
 Then, build the containers locally.
 
 !!! note "Note"
-
-     Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
+ Presidio uses [docker-compose](https://docs.docker.com/compose/) to manage the different Presidio containers.
 
 From the root folder of the repo:
 
