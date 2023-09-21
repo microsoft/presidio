@@ -52,7 +52,7 @@ class NerModelConfiguration:
     labels_to_ignore: Optional[Collection[str]] = None
     aggregation_strategy: Optional[str] = "simple"
     stride: Optional[int] = 14
-    alignment_mode: Optional[str] = "strict"
+    alignment_mode: Optional[str] = "expand"
     default_score: Optional[float] = 0.85
     model_to_presidio_entity_mapping: Optional[Dict[str, str]] = None
     low_score_entity_names: Optional[Collection] = None
