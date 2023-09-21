@@ -15,7 +15,7 @@ ner_model_configuration:
              # length. The value is the length of the
              # window overlap in transformer tokenizer
              # tokens, NOT the length of the stride.
-  alignment_mode: strict # "strict", "contract", "expand"
+  alignment_mode: expand # "strict", "contract", "expand"
   model_to_presidio_entity_mapping:
     PER: PERSON
     PERSON: PERSON
