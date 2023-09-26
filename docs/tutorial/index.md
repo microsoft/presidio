@@ -16,7 +16,7 @@ This tutorials covers different customization use cases to:
 - [Supporting new models and languages](05_languages.md)
 - [Calling an external service for PII detection](04_external_services.md)
 - [Using context words](06_context.md)
-- [Tracing the decision process](07_decision_process)
+- [Tracing the decision process](07_decision_process.md)
 - [Loading recognizers from file](08_no_code.md)
 - [Ad-Hoc recognizers](09_ad_hoc.md)
 - [Simple anonymization](10_simple_anonymization.md)

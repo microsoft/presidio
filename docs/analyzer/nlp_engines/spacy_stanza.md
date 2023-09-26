@@ -34,6 +34,22 @@ For the available models, follow these links: [spaCy](https://spacy.io/usage/mod
 
 Once created, see [the NLP configuration documentation](../customizing_nlp_models.md#Configure-Presidio-to-use-the-new-model) for more information.
 
+## How NER results flow within Presidio
+This diagram describes the flow of NER results within Presidio, and the relationship between the `SpacyNlpEngine` component and the `SpacyRecognizer` component:
+```mermaid
+sequenceDiagram
+    AnalyzerEngine->>SpacyNlpEngine: Call engine.process_text(text) <br>to get model results
+    SpacyNlpEngine->>spaCy: Call spaCy pipeline
+    spaCy->>SpacyNlpEngine: return entities and other attributes
+    Note over SpacyNlpEngine: Map entity names to Presidio's, <BR>update scores, <BR>remove unwanted entities <BR> based on NerModelConfiguration
+    SpacyNlpEngine->>AnalyzerEngine: Pass NlpArtifacts<BR>(Entities, lemmas, tokens, scores etc.)
+    Note over AnalyzerEngine: Call all recognizers
+    AnalyzerEngine->>SpacyRecognizer: Pass NlpArtifacts
+    Note over SpacyRecognizer: Extract PII entities out of NlpArtifacts
+    SpacyRecognizer->>AnalyzerEngine: Return List[RecognizerResult]
+
+```
+
 ## Training your own model
 
 !!! note "Note"

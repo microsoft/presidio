@@ -4,7 +4,7 @@
 
 Using Presidio's modules as Python packages to get started:
 
-=== "Anonymize PII in text (Default spaCy model)"
+===+ "Anonymize PII in text (Default spaCy model)"
 
     1. Install Presidio
         

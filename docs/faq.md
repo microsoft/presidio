@@ -45,7 +45,7 @@ By developing Presidio, our goals are:
 
 ### Is Microsoft Presidio an official Microsoft product?
 
-The authors and maintainers of Presidio come from the [Commercial Software Engineering]([https://microsoft/github.io/code-with-engineering-playbook/cse](https://microsoft.github.io/code-with-engineering-playbook/CSE/)) team. We work with customers on various engineering problems, and have found the proper handling of private and sensitive data a recurring challenge across many customers and industries.
+The authors and maintainers of Presidio come from the [Industry Solutions Engineering](https://microsoft.github.io/code-with-engineering-playbook) team. We work with customers on various engineering problems, and have found the proper handling of private and sensitive data a recurring challenge across many customers and industries.
 
 !!! note "Note"
     Microsoft Presidio is not an official Microsoft product. Usage terms are defined in the [repository's license](https://github.com/microsoft/presidio/blob/main/LICENSE).

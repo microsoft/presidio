@@ -7,13 +7,31 @@ Presidio's `TransformersNlpEngine` consists of a spaCy pipeline which encapsulat
 Presidio leverages other types of information from spaCy such as tokens, lemmas and part-of-speech.
 Therefore the pipeline returns both the NER model results as well as results from other pipeline components.
 
+## How NER results flow within Presidio
+This diagram describes the flow of NER results within Presidio, and the relationship between the `TransformersNlpEngine` component and the `TransformersRecognizer` component:
+```mermaid
+sequenceDiagram
+    AnalyzerEngine->>TransformersNlpEngine: Call engine.process_text(text) <br>to get model results
+    TransformersNlpEngine->>spaCy: Call spaCy pipeline
+    spaCy->>transformers: call NER model
+    transformers->>spaCy: get entities
+    spaCy->>TransformersNlpEngine: return transformers entities <BR>+ spaCy attributes
+    Note over TransformersNlpEngine: Map entity names to Presidio's, <BR>update scores, <BR>remove unwanted entities <BR> based on NerModelConfiguration
+    TransformersNlpEngine->>AnalyzerEngine: Pass NlpArtifacts<BR>(Entities, lemmas, tokens, scores etc.)
+    Note over AnalyzerEngine: Call all recognizers
+    AnalyzerEngine->>TransformersRecognizer: Pass NlpArtifacts
+    Note over TransformersRecognizer: Extract PII entities out of NlpArtifacts
+    TransformersRecognizer->>AnalyzerEngine: Return List[RecognizerResult]
+
+```
+
 ## Adding a new model
 
 As the underlying transformers model, you can choose from either a public pretrained model or a custom model.
 
 ### Using a public pre-trained transformers model
 
-### Downloading a pre-trained model
+#### Downloading a pre-trained model
 
 To download the desired NER model from HuggingFace:
 
@@ -99,6 +117,31 @@ The `ner_model_configuration` section contains the following parameters:
 See more information on parameters on the [spacy-huggingface-pipelines Github repo](https://github.com/explosion/spacy-huggingface-pipelines#token-classification).
   
 Once created, see [the NLP configuration documentation](../customizing_nlp_models.md#Configure-Presidio-to-use-the-new-model) for more information.
+
+#### Calling the new model
+
+Once the configuration file is created, it can be used to create a new `TransformersNlpEngine`:
+
+```python
+    from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+    from presidio_analyzer.nlp_engine import NlpEngineProvider
+    
+    # Create configuration containing engine name and models
+    conf_file = PATH_TO_CONF_FILE
+    
+    # Create NLP engine based on configuration
+    provider = NlpEngineProvider(conf_file=conf_file)
+    nlp_engine = provider.create_engine()
+    
+    # Pass the created NLP engine and supported_languages to the AnalyzerEngine
+    analyzer = AnalyzerEngine(
+        nlp_engine=nlp_engine, 
+        supported_languages=["en"]
+    )
+
+    results_english = analyzer.analyze(text="My name is Morris", language="en")
+    print(results_english)
+```
 
 ### Training your own model
 

@@ -22,7 +22,7 @@ Presidio is supported for the following python versions: 3.7, 3.8, 3.9, 3.10, 3.
 For PII anonymization on text, install the `presidio-analyzer` and `presidio-anonymizer` packages
 with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
 
-=== "spaCy (default)"
+===+ "spaCy (default)"
 
     ```
     pip install presidio_analyzer
