@@ -34,3 +34,5 @@ class TransformersRecognizer(SpacyRecognizer):
             "Spacy", "Transfromers"
         )
         super().__init__(**kwargs)
+        self.name = "TransformersRecognizer"
+

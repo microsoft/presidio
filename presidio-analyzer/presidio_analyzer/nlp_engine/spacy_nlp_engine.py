@@ -217,7 +217,7 @@ class SpacyNlpEngine(NlpEngine):
             else:
                 logger.warning(
                     f"Entity {ent.label_} is not mapped to a Presidio entity, "
-                    f"but keeping anyway"
+                    f"but keeping anyway. Add to `NerModelConfiguration.labels_to_ignore` to remove."
                 )
 
             # Remove presidio entities in the ignore list

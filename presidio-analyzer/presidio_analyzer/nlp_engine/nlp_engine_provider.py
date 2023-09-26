@@ -59,7 +59,7 @@ class NlpEngineProvider:
         if conf_file:
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
-        if not conf_file and not nlp_configuration:
+        if conf_file is None and nlp_configuration is None:
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
             self.nlp_configuration = self._read_nlp_conf(conf_file)

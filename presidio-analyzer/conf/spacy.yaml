@@ -22,3 +22,14 @@ ner_model_configuration:
   low_score_entity_names:
   - ORG
   - ORGANIZATION
+  labels_to_ignore:
+  - CARDINAL
+  - EVENT
+  - LANGUAGE
+  - LAW
+  - MONEY
+  - ORDINAL
+  - PERCENT
+  - PRODUCT
+  - QUANTITY
+  - WORK_OF_ART
