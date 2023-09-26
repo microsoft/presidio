@@ -27,8 +27,6 @@ class TransformersRecognizer(SpacyRecognizer):
         "PHONE_NUMBER",
     ]
 
-    LOW_SCORE_ENTITY_NAMES = {"ID"}
-
     def __init__(self, **kwargs):  # noqa ANN003
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace(
             "Spacy", "Transformers"
