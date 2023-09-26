@@ -31,8 +31,6 @@ class TransformersRecognizer(SpacyRecognizer):
 
     def __init__(self, **kwargs):  # noqa ANN003
         self.DEFAULT_EXPLANATION = self.DEFAULT_EXPLANATION.replace(
-            "Spacy", "Transfromers"
+            "Spacy", "Transformers"
         )
         super().__init__(**kwargs)
-        self.name = "TransformersRecognizer"
-

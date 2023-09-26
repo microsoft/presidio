@@ -87,7 +87,7 @@ class SpacyRecognizer(LocalRecognizer):
         :return:
         """
         explanation = AnalysisExplanation(
-            recognizer=self.__class__.__name__,
+            recognizer=self.name,
             original_score=original_score,
             textual_explanation=explanation,
         )
