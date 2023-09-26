@@ -10,8 +10,6 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Quickstart: getting_started.md
-
-
   - Handling text: 
     - Home: text_anonymization.md
     - Step by step tutorial: 
@@ -30,6 +28,7 @@ nav:
       - Custom anonymization: tutorial/11_custom_anonymization.md
       - Encryption/Decryption: tutorial/12_encryption.md
       - Allow-lists: tutorial/13_allow_list.md
+
     - Presidio Analyzer:
       - Home: analyzer/index.md
       - Developing PII recognizers:
@@ -58,6 +57,7 @@ nav:
       - Presidio Anonymizer Python API: api/anonymizer_python.md
       - Presidio Image Redactor Python API: api/image_redactor_python.md
     - REST API reference: https://microsoft.github.io/presidio/api-docs/api-docs.html" target="_blank
+
   - General:
     - Supported entities: supported_entities.md
     - Samples: samples/index.md

@@ -10,14 +10,17 @@ def entities():
 
 @pytest.mark.skip_engine("transformers_en")
 @pytest.fixture(scope="module")
-def nlp_engine(nlp_engines):
-    return nlp_engines.get("transformers_en", None)
+def nlp_recognizer(nlp_recognizers):
+    return nlp_recognizers.get("transformers", None)
 
 
 @pytest.mark.skip_engine("transformers_en")
 @pytest.fixture(scope="module")
-def nlp_recognizer(nlp_recognizers):
-    return nlp_recognizers.get("transformers", None)
+def nlp_engine(nlp_engines):
+    nlp_engine = nlp_engines.get("transformers_en", None)
+    if nlp_engine:
+        nlp_engine.load()
+    return nlp_engine
 
 
 def prepare_and_analyze(nlp, recognizer, text, entities):
@@ -74,6 +77,7 @@ def test_when_using_transformers_then_all_transformers_result_correct(
             expected_score_min=min_score,
             expected_score_max=max_score,
         )
+
 
 
 @pytest.mark.skip_engine("transformers_en")

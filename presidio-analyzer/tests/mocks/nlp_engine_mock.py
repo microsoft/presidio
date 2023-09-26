@@ -8,7 +8,7 @@ class NlpEngineMock(NlpEngine):
         self.stopwords = stopwords if stopwords else []
         self.punct_words = punct_words if punct_words else []
         if nlp_artifacts is None:
-            self.nlp_artifacts = NlpArtifacts([], [], [], [], None, "en")
+            self.nlp_artifacts = NlpArtifacts([], [], [], [], None, "en", [])
         else:
             self.nlp_artifacts = nlp_artifacts
 

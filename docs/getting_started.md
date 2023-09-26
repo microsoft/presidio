@@ -1,10 +1,11 @@
 # Getting started with Presidio
 
-## Simple flow: Text
+## Simple flow
 
 Using Presidio's modules as Python packages to get started:
 
 ===+ "Anonymize PII in text (Default spaCy model)"
+
 
     1. Install Presidio
         
@@ -20,7 +21,7 @@ Using Presidio's modules as Python packages to get started:
         from presidio_analyzer import AnalyzerEngine
         from presidio_anonymizer import AnonymizerEngine
         
-        text = "My phone number is 212-555-5555"
+        text="My phone number is 212-555-5555"
         
         # Set up the engine, loads the NLP module (spaCy model by default) 
         # and other PII recognizers

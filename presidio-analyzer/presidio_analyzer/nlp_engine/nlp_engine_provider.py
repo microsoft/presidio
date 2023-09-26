@@ -9,6 +9,7 @@ from presidio_analyzer.nlp_engine import (
     SpacyNlpEngine,
     NlpEngine,
     TransformersNlpEngine,
+    NerModelConfiguration,
 )
 
 logger = logging.getLogger("presidio-analyzer")
@@ -58,7 +59,7 @@ class NlpEngineProvider:
         if conf_file:
             self.nlp_configuration = self._read_nlp_conf(conf_file)
 
-        if not conf_file and not nlp_configuration:
+        if conf_file is None and nlp_configuration is None:
             conf_file = self._get_full_conf_path()
             logger.debug(f"Reading default conf file from {conf_file}")
             self.nlp_configuration = self._read_nlp_conf(conf_file)
@@ -88,6 +89,11 @@ class NlpEngineProvider:
             ner_model_configuration = self.nlp_configuration.get(
                 "ner_model_configuration"
             )
+            if ner_model_configuration:
+                ner_model_configuration = NerModelConfiguration.from_dict(
+                    ner_model_configuration
+                )
+
             engine = nlp_engine_class(
                 models=nlp_models, ner_model_configuration=ner_model_configuration
             )
@@ -116,6 +122,11 @@ class NlpEngineProvider:
 
         else:
             nlp_configuration = yaml.safe_load(open(conf_file))
+
+        if "ner_model_configuration" not in nlp_configuration:
+            logger.warning(
+                "configuration file is missing 'ner_model_configuration'. Using default"
+            )
 
         return nlp_configuration
 

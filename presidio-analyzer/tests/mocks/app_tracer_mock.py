@@ -5,7 +5,6 @@ from presidio_analyzer.app_tracer import AppTracer
 
 class AppTracerMock(AppTracer):
     def __init__(self, enable_decision_process=True):
-
         logger = logging.getLogger("DecisionProcessMock")
         if not logger.handlers:
             ch = logging.StreamHandler()
