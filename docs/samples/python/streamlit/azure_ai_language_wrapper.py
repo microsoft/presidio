@@ -10,8 +10,10 @@ from presidio_analyzer.nlp_engine import NlpArtifacts
 
 logger = logging.getLogger("presidio-streamlit")
 
-class TextAnalyticsWrapper(EntityRecognizer):
+
+class AzureAIServiceWrapper(EntityRecognizer):
     from azure.ai.textanalytics._models import PiiEntityCategory
+
     TA_SUPPORTED_ENTITIES = [r.value for r in PiiEntityCategory]
 
     def __init__(
@@ -35,7 +37,7 @@ class TextAnalyticsWrapper(EntityRecognizer):
         super().__init__(
             supported_entities=supported_entities,
             supported_language=supported_language,
-            name="Azure Text Analytics PII",
+            name="Azure AI Language PII",
         )
 
         self.ta_key = ta_key
@@ -67,7 +69,7 @@ class TextAnalyticsWrapper(EntityRecognizer):
             for entity in res.entities:
                 if entity.category not in self.supported_entities:
                     continue
-                analysis_explanation = TextAnalyticsWrapper._build_explanation(
+                analysis_explanation = AzureAIServiceWrapper._build_explanation(
                     original_score=entity.confidence_score,
                     entity_type=entity.category,
                 )
@@ -88,7 +90,7 @@ class TextAnalyticsWrapper(EntityRecognizer):
         original_score: float, entity_type: str
     ) -> AnalysisExplanation:
         explanation = AnalysisExplanation(
-            recognizer=TextAnalyticsWrapper.__class__.__name__,
+            recognizer=AzureAIServiceWrapper.__class__.__name__,
             original_score=original_score,
             textual_explanation=f"Identified as {entity_type} by Text Analytics",
         )
@@ -100,6 +102,7 @@ class TextAnalyticsWrapper(EntityRecognizer):
 
 if __name__ == "__main__":
     import presidio_helpers
+
     dotenv.load_dotenv()
     text = """
     Here are a few example sentences we currently support:

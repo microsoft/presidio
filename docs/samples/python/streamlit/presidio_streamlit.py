@@ -56,6 +56,7 @@ model_list = [
     "flair/ner-english-large",
     "HuggingFace/obi/deid_roberta_i2b2",
     "HuggingFace/StanfordAIMI/stanford-deidentifier-base",
+    "stanza/en",
     "Azure Text Analytics PII",
     "Other",
 ]
@@ -75,22 +76,22 @@ st_model_package = st_model.split("/")[0]
 # Remove package prefix (if needed)
 st_model = (
     st_model
-    if st_model_package not in ("spaCy", "HuggingFace")
+    if st_model_package not in ("spaCy", "stanza", "HuggingFace")
     else "/".join(st_model.split("/")[1:])
 )
 
 if st_model == "Other":
     st_model_package = st.sidebar.selectbox(
-        "NER model OSS package", options=["spaCy", "Flair", "HuggingFace"]
+        "NER model OSS package", options=["spaCy", "stanza", "Flair", "HuggingFace"]
     )
     st_model = st.sidebar.text_input(f"NER model name", value="")
 
-if st_model == "Azure Text Analytics PII":
+if st_model == "Azure AI Language":
     st_ta_key = st.sidebar.text_input(
-        f"Text Analytics key", value=os.getenv("TA_KEY", ""), type="password"
+        f"Azure AI Language key", value=os.getenv("TA_KEY", ""), type="password"
     )
     st_ta_endpoint = st.sidebar.text_input(
-        f"Text Analytics endpoint",
+        f"Azure AI Language endpoint",
         value=os.getenv("TA_ENDPOINT", default=""),
         help="For more info: https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/personally-identifiable-information/overview",  # noqa: E501
     )

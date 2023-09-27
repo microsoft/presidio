@@ -25,7 +25,8 @@ from presidio_nlp_engine_config import (
     create_nlp_engine_with_spacy,
     create_nlp_engine_with_flair,
     create_nlp_engine_with_transformers,
-    create_nlp_engine_with_azure_text_analytics,
+    create_nlp_engine_with_azure_ai_language,
+    create_nlp_engine_with_stanza,
 )
 
 logger = logging.getLogger("presidio-streamlit")
@@ -51,12 +52,14 @@ def nlp_engine_and_registry(
     # Set up NLP Engine according to the model of choice
     if "spaCy" in model_family:
         return create_nlp_engine_with_spacy(model_path)
+    if "stanza" in model_family:
+        return create_nlp_engine_with_stanza(model_path)
     elif "flair" in model_family:
         return create_nlp_engine_with_flair(model_path)
     elif "HuggingFace" in model_family:
         return create_nlp_engine_with_transformers(model_path)
     elif "Azure Text Analytics" in model_family:
-        return create_nlp_engine_with_azure_text_analytics(ta_key, ta_endpoint)
+        return create_nlp_engine_with_azure_ai_language(ta_key, ta_endpoint)
     else:
         raise ValueError(f"Model family {model_family} not supported")
 
