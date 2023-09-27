@@ -2,16 +2,17 @@
 
 ## Description
 
-This document describes the installation of the entire
+This document describes how to download and install the Presidio services locally.
+As Presidio is comprised of several packages/services,
+this document describes the installation of the entire
 Presidio suite using `pip` (as Python packages) or using `Docker` (As containerized services).
 
 ## Using pip
 
 !!! note "Note"
-
-    Consider installing the Presidio python packages
-    in a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
-    or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
+ Consider installing the Presidio python packages
+ on a virtual environment like [venv](https://docs.python.org/3/tutorial/venv.html)
+ or [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
 ### Supported Python Versions
 
@@ -25,42 +26,20 @@ Presidio is supported for the following python versions:
 
 ### PII anonymization on text
 
-For PII anonymization on text, install the `presidio-analyzer` and `presidio-anonymizer` packages
-with at least one NLP engine (`spaCy`, `transformers` or `stanza`):
+For PII anonymization on text, install the `presidio-analyzer` and `presidio-anonymizer` packages:
 
-===+ "spaCy (default)"
+```sh
+pip install presidio_analyzer
+pip install presidio_anonymizer
 
-    ```
-    pip install presidio_analyzer
-    pip install presidio_anonymizer
-    python -m spacy download en_core_web_lg
-    ```
+# Presidio analyzer requires a spaCy language model.
+python -m spacy download en_core_web_lg
+```
 
-=== "Transformers"
+For a more detailed installation of each package, refer to the specific documentation:
 
-    ```
-    pip install "presidio_analyzer[transformers]"
-    pip install presidio_anonymizer
-    python -m spacy download en_core_web_sm
-    ```
-
-    !!! note "Note"
-        
-        When using a transformers NLP engine, Presidio would still use spaCy for other capabilities,
-        therefore a small spaCy model (such as en_core_web_sm) is required. 
-        Transformers models would be loaded lazily. To pre-load them, see: [Downloading a pre-trained model](./analyzer/nlp_engines/transformers.md#downloading-a-pre-trained-model)
-
-=== "Stanza"
-
-    ```
-    pip install "presidio_analyzer[stanza]"
-    pip install presidio_anonymizer
-    ```
-
-
-    !!! note "Note"
-        
-        Stanza models would be loaded lazily. To pre-load them, see: [Downloading a pre-trained model](./analyzer/nlp_engines/spacy_stanza.md#download-the-pre-trained-model).
+* [presidio-analyzer](analyzer/index.md).
+* [presidio-anonymizer](anonymizer/index.md).
 
 ### PII redaction in images
 
@@ -73,6 +52,8 @@ pip install presidio_image_redactor
 # which requires a spaCy language model:
 python -m spacy download en_core_web_lg
 ```
+
+[Click here](image-redactor/index.md) for more information on the presidio-image-redactor package.
 
 ## Using Docker
 
